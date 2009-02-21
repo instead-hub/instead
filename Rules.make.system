@@ -1,0 +1,23 @@
+VERSION := \"0.7.2\"
+
+DESTDIR=/usr/local
+BIN=$(DESTDIR)/bin
+STEADPATH=$(DESTDIR)/share/stead
+THEMESPATH=$(DESTDIR)/share/stead/themes
+GAMESPATH=$(DESTDIR)/share/stead/games
+
+LUA_CFLAGS=$(shell pkg-config --cflags lua5.1)
+LUA_LFLAGS=$(shell pkg-config --libs lua5.1)
+
+# for arch linux use this
+#
+# LUA_CFLAGS=$(shell pkg-config --cflags lua)
+# LUA_LFLAGS=$(shell pkg-config --libs lua)
+#
+
+SDL_CFLAGS=$(shell sdl-config --cflags)
+SDL_LFLAGS=$(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer -lSDL_image
+
+CFLAGS	+= -g -Wall -DHAVE_ICONV -DRUSSIAN
+
+

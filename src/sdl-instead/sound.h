@@ -1,0 +1,21 @@
+#ifndef __SOUND_H__
+#define __SOUND_H__
+
+#define SND_CLICK	0
+#define SND_BONUS	1
+#define SND_HISCORE	2
+#define SND_GAMEOVER	3
+#define SND_BOOM 	4
+#define SND_FADEOUT	5
+#define SND_PAINT	6
+typedef void*  mus_t;
+//extern mus_t	snd_load_mus(const char *path);
+extern void	snd_free_mus(mus_t mus);
+extern int	snd_init(int hz);
+extern int	snd_hz(void);
+extern int      snd_play_mus(char *music, int ms);
+extern int	snd_playing_mus();
+extern void     snd_stop_mus(int ms);
+extern int 	snd_volume_mus(int vol);
+extern	void	snd_done(void);
+#endif
