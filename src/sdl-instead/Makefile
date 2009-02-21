@@ -15,7 +15,7 @@ $(OBJ): %.o : %.c gui.h
 	$(CC) -c $(<) $(I) $(CFLAGS)
 
 sdl-instead:  $(OBJ)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(^) -o $(@) 
+	$(CC) $(CFLAGS) $(^) $(LDFLAGS) -o $(@) 
 #	strip sdl-instead
 
 install:

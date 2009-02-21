@@ -9,7 +9,7 @@ GAMESPATH=$(DESTDIR)/share/stead/games
 LUA_CFLAGS=$(shell pkg-config --cflags lua5.1)
 LUA_LFLAGS=$(shell pkg-config --libs lua5.1)
 
-# for arch linux use this
+# for arch and gentoo linux use this
 #
 # LUA_CFLAGS=$(shell pkg-config --cflags lua)
 # LUA_LFLAGS=$(shell pkg-config --libs lua)
@@ -18,6 +18,6 @@ LUA_LFLAGS=$(shell pkg-config --libs lua5.1)
 SDL_CFLAGS=$(shell sdl-config --cflags)
 SDL_LFLAGS=$(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer -lSDL_image
 
-CFLAGS	+= -g -Wall -DHAVE_ICONV -DRUSSIAN
+CFLAGS	+= -Wall -DHAVE_ICONV -DRUSSIAN
 
 
