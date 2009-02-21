@@ -21,7 +21,7 @@ int opt_autosave = 0;
 char *opt_game = NULL;
 
 char game_cwd[PATH_MAX];
-char    *curgame;
+char    *curgame = NULL;
 int cfg_parse(const char *path);
 char *game_cfg_path(void);
 
