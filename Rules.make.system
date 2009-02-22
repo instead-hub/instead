@@ -1,4 +1,4 @@
-VERSION := \"0.7.3\"
+VERSION := \"0.7.4\"
 
 DESTDIR=/usr/local
 BIN=$(DESTDIR)/bin

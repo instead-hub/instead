@@ -609,8 +609,8 @@ int games_lookup(void)
 	if (!d)
 		return -1;
 	while ((de = readdir(d))) {
-		if (de->d_type != DT_DIR)
-			continue;
+		/*if (de->d_type != DT_DIR)
+			continue;*/
 		if (!is_game(de->d_name))
 			continue;
 		n ++;
@@ -620,8 +620,8 @@ int games_lookup(void)
 		return 0;
 	games = malloc(sizeof(struct game) * n);
 	while ((de = readdir(d)) && games_nr < n) {
-		if (de->d_type != DT_DIR)
-			continue;
+		/*if (de->d_type != DT_DIR)
+			continue;*/
 		if (!is_game(de->d_name))
 			continue;
 		p = getpath(GAMES_PATH, de->d_name);
