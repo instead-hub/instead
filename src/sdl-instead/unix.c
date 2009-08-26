@@ -1,6 +1,7 @@
 #include <limits.h>
 #include <pwd.h>
 #include <unistd.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <stdio.h>
 #include <errno.h>
