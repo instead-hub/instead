@@ -1,4 +1,5 @@
-SUBDIRS = src/instead src/sdl-instead stead games themes
+#SUBDIRS = src/sdl-instead stead games themes icon desktop doc
+SUBDIRS = src/sdl-instead stead games themes icon desktop doc
 
 all:	
 	@for dir in $(SUBDIRS); do \

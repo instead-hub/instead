@@ -2,7 +2,8 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <SDL_mutex.h>
-#include <unistd.h> /* for usleep */
+#include "SDL_rotozoom.h"
+#include "input.h"
 #include "graphics.h"
 #include "math.h"
 	
@@ -352,35 +353,16 @@ img_t gfx_combine(img_t src, img_t dst)
 	return new;	
 }
 
-img_t gfx_load_image(char *filename, int transparent)
+img_t gfx_load_image(char *filename)
 {
 
-	SDL_Surface *img, *img2;
+	SDL_Surface *img;
 	img = IMG_Load(filename);
 	if (!img) {
 		fprintf(stderr, "File not found: '%s'\n", filename);
 		return NULL;
 	}
-	if (transparent && transparent != 2) {
-		SDL_SetColorKey(img,  SDL_RLEACCEL, img->format->colorkey);
-		return img;
-	} 
-    // Create hardware surface
-    	img2 = SDL_CreateRGBSurface(SDL_HWSURFACE | (transparent)?SDL_SRCCOLORKEY:0, 
-		img->w, img->h, 16, 0xF800, 0x7E0, 0x1F, 0);
-	if (!img2) {
-		SDL_FreeSurface(img);
-		fprintf(stderr, "Error creating surface!\n");
-		return NULL;
-	}
-	
-	if (transparent)
-		SDL_SetColorKey(img2,  SDL_SRCCOLORKEY | SDL_RLEACCEL, 0xF81F);
-
-	SDL_SetAlpha(img2, 0, 0);
-	SDL_BlitSurface(img, NULL, img2, NULL);
-	SDL_FreeSurface(img);
-	return img2;
+	return img;
 }
 
 void gfx_draw_bg(img_t p, int x, int y, int width, int height)
@@ -458,10 +440,38 @@ void gfx_clear(int x, int y, int w, int h)
 
 int gfx_width;
 int gfx_height;
-int gfx_init(int width, int height, int fs)
+
+int gfx_setmode(int w, int h, int fs)
 {
-	gfx_width = width;
-	gfx_height = height;
+	gfx_width = w;
+	gfx_height = h;
+	
+	screen = SDL_SetVideoMode(gfx_width, gfx_height, 32, SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
+	if (screen == NULL) {
+		fprintf(stderr, "Unable to set %dx%d video: %s\n", w, h, SDL_GetError());
+		return -1;
+	}
+		
+	gfx_clear(0, 0, gfx_width, gfx_height);
+	return 0;
+}
+
+unsigned int	timer_counter = 0;
+
+SDL_TimerID timer_han = NULL;
+static SDL_Surface *icon = NULL;
+Uint32 counter_fn(Uint32 interval, void *p)
+{
+	timer_counter ++;
+	return interval;
+}
+
+int gfx_init(void)
+{
+	char title[4096];
+
+	strcpy( title, "INSTEAD SDL - " );
+	strcat( title, VERSION );
 
 	if (TTF_Init()) {
 		fprintf(stderr, "Can't init TTF subsystem.\n");
@@ -469,21 +479,22 @@ int gfx_init(int width, int height, int fs)
 	}
 
 	// Initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO) < 0) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER /*| SDL_INIT_AUDIO*/) < 0) {
 		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
 		return -1;
   	}
-	screen = SDL_SetVideoMode(gfx_width, gfx_height, 32, SDL_DOUBLEBUF | SDL_HWSURFACE | ((fs)?SDL_FULLSCREEN:0));
-	SDL_WM_SetCaption("IN S.T.E.A.D SDL - "VERSION, NULL);
-//	icon = IMG_Load( GAMEDATADIR"icon/lines.png" );
-//	if (icon) {
-//		SDL_WM_SetIcon( icon, NULL );
-//	}
-	if (screen == NULL) {
-		fprintf(stderr, "Unable to set 800x480 video: %s\n", SDL_GetError());
-		return -1;
+  	
+  	SDL_WM_SetCaption( title, title );
+
+#ifndef ICON_PATH
+#define ICON_PATH "./icon"
+#endif
+
+	icon = IMG_Load( ICON_PATH"/sdl_instead.png" );
+	if ( icon ) {
+		SDL_WM_SetIcon( icon, NULL );
 	}
-	gfx_clear(0, 0, gfx_width, gfx_height);
+	timer_han =  SDL_AddTimer(100, counter_fn, NULL);
 	return 0;
 }
 void gfx_flip(void)
@@ -516,339 +527,18 @@ void gfx_update(int x, int y, int w, int h) {
 
 void gfx_done(void)
 {
+	if (icon)
+		SDL_FreeSurface(icon);
+	if (timer_han)
+		SDL_RemoveTimer(timer_han);
+	timer_han = NULL;
 	TTF_Quit();
-	SDL_Quit();
-}
-
-/* code from sge */
-#ifndef PI
-	#define PI 3.1414926535
-#endif
-
-void _PutPixel24(SDL_Surface *surface, Sint16 x, Sint16 y, Uint32 color)
-{
-	Uint8 *pix = (Uint8 *)surface->pixels + y * surface->pitch + x*3;
-
-  	/* Gack - slow, but endian correct */
-	*(pix+surface->format->Rshift/8) = color>>surface->format->Rshift;
-  	*(pix+surface->format->Gshift/8) = color>>surface->format->Gshift;
-  	*(pix+surface->format->Bshift/8) = color>>surface->format->Bshift;
-	*(pix+surface->format->Ashift/8) = color>>surface->format->Ashift;
-}
-void _PutPixel32(SDL_Surface *surface, Sint16 x, Sint16 y, Uint32 color)
-{
-	*((Uint32 *)surface->pixels + y*surface->pitch/4 + x) = color;
-}
-
-void _PutPixelX(SDL_Surface *dest,Sint16 x,Sint16 y,Uint32 color)
-{
-	switch ( dest->format->BytesPerPixel ) {
-	case 1:
-		*((Uint8 *)dest->pixels + y*dest->pitch + x) = color;
-		break;
-	case 2:
-		*((Uint16 *)dest->pixels + y*dest->pitch/2 + x) = color;
-		break;
-	case 3:
-		_PutPixel24(dest,x,y,color);
-		break;
-	case 4:
-		*((Uint32 *)dest->pixels + y*dest->pitch/4 + x) = color;
-		break;
-	}
-}
-
-Uint32 sge_GetPixel(SDL_Surface *surface, Sint16 x, Sint16 y)
-{
-	if(x<0 || x>=surface->w || y<0 || y>=surface->h)
-		return 0;
-
-	switch (surface->format->BytesPerPixel) {
-		case 1: { /* Assuming 8-bpp */
-			return *((Uint8 *)surface->pixels + y*surface->pitch + x);
-		}
-		break;
-
-		case 2: { /* Probably 15-bpp or 16-bpp */
-			return *((Uint16 *)surface->pixels + y*surface->pitch/2 + x);
-		}
-		break;
-
-		case 3: { /* Slow 24-bpp mode, usually not used */
-			Uint8 *pix;
-			int shift;
-			Uint32 color=0;
-
-			pix = (Uint8 *)surface->pixels + y * surface->pitch + x*3;
-			shift = surface->format->Rshift;
-			color = *(pix+shift/8)<<shift;
-			shift = surface->format->Gshift;
-			color|= *(pix+shift/8)<<shift;
-			shift = surface->format->Bshift;
-			color|= *(pix+shift/8)<<shift;
-			shift = surface->format->Ashift;
-			color|= *(pix+shift/8)<<shift;
-			return color;
-		}
-		break;
-
-		case 4: { /* Probably 32-bpp */
-			return *((Uint32 *)surface->pixels + y*surface->pitch/4 + x);
-		}
-		break;
-	}
-	return 0;
-}
-
-/*
-*  Macro to get clipping
-*/
-#if SDL_VERSIONNUM(SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL) >= \
-    SDL_VERSIONNUM(1, 1, 5)
-	#define sge_clip_xmin(pnt) pnt->clip_rect.x
-	#define sge_clip_xmax(pnt) pnt->clip_rect.x + pnt->clip_rect.w-1
-	#define sge_clip_ymin(pnt) pnt->clip_rect.y
-	#define sge_clip_ymax(pnt) pnt->clip_rect.y + pnt->clip_rect.h-1
-#else
-	#define sge_clip_xmin(pnt) pnt->clip_minx
-	#define sge_clip_xmax(pnt) pnt->clip_maxx
-	#define sge_clip_ymin(pnt) pnt->clip_miny
-	#define sge_clip_ymax(pnt) pnt->clip_maxy
-#endif
-
-#define SWAP(x,y,temp) temp=x;x=y;y=temp
-//==================================================================================
-// Helper function to sge_transform()
-// Returns the bounding box
-//==================================================================================
-void _calcRect(SDL_Surface *src, SDL_Surface *dst, float theta, float xscale, float yscale, Uint16 px, Uint16 py, Uint16 qx, Uint16 qy, Sint16 *xmin, Sint16 *ymin, Sint16 *xmax, Sint16 *ymax)
-{
-	int i;
-	Sint16 x, y, rx, ry;
-	Sint32 istx, ictx, isty, icty;
-	// Clip to src surface
-	Sint16 sxmin = sge_clip_xmin(src);
-	Sint16 sxmax = sge_clip_xmax(src);
-	Sint16 symin = sge_clip_ymin(src);
-	Sint16 symax = sge_clip_ymax(src);
-	Sint16 sx[]={sxmin, sxmax, sxmin, sxmax};
-	Sint16 sy[]={symin, symax, symax, symin};
-	
-	// We don't really need fixed-point here
-	// but why not?
-	istx = (Sint32)((sin(theta)*xscale) * 8192.0);  /* Inverse transform */
-	ictx = (Sint32)((cos(theta)*xscale) * 8192.2);
-	isty = (Sint32)((sin(theta)*yscale) * 8192.0);
-	icty = (Sint32)((cos(theta)*yscale) * 8192.2);
-
-	//Calculate the four corner points
-	for(i=0; i<4; i++){
-		rx = sx[i] - px;
-		ry = sy[i] - py;
-		
-		x = (Sint16)(((ictx*rx - isty*ry) >> 13) + qx);
-		y = (Sint16)(((icty*ry + istx*rx) >> 13) + qy);
-		
-		
-		if(i==0){
-			*xmax = *xmin = x;
-			*ymax = *ymin = y;
-		}else{
-			if(x>*xmax)
-				*xmax=x;
-			else if(x<*xmin)
-				*xmin=x;
-				
-			if(y>*ymax)
-				*ymax=y;
-			else if(y<*ymin)
-				*ymin=y;
-		}
-	}
-	
-	//Better safe than sorry...
-	*xmin -= 1;
-	*ymin -= 1;
-	*xmax += 1;
-	*ymax += 1;
-	
-	//Clip to dst surface
-	if( !dst )
-		return;
-	if( *xmin < sge_clip_xmin(dst) )
-		*xmin = sge_clip_xmin(dst);
-	if( *xmax > sge_clip_xmax(dst) )
-		*xmax = sge_clip_xmax(dst);
-	if( *ymin < sge_clip_ymin(dst) )
-		*ymin = sge_clip_ymin(dst);
-	if( *ymax > sge_clip_ymax(dst) )
-		*ymax = sge_clip_ymax(dst);
-}
-
-#define TRANSFORM_GENERIC_AA \
-	Uint8 R, G, B, A, R1, G1, B1, A1=0, R2, G2, B2, A2=0, R3, G3, B3, A3=0, R4, G4, B4, A4=0; \
-	Sint32 wx, wy, p1, p2, p3, p4;\
-\
-	Sint32 const one = 2048;   /* 1 in Fixed-point */ \
-	Sint32 const two = 2*2048; /* 2 in Fixed-point */ \
-\
-	for (y=ymin; y<ymax; y++){ \
-		dy = y - qy; \
-\
-		sx = (Sint32)(ctdx  + stx*dy + mx);  /* Compute source anchor points */ \
-		sy = (Sint32)(cty*dy - stdx  + my); \
-\
-		for (x=xmin; x<xmax; x++){ \
-			rx=(Sint16)(sx >> 13);  /* Convert from fixed-point */ \
-			ry=(Sint16)(sy >> 13); \
-\
-			/* Make sure the source pixel is actually in the source image. */ \
-			if( (rx>=sxmin) && (rx+1<=sxmax) && (ry>=symin) && (ry+1<=symax) ){ \
-				wx = (sx & 0x00001FFF) >> 2;  /* (float(x) - int(x)) / 4 */ \
-				wy = (sy & 0x00001FFF) >> 2;\
-\
-				p4 = wx+wy;\
-				p3 = one-wx+wy;\
-				p2 = wx+one-wy;\
-				p1 = two-wx-wy;\
-\
-				SDL_GetRGBA(sge_GetPixel(src,rx,  ry), src->format, &R1, &G1, &B1, &A1);\
-				SDL_GetRGBA(sge_GetPixel(src,rx+1,ry), src->format, &R2, &G2, &B2, &A2);\
-				SDL_GetRGBA(sge_GetPixel(src,rx,  ry+1), src->format, &R3, &G3, &B3, &A3);\
-				SDL_GetRGBA(sge_GetPixel(src,rx+1,ry+1), src->format, &R4, &G4, &B4, &A4);\
-\
-				/* Calculate the average */\
-				R = (p1*R1 + p2*R2 + p3*R3 + p4*R4)>>13;\
-				G = (p1*G1 + p2*G2 + p3*G3 + p4*G4)>>13;\
-				B = (p1*B1 + p2*B2 + p3*B3 + p4*B4)>>13;\
-				A = (p1*A1 + p2*A2 + p3*A3 + p4*A4)>>13;\
-\
-				_PutPixelX(dst,x,y,SDL_MapRGBA(dst->format, R, G, B, A)); \
-				\
-			} \
-			sx += ctx;  /* Incremental transformations */ \
-			sy -= sty; \
-		} \
-	} 
-
-Uint8 _sge_lock=1;
-
-SDL_Rect sge_transformAA(SDL_Surface *src, SDL_Surface *dst, float angle, float xscale, float yscale ,Uint16 px, Uint16 py, Uint16 qx, Uint16 qy, Uint8 flags)
-{
-	Sint32 dy, sx, sy;
-	Sint16 x, y, rx, ry;
-	SDL_Rect r;
-	r.x = r.y = r.w = r.h = 0;
-
-	float theta = (float)(angle*PI/180.0);  /* Convert to radians.  */
-
-
-	// Here we use 18.13 fixed point integer math
-	// Sint32 should have 31 usable bits and one for sign
-	// 2^13 = 8192
-
-	// Check scales
-	Sint32 maxint = (Sint32)(pow(2, sizeof(Sint32)*8 - 1 - 13));  // 2^(31-13)
-	
-	if( xscale == 0 || yscale == 0)
-		return r;
-		
-	if( 8192.0/xscale > maxint )
-		xscale =  (float)(8192.0/maxint);
-	else if( 8192.0/xscale < -maxint )
-		xscale =  (float)(-8192.0/maxint);	
-		
-	if( 8192.0/yscale > maxint )
-		yscale =  (float)(8192.0/maxint);
-	else if( 8192.0/yscale < -maxint )
-		yscale =  (float)(-8192.0/maxint);
-
-
-	// Fixed-point equivalents
-	Sint32 const stx = (Sint32)((sin(theta)/xscale) * 8192.0);
-	Sint32 const ctx = (Sint32)((cos(theta)/xscale) * 8192.0);
-	Sint32 const sty = (Sint32)((sin(theta)/yscale) * 8192.0);
-	Sint32 const cty = (Sint32)((cos(theta)/yscale) * 8192.0);
-	Sint32 const mx = (Sint32)(px*8192.0); 
-	Sint32 const my = (Sint32)(py*8192.0);
-
-	// Compute a bounding rectangle
-	Sint16 xmin=0, xmax=dst->w, ymin=0, ymax=dst->h;
-	_calcRect(src, dst, theta, xscale, yscale, px, py, qx, qy, &xmin,&ymin, &xmax,&ymax);	
-
-	// Clip to src surface
-	Sint16 sxmin = sge_clip_xmin(src);
-	Sint16 sxmax = sge_clip_xmax(src);
-	Sint16 symin = sge_clip_ymin(src);
-	Sint16 symax = sge_clip_ymax(src);
-
-	// Some terms in the transform are constant
-	Sint32 const dx = xmin - qx;
-	Sint32 const ctdx = ctx*dx;
-	Sint32 const stdx = sty*dx;
-	
-	// Lock surfaces... hopfully less than two needs locking!
-	if ( SDL_MUSTLOCK(src) && _sge_lock )
-		if ( SDL_LockSurface(src) < 0 )
-			return r;
-	if ( SDL_MUSTLOCK(dst) && _sge_lock ){
-		if ( SDL_LockSurface(dst) < 0 ){
-			if ( SDL_MUSTLOCK(src) && _sge_lock )
-				SDL_UnlockSurface(src);
-			return r;
-		}
-	}
-	
-	
-	TRANSFORM_GENERIC_AA
-
-
-	// Unlock surfaces
-	if ( SDL_MUSTLOCK(src) && _sge_lock )
-		SDL_UnlockSurface(src);
-	if ( SDL_MUSTLOCK(dst) && _sge_lock )
-		SDL_UnlockSurface(dst);
-
-	//Return the bounding rectangle
-	r.x=xmin; r.y=ymin; r.w=xmax-xmin; r.h=ymax-ymin;
-	return r;
-}
-
-
-SDL_Rect sge_transform(SDL_Surface *src, SDL_Surface *dst, float angle, float xscale, float yscale, Uint16 px, Uint16 py, Uint16 qx, Uint16 qy, Uint8 flags)
-{
-	return sge_transformAA(src, dst, angle, xscale, yscale, px, py, qx, qy, flags);
-}
-
-SDL_Surface *sge_transform_surface(SDL_Surface *src, Uint32 bcol, float angle, float xscale, float yscale, Uint8 flags)
-{
-	float theta = (float)(angle*PI/180.0);  /* Convert to radians.  */
-	
-	// Compute a bounding rectangle
-	Sint16 xmin=0, xmax=0, ymin=0, ymax=0;
-	_calcRect(src, NULL, theta, xscale, yscale, 0, 0, 0, 0, &xmin,&ymin, &xmax,&ymax);	
-
-	Sint16 w = xmax-xmin+1; 
-	Sint16 h = ymax-ymin+1;
-	
-	Sint16 qx = -xmin;
-	Sint16 qy = -ymin;
-
-	SDL_Surface *dest;
-	dest = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, src->format->BitsPerPixel, src->format->Rmask, src->format->Gmask, src->format->Bmask, src->format->Amask);
-	if(!dest)
-		return NULL;
-		
-//	sge_ClearSurface(dest,bcol);  //Set background color
-	
-	sge_transform(src, dest, angle, xscale, yscale, 0, 0, qx, qy, flags);
-
-	return dest;
+	SDL_QuitSubSystem(SDL_INIT_VIDEO | SDL_INIT_TIMER);
 }
 
 img_t gfx_scale(img_t src, float xscale, float yscale)
 {
-	return (img_t)sge_transform_surface((SDL_Surface *)src, 0, 0, xscale, yscale, 0);
+	return (img_t)zoomSurface((SDL_Surface *)src, xscale, yscale, 1);
 }
 
 fnt_t fnt_load(const char *fname, int size)
@@ -897,6 +587,7 @@ struct word {
 	struct word *next; /* in line */
 	struct line *line;
 	struct xref *xref;
+	SDL_Surface  *prerend;
 };
 
 struct word *word_new(const char *str)
@@ -914,6 +605,7 @@ struct word *word_new(const char *str)
 	w->style = 0;
 	w->img = NULL;
 	w->unbrake = 0;
+	w->prerend = NULL;
 	return w;
 }
 
@@ -925,6 +617,9 @@ void word_free(struct word *word)
 //		gfx_free_image(word->img);
 	if (word->word)
 		free(word->word);
+	if (word->prerend)
+		SDL_FreeSurface(word->prerend);
+	word->prerend = NULL;
 	free(word);
 }
 
@@ -1172,8 +867,8 @@ void layout_add_line(struct layout *layout, struct line *line)
 {
 	struct line *l = layout->lines;
 	line->layout = layout;
-	if (line->w > layout->w)
-		layout->w = line->w;
+//	if (line->w > layout->w)
+//		layout->w = line->w;
 	if (!l) {
 		layout->lines = line;
 		line->prev = NULL;
@@ -1184,6 +879,16 @@ void layout_add_line(struct layout *layout, struct line *line)
 	l->next = line;
 	line->prev = l;
 	return;
+}
+
+struct image *_layout_lookup_image(struct layout *layout, const char *name)
+{
+	struct image *g = layout->images;
+	for (g = layout->images; g; g = g->next) {
+		if (!strcmp(g->name, name))
+			return g;
+	}
+	return NULL;
 }
 
 void layout_add_image(struct layout *layout, struct image *image)
@@ -1201,12 +906,8 @@ void layout_add_image(struct layout *layout, struct image *image)
 
 img_t layout_lookup_image(struct layout *layout, char *name)
 {
-	struct image *g = layout->images;
-	for (g = layout->images; g; g = g->next) {
-		if (!strcmp(g->name, name))
-			return g->image;
-	}
-	return NULL;
+	struct image *g = _layout_lookup_image(layout, name);
+	return (g)?g->image: NULL;
 }
 
 void layout_add_xref(struct layout *layout, struct xref *xref)
@@ -1257,6 +958,11 @@ int txt_layout_add_img(layout_t lay, const char *name, img_t img)
 {
 	struct layout *layout = (struct layout *)lay;
 	struct image *image;
+	image = _layout_lookup_image(layout, name);
+	if (image) { /* overwrite */
+		image->image = img;
+		return 0;
+	}
 	image = image_new(name, img);
 	if (!image)
 		return -1;
@@ -1573,7 +1279,6 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear)
 	gfx_noclip();
 }
 
-
 void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, int height, clear_fn clear)
 {
 	struct layout *layout = (struct layout*)lay;
@@ -1618,11 +1323,15 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 				col = acol;
 			else
 				col = lcol;
-			s = TTF_RenderUTF8_Blended((TTF_Font *)(layout->fn),
-				word->word, col);
+			s = word->prerend;
+			if (!s) {
+				s = TTF_RenderUTF8_Blended((TTF_Font *)(layout->fn),
+					word->word, col);
+				word->prerend = s;
+			}
 			yy = (line->h - TTF_FontHeight((TTF_Font *)(layout->fn))) / 2; // TODO
 			gfx_draw(s, x + word->x, y + line->y + yy);
-			SDL_FreeSurface(s);
+//			SDL_FreeSurface(s);
 		}
 	}
 //	gfx_noclip();
@@ -1693,33 +1402,67 @@ void txt_box_resize(textbox_t tbox, int w, int h)
 void txt_box_size(textbox_t tbox, int *w, int *h)
 {
 	struct textbox *box = (struct textbox *)tbox;
+	if (!tbox)
+		return;
 	if (w)
 		*w = box->w;
 	if (h)
 		*h = box->h;
 }
 
-void txt_box_scroll(textbox_t tbox, int disp)
+void txt_box_scroll_next(textbox_t tbox, int disp)
 {
-	int ld;
+	int off;
 	struct textbox *box = (struct textbox *)tbox;
 	struct line  *line = box->line;
 	if (!line)
 		return;
-	ld = box->off - line->y + disp;
-	while (line && ld > line->h) {
-		ld -= line->h;
+
+	if (box->lay->h - box->off < box->h)
+		return;
+
+	off = box->lay->h - box->off - box->h;
+	if (disp > off)
+		disp = off;
+	
+	off = box->off - line->y; /* offset from cur line */
+	off += disp; /* needed offset */
+	while (line->next && off > line->h) {
+		off -= line->h;
 		line = line->next;
 	}
-	if (line) {
-		box->line = line;
-		box->off = line->y + ld;
+	box->line = line;
+	box->off = line->y + off;
+}
+
+void txt_box_scroll_prev(textbox_t tbox, int disp)
+{
+	int off;
+	struct textbox *box = (struct textbox *)tbox;
+	struct line  *line = box->line;
+	if (!line)
+		return;
+	off = box->off - line->y; /* offset from cur line */
+	off -= disp; /* offset from current line */
+	
+	while (line->prev && off < 0) {
+		line = line->prev;
+		off += line->h;
 	}
-//	line = line->next;
-//	if (line) {
-//		box->off += (line->y - box->off);
-//		box->line = line;
-//	}
+
+	box->line = line;
+	box->off = line->y + off;
+
+	if (box->off <0)
+		box->off = 0;
+}
+
+void txt_box_scroll(textbox_t tbox, int disp)
+{
+	if (disp >0)
+		return txt_box_scroll_next(tbox, disp);
+	else if (disp <0)
+		return txt_box_scroll_prev(tbox, -disp);
 }
 
 void txt_box_next_line(textbox_t tbox)
@@ -1885,6 +1628,9 @@ img_t get_img(struct layout *layout, char *p)
 {
 	int len;
 	img_t img;
+	if (!p)
+		return NULL;
+
 	if (p[0] != '<' || p[1] != 'g' || p[2] != ':')
 		return NULL;
 	p += 3;
@@ -1964,7 +1710,7 @@ int get_unbrakable_len(struct layout *layout, const char *ptr)
 	int w = 0;
 	int ww = 0;
 	char *p, *eptr;
-	while (*ptr) {
+	while (ptr && *ptr) {
 		int sp, sp2 = 0;
 		while(get_token(ptr, &eptr, NULL, &sp)) {
 			if (sp)
@@ -1976,7 +1722,8 @@ int get_unbrakable_len(struct layout *layout, const char *ptr)
 		p = get_word(ptr, &eptr, &sp);
 		if (!p)
 			return w;
-		if (sp) {
+
+		if (sp || !*p) {
 			free(p);
 			return w;
 		}
@@ -2002,7 +1749,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 	int w, h, nl = 0;
 	int spw;
 	img_t img = NULL;
-	if (!layout)
+	if (!layout || !layout->fn)
 		return;
 	saved_style = TTF_GetFontStyle((TTF_Font *)(layout->fn));
 
@@ -2041,18 +1788,20 @@ void _txt_layout_add(layout_t lay, char *txt)
 			sp = 1;
 		} else
 			p = get_word(ptr, &eptr, &sp);
+
+		if (!p)
+			break;
+
 		addlen = get_unbrakable_len(layout, eptr);
 		img = get_img(layout, p);
 		if (img) {
 			w = gfx_img_w(img);
 			h = gfx_img_h(img);
 		} else {
-//		fprintf(stderr,"AAA:'%s'\n", p);
 			TTF_SizeUTF8((TTF_Font *)(layout->fn), p, &w, &h);
 		}
 		nl = !*p;
-		if ((line->num && (line->w + ((line->w)?spw:0) + w + addlen) >= layout->w) || nl) {
-//		if ((line->num && (line->w + ((sp)?spw:0) + w) >= layout->w) || nl) {
+		if ((line->num && (line->w + ((sp && line->w)?spw:0) + w + addlen) > layout->w) || nl) {
 			struct line *ol = line;
 			if ((layout->h) && (line->y + line->h) >= layout->h)
 				break;
@@ -2253,30 +2002,36 @@ void gfx_cursor(int *xp, int *yp, int *w, int *h)
 
 #define ALPHA_STEPS 5
 volatile int   step_nr = -1;
-SDL_mutex  	*sem;
 
-static Uint32 update(Uint32 interval, void *aux)
+static void update_gfx(void *aux)
 {
 	img_t img = (img_t) aux;
+	if (step_nr == -1)
+		return;
 	gfx_set_alpha(img, (255 * (step_nr + 1)) / ALPHA_STEPS);
 	gfx_draw(img, 0, 0);
 	gfx_flip();
 	step_nr ++;
 	if (step_nr == ALPHA_STEPS) {
 		step_nr = -1;
-		return 0;
 	}
+}
+
+static Uint32 update(Uint32 interval, void *aux)
+{
+	push_user_event(update_gfx, aux);
 	return interval;	
 }
 
+extern void nsleep(int delay);
+
 void gfx_change_screen(img_t src)
 {
-	sem = SDL_CreateMutex();
+	struct inp_event ev;
+	memset(&ev, 0, sizeof(ev));
+	SDL_TimerID han;
 	step_nr = 0;
-	SDL_AddTimer(60, update, src);
-	while (step_nr != -1) {
-		usleep(100);
-	}
-	SDL_DestroyMutex(sem);
+	han = SDL_AddTimer(60, update, src);
+	while (input(&ev, 1) >=0 && step_nr != -1); /* just wait for change */
+	SDL_RemoveTimer(han);
 }
-

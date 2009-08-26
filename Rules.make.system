@@ -1,10 +1,11 @@
-VERSION := \"0.7.4\"
+VERSION := \"0.8.5\"
 
 DESTDIR=/usr/local
-BIN=$(DESTDIR)/bin
+BIN=$(DESTDIR)/bin/
 STEADPATH=$(DESTDIR)/share/stead
-THEMESPATH=$(DESTDIR)/share/stead/themes
-GAMESPATH=$(DESTDIR)/share/stead/games
+THEMESPATH=$(STEADPATH)/themes
+GAMESPATH=$(STEADPATH)/games
+ICONPATH=$(DESTDIR)/share/pixmaps
 
 LUA_CFLAGS=$(shell pkg-config --cflags lua5.1)
 LUA_LFLAGS=$(shell pkg-config --libs lua5.1)
@@ -18,6 +19,11 @@ LUA_LFLAGS=$(shell pkg-config --libs lua5.1)
 SDL_CFLAGS=$(shell sdl-config --cflags)
 SDL_LFLAGS=$(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer -lSDL_image
 
-CFLAGS	+= -Wall -DHAVE_ICONV -DRUSSIAN
+CFLAGS	+= -Wall -D_HAVE_ICONV -DRUSSIAN
 
+INSTALLD=install -d -m 0775
+INSTALL=install -m 0775
+EXE=
+PLATFORM=unix.c
+RESOURCES=
 

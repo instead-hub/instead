@@ -1,0 +1,7 @@
+include ../Rules.make
+
+clean:
+all:
+install:
+	for /D %%f in (*) do ( if not exist "..\bin\themes\%%f" mkdir "..\bin\themes\%%f" )
+	for /D %%f in (*) do ( copy /Y %%f ..\bin\themes\%%f )

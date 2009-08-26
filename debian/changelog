@@ -1,0 +1,99 @@
+instead (0.8.5) unstable; urgency=low
+
+  * possible segfaults in timer functions.
+  * ways, objs, drop, take - extra parameters
+  * put - function
+  * set_music fixes
+  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 24 Aug 2009 08:32:00 +0400
+
+instead (0.8.4) unstable; urgency=low
+
+  * bug in savevar
+  * bug in long strings
+  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 20 Aug 2009 14:09:14 +0400
+
+instead (0.8.3) unstable; urgency=low
+
+  * sge forgotten
+  * set_music with loop argument bug
+  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 19 Aug 2009 14:09:14 +0400
+
+instead (0.8.2) unstable; urgency=low
+
+  * gfx_load_img
+  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 15 Aug 2009 14:09:14 +0400
+
+instead (0.8) unstable; urgency=low
+
+  * key_name attribute!!!!
+  * do_ini
+  * version in stead.lua 
+  * opairs!!!
+  * vroom fix
+  * typos
+  * backtrace
+  * list_set
+ 
+ -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 07 Aug 2009 14:09:14 +0400
+
+instead (0.7.7-4) unstable; urgency=low
+
+  * Fixes :)
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 05 Aug 2009 17:26:55 +0400
+
+instead (0.7.7) unstable; urgency=low
+
+  * typos in games
+  * local games now can be placed in ~/.instead/games
+  * console version disabled by default
+  * -- $Name: tag -- full name of games, not only dirname 
+  * fix of link color for title/ways
+  * bug in text layout logic (last period in line)
+  * embedded mode (picture and ways inside text!!!)
+  * float mode (for books)
+  * faster text renderer (x2-x5 times)
+  * free motion mode of scrolling
+  * click sound support in themes (in default theme too)
+  * new options (click sound, music)
+  * default theme changes
+  * fullscreen with Alt-Enter
+  * options -alsa, -fullscreen, -window
+  * now italic font used for events
+  * 48000Hz added in sound preferences
+  * now scroll position is saved in embedded mode
+  * themes support, one new theme added
+  * vway and vroom added
+  * updated tutorial
+  * set_music now take an loop parameter
+  * autosave is now default
+  * now vars saved if they begins from uppercase letter (undescore too);
+  * save slots !!!
+  * a lot of bugs fixed (memory leaks, SDL cavities.. )
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 30 Jul 2009 18:12:19 +0400
+
+instead (0.7.6-1) unstable; urgency=low
+
+  * debian file fixes
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 29 May 2009 14:17:01 +0400
+
+instead (0.7.6) unstable; urgency=low
+
+  * Keyboard scrolling
+  * Font scaling
+  * inv.horiz option
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 25 May 2009 10:58:29 +0400
+
+instead (0.7.5) unstable; urgency=low
+
+  * Initial release
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 21 May 2009 11:40:29 +0400
+

@@ -1,0 +1,18 @@
+MAKE=mingw32-make
+
+all:	
+	$(MAKE) -C src\sdl-instead all
+	$(MAKE) -C themes -f Makefile.windows all
+clean:
+	$(MAKE) -C src\sdl-instead clean
+
+install: all
+	if not exist bin mkdir bin
+	copy src\sdl-instead\sdl-instead.exe bin
+	$(MAKE) -C themes -f Makefile.windows install
+	$(MAKE) -C games -f Makefile.windows install
+	$(MAKE) -C stead -f Makefile.windows install
+	$(MAKE) -C icon -f Makefile.windows install
+	$(MAKE) -C doc -f Makefile.windows install
+
+

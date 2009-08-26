@@ -1,10 +1,11 @@
 game.codepage="UTF-8"
+game.err = "Ошибка!"
 game.dsc = [[Команды:^
     look(или просто ввод), act <на что> (или просто на что), use <что> [на что], go <куда>,^
     back, inv, way, obj, quit, save <fname>, load <fname>. Работает автодополнение по табуляции.^^]];
 
 main = room {
-	nam = 'туториал',
+	nam = 'Обучение',
 	act = function()
 		return goto('r1');
 	end,

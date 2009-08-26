@@ -13,14 +13,17 @@ iface.xref = function(self, str, obj)\n\
 		if not o then\n\
 			o = ref(inv():srch(obj));\n\
 		end\n\
-		if not o or not o.id then\n\
+		if not isObject(o) or not o.id then\n\
 			return str;\n\
---			error ('Xref to nowhere:'..str);\n\
 		end\n\
-		return cat('<a:'..cmd..tostring(o.id)..'>',str,'</a>');\n\
+		return cat('<a:'..cmd..'0'..tostring(o.id)..'>',str,'</a>');\n\
 end;\n\
 iface.title = function(self, str)\n\
 		return nil\n\
+end;\n\
+iface.em = function(self, str)\n\
+		if str == nil then return nil; end; \n\
+		return cat('<i>',str,'</i>');\n\
 end;\n\
 \n\
 iface.inv = function(self, str)\n\

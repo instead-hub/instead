@@ -1,0 +1,30 @@
+VERSION := \"0.8.5\"
+
+DESTDIR=
+BIN=..\..\bin\\
+
+STEADPATH=./stead
+THEMESPATH=./themes/
+GAMESPATH=./games
+ICONPATH=./icon
+
+LUA_CFLAGS=
+LUA_LFLAGS=-llua5.1
+
+SDL_CFLAGS=-IC:\MinGW\include\SDL
+SDL_LFLAGS=-lSDL -lSDLmain -lSDL_ttf -lSDL_mixer -lSDL_image
+
+CFLAGS	+= -Wall -DRUSSIAN -mwindows -D_HAVE_ICONV 
+LDFLAGS += -liconv
+
+CC=gcc
+RM=del
+EXE=.exe
+
+INSTALLD=echo mkdir
+INSTALL=copy
+PLATFORM=windows.c
+RESOURCES=resources.o
+
+resources.o: resources.rc
+	windres -i resources.rc -o resources.o

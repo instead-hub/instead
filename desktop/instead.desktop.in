@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=0.8.5
+Type=Application
+Name=INSTEAD
+Name[ru]=INSTEAD
+Comment=Siple Text Adventures Interpretor
+Comment[ru]=Интерпретатор простых приключений
+Exec=@BIN/sdl-instead
+Icon=sdl_instead.png
+Terminal=false
+Categories=Game;LogicGame;
+

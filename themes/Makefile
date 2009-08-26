@@ -6,6 +6,6 @@ install:
 	for f in *; do \
 		if [ ! -d $$f ]; then continue; fi;\
 		install -d -m0755 $(THEMESPATH)/$$f;\
-		tar -c -C $$f . | tar -x -C $(THEMESPATH)/$$f;\
+		tar --exclude=".svn" -c -C $$f . | tar -x -C $(THEMESPATH)/$$f;\
 	done
 

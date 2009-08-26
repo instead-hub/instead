@@ -1,3 +1,7 @@
+#ifndef STEAD_PATH
+#define STEAD_PATH 	"./stead"
+#endif
+
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
@@ -5,39 +9,99 @@
 #include <stdlib.h>
 #include <string.h>
 #include <locale.h>
-#include <libintl.h>
+// #include <libintl.h>
 #include <unistd.h>
 #include "gui.h"
-#ifdef HAVE_ICONV
+#ifdef _HAVE_ICONV
 #include <iconv.h>
 #endif
+#include "game.h"
 /* the Lua interpreter */
 
 char 		*fromgame(const char *s);
 char 		*togame(const char *s);
 lua_State	*L = NULL;
 
+static int report (lua_State *L, int status) 
+{
+	if (status && !lua_isnil(L, -1)) {
+		const char *msg = lua_tostring(L, -1);
+		if (msg == NULL) 
+			msg = "(error object is not a string)";
+		fprintf(stderr,"Error: %s\n", msg);
+		game_err_msg(msg);
+		lua_pop(L, 1);	
+		status = -1;
+	}
+	return status;
+}
+
+static int traceback (lua_State *L) 
+{
+	lua_getfield(L, LUA_GLOBALSINDEX, "debug");
+	if (!lua_istable(L, -1)) {
+		lua_pop(L, 1);
+		return 1;
+	}
+	lua_getfield(L, -1, "traceback");
+	if (!lua_isfunction(L, -1)) {
+		lua_pop(L, 2);
+		return 1;
+	}
+	lua_pushvalue(L, 1);  /* pass error message */
+	lua_pushinteger(L, 2);  /* skip this function and traceback */
+	lua_call(L, 2, 1);  /* call debug.traceback */
+	return 1;
+}
+
+extern int debug_sw;
+
+static int docall (lua_State *L) 
+{
+	int status;
+	int base = 0; 	
+	if (debug_sw) {
+		base = lua_gettop(L);  /* function index */
+		lua_pushcfunction(L, traceback);  /* push traceback function */
+		lua_insert(L, base);  /* put it under chunk and args */
+	}
+	status = lua_pcall(L, 0, LUA_MULTRET, base);
+	if (debug_sw)
+		lua_remove(L, base);  /* remove traceback function */
+	/* force a complete garbage collection in case of errors */
+	if (status != 0) 
+		lua_gc(L, LUA_GCCOLLECT, 0);
+	return status;
+}
+
+static int dofile (lua_State *L, const char *name) {
+	int status = luaL_loadfile(L, name) || docall(L);
+	return report(L, status);
+}
+
+static int dostring (lua_State *L, const char *s) {
+	int status = luaL_loadstring(L, s) || docall(L);
+	return report(L, status);
+}
+
 char *getstring(char *cmd)
 {
 	char *s;
 	if (!L)
 		return NULL;
-	if (luaL_dostring(L, cmd)) {
-		fprintf(stderr,"Error: %s\n", lua_tostring(L, -1));
-		exit(1);
-	}
+	if (dostring(L, cmd))
+		return NULL;
 	s = (char*)lua_tostring(L, -1);
 	if (s)
 		s = fromgame(s);
 	return s;
 }
 
+
 char *instead_eval(char *s)
 {
 	char *p;
-//	s = togame(s);
 	p = getstring(s);
-//	free(s);
 	return p;
 }
 
@@ -62,20 +126,19 @@ int luacall(char *cmd)
 	int rc;
 	if (!L)
 		return -1;
-	if (luaL_dostring(L, cmd)) {
-		fprintf(stderr,"Error: %s\n", lua_tostring(L, -1));
-		exit(1);
+	if (dostring(L, cmd)) {
+		return -1;
 	}
 	rc = lua_tonumber(L, -1);
 	return rc;
 }
 
-#ifdef HAVE_ICONV
+#ifdef _HAVE_ICONV
 static char *curcp = "UTF-8";
 static char *fromcp = NULL;
 #endif
 
-#ifdef HAVE_ICONV
+#ifdef _HAVE_ICONV
 #define CHAR_MAX_LEN 4
 static char *decode(iconv_t hiconv, const char *s)
 {
@@ -162,11 +225,10 @@ char *togame(const char *s)
 
 int instead_load(char *game)
 {
-   	if (luaL_loadfile(L, game) || lua_pcall(L, 0, 0, 0)) {
-		fprintf(stderr,"Error:%s\n", lua_tostring(L, -1));
+   	if (dofile(L, game)) {
 		return -1;
 	}
-#ifdef HAVE_ICONV
+#ifdef _HAVE_ICONV
 	if (fromcp)
 		free(fromcp);
 	fromcp = getstring("return game.codepage;");
@@ -181,34 +243,27 @@ int instead_init(void)
 	/* initialize Lua */
 	L = lua_open();
 	luaL_openlibs(L);
-   	if (luaL_loadfile(L,STEAD_PATH"stead.lua") || lua_pcall(L, 0, 0, 0)) {
-		fprintf(stderr,"Error:%s\n", lua_tostring(L, -1));
+   	if (dofile(L,STEAD_PATH"/stead.lua")) {
 		return -1;
 	}
 	if (luacall(instead_gui_lua)) {
-		fprintf(stderr,"Error while registering lua gui functions\n");
-		return -1;
-		
-	}
-#if 0
-   	if (luaL_loadfile(L,"gui.lua") || lua_pcall(L, 0, 0, 0)) {
-		fprintf(stderr,"Error:%s\n", lua_tostring(L, -1));
 		return -1;
 	}
-#endif
 	/* cleanup Lua */
 	return 0;
 }
 
 void instead_done(void)
 {
-#ifdef HAVE_ICONV
+#ifdef _HAVE_ICONV
 	if (fromcp)
 		free(fromcp);
 #endif
 	if (L)
 		lua_close(L);
 	L = NULL;
+#ifdef _HAVE_ICONV
 	fromcp = NULL;
+#endif
 }
 

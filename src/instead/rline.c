@@ -12,7 +12,7 @@
 #include <termios.h>
 #include <stdio.h>
 #include <wchar.h>
-#ifdef HAVE_ICONV
+#ifdef _HAVE_ICONV
 #include <langinfo.h>
 #include <iconv.h>
 #endif
@@ -241,7 +241,7 @@ char **tquest_completion(char *text, int start, int end)
 /* Tell the GNU Readline library how to complete.  We want to try to complete
     on command names if this is the first word in the line, or on filenames
     if not. */
-#ifdef HAVE_ICONV
+#ifdef _HAVE_ICONV
 static char curcp[64];
 static char *fromcp;
 #endif
@@ -257,7 +257,7 @@ void initialize_readline(void)
 	rl_parse_and_bind(strdup("Control-g: 'go '"));
 	/* Tell the completer that we want a crack first. */
 	rl_attempted_completion_function = (CPPFunction *) tquest_completion;
-#ifdef HAVE_ICONV
+#ifdef _HAVE_ICONV
 	strncpy(curcp, nl_langinfo(CODESET), sizeof(curcp));
 	fromcp = getstring("return game.codepage;");
 #endif
@@ -292,7 +292,7 @@ char *string_fromwc(const wchar_t *str)
 	pstr[ wcstombs(pstr, str, mbs_size) ] = 0;
 	return pstr;
 }
-#ifdef HAVE_ICONV
+#ifdef _HAVE_ICONV
 #define CHAR_MAX_LEN 4
 static char *decode(iconv_t hiconv, const char *s)
 {

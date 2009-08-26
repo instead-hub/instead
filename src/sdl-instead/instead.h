@@ -6,5 +6,6 @@ extern int  instead_load(char *game);
 extern void instead_done(void);
 extern char *instead_cmd(char *s);
 extern char *instead_eval(char *s);
+char 		*fromgame(const char *s);
 
 #endif
