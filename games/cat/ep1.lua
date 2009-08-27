@@ -355,7 +355,12 @@ forest = room {
 
 home = room {
 	nam = 'хижина',
-	pic ="gfx/house.png",
+	pic = function(s)
+		if not seen('mycat') then
+			return "gfx/house-empty.png"
+		end
+		return "gfx/house.png";
+	end,
 	dsc = [[
 В этой хижине я провел 10 лет. 10 лет назад я своими руками построил ее. Довольно тесно, но уютно.]],
 	obj = { 'fireplace', 'mytable', 'foto', 'mycat', 'gun', 

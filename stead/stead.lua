@@ -1247,7 +1247,7 @@ function game_step(self)
 	return game_life(self);
 end
 
-version = "0.8";
+version = "0.8.6";
 
 game = game {
 	nam = "INSTEAD -- Simple Text Adventure interpreter v"..version.." '2009 by Peter Kosyh",
@@ -1622,8 +1622,13 @@ function dropf(obj)
 	return o;
 end
 
-function seen(obj)
-	local o,w = here().obj:srch(obj);
+function seen(obj, wh)
+	if not wh then
+		wh = here();
+	else
+		wh = ref(wh);	
+	end
+	local o,w = wh.obj:srch(obj);
 	o = ref(o);
 	if isObject(o) then
 		return o,w
