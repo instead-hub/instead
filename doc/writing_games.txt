@@ -29,6 +29,7 @@
 }}}
 
 Графический интерпретатор ищет доступные игры в каталоге games. Unix версия интерпретатора кроме этого каталога просматривает также игры в каталоге ~/.instead/games.
+Windows версия (>=0.8.7): Documents and Settings/<USER>/Local Settings/Application Data/instead/games.
 
 == 1. Сцена ==
 
@@ -961,6 +962,7 @@ scr.gfx.h = 500
 
 Интерпретатор выполняет поиск тем в каталоге themes. Unix версия кроме этого каталога, просматривает также каталог ~/.instead/themes/
 
+Windows версия (>=0.8.7): Documents and Settings/<USER>/Local Settings/Application Data/instead/themes
 
 TODO 
 Полный список объектов и методов.

@@ -21,8 +21,15 @@
 #endif
 
 int opt_fsize = 0;
+#ifndef MAEMO
 int opt_fs = 0;
+int opt_owntheme = 1;
 int opt_hl = 1;
+#else
+int opt_fs = 1;
+int opt_owntheme = 0;
+int opt_hl = 0;
+#endif
 int opt_hz = 22050;
 int opt_vol = 127;
 int opt_motion = 1;
@@ -30,7 +37,6 @@ int opt_click = 1;
 int opt_music = 1;
 int opt_autosave = 1;
 int opt_filter = 1;
-int opt_owntheme = 1;
 char *opt_game = NULL;
 char *opt_theme = NULL;
 char *err_msg = NULL;
@@ -2391,11 +2397,10 @@ int game_highlight(int x, int y, int on)
 	static xref_t 	 hxref = NULL;
 	xref_t		xref = NULL;
 	int up = 0;
-	if (!opt_hl)
-		return 0;
+	
 	if (on) {
 		xref = look_xref(x, y, &elem);
-		if (xref) {
+		if (xref && opt_hl) {
 			game_cursor(-1);
 			xref_set_active(xref, 1);
 			xref_update(xref, elem->x, elem->y, game_clear);

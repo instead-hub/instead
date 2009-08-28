@@ -14,6 +14,9 @@
 extern char *curgame;
 extern char *curgame_dir;
 
+static char local_games_path[PATH_MAX];
+static char local_themes_path[PATH_MAX];
+
 static char save_path[PATH_MAX];
 
 void	nsleep(int u)
@@ -21,14 +24,18 @@ void	nsleep(int u)
 	Sleep(u);
 }
 
+char *app_dir( void );
+
 char *game_local_games_path(void)
 {
-	return NULL; /* TODO ? */
+	snprintf(local_games_path, sizeof(local_games_path) - 1 , "%s/instead/games/", app_dir());
+	return local_games_path;
 }
 
 char *game_local_themes_path(void)
 {
-	return NULL; /* TODO ? */
+	snprintf(local_themes_path, sizeof(local_themes_path) - 1 , "%s/instead/themes/", app_dir());
+	return local_themes_path;
 }
 
 extern void unix_path(char *);
