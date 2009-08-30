@@ -1247,7 +1247,7 @@ function game_step(self)
 	return game_life(self);
 end
 
-version = "0.8.7";
+version = "0.8.8";
 
 game = game {
 	nam = "INSTEAD -- Simple Text Adventure interpreter v"..version.." '2009 by Peter Kosyh",

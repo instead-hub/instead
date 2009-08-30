@@ -27,7 +27,9 @@
 <a:/ask_quit>Quit</a>"
 
 #define ABOUT_MENU \
-"Written by Peter Kosyh '2009\n\
+"INSTEAD SDL - "VERSION"\n\
+\n\
+Written by Peter Kosyh '2009\n\
 Ported to Windows by Ilja Ryndin\n\
 \n\
 Homepage:\n\
