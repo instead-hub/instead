@@ -98,7 +98,7 @@ gun = obj {
 		if w == 'wire' then
 			return 'Слишком близко... Тут нужно что-то вроде кусачек...', false;
 		end
-		if w == 'cam' and not cam._boken then
+		if w == 'cam' and not cam._broken then
 			cam._broken = true;
 			s._loaded = false;
 			return 'Я прицелился в камеру и выстрелил из обоих стволов... Глухой выстрел потонул в порывах вьюги...';
