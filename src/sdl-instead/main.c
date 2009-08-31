@@ -10,6 +10,7 @@ extern int debug_init(void);
 extern void debug_done(void);
 
 int debug_sw = 0;
+char *game_sw = NULL;
 
 int main(int argc, char **argv)
 {
@@ -25,6 +26,12 @@ int main(int argc, char **argv)
 			window_sw = 1;
 		else if (!strcmp(argv[i], "-debug"))
 			debug_sw = 1;
+		else if (!strcmp(argv[i], "-game")) {
+			if ((i + 1) < argc)
+				game_sw = argv[++i];
+			else
+				game_sw = "";
+		}	
 	}		
 
 	if (debug_sw) {
@@ -47,6 +54,9 @@ int main(int argc, char **argv)
 	
 	cfg_load();
 	
+	if (game_sw)
+		opt_game = game_sw;
+		
 	if (opt_theme)
 		game_theme_select(opt_theme);
 	if (!curtheme)
