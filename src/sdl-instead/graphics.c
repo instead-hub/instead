@@ -447,6 +447,8 @@ int gfx_setmode(int w, int h, int fs)
 	gfx_height = h;
 #ifndef MAEMO	
 	screen = SDL_SetVideoMode(gfx_width, gfx_height, 32, SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
+	if (screen == NULL) /* ok, fallback to 16 bit */
+		screen = SDL_SetVideoMode(gfx_width, gfx_height, 16, SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 #else
 	screen = SDL_SetVideoMode(gfx_width, gfx_height, 16, SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 #endif

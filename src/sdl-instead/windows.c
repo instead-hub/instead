@@ -55,9 +55,17 @@ char *app_dir( void )
 char *game_cfg_path( void )
 {
 	snprintf(save_path, sizeof(save_path) - 1 , "%s\\insteadrc", app_dir());
+	if (!access(save_path, R_OK)) 
+		return save_path;
+/* no at home? Try in dir */
+	snprintf(save_path, sizeof(save_path) - 1 , "%s\\instead", app_dir());
+	if (mkdir(save_path) && errno != EEXIST)
+		snprintf(save_path, sizeof(save_path) - 1 , "%s\\insteadrc", app_dir()); /* fallback to home */
+	else
+		snprintf(save_path, sizeof(save_path) - 1 , "%s\\instead\\insteadrc", app_dir());
 	return save_path;
-	
 }
+
 char *game_save_path( int cr, int nr )
 {
 	char appdir[PATH_MAX];

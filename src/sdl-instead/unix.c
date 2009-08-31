@@ -52,9 +52,16 @@ char *game_cfg_path(void)
 	pw = getpwuid(getuid());
 	if (!pw) 
 		return NULL;
-	snprintf(save_path, sizeof(save_path) - 1 , "%s/.insteadrc", pw->pw_dir);
+	snprintf(save_path, sizeof(save_path) - 1 , "%s/.insteadrc", pw->pw_dir); /* at home */
+	if (!access(save_path, R_OK)) 
+		return save_path;
+/* no at home? Try in dir */
+	snprintf(save_path, sizeof(save_path) - 1 , "%s/.instead/", pw->pw_dir);
+	if (mkdir(save_path, S_IRWXU) && errno != EEXIST)
+		snprintf(save_path, sizeof(save_path) - 1 , "%s/.insteadrc", pw->pw_dir); /* fallback to home */
+	else
+		snprintf(save_path, sizeof(save_path) - 1 , "%s/.instead/insteadrc", pw->pw_dir);
 	return save_path;
-	
 }
 char *game_save_path(int cr, int nr)
 {

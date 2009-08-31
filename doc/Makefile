@@ -3,4 +3,4 @@ clean:
 all:
 install:
 	install -d -m0755 $(DOCPATH)
-	install -m0644 *.png *.html *.txt $(DOCPATH)
+	install -m0644 *.jpg *.html *.txt $(DOCPATH)

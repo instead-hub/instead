@@ -1,3 +1,12 @@
+instead (0.8.8) unstable; urgency=low
+
+  * Makefiles fixes
+  * cat game fix
+  * .insteadrc now in .instead/ by default
+  * small fixes
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 31 Aug 2009 11:25:01 +0400
+
 instead (0.8.7) unstable; urgency=low
 
   * highlight bug in nohl mode with filter
