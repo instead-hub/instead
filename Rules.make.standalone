@@ -6,6 +6,7 @@ STEADPATH=./stead
 THEMESPATH=./themes
 GAMESPATH=./games
 ICONPATH=./icon
+DOCPATH=
 
 LUA_CFLAGS=$(shell pkg-config --cflags lua5.1)
 LUA_LFLAGS=$(shell pkg-config --libs lua5.1)

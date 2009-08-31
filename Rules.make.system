@@ -7,6 +7,7 @@ STEADPATH=$(DESTDIR)$(PREFIX)/share/stead
 THEMESPATH=$(STEADPATH)/themes
 GAMESPATH=$(STEADPATH)/games
 ICONPATH=$(DESTDIR)$(PREFIX)/share/pixmaps
+DOCPATH=$(DESTDIR)$(PREFIX)/share/doc/instead
 
 LUA_CFLAGS=$(shell pkg-config --cflags lua5.1)
 LUA_LFLAGS=$(shell pkg-config --libs lua5.1)
