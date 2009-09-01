@@ -54,9 +54,12 @@ int main(int argc, char **argv)
 	
 	cfg_load();
 	
-	if (game_sw)
+	if (game_sw) {
+		if (opt_game)
+			free(opt_game);
 		opt_game = game_sw;
-		
+	}	
+	
 	if (opt_theme)
 		game_theme_select(opt_theme);
 	if (!curtheme)
