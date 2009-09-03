@@ -11,6 +11,8 @@ extern void debug_done(void);
 
 int debug_sw = 0;
 char *game_sw = NULL;
+char *games_sw = NULL;
+char *themes_sw = NULL;
 
 int main(int argc, char **argv)
 {
@@ -31,7 +33,19 @@ int main(int argc, char **argv)
 				game_sw = argv[++i];
 			else
 				game_sw = "";
+		} else if (!strcmp(argv[i], "-gamespath")) {
+			if ((i + 1) < argc)
+				games_sw = argv[++i];
+			else
+				games_sw = "";
+		} else if (!strcmp(argv[i], "-themespath")) {
+			if ((i + 1) < argc)
+				themes_sw = argv[++i];
+			else
+				themes_sw = "";
 		}	
+
+
 	}		
 
 	if (debug_sw) {
@@ -43,15 +57,18 @@ int main(int argc, char **argv)
 	if (fullscreen_sw)
 		opt_fs = 1;
 
-	if (games_lookup(GAMES_PATH)) {
-		fprintf(stderr, "No games found.\n");
-	}
-	
+	if (games_sw)
+		games_lookup(games_sw);
+
+	if (games_lookup(GAMES_PATH))
+			fprintf(stderr, "No games found in: %s.\n", GAMES_PATH);
+	if (themes_sw)
+		themes_lookup(themes_sw);
 	themes_lookup(THEMES_PATH);
+	
 	themes_lookup(game_local_themes_path());
-	
 	games_lookup(game_local_games_path());
-	
+
 	cfg_load();
 	
 	if (game_sw) {

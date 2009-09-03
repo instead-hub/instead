@@ -1130,7 +1130,7 @@ function savemembers(h, self, name, need)
 		local need2
 		if k ~= "__visited__" then
 			need2 = false
-			if string.find(k, '_') ==  1 or string.match(k,'^%u') then
+			if isForSave(k) then
 				need2 = true;
 			end
 			
@@ -1729,5 +1729,11 @@ function change_pl(p)
 	game.pl = p;
 	return goto(o.where);
 end
--- here the game begins
 
+function isForSave(k)
+	if string.find(k, '_') ==  1 or string.match(k,'^%u') then
+		return true
+	end
+	return false
+end
+-- here the game begins
