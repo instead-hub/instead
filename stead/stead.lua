@@ -441,6 +441,28 @@ function list_search(self, n)
 	return self[i], i;
 end
 
+function list_zap(self)
+	local n,o,ii
+	for n,o,ii in opairs(self) do
+		self[ii] = nil;
+	end
+	self.__modifyed__ = true
+	return self
+end
+
+function list_concat(self, other, pos)
+	local n,o,ii
+	for n,o,ii in opairs(other) do
+		o = ref(o);
+		if pos == nil then
+			self:add(deref(o));
+		else 
+			self:add(deref(o), pos);
+			pos = pos + 1;
+		end
+	end
+end
+
 function list_del(self, name)
 	local v,n
 	v, n = list_search(self, name);
@@ -459,6 +481,8 @@ end
 function list(v)
 	v.add = list_add;
 	v.set = list_set;
+	v.concat = list_concat;
+	v.zap = list_zap;
 	v.del = list_del;
 	v.look = list_find;
 	v.name = list_name;
@@ -1723,11 +1747,15 @@ end
 
 function change_pl(p)
 	local o = ref(p);
-	if type(p) ~= 'string' or not o then
+	if type(deref(p)) ~= 'string' or not o then
 		error "Wrong player name in change_pl...";	
 	end
-	game.pl = p;
+	game.pl = deref(p);
 	return goto(o.where);
+end
+
+function disabled(o)
+	return isDisabled(ref(o))
 end
 
 function isForSave(k)
