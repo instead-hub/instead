@@ -498,7 +498,7 @@ function room_look(self)
 	for i,o in opairs(self.obj) do
 		o = ref(o);
 		if isObject(o) then
-			vv = par(' ',vv, obj_look(o));
+			vv = par(' ',vv, o:look());
 		end
 	end
 	return cat(vv,' ');
@@ -820,9 +820,7 @@ function player_take(self, what)
 	end
 	v,r = call(ref(obj), 'tak');
 	if v and r ~= false then
-		ref(w).obj:del(obj);
-		self.obj:add(obj);
-		ref(obj)._taken = true
+		take(obj, w);
 	end
 	return v;
 --	return cat(v,'^^');
@@ -1415,7 +1413,10 @@ function me()
 	return ref(game.pl);
 end
 
-function where()
+function where(s)
+	if s then
+		return ref(ref(s).__where__);
+	end
 	return me().where;
 end
 
@@ -1437,20 +1438,18 @@ end
 
 function objs(w)
 	if not w then
-		w = here();
+		return here().obj;
 	else
-		w = ref(w);
+		return ref(w).obj;
 	end
-	return w.obj;
 end
 
 function ways(w)
 	if not w then
-		w = here();
+		return here().way;
 	else
-		w = ref(w);
+		return ref(w).way;
 	end
-	return here().way;
 end
 
 function xref(str, obj)
@@ -1544,7 +1543,6 @@ function vroom(name, w)
 	return room { nam = name, where = deref(w), enter = vroom_enter, save = vroom_save, };
 end
 
-
 function goto(what)
 	local v,r=me():goto(what);
 	me():tag();
@@ -1564,13 +1562,13 @@ function taken(obj)
 	return false;
 end
 
-function take(obj, wh)
-	if not wh then
-		wh = here();
+function remove(obj, from)
+	local o,w
+	if from then
+		o,w = ref(from):srch(obj);
 	else
-		wh = ref(wh);
+		o,w = here():srch(obj);
 	end
-	local o,w = wh:srch(obj);
 	if w then
 		ref(w).obj:del(obj);
 	end
@@ -1578,7 +1576,11 @@ function take(obj, wh)
 	if not isObject(o) then
 		o = ref(obj);
 	end
-	
+	return o
+end
+
+function take(obj, wh)
+	local o = remove(obj, wh);
 	if not isObject(o) then
 		error "Trying to take wrong object.";
 	end
@@ -1587,24 +1589,34 @@ function take(obj, wh)
 	return o
 end
 
-function put(obj, w)
+function putto(obj, w, pos)
 	local o = ref(obj);
 	if not isObject(o) then
 		error "Trying to put wrong object.";
 	end
 	if not w then
-		w = here();
+		here().obj:add(obj, pos);
+		o.__where__ = deref(here());
 	else
-		w = ref(w);	
+		ref(w).obj:add(obj, pos);
+		o.__where__ = deref(w);
 	end
-	w.obj:add(obj);
 	return o;
+end
+
+
+function put(obj, w)
+	return putto(obj, w);
+end
+
+function putf(obj, w)
+	return putto(obj, w, 1);
 end
 
 function drop(obj, w)
 	local o = put(obj, w);
-	if not o then
-		return o;
+	if not isObject(o) then
+		error "Trying to drop wrong object:";
 	end
 	me().obj:del(obj);
 	o._taken = false
@@ -1612,12 +1624,11 @@ function drop(obj, w)
 end
 
 function dropf(obj)
-	local o = ref(obj);
+	local o = putf(obj);
 	if not isObject(o) then
 		error "Trying to dropf wrong object:";
 	end
 	me().obj:del(obj);
-	here().obj:add(obj, 1);
 	o._taken = false
 	return o;
 end
@@ -1646,19 +1657,8 @@ function have(obj)
 end
 
 function moveto(obj, there, from, pos)
-	local o
-	local w
-
-	if ref(from) then
-		o,w = ref(from):srch(obj);
-	else
-		o,w = here():srch(obj);
-	end
-
-	if w then
-		ref(w).obj:del(obj);
-	end
-	ref(there).obj:add(obj, pos);
+	remove(obj, from);
+	putto(obj, there, pos);
 	return ref(obj);
 end
 
