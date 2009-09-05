@@ -7,4 +7,3 @@
 #include "input.h"
 #include "util.h"
 #include "instead.h"
-#include "SDL_rotozoom.h"

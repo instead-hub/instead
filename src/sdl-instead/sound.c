@@ -1,6 +1,9 @@
 #include "externals.h"
 #include "internals.h"
 
+#include <SDL.h>
+#include <SDL_mixer.h>
+
 Mix_Music *music = NULL;
 
 int audio_rate = 22050;

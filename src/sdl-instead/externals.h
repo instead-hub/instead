@@ -1,9 +1,3 @@
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
-#include <SDL_mutex.h>
-#include <SDL_mixer.h>
-
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
@@ -21,7 +15,7 @@
 #include <stdlib.h>
 
 #include <limits.h>
-#include <pwd.h>
+// #include <pwd.h>
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -38,4 +32,3 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <time.h>
-

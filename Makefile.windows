@@ -13,6 +13,7 @@ install: all
 	$(MAKE) -C games -f Makefile.windows install
 	$(MAKE) -C stead -f Makefile.windows install
 	$(MAKE) -C icon -f Makefile.windows install
+	$(MAKE) -C languages -f Makefile.windows install
 	$(MAKE) -C doc -f Makefile.windows install
 
 
