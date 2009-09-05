@@ -481,7 +481,7 @@ end
 function list(v)
 	v.add = list_add;
 	v.set = list_set;
-	v.concat = list_concat;
+	v.cat = list_concat;
 	v.zap = list_zap;
 	v.del = list_del;
 	v.look = list_find;
@@ -1269,7 +1269,7 @@ function game_step(self)
 	return game_life(self);
 end
 
-version = "0.8.8";
+version = "0.8.9";
 
 game = game {
 	nam = "INSTEAD -- Simple Text Adventure interpreter v"..version.." '2009 by Peter Kosyh",

@@ -1,3 +1,13 @@
+instead (0.8.9) unstable; urgency=low
+
+  * runtime languages
+  * desabled function in stead
+  * list_zap, list_concat
+  * remove added
+  * stead.lua fixes
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 5 Aug 2009 11:25:01 +0400
+
 instead (0.8.8) unstable; urgency=low
 
   * Makefiles fixes
