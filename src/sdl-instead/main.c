@@ -1,10 +1,5 @@
-#include <unistd.h>
-#include <stdlib.h>
-#include "graphics.h"
-#include "game.h"
-#include <stdio.h>
-#include <sys/fcntl.h>
-#include <string.h>
+#include "externals.h"
+#include "internals.h"
 
 extern int debug_init(void);
 extern void debug_done(void);
@@ -47,7 +42,6 @@ int main(int argc, char **argv)
 
 
 	}		
-
 	if (debug_sw) {
 		debug_init();
 	}
@@ -56,7 +50,14 @@ int main(int argc, char **argv)
 		opt_fs = 0;
 	if (fullscreen_sw)
 		opt_fs = 1;
-
+	
+	menu_langs_lookup(LANG_PATH);
+	
+	if (!langs_nr) {
+		fprintf(stderr, "No languages found in: %s.\n", LANG_PATH);
+		exit(1);
+	}
+	
 	if (games_sw)
 		games_lookup(games_sw);
 
@@ -79,7 +80,7 @@ int main(int argc, char **argv)
 	
 	if (opt_theme)
 		game_theme_select(opt_theme);
-	if (!curtheme)
+	if (!curtheme_dir)
 		game_theme_select(DEFAULT_THEME);
 
 	if (game_init(opt_game)) {

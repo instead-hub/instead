@@ -24,4 +24,7 @@ extern int	snd_playing_mus();
 extern void     snd_stop_mus(int ms);
 extern int 	snd_volume_mus(int vol);
 extern	void	snd_done(void);
+extern int 	snd_vol_from_pcn(int v);
+extern int 	snd_vol_to_pcn(int v);
+
 #endif

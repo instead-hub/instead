@@ -1,11 +1,5 @@
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
-#include <SDL_mutex.h>
-#include "SDL_rotozoom.h"
-#include "input.h"
-#include "graphics.h"
-#include "math.h"
+#include "externals.h"
+#include "internals.h"
 	
 static SDL_Surface *screen;
 

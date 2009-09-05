@@ -2,20 +2,9 @@
 #define STEAD_PATH 	"./stead"
 #endif
 
-#include <lua.h>
-#include <lauxlib.h>
-#include <lualib.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <locale.h>
-// #include <libintl.h>
-#include <unistd.h>
 #include "gui.h"
-#ifdef _HAVE_ICONV
-#include <iconv.h>
-#endif
-#include "game.h"
+#include "externals.h"
+#include "internals.h"
 /* the Lua interpreter */
 
 char 		*fromgame(const char *s);

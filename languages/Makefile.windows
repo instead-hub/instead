@@ -1,0 +1,7 @@
+include ../Rules.make
+
+clean:
+all:
+install:
+	if not exist ..\bin\languages mkdir ..\bin\languages
+	copy /Y *.ini ..\bin\languages

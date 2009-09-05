@@ -1,51 +1,12 @@
-#include <ctype.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <dirent.h>
-#include <unistd.h>
-#include <errno.h>
-#include <sys/stat.h>
-#include <limits.h>
-#include <time.h>
-#include "graphics.h"
-#include "sound.h"
-#include "game.h"
-#include "input.h"
-#include "instead.h"
-
-#ifdef RUSSIAN
-#include "menu.h"
-#else
-#include "menu-en.h"
-#endif
-
-int opt_fsize = 0;
-#ifndef MAEMO
-int opt_fs = 0;
-int opt_owntheme = 1;
-int opt_hl = 1;
-#else
-int opt_fs = 1;
-int opt_owntheme = 0;
-int opt_hl = 0;
-#endif
-int opt_hz = 22050;
-int opt_vol = 127;
-int opt_motion = 1;
-int opt_click = 1;
-int opt_music = 1;
-int opt_autosave = 1;
-int opt_filter = 1;
-char *opt_game = NULL;
-char *opt_theme = NULL;
+#include "externals.h"
+#include "internals.h"
 char *err_msg = NULL;
 
-#ifndef PATH_MAX
-#define PATH_MAX 	4096
-#endif
-
 #define ERR_MSG_MAX 512
+char	game_cwd[PATH_MAX];
+char	*curgame_dir = NULL;
+
+int game_own_theme = 0;
 
 void game_err_msg(const char *s)
 {
@@ -59,593 +20,6 @@ void game_err_msg(const char *s)
 		}
 	} else
 		err_msg = NULL;
-}
-
-char game_cwd[PATH_MAX];
-char    *curgame = NULL;
-char	*curgame_dir = NULL;
-static int own_theme = 0;
-char    *curtheme = NULL;
-char	*curtheme_dir = NULL;
-int cfg_parse(const char *path);
-
-extern char *game_cfg_path(void);
-extern char *game_save_path(int rc, int nr);
-
-int game_save(int nr);
-
-int cfg_load(void)
-{
-	char *p = game_cfg_path();
-	if (!p)
-		return -1;
-	if (access(p, R_OK))
-		return 0;
-	return cfg_parse(p);
-}
-
-int cfg_save(void)
-{
-	FILE *fp;
-	char *p = game_cfg_path();
-	if (!p)
-		return -1;
-	fp = fopen(p, "w");
-	if (!fp)
-		return -1;
-	fprintf(fp, "fs = %d\nhl = %d\nhz = %d\nvol = %d\nautosave = %d\n\
-game = %s\nfscale = %d\nmotion = %d\n\
-click = %d\nmusic = %d\ntheme = %s\n\
-filter = %d\nowntheme = %d", 
-		opt_fs, opt_hl, opt_hz, opt_vol, opt_autosave, 
-		curgame_dir?curgame_dir:"", opt_fsize, opt_motion, 
-		opt_click, opt_music, curtheme_dir?curtheme_dir:DEFAULT_THEME, 
-		opt_filter, opt_owntheme);
-	fclose(fp);
-	return 0;
-}
-
-void game_menu_box(int show, const char *txt);
-
-void game_cursor(int on);
-
-#define GFX_MODE_FLOAT 0
-#define GFX_MODE_FIXED 1
-#define GFX_MODE_EMBEDDED 2
-
-#define INV_MODE_VERT 0
-#define INV_MODE_HORIZ 1
-
-struct game_theme {
-	int 	w;
-	int 	h;
-	color_t	bgcol;
-	char	*bg_name;
-	img_t	bg;
-	char	*use_name;
-	img_t	use;
-	int 	pad;
-	
-	int 	win_x;
-	int	win_y;
-	int	win_w;
-	int	win_h;
-
-	char	*font_name;
-	int	font_size;
-	fnt_t	font;
-
-	int	gfx_x;
-	int	gfx_y;
-	int	max_scene_w;
-	int 	max_scene_h;
-
-	char	*a_up_name;
-	char	*a_down_name;
-	img_t	a_up;
-	img_t	a_down;
-
-	color_t fgcol;
-	color_t lcol;
-	color_t acol;
-
-	int	inv_x;
-	int 	inv_y;
-	int 	inv_w;
-	int 	inv_h;
-
-	color_t icol;
-	color_t ilcol;
-	color_t iacol;
-	char	*inv_font_name;
-	int	inv_font_size;
-	fnt_t	inv_font;
-	
-	char	*inv_a_up_name;
-	char	*inv_a_down_name;
-	img_t	inv_a_up;
-	img_t	inv_a_down;
-	
-//	int	lstyle;
-//	int	ilstyle;
-
-	color_t menu_bg;
-	color_t menu_fg;
-	color_t border_col;
-	color_t menu_link;
-	color_t menu_alink;
-	int 	menu_alpha;
-	int 	border_w;
-	char	*menu_font_name;
-	int	menu_font_size;
-	fnt_t	menu_font;
-	
-	char	*menu_button_name;
-	img_t	menu_button;
-	int	menu_button_x;
-	int 	menu_button_y;
-	int	gfx_mode;
-	int	inv_mode;
-	char	*click_name;
-	void	*click;
-} game_theme = {
-	.w = 800,
-	.h = 480,
-	.bg_name = NULL,
-	.bg = NULL,
-	.use_name = NULL,
-	.use = NULL,
-	.font_name = NULL,
-	.font = NULL,
-	.a_up_name = NULL,
-	.a_down_name = NULL,
-	.a_up = NULL,
-	.a_down = NULL,
-	.inv_font_name = NULL,
-	.inv_font = NULL,
-	.inv_a_up_name = NULL,
-	.inv_a_down_name = NULL,
-	.inv_a_up = NULL,
-	.inv_a_down = NULL,
-	.menu_font_name = NULL,
-	.menu_font = NULL,
-	.menu_button_name = NULL,
-	.menu_button = NULL,
-	.gfx_mode = GFX_MODE_EMBEDDED,
-	.inv_mode = INV_MODE_VERT,
-	.click_name = NULL,
-	.click = NULL,
-};
-
-#define FREE(v) do { if ((v)) free((v)); v = NULL; } while(0)
-
-void free_theme_strings()
-{
-	struct game_theme *t = &game_theme;
-	FREE(t->use_name);
-	FREE(t->bg_name);
-	FREE(t->inv_a_up_name);
-	FREE(t->inv_a_down_name);
-	FREE(t->a_down_name);
-	FREE(t->a_up_name);
-	FREE(t->font_name);
-	FREE(t->inv_font_name);
-	FREE(t->menu_font_name);
-	FREE(t->menu_button_name);
-/*	FREE(t->click_name); must be reloaded, ugly :(*/
-}
-
-int game_theme_free(void)
-{
-	free_theme_strings();
-
-	if (game_theme.font)
-		fnt_free(game_theme.font);
-	if (game_theme.inv_font)
-		fnt_free(game_theme.inv_font);
-	if (game_theme.menu_font)
-		fnt_free(game_theme.menu_font);
-
-	if (game_theme.a_up)
-		gfx_free_image(game_theme.a_up);
-	if (game_theme.a_down)
-		gfx_free_image(game_theme.a_down);
-	if (game_theme.inv_a_up)
-		gfx_free_image(game_theme.inv_a_up);
-	if (game_theme.inv_a_down)
-		gfx_free_image(game_theme.inv_a_down);
-
-	if (game_theme.use)
-		gfx_free_image(game_theme.use);
-
-	if (game_theme.bg)
-		gfx_free_image(game_theme.bg);
-
-	if (game_theme.menu_button)
-		gfx_free_image(game_theme.menu_button);
-
-	if (game_theme.click)
-		snd_free_wav(game_theme.click);
-
-	game_theme.font = game_theme.inv_font = game_theme.menu_font = NULL;
-	game_theme.a_up = game_theme.a_down = game_theme.use = NULL;
-	game_theme.inv_a_up = game_theme.inv_a_down = NULL;
-	game_theme.menu_button = NULL;
-	game_theme.bg = NULL;
-	game_theme.click = NULL;
-//	game_theme.slide = gfx_load_image("slide.png", 1);
-	return 0;
-}
-
-#define FONT_SZ(v) ((v) * (1.0f + ((0.1f * opt_fsize))))
-
-int game_theme_init(void)
-{
-	struct game_theme *t = &game_theme;
-
-	if (t->font_name) {
-		fnt_free(t->font);
-		if (!(t->font = fnt_load(t->font_name, FONT_SZ(t->font_size))))
-			goto err;
-	}
-	
-	if (t->inv_font_name) {
-		fnt_free(t->inv_font);
-		if (!(t->inv_font = fnt_load(t->inv_font_name, FONT_SZ(t->inv_font_size))))
-			goto err;
-	}
-
-
-	if (t->menu_font_name) {
-		fnt_free(t->menu_font);
-		if (!(t->menu_font = fnt_load(t->menu_font_name, t->menu_font_size))) /* do not scale menu!!! */
-			goto err;
-	}
-
-
-	if (t->a_up_name) {
-		gfx_free_image(t->a_up);
-		if (!(t->a_up = gfx_load_image(t->a_up_name)))
-			goto err;
-	}
-	
-	if (t->a_down_name) {
-		gfx_free_image(t->a_down);
-		if (!(t->a_down = gfx_load_image(t->a_down_name)))
-			goto err;
-	}
-
-	if (t->inv_a_up_name) {
-		gfx_free_image(t->inv_a_up);
-		if (!(t->inv_a_up = gfx_load_image(t->inv_a_up_name)))
-			goto err;
-	}
-
-
-	if (t->inv_a_down_name) {
-		gfx_free_image(t->inv_a_down);
-		if (!(t->inv_a_down = gfx_load_image(t->inv_a_down_name)))
-			goto err;
-	}
-
-	if (t->bg_name) {
-		gfx_free_image(t->bg);
-		t->bg = NULL;
-		if (t->bg_name[0] && !(t->bg = gfx_load_image(t->bg_name)))
-			goto err;
-	}
-
-	if (t->use_name) {
-		gfx_free_image(t->use);	
-		if (!(t->use = gfx_load_image(t->use_name)))
-			goto err;
-	}
-	
-	if (t->menu_button_name) {
-		gfx_free_image(t->menu_button);
-		if (!(t->menu_button = gfx_load_image(t->menu_button_name)))
-			goto err;
-	}
-	
-	if (t->click_name) {
-		snd_free_wav(t->click);
-		t->click = snd_load_wav(t->click_name);
-	}
-
-	free_theme_strings();
-
-	if (!t->use || !t->inv_a_up || !t->inv_a_down || !t->a_down || !t->a_up ||
-		!t->font || !t->inv_font || !t->menu_font || !t->menu_button) {
-		fprintf(stderr,"Can't init theme.\n");
-		return -1;
-	}
-	return 0;
-err:
-	fprintf(stderr, "Can not init theme!\n");
-	game_theme_free();
-	return -1;
-}
-
-typedef int (*parser_fn)(const char *v, void *data);
-
-int parse_string(const char *v, void *data)
-{
-	char **p = ((char **)data);
-	if (*p)
-		free(*p);
-	*p = strdup(v);
-	if (!*p)
-		return -1;
-	return 0;	
-}
-
-int parse_gfx_mode(const char *v, void *data)
-{
-	int *i = (int *)data;
-	if (!strcmp(v, "fixed"))
-		*i = GFX_MODE_FIXED;	
-	else if (!strcmp(v, "embedded"))
-		*i = GFX_MODE_EMBEDDED;
-	else if (!strcmp(v, "float"))
-		*i = GFX_MODE_FLOAT;	
-	else
-		return -1;
-	return 0;	
-}
-
-int parse_inv_mode(const char *v, void *data)
-{
-	int *i = (int *)data;
-	if (!strcmp(v, "vertical") || !strcmp(v, "0"))
-		*i = INV_MODE_VERT;	
-	else if (!strcmp(v, "horizontal") || !strcmp(v, "1"))
-		*i = INV_MODE_HORIZ;
-	else
-		return -1;
-	return 0;	
-}
-
-int parse_full_path(const char *v, void *data)
-{
-	char cwd[PATH_MAX];
-	char **p = ((char **)data);
-	if (*p)
-		free(*p);
-	getcwd(cwd, sizeof(cwd));
-	*p = malloc(strlen(v) + strlen(cwd) + 2);
-	if (!*p)
-		return -1;
-	strcpy(*p, cwd);
-	strcat(*p,"/");
-	strcat(*p, v);
-	return 0;
-}
-
-int parse_int(const char *v, void *data)
-{
-	int *i = (int *)data;
-	char *eptr = NULL;
-	*i = strtol(v, &eptr, 0);
-	if (!eptr || *eptr)
-		return -1;
-	return 0;	
-}
-
-int parse_color(const char *v, void *data)
-{
-	color_t *c = (color_t *)data;
-	return gfx_parse_color(v, c);
-}
-int game_theme_load(const char *name);
-int game_theme_select(const char *name);
-
-int parse_include(const char *v, void *data)
-{
-	int rc;
-	char cwd[PATH_MAX];
-	if (!strcmp(v, DEFAULT_THEME))
-		return 0;
-	getcwd(cwd, sizeof(cwd));
-	chdir(game_cwd);
-	rc = game_theme_load(v);
-//	if (!rc)
-//		game_theme_select(v);
-	chdir(cwd);
-	return rc;
-}
-
-struct parser {
-	const char 	*cmd;
-	parser_fn	fn; 
-	void		*p;
-};
-
-struct parser cfg_parser[] = {
-	{ "hz", parse_int, &opt_hz },
-	{ "fs", parse_int, &opt_fs },
-	{ "vol", parse_int, &opt_vol }, 
-	{ "hl", parse_int, &opt_hl },
-	{ "game", parse_string, &opt_game },
-	{ "theme", parse_string, &opt_theme }, 
-	{ "autosave", parse_int, &opt_autosave },
-	{ "motion", parse_int, &opt_motion }, 
-	{ "click", parse_int, &opt_click }, 
-	{ "music", parse_int, &opt_music }, 
-	{ "fscale", parse_int, &opt_fsize },
-	{ "filter", parse_int, &opt_filter },
-	{ "owntheme", parse_int, &opt_owntheme },
-	{ NULL, },
-};
-
-struct parser cmd_parser[] = {
-	{ "scr.w", parse_int, &game_theme.w },
-	{ "scr.h", parse_int, &game_theme.h },
-	{ "scr.col.bg", parse_color, &game_theme.bgcol },
-	{ "scr.gfx.bg", parse_string, &game_theme.bg_name },
-	{ "scr.gfx.use", parse_string, &game_theme.use_name },
-	{ "scr.gfx.pad", parse_int, &game_theme.pad  }, 
-	{ "scr.gfx.x", parse_int, &game_theme.gfx_x },
-	{ "scr.gfx.y", parse_int, &game_theme.gfx_y },
-	{ "scr.gfx.w", parse_int, &game_theme.max_scene_w },
-	{ "scr.gfx.h", parse_int, &game_theme.max_scene_h },
-	{ "scr.gfx.mode", parse_gfx_mode, &game_theme.gfx_mode },
-
-	{ "win.x", parse_int, &game_theme.win_x },
-	{ "win.y", parse_int, &game_theme.win_y },
-	{ "win.w", parse_int, &game_theme.win_w },	
-	{ "win.h", parse_int, &game_theme.win_h },	
-	{ "win.fnt.name", parse_string, &game_theme.font_name },
-	{ "win.fnt.size", parse_int, &game_theme.font_size },
-/* compat mode directive */
-	{ "win.gfx.h", parse_int, &game_theme.max_scene_h },
-/* here it was */
-	{ "win.gfx.up", parse_string, &game_theme.a_up_name },
-	{ "win.gfx.down", parse_string, &game_theme.a_down_name },
-	{ "win.col.fg", parse_color, &game_theme.fgcol }, 
-	{ "win.col.link", parse_color, &game_theme.lcol },
-	{ "win.col.alink", parse_color, &game_theme.acol }, 
-
-	{ "inv.x", parse_int, &game_theme.inv_x },
-	{ "inv.y", parse_int, &game_theme.inv_y },
-	{ "inv.w", parse_int, &game_theme.inv_w },	
-	{ "inv.h", parse_int, &game_theme.inv_h },	
-	{ "inv.mode", parse_inv_mode, &game_theme.inv_mode },
-	{ "inv.horiz", parse_inv_mode, &game_theme.inv_mode },	
-
-	{ "inv.col.fg", parse_color, &game_theme.icol }, 
-	{ "inv.col.link", parse_color, &game_theme.ilcol },
-	{ "inv.col.alink", parse_color, &game_theme.iacol }, 
-	{ "inv.fnt.name", parse_string, &game_theme.inv_font_name },
-	{ "inv.fnt.size", parse_int, &game_theme.inv_font_size },
-	{ "inv.gfx.up", parse_string, &game_theme.inv_a_up_name },
-	{ "inv.gfx.down", parse_string, &game_theme.inv_a_down_name },
-
-	{ "menu.col.bg", parse_color, &game_theme.menu_bg },
-	{ "menu.col.fg", parse_color, &game_theme.menu_fg },
-	{ "menu.col.link", parse_color, &game_theme.menu_link },
-	{ "menu.col.alink", parse_color, &game_theme.menu_alink },
-	{ "menu.col.alpha", parse_int, &game_theme.menu_alpha },
-	{ "menu.col.border", parse_color, &game_theme.border_col },
-	{ "menu.bw", parse_int, &game_theme.border_w },
-	{ "menu.fnt.name", parse_string, &game_theme.menu_font_name },
-	{ "menu.fnt.size", parse_int, &game_theme.menu_font_size },
-	{ "menu.gfx.button", parse_string, &game_theme.menu_button_name },
-	{ "menu.button.x", parse_int, &game_theme.menu_button_x },
-	{ "menu.button.y", parse_int, &game_theme.menu_button_y },
-/* compat */
-	{ "menu.buttonx", parse_int, &game_theme.menu_button_x },
-	{ "menu.buttony", parse_int, &game_theme.menu_button_y },
-
-	{ "snd.click", parse_full_path, &game_theme.click_name },
-	{ "include", parse_include, NULL },
-	{ NULL,  },
-};
-
-char *strip(char *s)
-{
-	char *e;
-	while (isspace(*s))
-		s ++;
-	if (!*s)
-		return s;
-	e = s + strlen(s) - 1;
-	while (e != s && isspace(*e)) {
-		*e = 0;
-		e --;
-	}
-	return s;
-}
-
-int process_cmd(char *n, char *v, struct parser *cmd_parser)
-{
-	int i;
-	n = strip(n);
-	v = strip(v);
-	for (i = 0; cmd_parser[i].cmd; i++) {
-		if (!strcmp(cmd_parser[i].cmd, n)) {
-			return cmd_parser[i].fn(v, cmd_parser[i].p);
-		}
-	}
-	return -1;
-}
-
-int parse_ini(const char *path, struct parser *cmd_parser)
-{
-	int rc = 0;
-	int line_nr = 0;
-	FILE *fp;
-	char line[1024];
-	fp = fopen(path, "r");
-	if (!fp)
-		return -1;
-	while (fgets(line, sizeof(line), fp)) {
-		char *p = line;
-		char *val;
-		int len;
-		line_nr ++;
-		p += strspn(p, " \t");
-		if (*p == ';')
-			continue;
-		len = strcspn(p, "=");
-		if (p[len] != '=') /* just ignore it */
-			continue;
-		p[len] = 0;
-		val = p + len + 1;
-		len = strcspn(p, " \t");
-		p[len] = 0;
-//		printf("%s\n", p);
-		val += strspn(val, " \t");
-		val[strcspn(val, ";\n")] = 0;
-		if (process_cmd(p, val, cmd_parser)) {
-			rc = -1;
-			fprintf(stderr, "Can't process cmd '%s' on line %d : %s\n", p, line_nr, strerror(errno));
-		}
-	}
-	fclose(fp);
-	return rc;
-}
-
-int theme_parse(const char *path)
-{
-	if (parse_ini(path, cmd_parser)) {
-		fprintf(stderr, "Theme parsed with errors!\n");
-//		game_theme_free();
-		return -1;
-	}
-	return 0;
-}
-
-int theme_load(const char *name)
-{
-	if (theme_parse(name))
-		return 0; /* no theme loaded if error in parsing */
-	if (game_theme_init()) 
-		return -1;
-	return 0;
-}
-
-int cfg_parse(const char *path)
-{
-	return parse_ini(path, cfg_parser);
-}
-
-char *getfilepath(const char *d, const char *n)
-{
-	int i = strlen(d) + strlen(n) + 3;
-	char *p = malloc(i);
-	if (p) {
-		strcpy(p, d);
-		strcat(p, "/");
-		strcat(p, n);
-	}
-	return p;
-}
-
-char *getpath(const char *d, const char *n)
-{
-	char *p = getfilepath(d, n);
-	strcat(p, "/");
-	return p;
 }
 
 
@@ -668,20 +42,15 @@ static int is_game(const char *path, const char *n)
 	return rc;
 }
 
-struct game {
-	char *path;
-	char *name;
-	char *dir;
-};
-
 struct	game *games = NULL;
 int	games_nr = 0;
 
-
-
+void free_last(void);
+	
 int game_select(const char *name)
 {
 	int i;
+	free_last();
 	if (!name || !*name) {
 		if (games_nr == 1) 
 			name = games[0].dir;
@@ -698,7 +67,6 @@ int game_select(const char *name)
 				return -1;
 			if (instead_load(MAIN_FILE))
 				return -1;
-			curgame = games[i].name;
 			curgame_dir = games[i].dir;
 			return 0;
 		}
@@ -706,22 +74,6 @@ int game_select(const char *name)
 	return 0;
 }
 
-static char *parse_tag(char *line, const char *tag, const char *comm, int *brk)
-{
-	char *l = line;
-	l += strspn(l, " \t");
-	if (strncmp(l, comm, strlen(comm))) { /* non coment block */
-		*brk = 1;
-		return NULL;
-	}
-	l += strlen(comm); l += strspn(l, " \t");
-	if (strncmp(l, tag, strlen(tag)))
-		return NULL;
-	l += strlen(tag);
-	l += strspn(l, " \t");
-	l[strcspn(l, "$\n\r")] = 0;
-	return strdup(l);
-}
 
 static char *game_name(const char *path, const char *d_name)
 {
@@ -786,142 +138,6 @@ int games_lookup(const char *path)
 	return 0;
 }
 
-struct	theme *themes = NULL;
-int	themes_nr = 0;
-
-struct theme {
-	char *path;
-	char *name;
-	char *dir;
-};
-
-static int is_theme(const char *path, const char *n)
-{
-	int rc = 0;
-	char *p = getpath(path, n);
-	char *pp;
-	if (!p)
-		return 0;
-	pp = malloc(strlen(p) + strlen(THEME_FILE) + 1);
-	if (pp) {
-		strcpy(pp, p);
-		strcat(pp, THEME_FILE);
-		if (!access(pp, R_OK))
-			rc = 1;
-		free(pp);
-	}
-	free(p);
-	return rc;
-}
-
-static char *theme_name(const char *path, const char *d_name)
-{
-	int brk = 0;
-	char *p = getfilepath(path, THEME_FILE);
-	if (p) {
-		char *l; char line[1024];
-		FILE *fd = fopen(p, "r");
-		free(p);
-		if (!fd)
-			goto err;
-
-		while ((l = fgets(line, sizeof(line), fd)) && !brk) {
-			l = parse_tag(l, "$Name:", ";", &brk);
-			if (l)
-				return l;
-		}
-		fclose(fd);
-	}
-err:
-	return strdup(d_name);
-}
-
-int themes_lookup(const char *path)
-{
-	char *p;
-	int n = 0, i = 0;
-	DIR *d;
-	struct dirent *de;
-
-	if (!path)
-		return 0;
-
-	d = opendir(path);
-	if (!d)
-		return -1;
-	while ((de = readdir(d))) {
-		if (!is_theme(path, de->d_name))
-			continue;
-		n ++;
-	}
-		
-	rewinddir(d);
-	if (!n)
-		return 0;
-	themes = realloc(themes, sizeof(struct theme) * (n + themes_nr));
-	while ((de = readdir(d)) && i < n) {
-		/*if (de->d_type != DT_DIR)
-			continue;*/
-		if (!is_theme(path, de->d_name))
-			continue;
-		p = getpath(path, de->d_name);
-		themes[themes_nr].path = p;
-		themes[themes_nr].dir = strdup(de->d_name);
-		themes[themes_nr].name = theme_name(p, de->d_name);
-		themes_nr ++;
-		i ++;
-	}
-	closedir(d);
-	return 0;
-}
-
-int theme_load(const char *name);
-
-struct theme *theme_lookup(const char *name)
-{
-	int i;
-	if (!name || !*name) {
-		if (themes_nr == 1) 
-			return &themes[0];
-	}
-	for (i = 0; i<themes_nr; i ++) {
-		if (!strcmp(themes[i].dir, name)) {
-			return &themes[i];
-		}
-	}
-	return NULL;
-}
-
-int game_theme_load(const char *name)
-{
-	struct theme *theme;
-	char cwd[PATH_MAX];
-	getcwd(cwd, sizeof(cwd));
-	chdir(game_cwd);
-	theme = theme_lookup(name);
-	if (!theme || chdir(theme->path) || theme_load(THEME_FILE)) {
-		chdir(cwd);
-		return -1;
-	}
-	chdir(cwd);
-	return 0;
-}
-
-int game_theme_select(const char *name)
-{
-	struct theme *theme;
-	theme = theme_lookup(name);
-	if (!theme)
-		return -1;
-	curtheme = theme->name;
-	curtheme_dir = theme->dir;
-	return 0;
-}
-
-int game_default_theme(void)
-{
-	return game_theme_load(DEFAULT_THEME);
-}
 
 static int motion_mode = 0;
 static int motion_id = 0;
@@ -933,28 +149,10 @@ static		char *last_music = NULL;
 static int mx, my;
 static img_t 	menubg = NULL;
 static img_t	menu = NULL;
-static int cur_menu = 0;
+
 static int menu_shown = 0;
-enum {
-	menu_main = 0,
-	menu_about, 
-	menu_settings,
-	menu_quit,
-	menu_askquit,
-	menu_saved, 
-	menu_games, 
-	menu_themes, 
-	menu_own_theme,
-	menu_custom_theme,
-	menu_load, 
-	menu_save, 
-	menu_error, 
-	menu_warning,
-};
 
 int game_cmd(char *cmd);
-int change_vol(int d, int val);
-
 void game_clear(int x, int y, int w, int h)
 {
 	if (game_theme.bg)
@@ -972,10 +170,7 @@ void game_clear(int x, int y, int w, int h)
 	}
 }
 
-
-
 void game_clear(int x, int y, int w, int h);
-
 
 struct el {
 	int		id;
@@ -1057,8 +252,7 @@ char *game_menu_gen(void);
 void game_menu(int nr)
 {
 	cur_menu = nr;
-	menu_shown = 1;
-	game_menu_box(menu_shown, game_menu_gen());
+	game_menu_box(1, game_menu_gen());
 }
 
 int game_error(const char *name)
@@ -1074,17 +268,10 @@ int game_error(const char *name)
 
 void el_draw(int n);
 
-static void custom_theme_warn(void)
-{
-	if (own_theme && !opt_owntheme) {
-		game_menu(menu_custom_theme);
-	}
-}
-
 int window_sw = 0;
 int fullscreen_sw = 0;
 
-static int game_load(int nr)
+int game_load(int nr)
 {
 	char *s;
 	s = game_save_path(0, nr);
@@ -1095,6 +282,21 @@ static int game_load(int nr)
 		game_cmd(cmd);
 		if (nr == -1)
 			unlink(s);
+		return 0;
+	}
+	return -1;
+}
+
+int game_save(int nr)
+{
+	char *s = game_save_path(1, nr);
+	char cmd[PATH_MAX];
+	char *p;
+	if (s) {
+		snprintf(cmd, sizeof(cmd) - 1, "save %s", s);
+		p = instead_cmd(cmd);
+		if (p)
+			free(p);
 		return 0;
 	}
 	return -1;
@@ -1172,9 +374,83 @@ int game_apply_theme(void)
 	return 0;
 }
 
+int game_restart(void)
+{
+	char *og = curgame_dir;
+	game_save(-1);
+	game_done();
+	if (game_init(og)) {
+		game_error(og);
+		return 0;
+	}
+	return 0;
+}
+int static cur_vol = 0;
+void free_last_music(void);
+
+void game_stop_mus(int ms)
+{
+	snd_stop_mus(ms);
+	free_last_music();
+}
+
+int game_change_vol(int d, int val)
+{
+	int v = snd_volume_mus(-1);
+	int pc = snd_vol_to_pcn(v);
+	int opc = pc;
+	if (d) {
+		pc += d;
+		if (pc < 0)
+			pc = 0;
+		if (pc > 100)
+			pc = 100;
+		while (snd_vol_to_pcn(v) != pc)
+			v += (d<0)?-1:1;
+	} else {
+		v = val;
+		pc = snd_vol_to_pcn(v);
+	}
+	if (!pc)
+		v = 0;
+	snd_volume_mus(v);
+	if (opc && !pc) {
+		game_stop_mus(0);
+	} 
+	if (!opc && pc) {
+		game_music_player();
+	}
+	cur_vol = snd_volume_mus(-1);
+	opt_vol = cur_vol;
+	return 0;
+}
+
+int game_change_hz(int hz)
+{
+	if (!hz)
+		return -1;
+	snd_done();
+	free_last_music();
+	snd_init(hz);
+	snd_volume_mus(cur_vol);
+	snd_free_wav(game_theme.click);
+	game_theme.click = snd_load_wav(game_theme.click_name);
+	game_music_player();
+	opt_hz = snd_hz();
+	return 0;
+}
+
+
 int game_init(const char *name)
 {
 	getcwd(game_cwd, sizeof(game_cwd));
+	
+	if (!opt_lang || !opt_lang[0])
+		opt_lang = game_locale();
+		
+	if (menu_lang_select(opt_lang) && menu_lang_select(LANG_DEF))
+		return -1;
+		
 	if (name)
 		game_err_msg(NULL);
 
@@ -1182,7 +458,7 @@ int game_init(const char *name)
 		return -1;	
 
 	snd_init(opt_hz);
-	change_vol(0, opt_vol);
+	game_change_vol(0, opt_vol);
 
 	if (game_default_theme()) {
 		fprintf(stderr, "Can't load default theme.\n");
@@ -1192,11 +468,11 @@ int game_init(const char *name)
 	if (game_select(name))
 		return -1;
 	
-	if (curgame && !access(THEME_FILE, R_OK)) {
-		own_theme = 1;
+	if (curgame_dir && !access(THEME_FILE, R_OK)) {
+		game_own_theme = 1;
 	}
 	
-	if (own_theme && opt_owntheme) {
+	if (game_own_theme && opt_owntheme) {
 		if (theme_load(THEME_FILE))
 			return -1;
 	} else if (curtheme_dir && strcmp(DEFAULT_THEME, curtheme_dir)) {
@@ -1206,7 +482,7 @@ int game_init(const char *name)
 	if (game_apply_theme())
 		return -1;
 
-	if (!curgame) {
+	if (!curgame_dir) {
 		game_menu(menu_games);
 	} else {
 		if (!game_load(-1)) /* tmp save */
@@ -1235,15 +511,14 @@ void free_last(void)
 		free(last_pict);
 	if (last_title)
 		free(last_title);
-	free_last_music();
 	last_pict = last_title = NULL;
-	snd_stop_mus(500);
+	game_stop_mus(500);
 }
 
 void game_done(void)
 {
 	int i;
-	if (opt_autosave && curgame)
+	if (opt_autosave && curgame_dir)
 		game_save(0);
 	chdir(game_cwd);
 //	cfg_save();
@@ -1284,9 +559,8 @@ void game_done(void)
 	snd_done();
 	instead_done();
 	gfx_done();
-	curgame = NULL;
 	curgame_dir = NULL;
-	own_theme = 0;
+	game_own_theme = 0;
 //	SDL_Quit();
 }	
 
@@ -1453,470 +727,6 @@ img_t	game_pict_scale(img_t img, int ww, int hh)
 }
 
 
-int vol_from_pcn(int v)
-{
-	return (v * 127) / 100;
-}
-
-int vol_to_pcn(int v)
-{
-	return (v * 100) / 127;
-}
-void music_player(void);
-
-int static old_vol = 0;
-int static cur_vol = 0;
-
-int change_vol(int d, int val)
-{
-	int v = snd_volume_mus(-1);
-	int pc = vol_to_pcn(v);
-	int opc = pc;
-	if (d) {
-		pc += d;
-		if (pc < 0)
-			pc = 0;
-		if (pc > 100)
-			pc = 100;
-		while (vol_to_pcn(v) != pc)
-			v += (d<0)?-1:1;
-	} else {
-		v = val;
-		pc = vol_to_pcn(v);
-	}
-	if (!pc)
-		v = 0;
-	snd_volume_mus(v);
-	if (opc && !pc) {
-		snd_stop_mus(0);
-		free_last_music();
-	} 
-	if (!opc && pc) {
-		music_player();
-	}
-	cur_vol = snd_volume_mus(-1);
-	opt_vol = cur_vol;
-	return 0;
-}
-
-int change_hz(int hz)
-{
-	if (!hz)
-		return -1;
-	snd_done();
-	free_last_music();
-	snd_init(hz);
-	snd_volume_mus(cur_vol);
-	snd_free_wav(game_theme.click);
-	game_theme.click = snd_load_wav(game_theme.click_name);
-	music_player();
-	opt_hz = snd_hz();
-	return 0;
-}
-static int games_menu_from = 0;
-
-static int themes_menu_from = 0;
-
-int game_save(int nr)
-{
-	char *s = game_save_path(1, nr);
-	char cmd[PATH_MAX];
-	char *p;
-	if (s) {
-		snprintf(cmd, sizeof(cmd) - 1, "save %s", s);
-		p = instead_cmd(cmd);
-		if (p)
-			free(p);
-		return 0;
-	}
-	return -1;
-}
-static int restart_needed = 0;
-
-static int game_restart(void)
-{
-	if (restart_needed) {
-		restart_needed = 0;
-		char *og = curgame_dir;
-		game_save(-1);
-		game_done();
-		if (game_init(og)) {
-			game_error(og);
-			return 0;
-		}
-	}
-	return 0;
-}
-
-int game_menu_act(const char *a)
-{
-	if (!strcmp(a, "/autosave")) {
-		opt_autosave ^= 1;
-		game_menu_box(menu_shown, game_menu_gen());
-	} else if (!strcmp(a, "/owntheme")) {
-		opt_owntheme ^= 1;
-		if (own_theme)
-			restart_needed = 1;
-		game_menu_box(menu_shown, game_menu_gen());
-	} else if (!strcmp(a, "/motion")) {
-		opt_motion ^= 1;
-		game_menu_box(menu_shown, game_menu_gen());
-	} else if (!strcmp(a, "/filter")) {
-		opt_filter ^= 1;
-		game_menu_box(menu_shown, game_menu_gen());
-	} else if (!strcmp(a, "/click")) {
-		opt_click ^= 1;
-		game_menu_box(menu_shown, game_menu_gen());
-	} else if (!strcmp(a, "/fs--")) {
-		opt_fsize --;
-		if (FONT_SZ(game_theme.font_size) > FONT_MIN_SZ) {
-			restart_needed = 1;
-		} else
-			opt_fsize ++;
-		game_menu_box(menu_shown, game_menu_gen());
-	} else if (!strcmp(a, "/fs++")) {
-		opt_fsize ++;
-		if (FONT_SZ(game_theme.font_size) < FONT_MAX_SZ) {
-			restart_needed = 1;
-		} else
-			opt_fsize --;
-		game_menu_box(menu_shown, game_menu_gen());
-	} else if (!strcmp(a, "/hl")) {
-		opt_hl ^= 1;
-		game_menu_box(menu_shown, game_menu_gen());
-	} else if (!strcmp(a, "/fs")) {
-		restart_needed = 1;
-		opt_fs ^= 1;
-		game_menu_box(menu_shown, game_menu_gen());
-	} else if (!strcmp(a, "/games_prev")) {
-		games_menu_from -= MENU_GAMES_MAX;
-		if (games_menu_from < 0)
-			games_menu_from = 0;
-		game_menu_box(menu_shown, game_menu_gen());
-	} else if (!strcmp(a, "/games_next")) {
-		if (games_menu_from + MENU_GAMES_MAX < games_nr)
-			games_menu_from += MENU_GAMES_MAX;
-		game_menu_box(menu_shown, game_menu_gen());
-	} else if (!strcmp(a, "/themes_prev")) {
-		themes_menu_from -= MENU_THEMES_MAX;
-		if (themes_menu_from < 0)
-			themes_menu_from = 0;
-		game_menu_box(menu_shown, game_menu_gen());
-	} else if (!strcmp(a, "/themes_next")) {
-		if (themes_menu_from + MENU_THEMES_MAX < themes_nr)
-			themes_menu_from += MENU_THEMES_MAX;
-		game_menu_box(menu_shown, game_menu_gen());
-	} else if (!strcmp(a, "/select")) {
-		game_menu(menu_games);
-	} else if (!strcmp(a, "/themes")) {
-		game_menu(menu_themes);
-	} else if (!strcmp(a, "/save_menu")) {
-		if (curgame)
-			game_menu(menu_save);
-	} else if (!strncmp(a, "/save", 5)) {
-		if (!game_save(atoi(a + 5))) {
-			game_menu(menu_saved);
-		}
-	} else if (!strcmp(a, "/load_menu")) {
-		if (curgame)
-			game_menu(menu_load);
-	} else if (!strncmp(a, "/load", 5)) {
-		int nr = atoi(a + 5);
-		if (!curgame_dir)
-			return 0;
-		
-		free_last();
-		game_select(curgame_dir);
-		menu_shown = 0;
-		game_menu_box(0, NULL);
-		game_load(nr);
-		cur_menu = menu_main;
-//		game_menu_box(0, NULL);
-	} else if (!strcmp(a, "/new")) {
-		char *s;
-		if (!curgame_dir)
-			return 0;
-		free_last();
-		game_select(curgame_dir);
-		menu_shown = 0;
-		game_menu_box(0, NULL);
-		instead_eval("game:ini()");
-		game_cmd("look");
-		s = game_save_path(0, 0);
-		if (s && !access(s, R_OK) && opt_autosave)
-			unlink (s);
-		custom_theme_warn();
-	} else if (!strcmp(a,"/main")) {
-		game_restart();
-		game_menu(menu_main);
-	} else if (!strcmp(a,"/ask_quit")) {
-		game_menu(menu_askquit);
-	} else if (!strcmp(a,"/about")) {
-		game_menu(menu_about);
-	} else if (!strcmp(a,"/mtoggle")) {
-		if (!old_vol) {
-			old_vol = snd_volume_mus(-1);
-			change_vol(0, 0);
-		} else {
-			change_vol(0, old_vol);
-			old_vol = 0;
-		}
-	} else if (!strcmp(a,"/music")) {
-		opt_music ^= 1;
-		if (!opt_music) {
-			snd_stop_mus(0);
-			free_last_music();
-		} else
-			music_player();
-		game_menu_box(menu_shown, game_menu_gen());
-	} else if (!strcmp(a,"/resume")) {
-		menu_shown = 0;
-		cur_menu = menu_main;
-		game_menu_box(0, NULL);
-	} else if (!strcmp(a, "/settings")) {
-		game_menu(menu_settings);
-	} else if (!strcmp(a, "/vol--")) {
-		change_vol(-10, 0);
-		game_menu_box(menu_shown, game_menu_gen());
-	} else if (!strcmp(a, "/vol++")) {
-		change_vol(+10, 0);
-		game_menu_box(menu_shown, game_menu_gen());
-	} else if (!strcmp(a, "/vol-")) {
-		change_vol(-1, 0);
-		game_menu_box(menu_shown, game_menu_gen());
-	} else if (!strcmp(a, "/vol+")) {
-		change_vol(+1, 0);
-		game_menu_box(menu_shown, game_menu_gen());
-	} else if (!strcmp(a, "/hz-")) {
-		int hz = snd_hz();
-		if (hz == 48000)
-			hz = 44100;
-		else if (hz == 44100)
-			hz = 22050;
-		else if (hz == 22050)
-			hz = 11025;
-		else
-			hz = 0;
-		change_hz(hz);
-		game_menu_box(menu_shown, game_menu_gen());
-	} else if (!strcmp(a, "/hz+")) {
-		int hz = snd_hz();
-		if (hz == 11025)
-			hz = 22050;
-		else if (hz == 22050)
-			hz = 44100;
-		else if (hz == 44100)
-			hz = 48000;	
-		else
-			hz = 0;
-		change_hz(hz);
-		game_menu_box(menu_shown, game_menu_gen());
-	} else if (!strcmp(a,"/quit")) {
-		return -1;
-	} else if (cur_menu == menu_games) {
-		char *p;
-		p = strdup(a);
-		if (p) {
-			game_done();
-			if (game_init(p)) {
-				game_error(p);
-			}
-			free(p);
-		}
-	} else if (cur_menu == menu_themes) {
-		char *p;
-		p = strdup(a);
-		if (p) {
-			if (game_theme_select(p))
-				fprintf(stderr, "Can't select theme:%s:%s\n", p, strerror(errno));
-			char *og = curgame_dir;
-			game_save(-1);
-			game_done();
-			if (game_init(og))
-				game_error(og);
-			else if (curgame && own_theme && opt_owntheme) {
-				game_menu(menu_own_theme);
-			}
-			free(p);
-		}
-	}
-	return 0;
-}
-
-char  menu_buff[4096];
-
-char *slot_name(const char *path)
-{
-	struct stat 	st;
-	int brk = 0;
-	char *l; char line[1024];
-	FILE *fd = fopen(path, "r");
-	if (!fd)
-		return NULL;
-
-	while ((l = fgets(line, sizeof(line), fd)) && !brk) {
-		l = parse_tag(l, "$Name:", "--", &brk);
-		if (l) {
-			char *s = fromgame(l);
-			free(l);
-			return s;
-		}
-	}
-	fclose(fd);
-	if (stat(path, &st))
-		return NULL;
-	l = ctime(&st.st_ctime);
-	if (!l)
-		return NULL;
-	l[strcspn(l,"\n")] = 0;
-	return strdup(l);
-}
-
-void load_menu(void)
-{
-	int i;
-	*menu_buff = 0;
-	sprintf(menu_buff, SELECT_LOAD_MENU);
-	for (i = 0; i < MAX_SAVE_SLOTS; i ++) {
-		char tmp[PATH_MAX];
-		char *s = game_save_path(0, i);
-		if (!s || access(s, R_OK)) {
-			if (!i)
-				continue;
-			snprintf(tmp, sizeof(tmp), "<l>%d - "SAVE_SLOT_EMPTY"\n</l>", i);
-		} else {
-			char *name;
-			if (!i)
-				name = strdup(AUTOSAVE_SLOT);
-			else
-				name = slot_name(s);
-			if (!name)
-				snprintf(tmp, sizeof(tmp), "<l>%d - "BROKEN_SLOT"</l>\n", i);
-			else {
-				snprintf(tmp, sizeof(tmp), "<l>%d - <a:/load%d>%s</a></l>\n", i, i, name);
-				free(name);
-			}
-		}
-		strcat(menu_buff, tmp);
-	}	
-	strcat(menu_buff,"\n<a:/resume>Отмена</a>");
-}
-
-void save_menu(void)
-{
-	int i;
-	*menu_buff = 0;
-	sprintf(menu_buff, SELECT_SAVE_MENU);
-	for (i = 1; i < MAX_SAVE_SLOTS; i ++) {
-		char tmp[PATH_MAX];
-		char *s = game_save_path(0, i);
-		if (!s || access(s, R_OK))
-			snprintf(tmp, sizeof(tmp), "<l>%d - <a:/save%d>"SAVE_SLOT_EMPTY"</a></l>\n", i, i);
-		else {
-			char *name;
-			if (!i)
-				name = strdup(AUTOSAVE_SLOT);
-			else
-				name = slot_name(s);
-			if (!name)
-				snprintf(tmp, sizeof(tmp), "<l>%d - <a:/save%d>"BROKEN_SLOT"</a></l>\n", i, i);
-			else {
-				snprintf(tmp, sizeof(tmp), "<l>%d - <a:/save%d>%s</a></l>\n", i, i, name);
-				free(name);
-			}
-		}
-		strcat(menu_buff, tmp);
-	}	
-	strcat(menu_buff,"\n<a:/resume>Отмена</a>");
-}
-
-void games_menu(void)
-{
-	int i;
-	*menu_buff = 0;
-	sprintf(menu_buff, SELECT_GAME_MENU);
-	for (i = games_menu_from; i < games_nr && i - games_menu_from < MENU_GAMES_MAX; i ++) {
-		char tmp[PATH_MAX];
-		if (curgame && !strcmp(games[i].name, curgame))
-			snprintf(tmp, sizeof(tmp), "<a:/resume><b>%s</b></a>\n", games[i].name);
-		else
-			snprintf(tmp, sizeof(tmp), "<a:%s>%s</a>\n", games[i].dir, games[i].name);
-		strcat(menu_buff, tmp);
-	}	
-	if (!games_nr)
-		sprintf(menu_buff, NOGAMES_MENU, GAMES_PATH);
-	strcat(menu_buff,"\n");
-	if (games_menu_from)
-		strcat(menu_buff,"<a:/games_prev><<</a> ");
-	strcat(menu_buff, BACK_MENU); 
-	if (games_menu_from + MENU_GAMES_MAX < games_nr)
-		strcat(menu_buff," <a:/games_next>>></a>");
-}
-
-void themes_menu(void)
-{
-	int i;
-	*menu_buff = 0;
-	sprintf(menu_buff, SELECT_THEME_MENU);
-	for (i = themes_menu_from; i < themes_nr && i - themes_menu_from < MENU_THEMES_MAX; i ++) {
-		char tmp[PATH_MAX];
-		if (curtheme && !strcmp(themes[i].name, curtheme))
-			snprintf(tmp, sizeof(tmp), "<a:/resume><b>%s</b></a>\n", themes[i].name);
-		else
-			snprintf(tmp, sizeof(tmp), "<a:%s>%s</a>\n", themes[i].dir, themes[i].name);
-		strcat(menu_buff, tmp);
-	}	
-	if (!themes_nr)
-		sprintf(menu_buff, NOTHEMES_MENU, THEMES_PATH);
-	strcat(menu_buff,"\n");
-	if (themes_menu_from)
-		strcat(menu_buff,"<a:/themes_prev><<</a> ");
-	strcat(menu_buff, BACK_MENU); 
-	if (themes_menu_from + MENU_THEMES_MAX < themes_nr)
-		strcat(menu_buff," <a:/themes_next>>></a>");
-}
-
-char *game_menu_gen(void)
-{
-	if (cur_menu == menu_main) {
-		snprintf(menu_buff, sizeof(menu_buff), MAIN_MENU);
-	} else if (cur_menu == menu_about) {
-		snprintf(menu_buff, sizeof(menu_buff), ABOUT_MENU);
-	} else if (cur_menu == menu_settings) {
-		snprintf(menu_buff, sizeof(menu_buff), SETTINGS_MENU, 
-		vol_to_pcn(snd_volume_mus(-1)), snd_hz(), opt_music?ON:OFF, opt_click?ON:OFF,
-		opt_fs?ON:OFF, opt_fsize, opt_hl?ON:OFF, opt_motion?ON:OFF, opt_filter?ON:OFF,
-		opt_owntheme?ON:OFF, opt_autosave?ON:OFF);
-	} else if (cur_menu == menu_askquit) {
-		snprintf(menu_buff, sizeof(menu_buff), QUIT_MENU);
-	} else if (cur_menu == menu_saved) {
-		snprintf(menu_buff, sizeof(menu_buff),
-		SAVED_MENU);
-	} else if (cur_menu == menu_games) {
-		games_menu();
-	} else if (cur_menu == menu_themes) {
-		themes_menu();
-	} else if (cur_menu == menu_own_theme) {
-		snprintf(menu_buff, sizeof(menu_buff),
-		OWN_THEME_MENU);
-	} else if (cur_menu == menu_custom_theme) {
-		snprintf(menu_buff, sizeof(menu_buff),
-		CUSTOM_THEME_MENU);
-	} else if (cur_menu == menu_load) {
-		load_menu();
-	} else if (cur_menu == menu_save) {
-		save_menu();
-	} else if (cur_menu == menu_error) {
-		snprintf(menu_buff, sizeof(menu_buff),
-		ERROR_MENU, err_msg?err_msg:UNKNOWN_ERROR);
-		game_err_msg(NULL);
-	} else if (cur_menu == menu_warning) {
-		snprintf(menu_buff, sizeof(menu_buff),
-		WARNING_MENU, err_msg?err_msg:UNKNOWN_ERROR);
-		game_err_msg(NULL);
-	}
-	return menu_buff;
-}
 
 void game_menu_box(int show, const char *txt)
 {	
@@ -1926,6 +736,9 @@ void game_menu_box(int show, const char *txt)
 	int b = game_theme.border_w;
 	int pad = game_theme.pad;
 	layout_t lay;
+	
+	menu_shown = show;
+	
 	el(el_menu)->drawn = 0;
 	if (el_layout(el_menu)) {
 		txt_layout_free(el_layout(el_menu));
@@ -2042,7 +855,7 @@ void scene_scrollbar(void)
 static void dec_music(void *data)
 {
 	char *mus;
-	if (!curgame)
+	if (!curgame_dir)
 		return;
 	mus = instead_eval("return dec_music_loop()");
 	if (!mus)
@@ -2057,20 +870,7 @@ void game_music_finished(void)
 	push_user_event(&dec_music, NULL);
 }
 
-void unix_path(char *path)
-{
-	char *p = path;
-	if (!path)
-		return;
-	while (*p) { /* bad bad Windows!!! */
-		if (*p == '\\')
-			*p = '/';
-		p ++;
-	}
-	return;
-}
-
-void music_player(void)
+void game_music_player(void)
 {
 	int 	loop;
 	char		*mus;
@@ -2097,18 +897,15 @@ void music_player(void)
 	
 	if (!mus) {
 		if (last_music) {
-			free(last_music);
-			snd_stop_mus(500);
-			last_music = NULL;
+			game_stop_mus(500);
 		}
 	} else if (!last_music && mus) {
+		game_stop_mus(500);
 		last_music = mus;
-		snd_stop_mus(500);
 		snd_play_mus(mus, 0, loop - 1);
 	} else if (strcmp(last_music, mus)) {
-		free(last_music);
+		game_stop_mus(500);
 		last_music = mus;
-		snd_stop_mus(500);
 		snd_play_mus(mus, 0, loop - 1);
 	} else
 		free(mus);
@@ -2156,7 +953,7 @@ int game_cmd(char *cmd)
 	cmdstr = instead_cmd(cmd);
 	if (!cmdstr) 
 		goto err;
-	music_player();
+	game_music_player();
 //	sound_player(); /* TODO */
 	title = instead_eval("return get_title();");
 	unix_path(title);
@@ -2389,6 +1186,7 @@ void menu_update(struct el *elem)
 //	gfx_fill(x, y, w, h, game_theme.menu_bg);
 }
 
+void game_cursor(int on);
 
 int game_highlight(int x, int y, int on)
 {
@@ -2464,10 +1262,11 @@ static void scroll_pdown(int id)
 	el_update(id);
 }
 
-static unsigned int old_counter = 0;
 extern unsigned int timer_counter;
+
 int mouse_filter(void)
 {
+	static unsigned int old_counter = 0;
 	if (!opt_filter)
 		return 0;
 	if (abs(old_counter - timer_counter) <= 4) /* 400 ms */
@@ -2674,11 +1473,12 @@ static void scroll_motion(int id, int off)
 	el_update(id);
 }
 
-static int alt_pressed = 0;
 int game_loop(void)
 {
+	static int alt_pressed = 0;
 	static int x = 0, y = 0;
 	struct inp_event ev;
+	memset(&ev, 0, sizeof(struct inp_event));
 	while (1) {
 		int rc;
 		ev.x = -1;

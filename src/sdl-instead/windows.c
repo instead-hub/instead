@@ -7,9 +7,7 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#ifndef PATH_MAX
-#define PATH_MAX 	4096
-#endif
+#include "internals.h"
 
 extern char *curgame;
 extern char *curgame_dir;
@@ -22,6 +20,16 @@ static char save_path[PATH_MAX];
 void	nsleep(int u)
 {
 	Sleep(u);
+}
+
+char *game_locale(void)
+{
+	char buff[64];
+	buff[0] = 0;
+	if (!GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO639LANGNAME,
+        	buff,sizeof(buff) - 1))
+		return NULL;
+	return strdup(buff);
 }
 
 char *app_dir( void );

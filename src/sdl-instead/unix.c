@@ -6,13 +6,14 @@
 #include <stdio.h>
 #include <errno.h>
 #include <sys/fcntl.h>
+#include <string.h>
+#include <stdlib.h>
+
+#include "internals.h"
 
 #ifndef PATH_MAX
 #define PATH_MAX 	4096
 #endif
-
-extern char *curgame;
-extern char *curgame_dir;
 
 static char save_path[PATH_MAX];
 static char local_games_path[PATH_MAX];
@@ -22,6 +23,17 @@ static char local_themes_path[PATH_MAX];
 void	nsleep(int u)
 {
 	usleep(u);
+}
+
+char *game_locale(void)
+{
+	char *p;
+	char *s = strdup(getenv("LANG"));
+	if (!s)
+		return NULL;
+	if ((p = strchr(s, '_')))
+		*p = 0;
+	return s;
 }
 
 char *game_local_games_path(void)
@@ -66,7 +78,7 @@ char *game_cfg_path(void)
 char *game_save_path(int cr, int nr)
 {
 	struct passwd *pw;
-	if (!curgame)
+	if (!curgame_dir)
 		return NULL;
 	pw = getpwuid(getuid());
 	if (!pw) 

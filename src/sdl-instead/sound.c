@@ -1,11 +1,5 @@
-#include "sound.h"
-#include "input.h"
-
-#include <SDL.h>
-#include <SDL_mixer.h>
-
-#include <stdio.h>
-#include <stdlib.h>
+#include "externals.h"
+#include "internals.h"
 
 Mix_Music *music = NULL;
 
@@ -212,4 +206,14 @@ void snd_done(void)
 	next_mus = NULL;
 	Mix_CloseAudio();
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
+}
+
+int snd_vol_from_pcn(int v)
+{
+	return (v * 127) / 100;
+}
+
+int snd_vol_to_pcn(int v)
+{
+	return (v * 100) / 127;
 }

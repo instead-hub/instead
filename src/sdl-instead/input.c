@@ -1,7 +1,5 @@
-#include <SDL.h>
-#include "input.h"
-#include <strings.h>
-#include <stdio.h>
+#include "externals.h"
+#include "internals.h"
 
 void push_user_event(void (*p) (void*), void *data)
 {
