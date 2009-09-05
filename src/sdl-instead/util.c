@@ -119,7 +119,7 @@ int parse_ini(const char *path, struct parser *cmd_parser)
 //		val[strcspn(val, ";\n")] = 0;
 		if (process_cmd(p, val, cmd_parser)) {
 			rc = -1;
-			fprintf(stderr, "Can't process cmd '%s' on line %d : %s\n", p, line_nr - nr, strerror(errno));
+			fprintf(stderr, "Can't process cmd '%s' on line %d in '%s': %s\n", p, line_nr - nr, path, strerror(errno));
 		}
 	}
 	fclose(fp);
