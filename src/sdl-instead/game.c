@@ -1659,6 +1659,28 @@ static void select_ref(int prev)
 	xref_jump(xref, elem);		
 }
 
+static void game_scroll_up(int count)
+{
+	int xm, ym;
+	struct el *o;
+	gfx_cursor(&xm, &ym, NULL, NULL);
+	o = look_obj(xm, ym);
+	if (o && (o->id == el_scene || o->id == el_inv)) {
+		scroll_up(o->id, count);
+	}
+}
+
+static void game_scroll_down(int count)
+{
+	int xm, ym;
+	struct el *o;
+	gfx_cursor(&xm, &ym, NULL, NULL);
+	o = look_obj(xm, ym);
+	if (o && (o->id == el_scene || o->id == el_inv)) {
+		scroll_down(o->id, count);
+	}
+}
+
 int game_loop(void)
 {
 	static int alt_pressed = 0;
@@ -1692,12 +1714,12 @@ int game_loop(void)
 				if (menu_shown) {
 					select_ref(1);
 				} else
-					scroll_up(el_scene, 1);
+					game_scroll_up(1);
 			} else if (!strcmp(ev.sym,"down")) {
 				if (menu_shown) {
 					select_ref(0);
 				} else
-					scroll_down(el_scene, 1);
+					game_scroll_down(1);
 			} else if (!strcmp(ev.sym,"left")) {
 				select_ref(1);
 			} else if (!strcmp(ev.sym,"right")) {
@@ -1734,21 +1756,9 @@ int game_loop(void)
 			if (game_click(ev.x, ev.y, 1) == -1)
 				break;
 		} else if (ev.type == MOUSE_WHEEL_UP && !menu_shown) {
-			int xm, ym;
-			struct el *o;
-			gfx_cursor(&xm, &ym, NULL, NULL);
-			o = look_obj(xm, ym);
-			if (o && (o->id == el_scene || o->id == el_inv)) {
-				scroll_up(o->id, ev.count);
-			}
+			game_scroll_up(ev.count);
 		} else if (ev.type == MOUSE_WHEEL_DOWN && !menu_shown) {
-			int xm, ym;
-			struct el *o;
-			gfx_cursor(&xm, &ym, NULL, NULL);
-			o = look_obj(xm, ym);
-			if (o && (o->id == el_scene || o->id == el_inv)) {
-				scroll_down(o->id, ev.count);
-			}
+			game_scroll_down(ev.count);
 		} else if (ev.type == MOUSE_MOTION) {
 			if (motion_mode) {
 				scroll_motion(motion_id, motion_y - ev.y);
