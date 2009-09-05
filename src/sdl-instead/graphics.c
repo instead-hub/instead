@@ -1556,7 +1556,7 @@ xref_t txt_box_xrefs(textbox_t tbox)
 	for (line = box->line; line; line = line->next) {
 		if (line->y + line->h < box->off)
 			continue; /* too high */
-		if (line->y > box->h + box->off)
+		if (line->y + line->h > box->h + box->off)
 			break; /* bottom */
 		for (word = line->words; word; word = word->next) {
 			xref = word->xref;

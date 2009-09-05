@@ -1556,7 +1556,7 @@ static void select_frame(int prev)
 	}
 	el_size(sel_el, &w, &h);
 	x = el(sel_el)->mx;
-	y = el(sel_el)->mx;
+	y = el(sel_el)->my;
 	if (x < el(sel_el)->x || y < el(sel_el)->y || 
 		x > el(sel_el)->x + w || y > el(sel_el)->y + h) {
 		x = el(sel_el)->x + w / 2;
