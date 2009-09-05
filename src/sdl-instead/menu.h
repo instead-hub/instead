@@ -9,7 +9,7 @@
 
 #define MAX_SAVE_SLOTS 6
 
-#define LANG_DEF	"en.ini"
+#define LANG_DEF	"en"
 
 extern int cur_menu;
 extern char *game_menu_gen(void);
