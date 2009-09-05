@@ -1485,12 +1485,6 @@ static void frame_next(void)
 	case 0:
 		sel_el = el_scene;
 		break;
-	case el_title:
-		if (game_theme.gfx_mode != GFX_MODE_EMBEDDED)
-			sel_el = el_ways;
-		else
-			sel_el = el_scene;
-		break;
 	case el_ways:
 		sel_el = el_scene;
 		break;
@@ -1498,7 +1492,10 @@ static void frame_next(void)
 		sel_el = el_inv;
 		break;
 	case el_inv:
-		sel_el = el_title;
+		if (game_theme.gfx_mode != GFX_MODE_EMBEDDED)
+			sel_el = el_ways;
+		else
+			sel_el = el_scene;
 		break;
 	}
 }
@@ -1513,14 +1510,13 @@ static void frame_prev(void)
 		sel_el = el_inv;
 		break;
 	case el_ways:
-		sel_el = el_title;
+		sel_el = el_inv;
 		break;
 	case el_scene:
 		if (game_theme.gfx_mode != GFX_MODE_EMBEDDED)
 			sel_el = el_ways;
 		else
-			sel_el = el_title;
-		break;
+			sel_el = el_inv;
 		break;
 	case el_inv:
 		sel_el = el_scene;
@@ -1552,10 +1548,17 @@ static void select_frame(int prev)
 	if (menu_shown) {
 		sel_el = el_menu;
 	} else {
-		if (prev)
-			frame_prev();
-		else
-			frame_next();
+//		int old_sel;
+//		if (!sel_el)
+//			frame_next();
+//		old_sel = sel_el;
+//		do {
+			if (prev) {
+				frame_prev();
+			} else {
+				frame_next();
+			}
+//		} while (!get_xref(sel_el, 0) && sel_el != old_sel);
 	}
 	el_size(sel_el, &w, &h);
 	x = el(sel_el)->mx;
@@ -1781,10 +1784,10 @@ int game_loop(void)
 			} else if (alt_pressed &&
 				(!is_key(&ev, "enter") || !is_key(&ev, "return"))) {
 				int old_menu = (menu_shown) ? cur_menu: -1;
-				alt_pressed = 0;
+				shift_pressed = alt_pressed = 0;
 				opt_fs ^= 1;
-				if (menu_shown)
-					menu_toggle();
+				menu_shown ^= 1; /* hack ? Yes! */
+				menu_toggle();
 				game_menu_box(0, game_menu_gen());
 				game_restart();
 				if (old_menu != -1)
