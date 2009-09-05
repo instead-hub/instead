@@ -1528,8 +1528,10 @@ static void frame_prev(void)
 	}
 }
 static void select_ref(int prev);
-static xref_t get_first_xref(int i);
+static xref_t get_xref(int i, int last);
 static void xref_jump(xref_t xref, struct el* elem);
+
+static xref_t get_nearest_xref(int i, int mx, int my);
 
 static void select_frame(int prev)
 {
@@ -1566,9 +1568,18 @@ static void select_frame(int prev)
 	gfx_warp_cursor(x, y);
 	
 	if (!look_xref(x, y, &elem) && elem) {
-		xref_t xref = get_first_xref(elem->id);
+		xref_t xref = get_nearest_xref(elem->id, x, y);
 		xref_jump(xref, elem);
 	}	
+}
+
+static int xref_rel_position(xref_t xref, struct el *elem, int *x, int *y)
+{
+	int rc = xref_position(xref, x, y);	
+	if (!rc && elem->type == elt_box && y) {
+		*y -= txt_box_off(el_box(elem->id));
+	}
+	return rc;
 }
 
 static int xref_visible(xref_t xref, struct el *elem)
@@ -1577,42 +1588,45 @@ static int xref_visible(xref_t xref, struct el *elem)
 	if (!elem || !xref)
 		return -1;
 		
-	xref_position(xref, &x, &y);
-	
-	if (elem->type == elt_box) {
-		y -= txt_box_off(el_box(elem->id));
-	}
+	xref_rel_position(xref, elem, &x, &y);	
 	el_size(elem->id, &w, &h);
 	if (y < 0 || y >= h)
 		return -1;
 	return 0;
 }
 
-static xref_t get_first_xref(int i)
+static xref_t get_nearest_xref(int i, int mx, int my)
 {
+	int disp;
+	int min_disp = game_theme.w * game_theme.w;
+	if (!i)
+		return NULL;
 	xref_t		xref = NULL;
-	int type;
-	type = el(i)->type;
-	if (type == elt_layout) 
-		xref = txt_layout_xrefs(el_layout(i));
-	else if (type == elt_box) 
-		xref = txt_box_xrefs(el_box(i));
-	
-	return xref;
+	xref_t		min_xref = NULL;
+	for (xref = get_xref(i, 0); !xref_visible(xref, el(i)); xref = xref_next(xref)) {
+		int x, y;
+		xref_rel_position(xref, el(i), &x, &y);
+		disp = (x + el(i)->x - mx) * (x + el(i)->x - mx) + (y + el(i)->y - my) * (y + el(i)->y - my);
+		if (disp < min_disp) {
+			min_disp = disp;
+			min_xref = xref;
+		}
+	}
+	return min_xref;
 }
 
-static xref_t get_last_xref(int i)
+static xref_t get_xref(int i, int last)
 {
 	xref_t		xref = NULL;
 	int type;
 	type = el(i)->type;
 	if (type == elt_layout) {
 		xref = txt_layout_xrefs(el_layout(i));
-		while (xref && xref_next(xref))
+		while (last && xref && xref_next(xref))
 			xref = xref_next(xref);
-	} else if (type == elt_box)  {
+	} else if (type == elt_box) {
 		xref = txt_box_xrefs(el_box(i));
-		while (xref && !xref_visible(xref_next(xref), el(i)))
+		while (last && xref && !xref_visible(xref_next(xref), el(i)))
 			xref = xref_next(xref);
 	}
 	return xref;
@@ -1621,12 +1635,8 @@ static xref_t get_last_xref(int i)
 static void xref_jump(xref_t xref, struct el* elem)
 {
 	int x, y;
-	if (!elem || !xref || xref_position(xref, &x, &y))
+	if (!elem || !xref || xref_rel_position(xref, elem, &x, &y))
 		return;
-
-	if (elem->type == elt_box) {
-		y -= txt_box_off(el_box(elem->id));
-	}
 	gfx_warp_cursor(elem->x + x, elem->y + y);
 }
 
@@ -1648,13 +1658,15 @@ static void select_ref(int prev)
 	if (xref) {
 		if (prev) {
 			if (!(xref = xref_prev(xref)))
-				xref = get_last_xref(elem->id);
-		} else
-			xref = xref_next(xref);			
+				xref = get_xref(elem->id, 1);
+		} else {
+			if (!(xref = xref_next(xref)))
+				xref = get_xref(elem->id, 0);
+		}
 	} 
 	
 	if (!xref)
-		xref = get_first_xref(elem->id);
+		xref = get_nearest_xref(elem->id, x, y);
 
 	xref_jump(xref, elem);		
 }
