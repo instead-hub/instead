@@ -820,6 +820,7 @@ struct word_list {
 
 struct xref {
 	struct  xref *next;
+	struct 	xref *prev;
 	struct 	word **words;
 	struct  layout *layout;
 	char  	*link;
@@ -847,6 +848,7 @@ struct xref *xref_new(char *link)
 	p->num = 0;
 	p->layout = NULL;
 	p->next = NULL;
+	p->prev = NULL;
 	p->active = 0;
 	p->words = NULL;
 	return p;
@@ -921,11 +923,13 @@ void layout_add_xref(struct layout *layout, struct xref *xref)
 	xref->layout = layout;
 	if (!x) {
 		layout->xrefs = xref;
+		xref->prev = NULL;
 		return;
 	}
 	while (x->next)
 		x = x->next;
 	x->next = xref;
+	xref->prev = x;
 	return;
 }
 
@@ -1542,6 +1546,28 @@ void txt_box_prev(textbox_t tbox)
 	box->line = line;
 }
 
+xref_t txt_box_xrefs(textbox_t tbox)
+{
+	struct textbox *box = (struct textbox*)tbox;
+	struct xref *xref = NULL;
+	struct word *word = NULL;
+	struct line *line;
+
+	for (line = box->line; line; line = line->next) {
+		if (line->y + line->h < box->off)
+			continue; /* too high */
+		if (line->y > box->h + box->off)
+			break; /* bottom */
+		for (word = line->words; word; word = word->next) {
+			xref = word->xref;
+			if (!xref)
+				continue;
+			return xref;	
+		}
+	}
+	return xref;
+}
+
 xref_t txt_box_xref(textbox_t tbox, int x, int y)
 {
 	struct textbox *box = (struct textbox*)tbox;
@@ -1895,6 +1921,59 @@ void txt_layout_add(layout_t lay, char *txt)
 	_txt_layout_add(lay, txt);
 }
 
+xref_t	xref_next(xref_t x)
+{
+	if (!x)
+		return NULL;
+	return ((struct xref*)x)->next;
+}
+
+xref_t	xref_prev(xref_t x)
+{
+	if (!x)
+		return NULL;
+	return ((struct xref*)x)->prev;
+}
+
+xref_t	txt_layout_xrefs(layout_t lay)
+{
+	struct layout *layout = (struct layout*)lay;
+	if (!layout)
+		return NULL;
+	return layout->xrefs;
+}
+
+int xref_position(xref_t x, int *xc, int *yc)
+{
+	int i;
+	int w = 0;
+	struct line *line;
+	struct word *word;
+	struct xref *xref = (struct xref*)x;
+
+	if (!xref || !xref->num)
+		return -1;
+		
+	for (i = 0; i < xref->num; i ++) {
+		word = xref->words[i];
+		w += word->w;
+	}
+	
+	w = w/2;
+	
+	for (i = 0; i < xref->num; i ++) {
+		word = xref->words[i];
+		line = word->line;
+		w -= word->w;
+		if (w < 0)
+			break;
+	}
+	if (xc)
+		*xc = word->x + (word->w + w);
+	if (yc)
+		*yc = line->y + line->h / 2;
+	return 0;
+}
 xref_t txt_layout_xref(layout_t lay, int x, int y)
 {
 	struct layout *layout = (struct layout*)lay;
@@ -2004,7 +2083,10 @@ void gfx_cursor(int *xp, int *yp, int *w, int *h)
 	if (yp)
 		*yp = y;
 }
-
+void gfx_warp_cursor(int x, int y)
+{
+	SDL_WarpMouse(x, y);
+}
 #define ALPHA_STEPS 5
 volatile int   step_nr = -1;
 

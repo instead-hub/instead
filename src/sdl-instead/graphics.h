@@ -56,6 +56,7 @@ extern img_t	gfx_scale(img_t src, float xscale, float yscale);
 extern void 	gfx_draw_bg(img_t p, int x, int y, int width, int height);
 extern void 	gfx_draw_from(img_t p, int x, int y, int xx, int yy, int width, int height);
 extern void 	gfx_cursor(int *xp, int *yp, int *w, int *h);
+extern void 	gfx_warp_cursor(int x, int y);
 extern void 	gfx_change_screen(img_t src);
 extern void	gfx_img_fill(img_t img, int x, int y, int w, int h, color_t col);
 extern void	gfx_fill(int x, int y, int w, int h, color_t col);
@@ -89,6 +90,8 @@ extern void 	txt_box_next_line(textbox_t tbox);
 extern void 	txt_box_prev_line(textbox_t tbox);
 extern void	txt_box_scroll(textbox_t tbox, int disp);
 extern xref_t	txt_box_xref(textbox_t tbox, int x, int y);
+extern xref_t 	txt_box_xrefs(textbox_t tbox);
+
 extern int	txt_box_off(textbox_t tbox);
 extern void	txt_box_size(textbox_t tbox, int *w, int *h);
 extern void 	txt_box_resize(textbox_t tbox, int w, int h);
@@ -101,6 +104,13 @@ extern img_t 	txt_box_render(textbox_t tbox);
 
 extern char	*xref_get_text(xref_t x);
 extern void 	xref_set_active(xref_t x, int val);
+
+extern xref_t	xref_next(xref_t x);
+extern xref_t	xref_prev(xref_t x);
+extern int 	xref_position(xref_t x, int *xc, int *yc);
+
+extern xref_t	txt_layout_xrefs(layout_t lay);
+
 extern layout_t	xref_layout(xref_t x);
 extern void xref_update(xref_t xref, int x, int y, clear_fn clear);
 #endif

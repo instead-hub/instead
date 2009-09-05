@@ -176,6 +176,8 @@ struct el {
 	int		id;
 	int 		x;
 	int 		y;
+	int		mx; /* mouse pointer */
+	int		my; /* coordinates */
 	int 		type;
 	int		drawn;
 //	int 		clone;
@@ -194,7 +196,7 @@ enum {
 };
 
 enum {
-	el_menu = 0,
+	el_menu = 1,
 	el_title,
 	el_ways,
 	el_inv,
@@ -1474,6 +1476,189 @@ static void scroll_motion(int id, int off)
 	el_update(id);
 }
 
+
+static int sel_el = 0;
+
+static void frame_next(void)
+{
+	switch(sel_el) {
+	case 0:
+		sel_el = el_title;
+		break;
+	case el_title:
+		if (game_theme.gfx_mode != GFX_MODE_EMBEDDED)
+			sel_el = el_ways;
+		else
+			sel_el = el_scene;
+		break;
+	case el_ways:
+		sel_el = el_scene;
+		break;
+	case el_scene:
+		sel_el = el_inv;
+		break;
+	case el_inv:
+		sel_el = el_title;
+		break;
+	}
+}
+
+static void frame_prev(void)
+{
+	switch(sel_el) {
+	case 0:
+		sel_el = el_inv;
+		break;
+	case el_title:
+		sel_el = el_inv;
+		break;
+	case el_ways:
+		sel_el = el_title;
+		break;
+	case el_scene:
+		if (game_theme.gfx_mode != GFX_MODE_EMBEDDED)
+			sel_el = el_ways;
+		else
+			sel_el = el_title;
+		break;
+		break;
+	case el_inv:
+		sel_el = el_scene;
+		break;
+	}
+}
+static void select_ref(int prev);
+static xref_t get_first_xref(int i);
+static void xref_jump(xref_t xref, struct el* elem);
+
+static void select_frame(int prev)
+{
+	struct el *elem = NULL;
+	int x, y, w, h;
+	
+	gfx_cursor(&x, &y, NULL, NULL);
+	
+	elem = look_obj(x, y);
+	
+	if (elem)
+		sel_el = elem->id;
+	
+	el(sel_el)->mx = x;
+	el(sel_el)->my = y;
+
+	if (menu_shown) {
+		sel_el = el_menu;
+	} else {
+		if (prev)
+			frame_prev();
+		else
+			frame_next();
+	}
+	el_size(sel_el, &w, &h);
+	x = el(sel_el)->mx;
+	y = el(sel_el)->mx;
+	if (x < el(sel_el)->x || y < el(sel_el)->y || 
+		x > el(sel_el)->x + w || y > el(sel_el)->y + h) {
+		x = el(sel_el)->x + w / 2;
+		y = el(sel_el)->y + h / 2;
+	}
+	
+	gfx_warp_cursor(x, y);
+	
+	if (!look_xref(x, y, &elem) && elem) {
+		xref_t xref = get_first_xref(elem->id);
+		xref_jump(xref, elem);
+	}	
+}
+
+static int xref_visible(xref_t xref, struct el *elem)
+{
+	int x, y, w, h;
+	if (!elem || !xref)
+		return -1;
+		
+	xref_position(xref, &x, &y);
+	
+	if (elem->type == elt_box) {
+		y -= txt_box_off(el_box(elem->id));
+	}
+	el_size(elem->id, &w, &h);
+	if (y < 0 || y >= h)
+		return -1;
+	return 0;
+}
+
+static xref_t get_first_xref(int i)
+{
+	xref_t		xref = NULL;
+	int type;
+	type = el(i)->type;
+	if (type == elt_layout) 
+		xref = txt_layout_xrefs(el_layout(i));
+	else if (type == elt_box) 
+		xref = txt_box_xrefs(el_box(i));
+	
+	return xref;
+}
+
+static xref_t get_last_xref(int i)
+{
+	xref_t		xref = NULL;
+	int type;
+	type = el(i)->type;
+	if (type == elt_layout) {
+		xref = txt_layout_xrefs(el_layout(i));
+		while (xref && xref_next(xref))
+			xref = xref_next(xref);
+	} else if (type == elt_box)  {
+		xref = txt_box_xrefs(el_box(i));
+		while (xref && !xref_visible(xref_next(xref), el(i)))
+			xref = xref_next(xref);
+	}
+	return xref;
+}
+
+static void xref_jump(xref_t xref, struct el* elem)
+{
+	int x, y;
+	if (!elem || !xref || xref_position(xref, &x, &y))
+		return;
+
+	if (elem->type == elt_box) {
+		y -= txt_box_off(el_box(elem->id));
+	}
+	gfx_warp_cursor(elem->x + x, elem->y + y);
+}
+
+static void select_ref(int prev)
+{
+	int x, y;
+	struct el 	 *elem = NULL;
+	xref_t		xref = NULL;
+	gfx_cursor(&x, &y, NULL, NULL);
+	
+	xref = look_xref(x, y, &elem);
+	
+	if (!elem) {
+		if (!sel_el)
+			select_frame(0);
+		elem = el(sel_el);
+	}
+	
+	if (xref) {
+		if (prev) {
+			if (!(xref = xref_prev(xref)))
+				xref = get_last_xref(elem->id);
+		} else
+			xref = xref_next(xref);			
+	} 
+	
+	if (!xref)
+		xref = get_first_xref(elem->id);
+
+	xref_jump(xref, elem);		
+}
+
 int game_loop(void)
 {
 	static int alt_pressed = 0;
@@ -1489,13 +1674,34 @@ int game_loop(void)
 		else if (((ev.type ==  KEY_DOWN) || (ev.type == KEY_UP)) && ev.sym && 
 			(!strcmp(ev.sym,"left alt") || !strcmp(ev.sym, "right alt"))) {
 			alt_pressed = (ev.type == KEY_DOWN) ? 1:0;
+		} else if (ev.type == KEY_UP && ev.sym) {
+			if (!strcmp(ev.sym,"return")) {
+				game_cursor(0);
+				game_highlight(-1, -1, 0);
+				gfx_cursor(&x, &y, NULL, NULL);
+				game_click(x, y, 0);
+				if (game_click(x, y, 1) == -1)
+					break;
+			}
 		} else if (ev.type == KEY_DOWN && ev.sym) {
 			if (!strcmp(ev.sym,"escape")) {
 				menu_toggle();
-			} else if (!strcmp(ev.sym,"up") && !menu_shown) {
-				scroll_up(el_scene, 1);
-			} else if (!strcmp(ev.sym,"down") && !menu_shown) {
-				scroll_down(el_scene, 1);
+			} else if (!strcmp(ev.sym,"tab")) {
+				select_frame(0);
+			} else if (!strcmp(ev.sym,"up")) {
+				if (menu_shown) {
+					select_ref(1);
+				} else
+					scroll_up(el_scene, 1);
+			} else if (!strcmp(ev.sym,"down")) {
+				if (menu_shown) {
+					select_ref(0);
+				} else
+					scroll_down(el_scene, 1);
+			} else if (!strcmp(ev.sym,"left")) {
+				select_ref(1);
+			} else if (!strcmp(ev.sym,"right")) {
+				select_ref(0);
 			} else if ((!strcmp(ev.sym,"page up") || !strcmp(ev.sym, "backspace")) && !menu_shown) {
 				scroll_pup(el_scene);
 			} else if ((!strcmp(ev.sym,"page down") || !strcmp(ev.sym, "space")) && !menu_shown) {
@@ -1552,8 +1758,11 @@ int game_loop(void)
 		}
 		if (old_xref)
 			game_highlight(x, y, 1);
-		else if (ev.x >= 0)
-			game_highlight(ev.x, ev.y, 1);
+		else {
+			int x, y;
+			gfx_cursor(&x, &y, NULL, NULL);
+			game_highlight(x, y, 1);
+		}
 		game_cursor(1);
 	}
 	return 0;
