@@ -297,7 +297,8 @@ img_t	gfx_screen(img_t nscreen)
 img_t	gfx_grab_screen(int x, int y, int w, int h)
 {
 	SDL_Rect dst, src;
-	SDL_Surface *img = SDL_CreateRGBSurface(SDL_HWSURFACE, w, h, 16, 0xF800, 0x7E0, 0x1F, 0);
+	SDL_Surface *img = SDL_CreateRGBSurface(screen->flags, w, h, screen->format->BitsPerPixel, 
+			screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
 	if (!img)
 		return NULL;	
 	src.x = x;
