@@ -1684,6 +1684,7 @@ static void game_scroll_down(int count)
 int game_loop(void)
 {
 	static int alt_pressed = 0;
+	static int shift_pressed = 0;
 	static int x = 0, y = 0;
 	struct inp_event ev;
 	memset(&ev, 0, sizeof(struct inp_event));
@@ -1696,6 +1697,9 @@ int game_loop(void)
 		else if (((ev.type ==  KEY_DOWN) || (ev.type == KEY_UP)) && ev.sym && 
 			(!strcmp(ev.sym,"left alt") || !strcmp(ev.sym, "right alt"))) {
 			alt_pressed = (ev.type == KEY_DOWN) ? 1:0;
+		} else if (((ev.type ==  KEY_DOWN) || (ev.type == KEY_UP)) && ev.sym && 
+			(!strcmp(ev.sym,"left shift") || !strcmp(ev.sym, "right shift"))) {
+			shift_pressed = (ev.type == KEY_DOWN) ? 1:0;
 		} else if (ev.type == KEY_UP && ev.sym) {
 			if (!strcmp(ev.sym,"return")) {
 				game_cursor(0);
@@ -1709,7 +1713,7 @@ int game_loop(void)
 			if (!strcmp(ev.sym,"escape")) {
 				menu_toggle();
 			} else if (!strcmp(ev.sym,"tab")) {
-				select_frame(0);
+				select_frame(shift_pressed);
 			} else if (!strcmp(ev.sym,"up")) {
 				if (menu_shown) {
 					select_ref(1);
