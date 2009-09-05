@@ -74,6 +74,20 @@ static int fgetsesc(char *oline, size_t size, FILE *fp)
 	return nr;
 }
 
+static void comments_zap(char *p)
+{
+	int i;
+	do {
+		i = strcspn(p, ";\n");
+		if (i && p[i - 1] != '\\') {
+			p[i] = 0;
+			break;
+		}
+		p += i;
+	} while (i);	
+}
+
+
 int parse_ini(const char *path, struct parser *cmd_parser)
 {
 	int nr;
@@ -101,7 +115,8 @@ int parse_ini(const char *path, struct parser *cmd_parser)
 		p[len] = 0;
 //		printf("%s\n", p);
 		val += strspn(val, " \t");
-		val[strcspn(val, ";\n")] = 0;
+		comments_zap(val);
+//		val[strcspn(val, ";\n")] = 0;
 		if (process_cmd(p, val, cmd_parser)) {
 			rc = -1;
 			fprintf(stderr, "Can't process cmd '%s' on line %d : %s\n", p, line_nr - nr, strerror(errno));
@@ -140,6 +155,9 @@ int parse_esc_string(const char *v, void *data)
 				break;
 			case '\\':
 				*ptr = '\\';
+				break;
+			case ';':
+				*ptr = ';';
 				break;
 			case 'r':
 				*ptr = '\n';
