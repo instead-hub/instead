@@ -1786,12 +1786,12 @@ int game_loop(void)
 			} else if (!is_key(&ev, "tab")) {
 				select_frame(shift_pressed);
 			} else if (!is_key(&ev, "up")) {
-				if (menu_shown || !alt_pressed) {
+				if (menu_shown || (!alt_pressed && !shift_pressed)) {
 					select_ref(1);
 				} else
 					game_scroll_up(1);
 			} else if (!is_key(&ev, "down")) {
-				if (menu_shown || !alt_pressed) {
+				if (menu_shown || (!alt_pressed && !shift_pressed)) {
 					select_ref(0);
 				} else
 					game_scroll_down(1);

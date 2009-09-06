@@ -207,6 +207,7 @@ int game_theme_free(void)
 	game_theme.menu_button = NULL;
 	game_theme.bg = NULL;
 	game_theme.click = NULL;
+	game_theme.cur_x = game_theme.cur_y = 0;
 //	game_theme.slide = gfx_load_image("slide.png", 1);
 	return 0;
 }
@@ -449,7 +450,5 @@ int game_theme_select(const char *name)
 
 int game_default_theme(void)
 {
-	game_theme.cur_x = 0;
-	game_theme.cur_y = 0;
 	return game_theme_load(DEFAULT_THEME);
 }
