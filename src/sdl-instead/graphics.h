@@ -95,7 +95,9 @@ extern xref_t 	txt_box_xrefs(textbox_t tbox);
 extern int	txt_box_off(textbox_t tbox);
 extern void	txt_box_size(textbox_t tbox, int *w, int *h);
 extern void 	txt_box_resize(textbox_t tbox, int w, int h);
+
 typedef void 	(*clear_fn)(int x, int y, int w, int h);
+
 extern void 	txt_box_update_links(textbox_t tbox, int x, int y, clear_fn);
 extern void 	txt_layout_update_links(layout_t layout, int x, int y, clear_fn clear);
 extern void 	txt_layout_real_size(layout_t lay, int *w, int *h);
@@ -112,6 +114,8 @@ extern int 	xref_position(xref_t x, int *xc, int *yc);
 extern xref_t	txt_layout_xrefs(layout_t lay);
 
 extern layout_t	xref_layout(xref_t x);
-extern void xref_update(xref_t xref, int x, int y, clear_fn clear);
+
+typedef void 	(*update_fn)(int x, int y, int w, int h);
+extern void xref_update(xref_t xref, int x, int y, clear_fn clear, update_fn update);
 #endif
 

@@ -18,7 +18,11 @@ struct game_theme {
 	char	*bg_name;
 	img_t	bg;
 	char	*use_name;
+	char	*cursor_name;
+	int	cur_x;
+	int	cur_y;
 	img_t	use;
+	img_t	cursor;
 	int 	pad;
 	
 	int 	win_x;

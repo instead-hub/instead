@@ -446,6 +446,7 @@ int gfx_setmode(int w, int h, int fs)
 {
 	gfx_width = w;
 	gfx_height = h;
+	SDL_ShowCursor(SDL_DISABLE);
 #ifndef MAEMO	
 	screen = SDL_SetVideoMode(gfx_width, gfx_height, 32, SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 	if (screen == NULL) /* ok, fallback to 16 bit */
@@ -1232,7 +1233,7 @@ void txt_layout_link_style(layout_t lay, int style)
 	layout->lstyle = style;	
 }
 
-void xref_update(xref_t pxref, int x, int y, clear_fn clear)
+void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 {
 	int i;
 	struct xref *xref = (struct xref*)pxref;
@@ -1267,7 +1268,7 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear)
 		}
 		if (word->img) {
 			gfx_draw(word->img, x + word->x, y + line->y);
-			gfx_update(x + word->x, y + line->y, gfx_img_w(word->img), gfx_img_h(word->img));
+			update(x + word->x, y + line->y, gfx_img_w(word->img), gfx_img_h(word->img));
 			continue;
 		}
 		if (!word->style)
@@ -1283,7 +1284,7 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear)
 		s = TTF_RenderUTF8_Blended((TTF_Font *)(layout->fn), word->word, col);
 		yy = (line->h - TTF_FontHeight((TTF_Font *)(layout->fn))) / 2; // TODO
 		gfx_draw(s, x + word->x, y + line->y + yy);
-		gfx_update(x + word->x, y + line->y, word->w, line->h);
+		update(x + word->x, y + line->y, word->w, line->h);
 		SDL_FreeSurface(s);
 	}
 	gfx_noclip();

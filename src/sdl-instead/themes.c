@@ -55,7 +55,11 @@ struct parser cmd_parser[] = {
 	{ "scr.h", parse_int, &game_theme.h },
 	{ "scr.col.bg", parse_color, &game_theme.bgcol },
 	{ "scr.gfx.bg", parse_string, &game_theme.bg_name },
-	{ "scr.gfx.use", parse_string, &game_theme.use_name },
+	{ "scr.gfx.cursor.normal", parse_string, &game_theme.cursor_name },
+	{ "scr.gfx.cursor.x", parse_int, &game_theme.cur_x },
+	{ "scr.gfx.cursor.y", parse_int, &game_theme.cur_y },
+	{ "scr.gfx.use", parse_string, &game_theme.use_name }, /* compat */
+	{ "scr.gfx.cursor.use", parse_string, &game_theme.use_name },
 	{ "scr.gfx.pad", parse_int, &game_theme.pad  }, 
 	{ "scr.gfx.x", parse_int, &game_theme.gfx_x },
 	{ "scr.gfx.y", parse_int, &game_theme.gfx_y },
@@ -120,7 +124,11 @@ struct game_theme game_theme = {
 	.bg_name = NULL,
 	.bg = NULL,
 	.use_name = NULL,
+	.cursor_name = NULL,
 	.use = NULL,
+	.cursor = NULL,
+	.cur_x = 0,
+	.cur_y = 0,
 	.font_name = NULL,
 	.font = NULL,
 	.a_up_name = NULL,
@@ -148,6 +156,7 @@ static void free_theme_strings(void)
 {
 	struct game_theme *t = &game_theme;
 	FREE(t->use_name);
+	FREE(t->cursor_name);
 	FREE(t->bg_name);
 	FREE(t->inv_a_up_name);
 	FREE(t->inv_a_down_name);
@@ -264,6 +273,12 @@ static int game_theme_init(void)
 		if (!(t->use = gfx_load_image(t->use_name)))
 			goto err;
 	}
+
+	if (t->cursor_name) {
+		gfx_free_image(t->cursor);	
+		if (!(t->cursor = gfx_load_image(t->cursor_name)))
+			goto err;
+	}
 	
 	if (t->menu_button_name) {
 		gfx_free_image(t->menu_button);
@@ -278,9 +293,9 @@ static int game_theme_init(void)
 
 	free_theme_strings();
 
-	if (!t->use || !t->inv_a_up || !t->inv_a_down || !t->a_down || !t->a_up ||
+	if (!t->cursor || !t->use || !t->inv_a_up || !t->inv_a_down || !t->a_down || !t->a_up ||
 		!t->font || !t->inv_font || !t->menu_font || !t->menu_button) {
-		fprintf(stderr,"Can't init theme.\n");
+		fprintf(stderr,"Can't init theme. Not all required elements are defined.\n");
 		return -1;
 	}
 	return 0;
@@ -434,5 +449,7 @@ int game_theme_select(const char *name)
 
 int game_default_theme(void)
 {
+	game_theme.cur_x = 0;
+	game_theme.cur_y = 0;
 	return game_theme_load(DEFAULT_THEME);
 }

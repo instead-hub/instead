@@ -8,6 +8,10 @@ char	*curgame_dir = NULL;
 
 int game_own_theme = 0;
 
+static void game_cursor(int on);
+static void mouse_reset(void);
+static void menu_toggle(void);
+
 void game_err_msg(const char *s)
 {
 	if (err_msg)
@@ -155,6 +159,7 @@ static int menu_shown = 0;
 int game_cmd(char *cmd);
 void game_clear(int x, int y, int w, int h)
 {
+	game_cursor(-1);
 	if (game_theme.bg)
 		gfx_draw_bg(game_theme.bg, x, y, w, h);
 	else
@@ -517,7 +522,7 @@ void free_last(void)
 	last_pict = last_title = NULL;
 	game_stop_mus(500);
 }
-void menu_toggle(void);
+
 
 void game_done(void)
 {
@@ -527,9 +532,9 @@ void game_done(void)
 	chdir(game_cwd);
 //	cfg_save();
 
-	if (!menu_shown)
-		menu_shown ^= 1;
-	menu_toggle();	 /* reset menu hack */
+	if (menu_shown)
+		menu_toggle();
+	mouse_reset();
 	
 	if (el_img(el_spic))
 		gfx_free_image(el_img(el_spic));
@@ -607,6 +612,7 @@ void el_update(int n)
 	x = o->x;
 	y = o->y;
 	el_size(n, &w, &h);
+	game_cursor(1);
 	gfx_update(x, y, w, h);
 	return;
 }
@@ -682,6 +688,7 @@ void el_draw(int n)
 	y = o->y;
 	if (!o->p.p)
 		return;
+	game_cursor(-1);
 	if (o->type == elt_image)
 		gfx_draw(o->p.img, x, y);
 	else if (o->type == elt_layout)
@@ -738,7 +745,7 @@ void game_menu_box(int show, const char *txt)
 	int b = game_theme.border_w;
 	int pad = game_theme.pad;
 	layout_t lay;
-	
+
 	menu_shown = show;
 	
 	el(el_menu)->drawn = 0;
@@ -746,20 +753,21 @@ void game_menu_box(int show, const char *txt)
 		txt_layout_free(el_layout(el_menu));
 		el(el_menu)->p.p = NULL;
 	}
-
 	if (menubg) {
+		game_cursor(-1);
 		gfx_draw(menubg, mx, my);
 		gfx_free_image(menubg);
 		menubg = NULL;
 	}
-	el_clear(el_menu_button);
 
+	el_clear(el_menu_button);
 	if (!show)
 		el_draw(el_menu_button);
 
-	el_update(el_menu_button);
+//	el_update(el_menu_button);
 
 	if (!show) {
+		game_cursor(1);
 		gfx_flip();
 		return;
 	}
@@ -792,10 +800,12 @@ void game_menu_box(int show, const char *txt)
 	my = y - b - pad;
 	mw = w + (b + pad) * 2;
 	mh = h + (b + pad) * 2;
+	game_cursor(-1);
 	menubg = gfx_grab_screen(mx, my, mw, mh);
 	gfx_draw(menu, mx, my);
 	el_set(el_menu, elt_layout, /*game_theme.win_x*/  x, y, lay);
 	el_draw(el_menu);
+	game_cursor(1);
 	gfx_flip();
 }
 
@@ -944,7 +954,7 @@ int game_cmd(char *cmd)
 {
 	int		new_pict = 0, new_place = 0;
 	int		title_h = 0, ways_h = 0, pict_h = 0;
-	char 		buf[512];
+	char 		buf[1024];
 	char 		*cmdstr;
 	char 		*invstr;
 	char 		*waystr;
@@ -955,7 +965,7 @@ int game_cmd(char *cmd)
 	cmdstr = instead_cmd(cmd);
 	if (!cmdstr) 
 		goto err;
-	game_music_player();
+	game_music_player();	
 //	sound_player(); /* TODO */
 	title = instead_eval("return get_title();");
 	unix_path(title);
@@ -1057,6 +1067,7 @@ int game_cmd(char *cmd)
 		free(waystr);
 
 	el(el_scene)->y = el(el_ways)->y + ways_h;
+	
 	/* draw title and ways */
 	if (new_pict || new_place) {
 		img_t offscreen = gfx_new(game_theme.w, game_theme.h);
@@ -1073,6 +1084,7 @@ int game_cmd(char *cmd)
 		game_clear(game_theme.win_x, game_theme.win_y + pict_h + title_h, 
 			game_theme.win_w, game_theme.win_h - pict_h - title_h);
 	}
+	
 	el_clear(el_title);
 	el_draw(el_title);
 
@@ -1098,7 +1110,6 @@ int game_cmd(char *cmd)
 	el_clear(el_inv);
 	el_draw(el_inv);
 //	scene_scrollbar();
-
 	if (new_pict || new_place) {
 		img_t offscreen;
 		offscreen = gfx_screen(oldscreen);
@@ -1117,13 +1128,26 @@ err:
 	return 0;
 }
 
+void game_update(int x, int y, int w, int h)
+{
+	game_cursor(1);
+	gfx_update(x, y, w, h);
+}
+
+void game_xref_update(xref_t xref, int x, int y)
+{
+	game_cursor(-1);
+	xref_update(xref, x, y, game_clear, game_update);
+	game_cursor(1);
+}
+
 xref_t	inv_xref = NULL;
 
 int disable_inv(void)
 {
 	if (inv_xref) {
 		xref_set_active(inv_xref, 0);
-		xref_update(inv_xref, el(el_inv)->x, el(el_inv)->y, game_clear);
+		game_xref_update(inv_xref, el(el_inv)->x, el(el_inv)->y);
 //		txt_box_update_links(el_box(el_inv), el(el_inv)->x, el(el_inv)->y, game_clear);
 		inv_xref = NULL;
 		return 1;
@@ -1136,7 +1160,7 @@ void enable_inv(xref_t xref)
 	inv_xref = xref;
 	xref_set_active(xref, 1);
 	//txt_box_update_links(el_box(el_inv), el(el_inv)->x, el(el_inv)->y, game_clear);
-	xref_update(inv_xref, el(el_inv)->x, el(el_inv)->y, game_clear);
+	game_xref_update(inv_xref, el(el_inv)->x, el(el_inv)->y);
 }
 
 
@@ -1188,7 +1212,6 @@ void menu_update(struct el *elem)
 //	gfx_fill(x, y, w, h, game_theme.menu_bg);
 }
 
-void game_cursor(int on);
 
 int game_highlight(int x, int y, int on)
 {
@@ -1201,17 +1224,15 @@ int game_highlight(int x, int y, int on)
 	if (on) {
 		xref = look_xref(x, y, &elem);
 		if (xref && opt_hl) {
-			game_cursor(-1);
 			xref_set_active(xref, 1);
-			xref_update(xref, elem->x, elem->y, game_clear);
+			game_xref_update(xref, elem->x, elem->y);
 		}
 	}
 	
 	if (hxref != xref && oel) {
 		if (hxref != inv_xref) {
 			xref_set_active(hxref, 0);
-			game_cursor(-1);
-			xref_update(hxref, oel->x, oel->y, game_clear);
+			game_xref_update(hxref, oel->x, oel->y);
 			up = 1;
 		}
 		hxref = NULL;
@@ -1221,22 +1242,25 @@ int game_highlight(int x, int y, int on)
 	return 0;
 }
 
-void menu_toggle(void)
+static void mouse_reset(void)
 {
-	game_cursor(0);
 	game_highlight(-1, -1, 0);
 	disable_inv();
-	menu_shown ^= 1;
 	motion_mode = 0;
 	old_xref = old_el = NULL;
+}
+
+static void menu_toggle(void)
+{
+	menu_shown ^= 1;
 	if (!menu_shown)
 		cur_menu = menu_main;
+	mouse_reset();
 	game_menu_box(menu_shown, game_menu_gen());
 }
 
 static void scroll_pup(int id)
 {
-	game_cursor(0);
 	game_highlight(-1, -1, 0);
 	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) {
 		int hh;
@@ -1251,7 +1275,6 @@ static void scroll_pup(int id)
 
 static void scroll_pdown(int id)
 {
-	game_cursor(0);
 	game_highlight(-1, -1, 0);
 	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) {
 		int hh;
@@ -1280,8 +1303,8 @@ int mouse_filter(void)
 int game_click(int x, int y, int action)
 {
 	struct el	*elem = NULL;
-	char buf[512];
-	xref_t 	xref = NULL;
+	char 		buf[1024];
+	xref_t 		xref = NULL;
 
 	if (action)
 		motion_mode = 0;
@@ -1308,7 +1331,7 @@ int game_click(int x, int y, int action)
 		xref = look_xref(x, y, &elem);
 		if (xref) {
 			xref_set_active(xref, 1);
-			xref_update(xref, elem->x, elem->y, game_clear);
+			game_xref_update(xref, elem->x, elem->y);
 		} else if (elem && elem->type == elt_box && opt_motion) {
 			motion_mode = 1;
 			motion_id = elem->id;
@@ -1404,41 +1427,50 @@ int game_click(int x, int y, int action)
 	return 0;
 }
 
-void game_cursor(int on)
+static void game_cursor(int on)
 {
 	static img_t	grab = NULL;
-	static int xc, yc, w, h;
-
+	static img_t 	cur;
+	static int xc = 0, yc = 0, ow = 0, oh = 0; //, w, h;
 	if (grab) {
 		gfx_draw(grab, xc, yc);
 		gfx_free_image(grab);
 		grab = NULL;
 		if (!on) {
-			gfx_update(xc, yc, gfx_img_w(game_theme.use), gfx_img_h(game_theme.use));
+			gfx_update(xc, yc, ow, oh);
 			return;
 		}
 	}
 
 	if (on == -1)
 		return;
-	if (inv_xref) {
+	
+	cur = (inv_xref) ? game_theme.use:game_theme.cursor;
+	
+	if (!cur)
+		return;	
+
+	do {
 		int ox = xc;
 		int oy = yc;
-		gfx_cursor(&xc, &yc, &w, &h);
-		xc += w/2;
-		yc += h/2;
-		grab = gfx_grab_screen(xc, yc, gfx_img_w(game_theme.use), gfx_img_h(game_theme.use));
-		gfx_draw(game_theme.use, xc, yc);
-		gfx_update(xc, yc, gfx_img_w(game_theme.use), gfx_img_h(game_theme.use));
-		gfx_update(ox, oy, gfx_img_w(game_theme.use), gfx_img_h(game_theme.use));
-	}
+		gfx_cursor(&xc, &yc, NULL, NULL);
+		xc -= game_theme.cur_x;
+		yc -= game_theme.cur_y;
+//		xc += w/2;
+//		yc += h/2;
+		grab = gfx_grab_screen(xc, yc, gfx_img_w(cur), gfx_img_h(cur));
+		gfx_draw(cur, xc, yc);
+		gfx_update(xc, yc, gfx_img_w(cur), gfx_img_h(cur));
+		gfx_update(ox, oy, ow, oh);
+		ow = gfx_img_w(cur);
+		oh = gfx_img_h(cur);
+	} while (0);
 }
 
 
 static void scroll_up(int id, int count)
 {
 	int i;
-	game_cursor(0);
 	game_highlight(-1, -1, 0);
 	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED)
 		txt_box_scroll(el_box(id), -(FONT_SZ(game_theme.font_size)) * count);
@@ -1453,7 +1485,6 @@ static void scroll_up(int id, int count)
 static void scroll_down(int id, int count)
 {
 	int i;
-	game_cursor(0);
 	game_highlight(-1, -1, 0);
 	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED)
 		txt_box_scroll(el_box(id), (FONT_SZ(game_theme.font_size)) * count);
@@ -1467,7 +1498,6 @@ static void scroll_down(int id, int count)
 
 static void scroll_motion(int id, int off)
 {
-	game_cursor(0);
 	game_highlight(-1, -1, 0);
 	txt_box_scroll(el_box(id), off);
 	el_clear(id);
@@ -1734,6 +1764,7 @@ int game_loop(void)
 	while (1) {
 		int rc;
 		ev.x = -1;
+		game_cursor(-1); /* release bg */
 		while ((rc = input(&ev, 1)) == AGAIN);
 		if (rc == -1) {/* close */
 			break;
@@ -1745,7 +1776,6 @@ int game_loop(void)
 			shift_pressed = (ev.type == KEY_DOWN) ? 1:0;
 		} else if (ev.type == KEY_DOWN) {
 			if (!alt_pressed && !is_key(&ev, "return")) {
-				game_cursor(0);
 				game_highlight(-1, -1, 0);
 				gfx_cursor(&x, &y, NULL, NULL);
 				game_click(x, y, 0);
@@ -1789,13 +1819,11 @@ int game_loop(void)
 					game_menu(old_menu);
 			}
 		} else if (ev.type == MOUSE_DOWN) {
-			game_cursor(0);
 			game_highlight(-1, -1, 0);
 			game_click(ev.x, ev.y, 0);
 			x = ev.x;
 			y = ev.y;
 		} else if (ev.type == MOUSE_UP) {
-			game_cursor(0);
 			game_highlight(-1, -1, 0);
 			if (game_click(ev.x, ev.y, 1) == -1)
 				break;
