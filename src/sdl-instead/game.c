@@ -517,6 +517,7 @@ void free_last(void)
 	last_pict = last_title = NULL;
 	game_stop_mus(500);
 }
+void menu_toggle(void);
 
 void game_done(void)
 {
@@ -525,12 +526,10 @@ void game_done(void)
 		game_save(0);
 	chdir(game_cwd);
 //	cfg_save();
-	
-	if (menu_shown) {
-		menu_shown = 0;
-		game_menu_box(0, NULL);
-	}
-	cur_menu = menu_main;
+
+	if (!menu_shown)
+		menu_shown ^= 1;
+	menu_toggle();	 /* reset menu hack */
 	
 	if (el_img(el_spic))
 		gfx_free_image(el_img(el_spic));
@@ -1601,14 +1600,13 @@ static int xref_visible(xref_t xref, struct el *elem)
 
 static xref_t get_nearest_xref(int i, int mx, int my)
 {
-	int disp;
-	int min_disp = game_theme.w * game_theme.w;
-	if (!i)
-		return NULL;
 	xref_t		xref = NULL;
 	xref_t		min_xref = NULL;
+	int min_disp = game_theme.h * game_theme.h + game_theme.w * game_theme.w;
+	if (!i)
+		return NULL;
 	for (xref = get_xref(i, 0); !xref_visible(xref, el(i)); xref = xref_next(xref)) {
-		int x, y;
+		int x, y, disp;
 		xref_rel_position(xref, el(i), &x, &y);
 		disp = (x + el(i)->x - mx) * (x + el(i)->x - mx) + (y + el(i)->y - my) * (y + el(i)->y - my);
 		if (disp < min_disp) {
@@ -1661,10 +1659,10 @@ static void select_ref(int prev)
 	
 	if (xref) {
 		if (prev) {
-			if (!(xref = xref_prev(xref)))
+			if (!(xref = xref_prev(xref)) || xref_visible(xref, elem))
 				xref = get_xref(elem->id, 1);
 		} else {
-			if (!(xref = xref_next(xref)))
+			if (!(xref = xref_next(xref)) || xref_visible(xref, elem))
 				xref = get_xref(elem->id, 0);
 		}
 	} 
@@ -1786,9 +1784,6 @@ int game_loop(void)
 				int old_menu = (menu_shown) ? cur_menu: -1;
 				shift_pressed = alt_pressed = 0;
 				opt_fs ^= 1;
-				menu_shown ^= 1; /* hack ? Yes! */
-				menu_toggle();
-				game_menu_box(0, game_menu_gen());
 				game_restart();
 				if (old_menu != -1)
 					game_menu(old_menu);
