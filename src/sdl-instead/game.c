@@ -1511,6 +1511,7 @@ static int sel_el = 0;
 static void frame_next(void)
 {
 	switch(sel_el) {
+	default:
 	case 0:
 		sel_el = el_scene;
 		break;
@@ -1521,7 +1522,8 @@ static void frame_next(void)
 		sel_el = el_inv;
 		break;
 	case el_inv:
-		if (game_theme.gfx_mode != GFX_MODE_EMBEDDED)
+		if (game_theme.gfx_mode != GFX_MODE_EMBEDDED && 
+			txt_layout_xrefs(el_layout(el_ways)))
 			sel_el = el_ways;
 		else
 			sel_el = el_scene;
@@ -1532,6 +1534,7 @@ static void frame_next(void)
 static void frame_prev(void)
 {
 	switch(sel_el) {
+	default:
 	case 0:
 		sel_el = el_inv;
 		break;
@@ -1542,7 +1545,8 @@ static void frame_prev(void)
 		sel_el = el_inv;
 		break;
 	case el_scene:
-		if (game_theme.gfx_mode != GFX_MODE_EMBEDDED)
+		if (game_theme.gfx_mode != GFX_MODE_EMBEDDED && 
+			txt_layout_xrefs(el_layout(el_ways)))
 			sel_el = el_ways;
 		else
 			sel_el = el_inv;
