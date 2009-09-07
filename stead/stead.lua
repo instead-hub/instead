@@ -465,7 +465,7 @@ end
 
 function list_del(self, name)
 	local v,n
-	v, n = list_search(self, name);
+	v, n = self:srch(name);
 	if n == nil then
 		return nil;
 	end
@@ -1038,6 +1038,9 @@ function check_room(k, v)
 	if not v.way:check() then
 		error ("error in room (way): "..k);
 	end
+	if not v.obj:check() then
+		error ("error in room (obj): "..k);
+	end
 end
 
 function check_player(k, v)
@@ -1060,6 +1063,9 @@ function do_ini(self)
 	for_each_object(check_object);
 	for_each_room(check_room);
 	for_each_player(check_player);
+	if not game.lifes:check() then
+		error ("error in game (lifes).");
+	end
 	me():tag();
 	if not self.showlast then
 		self._lastdisp = nil;
@@ -1642,7 +1648,7 @@ function drop(obj, w)
 	if not isObject(o) then
 		error "Trying to drop wrong object:";
 	end
-	me().obj:del(obj);
+	inv():del(obj);
 	o._taken = false
 	return o;
 end
