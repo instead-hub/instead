@@ -811,6 +811,7 @@ struct layout {
 	int w;
 	int h;
 	int align;
+	int saved_align;
 	int style;
 	int lstyle;
 };
@@ -1713,7 +1714,13 @@ char *process_token(char *ptr, struct layout *layout, struct line *line, struct 
 		al = ALIGN_JUSTIFY;
 	
 	if (al) {
-		line->align = al;
+		if (token & TOKEN_CLOSE)  {
+			layout->align = layout->saved_align;
+		} else {
+			layout->saved_align = layout->align;
+			layout->align = al;
+			line->align = al;
+		}
 		goto out;
 	}
 

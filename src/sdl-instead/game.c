@@ -1076,7 +1076,7 @@ int game_cmd(char *cmd)
 			txt_layout_add(txt_box_layout(el_box(el_scene)), "<c><g:scene></c>\n");
 		}
 		txt_layout_add(txt_box_layout(el_box(el_scene)), waystr);
-		txt_layout_add(txt_box_layout(el_box(el_scene)), "<l>\n"); /* small hack */
+		txt_layout_add(txt_box_layout(el_box(el_scene)), "<l></l>\n"); /* small hack */
 		txt_layout_add(txt_box_layout(el_box(el_scene)), cmdstr);
 		txt_box_set(el_box(el_scene), txt_box_layout(el_box(el_scene)));
 		if (!new_pict && !new_place) 
