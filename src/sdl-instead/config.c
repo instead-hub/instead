@@ -18,6 +18,7 @@ int opt_click = 1;
 int opt_music = 1;
 int opt_autosave = 1;
 int opt_filter = 1;
+int opt_kbd = KBD_SMART;
 
 char *opt_game = NULL;
 char *opt_theme = NULL;
@@ -38,6 +39,7 @@ static struct parser cfg_parser[] = {
 	{ "filter", parse_int, &opt_filter },
 	{ "owntheme", parse_int, &opt_owntheme },
 	{ "lang", parse_string, &opt_lang },
+	{ "kbd", parse_int, &opt_kbd },
 	{ NULL, },
 };
 
@@ -68,11 +70,11 @@ int cfg_save(void)
 	fprintf(fp, "fs = %d\nhl = %d\nhz = %d\nvol = %d\nautosave = %d\n\
 game = %s\nfscale = %d\nmotion = %d\n\
 click = %d\nmusic = %d\ntheme = %s\n\
-filter = %d\nowntheme = %d\nlang = %s", 
+filter = %d\nowntheme = %d\nlang = %s\nkbd = %d", 
 		opt_fs, opt_hl, opt_hz, opt_vol, opt_autosave, 
 		curgame_dir?curgame_dir:"", opt_fsize, opt_motion, 
 		opt_click, opt_music, curtheme_dir?curtheme_dir:DEFAULT_THEME, 
-		opt_filter, opt_owntheme, opt_lang);
+		opt_filter, opt_owntheme, opt_lang, opt_kbd);
 	fclose(fp);
 	return 0;
 }

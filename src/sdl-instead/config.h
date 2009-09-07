@@ -3,6 +3,11 @@
 
 #define FONT_SZ(v) ((v) * (1.0f + ((0.1f * opt_fsize))))
 
+#define KBD_NORMAL	0
+#define KBD_SMART	1
+#define KBD_INVERSE	2
+#define KBD_MAX		3
+
 extern int opt_fsize;
 extern int opt_fs;
 extern int opt_owntheme;
@@ -14,6 +19,8 @@ extern int opt_click;
 extern int opt_music;
 extern int opt_autosave;
 extern int opt_filter;
+extern int opt_kbd;
+
 extern char *opt_game;
 extern char *opt_theme;
 extern char *opt_lang;

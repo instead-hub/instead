@@ -1827,22 +1827,23 @@ int game_loop(void)
 				menu_toggle();
 			} else if (!is_key(&ev, "tab")) {
 				select_frame(shift_pressed);
-			} else if (!is_key(&ev, "up")) {
-				if (menu_shown || (!alt_pressed && !shift_pressed)) {
-					if (select_ref(1, 0)) {
-						game_scroll_up(1);
-						select_ref(0, 1);
+			} else if (!is_key(&ev, "up") || !is_key(&ev, "down")) {
+				int lm;
+				int prev = !is_key(&ev, "up");
+				
+				if (opt_kbd == KBD_INVERSE)
+					lm = (alt_pressed || shift_pressed);
+				else
+					lm = (!alt_pressed && !shift_pressed);
+			
+				if (menu_shown || lm) {
+					if (select_ref(prev, 0)) {
+						if (opt_kbd == KBD_SMART)
+							(prev)?game_scroll_up(1):game_scroll_down(1);
+						select_ref(!prev, 1);
 					}
 				} else
-					game_scroll_up(1);
-			} else if (!is_key(&ev, "down")) {
-				if (menu_shown || (!alt_pressed && !shift_pressed)) {
-					if (select_ref(0, 0)) {
-						game_scroll_down(1);
-						select_ref(1, 1);
-					}
-				} else
-					game_scroll_down(1);
+					(prev)?game_scroll_up(1):game_scroll_down(1);
 			} else if (!is_key(&ev, "left")) {
 				select_ref(1, 0);
 			} else if (!is_key(&ev, "right")) {
