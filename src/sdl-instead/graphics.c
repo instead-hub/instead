@@ -697,16 +697,11 @@ void line_justify(struct line *line, int width)
 void line_right(struct line *line, int width)
 {
 	struct word *w;
-	int sp, lw = 0;
+	int sp;
 	if (!line || line->num == 0)
 		return;
+	sp = width - line->w;
 	w = line->words;
-	while (w) {
-		lw += w->w;
-		w = w->next;
-	}
-	w = line->words;
-	sp = width - lw;
 	while (w) {
 		w->x += sp;
 		w = w->next;
