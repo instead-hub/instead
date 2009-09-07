@@ -2089,7 +2089,7 @@ void gfx_warp_cursor(int x, int y)
 {
 	SDL_WarpMouse(x, y);
 }
-#define ALPHA_STEPS 5
+#define ALPHA_STEPS 10
 volatile int   step_nr = -1;
 
 static void update_gfx(void *aux)
@@ -2122,7 +2122,7 @@ void gfx_change_screen(img_t src)
 	memset(&ev, 0, sizeof(ev));
 	SDL_TimerID han;
 	step_nr = 0;
-	han = SDL_AddTimer(60, update, src);
+	han = SDL_AddTimer(30, update, src);
 	while (input(&ev, 1) >=0 && step_nr != -1); /* just wait for change */
 	SDL_RemoveTimer(han);
 }
