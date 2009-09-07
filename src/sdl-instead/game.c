@@ -1278,10 +1278,10 @@ static void mouse_reset(void)
 
 static void menu_toggle(void)
 {
+	mouse_reset();
 	menu_shown ^= 1;
 	if (!menu_shown)
 		cur_menu = menu_main;
-	mouse_reset();
 	game_menu_box(menu_shown, game_menu_gen());
 }
 
