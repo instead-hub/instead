@@ -617,6 +617,32 @@ void el_update(int n)
 	return;
 }
 
+int box_isscroll_up(int n)
+{
+	if (el(n)->type != elt_box)
+		return -1;
+	if (txt_box_off(el_box(n)))
+		return 0;
+	return -1;
+}
+
+int box_isscroll_down(int n)
+{
+	layout_t l;
+	int off;
+	int h, hh;
+	if (el(n)->type != elt_box)
+		return -1;
+	el_size(n, NULL, &h);
+	l = txt_box_layout(el_box(n));
+	txt_layout_size(l, NULL, &hh);
+	off = txt_box_off(el_box(n));
+
+	if (hh - off > h)
+		return 0;
+	return -1;
+}
+
 void box_update_scrollbar(int n)
 {
 	struct el *elup = NULL;
@@ -1557,7 +1583,7 @@ static void frame_prev(void)
 	}
 }
 
-static void select_ref(int prev);
+static int select_ref(int prev, int last);
 static xref_t get_xref(int i, int last);
 static void xref_jump(xref_t xref, struct el* elem);
 
@@ -1676,7 +1702,7 @@ static void xref_jump(xref_t xref, struct el* elem)
 	gfx_warp_cursor(elem->x + x, elem->y + y);
 }
 
-static void select_ref(int prev)
+static int select_ref(int prev, int last)
 {
 	int x, y;
 	struct el 	 *elem = NULL;
@@ -1690,21 +1716,33 @@ static void select_ref(int prev)
 			select_frame(0);
 		elem = el(sel_el);
 	}
-	
-	if (xref) {
+	if (last) {
+		if (!(xref = get_xref(elem->id, prev)))
+			return -1;
+	} else if (xref) {
 		if (prev) {
-			if (!(xref = xref_prev(xref)) || xref_visible(xref, elem))
-				xref = get_xref(elem->id, 1);
+			if (!(xref = xref_prev(xref)) || xref_visible(xref, elem)) {
+				if (!box_isscroll_up(elem->id))
+					return -1;
+				else
+					xref = get_xref(elem->id, 1);
+			}
 		} else {
-			if (!(xref = xref_next(xref)) || xref_visible(xref, elem))
-				xref = get_xref(elem->id, 0);
+			if (!(xref = xref_next(xref)) || xref_visible(xref, elem)) {
+				if (!box_isscroll_down(elem->id))
+					return -1;
+				else
+					xref = get_xref(elem->id, 0);
+			}
 		}
 	} 
 	
 	if (!xref)
 		xref = get_nearest_xref(elem->id, x, y);
-
+	if (!xref)
+		return -1;
 	xref_jump(xref, elem);		
+	return 0;
 }
 
 static void game_scroll_up(int count)
@@ -1791,18 +1829,24 @@ int game_loop(void)
 				select_frame(shift_pressed);
 			} else if (!is_key(&ev, "up")) {
 				if (menu_shown || (!alt_pressed && !shift_pressed)) {
-					select_ref(1);
+					if (select_ref(1, 0)) {
+						game_scroll_up(1);
+						select_ref(0, 1);
+					}
 				} else
 					game_scroll_up(1);
 			} else if (!is_key(&ev, "down")) {
 				if (menu_shown || (!alt_pressed && !shift_pressed)) {
-					select_ref(0);
+					if (select_ref(0, 0)) {
+						game_scroll_down(1);
+						select_ref(1, 1);
+					}
 				} else
 					game_scroll_down(1);
 			} else if (!is_key(&ev, "left")) {
-				select_ref(1);
+				select_ref(1, 0);
 			} else if (!is_key(&ev, "right")) {
-				select_ref(0);
+				select_ref(0, 0);
 			} else if (!is_key(&ev, "backspace") && !menu_shown) {
 				scroll_pup(el_scene);
 			} else if (!is_key(&ev, "space") && !menu_shown) {
