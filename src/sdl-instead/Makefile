@@ -10,7 +10,7 @@ OBJ     := $(patsubst %.c, %.o, $(SRC))
 
 all: sdl-instead$(EXE)
 
-$(OBJ): %.o : %.c gui.h menu.h menu-en.h
+$(OBJ): %.o : %.c gui.h menu.h config.h game.h themes.h externals.h internals.h util.h
 	$(CC) -c $(<) $(I) $(CFLAGS)
 
 sdl-instead$(EXE):  $(OBJ) $(RESOURCES)

@@ -3,8 +3,10 @@
 
 #define FONT_SZ(v) ((v) * (1.0f + ((0.1f * opt_fsize))))
 
-#define KBD_NORMAL	0
-#define KBD_SMART	1
+
+
+#define KBD_SMART	0
+#define KBD_NORMAL	1
 #define KBD_INVERSE	2
 #define KBD_MAX		3
 

@@ -182,7 +182,7 @@ char *game_menu_gen(void)
 	} else if (cur_menu == menu_about) {
 		snprintf(menu_buff, sizeof(menu_buff), ABOUT_MENU, VERSION);
 	} else if (cur_menu == menu_settings) {
-		char *kbd [KBD_MAX] = { KBD_MODE_NORMAL, KBD_MODE_SMART, KBD_MODE_INVERSE };
+		char *kbd [KBD_MAX] = { KBD_MODE_SMART, KBD_MODE_NORMAL, KBD_MODE_INVERSE };
 		snprintf(menu_buff, sizeof(menu_buff), SETTINGS_MENU, 
 		snd_vol_to_pcn(snd_volume_mus(-1)), snd_hz(), opt_music?ON:OFF, opt_click?ON:OFF,
 		opt_fs?ON:OFF, opt_fsize, opt_hl?ON:OFF, opt_motion?ON:OFF, opt_filter?ON:OFF, kbd[opt_kbd],
