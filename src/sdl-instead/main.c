@@ -7,6 +7,7 @@ extern void debug_done(void);
 int debug_sw = 0;
 char *game_sw = NULL;
 char *games_sw = NULL;
+char *theme_sw = NULL;
 char *themes_sw = NULL;
 
 int main(int argc, char **argv)
@@ -28,6 +29,11 @@ int main(int argc, char **argv)
 				game_sw = argv[++i];
 			else
 				game_sw = "";
+		} else if (!strcmp(argv[i], "-theme")) {
+			if ((i + 1) < argc)
+				theme_sw = argv[++i];
+			else
+				theme_sw = "";
 		} else if (!strcmp(argv[i], "-gamespath")) {
 			if ((i + 1) < argc)
 				games_sw = argv[++i];
@@ -73,9 +79,13 @@ int main(int argc, char **argv)
 	cfg_load();
 	
 	if (game_sw) {
-		if (opt_game)
-			free(opt_game);
+		FREE(opt_game);
 		opt_game = game_sw;
+	}	
+
+	if (theme_sw) {
+		FREE(opt_theme);
+		opt_theme = theme_sw;
 	}	
 	
 	if (opt_theme)

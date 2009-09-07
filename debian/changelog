@@ -1,5 +1,6 @@
 instead (0.8.9) unstable; urgency=low
 
+  * -gamespath -game -themespath -theme options
   * runtime languages
   * desabled function in stead
   * list_zap, list_concat
