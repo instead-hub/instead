@@ -1724,14 +1724,14 @@ static int select_ref(int prev, int last)
 	} else if (xref) {
 		if (prev) {
 			if (!(xref = xref_prev(xref)) || xref_visible(xref, elem)) {
-				if (!box_isscroll_up(elem->id))
+				if (!box_isscroll_up(elem->id) || !box_isscroll_down(elem->id))
 					return -1;
 				else
 					xref = get_xref(elem->id, 1);
 			}
 		} else {
 			if (!(xref = xref_next(xref)) || xref_visible(xref, elem)) {
-				if (!box_isscroll_down(elem->id))
+				if (!box_isscroll_down(elem->id) || !box_isscroll_up(elem->id))
 					return -1;
 				else
 					xref = get_xref(elem->id, 0);
@@ -1854,9 +1854,11 @@ int game_loop(void)
 			
 				if (menu_shown || lm) {
 					if (select_ref(prev, 0)) {
-						if (opt_kbd == KBD_SMART)
+						if (opt_kbd == KBD_SMART) {
 							(prev)?game_scroll_up(1):game_scroll_down(1);
-						select_ref(!prev, 1);
+							select_ref(!prev, 1);
+						} else
+							select_ref(prev, 1);
 					}
 				} else
 					(prev)?game_scroll_up(1):game_scroll_down(1);
