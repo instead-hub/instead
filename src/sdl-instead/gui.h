@@ -25,6 +25,22 @@ iface.em = function(self, str)\n\
 		if str == nil then return nil; end; \n\
 		return cat('<i>',str,'</i>');\n\
 end;\n\
+iface.right = function(self, str)\n\
+		if str == nil then return nil; end; \n\
+		return cat('<r>',str,'</r>');\n\
+end;\n\
+iface.left = function(self, str)\n\
+		if str == nil then return nil; end; \n\
+		return cat('<l>',str,'</l>');\n\
+end;\n\
+iface.center = function(self, str)\n\
+		if str == nil then return nil; end; \n\
+		return cat('<c>',str,'</c>');\n\
+end;\n\
+iface.bold = function(self, str)\n\
+		if str == nil then return nil; end; \n\
+		return cat('<b>',str,'</b>');\n\
+end;\n\
 \n\
 iface.inv = function(self, str)\n\
 	if str then\n\

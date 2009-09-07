@@ -29,6 +29,25 @@ function cat(v,...)
 	return res;
 end
 
+function em(v)
+	return iface:em(v)
+end
+
+function right(v)
+	return iface:right(v)
+end
+
+function left(v)
+	return iface:left(v)
+end
+
+function center(v)
+	return iface:center(v)
+end
+
+function bold(v)
+	return iface:bold(v)
+end
 
 function p(...)
  	io.write(fmt(unpack(arg)))
@@ -1294,6 +1313,18 @@ function strip(s)
 end
 iface = {
 	em = function(self, str)
+		return str;
+	end,
+	right = function(self, str)
+		return str;
+	end,
+	left = function(self, str)
+		return str;
+	end,
+	center = function(self, str)
+		return str;
+	end,
+	bold = function(self, str)
 		return str;
 	end,
 	xref = function(self, str, obj)
