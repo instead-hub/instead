@@ -52,6 +52,7 @@ extern char 	*game_cfg_path(void);
 extern char 	*game_save_path(int rc, int nr);
 
 extern char 	*game_locale(void);
+extern void 	game_cursor(int on); /* must be called with -1 before gfx change and 1 after */
 
 struct game {
 	char *path;

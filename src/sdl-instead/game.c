@@ -8,7 +8,7 @@ char	*curgame_dir = NULL;
 
 int game_own_theme = 0;
 
-static void game_cursor(int on);
+void game_cursor(int on);
 static void mouse_reset(void);
 static void menu_toggle(void);
 
@@ -1096,6 +1096,7 @@ int game_cmd(char *cmd)
 	
 	/* draw title and ways */
 	if (new_pict || new_place) {
+		game_cursor(-1);
 		img_t offscreen = gfx_new(game_theme.w, game_theme.h);
 		oldscreen = gfx_screen(offscreen);
 		gfx_draw(oldscreen, 0, 0);
@@ -1138,6 +1139,7 @@ int game_cmd(char *cmd)
 //	scene_scrollbar();
 	if (new_pict || new_place) {
 		img_t offscreen;
+		game_cursor(-1);
 		offscreen = gfx_screen(oldscreen);
 		gfx_change_screen(offscreen);
 		gfx_free_image(offscreen);
@@ -1453,7 +1455,7 @@ int game_click(int x, int y, int action)
 	return 0;
 }
 
-static void game_cursor(int on)
+void game_cursor(int on)
 {
 	static img_t	grab = NULL;
 	static img_t 	cur;

@@ -351,7 +351,7 @@ function list_add(self, name, pos)
 --		error "No string adding to list."
 --	end
 	nam = deref(name);
-	if list_find(self, nam) then
+	if self:look(nam) then
 		return nil
 	end
 	self.__modifyed__ = true;
@@ -425,12 +425,12 @@ end
 
 function list_search(self, n)
 	local i;
-	i = list_find(self, n);
+	i = self:look(n);
 	if not i then
-		i = list_name(self, n);
+		i = self:name(n);
 	end
 	if not i and tonumber(n) then
-		i = list_id(self, tonumber(n));
+		i = self:byid(tonumber(n));
 		if not i then
 			return nil
 		end

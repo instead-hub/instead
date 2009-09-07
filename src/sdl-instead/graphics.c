@@ -2097,8 +2097,10 @@ static void update_gfx(void *aux)
 	img_t img = (img_t) aux;
 	if (step_nr == -1)
 		return;
+	game_cursor(-1);
 	gfx_set_alpha(img, (255 * (step_nr + 1)) / ALPHA_STEPS);
 	gfx_draw(img, 0, 0);
+	game_cursor(1);
 	gfx_flip();
 	step_nr ++;
 	if (step_nr == ALPHA_STEPS) {
