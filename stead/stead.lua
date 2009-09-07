@@ -1063,6 +1063,7 @@ function check_room(k, v)
 end
 
 function check_player(k, v)
+	v.where = deref(v.where);
 	if v.obj and not v.obj:check() then
 		error ("error in player (obj): "..k);
 	end
@@ -1075,16 +1076,21 @@ function do_ini(self)
 		v = call(v, 'ini');
 		v = cat(v, "^^");
 	end
+
 	math.randomseed(tonumber(os.date("%m%d%H%M%S")))
 	for_each_object(call_ini);
 	for_each_player(call_ini);
 --	for_each_room(call_ini);
-	for_each_object(check_object);
-	for_each_room(check_room);
-	for_each_player(check_player);
+
+	game.pl = deref(game.pl);
+	game.where = deref(game.where);
 	if not game.lifes:check() then
 		error ("error in game (lifes).");
 	end
+
+	for_each_object(check_object);
+	for_each_room(check_room);
+	for_each_player(check_player);
 	me():tag();
 	if not self.showlast then
 		self._lastdisp = nil;
@@ -1243,7 +1249,7 @@ end
 function game_save(self, name, file) 
 	local h;
 	if file ~= nil then
-		file:write(name..".pl = '"..self.pl.."'\n");
+		file:write(name..".pl = '"..deref(self.pl).."'\n");
 		savemembers(file, self, name, false);
 		return nil, true
 	end
