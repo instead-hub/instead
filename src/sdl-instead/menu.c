@@ -339,6 +339,7 @@ int game_menu_act(const char *a)
 			game_change_vol(0, old_vol);
 			old_vol = 0;
 		}
+		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a,"/music")) {
 		opt_music ^= 1;
 		if (!opt_music) {

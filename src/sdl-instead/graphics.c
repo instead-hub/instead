@@ -2102,7 +2102,7 @@ static void update_gfx(void *aux)
 	game_cursor(-1);
 	gfx_set_alpha(img, (255 * (step_nr + 1)) / ALPHA_STEPS);
 	gfx_draw(img, 0, 0);
-	game_cursor(1);
+	game_cursor(CURSOR_DRAW);
 	gfx_flip();
 	step_nr ++;
 	if (step_nr == ALPHA_STEPS) {
@@ -2126,6 +2126,6 @@ void gfx_change_screen(img_t src)
 	step_nr = 0;
 	han = SDL_AddTimer(60, update, src);
 	while (input(&ev, 1) >=0 && step_nr != -1) /* just wait for change */
-		game_cursor(1);
+		game_cursor(CURSOR_ON);
 	SDL_RemoveTimer(han);
 }

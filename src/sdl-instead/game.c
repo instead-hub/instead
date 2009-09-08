@@ -159,7 +159,7 @@ static int menu_shown = 0;
 int game_cmd(char *cmd);
 void game_clear(int x, int y, int w, int h)
 {
-	game_cursor(-1);
+	game_cursor(CURSOR_CLEAR);
 	if (game_theme.bg)
 		gfx_draw_bg(game_theme.bg, x, y, w, h);
 	else
@@ -612,7 +612,7 @@ void el_update(int n)
 	x = o->x;
 	y = o->y;
 	el_size(n, &w, &h);
-	game_cursor(1); /* todo */
+	game_cursor(CURSOR_DRAW);
 	gfx_update(x, y, w, h);
 	return;
 }
@@ -714,7 +714,7 @@ void el_draw(int n)
 	y = o->y;
 	if (!o->p.p)
 		return;
-	game_cursor(-1);
+	game_cursor(CURSOR_CLEAR);
 	if (o->type == elt_image)
 		gfx_draw(o->p.img, x, y);
 	else if (o->type == elt_layout)
@@ -780,7 +780,7 @@ void game_menu_box(int show, const char *txt)
 		el(el_menu)->p.p = NULL;
 	}
 	if (menubg) {
-		game_cursor(-1);
+		game_cursor(CURSOR_CLEAR);
 		gfx_draw(menubg, mx, my);
 		gfx_free_image(menubg);
 		menubg = NULL;
@@ -793,7 +793,7 @@ void game_menu_box(int show, const char *txt)
 //	el_update(el_menu_button);
 
 	if (!show) {
-		game_cursor(2);
+		game_cursor(CURSOR_DRAW);
 		gfx_flip();
 		return;
 	}
@@ -826,12 +826,12 @@ void game_menu_box(int show, const char *txt)
 	my = y - b - pad;
 	mw = w + (b + pad) * 2;
 	mh = h + (b + pad) * 2;
-	game_cursor(-1);
+	game_cursor(CURSOR_CLEAR);
 	menubg = gfx_grab_screen(mx, my, mw, mh);
 	gfx_draw(menu, mx, my);
 	el_set(el_menu, elt_layout, /*game_theme.win_x*/  x, y, lay);
 	el_draw(el_menu);
-	game_cursor(2);
+	game_cursor(CURSOR_DRAW);
 	gfx_flip();
 }
 
@@ -1096,7 +1096,7 @@ int game_cmd(char *cmd)
 	
 	/* draw title and ways */
 	if (new_pict || new_place) {
-		game_cursor(-1);
+		game_cursor(CURSOR_CLEAR);
 		img_t offscreen = gfx_new(game_theme.w, game_theme.h);
 		oldscreen = gfx_screen(offscreen);
 		gfx_draw(oldscreen, 0, 0);
@@ -1139,14 +1139,14 @@ int game_cmd(char *cmd)
 //	scene_scrollbar();
 	if (new_pict || new_place) {
 		img_t offscreen;
-		game_cursor(-1);
+		game_cursor(CURSOR_CLEAR);
 		offscreen = gfx_screen(oldscreen);
 		gfx_change_screen(offscreen);
 		gfx_free_image(offscreen);
 //		input_clear();
 		goto err;
 	}
-	game_cursor(2);
+	game_cursor(CURSOR_DRAW);
 	gfx_flip();
 //	input_clear();
 err:
@@ -1158,16 +1158,15 @@ err:
 }
 
 void game_update(int x, int y, int w, int h)
-{
-	game_cursor(1);
+{	
+	game_cursor(CURSOR_DRAW);
 	gfx_update(x, y, w, h);
 }
 
 void game_xref_update(xref_t xref, int x, int y)
 {
-	game_cursor(-1);
+	game_cursor(CURSOR_CLEAR);
 	xref_update(xref, x, y, game_clear, game_update);
-	game_cursor(1);
 }
 
 xref_t	inv_xref = NULL;
@@ -1460,18 +1459,20 @@ void game_cursor(int on)
 {
 	static img_t	grab = NULL;
 	static img_t 	cur;
-	static int xc = 0, yc = 0, ow = 0, oh = 0; //, w, h;
+	static int xc = 0, yc = 0, w = 0, h = 0; //, w, h;
+	
+	
 	if (grab) {
 		gfx_draw(grab, xc, yc);
 		gfx_free_image(grab);
 		grab = NULL;
-		if (!on) {
-			gfx_update(xc, yc, ow, oh);
+		if (on == CURSOR_OFF) {
+			gfx_update(xc, yc, w, h);
 			return;
 		}
 	}
 
-	if (on == -1)
+	if (on == CURSOR_CLEAR)
 		return;
 	
 	cur = (inv_xref) ? game_theme.use:game_theme.cursor;
@@ -1480,21 +1481,27 @@ void game_cursor(int on)
 		return;	
 
 	do {
-		int ox = xc;
+		int ox = xc; 
 		int oy = yc;
-		gfx_cursor(&xc, &yc, NULL, NULL);
-		xc -= game_theme.cur_x;
-		yc -= game_theme.cur_y;
-//		xc += w/2;
-//		yc += h/2;
-		grab = gfx_grab_screen(xc, yc, gfx_img_w(cur), gfx_img_h(cur));
+		int ow = w; 
+		int oh = h;
+
+		if (on != CURSOR_DRAW) { 
+			gfx_cursor(&xc, &yc, NULL, NULL);
+			xc -= game_theme.cur_x;
+			yc -= game_theme.cur_y;
+		}
+		
+		w = gfx_img_w(cur);
+		h = gfx_img_h(cur);
+
+		grab = gfx_grab_screen(xc, yc, w, h);
 		gfx_draw(cur, xc, yc);
-		if (on != 2) {
-			gfx_update(xc, yc, gfx_img_w(cur), gfx_img_h(cur));
+	
+		if (on != CURSOR_DRAW) {
+			gfx_update(xc, yc, w, h);
 			gfx_update(ox, oy, ow, oh);
 		}
-		ow = gfx_img_w(cur);
-		oh = gfx_img_h(cur);
 	} while (0);
 }
 
@@ -1810,7 +1817,7 @@ int game_loop(void)
 	while (1) {
 		int rc;
 		ev.x = -1;
-		game_cursor(-1); /* release bg */
+		game_cursor(CURSOR_CLEAR); /* release bg */
 		while ((rc = input(&ev, 1)) == AGAIN);
 		if (rc == -1) {/* close */
 			break;
@@ -1918,7 +1925,7 @@ int game_loop(void)
 			gfx_cursor(&x, &y, NULL, NULL);
 			game_highlight(x, y, 1);
 		}
-		game_cursor(1);
+		game_cursor(CURSOR_ON);
 	}
 	return 0;
 }
