@@ -1458,9 +1458,8 @@ int game_click(int x, int y, int action)
 void game_cursor(int on)
 {
 	static img_t	grab = NULL;
-	static img_t 	cur;
+	static img_t 	cur = NULL;
 	static int xc = 0, yc = 0, w = 0, h = 0; //, w, h;
-	
 	
 	if (grab) {
 		gfx_draw(grab, xc, yc);
@@ -1474,8 +1473,9 @@ void game_cursor(int on)
 
 	if (on == CURSOR_CLEAR)
 		return;
-	
-	cur = (inv_xref) ? game_theme.use:game_theme.cursor;
+		
+	if (on != CURSOR_DRAW)
+		cur = (inv_xref) ? game_theme.use:game_theme.cursor;
 	
 	if (!cur)
 		return;	
@@ -1501,7 +1501,7 @@ void game_cursor(int on)
 		if (on != CURSOR_DRAW) {
 			gfx_update(xc, yc, w, h);
 			gfx_update(ox, oy, ow, oh);
-		}
+		} 
 	} while (0);
 }
 
