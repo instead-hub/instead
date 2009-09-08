@@ -1476,14 +1476,11 @@ function me()
 end
 
 function where(s)
-	if s then
-		return ref(ref(s).__where__);
-	end
-	return me().where;
+	return ref(ref(s).__where__);
 end
 
 function here()
-	return ref(where());
+	return ref(me().where);
 end
 
 function from()
