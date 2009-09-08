@@ -612,7 +612,7 @@ void el_update(int n)
 	x = o->x;
 	y = o->y;
 	el_size(n, &w, &h);
-	game_cursor(2);
+	game_cursor(1); /* todo */
 	gfx_update(x, y, w, h);
 	return;
 }
