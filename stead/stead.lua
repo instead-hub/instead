@@ -199,10 +199,10 @@ end
 
 function obj_look(self)
 	local i, vv, o
-	local v = call(self,'dsc');
 	if isDisabled(self) then
 		return
 	end
+	local v = call(self,'dsc');
 	if game.hinting then
 		v = obj_xref(self, v);
 	elseif v then

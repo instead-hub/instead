@@ -1841,7 +1841,11 @@ int game_loop(void)
 				menu_toggle();
 			} else if (!is_key(&ev, "tab")) {
 				select_frame(shift_pressed);
-			} else if (!is_key(&ev, "up") || !is_key(&ev, "down") ||
+			} /*else if (!is_key(&ev, "home") || !is_key(&ev, "[7]")) {
+				select_ref(0, 1);
+			} else if (!is_key(&ev, "end") || !is_key(&ev, "[1]")) {
+				select_ref(1, 1);
+			} */else if (!is_key(&ev, "up") || !is_key(&ev, "down") ||
 					!is_key(&ev, "[8]") || !is_key(&ev, "[2]")) {
 		
 				int lm;
