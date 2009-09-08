@@ -1476,6 +1476,9 @@ function me()
 end
 
 function where(s)
+	if isPlayer(ref(s)) then
+		return ref(ref(s).where);
+	end
 	return ref(ref(s).__where__);
 end
 
