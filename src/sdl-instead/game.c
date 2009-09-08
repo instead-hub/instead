@@ -612,7 +612,7 @@ void el_update(int n)
 	x = o->x;
 	y = o->y;
 	el_size(n, &w, &h);
-	game_cursor(1);
+	game_cursor(2);
 	gfx_update(x, y, w, h);
 	return;
 }
@@ -793,7 +793,7 @@ void game_menu_box(int show, const char *txt)
 //	el_update(el_menu_button);
 
 	if (!show) {
-		game_cursor(1);
+		game_cursor(2);
 		gfx_flip();
 		return;
 	}
@@ -831,7 +831,7 @@ void game_menu_box(int show, const char *txt)
 	gfx_draw(menu, mx, my);
 	el_set(el_menu, elt_layout, /*game_theme.win_x*/  x, y, lay);
 	el_draw(el_menu);
-	game_cursor(1);
+	game_cursor(2);
 	gfx_flip();
 }
 
@@ -1146,6 +1146,7 @@ int game_cmd(char *cmd)
 //		input_clear();
 		goto err;
 	}
+	game_cursor(2);
 	gfx_flip();
 //	input_clear();
 err:
@@ -1488,8 +1489,10 @@ void game_cursor(int on)
 //		yc += h/2;
 		grab = gfx_grab_screen(xc, yc, gfx_img_w(cur), gfx_img_h(cur));
 		gfx_draw(cur, xc, yc);
-		gfx_update(xc, yc, gfx_img_w(cur), gfx_img_h(cur));
-		gfx_update(ox, oy, ow, oh);
+		if (on != 2) {
+			gfx_update(xc, yc, gfx_img_w(cur), gfx_img_h(cur));
+			gfx_update(ox, oy, ow, oh);
+		}
 		ow = gfx_img_w(cur);
 		oh = gfx_img_h(cur);
 	} while (0);
@@ -1738,7 +1741,6 @@ static int select_ref(int prev, int last)
 			}
 		}
 	} 
-	
 	if (!xref)
 		xref = get_nearest_xref(elem->id, x, y);
 	if (!xref)

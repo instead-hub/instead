@@ -1552,7 +1552,7 @@ xref_t txt_box_xrefs(textbox_t tbox)
 	struct line *line;
 
 	for (line = box->line; line; line = line->next) {
-		if (line->y + line->h < box->off)
+		if (line->y < box->off)
 			continue; /* too high */
 		if (line->y + line->h > box->h + box->off)
 			break; /* bottom */
