@@ -29,30 +29,25 @@ function cat(v,...)
 	return res;
 end
 
-function em(v)
+function txtem(v)
 	return iface:em(v)
 end
 
-function right(v)
+function txtr(v)
 	return iface:right(v)
 end
 
-function left(v)
+function txtl(v)
 	return iface:left(v)
 end
 
-function center(v)
+function txtc(v)
 	return iface:center(v)
 end
 
-function bold(v)
+function txtb(v)
 	return iface:bold(v)
 end
-
-function p(...)
- 	io.write(fmt(unpack(arg)))
-end
-
 
 function fmt(...)
 	local i, res
