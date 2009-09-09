@@ -1797,9 +1797,6 @@ function disabled(o)
 end
 
 function isForSave(k)
-	if string.find(k, '_') ==  1 or string.match(k,'^%u') then
-		return true
-	end
-	return false
+	return string.find(k, '_') ==  1 or string.match(k,'^%u')
 end
 -- here the game begins
