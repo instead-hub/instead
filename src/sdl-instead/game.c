@@ -535,7 +535,7 @@ void game_done(void)
 	if (menu_shown)
 		menu_toggle();
 	mouse_reset();
-	
+	game_cursor(CURSOR_OFF);	
 	if (el_img(el_spic))
 		gfx_free_image(el_img(el_spic));
 
@@ -952,8 +952,14 @@ void game_music_player(void)
 char *horiz_inv(char *invstr)
 {
 	char *p = invstr;
-	char *ns = malloc(strlen(p) * 3);
-	char *np = ns;
+	char *ns;
+	char *np;
+
+	if (!p || !(*p))
+		return invstr;
+
+	np = ns = malloc((strlen(p) + 2) * 3);
+
 	if (!np)
 		return invstr;
 	while (*p) {
@@ -1460,7 +1466,10 @@ void game_cursor(int on)
 	static img_t	grab = NULL;
 	static img_t 	cur = NULL;
 	static int xc = 0, yc = 0, w = 0, h = 0; //, w, h;
-	
+
+	if (on == CURSOR_OFF)	
+		cur = NULL;
+
 	if (grab) {
 		gfx_draw(grab, xc, yc);
 		gfx_free_image(grab);
@@ -1471,7 +1480,7 @@ void game_cursor(int on)
 		}
 	}
 
-	if (on == CURSOR_CLEAR)
+	if (on == CURSOR_CLEAR || on == CURSOR_OFF)
 		return;
 		
 	if (on != CURSOR_DRAW)
@@ -1663,7 +1672,9 @@ static int xref_visible(xref_t xref, struct el *elem)
 	if (!elem || !xref)
 		return -1;
 		
-	xref_rel_position(xref, elem, &x, &y);	
+	if (xref_rel_position(xref, elem, &x, &y))
+		return -1;
+
 	el_size(elem->id, &w, &h);
 	if (y < 0 || y >= h)
 		return -1;
@@ -1679,7 +1690,9 @@ static xref_t get_nearest_xref(int i, int mx, int my)
 		return NULL;
 	for (xref = get_xref(i, 0); !xref_visible(xref, el(i)); xref = xref_next(xref)) {
 		int x, y, disp;
-		xref_rel_position(xref, el(i), &x, &y);
+		if (xref_rel_position(xref, el(i), &x, &y))
+			continue;
+
 		disp = (x + el(i)->x - mx) * (x + el(i)->x - mx) + (y + el(i)->y - my) * (y + el(i)->y - my);
 		if (disp < min_disp) {
 			min_disp = disp;
@@ -1913,6 +1926,7 @@ int game_loop(void)
 			game_scroll_down(ev.count);
 		} else if (ev.type == MOUSE_MOTION) {
 			if (motion_mode) {
+				motion_mode = 2;
 				scroll_motion(motion_id, motion_y - ev.y);
 				motion_y = ev.y;
 			}

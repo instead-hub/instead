@@ -1951,8 +1951,8 @@ int xref_position(xref_t x, int *xc, int *yc)
 {
 	int i;
 	int w = 0;
-	struct line *line;
-	struct word *word;
+	struct line *line = NULL;
+	struct word *word = NULL;
 	struct xref *xref = (struct xref*)x;
 
 	if (!xref || !xref->num)
@@ -1972,6 +1972,10 @@ int xref_position(xref_t x, int *xc, int *yc)
 		if (w < 0)
 			break;
 	}
+
+	if (!line || !word)
+		return -1;
+
 	if (xc)
 		*xc = word->x + (word->w + w);
 	if (yc)
