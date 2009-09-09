@@ -1,11 +1,6 @@
 #include "externals.h"
 #include "internals.h"
 
-#ifdef RUSSIAN
-//#include "menu-ru.h"
-#else
-//#include "menu-en.h"
-#endif
 
 static int restart_needed = 0;
 static int games_menu_from = 0;
