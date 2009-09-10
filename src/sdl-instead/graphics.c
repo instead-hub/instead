@@ -484,12 +484,6 @@ int gfx_init(void)
 		fprintf(stderr, "Can't init TTF subsystem.\n");
 		return -1;
 	}
-
-	// Initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER /*| SDL_INIT_AUDIO*/) < 0) {
-		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
-		return -1;
-  	}
   	
   	SDL_WM_SetCaption( title, title );
 
@@ -540,7 +534,6 @@ void gfx_done(void)
 		SDL_RemoveTimer(timer_han);
 	timer_han = NULL;
 	TTF_Quit();
-	SDL_QuitSubSystem(SDL_INIT_VIDEO | SDL_INIT_TIMER);
 }
 
 img_t gfx_scale(img_t src, float xscale, float yscale)

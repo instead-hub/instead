@@ -1,3 +1,4 @@
+#include <SDL.h>
 #include "externals.h"
 #include "internals.h"
 
@@ -92,6 +93,12 @@ int main(int argc, char **argv)
 		game_theme_select(opt_theme);
 	if (!curtheme_dir)
 		game_theme_select(DEFAULT_THEME);
+	
+	// Initialize SDL
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
+		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
+		return -1;
+  	}
 
 	if (game_init(opt_game)) {
 		game_error(opt_game);
@@ -101,6 +108,7 @@ int main(int argc, char **argv)
 	game_done();
 	if (debug_sw)
 		debug_done();
+	SDL_Quit();
 	return 0;
 }
 

@@ -9,6 +9,7 @@ instead (0.8.9) unstable; urgency=low
   * full keyboard control!
   * alt enter fix
   * gfx cursor support!
+  * no reset video while change game/theme
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 5 Aug 2009 11:25:01 +0400
 
