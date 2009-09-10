@@ -3,6 +3,11 @@
 
 #include <SDL.h>
 
+int mouse_focus(void)
+{
+	return !!(SDL_GetAppState() & SDL_APPMOUSEFOCUS);
+}
+
 void push_user_event(void (*p) (void*), void *data)
 {
 	SDL_Event event;

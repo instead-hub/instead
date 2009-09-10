@@ -1474,15 +1474,15 @@ void game_cursor(int on)
 		gfx_draw(grab, xc, yc);
 		gfx_free_image(grab);
 		grab = NULL;
-		if (on == CURSOR_OFF) {
-			gfx_update(xc, yc, w, h);
-			return;
-		}
+	}
+	
+	if (on == CURSOR_OFF) {
+		gfx_update(xc, yc, w, h);
+		return;
 	}
 
 	if (on == CURSOR_CLEAR || on == CURSOR_OFF)
 		return;
-		
 	if (on != CURSOR_DRAW)
 		cur = (inv_xref) ? game_theme.use:game_theme.cursor;
 	
@@ -1939,7 +1939,10 @@ int game_loop(void)
 			gfx_cursor(&x, &y, NULL, NULL);
 			game_highlight(x, y, 1);
 		}
-		game_cursor(CURSOR_ON);
+		if (!mouse_focus()) {
+			game_cursor(CURSOR_OFF);
+		} else
+			game_cursor(CURSOR_ON);
 	}
 	return 0;
 }
