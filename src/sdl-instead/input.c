@@ -3,9 +3,11 @@
 
 #include <SDL.h>
 
+static int m_focus = 0;
+
 int mouse_focus(void)
 {
-	return !!(SDL_GetAppState() & SDL_APPMOUSEFOCUS);
+	return m_focus;
 }
 
 void push_user_event(void (*p) (void*), void *data)
@@ -24,6 +26,7 @@ void push_user_event(void (*p) (void*), void *data)
 int input_init(void)
 {
 	SDL_EnableKeyRepeat(500, 30);
+	m_focus = !!(SDL_GetAppState() & SDL_APPMOUSEFOCUS);
 	return 0;
 }
 
@@ -56,6 +59,14 @@ int input(struct inp_event *inp, int wait)
 		p(event.user.data2);
 		return AGAIN;
 		}
+	case SDL_ACTIVEEVENT:
+		if (event.active.state & SDL_APPMOUSEFOCUS) {
+			if (event.active.gain) 
+				m_focus = 1;
+			else
+				m_focus = 0;
+		}
+		return 0;
 	case SDL_QUIT:
 		return -1;
 	case SDL_KEYDOWN:	//A key has been pressed
