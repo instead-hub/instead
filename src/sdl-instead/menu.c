@@ -33,9 +33,9 @@ char *QUIT_MENU = NULL;
 char *ON = NULL;
 char *OFF = NULL;
 
-char *KBD_MODE_NORMAL = NULL;
+char *KBD_MODE_LINKS = NULL;
 char *KBD_MODE_SMART = NULL;
-char *KBD_MODE_INVERSE = NULL;
+char *KBD_MODE_SCROLL = NULL;
 
 static char  menu_buff[4096];
 
@@ -177,7 +177,7 @@ char *game_menu_gen(void)
 	} else if (cur_menu == menu_about) {
 		snprintf(menu_buff, sizeof(menu_buff), ABOUT_MENU, VERSION);
 	} else if (cur_menu == menu_settings) {
-		char *kbd [KBD_MAX] = { KBD_MODE_SMART, KBD_MODE_NORMAL, KBD_MODE_INVERSE };
+		char *kbd [KBD_MAX] = { KBD_MODE_SMART, KBD_MODE_LINKS, KBD_MODE_SCROLL };
 		snprintf(menu_buff, sizeof(menu_buff), SETTINGS_MENU, 
 		snd_vol_to_pcn(snd_volume_mus(-1)), snd_hz(), opt_music?ON:OFF, opt_click?ON:OFF,
 		opt_fs?ON:OFF, opt_fsize, opt_hl?ON:OFF, opt_motion?ON:OFF, opt_filter?ON:OFF, kbd[opt_kbd],
@@ -466,9 +466,9 @@ static void lang_free(void)
 	FREE(QUIT_MENU);
 	FREE(ON);
 	FREE(OFF);
-	FREE(KBD_MODE_NORMAL);
+	FREE(KBD_MODE_LINKS);
 	FREE(KBD_MODE_SMART);
-	FREE(KBD_MODE_INVERSE);
+	FREE(KBD_MODE_SCROLL);
 }
 
 static int lang_ok(void)
@@ -478,7 +478,7 @@ static int lang_ok(void)
 		MAIN_MENU && ABOUT_MENU && BACK_MENU && SETTINGS_MENU &&
 		CUSTOM_THEME_MENU && OWN_THEME_MENU && SELECT_GAME_MENU && SELECT_THEME_MENU &&
 		SAVED_MENU && NOGAMES_MENU && NOTHEMES_MENU && QUIT_MENU &&
-		ON && OFF && KBD_MODE_NORMAL && KBD_MODE_SMART && KBD_MODE_INVERSE)
+		ON && OFF && KBD_MODE_LINKS && KBD_MODE_SMART && KBD_MODE_SCROLL)
 		return 0;
 	return -1;
 }	
@@ -506,9 +506,9 @@ struct parser lang_parser[] = {
 	{ "QUIT_MENU", parse_esc_string, &QUIT_MENU },
 	{ "ON", parse_esc_string, &ON },
 	{ "OFF", parse_esc_string, &OFF },
-	{ "KBD_MODE_NORMAL", parse_esc_string, &KBD_MODE_NORMAL },
+	{ "KBD_MODE_LINKS", parse_esc_string, &KBD_MODE_LINKS },
 	{ "KBD_MODE_SMART", parse_esc_string, &KBD_MODE_SMART },
-	{ "KBD_MODE_INVERSE", parse_esc_string, &KBD_MODE_INVERSE },
+	{ "KBD_MODE_SCROLL", parse_esc_string, &KBD_MODE_SCROLL },
 	{ NULL,  },
 };
 
