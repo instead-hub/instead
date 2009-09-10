@@ -21,6 +21,10 @@ end;\n\
 iface.title = function(self, str)\n\
 		return nil\n\
 end;\n\
+iface.under = function(self, str)\n\
+		if str == nil then return nil; end; \n\
+		return cat('<u>',str,'</u>');\n\
+end;\n\
 iface.em = function(self, str)\n\
 		if str == nil then return nil; end; \n\
 		return cat('<i>',str,'</i>');\n\

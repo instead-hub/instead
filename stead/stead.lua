@@ -49,6 +49,10 @@ function txtb(v)
 	return iface:bold(v)
 end
 
+function txtu(v)
+	return iface:under(v)
+end
+
 function fmt(...)
 	local i, res
 	if arg == nil then
@@ -1326,6 +1330,9 @@ iface = {
 		return str;
 	end,
 	bold = function(self, str)
+		return str;
+	end,
+	under = function(self, str)
 		return str;
 	end,
 	xref = function(self, str, obj)
