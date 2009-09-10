@@ -20,15 +20,20 @@ char *getpath(const char *d, const char *n)
 	return p;
 }
 
+static int is_space(int c)
+{
+	return (c == ' ' || c == '\t');
+}
+
 char *strip(char *s)
 {
 	char *e;
-	while (isspace(*s))
+	while (is_space(*s))
 		s ++;
 	if (!*s)
 		return s;
 	e = s + strlen(s) - 1;
-	while (e != s && isspace(*e)) {
+	while (e != s && is_space(*e)) {
 		*e = 0;
 		e --;
 	}
