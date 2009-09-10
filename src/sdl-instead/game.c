@@ -329,6 +329,7 @@ int game_apply_theme(void)
 		return -1;
 	txt_layout_color(lay, game_theme.fgcol);
 	txt_layout_link_color(lay, game_theme.lcol);
+//	txt_layout_link_style(lay, 3);
 	txt_layout_active_color(lay, game_theme.acol);
 
 	txt_box_set(box, lay);

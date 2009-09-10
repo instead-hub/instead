@@ -1779,8 +1779,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 	img_t img = NULL;
 	if (!layout || !layout->fn)
 		return;
-	saved_style = TTF_GetFontStyle((TTF_Font *)(layout->fn));
-
+	saved_style = layout->style; 
 	TTF_SetFontStyle((TTF_Font *)(layout->fn), 0);
 	TTF_SizeUTF8((TTF_Font *)(layout->fn), " ", &spw, &h);
 
@@ -1804,7 +1803,11 @@ void _txt_layout_add(layout_t lay, char *txt)
 		eptr = process_token(ptr, layout, line, &xref, &sp2);
 		if (eptr) {
 			ptr = eptr;
-			TTF_SetFontStyle((TTF_Font *)(layout->fn), layout->style);
+			if (xref && layout->style == saved_style)
+				TTF_SetFontStyle((TTF_Font *)(layout->fn), layout->lstyle);
+			else
+				TTF_SetFontStyle((TTF_Font *)(layout->fn), layout->style);
+
 			if (!ptr || !*ptr)
 				break;
 			if (sp2)
@@ -1902,11 +1905,13 @@ void _txt_layout_add(layout_t lay, char *txt)
 //	layout->align = align;
 //	layout_debug(layout);
 //	fnt_draw_layout(layout, 300, 100, gfx_col(255,255,255));
-	TTF_SetFontStyle((TTF_Font *)(layout->fn), saved_style);
+//	TTF_SetFontStyle((TTF_Font *)(layout->fn), saved_style);
+	layout->style = saved_style;
 	return;
 err:
 	txt_layout_free(layout);
-	TTF_SetFontStyle((TTF_Font *)(layout->fn), saved_style);
+//	TTF_SetFontStyle((TTF_Font *)(layout->fn), saved_style);
+//	layout->style = saved_style;
 	return;
 }
 
