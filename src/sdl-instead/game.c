@@ -462,7 +462,7 @@ int game_init(const char *name)
 	if (name)
 		game_err_msg(NULL);
 
-	if (gfx_init() || input_init())
+	if (gfx_video_init() || input_init())
 		return -1;	
 
 	snd_init(opt_hz);
@@ -565,7 +565,7 @@ void game_done(void)
 	input_clear();
 	snd_done();
 	instead_done();
-	gfx_done();
+	gfx_video_done();
 	curgame_dir = NULL;
 	game_own_theme = 0;
 //	SDL_Quit();

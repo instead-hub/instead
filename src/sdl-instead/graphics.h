@@ -28,6 +28,10 @@ static inline color_t gfx_col(int r, int g, int b)
 	col.b = b;
 	return col;
 }
+
+extern int 	gfx_init(void);
+extern void 	gfx_done(void);
+
 extern int gfx_parse_color (const char *spec, color_t *def);
 extern void	gfx_flip(void);
 extern img_t	gfx_screen(img_t nscreen);
@@ -36,10 +40,10 @@ extern void 	gfx_noclip(void);
 extern void 	gfx_clip(int x, int y, int w, int h);
 extern int 	gfx_width;
 extern int 	gfx_height;
-extern int	gfx_init(void);
+extern int	gfx_video_init(void);
 extern int 	gfx_setmode(int w, int h, int fs);
 extern void	gfx_update(int x, int y, int w, int h);
-extern void	gfx_done(void);
+extern void	gfx_video_done(void);
 extern void	gfx_clear(int x, int y, int w, int h);
 extern void	gfx_draw(img_t pixmap, int x, int y);
 extern void	gfx_draw_wh(img_t p, int x, int y, int w, int h);

@@ -473,7 +473,7 @@ Uint32 counter_fn(Uint32 interval, void *p)
 	return interval;
 }
 
-int gfx_init(void)
+int gfx_video_init(void)
 {
 	char title[4096];
 
@@ -526,7 +526,7 @@ void gfx_update(int x, int y, int w, int h) {
 	SDL_UpdateRect(screen, x, y, w, h);
 }
 
-void gfx_done(void)
+void gfx_video_done(void)
 {
 	if (icon)
 		SDL_FreeSurface(icon);
@@ -2125,4 +2125,18 @@ void gfx_change_screen(img_t src)
 	while (input(&ev, 1) >=0 && step_nr != -1) /* just wait for change */
 		game_cursor(CURSOR_ON);
 	SDL_RemoveTimer(han);
+}
+
+int gfx_init(void)
+{
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
+		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
+		return -1;
+  	}
+	return 0;
+}
+
+void gfx_done(void)
+{
+	SDL_Quit();
 }
