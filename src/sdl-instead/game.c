@@ -1366,7 +1366,8 @@ int game_click(int x, int y, int action)
 		if (xref) {
 			xref_set_active(xref, 1);
 			game_xref_update(xref, elem->x, elem->y);
-		} else if (elem && elem->type == elt_box && opt_motion) {
+		} else if (elem && elem->type == elt_box && opt_motion &&
+				(!box_isscroll_up(elem->id) || !box_isscroll_down(elem->id))) {
 			motion_mode = 1;
 			motion_id = elem->id;
 			motion_y =y;
@@ -1505,7 +1506,8 @@ void game_cursor(int on)
 		h = gfx_img_h(cur);
 
 		grab = gfx_grab_screen(xc, yc, w, h);
-		gfx_draw(cur, xc, yc);
+		if (mouse_focus())
+			gfx_draw(cur, xc, yc);
 	
 		if (on != CURSOR_DRAW) {
 			gfx_update(xc, yc, w, h);
@@ -1546,6 +1548,9 @@ static void scroll_down(int id, int count)
 static void scroll_motion(int id, int off)
 {
 	game_highlight(-1, -1, 0);
+	if (!off || (off > 0 && box_isscroll_down(id)) ||
+		(off < 0  && box_isscroll_up(id)))
+		return;
 	txt_box_scroll(el_box(id), off);
 	el_clear(id);
 	el_draw(id);
