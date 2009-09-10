@@ -1944,10 +1944,7 @@ int game_loop(void)
 			gfx_cursor(&x, &y, NULL, NULL);
 			game_highlight(x, y, 1);
 		}
-		if (!mouse_focus()) {
-			game_cursor(CURSOR_OFF);
-		} else
-			game_cursor(CURSOR_ON);
+		game_cursor(CURSOR_ON);
 	}
 	return 0;
 }
