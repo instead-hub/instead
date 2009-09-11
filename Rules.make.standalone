@@ -14,8 +14,8 @@ LUA_LFLAGS=$(shell pkg-config --libs lua5.1)
 
 # for arch linux (may be others) use this
 #
-LUA_CFLAGS=$(shell pkg-config --cflags lua)
-LUA_LFLAGS=$(shell pkg-config --libs lua)
+# LUA_CFLAGS=$(shell pkg-config --cflags lua)
+# LUA_LFLAGS=$(shell pkg-config --libs lua)
 #
 
 SDL_CFLAGS=$(shell sdl-config --cflags)
