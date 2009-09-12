@@ -68,6 +68,7 @@ int input(struct inp_event *inp, int wait)
 		}
 		return 0;
 	case SDL_QUIT:
+		game_running = 0;
 		return -1;
 	case SDL_KEYDOWN:	//A key has been pressed
 		inp->type = KEY_DOWN; 

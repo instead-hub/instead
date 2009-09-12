@@ -1,5 +1,8 @@
 #include "externals.h"
 #include "internals.h"
+
+int game_running = 1;
+
 char *err_msg = NULL;
 
 #define ERR_MSG_MAX 512
@@ -1833,7 +1836,7 @@ int game_loop(void)
 	static int x = 0, y = 0;
 	struct inp_event ev;
 	memset(&ev, 0, sizeof(struct inp_event));
-	while (1) {
+	while (game_running) {
 		int rc;
 		ev.x = -1;
 		game_cursor(CURSOR_CLEAR); /* release bg */

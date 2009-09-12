@@ -7,6 +7,7 @@
 
 #define MAIN_FILE	"main.lua"
 
+extern int	game_running;
 
 extern int 	nosound_sw;
 extern int 	alsa_sw;
