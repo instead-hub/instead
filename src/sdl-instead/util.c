@@ -9,6 +9,7 @@ char *getfilepath(const char *d, const char *n)
 		strcpy(p, d);
 		strcat(p, "/");
 		strcat(p, n);
+		unix_path(p);
 	}
 	return p;
 }
