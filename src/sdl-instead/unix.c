@@ -28,8 +28,9 @@ void	nsleep(int u)
 char *game_locale(void)
 {
 	char *p;
-	char *s = strdup(getenv("LANG"));
-	if (!s)
+	char *s;
+	p = getenv("LANG");
+	if (!p || !(s = strdup(p)))
 		return NULL;
 	if ((p = strchr(s, '_')))
 		*p = 0;
