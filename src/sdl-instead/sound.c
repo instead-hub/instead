@@ -67,10 +67,10 @@ int snd_init(int hz)
 	if (!audio_buffers) /* wrong parameter? */
 		audio_buffers = 8192;
 
-//	if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0) {
-//		fprintf(stderr, "Unable to init audio!\n");
-//		return -1;
-//	}
+	if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0) {
+		fprintf(stderr, "Unable to init audio!\n");
+		return -1;
+	}
 	
 	if (alsa_sw) {
 		SDL_AudioInit("alsa");
@@ -208,7 +208,7 @@ void snd_done(void)
 		free(next_mus);
 	next_mus = NULL;
 	Mix_CloseAudio();
-//	SDL_QuitSubSystem(SDL_INIT_AUDIO);
+	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 }
 
 int snd_vol_from_pcn(int v)
