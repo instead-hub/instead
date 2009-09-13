@@ -57,7 +57,7 @@ static int process_cmd(char *n, char *v, struct parser *cmd_parser)
 static int fgetsesc(char *oline, size_t size, FILE *fp)
 {
 	int nr = 0;
-	char line[1024];
+	char line[4096];
 	*oline = 0;
 	*line = 0;
 	while (fgets(line, sizeof(line), fp)) {
@@ -159,6 +159,9 @@ int parse_esc_string(const char *v, void *data)
 			case 'n':
 				*ptr = '\n';
 				break;
+			case '$':
+				*ptr = '$';
+				break;	
 			case '\\':
 				*ptr = '\\';
 				break;
@@ -226,7 +229,9 @@ void unix_path(char *path)
 
 char *parse_tag(char *line, const char *tag, const char *comm, int *brk)
 {
+	int esc = 0;
 	char *l = line;
+	char *ns = NULL;
 	l += strspn(l, " \t");
 	if (strncmp(l, comm, strlen(comm))) { /* non coment block */
 		*brk = 1;
@@ -237,6 +242,22 @@ char *parse_tag(char *line, const char *tag, const char *comm, int *brk)
 		return NULL;
 	l += strlen(tag);
 	l += strspn(l, " \t");
-	l[strcspn(l, "$\n\r")] = 0;
-	return strdup(l);
+	
+	for (ns = l; *l; l++) {
+		l += strcspn(l, "\\$");
+		if (*l == '\\') {
+			esc ^= 1;
+			continue;
+		}
+		if (!esc) {
+			*l = 0;
+			break;
+		}
+		esc = 0;		
+	}
+	l = ns; ns = NULL;
+	if (parse_esc_string(l, &ns))
+		return NULL;
+	ns[strcspn(ns, "\n\r")] = 0;
+	return ns;
 }
