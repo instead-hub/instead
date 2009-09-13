@@ -1296,7 +1296,7 @@ end
 
 function game_step(self)
 	self._time = self._time + 1;
-	return game_life(self);
+	return self:life(self);
 end
 
 version = "0.8.9";
