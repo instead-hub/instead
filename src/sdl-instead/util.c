@@ -79,20 +79,30 @@ static int fgetsesc(char *oline, size_t size, FILE *fp)
 	strncat(oline, line, size);
 	return nr;
 }
+static char *find_in_esc(char *l, const char *s)
+{
+	int esc = 0;
+	char *ns;
+	for (ns = l; *l; l++) {
+		l += strcspn(l, s);
+		if (*l == '\\') {
+			esc ^= 1;
+			continue;
+		}
+		if (!esc) {
+			return l;
+		}
+		esc = 0;		
+	}
+	return NULL;
+}
 
 static void comments_zap(char *p)
 {
-	int i;
-	do {
-		i = strcspn(p, ";\n");
-		if (i && p[i - 1] != '\\') {
-			p[i] = 0;
-			break;
-		}
-		p += i;
-	} while (i);	
+	char *l = find_in_esc(p, "\\;\n");
+	if (l)
+		*l = 0;
 }
-
 
 int parse_ini(const char *path, struct parser *cmd_parser)
 {
@@ -142,6 +152,7 @@ int parse_string(const char *v, void *data)
 		return -1;
 	return 0;	
 }
+
 
 int parse_esc_string(const char *v, void *data)
 {
@@ -229,7 +240,6 @@ void unix_path(char *path)
 
 char *parse_tag(char *line, const char *tag, const char *comm, int *brk)
 {
-	int esc = 0;
 	char *l = line;
 	char *ns = NULL;
 	l += strspn(l, " \t");
@@ -242,19 +252,10 @@ char *parse_tag(char *line, const char *tag, const char *comm, int *brk)
 		return NULL;
 	l += strlen(tag);
 	l += strspn(l, " \t");
-	
-	for (ns = l; *l; l++) {
-		l += strcspn(l, "\\$");
-		if (*l == '\\') {
-			esc ^= 1;
-			continue;
-		}
-		if (!esc) {
-			*l = 0;
-			break;
-		}
-		esc = 0;		
-	}
+	ns = l;
+	l = find_in_esc(l, "\\$");
+	if (l)
+		*l = 0;
 	l = ns; ns = NULL;
 	if (parse_esc_string(l, &ns))
 		return NULL;
