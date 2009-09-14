@@ -1625,9 +1625,6 @@ Hybrid song // Quazar^
 Hispeed - track whatever // Purple Motion^
 Liberty // Zapper^^
 
-Шрифт темы по-умолчанию:^
-Arial от Microsoft.^^
-
 Тестеры:^
 Каличев Сергей a.k.a. Pkun^
 Подобаев Владимир a.k.a. zloyvov^^
