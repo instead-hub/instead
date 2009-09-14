@@ -6,6 +6,6 @@ install:
 	copy cat\gfx ..\bin\games\cat\gfx
 	if not exist ..\bin\games\cat\mus mkdir ..\bin\games\cat\mus
 	copy cat\mus ..\bin\games\cat\mus
-	if not exist ..\bin\games\tutorial mkdir ..\bin\games\tutorial
-	copy tutorial ..\bin\games\tutorial
+	if not exist ..\bin\games\tutorial2 mkdir ..\bin\games\tutorial2
+	copy tutorial ..\bin\games\tutorial2
 clean:
