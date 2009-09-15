@@ -67,7 +67,7 @@ r1 = room {
 			return
 		end
 		put(vway('continue',
-		[[Excellent!^You've probably noticed that the static part of the scene description disappeared, replaced by the descriptions of the objects you've taken. To see the full scene descriptiion again either click on the scene name at the top — "Lesson 1" or press F5. The result is the same.^^
+		[[Excellent!^You've probably noticed that the static part of the scene description disappeared, replaced by the descriptions of the objects you've taken. To see the full scene description again either click on the scene name at the top — "Lesson 1" or press F5. The result is the same.^^
 		{Next}]], 'r2'));
 		lifeoff('r1');
 	end,
