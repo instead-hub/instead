@@ -200,6 +200,7 @@ theend = room {
 	nam = 'Last lesson',
 	dsc = [[With the help of the menu you can choose a game, save or load the state, or do other things. To open the menu press "Esc" or click the menu icon at the bottom right.^^
 		Now you are ready to play. Good luck!!!^^
+		Download games for INSTEAD here: ]]..txtu("http://instead.googlecode.com")..[[^^
 		The tutorial uses the track Ramparts from Scorpion.]],
 	obj = { vway('keys', 'See {list of keyboard shortcuts}.', 'help')},
 };
