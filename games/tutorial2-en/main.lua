@@ -100,7 +100,7 @@ apple = obj {
 	tak = 'You take an apple from the table.',
 	inv = function(s)
 		if here() == r4 then
-			inv():del(s);
+			remove(s, me());
 			return 'You eat the apple.';
 		end
 		return 'Looks appetizing.';

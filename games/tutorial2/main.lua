@@ -118,7 +118,7 @@ apple = obj {
 	tak = 'Вы взяли яблоко со стола.',
 	inv = function(s)
 		if here() == r4 then
-			inv():del(s);
+			remove(s, me());
 			return 'Вы съедаете яблоко.';
 		end
 		return 'Выглядит аппетитно.';

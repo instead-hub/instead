@@ -1018,6 +1018,9 @@ function player(v)
 	if v.objs == nil then
 		v.objs = player_objs;
 	end
+	if v.srch == nil then
+		v.srch = obj_search;
+	end
 	v.obj = list(v.obj); -- inventory
 	v.player_type = true;
 	return v;
