@@ -1,0 +1,82 @@
+.TH INSTEAD 6 "Version 0.9" Instead GAMES
+
+.SH NAME
+
+INSTEAD - Simple Text Adventure Game Engine, The Interpretor
+
+.SH DESCRIPTION
+
+The interpreter of STEAD (Simple Text Adventures) allows to play games, combining visual novels, text adventure and classic quests of 1990-s. 
+The STEAD games features are:
+.TP
+ * very simple source code of the stories. (based on LUA);
+.TP
+ * the ability to use graphic or textual (readline) game interface;
+.TP
+ * graphic interface supports music and images;
+.TP
+ * graphic interpreter theme support — a game may change the interface look;
+.TP
+ * portability (originally written for Linux, depends on SDL and lua).
+ 
+.SH SYNOPSIS
+
+.B sdl-instead
+.I [options]
+
+.SH OPTIONS
+
+.TP
+.B -debug
+Debug mode (for game developers).
+.TP
+.B -alsa
+Force ALSA sound (for Linux only).
+.TP
+.B -nosound
+Runs the game without sound.
+.TP
+.B -gamespath <path>
+Add path with games.
+.TP
+.B -themespath <path>
+Add path with themes.
+.TP
+.B -game <basename>
+Select game in gamespath.
+.TP
+.B -theme <basename>
+Select theme in themespath.
+.TP
+.B -fullscreen
+Runs the game in fullscreen mode.
+.TP
+.B -window
+Runs the game in windowed mode.
+.PP
+Configuration file name is 'insteadrc' and it's located in ~/.instead/.
+
+You can download some games from: http://instead.googlecode.com. Unzip them
+in ~/.instead/games.
+
+.SH CONTROLS
+
+Please, see tutorial.
+
+.SH LICENCE
+
+This is free software; you can redistribute it and/or modify it
+under the terms specified in the GNU Public Licence (GPL).
+
+.SH WARRANTY
+
+None.
+
+
+.SH COPYRIGHT AND CREDITS
+
+.TP
+.B Peter Kosyh
+Game author
+.PP
+Many others for comments, bug reports and ideas.
