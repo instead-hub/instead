@@ -36,6 +36,7 @@ char *OFF = NULL;
 char *KBD_MODE_LINKS = NULL;
 char *KBD_MODE_SMART = NULL;
 char *KBD_MODE_SCROLL = NULL;
+char *CANCEL_MENU = NULL;
 
 static char  menu_buff[4096];
 
@@ -93,7 +94,8 @@ static void load_menu(void)
 		}
 		strcat(menu_buff, tmp);
 	}	
-	strcat(menu_buff,"\n<a:/resume>Отмена</a>");
+	strcat(menu_buff,"\n");
+	strcat(menu_buff, CANCEL_MENU);
 }
 
 static void save_menu(void)
@@ -121,7 +123,8 @@ static void save_menu(void)
 		}
 		strcat(menu_buff, tmp);
 	}	
-	strcat(menu_buff,"\n<a:/resume>Отмена</a>");
+	strcat(menu_buff,"\n");
+	strcat(menu_buff, CANCEL_MENU);
 }
 
 static void games_menu(void)
@@ -469,6 +472,7 @@ static void lang_free(void)
 	FREE(KBD_MODE_LINKS);
 	FREE(KBD_MODE_SMART);
 	FREE(KBD_MODE_SCROLL);
+	FREE(CANCEL_MENU);
 }
 
 static int lang_ok(void)
@@ -478,7 +482,7 @@ static int lang_ok(void)
 		MAIN_MENU && ABOUT_MENU && BACK_MENU && SETTINGS_MENU &&
 		CUSTOM_THEME_MENU && OWN_THEME_MENU && SELECT_GAME_MENU && SELECT_THEME_MENU &&
 		SAVED_MENU && NOGAMES_MENU && NOTHEMES_MENU && QUIT_MENU &&
-		ON && OFF && KBD_MODE_LINKS && KBD_MODE_SMART && KBD_MODE_SCROLL)
+		ON && OFF && KBD_MODE_LINKS && KBD_MODE_SMART && KBD_MODE_SCROLL && CANCEL_MENU)
 		return 0;
 	return -1;
 }	
@@ -509,6 +513,7 @@ struct parser lang_parser[] = {
 	{ "KBD_MODE_LINKS", parse_esc_string, &KBD_MODE_LINKS },
 	{ "KBD_MODE_SMART", parse_esc_string, &KBD_MODE_SMART },
 	{ "KBD_MODE_SCROLL", parse_esc_string, &KBD_MODE_SCROLL },
+	{ "CANCEL_MENU", parse_esc_string, &CANCEL_MENU },
 	{ NULL,  },
 };
 
