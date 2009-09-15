@@ -244,8 +244,8 @@ help2 = room {
 	-theme <theme> - pick a theme;^
 	-game <game> - pick a game;^
 	-themespath <path> - additional path to themes;^
-	-gamespath <path> - additional path to games;
-	-window - windowed mode;
+	-gamespath <path> - additional path to games;^
+	-window - windowed mode;^
 	-fullscreen  - fullscreen mode.
 	]],
 	obj = { vway('keys', 'See {list of keyboard shortcuts}.', 'help')},
