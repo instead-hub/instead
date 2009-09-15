@@ -1,3 +1,12 @@
+instead (0.9) unstable; urgency=low
+
+  * fixes in localization
+  * srch method for player
+  * english tutorial
+  * separated games?
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 15 Sep 2009 13:29:55 +0400
+
 instead (0.8.9) unstable; urgency=low
 
   * -gamespath -game -themespath -theme options
