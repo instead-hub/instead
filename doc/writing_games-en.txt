@@ -237,7 +237,7 @@ When switching between scenes the engine calls the “exit” handler from the c
 {{{
 room2 = room {
 	enter = 'You enter the hall.',
-	nam = 'зал',
+	nam = 'hall',
 	dsc = 'You are in a huge hall.',
 	way = { 'main' },
 	exit = 'You leave the hall.',
