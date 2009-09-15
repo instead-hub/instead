@@ -38,7 +38,7 @@ instead (0.8.7) unstable; urgency=low
   * highlight bug in nohl mode with filter
   * windows version now looks games and themes in appdir.
 
- -- Peter Kosyh <peter@localhost>  Fri, 28 Aug 2009 12:51:08 +0400
+ -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 28 Aug 2009 12:51:08 +0400
 
 instead (0.8.6) unstable; urgency=low
 

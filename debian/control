@@ -9,6 +9,6 @@ Homepage: http://instead.googlecode.com
 Package: instead
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: instead, simply text adventures/visual novels engine and game.
+Description: simply text adventures/visual novels engine and game.
  Visual novell/text quest-like game in russian with engine.
 
