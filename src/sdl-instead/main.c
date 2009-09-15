@@ -52,11 +52,6 @@ int main(int argc, char **argv)
 		debug_init();
 	}
 
-	if (window_sw)
-		opt_fs = 0;
-	if (fullscreen_sw)
-		opt_fs = 1;
-	
 	menu_langs_lookup(LANG_PATH);
 	
 	if (!langs_nr) {
@@ -77,6 +72,12 @@ int main(int argc, char **argv)
 	games_lookup(game_local_games_path());
 
 	cfg_load();
+	
+	if (window_sw)
+		opt_fs = 0;
+	if (fullscreen_sw)
+		opt_fs = 1;
+	
 	
 	if (game_sw) {
 		FREE(opt_game);
