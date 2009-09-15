@@ -5,6 +5,7 @@ instead (0.9) unstable; urgency=low
   * english tutorial
   * separated games?
   * font with apache license :)
+  * debian cleanups
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 15 Sep 2009 13:29:55 +0400
 
