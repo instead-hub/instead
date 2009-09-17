@@ -1080,6 +1080,7 @@ function do_ini(self)
 	end
 
 	math.randomseed(tonumber(os.date("%m%d%H%M%S")))
+	rnd(1); rnd(1); rnd(1); -- Lua bug?
 	for_each_object(call_ini);
 	for_each_player(call_ini);
 --	for_each_room(call_ini);
