@@ -252,7 +252,7 @@ end
 
 function obj_str(self)
 	local i, v, vv, o;
-	if not isObject(self) and not isPlayer(self) then
+	if not isObject(self) then
 		return
 	end
 	if isDisabled(self) then
@@ -973,9 +973,6 @@ function player(v)
 	if v.nam == nil then
 		error "No player name in constructor.";
 	end
-	if v.obj == nil then
-		v.obj = { };
-	end
 	if v.where == nil then
 		v.where = 'main';
 	end
@@ -1012,15 +1009,8 @@ function player(v)
 	if v.objs == nil then
 		v.objs = player_objs;
 	end
-	if v.srch == nil then
-		v.srch = obj_search;
-	end
-	if v.str == nil then
-		v.str = obj_str;
-	end
-	v.obj = list(v.obj); -- inventory
 	v.player_type = true;
-	return v;
+	return obj(v);
 end
 
 function game_life(self)
@@ -1038,15 +1028,12 @@ function check_object(k, v)
 	if not v.nam then
 		error ("No name in "..k);
 	end
-	if v.obj and not v.obj:check() then
-		error ("error in object (obj): "..k);
+	if not v.obj:check() then
+		error ("error in object, room or player (obj): "..k);
 	end
 end
 
 function check_room(k, v)
-	if not v.nam then
-		error ("No name in "..k);
-	end
 	if v.obj == nil then
 		error("no obj in room:"..k);
 	end
@@ -1056,16 +1043,10 @@ function check_room(k, v)
 	if not v.way:check() then
 		error ("error in room (way): "..k);
 	end
-	if not v.obj:check() then
-		error ("error in room (obj): "..k);
-	end
 end
 
 function check_player(k, v)
 	v.where = deref(v.where);
-	if v.obj and not v.obj:check() then
-		error ("error in player (obj): "..k);
-	end
 end
 
 function do_ini(self)
@@ -1079,7 +1060,7 @@ function do_ini(self)
 	math.randomseed(tonumber(os.date("%m%d%H%M%S")))
 	rnd(1); rnd(1); rnd(1); -- Lua bug?
 	for_each_object(call_ini);
-	for_each_player(call_ini);
+--	for_each_player(call_ini);
 --	for_each_room(call_ini);
 
 	game.pl = deref(game.pl);
@@ -1263,7 +1244,7 @@ function game_save(self, name, file)
 	h:write("-- $Name: "..call(here(),'nam').."$\n");
 --	for_each_room(save_object, h);
 	for_each_object(save_object, h);
-	for_each_player(save_object, h);
+--	for_each_player(save_object, h);
 	save_object('game', self, h);
 	h:flush();
 	h:close();
