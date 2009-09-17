@@ -252,7 +252,7 @@ end
 
 function obj_str(self)
 	local i, v, vv, o;
-	if not isObject(self) then
+	if not isObject(self) and not isPlayer(self) then
 		return
 	end
 	if isDisabled(self) then
@@ -260,7 +260,7 @@ function obj_str(self)
 	end
 	for i,o in opairs(self.obj) do
 		o = ref(o);
-		if isObject(o) and not isDisabled(o) then
+		if o~= nil and not isDisabled(o) then -- isObject is better, but compat layer must be ok
 			vv = call(o, 'nam');
 			vv = xref(vv, o);
 --			vv = cat(vv,'(',tostring(ref(self[i]).id),')');
@@ -774,7 +774,7 @@ function phr(ask, answ, act)
 end
 
 function player_inv(self)
-	return iface:inv(cat(self.obj:str()));
+	return iface:inv(cat(self:str()));
 end
 
 function player_ways(self)
@@ -813,14 +813,8 @@ function player_tagall(self)
 	id = 0;
 	
 	id = obj_tag(here(), id);
-
-	for k,v in opairs(inv()) do
-		v = ref(v);
-		if isObject(v) and not isDisabled(v) then
-			id = id + 1;
-			v.id = id;
-		end
-	end
+	id = obj_tag(me(), id);
+	
 	for k,v in opairs(ways()) do
 		v = ref(v);
 		if isRoom(v) and not isDisabled(v) then
@@ -870,7 +864,7 @@ end
 
 function player_use(self, what, onwhat)
 	local obj, obj2, v, vv, r;
-	obj = self.obj:srch(what);
+	obj = self:srch(what);
 	if not obj then
 		return game.err, false;
 	end
@@ -1020,6 +1014,9 @@ function player(v)
 	end
 	if v.srch == nil then
 		v.srch = obj_search;
+	end
+	if v.str == nil then
+		v.str = obj_str;
 	end
 	v.obj = list(v.obj); -- inventory
 	v.player_type = true;
@@ -1377,7 +1374,6 @@ iface = {
 		local scene = false;
 		local st = false;
 		local l;
-		
 		i,k = string.find(inp,'[a-zA-Z0-9_]+', k);
 		if not i or not k then
 			cmd = inp

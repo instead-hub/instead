@@ -11,7 +11,7 @@ iface.xref = function(self, str, obj)\n\
 			end\n\
 		end\n\
 		if not o then\n\
-			o = ref(inv():srch(obj));\n\
+			o = ref(me():srch(obj));\n\
 		end\n\
 		if not isObject(o) or not o.id then\n\
 			return str;\n\
