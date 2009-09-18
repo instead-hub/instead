@@ -242,6 +242,33 @@ function obj_enable(self)
 	return self
 end
 
+function obj_enable_all(s)
+	local k,v
+	if not isObject(s) then
+		return
+	end
+	for k,v in opairs(objs(s)) do
+		local o = ref(v);
+		if isObject(o) then
+			o:enable()
+		end
+	end
+end
+
+function obj_disable_all(s)
+	local k,v
+	if not isObject(s) then
+		return
+	end
+	for k,v in opairs(objs(s)) do
+		local o = ref(v);
+		if isObject(o) then
+			o:disable()
+		end
+	end
+end
+
+
 function obj_save(self, name, h, need)
 	local dsc;
 	if need then
@@ -285,6 +312,12 @@ function obj(v)
 	if v.disable == nil then
 		v.disable = obj_disable;
 	end
+	if v.enable_all == nil then
+		v.enable_all = obj_enable_all;
+	end
+	if v.disable_all == nil then
+		v.disable_all = obj_disable_all;
+	end
 	if v.remove == nil then
 		v.remove = obj_remove;
 	end
@@ -303,6 +336,7 @@ function obj(v)
 	end
 	return v
 end
+
 
 function ref(n) -- ref object by name
 	if type(n) == 'string' then
@@ -568,6 +602,14 @@ function obj_search(v, n)
 	return;
 end
 
+function room_save(self, name, h, need)
+	local dsc;
+	if need then
+		h:write(name.." = room {nam = '"..tostring(self.nam).."'}\n");
+	end
+	savemembers(h, self, name, need);
+end
+
 function room(v) --constructor
 	if v.nam == nil then
 		error "No room name in constructor.";
@@ -577,6 +619,9 @@ function room(v) --constructor
 	end
 	if v.look == nil then
 		v.look = room_look;
+	end
+	if v.save == nil then
+		v.save = room_save;
 	end
 	v.location_type = true;
 	if v.way == nil then
@@ -1512,6 +1557,7 @@ end
 function xref(str, obj)
 	return iface:xref(str, obj);
 end
+
 function pon(...)
 	if not isDialog(here()) then
 		return
@@ -1794,4 +1840,47 @@ end
 function isForSave(k)
 	return string.find(k, '_') ==  1 or string.match(k,'^%u')
 end
+
+-- here is gui staff only
+function stat(v)
+	v.status_type = true
+	return obj(v);
+end
+
+function isStatus(v)
+	if type(v) ~= 'table' then
+		return false
+	end
+	if v.status_type then
+		return true
+	end
+	return false
+end
+
+function menu_save(self, name, h, need)
+	local dsc;
+	if need then
+		h:write(name.." = menu {nam = '"..tostring(self.nam).."'}\n");
+	end
+	savemembers(h, self, name, need);
+end
+
+function menu(v)
+	v.menu_type = true
+	if v.save == nil then
+		v.save = menu_save;
+	end
+	return obj(v);
+end
+
+function isMenu(v)
+	if type(v) ~= 'table' then
+		return false
+	end
+	if v.menu_type then
+		return true
+	end
+	return false
+end
+
 -- here the game begins

@@ -1446,15 +1446,24 @@ int game_click(int x, int y, int action)
 	}
 	
 	if (elem->id == el_inv) {
-		if (!inv_xref) {
+		int menu_mode = 0;
+
+		if (!strncmp("use ", xref_get_text(xref), 4))
+			menu_mode = 1;
+
+		if (!inv_xref && !menu_mode) {
 			enable_inv(xref);
 			el_update(el_inv);
 			return 0;
-		}	
-		if (xref == inv_xref)
+		}
+
+		if (menu_mode)
+			snprintf(buf,sizeof(buf), "%s", xref_get_text(xref));
+		else if (xref == inv_xref)
 			snprintf(buf,sizeof(buf), "use %s", xref_get_text(xref));
 		else
 			snprintf(buf,sizeof(buf), "use %s,%s", xref_get_text(inv_xref), xref_get_text(xref));
+
 		disable_inv();
 		if (mouse_filter())
 			return 0;
