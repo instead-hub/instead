@@ -1324,7 +1324,7 @@ iface = {
 			o = ref(ways():srch(obj));
 		end
 		if not o then
-			o = ref(inv():srch(obj));
+			o = ref(me():srch(obj));
 		end
 		if not o or not o.id then
 			return str;
