@@ -744,7 +744,14 @@ function phrase_action(self)
 end
 
 function phrase_save(self, name, h, need)
-	savemembers(h, self, name, need);
+	if need then
+		local m = " = phr('"
+		if isDisabled(self) then
+			m = " = _phr('"
+		end
+		h:write(name..m..tostring(self.dsc).."','"..tostring(self.ans).."','"..tostring(self.do_act).."');\n");
+	end
+	savemembers(h, self, name, false);
 end
 
 function phrase(o) --constructor
