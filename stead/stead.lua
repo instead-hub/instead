@@ -877,7 +877,7 @@ function player_use(self, what, onwhat)
 	end
 	obj2 = ref(self.where):srch(onwhat);
 	if not obj2 then
-		obj2 = self.obj:srch(onwhat);
+		obj2 = self:srch(onwhat);
 	end
 	if not obj2 or obj2 == obj then
 		return game.err, false;
