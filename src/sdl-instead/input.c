@@ -61,7 +61,7 @@ int input(struct inp_event *inp, int wait)
 		}
 	case SDL_ACTIVEEVENT:
 		if (event.active.state & SDL_APPMOUSEFOCUS) {
-			if (event.active.gain) 
+			if (event.active.gain)
 				m_focus = 1;
 			else
 				m_focus = 0;
@@ -81,7 +81,6 @@ int input(struct inp_event *inp, int wait)
 		inp->sym = SDL_GetKeyName(event.key.keysym.sym);
 		break;
 	case SDL_MOUSEMOTION:
-		m_focus = 1;
 		inp->type = MOUSE_MOTION;
 		inp->x = event.button.x;
 		inp->y = event.button.y;

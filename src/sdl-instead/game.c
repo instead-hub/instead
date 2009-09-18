@@ -1839,7 +1839,7 @@ int game_loop(void)
 	while (game_running) {
 		int rc;
 		ev.x = -1;
-		game_cursor(CURSOR_CLEAR); /* release bg */
+//		game_cursor(CURSOR_CLEAR); /* release bg */
 		while ((rc = input(&ev, 1)) == AGAIN);
 		if (rc == -1) {/* close */
 			break;
