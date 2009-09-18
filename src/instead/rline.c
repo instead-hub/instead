@@ -496,7 +496,7 @@ void loop(void)
 	while (1) {
 		luacall("me():tag();");
 		getcompletion(getstring("return here():str();"), &obj_comp);
-		getcompletion(getstring("return me().obj:str();"), &inv_comp);
+		getcompletion(getstring("return me():str();"), &inv_comp);
 		getcompletion(getstring("return here().way:str();"), &way_comp);
 		line = readline("-- > ");
 
