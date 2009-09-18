@@ -13,8 +13,11 @@ iface.xref = function(self, str, obj)\n\
 		if not o then\n\
 			o = ref(me():srch(obj));\n\
 		end\n\
-		if not isObject(o) or not o.id then\n\
+		if not isObject(o) or isStatus(o) or not o.id then\n\
 			return str;\n\
+		end\n\
+		if isMenu(o) then\n\
+			cmd = 'use ';\n\
 		end\n\
 		return cat('<a:'..cmd..'0'..tostring(o.id)..'>',str,'</a>');\n\
 end;\n\
