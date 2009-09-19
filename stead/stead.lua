@@ -1466,7 +1466,7 @@ iface = {
 		end
 		
 		if st and r == nil and v == true then -- we do nothing
-			me():tag();
+--			me():tag();
 			return nil; --game._lastdisp;
 		end
 		
