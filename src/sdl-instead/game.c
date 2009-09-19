@@ -1344,10 +1344,12 @@ int mouse_filter(void)
 
 int game_click(int x, int y, int action)
 {
+	int menu_mode 	= 0;
 	struct el	*elem = NULL;
 	char 		buf[1024];
 	xref_t 		xref = NULL;
-
+	char		*xref_txt;
+	
 	if (action)
 		motion_mode = 0;
 
@@ -1419,10 +1421,17 @@ int game_click(int x, int y, int action)
 //		gfx_flip();
 		return 1;
 	}
-
+	
+	xref_txt = xref_get_text(xref);
+	
+	if (!strncmp("act ", xref_get_text(xref), 4)) {
+		menu_mode = 1;
+		xref_txt += 4;
+	}
+	
 	if (elem->id == el_ways ||
 		elem->id == el_title) {
-		strcpy(buf, xref_get_text(xref));
+		strcpy(buf, xref_txt);
 		if (mouse_filter())
 			return 0;
 		if (opt_click)
@@ -1437,10 +1446,12 @@ int game_click(int x, int y, int action)
 
 	if (elem->id == el_scene) {
 		if (inv_xref) {
-			snprintf(buf,sizeof(buf), "use %s,%s", xref_get_text(inv_xref), xref_get_text(xref));
+			if (menu_mode)
+				return 0;
+			snprintf(buf,sizeof(buf), "use %s,%s", xref_get_text(inv_xref), xref_txt);
 			disable_inv();
 		} else	
-			strcpy(buf, xref_get_text(xref));
+			strcpy(buf, xref_txt);
 		if (mouse_filter())
 			return 0;
 		if (opt_click)
@@ -1450,10 +1461,6 @@ int game_click(int x, int y, int action)
 	}
 	
 	if (elem->id == el_inv) {
-		int menu_mode = 0;
-
-		if (!strncmp("act ", xref_get_text(xref), 4))
-			menu_mode = 1;
 
 		if (!inv_xref && !menu_mode) {
 			enable_inv(xref);
@@ -1461,12 +1468,10 @@ int game_click(int x, int y, int action)
 			return 0;
 		}
 
-		if (menu_mode)
-			snprintf(buf,sizeof(buf), "use %s", xref_get_text(xref) + 4);
-		else if (xref == inv_xref)
-			snprintf(buf,sizeof(buf), "use %s", xref_get_text(xref));
-		else
-			snprintf(buf,sizeof(buf), "use %s,%s", xref_get_text(inv_xref), xref_get_text(xref));
+		if (xref == inv_xref || menu_mode) {
+			snprintf(buf,sizeof(buf), "use %s", xref_txt);
+		} else
+			snprintf(buf,sizeof(buf), "use %s,%s", xref_get_text(inv_xref), xref_txt);
 
 		disable_inv();
 		if (mouse_filter())
