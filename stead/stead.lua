@@ -342,7 +342,7 @@ function ref(n) -- ref object by name
 	if type(n) == 'string' then
 		local f = loadstring('return '..n);
 		if f then
-			return f();
+			return ref(f());
 		end
 		return nil;
 	end
@@ -863,10 +863,10 @@ end
 function player_tagall(self)
 	local id, k, v;
 	id = 0;
-	
+
 	id = obj_tag(here(), id);
 	id = obj_tag(me(), id);
-	
+
 	for k,v in opairs(ways()) do
 		v = ref(v);
 		if isRoom(v) and not isDisabled(v) then
