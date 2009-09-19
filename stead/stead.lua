@@ -893,11 +893,11 @@ function player_action(self, what, ...)
 	v, r = player_take(self, what);
 	if not v then
 		v, r = call(ref(obj), 'act', unpack(arg));
-		if not v then
+		if not v and r ~= true then
 			v, r = call(ref(game), 'act', obj, unpack(arg));
 		end
 	end
-	return v;
+	return v, r;
 end
 
 function player_take(self, what)
@@ -922,10 +922,10 @@ function player_use(self, what, onwhat)
 	end
 	if onwhat == nil then
 		v, r = call(ref(obj),'inv');
-		if not v then
+		if not v and r ~= true then
 			v, r = call(game, 'inv', obj);
 		end
-		return cat(v, ' '), r;
+		return v, r;
 	end
 	obj2 = ref(self.where):srch(onwhat);
 	if not obj2 then
@@ -941,7 +941,7 @@ function player_use(self, what, onwhat)
 	if not v and not vv then
 		v, r = call(game, 'use', obj, obj2);
 	end
-	return cat(par(' ', v, vv),' ');
+	return par(' ', v, vv);
 end
 
 function player_back(self)
@@ -1464,6 +1464,12 @@ iface = {
 			r,v = me():action(strip(inp));
 			st = true;
 		end
+		
+		if st and r == nil and v == true then -- we do nothing
+			me():tag();
+			return nil; --game._lastdisp;
+		end
+		
 --		self:text(r);
 		if st and v ~= false then
 			vv = par(" ",vv, game:step());

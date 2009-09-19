@@ -991,16 +991,17 @@ int game_cmd(char *cmd)
 	int		new_pict = 0, new_place = 0;
 	int		title_h = 0, ways_h = 0, pict_h = 0;
 	char 		buf[1024];
-	char 		*cmdstr;
-	char 		*invstr;
-	char 		*waystr;
-	char		*title;
-	char 		*pict;
+	char 		*cmdstr = NULL;
+	char 		*invstr = NULL;
+	char 		*waystr = NULL;
+	char		*title = NULL;
+	char 		*pict = NULL;
 	img_t		oldscreen = NULL;
 
 	cmdstr = instead_cmd(cmd);
 	if (!cmdstr) 
-		goto err;
+		goto inv; /* hackish? ok, yes  it is... */
+//		goto err;
 	game_music_player();	
 //	sound_player(); /* TODO */
 	title = instead_eval("return get_title();");
@@ -1055,12 +1056,7 @@ int game_cmd(char *cmd)
 		el(el_spic)->p.p = NULL;
 	}
 
-	waystr = instead_cmd("way");
-	invstr = instead_cmd("inv");
-
-	if (invstr && game_theme.inv_mode == INV_MODE_HORIZ) {
-		invstr = horiz_inv(invstr);
-	}
+	waystr = instead_cmd("way");	
 
 	if (waystr) {
 		waystr[strcspn(waystr,"\n")] = 0;
@@ -1098,6 +1094,7 @@ int game_cmd(char *cmd)
 		txt_box_set(el_box(el_scene), txt_box_layout(el_box(el_scene)));
 	}
 	free(cmdstr);
+	
 	el(el_ways)->y = el(el_title)->y + title_h + pict_h;
 	if (waystr)
 		free(waystr);
@@ -1133,6 +1130,13 @@ int game_cmd(char *cmd)
 	
 	txt_box_resize(el_box(el_scene), game_theme.win_w, game_theme.win_h - title_h - ways_h - pict_h);
 	el_draw(el_scene);
+	
+inv:
+	invstr = instead_cmd("inv");
+
+	if (invstr && game_theme.inv_mode == INV_MODE_HORIZ) {
+		invstr = horiz_inv(invstr);
+	}
 
 	do {
 		int off = txt_box_off(el_box(el_inv));
@@ -1448,7 +1452,7 @@ int game_click(int x, int y, int action)
 	if (elem->id == el_inv) {
 		int menu_mode = 0;
 
-		if (!strncmp("use ", xref_get_text(xref), 4))
+		if (!strncmp("act ", xref_get_text(xref), 4))
 			menu_mode = 1;
 
 		if (!inv_xref && !menu_mode) {
@@ -1458,7 +1462,7 @@ int game_click(int x, int y, int action)
 		}
 
 		if (menu_mode)
-			snprintf(buf,sizeof(buf), "%s", xref_get_text(xref));
+			snprintf(buf,sizeof(buf), "use %s", xref_get_text(xref) + 4);
 		else if (xref == inv_xref)
 			snprintf(buf,sizeof(buf), "use %s", xref_get_text(xref));
 		else

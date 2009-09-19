@@ -17,7 +17,7 @@ iface.xref = function(self, str, obj)\n\
 			return str;\n\
 		end\n\
 		if isMenu(o) then\n\
-			cmd = 'use ';\n\
+			cmd = 'act ';\n\
 		end\n\
 		return cat('<a:'..cmd..'0'..tostring(o.id)..'>',str,'</a>');\n\
 end;\n\

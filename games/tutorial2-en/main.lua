@@ -246,7 +246,8 @@ help2 = room {
 	-themespath <path> - additional path to themes;^
 	-gamespath <path> - additional path to games;^
 	-window - windowed mode;^
-	-fullscreen  - fullscreen mode.
+	-fullscreen  - fullscreen mode;^
+	-noautosave - disable autosave/autoload option.
 	]],
 	obj = { vway('keys', 'See {list of keyboard shortcuts}.', 'help')},
 };
