@@ -5,6 +5,7 @@ extern int debug_init(void);
 extern void debug_done(void);
 
 int debug_sw = 0;
+int noauto_sw = 0;
 char *game_sw = NULL;
 char *games_sw = NULL;
 char *theme_sw = NULL;
@@ -24,6 +25,8 @@ int main(int argc, char **argv)
 			window_sw = 1;
 		else if (!strcmp(argv[i], "-debug"))
 			debug_sw = 1;
+		else if (!strcmp(argv[i], "-noautosave"))
+			noauto_sw = 1;		
 		else if (!strcmp(argv[i], "-game")) {
 			if ((i + 1) < argc)
 				game_sw = argv[++i];
@@ -73,6 +76,8 @@ int main(int argc, char **argv)
 
 	cfg_load();
 	
+	if (noauto_sw)
+		opt_autosave = 0;
 	if (window_sw)
 		opt_fs = 0;
 	if (fullscreen_sw)
