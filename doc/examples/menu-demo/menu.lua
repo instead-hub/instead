@@ -68,7 +68,7 @@ fill_objs = function(s, w, act)
 	for i,o,ii in opairs(objs(w)) do
 		o = ref(o);
 		if isObject(o) and not isDisabled(o) and o ~= s and not isPhrase(o) then
-			local n = deref(here())..".obj["..tonumber(ii).."]";
+			local n = deref(w)..".obj["..tonumber(ii).."]";
 			if act == "use" then
 				put(use_proxy(n), s);
 			else
