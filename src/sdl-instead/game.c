@@ -1881,9 +1881,10 @@ int game_loop(void)
 				mouse_reset();
 				game_menu(menu_askquit);
 			} else if (!alt_pressed && (!is_key(&ev, "return") || !is_key(&ev, "enter"))) {
-				game_highlight(-1, -1, 0);
 				gfx_cursor(&x, &y, NULL, NULL);
 				game_click(x, y, 0);
+				game_highlight(x, y, 1);
+				game_highlight(-1, -1, 0);
 				if (game_click(x, y, 1) == -1)
 					break;
 			} else if (!is_key(&ev, "escape")) {
