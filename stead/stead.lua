@@ -1693,7 +1693,7 @@ function take(obj, wh)
 	if not isObject(o) then
 		error "Trying to take wrong object.";
 	end
-	me().obj:add(obj);
+	inv():add(obj);
 	o._taken = true
 	return o
 end
@@ -1737,7 +1737,7 @@ function dropf(obj)
 	if not isObject(o) then
 		error "Trying to dropf wrong object:";
 	end
-	me().obj:del(obj);
+	inv():del(obj);
 	o._taken = false
 	return o;
 end
@@ -1757,7 +1757,7 @@ function seen(obj, wh)
 end
 
 function have(obj)
-	local o = me().obj:srch(obj);
+	local o = inv():srch(obj);
 	o = ref(o);
 	if isObject(o) then
 		return o
