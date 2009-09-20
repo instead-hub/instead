@@ -379,6 +379,8 @@ knif = obj {
 
 Apart from adding and deleting objects from lists you may switch them on and off  with “enable()” and “disable()” methods. E.g. “knif:disable()”. This way the object “knif” will disappear from the scene description, but may be switched on later with “knif:enable()”.
 
+“enable_all()” and “disable_all()” methods works (from 0.9.1) with embedded objects (objects in object).
+
 == 12. Functions, that return objects ==
 
 In STEAD several functions are defined, that return some frequently used objects. For example:
@@ -391,7 +393,7 @@ In STEAD several functions are defined, that return some frequently used objects
 
 Combining those functions with “add” and “del” methods one can dynamically alter the scene, for example:
 {{{
-ways:add('nexroom'); — add a passage to a new scene;
+ways():add('nexroom'); — add a passage to a new scene;
 }}}
 {{{
 objs():add('chair'); — add an object to the current scene;
