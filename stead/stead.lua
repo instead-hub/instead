@@ -1066,14 +1066,22 @@ function player(v)
 end
 
 function game_life(self)
-	local i, v;
-	for i,v in ipairs(self.lifes) do
-		v = ref(v);
-		if not isDisabled(v) then
-			v = par(' ',v,call(ref(self.lifes[i]),'life'));
+	local i,o
+	local av,v
+	
+	for i,o in ipairs(self.lifes) do
+		local vv
+		local pre
+
+		o = ref(o);
+		vv,pre = call(o,'life');
+		if not pre then
+			v = par(' ',v, vv);
+		else
+			av = par(' ', av, vv);
 		end
 	end
-	return v;
+	return v, av;
 end
 
 function check_object(k, v)
@@ -1318,15 +1326,6 @@ function game_load(self, name)
 	return nil, false
 end
 
-function game_life(self)
-	local i,v,o
-	for i,o in ipairs(self.lifes) do
-		o = ref(o);
-		vv = call(o,'life');
-		v = par(' ',v, vv);
-	end
-	return v;
-end
 
 function game_step(self)
 	self._time = self._time + 1;
@@ -1471,8 +1470,11 @@ iface = {
 		end
 		
 --		self:text(r);
+		
 		if st and v ~= false then
-			vv = par(" ",vv, game:step());
+			local av, pv
+			pv,av = game:step();
+			vv = par(" ",vv, pv);
 			me():tag();		
 			if oldloc == here() and not look then
 				if here().forcedsc == true then
@@ -1481,9 +1483,9 @@ iface = {
 					l,v = me():look();
 				end
 				r = iface:em(r);
-				vv = par("^^",here():look(), iface:em(vv));
+				vv = par("^^",iface:em(av), here():look(), iface:em(vv));
 			else
-				vv = par("^^",here():look(), vv);
+				vv = par("^^",av, here():look(), vv);
 			end
 		end
 		if v == false then
