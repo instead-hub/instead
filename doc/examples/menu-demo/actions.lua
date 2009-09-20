@@ -201,7 +201,7 @@ talkm  = actmenu('> говорить', 'Talk', true);
 openm  = actmenu('> открыть', 'Open', true, true);
 closem = actmenu('> закрыть', 'Close', true, true);
 usem   = actmenu('> использовать', 'use', true, true);
-givem  = actmenu('> отдать', 'use', true, true);
+givem  = actmenu('> отдать', 'use', true, true, true);
 
 rest   = menu {
 	nam = '> отдыхать',

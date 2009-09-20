@@ -81,6 +81,7 @@ end
 
 fill_inv = function(s, w, act)
 	local i, o
+	local rc = false
 	for i,o in opairs(w) do
 		o = ref(o);
 		if isObject(o) and not isDisabled(o) 
@@ -93,8 +94,10 @@ fill_inv = function(s, w, act)
 				put(act_proxy(o, act), s);
 			end
 			fill_inv(s, o.obj, act);
+			rc = true
 		end
 	end
+	return rc
 end 
 
 select_only = function(s)
@@ -110,7 +113,7 @@ select_only = function(s)
 	end
 end
 
-actmenu = function(nam, act, _scene, _inv)
+actmenu = function(nam, act, _scene, _inv, _ifinvonly)
 	local v = { };
 	v.action_type = true;
 	v.State = false;
@@ -125,12 +128,15 @@ actmenu = function(nam, act, _scene, _inv)
 	v._inv = _inv;
 	v.gen = function(s)
 		local k,o,i
+		local rc = false
 		s.obj:zap();
 		if s._inv then
-			fill_inv(s, inv(), act);
+			rc =fill_inv(s, inv(), act);
 		end
-		if s._scene then
-			fill_objs(s, here(), act);
+		if not _ifinvonly or rc then
+			if s._scene then
+				fill_objs(s, here(), act);
+			end
 		end
 		select_only(s);
 	end
