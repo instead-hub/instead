@@ -1,3 +1,18 @@
+instead (0.9.1) unstable; urgency=low
+
+  * mouse gfx bug
+  * gui.lua is separated file
+  * menus in gfx mode!!! :)
+  * stead.lua fixes:
+  * ref fix
+  * noautosave option
+  * phrases saver
+  * player is object
+  * disable_all enable_all for object
+  * inherited inventory
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sun, 15 Sep 2009 14:42:44 +0400
+
 instead (0.9) unstable; urgency=low
 
   * fixes in localization

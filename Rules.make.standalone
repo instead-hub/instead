@@ -1,4 +1,4 @@
-VERSION := \"0.9\"
+VERSION := \"0.9.1\"
 
 DESTDIR=
 BIN=
@@ -13,7 +13,7 @@ MANPATH=
 LUA_CFLAGS=$(shell pkg-config --cflags lua5.1)
 LUA_LFLAGS=$(shell pkg-config --libs lua5.1)
 
-# for arch linux (may be others) use this
+# for arch linux, fedora (may be others) use this
 #
 LUA_CFLAGS=$(shell pkg-config --cflags lua)
 LUA_LFLAGS=$(shell pkg-config --libs lua)
