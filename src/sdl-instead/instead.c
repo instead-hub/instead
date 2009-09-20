@@ -2,7 +2,6 @@
 #define STEAD_PATH 	"./stead"
 #endif
 
-#include "gui.h"
 #include "externals.h"
 #include "internals.h"
 /* the Lua interpreter */
@@ -235,7 +234,8 @@ int instead_init(void)
    	if (dofile(L,STEAD_PATH"/stead.lua")) {
 		return -1;
 	}
-	if (luacall(instead_gui_lua)) {
+
+   	if (dofile(L,STEAD_PATH"/gui.lua")) {
 		return -1;
 	}
 	/* cleanup Lua */

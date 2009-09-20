@@ -4,3 +4,4 @@ all:	stead.lua
 install:
 	if not exist ..\bin\stead mkdir ..\bin\stead
 	copy stead.lua ..\bin\stead
+	copy gui.lua ..\bin\stead
