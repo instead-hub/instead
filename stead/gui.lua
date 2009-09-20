@@ -96,6 +96,11 @@ end
 
 function menu(v)
 	v.menu_type = true
+	if v.inv == nil then
+		v.inv = function(s)
+			return call(s,'act');
+		end
+	end
 	if v.save == nil then
 		v.save = menu_save;
 	end

@@ -1,0 +1,199 @@
+use_proxy = function(o)
+	local v = {};
+	v.proxy_type = true;
+	v.nam = ' '..call(ref(o), 'nam');
+	v.pobj = deref(o);
+	
+	v.save = function(self, name, h, need)
+		if need then
+			h:write(name.." = use_proxy('"..tostring(self.pobj).."');\n");
+		end
+		savemembers(h, self, name,false);
+	end
+
+	if ref(o).use ~= nil then
+		v.use = function(s, w)
+			if ref(w).proxy_type then
+				local v,r = call(ref(s.pobj), 'use', w.pobj);
+--				where(s):gen();
+				return v,r;
+			end
+		end
+		v.inv = function(s)
+			local v,r = call(ref(s.pobj), 'use', nil);
+--			where(s):gen();
+			return v,r;
+		end
+	end
+
+	if ref(o).used ~= nil then
+		v.used = function(s, w)
+			if ref(w).proxy_type then
+				local v,r = call(ref(s.pobj), 'used', w.pobj);
+--				where(s):gen();
+				return v,r;
+			end
+		end
+	end
+	return obj(v)
+end
+
+act_proxy = function(o, act)
+	local v = {};
+	v.proxy_type = true;
+	v.nam = ' '..call(ref(o), 'nam');
+	v.pobj = deref(o);
+	v.pact = act;
+	v.save = function(self, name, h, need)
+		if need then
+			h:write(name.." = act_proxy('"..self.pobj.."','"..self.pact.."');\n");
+		end
+		savemembers(h, self, name,false);
+	end
+
+	if ref(o)[act] ~= nil then
+		v.inv = function(s)
+			local v, r;
+			v,r = call(ref(s.pobj), act);
+--			where(s):gen();
+			return v,r;
+		end
+	end
+	return menu(v)
+end
+
+fill_objs = function(s, w, act)
+	local ii,i, o
+	
+	for i,o,ii in opairs(objs(w)) do
+		o = ref(o);
+		if isObject(o) and not isDisabled(o) and o ~= s and not isPhrase(o) then
+			local n = deref(here())..".obj["..tonumber(ii).."]";
+			if act == "use" then
+				put(use_proxy(n), s);
+			else
+				put(act_proxy(n, act), s);
+			end
+			fill_objs(s, o, act);
+		end
+	end
+end 
+
+fill_inv = function(s, w, act)
+	local i, o
+	for i,o in opairs(w) do
+		o = ref(o);
+		if isObject(o) and not isDisabled(o) 
+			and not o.proxy_type 
+			and not isStatus(o) 
+			and s ~= o and not o.action_type then
+			if act == "use" then
+				put(use_proxy(o), s);
+			else
+				put(act_proxy(o, act), s);
+			end
+			fill_inv(s, o.obj, act);
+		end
+	end
+end 
+
+select_only = function(s)
+	local k, o, i
+	for k,o in opairs(me().obj) do
+		o = ref(o)
+		if o.action_type and o.State and o ~= s then
+			o:inv();
+		end
+	end
+	for k,o,i in opairs(objs(s)) do -- retag 
+		ref(o).id = 10000 + i;
+	end
+end
+
+actmenu = function(nam, act, _scene, _inv)
+	local v = { };
+	v.action_type = true;
+	v.State = false;
+	v._nam = nam;
+	v.nam = function(s)
+		if s.State then
+			return txtu(s._nam);
+		end
+		return s._nam;
+	end
+	v._scene = _scene;
+	v._inv = _inv;
+	v.gen = function(s)
+		local k,o,i
+		s.obj:zap();
+		if s._inv then
+			fill_inv(s, inv(), act);
+		end
+		if s._scene then
+			fill_objs(s, here(), act);
+		end
+		select_only(s);
+	end
+	v.inv = function(s)
+		local i,o
+		local k,v
+		if not s.State then
+			s:gen();
+			s.State = true;
+		else
+			s.State = false;
+			s.obj:zap();
+		end
+		return nil, true
+	end
+	return menu(v);
+end
+
+function gen_actions(s)
+	local k, o
+	for k,o in opairs(me().obj) do
+		o = ref(o)
+		if o.action_type and o.State then
+			o:gen();
+		end
+	end
+end
+
+pocket = function(nam) 
+	local v = {}
+	v.action_type = true;
+	v.State = false;
+	v._nam = nam;
+	v.nam = function(s)
+		if s.State then
+			return txtu(s._nam);
+		end
+		return s._nam;
+	end;
+	v.gen = function(s)
+		s.obj:zap();
+		fill_inv(s, inv(), 'act');
+--		put(act_proxy(o, 'inv'), s);
+--		s.obj:cat(s.robj);
+		select_only(s);
+	end;
+	v.inv = function(s)
+		if not s.State then
+			s:gen();
+			s.State = true;
+		else
+			s.obj:zap();
+			s.State = false;
+		end
+		return nil,true
+	end;
+	v.robj = list {};
+	return menu(v);
+end
+
+menu_init = function(s)
+	pl.inv = function(s)
+		gen_actions(s);
+		return player_inv(s);
+	end
+end
