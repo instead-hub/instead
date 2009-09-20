@@ -60,10 +60,10 @@ int input(struct inp_event *inp, int wait)
 		return AGAIN;
 		}
 	case SDL_ACTIVEEVENT:
-		if (event.active.state & SDL_APPMOUSEFOCUS) {
+		if (event.active.state & (SDL_APPMOUSEFOCUS | SDL_APPINPUTFOCUS)) {
 			if (event.active.gain)
 				m_focus = 1;
-			else
+			else if (event.active.state & SDL_APPMOUSEFOCUS)
 				m_focus = 0;
 		}
 		return 0;
