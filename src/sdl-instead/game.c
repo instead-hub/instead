@@ -1882,9 +1882,13 @@ int game_loop(void)
 				game_menu(menu_askquit);
 			} else if (!alt_pressed && (!is_key(&ev, "return") || !is_key(&ev, "enter"))) {
 				gfx_cursor(&x, &y, NULL, NULL);
+				game_highlight(-1, -1, 0); /* reset */
+
 				game_click(x, y, 0);
-				game_highlight(x, y, 1);
-				game_highlight(-1, -1, 0);
+
+				game_highlight(x, y, 1); /* hl on/off */
+				game_highlight(x, y, 0);
+
 				if (game_click(x, y, 1) == -1)
 					break;
 			} else if (!is_key(&ev, "escape")) {
