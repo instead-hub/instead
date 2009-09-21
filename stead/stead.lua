@@ -1069,16 +1069,17 @@ function game_life(self)
 	local i,o
 	local av,v
 	
-	for i,o in ipairs(self.lifes) do
+	for i,o in opairs(self.lifes) do
 		local vv
 		local pre
-
 		o = ref(o);
-		vv,pre = call(o,'life');
-		if not pre then
-			v = par(' ',v, vv);
-		else
-			av = par(' ', av, vv);
+		if not isDisabled(o) then
+			vv,pre = call(o,'life');
+			if not pre then
+				v = par(' ',v, vv);
+			else
+				av = par(' ', av, vv);
+			end
 		end
 	end
 	return v, av;
