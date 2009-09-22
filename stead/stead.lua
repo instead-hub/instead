@@ -1463,7 +1463,7 @@ iface = {
 			return nil;
 		end
 		
-		ACTIONS_TXT = r; -- here, life methods can redefine this
+		ACTION_TXT = r; -- here, life methods can redefine this
 		
 		if st and v ~= false then
 			local av, pv -- av -- active lifes, pv -- background
@@ -1476,16 +1476,16 @@ iface = {
 				elseif game.forcedsc == true and here().forcedsc ~= false then
 					l,v = me():look();
 				end
-				ACTIONS_TXT = iface:em(ACTIONS_TXT);
+				ACTION_TXT = iface:em(ACTION_TXT);
 				vv = par("^^",iface:em(av), here():look(), iface:em(vv));
 			else
 				vv = par("^^",av, here():look(), vv);
 			end
 		end
 		if v == false then
-			return fmt(ACTIONS_TXT);
+			return fmt(ACTION_TXT);
 		end
-		vv = fmt(cat(par("^^",l,ACTIONS_TXT,vv),'^'));
+		vv = fmt(cat(par("^^",l,ACTION_TXT,vv),'^'));
 		if st then
 			game._lastdisp = vv
 		end
