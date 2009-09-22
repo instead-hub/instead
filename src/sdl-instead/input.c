@@ -81,6 +81,7 @@ int input(struct inp_event *inp, int wait)
 		inp->sym = SDL_GetKeyName(event.key.keysym.sym);
 		break;
 	case SDL_MOUSEMOTION:
+		m_focus = 1; /* ahhh */
 		inp->type = MOUSE_MOTION;
 		inp->x = event.button.x;
 		inp->y = event.button.y;
