@@ -1463,7 +1463,7 @@ iface = {
 			return nil;
 		end
 		
-		ACTION_TXT = r; -- here, life methods can redefine this
+		ACTION_TEXT = r; -- here, life methods can redefine this
 		
 		if st and v ~= false then
 			local av, pv -- av -- active lifes, pv -- background
@@ -1476,16 +1476,16 @@ iface = {
 				elseif game.forcedsc == true and here().forcedsc ~= false then
 					l,v = me():look();
 				end
-				ACTION_TXT = iface:em(ACTION_TXT);
+				ACTION_TEXT = iface:em(ACTION_TEXT);
 				vv = par("^^",iface:em(av), here():look(), iface:em(vv));
 			else
 				vv = par("^^",av, here():look(), vv);
 			end
 		end
 		if v == false then
-			return fmt(ACTION_TXT);
+			return fmt(ACTION_TEXT);
 		end
-		vv = fmt(cat(par("^^",l,ACTION_TXT,vv),'^'));
+		vv = fmt(cat(par("^^",l,ACTION_TEXT,vv),'^'));
 		if st then
 			game._lastdisp = vv
 		end
@@ -1842,5 +1842,4 @@ end
 function isForSave(k)
 	return string.find(k, '_') ==  1 or string.match(k,'^%u')
 end
-
 -- here the game begins
