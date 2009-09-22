@@ -117,73 +117,31 @@ function opairs(s, var)
 end
 
 function isPlayer(v)
-	if type(v) ~= 'table' then
-		return false
-	end
-	if v.player_type then
-		return true
-	end
-	return false
+	return (type(v) == 'table') and (v.player_type)
 end
 
 function isRoom(v)
-	if type(v) ~= 'table' then
-		return false
-	end
-	if v.location_type then
-		return true
-	end
-	return false
+	return (type(v) == 'table') and (v.location_type)
 end
 
 function isPhrase(v)
-	if type(v) ~= 'table' then
-		return false
-	end
-	if v.phrase_type then
-		return true
-	end
-	return false
+	return (type(v) == 'table') and (v.phrase_type)
 end
 
 function isDialog(v)
-	if type(v) ~= 'table' then
-		return false
-	end
-	if v.dialog_type then
-		return true
-	end
-	return false
+	return (type(v) == 'table') and (v.dialog_type)
 end
 
 function isDisabled(v)
-	if type(v) ~= 'table' then
-		return false
-	end
-	if v._disabled then
-		return true
-	end
-	return false
+	return (type(v) == 'table') and (v._disabled)
 end
 
 function isRemoved(v)
-	if type(v) ~= 'table' then
-		return false
-	end
-	if v._disabled == -1 then
-		return true
-	end
-	return false
+	return (type(v) == 'table') and (v._disabled == -1)
 end
 
 function isObject(v)
-	if type(v) ~= 'table' then
-		return false
-	end
-	if v.object_type then
-		return true
-	end
-	return false
+	return (type(v) == 'table') and (v.object_type)
 end
 
 function obj_xref(self,str)
@@ -531,6 +489,7 @@ function list_del(self, name)
 end
 
 function list(v)
+	v.list_type = true;
 	v.add = list_add;
 	v.set = list_set;
 	v.cat = list_concat;
@@ -544,6 +503,10 @@ function list(v)
 	v.check = list_check;
 	v.save = list_save;
 	return v;
+end
+
+function isList(v)
+	return (type(v) == 'table') and (v.list_type == true)
 end
 
 function call(v, n, ...)
@@ -1085,12 +1048,9 @@ function game_life(self)
 	return v, av;
 end
 
-function check_object(k, v)
-	if not v.nam then
-		error ("No name in "..k);
-	end
-	if not v.obj:check() then
-		error ("error in object, room or player (obj): "..k);
+check_list = function(k, v)
+	if v.check == nil or not v:check() then
+		error ("error in list: "..k);
 	end
 end
 
@@ -1101,38 +1061,56 @@ function check_room(k, v)
 	if v.way == nil then
 		error("no way in room:"..k);
 	end
-	if not v.way:check() then
-		error ("error in room (way): "..k);
-	end
 end
 
 function check_player(k, v)
 	v.where = deref(v.where);
 end
 
+function check_object(k, v)
+	if not v.nam then
+		error ("No name in "..k);
+	end
+	if isRoom(v) then
+		check_room(k, v);
+	end
+	if isPlayer(v) then
+		check_player(k, v);
+	end
+	for_each(v, k, check_list, isList)
+end
+
+function for_everything(f, ...)
+	local is_ok = function(s)
+		return true
+	end
+	for_each(_G, '_G', f, is_ok, unpack(arg))
+end
+
 function do_ini(self)
 	local v='',vv
-	local function call_ini(k, v)
+	local function call_key(k, v)
 		v.key_name = k;
+	end
+	local function call_ini(k, v)
+	--	v.key_name = k;
 		v = call(v, 'ini');
 		v = cat(v, "^^");
 	end
 
 	math.randomseed(tonumber(os.date("%m%d%H%M%S")))
 	rnd(1); rnd(1); rnd(1); -- Lua bug?
-	for_each_object(call_ini);
---	for_each_player(call_ini);
---	for_each_room(call_ini);
+
+	for_each_object(call_key);
+	for_each_object(check_object);
 
 	game.pl = deref(game.pl);
 	game.where = deref(game.where);
-	if not game.lifes:check() then
-		error ("error in game (lifes).");
-	end
 
-	for_each_object(check_object);
-	for_each_room(check_room);
-	for_each_player(check_player);
+	for_each(game, "game", check_list, isList)
+	
+	for_each_object(call_ini);
+
 	me():tag();
 	if not self.showlast then
 		self._lastdisp = nil;
@@ -1180,42 +1158,54 @@ function game(v)
 	return v;
 end
 
-function for_each_room(f,...)
-	local k,v
-	for k,v in pairs(_G) do
-		if isRoom(v) then
-			f(k,v, unpack(arg));
-		end
-	end
-end
 
-function for_each_object(f,...)
+function for_each(o, n, f, fv, ...)
 	local k,v
-	for k,v in pairs(_G) do
-		if isObject(v) then
+	if type(o) ~= 'table' then
+		return
+	end
+
+	for k,v in pairs(o) do
+		if type(v) == 'table' and fv(v) then
+			local i = tonumber(k);
+			local nn
+			if i then
+				nn = n.."["..i.."]"
+			else
+				if n == '_G' then
+					nn = k;
+				else
+					nn = n.."."..k;
+				end
+			end
 			f(k, v, unpack(arg));
 		end
 	end
 end
 
-function for_each_player(f,...)
-	local k,v
-	for k,v in pairs(_G) do
-		if isPlayer(v) then
-			f(k,v, unpack(arg));
-		end
-	end
+function for_each_object(f,...)
+	for_each(_G, '_G', f, isObject, unpack(arg))
 end
 
+function for_each_player(f,...)
+	for_each(_G, '_G', f, isPlayer, unpack(arg))
+end
+
+function for_each_room(f,...)
+	for_each(_G, '_G', f, isRoom, unpack(arg))
+end
+
+function for_each_list(f,...)
+	for_each(_G, '_G', f, isList, unpack(arg))
+end
 
 function clearvar (v)
-	local r,f
-	if type(v) ~= "table" then 
-		return 
-	end
-	v.__visited__ = nil
-	for r,f in pairs(v) do
-		clearvar(r, f)
+	local k,o
+	for k,o in pairs(v) do
+		if type(o) == 'table' and o.__visited__ ~= nil then
+			o.__visited__ = nil
+			clearvar(o)
+		end
 	end
 end
 
@@ -1262,11 +1252,13 @@ function savevar (h, v, n, need)
 		if v.__visited__ ~= nil then
 			return
 		end
+
+		v.__visited__ = n;
+
 		if type(v.save) == 'function' then
 			v:save(n, h, need);
 			return;
 		end
-		v.__visited__ = n;
 		
 		if need then
 			h:write(n.." = {};\n");
@@ -1307,6 +1299,7 @@ function game_save(self, name, file)
 	for_each_object(save_object, h);
 --	for_each_player(save_object, h);
 	save_object('game', self, h);
+	clearvar(_G);
 	h:flush();
 	h:close();
 	return nil;
@@ -1464,16 +1457,16 @@ iface = {
 			r,v = me():action(strip(inp));
 			st = true;
 		end
-		
+		-- here r is action result, v - ret code value	
+		-- st -- game state changed
 		if st and r == nil and v == true then -- we do nothing
---			me():tag();
-			return nil; --game._lastdisp;
+			return nil;
 		end
 		
---		self:text(r);
+		ACTIONS_TXT = r; -- here, life methods can redefine this
 		
 		if st and v ~= false then
-			local av, pv
+			local av, pv -- av -- active lifes, pv -- background
 			pv,av = game:step();
 			vv = par(" ",vv, pv);
 			me():tag();		
@@ -1483,16 +1476,16 @@ iface = {
 				elseif game.forcedsc == true and here().forcedsc ~= false then
 					l,v = me():look();
 				end
-				r = iface:em(r);
+				ACTIONS_TXT = iface:em(ACTIONS_TXT);
 				vv = par("^^",iface:em(av), here():look(), iface:em(vv));
 			else
 				vv = par("^^",av, here():look(), vv);
 			end
 		end
 		if v == false then
-			return fmt(r);
+			return fmt(ACTIONS_TXT);
 		end
-		vv = fmt(cat(par("^^",l,r,vv),'^'));
+		vv = fmt(cat(par("^^",l,ACTIONS_TXT,vv),'^'));
 		if st then
 			game._lastdisp = vv
 		end

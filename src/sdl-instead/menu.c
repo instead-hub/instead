@@ -421,9 +421,9 @@ int game_menu_act(const char *a)
 			char *og = curgame_dir;
 			game_save(-1);
 			game_done();
-			if (game_init(og))
+			if (game_init(og)) {
 				game_error(og);
-			else if (curgame_dir && game_own_theme && opt_owntheme) {
+			} else if (curgame_dir && game_own_theme && opt_owntheme) {
 				game_menu(menu_own_theme);
 			}
 			free(p);
@@ -434,7 +434,7 @@ int game_menu_act(const char *a)
 
 void custom_theme_warn(void)
 {
-	if (game_own_theme && !opt_owntheme) {
+	if (game_own_theme && !opt_owntheme && cur_menu != menu_warning) {
 		game_menu(menu_custom_theme);
 	}
 }
