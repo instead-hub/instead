@@ -11,9 +11,6 @@ install:
 	$(INSTALLD) $(DESTDIR)$(PREFIX)/share/applications
 	$(INSTALL) instead.desktop $(DESTDIR)$(PREFIX)/share/applications/instead.desktop
 
-ifeq ($(SYSTEMSETUP), yes)
 uninstall:
 	$(RM) $(DESTDIR)$(PREFIX)/share/applications/instead.desktop
-else
-uninstall:
-endif
+

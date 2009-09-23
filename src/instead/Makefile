@@ -9,9 +9,6 @@ install:
 	$(INSTALLD) $(BIN)
 	$(INSTALLB) instead $(BIN)/instead
 
-ifeq ($(SYSTEMSETUP), yes)
 uninstall:
 	$(RM) $(BIN)/instead
-else
-uninstall:
-endif
+
