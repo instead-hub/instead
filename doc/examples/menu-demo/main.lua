@@ -1,4 +1,5 @@
 dofile("actions.lua");
+game.use = 'Не сработает...';
 
 status = stat {
 	Turns = 0,
