@@ -18,7 +18,14 @@ sdl-instead$(EXE):  $(OBJ) $(RESOURCES)
 
 install:
 	$(INSTALLD) $(BIN)
-	$(INSTALL) sdl-instead$(EXE) $(BIN)/sdl-instead$(EXE)
+	$(INSTALLB) sdl-instead$(EXE) $(BIN)/sdl-instead$(EXE)
+
+ifeq ($(SYSTEMSETUP), yes)
+uninstall:
+	$(RM) $(BIN)/sdl-instead$(EXE)
+else
+uninstall:
+endif
 
 clean:
 	$(RM) -f *.o sdl-instead$(EXE)

@@ -10,6 +10,7 @@ ICONPATH=$(DESTDIR)$(PREFIX)/share/pixmaps
 DOCPATH=$(DESTDIR)$(PREFIX)/share/doc/instead
 LANGPATH=$(STEADPATH)/languages
 MANPATH=$(DESTDIR)$(PREFIX)/share/man/man6
+SYSTEMSETUP=yes
 
 LUA_CFLAGS=$(shell pkg-config --cflags lua5.1)
 LUA_LFLAGS=$(shell pkg-config --libs lua5.1)
@@ -26,8 +27,10 @@ SDL_LFLAGS=$(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer -lSDL_image
 CFLAGS	+= -Wall -D_HAVE_ICONV
 
 INSTALLD=install -d -m 0755
-INSTALL=install -m 0755
+INSTALLB=install -m 0755
+INSTALL=install -m 0644
+
 EXE=
 PLATFORM=unix.c
 RESOURCES=
-
+RM=rm

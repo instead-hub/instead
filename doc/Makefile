@@ -2,7 +2,15 @@ include ../Rules.make
 clean:
 all:
 install:
-	install -d -m0755 $(DOCPATH)
-	install -m0644 *.jpg *.html *.txt $(DOCPATH)
-	install -d -m0755 $(MANPATH)
-	install -m0644 *.6 $(MANPATH)
+	$(INSTALLD) $(DOCPATH)
+	$(INSTALL) *.jpg *.html *.txt $(DOCPATH)
+	$(INSTALLD) $(MANPATH)
+	$(INSTALL) *.6 $(MANPATH)
+
+ifeq ($(SYSTEMSETUP), yes)
+uninstall:
+	$(RM) -rf $(DOCPATH)
+	$(RM) $(MANPATH)/instead.*
+else
+uninstall:
+endif

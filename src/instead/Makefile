@@ -4,8 +4,14 @@ all: instead
 instead: instead.c rline.c
 	$(CC) $(CFLAGS) -DSTEAD_PATH=\"${STEADPATH}/\" instead.c $(LUA_CFLAGS) rline.c $(LUA_LFLAGS) -lncurses -lreadline -o instead
 clean:
-	rm -rf *.o instead
+	$(RM) -rf *.o instead
 install:
-	install -d -m 0755 $(BIN)
-	install -m 0755 instead $(BIN)/instead
+	$(INSTALLD) $(BIN)
+	$(INSTALLB) instead $(BIN)/instead
 
+ifeq ($(SYSTEMSETUP), yes)
+uninstall:
+	$(RM) $(BIN)/instead
+else
+uninstall:
+endif
