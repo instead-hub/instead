@@ -135,19 +135,30 @@ static void games_menu(void)
 	for (i = games_menu_from; i < games_nr && i - games_menu_from < MENU_GAMES_MAX; i ++) {
 		char tmp[PATH_MAX];
 		if (curgame_dir && !strcmp(games[i].dir, curgame_dir))
-			snprintf(tmp, sizeof(tmp), "<a:/resume><b>%s</b></a>\n", games[i].name);
+			snprintf(tmp, sizeof(tmp), "<l><a:/resume><b>%s</b></a></l>\n", games[i].name);
 		else
-			snprintf(tmp, sizeof(tmp), "<a:%s>%s</a>\n", games[i].dir, games[i].name);
+			snprintf(tmp, sizeof(tmp), "<l><a:%s>%s</a></l>\n", games[i].dir, games[i].name);
 		strcat(menu_buff, tmp);
 	}	
 	if (!games_nr)
 		sprintf(menu_buff, NOGAMES_MENU, GAMES_PATH);
 	strcat(menu_buff,"\n");
-	if (games_menu_from)
-		strcat(menu_buff,"<a:/games_prev><<</a> ");
+
+	i = games_menu_from || (games_menu_from + MENU_GAMES_MAX < games_nr);
+
+	if (i) {
+		if (games_menu_from)
+			strcat(menu_buff,"<a:/games_prev><<</a> ");
+		else
+			strcat(menu_buff,"<< ");
+	}
 	strcat(menu_buff, BACK_MENU); 
-	if (games_menu_from + MENU_GAMES_MAX < games_nr)
-		strcat(menu_buff," <a:/games_next>>></a>");
+	if (i) {
+		if (games_menu_from + MENU_GAMES_MAX < games_nr)
+			strcat(menu_buff," <a:/games_next>>></a>");
+		else
+			strcat(menu_buff," >>");
+	}
 }
 
 static void themes_menu(void)
@@ -158,19 +169,28 @@ static void themes_menu(void)
 	for (i = themes_menu_from; i < themes_nr && i - themes_menu_from < MENU_THEMES_MAX; i ++) {
 		char tmp[PATH_MAX];
 		if (curtheme_dir && !strcmp(themes[i].dir, curtheme_dir))
-			snprintf(tmp, sizeof(tmp), "<a:/resume><b>%s</b></a>\n", themes[i].name);
+			snprintf(tmp, sizeof(tmp), "<l><a:/resume><b>%s</b></a></l>\n", themes[i].name);
 		else
-			snprintf(tmp, sizeof(tmp), "<a:%s>%s</a>\n", themes[i].dir, themes[i].name);
+			snprintf(tmp, sizeof(tmp), "<l><a:%s>%s</a></l>\n", themes[i].dir, themes[i].name);
 		strcat(menu_buff, tmp);
 	}	
 	if (!themes_nr)
 		sprintf(menu_buff, NOTHEMES_MENU, THEMES_PATH);
 	strcat(menu_buff,"\n");
-	if (themes_menu_from)
-		strcat(menu_buff,"<a:/themes_prev><<</a> ");
+	i = themes_menu_from || (themes_menu_from + MENU_THEMES_MAX < themes_nr);
+	if (i) {
+		if (themes_menu_from)
+			strcat(menu_buff,"<a:/themes_prev><<</a> ");
+		else
+			strcat(menu_buff,"<< ");
+	}
 	strcat(menu_buff, BACK_MENU); 
-	if (themes_menu_from + MENU_THEMES_MAX < themes_nr)
-		strcat(menu_buff," <a:/themes_next>>></a>");
+	if (i) {
+		if (themes_menu_from + MENU_THEMES_MAX < themes_nr)
+			strcat(menu_buff," <a:/themes_next>>></a>");
+		else
+			strcat(menu_buff," >>");
+	}
 }
 
 char *game_menu_gen(void)
