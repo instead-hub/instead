@@ -2,7 +2,14 @@ include ../Rules.make
 clean:
 all:
 install:
-	install -d -m0755 $(LANGPATH)
+	$(INSTALLD) $(LANGPATH)
 	for f in *.ini; do \
-		install -m0644 $$f $(LANGPATH)/$$f;\
+		$(INSTALL) $$f $(LANGPATH)/$$f;\
 	done
+
+ifeq ($(SYSTEMSETUP), yes)
+uninstall:
+	$(RM) -rf $(LANGPATH)
+else
+uninstall:
+endif

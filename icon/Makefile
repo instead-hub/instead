@@ -2,6 +2,12 @@ include ../Rules.make
 clean:
 all:
 install:
-	install -d -m0755 $(ICONPATH)
-	install -m0644 sdl_instead.png $(ICONPATH)
+	$(INSTALLD) $(ICONPATH)
+	$(INSTALL) sdl_instead.png $(ICONPATH)
 
+ifeq ($(SYSTEMSETUP), yes)
+uninstall:
+	$(RM) $(ICONPATH)/sdl_instead.png
+else
+uninstall:
+endif
