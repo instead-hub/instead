@@ -1,4 +1,4 @@
-﻿== 0. General information ==
+== 0. General information ==
 
 Game code for STEAD is written in lua (5.1), therefore it is useful to know the language, though not necessary. The engine code in lua is only ~900 lines long. And, of course it is the best documentation.
 
@@ -668,7 +668,14 @@ profdlg2 = dlg {
 }}}
 Any object or scene may have their “life” handler, which is called every time the game time advances, if the object or the scene have been added to the list of living objects with “lifeon”. Don't forget to remofe living objects from the list with “lifeoff”, when you no longer need them. You can do this, for example, in the “exit” handler or some other way.
 
-== 17. Графика и музыка ==
+life may return string, that will be printed after all text of scene.
+
+From 0.9.1 you can return second retval -- importance. (true or false). For example:
+{{{
+return 'Guard entered the room.', true -- The event will be printed before objects description.
+}}}
+
+== 17. Graphics and music ==
 
 Graphic interpreter analyzes the scene “pic” attribute and treats it as a path to the picture. For example:
 
