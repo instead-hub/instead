@@ -122,9 +122,6 @@ Use = function(s, w)
 		end
 		r, v = call(s, 'useit', w);
 	else
-		if not s.use then
-			return 'Гм... Не сработает...', false
-		end
 		r, v = call(s, 'useon', w);
 	end
 	return r, v;
