@@ -7,9 +7,6 @@ install:
 		$(INSTALL) $$f $(LANGPATH)/$$f;\
 	done
 
-ifeq ($(SYSTEMSETUP), yes)
 uninstall:
 	$(RM) -rf $(LANGPATH)
-else
-uninstall:
-endif
+
