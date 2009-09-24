@@ -1,10 +1,5 @@
 stead = {
-	ver = {
-		maj = 0,
-		min = 9,
-		rev = 1,
-		str = "0.9.1",
-	}
+	ver = { maj = 0, min = 9, rev = 1, str = "0.9.1", }
 }
 
 -- merge strings with "space" as separator
