@@ -1,11 +1,15 @@
 stead = {
-	ver = { maj = 0, min = 9, rev = 1, str = "0.9.1", }
+	ver = "0.9.1",
+	table = table,
+	string = string,
+	math = math,
 }
+
 
 -- merge strings with "space" as separator
 function par(space,...)
 	local i, res
-	for i = 1, table.maxn(arg) do
+	for i = 1, stead.table.maxn(arg) do
 		if type(arg[i]) == 'string' then
 			if res == nil then
 				res = ""
@@ -25,7 +29,7 @@ function cat(v,...)
 		return nil
 	end
 	res = v;
-	for i = 1, table.maxn(arg) do
+	for i = 1, stead.table.maxn(arg) do
 		if type(arg[i]) == 'string' then
 			res = res..arg[i];
 		end 
@@ -62,11 +66,11 @@ function fmt(...)
 	if arg == nil then
 		return false
 	end
-	for i=1,table.maxn(arg) do
+	for i=1,stead.table.maxn(arg) do
 		if type(arg[i]) == 'string' then
-			local s = string.gsub(arg[i],'[\t ]+',' ');
-			s = string.gsub(s, '[\n]+', ' ');
-			s = string.gsub(s,'%^','\n');
+			local s = stead.string.gsub(arg[i],'[\t ]+',' ');
+			s = stead.string.gsub(s, '[\n]+', ' ');
+			s = stead.string.gsub(s,'%^','\n');
  			res = par('',res,s);
 		end
 	end
@@ -94,10 +98,10 @@ function ordered_i(t)
 	local i,v, max;
 	max = 0;
 	for i,v in ilist(t) do
-		table.insert(ordered, i);
+		stead.table.insert(ordered, i);
 		max = max + 1;
 	end
-	table.sort(ordered);
+	stead.table.sort(ordered);
 	ordered.i = 1;
 	ordered.max = max;
 	return ordered;
@@ -150,7 +154,7 @@ end
 
 function obj_xref(self,str)
 	function xrefrep(str)
-		local s =  string.gsub(str,'[{}]','');
+		local s =  stead.string.gsub(str,'[{}]','');
 		return xref(s, self);
 	end
 	if not str then
@@ -159,7 +163,7 @@ function obj_xref(self,str)
 	if not isObject(self) then
 		return str;
 	end
-	local s = string.gsub(str,'{[^}]+}',xrefrep);
+	local s = stead.string.gsub(str,'{[^}]+}',xrefrep);
 	return s;
 end
 
@@ -172,7 +176,7 @@ function obj_look(self)
 	if game.hinting then
 		v = obj_xref(self, v);
 	elseif v then
-		v = string.gsub(v, '[{}]','');
+		v = stead.string.gsub(v, '[{}]','');
 	end
 	for i,o in opairs(self.obj) do
 		o = ref(o);
@@ -370,10 +374,10 @@ function list_add(self, name, pos)
 	end
 	self.__modifyed__ = true;
 	if tonumber(pos) then
-		table.insert(self, tonumber(pos), nam);
+		stead.table.insert(self, tonumber(pos), nam);
 		self[tonumber(pos)] = nam; -- for spare lists
 	else
-		table.insert(self, nam);
+		stead.table.insert(self, nam);
 	end
 	return true
 end
@@ -484,7 +488,7 @@ function list_del(self, name)
 		return nil;
 	end
 	self.__modifyed__ = true
-	v = table.remove(self, n);
+	v = stead.table.remove(self, n);
 	if not v then
 		v = self[n];
 		self[n] = nil -- for spare lists
@@ -628,7 +632,7 @@ function dialog_look(self)
 			if game.hinting then
 				v = par('^', v, n..' - '..xref(call(ph,'dsc'),ph));
 			else
-				v = par('^', v, n..' - '..string.gsub(call(ph,'dsc'),'[{}]',''));
+				v = par('^', v, n..' - '..stead.string.gsub(call(ph,'dsc'),'[{}]',''));
 			end
 			n = n + 1
 		end
@@ -664,7 +668,7 @@ end
 
 function ponoff(self, on, ...)
 	local i, ph
-	for i=1,table.maxn(arg) do
+	for i=1,stead.table.maxn(arg) do
 		ph = dialog_phrase(self, arg[i]);
 		if isPhrase(ph) and not isRemoved(ph) then
 			 if on then
@@ -679,7 +683,7 @@ end
 
 function dialog_prem(self, ...)
 	local i, ph
-	for i=1,table.maxn(arg) do
+	for i=1,stead.table.maxn(arg) do
 		ph = dialog_phrase(self, arg[i]);
 		if isPhrase(ph) then
 			ph:remove();
@@ -1240,7 +1244,7 @@ function savevar (h, v, n, need)
 		return 
 	end
 
---	if string.find(n, '_') ==  1 or string.match(n,'^%u') then
+--	if stead.string.find(n, '_') ==  1 or stead.string.match(n,'^%u') then
 --		need = true;
 --	end
 
@@ -1248,7 +1252,7 @@ function savevar (h, v, n, need)
 		if not need then 
 			return
 		end
-		h:write(string.format("%s=%q\n",n,v))
+		h:write(stead.string.format("%s=%q\n",n,v))
 		return;
 	end
  	
@@ -1332,7 +1336,7 @@ end
 
 
 game = game {
-	nam = "INSTEAD -- Simple Text Adventure interpreter v"..stead.ver.str.." '2009 by Peter Kosyh",
+	nam = "INSTEAD -- Simple Text Adventure interpreter v"..stead.ver.." '2009 by Peter Kosyh",
 	dsc = [[
 Commands:^
     look(or just enter), act <on what> (or just what), use <what> [on what], go <where>,^
@@ -1342,8 +1346,8 @@ Commands:^
 };
 function strip(s)
 	local s = tostring(s);
-	s = string.gsub(s, '^[ \t]*', '');
-	s = string.gsub(s, '[ \t]*$', '');
+	s = stead.string.gsub(s, '^[ \t]*', '');
+	s = stead.string.gsub(s, '[ \t]*$', '');
 	return s;
 end
 iface = {
@@ -1403,21 +1407,21 @@ iface = {
 		local scene = false;
 		local st = false;
 		local l;
-		i,k = string.find(inp,'[a-zA-Z0-9_]+', k);
+		i,k = stead.string.find(inp,'[a-zA-Z0-9_]+', k);
 		if not i or not k then
 			cmd = inp
 		else
-			cmd = string.sub(inp, i, k);
+			cmd = stead.string.sub(inp, i, k);
 		end
 		local a = { };
 		local n = 1;
 		while i do
 			k = k + 1;
-			i,k = string.find(inp,'[^,]+', k);
+			i,k = stead.string.find(inp,'[^,]+', k);
 			if not i then
 				break
 			end
-			a[n] = strip(string.sub(inp, i, k));
+			a[n] = strip(stead.string.sub(inp, i, k));
 			n = n + 1;
 		end
 		v = false
@@ -1843,6 +1847,6 @@ function disabled(o)
 end
 
 function isForSave(k)
-	return string.find(k, '_') ==  1 or string.match(k,'^%u')
+	return stead.string.find(k, '_') ==  1 or stead.string.match(k,'^%u')
 end
 -- here the game begins
