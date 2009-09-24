@@ -1,4 +1,6 @@
--- brake strings by space
+version = "0.9.1";
+
+-- merge strings with "space" as separator
 function par(space,...)
 	local i, res
 	for i = 1, table.maxn(arg) do
@@ -1326,7 +1328,6 @@ function game_step(self)
 	return self:life(self);
 end
 
-version = "0.9.1";
 
 game = game {
 	nam = "INSTEAD -- Simple Text Adventure interpreter v"..version.." '2009 by Peter Kosyh",
