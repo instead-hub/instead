@@ -1,4 +1,11 @@
-version = "0.9.1";
+stead = {
+	ver = {
+		maj = 0,
+		min = 9,
+		rev = 1,
+		str = "0.9.1",
+	}
+}
 
 -- merge strings with "space" as separator
 function par(space,...)
@@ -1330,7 +1337,7 @@ end
 
 
 game = game {
-	nam = "INSTEAD -- Simple Text Adventure interpreter v"..version.." '2009 by Peter Kosyh",
+	nam = "INSTEAD -- Simple Text Adventure interpreter v"..stead.ver.str.." '2009 by Peter Kosyh",
 	dsc = [[
 Commands:^
     look(or just enter), act <on what> (or just what), use <what> [on what], go <where>,^
