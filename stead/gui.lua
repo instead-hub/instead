@@ -94,11 +94,14 @@ function menu_save(self, name, h, need)
 	savemembers(h, self, name, need);
 end
 
+MENU_TAG_ID = 10000
+
 function menu(v)
 	v.menu_type = true
 	if v.inv == nil then
 		v.inv = function(s)
-			return call(s,'act');
+			call(s, 'menu');
+			obj_tag(me(), MENU_TAG_ID); -- retag menu field
 		end
 	end
 	if v.save == nil then

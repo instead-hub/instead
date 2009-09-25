@@ -108,9 +108,7 @@ select_only = function(s)
 			o:inv();
 		end
 	end
-	for k,o,i in opairs(objs(s)) do -- retag 
-		ref(o).id = 10000 + i;
-	end
+	obj_tag(me(), MENU_TAG_ID);
 end
 
 actmenu = function(nam, act, _scene, _inv, _ifinvonly)
@@ -150,7 +148,7 @@ actmenu = function(nam, act, _scene, _inv, _ifinvonly)
 			s.State = false;
 			s.obj:zap();
 		end
-		return nil, true
+		return nil, true -- to say instead, do not redraw scene, only inv ;)
 	end
 	return menu(v);
 end
