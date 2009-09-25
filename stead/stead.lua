@@ -1,8 +1,9 @@
 stead = {
-	ver = "0.9.1",
+	version = "0.9.1",
 	table = table,
 	string = string,
 	math = math,
+	io = io,
 }
 
 
@@ -1298,7 +1299,7 @@ function game_save(self, name, file)
 	if name == nil then
 		return nil, false
 	end
-	h = io.open(name,"w");
+	h = stead.io.open(name,"w");
 	if not h then
 		return nil, false
 	end
@@ -1336,7 +1337,7 @@ end
 
 
 game = game {
-	nam = "INSTEAD -- Simple Text Adventure interpreter v"..stead.ver.." '2009 by Peter Kosyh",
+	nam = "INSTEAD -- Simple Text Adventure interpreter v"..stead.version.." '2009 by Peter Kosyh",
 	dsc = [[
 Commands:^
     look(or just enter), act <on what> (or just what), use <what> [on what], go <where>,^
@@ -1505,7 +1506,7 @@ iface = {
 		local inp, i, k, cmd, a, n;
 		me():tag();		
 		while game._running do
-			inp = io.read("*l");
+			inp = stead.io.read("*l");
 			if inp == 'quit' then
 				break;
 			end
