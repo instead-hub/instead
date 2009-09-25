@@ -100,8 +100,12 @@ function menu(v)
 	v.menu_type = true
 	if v.inv == nil then
 		v.inv = function(s)
-			call(s, 'menu');
-			obj_tag(me(), MENU_TAG_ID); -- retag menu field
+			local r
+			r = call(s, 'menu');
+			if r == nil then
+				obj_tag(me(), MENU_TAG_ID); -- retag menu field
+			end
+			return r, true
 		end
 	end
 	if v.save == nil then
