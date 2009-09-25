@@ -526,7 +526,7 @@ function call(v, n, ...)
 		return nil,nil;
 	end
 	if type(v[n]) == 'string' then
-		return v[n],true;
+		return v[n];
 	end 
 	if type(v[n]) == 'function' then
 		return v[n](v, unpack(arg));
