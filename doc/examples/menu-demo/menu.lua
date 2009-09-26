@@ -3,9 +3,6 @@ use_proxy = function(o)
 	v.proxy_type = true;
 	v.nam = ' '..call(ref(o), 'nam');
 	v.pobj = deref(o);
-	if type(v.pobj) ~= 'string' then
-		error ("You can not use unnamed objects in use_proxy!");
-	end
 	v.save = function(self, name, h, need)
 		if need then
 			h:write(name.." = use_proxy('"..tostring(self.pobj).."');\n");
@@ -70,11 +67,14 @@ fill_objs = function(s, w, act)
 	for i,o,ii in opairs(objs(w)) do
 		o = ref(o);
 		if isObject(o) and not isDisabled(o) and o ~= s and not isPhrase(o) then
-			-- local n = deref(w)..".obj["..tonumber(ii).."]";
+			local n = deref(o)
+			if type(n) ~= 'string' then
+				n = deref(w)..".obj["..tonumber(ii).."]";
+			end
 			if act == "use" then
-				put(use_proxy(o), s);
+				put(use_proxy(n), s);
 			else
-				put(act_proxy(o, act), s);
+				put(act_proxy(n, act), s);
 			end
 			fill_objs(s, o, act);
 		end
@@ -90,10 +90,15 @@ fill_inv = function(s, w, act)
 			and not o.proxy_type 
 			and not isStatus(o) 
 			and s ~= o and not o.action_type then
+			local n = deref(o)
+			if type(n) ~= 'string' then
+				n = deref(w)..".obj["..tonumber(ii).."]";
+			end
+
 			if act == "use" then
-				put(use_proxy(o), s);
+				put(use_proxy(n), s);
 			else
-				put(act_proxy(o, act), s);
+				put(act_proxy(n, act), s);
 			end
 			fill_inv(s, o.obj, act);
 			rc = true
