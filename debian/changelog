@@ -1,18 +1,21 @@
 instead (0.9.1) unstable; urgency=low
 
   * mouse gfx bug
+  * noautosave option
+  * make uninstall
+  * === STEAD FIXES ====
   * gui.lua is separated file
   * menus in gfx mode!!! :)
   * stead.lua fixes:
   * ref fix
-  * noautosave option
   * phrases saver
   * player is object
   * disable_all enable_all for object
   * inherited inventory
   * save game bug
-  * make uninstall
   * own stead namespace (table problem fixed!)
+  * recurse for exit breaking
+  * wrap into vroom not call exit twice
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Sun, 15 Sep 2009 14:42:44 +0400
 
