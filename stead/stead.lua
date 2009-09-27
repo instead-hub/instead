@@ -938,8 +938,10 @@ function go(self, where, back)
 	end
 	local v, r;
 --	if not isDialog(ref(self.where)) then
-	if not isVroom(ref(where)) then
+	if not isVroom(ref(where)) and not stead.in_exit_call then
+		stead.in_exit_call = true -- to break recurse
 		v,r = call(ref(self.where), 'exit', where);
+		stead.in_exit_call = nil
 		if r == false then
 			return v, r
 		end
