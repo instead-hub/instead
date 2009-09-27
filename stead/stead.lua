@@ -938,11 +938,12 @@ function go(self, where, back)
 	end
 	local v, r;
 --	if not isDialog(ref(self.where)) then
+	if not isVroom(ref(where)) then
 		v,r = call(ref(self.where), 'exit', where);
 		if r == false then
 			return v, r
 		end
-
+	end
 --	if ref(was) ~= ref(self.where) then -- jump !!!
 --		where = self.where;
 --		was = where;
@@ -1652,8 +1653,12 @@ function vroom_enter(self, ...)
 	return go(me(), self.where, false);
 end
 
+function isVroom(v)
+	return (type(v) == 'table') and (v.vroom_type)
+end
+
 function vroom(name, w)
-	return room { nam = name, where = deref(w), enter = vroom_enter, save = vroom_save, };
+	return room { vroom_type = true, nam = name, where = deref(w), enter = vroom_enter, save = vroom_save, };
 end
 
 function goto(what)
