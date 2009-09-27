@@ -2,6 +2,9 @@ use_proxy = function(o)
 	local v = {};
 	v.proxy_type = true;
 	v.nam = ' '..call(ref(o), 'nam');
+	if inv():srch(ref(o)) then
+		v.nam = txtem(v.nam);
+	end
 	v.pobj = deref(o);
 	v.save = function(self, name, h, need)
 		if need then
