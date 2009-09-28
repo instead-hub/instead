@@ -724,6 +724,8 @@ inv():add('status');
 status.object_type = false
 }}}
 
+From version 0.9.1 you can use stat constructor for status.
+
 === “goto” from the “exit” handler ==
 
 If you use “goto” from the “exit” handler, you get stack overflow, because goto would call “exit” again and again. You can prevent it by aadding a check that breaks the recursioon. For example:
@@ -732,6 +734,8 @@ exit = function(s, t)
         if t == 'dialog' then return; end
         return goto('dialog');
 }}}
+
+From version 0.9.1 this is done by stead engine.
 
 You can also do “goto” from the “enter” handlers.
 
