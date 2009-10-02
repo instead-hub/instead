@@ -459,7 +459,7 @@ static void anigif_do(void *data)
 {
 	if (gfx_frame_gif(el_img(el_spic))) {
 		game_cursor(CURSOR_ON);
-		gfx_flip();
+		gfx_update_gif(el_img(el_spic));
 	}
 }
 

@@ -127,5 +127,6 @@ extern void	gfx_stop_gif(img_t img);
 extern int	gfx_frame_gif(img_t img);
 extern void	gfx_del_timer(timer_t han);
 extern timer_t 	gfx_add_timer(int delay, int (*fn)(int, void*), void *aux);
+extern void	gfx_update_gif(img_t img);
 #endif
 
