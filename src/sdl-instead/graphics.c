@@ -658,6 +658,17 @@ int gfx_frame_gif(img_t img)
 	return 1;
 }
 
+void gfx_update_gif(img_t img)
+{
+	anigif_t ag;
+	ag = is_anigif(img);
+	if (!ag)
+		return;
+	if (!ag->drawn)
+		return;
+	gfx_update(ag->x, ag->y, gfx_img_w(img), gfx_img_h(img));
+}
+
 void gfx_draw_wh(img_t p, int x, int y, int w, int h)
 {
 	SDL_Surface *pixbuf = (SDL_Surface *)p;
