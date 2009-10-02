@@ -1150,11 +1150,11 @@ int game_cmd(char *cmd)
 
 	if (game_theme.gfx_mode != GFX_MODE_EMBEDDED) {
 		el_draw(el_ways);
-		if ((new_pict || new_place)) {
+		if ((new_pict || new_place))
 			el_draw(el_spic);
-			gfx_start_gif(el_img(el_spic));
-		}
 	}
+
+	gfx_start_gif(el_img(el_spic));
 	
 	txt_box_resize(el_box(el_scene), game_theme.win_w, game_theme.win_h - title_h - ways_h - pict_h);
 	el_draw(el_scene);

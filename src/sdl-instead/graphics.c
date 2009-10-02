@@ -257,9 +257,12 @@ extern int timer_counter;
 static void anigif_frame(anigif_t g)
 {
 	SDL_Rect dest;
+	SDL_Rect clip;
+
 	img_t	*img = NULL;
 	AG_Frame *frame;
 	frame = &g->frames[g->cur_frame];
+	SDL_GetClipRect(screen, &clip);
 	
 	dest.x = g->x;
 	dest.y = g->y; 
@@ -295,7 +298,7 @@ static void anigif_frame(anigif_t g)
 	dest.y += frame->y;
 	SDL_BlitSurface(frame->surface, NULL, screen, &dest);
 	g->delay = timer_counter;
-	gfx_noclip();
+	SDL_SetClipRect(screen, &clip);
 }	
 
 /*
@@ -2369,5 +2372,5 @@ timer_t gfx_add_timer(int delay, int (*fn)(int, void*), void *aux)
 void gfx_del_timer(timer_t han)
 {
 	if (han)
-		SDL_RemoveTimer((SDL_TimerID*)han);
+		SDL_RemoveTimer((SDL_TimerID)han);
 }
