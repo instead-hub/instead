@@ -1213,26 +1213,31 @@ void game_xref_update(xref_t xref, int x, int y)
 	xref_update(xref, x, y, game_clear, game_update);
 }
 
-xref_t	inv_xref = NULL;
+xref_t	use_xref = NULL;
 
-int disable_inv(void)
+int disable_use(void)
 {
-	if (inv_xref) {
-		xref_set_active(inv_xref, 0);
-		game_xref_update(inv_xref, el(el_inv)->x, el(el_inv)->y);
-//		txt_box_update_links(el_box(el_inv), el(el_inv)->x, el(el_inv)->y, game_clear);
-		inv_xref = NULL;
+	if (use_xref) {
+		xref_set_active(use_xref, 0);	
+		if (xref_layout(use_xref) == txt_box_layout(el_box(el_inv)))
+			game_xref_update(use_xref, el(el_inv)->x, el(el_inv)->y);
+		else
+			game_xref_update(use_xref, el(el_scene)->x, el(el_scene)->y);	
+		use_xref = NULL;
 		return 1;
 	}
 	return 0;
 }
 
-void enable_inv(xref_t xref)
+void enable_use(xref_t xref)
 {
-	inv_xref = xref;
+	use_xref = xref;
 	xref_set_active(xref, 1);
-	//txt_box_update_links(el_box(el_inv), el(el_inv)->x, el(el_inv)->y, game_clear);
-	game_xref_update(inv_xref, el(el_inv)->x, el(el_inv)->y);
+	game_xref_update(use_xref, el(el_inv)->x, el(el_inv)->y);
+	if (xref_layout(use_xref) == txt_box_layout(el_box(el_inv)))
+		game_xref_update(use_xref, el(el_inv)->x, el(el_inv)->y);
+	else
+		game_xref_update(use_xref, el(el_scene)->x, el(el_scene)->y);	
 }
 
 
@@ -1302,7 +1307,7 @@ int game_highlight(int x, int y, int on)
 	}
 	
 	if (hxref != xref && oel) {
-		if (hxref != inv_xref) {
+		if (hxref != use_xref) {
 			xref_set_active(hxref, 0);
 			game_xref_update(hxref, oel->x, oel->y);
 			up = 1;
@@ -1317,7 +1322,7 @@ int game_highlight(int x, int y, int on)
 static void mouse_reset(void)
 {
 	game_highlight(-1, -1, 0);
-	disable_inv();
+	disable_use();
 	motion_mode = 0;
 	old_xref = old_el = NULL;
 }
@@ -1377,6 +1382,8 @@ int mouse_filter(void)
 int game_click(int x, int y, int action)
 {
 	int menu_mode 	= 0;
+	int use_mode	= 0;
+	int go_mode	= 0;
 	struct el	*elem = NULL;
 	char 		buf[1024];
 	xref_t 		xref = NULL;
@@ -1433,11 +1440,11 @@ int game_click(int x, int y, int action)
 				scroll_pdown(el_inv);
 			} else if (elem->id == el_iup) {
 				scroll_pup(el_inv);
-			} else if (disable_inv())
-				el_update(el_inv);
+			} else if (disable_use());
+//				el_update(el_inv);
 			motion_mode = 0;
-		} else if (disable_inv()) {
-			el_update(el_inv);
+		} else if (disable_use()) {
+//			el_update(el_inv);
 //			gfx_flip();
 		}
 		return 0;
@@ -1459,61 +1466,54 @@ int game_click(int x, int y, int action)
 	if (!strncmp("act ", xref_get_text(xref), 4)) {
 		menu_mode = 1;
 		xref_txt += 4;
+	} else if (!strncmp("use ", xref_get_text(xref), 4)) {
+		use_mode = 1;
+		xref_txt += 4;
+	} else if (!strncmp("go ", xref_get_text(xref), 3)) {
+		go_mode = 1;
+		xref_txt += 3;
 	}
 	
-	if (elem->id == el_ways ||
-		elem->id == el_title) {
-		strcpy(buf, xref_txt);
-		if (mouse_filter())
-			return 0;
-		if (opt_click)
-			snd_play(game_theme.click);
-		if (disable_inv()) {
-			el_update(el_inv);
+	if (!use_xref) {
+		if (use_mode) {
+			enable_use(xref);
+//			el_update(el_inv);
 			return 0;
 		}
-		game_cmd(buf);
-		return 1;
-	}
-
-	if (elem->id == el_scene) {
-		if (inv_xref) {
-			if (menu_mode)
-				return 0;
-			snprintf(buf,sizeof(buf), "use %s,%s", xref_get_text(inv_xref), xref_txt);
-			disable_inv();
-		} else	
-			strcpy(buf, xref_txt);
-		if (mouse_filter())
-			return 0;
-		if (opt_click)
-			snd_play(game_theme.click);
-		game_cmd(buf);
-		return 1;
-	}
-	
-	if (elem->id == el_inv) {
-
-		if (!inv_xref && !menu_mode) {
-			enable_inv(xref);
-			el_update(el_inv);
-			return 0;
-		}
-
-		if (xref == inv_xref || menu_mode) {
-			snprintf(buf,sizeof(buf), "use %s", xref_txt);
+		if (menu_mode) {
+			if (elem->id == el_inv)
+				snprintf(buf, sizeof(buf), "use %s", xref_txt);
+			else
+				snprintf(buf, sizeof(buf), "%s", xref_txt);
 		} else
-			snprintf(buf,sizeof(buf), "use %s,%s", xref_get_text(inv_xref), xref_txt);
-
-		disable_inv();
+			snprintf(buf, sizeof(buf), "%s", xref_get_text(xref));
 		if (mouse_filter())
 			return 0;
 		if (opt_click)
 			snd_play(game_theme.click);
 		game_cmd(buf);
 		return 1;
-	}
-	return 0;
+
+	}	
+
+	if (menu_mode || go_mode)
+		return 0;
+
+	if (use_xref == xref)	
+		snprintf(buf,sizeof(buf), "%s", xref_get_text(use_xref));
+	else
+		snprintf(buf,sizeof(buf), "%s,%s", xref_get_text(use_xref), xref_txt);
+		
+	if (mouse_filter())
+		return 0;
+		
+	disable_use();
+
+	if (opt_click)
+		snd_play(game_theme.click);
+		
+	game_cmd(buf);
+	return 1;
 }
 
 void game_cursor(int on)
@@ -1539,7 +1539,7 @@ void game_cursor(int on)
 	if (on == CURSOR_CLEAR || on == CURSOR_OFF)
 		return;
 	if (on != CURSOR_DRAW)
-		cur = (inv_xref) ? game_theme.use:game_theme.cursor;
+		cur = (use_xref) ? game_theme.use:game_theme.cursor;
 	
 	if (!cur)
 		return;	

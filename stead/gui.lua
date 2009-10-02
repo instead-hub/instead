@@ -12,6 +12,9 @@ iface.xref = function(self, str, obj)
 		end
 		if not o then
 			o = ref(me():srch(obj));
+			if o ~= nil then
+				cmd = 'use ';
+			end
 		end
 		if not isObject(o) or isStatus(o) or not o.id then
 			return str;
@@ -100,6 +103,16 @@ function menu(v)
 	v.menu_type = true
 	if v.inv == nil then
 		v.inv = function(s)
+			local r
+			r = call(s, 'menu');
+			if r == nil then
+				obj_tag(me(), MENU_TAG_ID); -- retag menu field
+			end
+			return r, true
+		end
+	end
+	if v.act == nil then
+		v.act = function(s)
 			local r
 			r = call(s, 'menu');
 			if r == nil then
