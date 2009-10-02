@@ -80,6 +80,7 @@ typedef struct
 {
 	/* global data */
 	SDL_RWops*		src;
+	int			loop;
 	gifscreen		gs;
 	gif89			g89;
 	int				zerodatablock;
@@ -132,7 +133,7 @@ int AG_isGIF( SDL_RWops* src )
 	return isGIF;
 }
 
-int AG_LoadGIF( const char* file, AG_Frame* frames, int size )
+int AG_LoadGIF( const char* file, AG_Frame* frames, int size, int *loop )
 {
 	int n = 0;
 
@@ -140,7 +141,7 @@ int AG_LoadGIF( const char* file, AG_Frame* frames, int size )
 
 	if ( src )
 	{
-		n = AG_LoadGIF_RW( src, frames, size );
+		n = AG_LoadGIF_RW( src, frames, size, loop );
 		SDL_RWclose( src );
 	}
 
@@ -255,7 +256,7 @@ int AG_NormalizeSurfacesToDisplayFormat( AG_Frame* frames, int nFrames )
 
 
 
-int AG_LoadGIF_RW( SDL_RWops* src, AG_Frame* frames, int maxFrames )
+int AG_LoadGIF_RW( SDL_RWops* src, AG_Frame* frames, int maxFrames, int *loop)
 {
 	int start;
 	unsigned char buf[16];
@@ -394,7 +395,8 @@ int AG_LoadGIF_RW( SDL_RWops* src, AG_Frame* frames, int maxFrames )
 done:
 	if ( image == NULL )
 		SDL_RWseek( src, start, SEEK_SET );
-
+	if (loop)
+		*loop = gd->loop;
 	free( gd );
 
 	return iFrame;
@@ -432,13 +434,20 @@ static int ReadColorMap( gifdata* gd, int number, unsigned char buffer[3][MAXCOL
 static int DoExtension( gifdata* gd, int label )
 {
 	unsigned char buf[256];
-
 	switch ( label )
 	{
 	  case 0x01:		/* Plain Text Extension */
 		break;
-
 	  case 0xff:		/* Application Extension */
+	  	if (GetDataBlock( gd, buf ) != 11)
+			break;
+		if (strncmp((char*)buf, "NETSCAPE2.0", 11))
+			break;
+		if (GetDataBlock( gd, buf ) != 3)
+			break;
+		if (buf[0] != 1)
+			break;
+		gd->loop = buf[1] | (buf[2] << 8);
 		break;
 
 	  case 0xfe:		/* Comment Extension */

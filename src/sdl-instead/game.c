@@ -1182,8 +1182,10 @@ inv:
 	if (new_pict || new_place) {
 		img_t offscreen;
 		game_cursor(CURSOR_CLEAR);
+		gfx_stop_gif(el_img(el_spic));
 		offscreen = gfx_screen(oldscreen);
 		gfx_change_screen(offscreen);
+		gfx_start_gif(el_img(el_spic));
 		gfx_free_image(offscreen);
 //		input_clear();
 		goto err;
