@@ -6,7 +6,10 @@
 #include <SDL_ttf.h>
 #include <SDL_mutex.h>
 #include "SDL_rotozoom.h"
-	
+#include "SDL_anigif.h"
+
+#define Surf(p) ((SDL_Surface *)p)
+
 static SDL_Surface *screen;
 
 static struct {
@@ -221,10 +224,161 @@ int gfx_parse_color (
 	return -1;
 }
 
+struct _anigif_t;
+
+struct _anigif_t {
+	struct _anigif_t *next;
+	struct _anigif_t *prev;
+	int	cur_frame;
+	int	nr_frames;
+	int	x;
+	int	y;
+	int 	drawn;
+	int	delay;
+	img_t	bg;	
+	SDL_Rect clip;
+	AG_Frame frames[0];
+};
+
+typedef struct _anigif_t *anigif_t;
+
+static anigif_t anim_gifs = NULL;
+
+static anigif_t anigif_find(anigif_t g)
+{
+	anigif_t p;
+	for (p = anim_gifs; p; p = p->next) {
+		if (p == g)
+			return p;
+	}
+	return NULL;
+}
+extern int timer_counter;
+static void anigif_frame(anigif_t g)
+{
+	SDL_Rect dest;
+	img_t	*img = NULL;
+	AG_Frame *frame;
+	frame = &g->frames[g->cur_frame];
+	
+	dest.x = g->x;
+	dest.y = g->y; 
+
+	switch (frame->disposal) {
+	case AG_DISPOSE_NA:
+	case AG_DISPOSE_NONE: /* just show next frame */
+		break;
+	case AG_DISPOSE_RESTORE_BACKGROUND:
+		img = g->bg;
+		dest.w = Surf(img)->w; 
+		dest.h = Surf(img)->h;
+		break;
+	case AG_DISPOSE_RESTORE_PREVIOUS:
+		if (g->cur_frame) {
+			img = (img_t*)(g->frames[g->cur_frame - 1].surface);
+			dest.w = g->frames[g->cur_frame - 1].surface->w; 
+			dest.h = g->frames[g->cur_frame - 1].surface->h;
+			dest.x += g->frames[g->cur_frame - 1].x; 
+			dest.y += g->frames[g->cur_frame - 1].y;
+		}
+		break;
+	}
+	SDL_SetClipRect(screen, &g->clip);
+	if (img) { /* draw bg */
+		SDL_BlitSurface(Surf(img), NULL, screen, &dest);
+	}
+	dest.x = g->x;
+	dest.y = g->y; 
+	dest.w = frame->surface->w; 
+	dest.h = frame->surface->h;
+	dest.x += frame->x;
+	dest.y += frame->y;
+	SDL_BlitSurface(frame->surface, NULL, screen, &dest);
+	g->delay = timer_counter;
+	gfx_noclip();
+}	
+
+/*
+static void anigif_do(void *data)
+{
+	anigif_t p;
+	int rc = 0;
+	for (p = anim_gifs; p; p = p->next) {
+		if (!p->drawn)
+			continue;
+		if ((timer_counter - p->delay) < (p->frames[p->cur_frame].delay / HZ))
+			continue;
+		p->cur_frame ++;
+		if (p->cur_frame >= p->nr_frames)	
+			p->cur_frame = 0;
+		anigif_frame(p);
+		rc ++;
+	}
+	if (!rc)
+		return;
+	gfx_flip();
+}*/
+
+static anigif_t is_anigif(img_t img)
+{
+	anigif_t p;
+	for (p = anim_gifs; p; p = p->next) {
+		if (p->frames[0].surface == img)
+			return p;
+	}
+	return NULL;
+}
+
+static anigif_t anigif_add(anigif_t g)
+{
+	anigif_t p;
+	p = anigif_find(g);
+	if (p) {
+		return p;
+	}
+	if (!anim_gifs)	{
+		anim_gifs = g;
+		g->next = NULL;
+		g->prev = NULL;
+		return g;
+	}
+	for (p = anim_gifs; p && p->next; p = p->next);
+	p->next = g;
+	g->next = NULL;
+	g->prev = p;
+	return g;
+}
+
+static anigif_t anigif_del(anigif_t g)
+{
+	if (g->prev == NULL) {
+		anim_gifs = g->next;
+	}
+	if (g->next) {
+		g->next->prev = g->prev;
+	}
+	return g;
+}
+
+
+static void anigif_free(anigif_t g)
+{
+	AG_FreeSurfaces(g->frames, g->nr_frames);
+	gfx_free_image(g->bg);
+	free(g);
+}
+
+
 void gfx_free_image(img_t p)
 {
+	anigif_t ag;
 	if (!p)
 		return;
+	if ((ag = is_anigif(p))) {
+		anigif_del(ag);
+		anigif_free(ag);
+		return;
+	}
 	SDL_FreeSurface((SDL_Surface *)p);
 }
 
@@ -232,14 +386,14 @@ int	gfx_img_w(img_t pixmap)
 {
 	if (!pixmap)
 		return 0;
-	return ((SDL_Surface *)pixmap)->w;
+	return Surf(pixmap)->w;
 }
 
 int	gfx_img_h(img_t pixmap)
 {
 	if (!pixmap)
 		return 0;
-	return ((SDL_Surface *)pixmap)->h;
+	return Surf(pixmap)->h;
 }
 
 void gfx_noclip(void)
@@ -358,6 +512,18 @@ img_t gfx_load_image(char *filename)
 {
 
 	SDL_Surface *img;
+	int nr;
+	nr = AG_LoadGIF(filename, NULL, 0);
+	if (nr > 0) { /* anigif logic */
+		anigif_t agif = malloc(sizeof(struct _anigif_t) + nr * sizeof(AG_Frame));
+		AG_LoadGIF(filename, agif->frames, nr);
+		agif->nr_frames = nr;
+		agif->cur_frame = 0;
+		agif->drawn = 0;
+		agif->bg = NULL;
+		anigif_add(agif);
+		return agif->frames[0].surface;
+	}
 	img = IMG_Load(filename);
 	if (!img) {
 		fprintf(stderr, "File not found: '%s'\n", filename);
@@ -395,15 +561,62 @@ void gfx_draw_from(img_t p, int x, int y, int xx, int yy, int width, int height)
 	dest.h = height;
 	SDL_BlitSurface(pixbuf, &src, screen, &dest);
 }
+
 void gfx_draw(img_t p, int x, int y)
 {
+	anigif_t ag;
 	SDL_Surface *pixbuf = (SDL_Surface *)p;
 	SDL_Rect dest;
 	dest.x = x;
 	dest.y = y; 
 	dest.w = pixbuf->w; 
 	dest.h = pixbuf->h;
+	ag = is_anigif(pixbuf);
+	if (ag) {
+		SDL_Rect clip;
+		SDL_GetClipRect(screen, &clip);
+		ag->clip = clip;
+		ag->x = x;
+		ag->y = y;
+		gfx_free_image(ag->bg);
+		ag->bg = gfx_grab_screen(x, y, dest.w, dest.h);
+		anigif_frame(ag);
+	}
 	SDL_BlitSurface(pixbuf, NULL, screen, &dest);
+}
+
+void gfx_stop_gif(img_t p)
+{
+	anigif_t ag;
+	ag = is_anigif(p);
+	if (ag)
+		ag->drawn = 0;
+}
+
+void gfx_start_gif(img_t p)
+{
+	anigif_t ag;
+	ag = is_anigif(p);
+	if (ag)
+		ag->drawn = 1;
+}
+
+int gfx_frame_gif(img_t img)
+{
+	anigif_t ag;
+	ag = is_anigif(img);
+	if (!ag)
+		return 0;
+	if (!ag->drawn)
+		return 0;
+	if ((timer_counter - ag->delay) < (ag->frames[ag->cur_frame].delay / HZ))
+		return 0;
+	ag->cur_frame ++;
+	if (ag->cur_frame >= ag->nr_frames) {
+		ag->cur_frame = 0;
+	}
+	anigif_frame(ag);
+	return 1;
 }
 
 void gfx_draw_wh(img_t p, int x, int y, int w, int h)
@@ -463,15 +676,8 @@ int gfx_setmode(int w, int h, int fs)
 	return 0;
 }
 
-unsigned int	timer_counter = 0;
 
-SDL_TimerID timer_han = NULL;
 static SDL_Surface *icon = NULL;
-Uint32 counter_fn(Uint32 interval, void *p)
-{
-	timer_counter ++;
-	return interval;
-}
 
 int gfx_video_init(void)
 {
@@ -495,7 +701,6 @@ int gfx_video_init(void)
 	if ( icon ) {
 		SDL_WM_SetIcon( icon, NULL );
 	}
-	timer_han =  SDL_AddTimer(100, counter_fn, NULL);
 	return 0;
 }
 void gfx_flip(void)
@@ -530,14 +735,24 @@ void gfx_video_done(void)
 {
 	if (icon)
 		SDL_FreeSurface(icon);
-	if (timer_han)
-		SDL_RemoveTimer(timer_han);
-	timer_han = NULL;
 	TTF_Quit();
 }
 
 img_t gfx_scale(img_t src, float xscale, float yscale)
 {
+	anigif_t ag;
+	if ((ag = is_anigif(Surf(src)))) {
+		int i;
+		for (i = 0; i < ag->nr_frames; i ++) {
+			SDL_Surface *s = zoomSurface(ag->frames[i].surface, xscale, yscale, 1);
+			if (i)
+				SDL_FreeSurface(ag->frames[i].surface);
+			ag->frames[i].surface = s;
+			ag->frames[i].x = (float)(ag->frames[i].x) * xscale;
+			ag->frames[i].y = (float)(ag->frames[i].y) * yscale;
+		}
+		return ag->frames[0].surface;
+	}
 	return (img_t)zoomSurface((SDL_Surface *)src, xscale, yscale, 1);
 }
 
@@ -2144,4 +2359,15 @@ int gfx_init(void)
 void gfx_done(void)
 {
 	SDL_Quit();
+}
+
+timer_t gfx_add_timer(int delay, int (*fn)(int, void*), void *aux)
+{
+	return (timer_t)SDL_AddTimer(delay, (SDL_NewTimerCallback)fn, aux);
+}
+
+void gfx_del_timer(timer_t han)
+{
+	if (han)
+		SDL_RemoveTimer((SDL_TimerID*)han);
 }

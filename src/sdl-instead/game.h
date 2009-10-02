@@ -6,6 +6,7 @@
 #endif
 
 #define MAIN_FILE	"main.lua"
+#define HZ 		100
 
 extern int	game_running;
 
