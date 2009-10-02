@@ -597,6 +597,7 @@ void gfx_draw(img_t p, int x, int y)
 		ag->clip = clip;
 		ag->x = x;
 		ag->y = y;
+		ag->drawn = 1;
 		gfx_free_image(ag->bg);
 		ag->bg = gfx_grab_screen(x, y, dest.w, dest.h);
 		anigif_frame(ag);
