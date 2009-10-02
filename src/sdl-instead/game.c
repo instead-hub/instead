@@ -1154,7 +1154,7 @@ int game_cmd(char *cmd)
 			el_draw(el_spic);
 	}
 
-	gfx_start_gif(el_img(el_spic));
+//	gfx_start_gif(el_img(el_spic));
 	
 	txt_box_resize(el_box(el_scene), game_theme.win_w, game_theme.win_h - title_h - ways_h - pict_h);
 	el_draw(el_scene);
@@ -1341,6 +1341,8 @@ static void scroll_pup(int id)
 	} else
 		txt_box_prev(el_box(id));
 	el_clear(id);
+	if (id == el_scene && game_theme.gfx_mode == GFX_MODE_EMBEDDED)
+		gfx_stop_gif(el_img(el_spic));
 	el_draw(id);
 	el_update(id);
 }
@@ -1355,6 +1357,8 @@ static void scroll_pdown(int id)
 	} else
 		txt_box_next(el_box(id));
 	el_clear(id);
+	if (id == el_scene && game_theme.gfx_mode == GFX_MODE_EMBEDDED)
+		gfx_stop_gif(el_img(el_scene));
 	el_draw(id);
 	el_update(id);
 }
@@ -1577,6 +1581,8 @@ static void scroll_up(int id, int count)
 		for (i = 0; i < count; i++)
 			txt_box_prev_line(el_box(id));
 	el_clear(id);
+	if (id == el_scene && game_theme.gfx_mode == GFX_MODE_EMBEDDED)
+		gfx_stop_gif(el_img(el_spic));
 	el_draw(id);
 	el_update(id);
 }
@@ -1591,6 +1597,8 @@ static void scroll_down(int id, int count)
 		for (i = 0; i < count; i++)
 			txt_box_next_line(el_box(id));
 	el_clear(id);
+	if (id == el_scene && game_theme.gfx_mode == GFX_MODE_EMBEDDED)
+		gfx_stop_gif(el_img(el_spic));
 	el_draw(id);
 	el_update(id);
 }
@@ -1603,6 +1611,8 @@ static void scroll_motion(int id, int off)
 		return;
 	txt_box_scroll(el_box(id), off);
 	el_clear(id);
+	if (id == el_scene && game_theme.gfx_mode == GFX_MODE_EMBEDDED)
+		gfx_stop_gif(el_img(el_spic));
 	el_draw(id);
 	el_update(id);
 }
