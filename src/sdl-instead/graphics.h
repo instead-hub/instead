@@ -1,5 +1,6 @@
 #ifndef __GRAPHICS_H__
 #define __GRAPHICS_H__
+typedef void*	timer_t;
 typedef void*	img_t;
 typedef void*	fnt_t;
 typedef void*	layout_t;
@@ -32,7 +33,7 @@ static inline color_t gfx_col(int r, int g, int b)
 extern int 	gfx_init(void);
 extern void 	gfx_done(void);
 
-extern int gfx_parse_color (const char *spec, color_t *def);
+extern int	gfx_parse_color (const char *spec, color_t *def);
 extern void	gfx_flip(void);
 extern img_t	gfx_screen(img_t nscreen);
 extern void 	gfx_bg(color_t col);
@@ -120,6 +121,11 @@ extern xref_t	txt_layout_xrefs(layout_t lay);
 extern layout_t	xref_layout(xref_t x);
 
 typedef void 	(*update_fn)(int x, int y, int w, int h);
-extern void xref_update(xref_t xref, int x, int y, clear_fn clear, update_fn update);
+extern void	xref_update(xref_t xref, int x, int y, clear_fn clear, update_fn update);
+extern void 	gfx_start_gif(img_t img);
+extern void	gfx_stop_gif(img_t img);
+extern int	gfx_frame_gif(img_t img);
+extern void	gfx_del_timer(timer_t han);
+extern timer_t 	gfx_add_timer(int delay, int (*fn)(int, void*), void *aux);
 #endif
 

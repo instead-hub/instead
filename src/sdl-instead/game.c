@@ -451,6 +451,24 @@ int game_change_hz(int hz)
 	return 0;
 }
 
+unsigned int	timer_counter = 0;
+
+timer_t timer_han = NULL;
+
+static void anigif_do(void *data)
+{
+	if (gfx_frame_gif(el_img(el_spic))) {
+		game_cursor(CURSOR_ON);
+		gfx_flip();
+	}
+}
+
+int counter_fn(int interval, void *p)
+{
+	timer_counter ++;
+	push_user_event(anigif_do, NULL);
+	return interval;
+}
 
 int game_init(const char *name)
 {
@@ -493,6 +511,7 @@ int game_init(const char *name)
 
 	if (game_apply_theme())
 		return -1;
+	timer_han =  gfx_add_timer(HZ, counter_fn, NULL); 
 
 	if (!curgame_dir) {
 		game_menu(menu_games);
@@ -531,6 +550,10 @@ void free_last(void)
 void game_done(void)
 {
 	int i;
+
+	gfx_del_timer(timer_han);
+	timer_han = NULL;
+
 	if (opt_autosave && curgame_dir)
 		game_save(0);
 	chdir(game_cwd);
@@ -777,7 +800,10 @@ void game_menu_box(int show, const char *txt)
 	layout_t lay;
 
 	menu_shown = show;
-	
+	if (show)
+		gfx_stop_gif(el_img(el_spic));
+	else
+		gfx_start_gif(el_img(el_spic));
 	el(el_menu)->drawn = 0;
 	if (el_layout(el_menu)) {
 		txt_layout_free(el_layout(el_menu));
@@ -1124,8 +1150,10 @@ int game_cmd(char *cmd)
 
 	if (game_theme.gfx_mode != GFX_MODE_EMBEDDED) {
 		el_draw(el_ways);
-		if ((new_pict || new_place))
+		if ((new_pict || new_place)) {
 			el_draw(el_spic);
+			gfx_start_gif(el_img(el_spic));
+		}
 	}
 	
 	txt_box_resize(el_box(el_scene), game_theme.win_w, game_theme.win_h - title_h - ways_h - pict_h);
@@ -1328,8 +1356,6 @@ static void scroll_pdown(int id)
 	el_draw(id);
 	el_update(id);
 }
-
-extern unsigned int timer_counter;
 
 int mouse_filter(void)
 {
