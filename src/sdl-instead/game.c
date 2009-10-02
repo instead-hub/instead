@@ -1496,7 +1496,7 @@ int game_click(int x, int y, int action)
 
 	}	
 
-	if (menu_mode || go_mode)
+	if (menu_mode || go_mode || elem->id == el_title)
 		return 0;
 
 	if (use_xref == xref)	
