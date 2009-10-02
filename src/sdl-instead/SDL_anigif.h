@@ -45,11 +45,11 @@ typedef struct
 
 
 extern DECLSPEC int		AG_isGIF( SDL_RWops* src );
-extern DECLSPEC int		AG_LoadGIF( const char* file, AG_Frame* frames, int maxFrames );
+extern DECLSPEC int		AG_LoadGIF( const char* file, AG_Frame* frames, int maxFrames, int *loop );
 extern DECLSPEC void	AG_FreeSurfaces( AG_Frame* frames, int nFrames );
 extern DECLSPEC int		AG_ConvertSurfacesToDisplayFormat( AG_Frame* frames, int nFrames );
 extern DECLSPEC int		AG_NormalizeSurfacesToDisplayFormat( AG_Frame* frames, int nFrames );
-extern DECLSPEC int		AG_LoadGIF_RW( SDL_RWops* src, AG_Frame* frames, int size );
+extern DECLSPEC int		AG_LoadGIF_RW( SDL_RWops* src, AG_Frame* frames, int size, int *loop );
 
 
 

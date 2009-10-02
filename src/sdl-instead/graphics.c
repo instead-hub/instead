@@ -231,6 +231,7 @@ struct _anigif_t {
 	struct _anigif_t *prev;
 	int	cur_frame;
 	int	nr_frames;
+	int	loop;
 	int	x;
 	int	y;
 	int 	drawn;
@@ -254,7 +255,8 @@ static anigif_t anigif_find(anigif_t g)
 	return NULL;
 }
 extern int timer_counter;
-static void anigif_frame(anigif_t g)
+
+static void anigif_disposal(anigif_t g)
 {
 	SDL_Rect dest;
 	SDL_Rect clip;
@@ -290,12 +292,24 @@ static void anigif_frame(anigif_t g)
 	if (img) { /* draw bg */
 		SDL_BlitSurface(Surf(img), NULL, screen, &dest);
 	}
-	dest.x = g->x;
-	dest.y = g->y; 
+	SDL_SetClipRect(screen, &clip);
+}
+
+static void anigif_frame(anigif_t g)
+{
+	SDL_Rect dest;
+	SDL_Rect clip;
+
+	AG_Frame *frame;
+	frame = &g->frames[g->cur_frame];
+	SDL_GetClipRect(screen, &clip);
+	
+	dest.x = g->x + frame->x;
+	dest.y = g->y + frame->y;
 	dest.w = frame->surface->w; 
 	dest.h = frame->surface->h;
-	dest.x += frame->x;
-	dest.y += frame->y;
+
+	SDL_SetClipRect(screen, &g->clip);
 	SDL_BlitSurface(frame->surface, NULL, screen, &dest);
 	g->delay = timer_counter;
 	SDL_SetClipRect(screen, &clip);
@@ -516,10 +530,12 @@ img_t gfx_load_image(char *filename)
 
 	SDL_Surface *img;
 	int nr;
-	nr = AG_LoadGIF(filename, NULL, 0);
+	nr = AG_LoadGIF(filename, NULL, 0, NULL);
 	if (nr > 0) { /* anigif logic */
+		int loop = 0;
 		anigif_t agif = malloc(sizeof(struct _anigif_t) + nr * sizeof(AG_Frame));
-		AG_LoadGIF(filename, agif->frames, nr);
+		AG_LoadGIF(filename, agif->frames, nr, &loop);
+		agif->loop = loop;
 		agif->nr_frames = nr;
 		agif->cur_frame = 0;
 		agif->drawn = 0;
@@ -608,17 +624,36 @@ int gfx_frame_gif(img_t img)
 {
 	anigif_t ag;
 	ag = is_anigif(img);
+	
 	if (!ag)
 		return 0;
+		
 	if (!ag->drawn)
 		return 0;
+		
+	if (ag->loop == -1)
+		return 0;
+		
 	if ((timer_counter - ag->delay) < (ag->frames[ag->cur_frame].delay / HZ))
 		return 0;
+		
+	anigif_disposal(ag);
 	ag->cur_frame ++;
+
 	if (ag->cur_frame >= ag->nr_frames) {
-		ag->cur_frame = 0;
+		if (!ag->loop || ag->loop > 1)
+			ag->cur_frame = 0;
+		else
+			ag->cur_frame --; /* last one */
+		if (ag->loop) {
+			ag->loop --;
+			if (!ag->loop)	
+				ag->loop = -1; /* disabled */
+		}
+
 	}
-	anigif_frame(ag);
+	if (ag->loop != -1)
+		anigif_frame(ag);
 	return 1;
 }
 
