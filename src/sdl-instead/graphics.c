@@ -235,6 +235,7 @@ struct _anigif_t {
 	int	x;
 	int	y;
 	int 	drawn;
+	int	active;
 	int	delay;
 	img_t	bg;	
 	SDL_Rect clip;
@@ -536,13 +537,11 @@ img_t gfx_load_image(char *filename)
 		anigif_t agif = malloc(sizeof(struct _anigif_t) + nr * sizeof(AG_Frame));
 		if (!agif)
 			return NULL;
+		memset(agif, 0, sizeof(struct _anigif_t) + nr * sizeof(AG_Frame));
 		AG_LoadGIF(filename, agif->frames, nr, &loop);
 		AG_NormalizeSurfacesToDisplayFormat( agif->frames, nr);
 		agif->loop = loop;
 		agif->nr_frames = nr;
-		agif->cur_frame = 0;
-		agif->drawn = 0;
-		agif->bg = NULL;
 		anigif_add(agif);
 		return agif->frames[0].surface;
 	}
@@ -601,6 +600,7 @@ void gfx_draw(img_t p, int x, int y)
 		ag->x = x;
 		ag->y = y;
 		ag->drawn = 1;
+		ag->active = 1;
 		gfx_free_image(ag->bg);
 		ag->bg = gfx_grab_screen(x, y, dest.w, dest.h);
 		anigif_frame(ag);
@@ -614,7 +614,17 @@ void gfx_stop_gif(img_t p)
 	anigif_t ag;
 	ag = is_anigif(p);
 	if (ag)
+		ag->active = 0;
+
+}
+
+void gfx_dispose_gif(img_t p)
+{
+	anigif_t ag;
+	ag = is_anigif(p);
+	if (ag)
 		ag->drawn = 0;
+
 }
 
 void gfx_start_gif(img_t p)
@@ -622,7 +632,7 @@ void gfx_start_gif(img_t p)
 	anigif_t ag;
 	ag = is_anigif(p);
 	if (ag)
-		ag->drawn = 1;
+		ag->active = 1;
 }
 
 int gfx_frame_gif(img_t img)
@@ -633,7 +643,7 @@ int gfx_frame_gif(img_t img)
 	if (!ag)
 		return 0;
 		
-	if (!ag->drawn)
+	if (!ag->drawn || !ag->active)
 		return 0;
 		
 	if (ag->loop == -1)
@@ -668,7 +678,7 @@ void gfx_update_gif(img_t img)
 	ag = is_anigif(img);
 	if (!ag)
 		return;
-	if (!ag->drawn)
+	if (!ag->drawn || !ag->active)
 		return;
 	gfx_update(ag->x, ag->y, gfx_img_w(img), gfx_img_h(img));
 }
