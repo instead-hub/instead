@@ -1363,7 +1363,7 @@ static void scroll_pdown(int id)
 		txt_box_next(el_box(id));
 	el_clear(id);
 	if (id == el_scene && game_theme.gfx_mode == GFX_MODE_EMBEDDED)
-		gfx_dispose_gif(el_img(el_scene));
+		gfx_dispose_gif(el_img(el_spic));
 	el_draw(id);
 	el_update(id);
 }
