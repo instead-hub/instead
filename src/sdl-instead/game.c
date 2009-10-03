@@ -267,7 +267,7 @@ void game_menu(int nr)
 
 int game_error(const char *name)
 {
-	game_done();
+	game_done(1);
 	if (game_init(NULL)) {
 		fprintf(stderr,"Fatal error! Can't init anything!!!\n");
 		exit(1);
@@ -389,7 +389,7 @@ int game_restart(void)
 {
 	char *og = curgame_dir;
 	game_save(-1);
-	game_done();
+	game_done(0);
 	if (game_init(og)) {
 		game_error(og);
 		return 0;
@@ -547,14 +547,14 @@ void free_last(void)
 }
 
 
-void game_done(void)
+void game_done(int err)
 {
 	int i;
 
 	gfx_del_timer(timer_han);
 	timer_han = NULL;
 
-	if (opt_autosave && curgame_dir)
+	if (opt_autosave && curgame_dir && !err)
 		game_save(0);
 	chdir(game_cwd);
 //	cfg_save();
