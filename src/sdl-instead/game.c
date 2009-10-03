@@ -1373,7 +1373,7 @@ int mouse_filter(void)
 	static unsigned int old_counter = 0;
 	if (!opt_filter)
 		return 0;
-	if (abs(old_counter - timer_counter) <= 4) /* 400 ms */
+	if (abs(old_counter - timer_counter) <= (400 / HZ)) /* 400 ms */
 		return -1;
 	old_counter = timer_counter;
 	return 0;
