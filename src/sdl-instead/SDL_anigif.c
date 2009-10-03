@@ -211,7 +211,8 @@ int AG_NormalizeSurfacesToDisplayFormat( AG_Frame* frames, int nFrames )
 			int i;
 			int lastDispose = AG_DISPOSE_NA;
 			int iRestore = 0;
-			const Uint8 alpha = (frames[0].disposal == AG_DISPOSE_NONE) ? SDL_ALPHA_OPAQUE : SDL_ALPHA_TRANSPARENT;
+			const Uint8 alpha = (frames[0].disposal == AG_DISPOSE_NONE || 
+				frames[0].disposal == AG_DISPOSE_NA) ? SDL_ALPHA_OPAQUE : SDL_ALPHA_TRANSPARENT;
 
 			SDL_FillRect( mainSurface, NULL, SDL_MapRGBA(mainSurface->format,0,0,0,alpha) );
 
