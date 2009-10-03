@@ -528,10 +528,10 @@ img_t gfx_combine(img_t src, img_t dst)
 
 img_t gfx_load_image(char *filename)
 {
-
 	SDL_Surface *img;
-	int nr;
-	nr = AG_LoadGIF(filename, NULL, 0, NULL);
+	int nr = 0;
+	if (strcasestr(filename,".gif"))
+		nr = AG_LoadGIF(filename, NULL, 0, NULL);
 	if (nr > 0) { /* anigif logic */
 		int loop = 0;
 		anigif_t agif = malloc(sizeof(struct _anigif_t) + nr * sizeof(AG_Frame));
