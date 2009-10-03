@@ -534,7 +534,10 @@ img_t gfx_load_image(char *filename)
 	if (nr > 0) { /* anigif logic */
 		int loop = 0;
 		anigif_t agif = malloc(sizeof(struct _anigif_t) + nr * sizeof(AG_Frame));
+		if (!agif)
+			return NULL;
 		AG_LoadGIF(filename, agif->frames, nr, &loop);
+		AG_NormalizeSurfacesToDisplayFormat( agif->frames, nr);
 		agif->loop = loop;
 		agif->nr_frames = nr;
 		agif->cur_frame = 0;
@@ -601,6 +604,7 @@ void gfx_draw(img_t p, int x, int y)
 		gfx_free_image(ag->bg);
 		ag->bg = gfx_grab_screen(x, y, dest.w, dest.h);
 		anigif_frame(ag);
+		return;
 	}
 	SDL_BlitSurface(pixbuf, NULL, screen, &dest);
 }
