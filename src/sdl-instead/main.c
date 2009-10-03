@@ -108,7 +108,7 @@ int main(int argc, char **argv)
 	}
 	game_loop();
 	cfg_save();
-	game_done();
+	game_done(0);
 	if (debug_sw)
 		debug_done();
 	gfx_done();

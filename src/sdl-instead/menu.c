@@ -426,7 +426,7 @@ int game_menu_act(const char *a)
 		char *p;
 		p = strdup(a);
 		if (p) {
-			game_done();
+			game_done(0);
 			if (game_init(p)) {
 				game_error(p);
 			}
@@ -440,7 +440,7 @@ int game_menu_act(const char *a)
 				fprintf(stderr, "Can't select theme:%s:%s\n", p, strerror(errno));
 			char *og = curgame_dir;
 			game_save(-1);
-			game_done();
+			game_done(0);
 			if (game_init(og)) {
 				game_error(og);
 			} else if (curgame_dir && game_own_theme && opt_owntheme) {

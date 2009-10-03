@@ -25,7 +25,7 @@ extern int 	game_theme_select(const char *name);
 
 extern int 	game_init(const char *game);
 extern int 	game_loop(void);
-extern void 	game_done(void);
+extern void 	game_done(int err);
 
 extern int 	game_load_theme(const char *path);
 
