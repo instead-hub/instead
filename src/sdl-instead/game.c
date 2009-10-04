@@ -578,11 +578,13 @@ void free_last(void)
 	game_stop_mus(500);
 }
 
+static void sounds_free(void);
 
 void game_done(int err)
 {
 	int i;
 
+	sounds_free();
 	gfx_del_timer(timer_han);
 	timer_han = NULL;
 
@@ -1020,6 +1022,77 @@ void game_music_player(void)
 		free(mus);
 }
 
+#define MAX_WAVS 4
+
+static struct {
+	char *fname;
+	wav_t wav;
+} wavs[MAX_WAVS] = {
+	{ NULL, NULL },
+	{ NULL, NULL },
+	{ NULL, NULL },
+	{ NULL, NULL },
+};
+
+static int wavs_pos = 0;
+
+static wav_t sound_add(const char *fname)
+{
+	wav_t w;
+	w = snd_load_wav(fname);
+	if (!w)
+		return NULL;
+	snd_free_wav(wavs[wavs_pos].wav);
+	if (wavs[wavs_pos].fname)
+		free(wavs[wavs_pos].fname);
+	wavs[wavs_pos].wav = w;
+	wavs[wavs_pos].fname = strdup(fname);
+	wavs_pos ++;
+	if (wavs_pos >= MAX_WAVS)
+		wavs_pos = 0;
+	return w;
+}
+
+static wav_t sound_find(const char *fname)
+{
+	int i;
+	for (i = 0; i < MAX_WAVS; i++) {
+		if (wavs[i].fname && !strcmp(wavs[i].fname, fname))
+			return wavs[i].wav;
+	}
+	return NULL;
+}
+
+static void sounds_free(void)
+{
+	int i;
+	for (i = 0; i < MAX_WAVS; i++) {
+		if (wavs[i].fname)
+			free(wavs[i].fname);
+		snd_free_wav(wavs[i].wav);
+		wavs[i].wav = wavs[i].fname = NULL;
+	}
+}
+
+void game_sound_player(void)
+{
+	wav_t		w;
+	char		*snd;
+	if (!snd_volume_mus(-1))
+		return;	
+	snd = instead_eval("return get_sound()");
+	if (!snd)
+		return;
+	unix_path(snd);
+	w = sound_find(snd);
+	if (!w)
+		w = sound_add(snd);
+	free(snd);
+	if (!w)
+		return;
+	snd_play(w);
+}
+
 char *horiz_inv(char *invstr)
 {
 	char *p = invstr;
@@ -1070,7 +1143,7 @@ int game_cmd(char *cmd)
 		goto inv; /* hackish? ok, yes  it is... */
 //		goto err;
 	game_music_player();	
-//	sound_player(); /* TODO */
+	game_sound_player();
 	title = instead_eval("return get_title();");
 	unix_path(title);
 	if (title) {

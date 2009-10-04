@@ -2,6 +2,7 @@ instead (0.9.2) unstable; urgency=low
 
   * animated gif support
   * graphics everywhere!!! (img cmd)
+  * sound support (set_sound)
   * some cleanups
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Sun, 4 Oct 2009 16:10:09 +0400

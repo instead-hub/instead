@@ -1848,6 +1848,16 @@ function set_music(s, count)
 	end
 end
 
+function get_sound()
+	local ret = game._sound;
+	game._sound = nil
+	return ret
+end
+
+function set_sound(s)
+	game._sound = s;
+end
+
 function change_pl(p)
 	local o = ref(p);
 	if type(deref(p)) ~= 'string' or not o then
