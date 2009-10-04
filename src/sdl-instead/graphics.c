@@ -1173,10 +1173,14 @@ struct image *_layout_lookup_image(struct layout *layout, const char *name)
 	return NULL;
 }
 
-img_t txt_layout_image(layout_t lay, void **v)
+img_t txt_layout_images(layout_t lay, void **v)
 {
 	struct image **g = (struct image **)v;
 	struct layout *layout = (struct layout *)lay;
+	
+	if (!layout)
+		return NULL;
+		
 	if (!*g)
 		*g = layout->images;
 	else
