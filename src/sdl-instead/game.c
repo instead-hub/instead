@@ -184,7 +184,7 @@ struct el {
 	int		id;
 	int 		x;
 	int 		y;
-	int		mx; /* mouse pointer */
+	int		mx;
 	int		my; /* coordinates */
 	int 		type;
 	int		drawn;
@@ -457,9 +457,25 @@ timer_t timer_han = NULL;
 
 static void anigif_do(void *data)
 {
+	void *v;
+	img_t img;
 	if (gfx_frame_gif(el_img(el_spic))) {
 		game_cursor(CURSOR_ON);
 		gfx_update_gif(el_img(el_spic));
+	}
+	
+	for (v = NULL; (img = txt_layout_image(txt_box_layout(el_box(el_inv)), &v)); ) {
+		if (gfx_frame_gif(img)) {
+			game_cursor(CURSOR_ON);
+			gfx_update_gif(img);
+		}
+	}
+
+	for (v = NULL; (img = txt_layout_image(txt_box_layout(el_box(el_scene)), &v)); ) {
+		if ((img != el_img(el_spic)) && gfx_frame_gif(img)) {
+			game_cursor(CURSOR_ON);
+			gfx_update_gif(img);
+		}
 	}
 }
 
@@ -616,6 +632,8 @@ void el_size(int i, int *w, int *h)
 
 int el_clear(int n)
 {
+	void *v;
+	img_t img;
 	int x, y, w, h;
 	struct el *o;
 	o = el(n);
@@ -626,6 +644,13 @@ int el_clear(int n)
 	el_size(n, &w, &h);
 	o->drawn = 0;
 	game_clear(x, y, w, h);
+	if (o->type == elt_box) {
+		for (v = NULL; (img = txt_layout_image(txt_box_layout(el_box(n)), &v)); )
+			gfx_dispose_gif(img);
+	} else if (o->type == elt_layout) {
+		for (v = NULL; (img = txt_layout_image(el_layout(n), &v)); )
+			gfx_dispose_gif(img);
+	}
 	return 1;
 }
 
@@ -1346,8 +1371,6 @@ static void scroll_pup(int id)
 	} else
 		txt_box_prev(el_box(id));
 	el_clear(id);
-	if (id == el_scene && game_theme.gfx_mode == GFX_MODE_EMBEDDED)
-		gfx_dispose_gif(el_img(el_spic));
 	el_draw(id);
 	el_update(id);
 }
@@ -1362,8 +1385,6 @@ static void scroll_pdown(int id)
 	} else
 		txt_box_next(el_box(id));
 	el_clear(id);
-	if (id == el_scene && game_theme.gfx_mode == GFX_MODE_EMBEDDED)
-		gfx_dispose_gif(el_img(el_spic));
 	el_draw(id);
 	el_update(id);
 }
@@ -1581,8 +1602,6 @@ static void scroll_up(int id, int count)
 		for (i = 0; i < count; i++)
 			txt_box_prev_line(el_box(id));
 	el_clear(id);
-	if (id == el_scene && game_theme.gfx_mode == GFX_MODE_EMBEDDED)
-		gfx_dispose_gif(el_img(el_spic));
 	el_draw(id);
 	el_update(id);
 }
@@ -1597,8 +1616,6 @@ static void scroll_down(int id, int count)
 		for (i = 0; i < count; i++)
 			txt_box_next_line(el_box(id));
 	el_clear(id);
-	if (id == el_scene && game_theme.gfx_mode == GFX_MODE_EMBEDDED)
-		gfx_dispose_gif(el_img(el_spic));
 	el_draw(id);
 	el_update(id);
 }
@@ -1611,8 +1628,6 @@ static void scroll_motion(int id, int off)
 		return;
 	txt_box_scroll(el_box(id), off);
 	el_clear(id);
-	if (id == el_scene && game_theme.gfx_mode == GFX_MODE_EMBEDDED)
-		gfx_dispose_gif(el_img(el_spic));
 	el_draw(id);
 	el_update(id);
 }
