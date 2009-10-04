@@ -275,7 +275,7 @@ int AG_LoadGIF_RW( SDL_RWops* src, AG_Frame* frames, int maxFrames, int *loop)
 	gd = malloc( sizeof(*gd) );
 	memset( gd, 0, sizeof(*gd) );
 	gd->src = src;
-
+	gd->loop = 1;
 	start = SDL_RWtell( src );
 
 	if ( !SDL_RWread(src,buf,6,1) )
@@ -448,9 +448,8 @@ static int DoExtension( gifdata* gd, int label )
 			break;
 		if (buf[0] != 1)
 			break;
-		gd->loop = buf[1] | (buf[2] << 8);
+		gd->loop = (unsigned int)buf[1] | (((unsigned int)buf[2]) << 8);
 		break;
-
 	  case 0xfe:		/* Comment Extension */
 		while ( GetDataBlock(gd,buf) != 0 )
 			;
