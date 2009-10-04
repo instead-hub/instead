@@ -652,7 +652,7 @@ int gfx_frame_gif(img_t img)
 	if ((timer_counter - ag->delay) < (ag->frames[ag->cur_frame].delay / HZ))
 		return 0;
 	
-	if (ag->loop > 1 || !ag->loop)
+	if (ag->cur_frame != ag->nr_frames - 1 || ag->loop > 1 || !ag->loop)
 		anigif_disposal(ag);
 		
 	ag->cur_frame ++;
@@ -1171,6 +1171,19 @@ struct image *_layout_lookup_image(struct layout *layout, const char *name)
 			return g;
 	}
 	return NULL;
+}
+
+img_t txt_layout_image(layout_t lay, void **v)
+{
+	struct image **g = (struct image **)v;
+	struct layout *layout = (struct layout *)lay;
+	if (!*g)
+		*g = layout->images;
+	else
+		*g = (*g)->next;
+	if (!*g)
+		return NULL;
+	return (*g)->image;
 }
 
 void layout_add_image(struct layout *layout, struct image *image)
