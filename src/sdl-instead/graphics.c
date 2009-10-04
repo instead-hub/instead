@@ -1044,6 +1044,7 @@ struct image {
 	struct image *next;
 	char	*name;
 	img_t	image;
+	int	free_it;
 };
 
 struct image *image_new(const char *name, img_t img)
@@ -1054,6 +1055,7 @@ struct image *image_new(const char *name, img_t img)
 	g->image = img;
 	g->name = strdup(name);
 	g->next = NULL;
+	g->free_it = 0;
 	return g;
 }
 
@@ -1063,7 +1065,8 @@ void image_free(struct image *image)
 		return;
 	if (image->name)
 		free(image->name);
-//	gfx_free_image(image->image);
+	if (image->free_it)
+		gfx_free_image(image->image);
 	free(image);
 }
 
@@ -1927,6 +1930,7 @@ void txt_layout_update_links(layout_t layout, int x, int y, clear_fn clear)
 	txt_layout_draw_ex(lay, lay->lines, x, y, 0, lay->h, clear);
 //	gfx_noclip();
 }
+
 img_t get_img(struct layout *layout, char *p)
 {
 	int len;
@@ -1942,6 +1946,16 @@ img_t get_img(struct layout *layout, char *p)
 		return NULL;
 	p[len] = 0;
 	img = layout_lookup_image(layout, p);
+	if (!img && (img = gfx_load_image(p))) {
+		struct image *image = image_new(p, img);
+		if (!image) {
+			gfx_free_image(img);
+			img = NULL;
+		} else {
+			layout_add_image(layout, image);
+			image->free_it = 1; /* free on layout destroy */
+		}
+	}
 	p[len] = '>';
 	return img;
 }
