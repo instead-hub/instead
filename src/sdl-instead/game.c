@@ -1146,11 +1146,13 @@ int game_cmd(char *cmd)
 	img_t		oldscreen = NULL;
 
 	cmdstr = instead_cmd(cmd);
-	if (!cmdstr) 
-		goto inv; /* hackish? ok, yes  it is... */
 //		goto err;
 	game_music_player();	
 	game_sound_player();
+
+	if (!cmdstr) 
+		goto inv; /* hackish? ok, yes  it is... */
+	
 	title = instead_eval("return get_title();");
 	unix_path(title);
 	if (title) {
