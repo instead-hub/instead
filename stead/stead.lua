@@ -1849,9 +1849,7 @@ function set_music(s, count)
 end
 
 function get_sound()
-	local ret = game._sound;
-	game._sound = nil
-	return ret
+	return game._sound;
 end
 
 function set_sound(s)
