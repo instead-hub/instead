@@ -1,6 +1,10 @@
 game.hinting = true;
 game.showlast = true;
 
+iface.img = function(self, str)
+	return "<g:"..str..">";
+end;
+
 iface.xref = function(self, str, obj)
 		local o = ref(here():srch(obj));
 		local cmd=''

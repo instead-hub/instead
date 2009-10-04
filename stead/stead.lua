@@ -1,5 +1,5 @@
 stead = {
-	version = "0.9.1",
+	version = "0.9.2",
 	table = table,
 	string = string,
 	math = math,
@@ -36,6 +36,10 @@ function cat(v,...)
 		end 
 	end
 	return res;
+end
+
+function img(v)
+	return iface:img(v);
 end
 
 function txtem(v)
@@ -1355,6 +1359,9 @@ function strip(s)
 	return s;
 end
 iface = {
+	img = function(self, str)
+		return '';
+	end,
 	em = function(self, str)
 		return str;
 	end,
