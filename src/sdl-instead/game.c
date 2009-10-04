@@ -1083,6 +1083,13 @@ void game_sound_player(void)
 	snd = instead_eval("return get_sound()");
 	if (!snd)
 		return;
+		
+	do { /* reset sound */
+		char *p = instead_eval("set_sound(nil)");
+		if (p)
+			free(p);
+	} while(0);
+	
 	unix_path(snd);
 	w = sound_find(snd);
 	if (!w)
