@@ -651,8 +651,10 @@ int gfx_frame_gif(img_t img)
 		
 	if ((timer_counter - ag->delay) < (ag->frames[ag->cur_frame].delay / HZ))
 		return 0;
+	
+	if (ag->loop > 1 || !ag->loop)
+		anigif_disposal(ag);
 		
-	anigif_disposal(ag);
 	ag->cur_frame ++;
 
 	if (ag->cur_frame >= ag->nr_frames) {
