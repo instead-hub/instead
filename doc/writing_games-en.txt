@@ -381,6 +381,8 @@ Apart from adding and deleting objects from lists you may switch them on and off
 
 “enable_all()” and “disable_all()” methods works (from 0.9.1) with embedded objects (objects in object).
 
+From version 0.9.1 methods “zap” and “cat” can be used. zap() -- delete all elements. cat(b, [pos]) -- add all elements of list b to current list at position [pos].
+
 == 12. Functions, that return objects ==
 
 In STEAD several functions are defined, that return some frequently used objects. For example:
@@ -690,6 +692,16 @@ home = room {
 Of couce, “pic” may be a function. This enhaces the developer's capabilities. 
 If the current scene has no “pic” attribute defined, the “game.pic” attribute is taken. If “game.pic” isn't defined, no picture is displayed.
 
+From version 0.9.2 you can use animated gif files. 
+
+From version 0.9.2 graphics can be embedded everywhere in text or inventory with img function. For example:
+
+{{{
+knife = obj {
+        nam = 'Knife'..img('img/knife.png'),
+}
+}}}
+
 The interpreter cycles the current music defined by the function ”set_music(music file name)”.
 
 For example:
@@ -708,8 +720,80 @@ get_music() returns the current track name.
 
 From version 0.7.7 the set_music() function can get an additional parameter — the number of playbacks. You can get the current counter with “get_music_loop”. -1 means that the playback of the current track is over.
 
+From version 0.9.2 the set_sound() function lets to play sound file. get_sound() returns sound filename, that will be played.
+
 
 == 18. Advices ==
+
+=== Formatting  ===
+You can do simple text formatting with functions:
+
+txtc() - center align;
+txtr() - right align;
+txtl() - left align;
+
+For example:
+{{{
+main = room {
+      nam = 'Intro',
+      dsc = txtc('Welcome!'),
+}
+}}}
+
+You can define text style with functions:
+
+txtb() - bold;
+txtem() - emboss;
+txtu() - underline;
+
+For example:
+{{{
+main = room {
+      nam = 'Intro',
+      dsc = 'You are in the room: '..txtb('main')..'.',
+}
+}}}
+=== Menus ===
+You can do menus in the inventory area, using menu constructor. Menu handler will be called after single mouse click. If handler have no return string the state of game will no change. For example, here is pocket realisation:
+{{{
+pocket = menu {
+        State = false,
+        nam = function(s)
+                if s.State then
+                        return txtu('pocket');
+                end 
+                return 'pocket';
+        end,
+        gen = function(s)
+                if s.State then
+                        s:enable_all();
+                else
+                        s:disable_all();
+                end 
+        end,
+        menu = function(s)
+                if s.State then
+                        s.State = false;
+                else
+                        s.State = true;
+                end 
+                s:gen();
+        end,
+};
+
+knife = obj {
+        nam = 'knife',
+        inv = 'This is knife',
+};
+
+inv():add(pocket);
+put(knife, pocket);
+pocket:gen();
+
+main = room {
+        nam = 'test',
+};
+}}}
 === Player status ===
 The engine code is in the stead.lua file. In your game you can redefine any lua function or object, getting whatever your creative concept needs. It is useful to know the peculiarities of the engine work. For example below is an implementation of player status as a text in the inventory, which cannot be picked.
 
@@ -1004,4 +1088,3 @@ TODO
 Full list of objects and methods.
 
 Translation: vopros@pochta.ru
-
