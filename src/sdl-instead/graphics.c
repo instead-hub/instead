@@ -316,27 +316,6 @@ static void anigif_frame(anigif_t g)
 	SDL_SetClipRect(screen, &clip);
 }	
 
-/*
-static void anigif_do(void *data)
-{
-	anigif_t p;
-	int rc = 0;
-	for (p = anim_gifs; p; p = p->next) {
-		if (!p->drawn)
-			continue;
-		if ((timer_counter - p->delay) < (p->frames[p->cur_frame].delay / HZ))
-			continue;
-		p->cur_frame ++;
-		if (p->cur_frame >= p->nr_frames)	
-			p->cur_frame = 0;
-		anigif_frame(p);
-		rc ++;
-	}
-	if (!rc)
-		return;
-	gfx_flip();
-}*/
-
 static anigif_t is_anigif(img_t img)
 {
 	anigif_t p;
@@ -450,6 +429,7 @@ void	gfx_img_fill(img_t img, int x, int y, int w, int h, color_t col)
 	dest.h = h;
 	SDL_FillRect(img, &dest, SDL_MapRGB(((SDL_Surface*)img)->format, col.r, col.g, col.b));
 }
+
 void	gfx_fill(int x, int y, int w, int h, color_t col)
 {
 	gfx_img_fill(screen, x, y, w, h, col);
@@ -509,11 +489,7 @@ img_t gfx_alpha_img(img_t src, int alpha)
 
 void	gfx_set_alpha(img_t src, int alpha)
 {
-//	SDL_Surface *img = SDL_DisplayFormat((SDL_Surface*)src);
-//	if (!img)
-//		return NULL;	
 	SDL_SetAlpha((SDL_Surface *)src, SDL_SRCALPHA | SDL_RLEACCEL, alpha);
-//	return img;
 }
 
 img_t gfx_combine(img_t src, img_t dst)
