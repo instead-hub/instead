@@ -459,40 +459,50 @@ static void anigif_do(void *data)
 {
 	void *v;
 	img_t img;
-
+	
+	game_cursor(CURSOR_CLEAR);
+	
 	if (gfx_frame_gif(el_img(el_spic))) { /* scene */
-		game_cursor(CURSOR_ON);
+		game_cursor(CURSOR_DRAW);
 		gfx_update_gif(el_img(el_spic));
 	}
-
+	
+	game_cursor(CURSOR_CLEAR);
+	
 	for (v = NULL; (img = txt_layout_images(txt_box_layout(el_box(el_scene)), &v)); ) { /* scene */
 		if ((img != el_img(el_spic)) && gfx_frame_gif(img)) {
-			game_cursor(CURSOR_ON);
+			game_cursor(CURSOR_DRAW);
 			gfx_update_gif(img);
 		}
 	}
 	
+	game_cursor(CURSOR_CLEAR);
+	
 	for (v = NULL; (img = txt_layout_images(txt_box_layout(el_box(el_inv)), &v)); ) { /* inv */
 		if (gfx_frame_gif(img)) {
-			game_cursor(CURSOR_ON);
+			game_cursor(CURSOR_DRAW);
 			gfx_update_gif(img);
 		}
 	}
-
+	
+	game_cursor(CURSOR_CLEAR);
+	
 	for (v = NULL; (img = txt_layout_images(el_layout(el_title), &v)); ) { /* title */
 		if (gfx_frame_gif(img)) {
-			game_cursor(CURSOR_ON);
+			game_cursor(CURSOR_DRAW);
 			gfx_update_gif(img);
 		}
 	}
-
+	
+	game_cursor(CURSOR_CLEAR);
+	
 	for (v = NULL; (img = txt_layout_images(el_layout(el_ways), &v)); ) { /* ways */
 		if (gfx_frame_gif(img)) {
-			game_cursor(CURSOR_ON);
+			game_cursor(CURSOR_DRAW);
 			gfx_update_gif(img);
 		}
 	}
-
+	game_cursor(CURSOR_ON);
 }
 
 int counter_fn(int interval, void *p)
