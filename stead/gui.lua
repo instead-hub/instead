@@ -6,26 +6,21 @@ iface.img = function(self, str)
 end;
 
 iface.xref = function(self, str, obj)
-		local o = ref(here():srch(obj));
+		local o = ref(obj);
 		local cmd=''
-		if not o then 
-			o = ref(ways():srch(obj));
-			if o then
-				cmd = 'go ';
-			end
+
+		if ref(ways():srch(obj)) then
+			cmd = 'go ';
 		end
-		if not o then
-			o = ref(me():srch(obj));
-			if o ~= nil then
-				cmd = 'use ';
-			end
-		end
+
 		if not isObject(o) or isStatus(o) or not o.id then
 			return str;
 		end
+
 		if isMenu(o) then
 			cmd = 'act ';
 		end
+
 		return cat('<a:'..cmd..'0'..tostring(o.id)..'>',str,'</a>');
 end;
 
