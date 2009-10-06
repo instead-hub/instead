@@ -1600,6 +1600,8 @@ int game_click(int x, int y, int action)
 	} else if (!strncmp("go ", xref_get_text(xref), 3)) {
 		go_mode = 1;
 		xref_txt += 3;
+	} else if (elem->id == el_inv) {
+		use_mode = 1;
 	}
 	
 	if (!use_xref) {
@@ -1628,10 +1630,13 @@ int game_click(int x, int y, int action)
 		return 0;
 
 	if (use_xref == xref)	
-		snprintf(buf,sizeof(buf), "%s", xref_get_text(use_xref));
-	else
-		snprintf(buf,sizeof(buf), "%s,%s", xref_get_text(use_xref), xref_txt);
-		
+		snprintf(buf,sizeof(buf), "use %s", xref_txt);
+	else {
+		if (!strncmp("use ", xref_get_text(use_xref), 4)) /* already use */
+			snprintf(buf,sizeof(buf), "%s,%s", xref_get_text(use_xref), xref_txt);
+		else
+			snprintf(buf,sizeof(buf), "use %s,%s", xref_get_text(use_xref), xref_txt);
+	}	
 	if (mouse_filter())
 		return 0;
 		
