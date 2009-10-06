@@ -893,6 +893,9 @@ end
 function player_use(self, what, onwhat)
 	local obj, obj2, v, vv, r;
 	obj = self:srch(what);
+	if not obj and game.scene_use then
+		obj = ref(self.where):srch(what);
+	end
 	if not obj then
 		return game.err, false;
 	end
