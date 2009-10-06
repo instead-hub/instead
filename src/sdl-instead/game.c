@@ -1366,7 +1366,6 @@ void enable_use(xref_t xref)
 {
 	use_xref = xref;
 	xref_set_active(xref, 1);
-	game_xref_update(use_xref, el(el_inv)->x, el(el_inv)->y);
 	if (xref_layout(use_xref) == txt_box_layout(el_box(el_inv)))
 		game_xref_update(use_xref, el(el_inv)->x, el(el_inv)->y);
 	else
