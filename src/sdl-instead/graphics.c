@@ -506,7 +506,7 @@ img_t gfx_load_image(char *filename)
 {
 	SDL_Surface *img;
 	int nr = 0;
-	if (strcasestr(filename,".gif"))
+	if (strstr(filename,".gif") || strstr(filename,".GIF"))
 		nr = AG_LoadGIF(filename, NULL, 0, NULL);
 	if (nr > 0) { /* anigif logic */
 		int loop = 0;
