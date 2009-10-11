@@ -458,7 +458,7 @@ function list_search(self, n)
 			return nil
 		end
 	end
-	if isDisabled(self[i]) then
+	if isDisabled(ref(self[i])) then
 		return nil;
 	end
 	return self[i], i;
@@ -1780,7 +1780,7 @@ end
 function have(obj)
 	local o = inv():srch(obj);
 	o = ref(o);
-	if isObject(o) and not isDisabled(o) then
+	if isObject(o) then
 		return o
 	end
 	return nil
