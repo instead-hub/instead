@@ -11,7 +11,7 @@ stead = {
 function par(space,...)
 	local i, res
 	for i = 1, stead.table.maxn(arg) do
-		if type(arg[i]) == 'string' then
+		if type(arg[i]) == 'string' and arg[i] ~= "" then
 			if res == nil then
 				res = ""
 			else
