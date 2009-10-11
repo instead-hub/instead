@@ -11,7 +11,7 @@ stead = {
 function par(space,...)
 	local i, res
 	for i = 1, stead.table.maxn(arg) do
-		if type(arg[i]) == 'string' then
+		if type(arg[i]) == 'string' and arg[i] ~= "" then
 			if res == nil then
 				res = ""
 			else
@@ -1769,7 +1769,7 @@ function seen(obj, wh)
 	else
 		wh = ref(wh);	
 	end
-	local o,w = wh.obj:srch(obj);
+	local o,w = wh:srch(obj);
 	o = ref(o);
 	if isObject(o) then
 		return o,w
@@ -1780,7 +1780,7 @@ end
 function have(obj)
 	local o = inv():srch(obj);
 	o = ref(o);
-	if isObject(o) then
+	if isObject(o) and not isDisabled(o) then
 		return o
 	end
 	return nil
