@@ -10,9 +10,12 @@ char *game_sw = NULL;
 char *games_sw = NULL;
 char *theme_sw = NULL;
 char *themes_sw = NULL;
+char *encode_sw = NULL;
+char *encode_output = NULL;
 
 int main(int argc, char **argv)
 {
+	int err = 0;
 	int i;
 	for (i = 1; i < argc; i++) {
 		if (!strcmp(argv[i],"-alsa")) 
@@ -47,14 +50,29 @@ int main(int argc, char **argv)
 				themes_sw = argv[++i];
 			else
 				themes_sw = "";
-		}	
+		} else if (!strcmp(argv[i], "-encode")) {	
+			if ((i + 1) < argc)
+				encode_sw = argv[++i];
+			else {
+				fprintf(stderr,"No lua file specified.\n");
+				exit(1);	
+			}
+			if ((i + 1) < argc)
+				encode_output = argv[++i];
+			else
+				encode_output = "lua.enc";
+		}
 
-
-	}		
+	}	
+	
 	if (debug_sw) {
 		debug_init();
 	}
-
+	
+	if (encode_sw) {
+		err = instead_encode(encode_sw, encode_output);
+		goto out;		
+	}
 	menu_langs_lookup(LANG_PATH);
 	
 	if (!langs_nr) {
@@ -109,9 +127,10 @@ int main(int argc, char **argv)
 	game_loop();
 	cfg_save();
 	game_done(0);
+	gfx_done();
+out:
 	if (debug_sw)
 		debug_done();
-	gfx_done();
-	return 0;
+	return err;
 }
 

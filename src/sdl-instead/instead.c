@@ -224,13 +224,85 @@ int instead_load(char *game)
 	return 0;
 }
 
+typedef struct LoadF {
+	int extraline;
+	unsigned char byte;
+	FILE *f;
+	unsigned char buff[LUAL_BUFFERSIZE];
+} LoadF;
+
+static const char *getF (lua_State *L, void *ud, size_t *size) {
+	int i = 0;
+	LoadF *lf = (LoadF *)ud;
+	(void)L;
+	if (lf->extraline) {
+		lf->extraline = 0;
+		*size = 1;
+		return "\n";
+	}
+	if (feof(lf->f)) return NULL;
+	*size = fread(lf->buff, 1, sizeof(lf->buff), lf->f);
+	for (i = 0; i < *size; i ++) {
+		unsigned char b = lf->buff[i];
+		lf->buff[i] ^= lf->byte;
+		lf->buff[i] = (lf->buff[i] >> 3) | (lf->buff[i] << 5);
+		lf->byte = b;
+	}
+	return (*size > 0) ? (char*)lf->buff : NULL;
+}
+
+static int errfile (lua_State *L, const char *what, int fnameindex) {
+	const char *serr = strerror(errno);
+	const char *filename = lua_tostring(L, fnameindex) + 1;
+	lua_pushfstring(L, "cannot %s %s: %s", what, filename, serr);
+	lua_remove(L, fnameindex);
+	return LUA_ERRFILE;
+}
+
+static int loadfile (lua_State *L, const char *filename) {
+	LoadF lf;
+	int status, readstatus;
+	int fnameindex = lua_gettop(L) + 1;  /* index of filename on the stack */
+	lf.extraline = 0;
+	lua_pushfstring(L, "@%s", filename);
+	lf.f = fopen(filename, "r");
+	lf.byte = 0xcc;
+	if (lf.f == NULL) return errfile(L, "open", fnameindex);
+	status = lua_load(L, getF, &lf, lua_tostring(L, -1));
+	readstatus = ferror(lf.f);
+	if (filename) fclose(lf.f);  /* close file (even in case of errors) */
+	if (readstatus) {
+		lua_settop(L, fnameindex);  /* ignore results from `lua_load' */
+		return errfile(L, "read", fnameindex);
+	}
+	lua_remove(L, fnameindex);
+	return status;
+}
+
+
+static int luaB_doencfile (lua_State *L) {
+	const char *fname = luaL_optstring(L, 1, NULL);
+	int n = lua_gettop(L);
+	if (loadfile(L, fname) != 0) lua_error(L);
+	lua_call(L, 0, LUA_MULTRET);
+	return lua_gettop(L) - n;
+}
+
+static const luaL_Reg base_funcs[] = {
+	{"doencfile", luaB_doencfile},
+	{NULL, NULL}
+};
+
 int instead_init(void)
 {
 	setlocale(LC_ALL,"");
 //	strcpy(curcp, "UTF-8");
 	/* initialize Lua */
 	L = lua_open();
+	if (!L)
+		return -1;
 	luaL_openlibs(L);
+	luaL_register(L, "_G", base_funcs);
    	if (dofile(L,STEAD_PATH"/stead.lua")) {
 		return -1;
 	}
@@ -256,3 +328,37 @@ void instead_done(void)
 #endif
 }
 
+int  instead_encode(const char *s, const char *d)
+{
+	FILE *src;
+	FILE *dst;
+	size_t size;
+	int i = 0;
+	unsigned char byte = 0xcc;
+	unsigned char buff[LUAL_BUFFERSIZE];
+
+	src = fopen(s, "r");
+	if (!src) {
+		fprintf(stderr,"Can't open on read: '%s'.\n", s);
+		return -1;
+	}
+	dst = fopen(d, "w");
+	if (!dst) {
+		fprintf(stderr,"Can't open on write: '%s'.\n", s);
+		return -1;
+	}
+	while ((size = fread(buff, 1, sizeof(buff), src))) {
+		for (i = 0; i < size; i++) {
+			buff[i] = (buff[i] << 3) | (buff[i] >> 5);
+			buff[i] ^= byte;
+			byte = buff[i];
+		}
+		if (fwrite(buff, 1, size, dst) != size) {
+			fprintf(stderr, "Error while writing file: '%s'.\n", d);
+			return -1;
+		}
+	}
+	fclose(src);
+	fclose(dst);
+	return 0;
+}
