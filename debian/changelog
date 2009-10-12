@@ -1,3 +1,10 @@
+instead (0.9.3) unstable; urgency=low
+
+  * have and seen fixes
+  * -encode option + doencfile
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 12 Oct 2009 11:09:19 +0400
+
 instead (0.9.2) unstable; urgency=low
 
   * animated gif support
