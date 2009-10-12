@@ -228,7 +228,7 @@ typedef struct LoadF {
 	int extraline;
 	unsigned char byte;
 	FILE *f;
-	unsigned char buff[LUAL_BUFFERSIZE];
+	unsigned char buff[4096];
 } LoadF;
 
 static const char *getF (lua_State *L, void *ud, size_t *size) {
@@ -335,7 +335,7 @@ int  instead_encode(const char *s, const char *d)
 	size_t size;
 	int i = 0;
 	unsigned char byte = 0xcc;
-	unsigned char buff[LUAL_BUFFERSIZE];
+	unsigned char buff[4096];
 
 	src = fopen(s, "r");
 	if (!src) {
@@ -362,3 +362,4 @@ int  instead_encode(const char *s, const char *d)
 	fclose(dst);
 	return 0;
 }
+
