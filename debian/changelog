@@ -2,6 +2,7 @@ instead (0.9.3) unstable; urgency=low
 
   * have and seen fixes
   * -encode option + doencfile
+  * print reregister
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 12 Oct 2009 11:09:19 +0400
 
