@@ -707,9 +707,9 @@ end
 
 function dlg(v) --constructor
 	v.dialog_type = true;
-	if v.ini == nil then
-		v.ini = dialog_enter;
-	end
+--	if v.ini == nil then
+--		v.ini = dialog_enter;
+--	end
 	if v.enter == nil then
 		v.enter = dialog_enter;
 	end
@@ -1276,6 +1276,7 @@ function savevar (h, v, n, need)
 
 		if type(v.save) == 'function' then
 			v:save(n, h, need);
+			clearvar(v);
 			return;
 		end
 		
@@ -1283,6 +1284,7 @@ function savevar (h, v, n, need)
 			h:write(n.." = {};\n");
 		end
 		savemembers(h, v, n, need);
+		clearvar(v);
 		return;
 	end
 
