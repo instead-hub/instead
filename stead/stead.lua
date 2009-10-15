@@ -911,18 +911,25 @@ end
 
 function player_use(self, what, onwhat)
 	local obj, obj2, v, vv, r;
+	local use_mode
 	obj = self:srch(what);
 	if not obj then
-		obj = ref(self.where):srch(what);
-		if obj and not isSceneuse(obj) then
-			obj = nil;
+		if call_bool(game, 'scene_use') then
+			use_mode = true
+			obj = ref(self.where):srch(what);
+			if not obj then
+				return
+			end
+		else
+			return game.err, false;
 		end
 	end
-	if not obj then
-		return game.err, false;
-	end
 	if onwhat == nil then
-		v, r = call(ref(obj),'inv');
+		if use_mode then
+			return player_action(self, what);
+		else
+			v, r = call(ref(obj),'inv');
+		end
 		if not v and r ~= true then
 			v, r = call(game, 'inv', obj);
 		end
@@ -1392,16 +1399,6 @@ function isForcedsc(v)
 	end
 	g = call_bool(game, 'forcedsc');
 	return g and r ~= false
-end
-
-function isSceneuse(v)
-	local o,g
-	o = call_bool(v, 'scene_use');
-	if o then
-		return true
-	end
-	g = call_bool(game, 'scene_use');
-	return g and o ~= false
 end
 
 iface = {
