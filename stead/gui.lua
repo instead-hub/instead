@@ -17,7 +17,7 @@ iface.xref = function(self, str, obj)
 			cmd = 'go ';
 		elseif isMenu(o) then
 			cmd = 'act ';
-		elseif isSceneuse(o) then
+		elseif isSceneUse(o) then
 			cmd = 'use ';	
 		end
 
@@ -134,4 +134,8 @@ function isMenu(v)
 		return true
 	end
 	return false
+end
+
+function isSceneUse(v)
+	return call_bool(v, 'scene_use');
 end
