@@ -136,6 +136,3 @@ function isMenu(v)
 	return false
 end
 
-function isSceneUse(v)
-	return call_bool(v, 'scene_use');
-end
