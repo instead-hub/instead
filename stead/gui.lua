@@ -9,16 +9,16 @@ iface.xref = function(self, str, obj)
 		local o = ref(obj);
 		local cmd=''
 
-		if ref(ways():srch(obj)) then
-			cmd = 'go ';
-		end
-
 		if not isObject(o) or isStatus(o) or not o.id then
 			return str;
 		end
 
-		if isMenu(o) then
+		if ref(ways():srch(obj)) then
+			cmd = 'go ';
+		elseif isMenu(o) then
 			cmd = 'act ';
+		elseif isSceneuse(o) then
+			cmd = 'use ';	
 		end
 
 		return cat('<a:'..cmd..'0'..tostring(o.id)..'>',str,'</a>');

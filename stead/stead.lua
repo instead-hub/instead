@@ -538,6 +538,25 @@ function call(v, n, ...)
 	error ("Method not string nor function:"..tostring(n));
 end
 
+function call_bool(v, n, ...)
+	if type(v) ~= 'table' then
+		error ("Call bool on non table object:"..n);
+	end
+	
+	if v[n] == nil then
+		return nil
+	end	
+	
+	if v[n] == false then
+		return false;
+	end
+	
+	if type(v[n]) == 'function' then
+		return v[n](v, unpack(arg));
+	end
+	return true; -- not nil
+end
+
 function room_scene(self)
 	local v;
 	v = iface:title(call(self,'nam'));
@@ -893,8 +912,11 @@ end
 function player_use(self, what, onwhat)
 	local obj, obj2, v, vv, r;
 	obj = self:srch(what);
-	if not obj and game.scene_use then
+	if not obj then
 		obj = ref(self.where):srch(what);
+		if obj and not isSceneuse(obj) then
+			obj = nil;
+		end
 	end
 	if not obj then
 		return game.err, false;
@@ -976,7 +998,7 @@ function go(self, where, back)
 	if not back then
 		ref(where).__from__ = deref(self.where);
 	end	
-	if need_scene then
+	if need_scene then -- or isForcedsc(ref(where)) then -- i'am not sure...
 		self.where = deref(where);
 		return par('^^',res,ref(where):scene());
 	end
@@ -1361,6 +1383,27 @@ function strip(s)
 	s = stead.string.gsub(s, '[ \t]*$', '');
 	return s;
 end
+
+function isForcedsc(v)
+	local r,g
+	r = call_bool(v, 'forcedsc');
+	if r then
+		return true
+	end
+	g = call_bool(game, 'forcedsc');
+	return g and r ~= false
+end
+
+function isSceneuse(v)
+	local o,g
+	o = call_bool(v, 'scene_use');
+	if o then
+		return true
+	end
+	g = call_bool(game, 'scene_use');
+	return g and o ~= false
+end
+
 iface = {
 	img = function(self, str)
 		return '';
@@ -1492,9 +1535,7 @@ iface = {
 			vv = par(" ",vv, pv);
 			me():tag();		
 			if oldloc == here() and not look then
-				if here().forcedsc == true then
-					l,v = me():look();
-				elseif game.forcedsc == true and here().forcedsc ~= false then
+				if isForcedsc(here()) then
 					l,v = me():look();
 				end
 				ACTION_TEXT = iface:em(ACTION_TEXT);
