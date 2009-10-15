@@ -335,9 +335,7 @@ function deref(n)
 	if type(n) == 'table' and type(n.key_name) == 'string' then
 		return n.key_name
 	end
-	return function() -- yeah! lua beauty!!!
-		return n
-	end
+	return n
 end
 
 function list_check(self)
