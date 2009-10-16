@@ -1595,8 +1595,13 @@ function here()
 	return ref(me().where);
 end
 
-function from()
-	return ref(here().__from__);
+function from(w)
+	if w == nil then
+		w = here();
+	else
+		w = ref(w);
+	end
+	return ref(w.__from__);
 end
 
 function time()
