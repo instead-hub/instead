@@ -1094,9 +1094,9 @@ function game_life(self)
 	return v, av;
 end
 
-check_list = function(k, v)
+function check_list(k, v)
 	if v.check == nil or not v:check() then
-		error ("error in list: "..k);
+		error ("error in list: "..stead.object..'.'..k);
 	end
 end
 
@@ -1210,7 +1210,7 @@ function for_each(o, n, f, fv, ...)
 	if type(o) ~= 'table' then
 		return
 	end
-
+	stead.object = n;
 	for k,v in pairs(o) do
 		if type(v) == 'table' and fv(v) then
 			local i = tonumber(k);
