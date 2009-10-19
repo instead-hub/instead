@@ -1659,6 +1659,52 @@ function lifeoff(what)
 	game.lifes:del(what);
 end
 
+function allocator_save(s, name, h, need)
+	if need then
+		local m = ' = allocator:get("'..name..'","'..s.constructor..'");';
+		h:write(name..m..'\n');
+	end
+	savemembers(h, s, name, false);
+end
+
+allocator = obj {
+	nam = 'allocator',
+	get = function(s, n, c)
+		local v = ref(c);
+		v.key_name = n;
+		v.save = allocator_save;
+		v.constructor = c;
+		return v
+	end,
+	delete = function(s, w)
+		w = ref(w);
+		local f = loadstring(w.key_name..'= nil;');
+		if f then
+			f();
+		end
+	end,
+	new = function(s, n)
+		local v = ref(n);
+		v.save = allocator_save;
+		v.constructor = n;
+		stead.table.insert(s._objects, v);
+		v.key_name = 'allocator._objects['..stead.table.maxn(s._objects)..']';
+		return v
+	end,
+	_objects = {},
+};
+
+function new(str)
+	if type(str) ~= 'string' then
+		error("Non string constructor in new.");
+	end
+	return allocator:new(str);
+end
+
+function delete(v)
+	allocator:delete(v);
+end
+
 function vobj_save(self, name, h, need)
 	local dsc;
 	local w
