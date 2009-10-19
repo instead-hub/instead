@@ -5,6 +5,8 @@ instead (0.9.3) unstable; urgency=low
   * print reregister
   * deref is more clever!!! It not do duble objects now
   * from() with argument
+  * new() (allocator object)
+  * game:ini() fix
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 12 Oct 2009 11:09:19 +0400
 

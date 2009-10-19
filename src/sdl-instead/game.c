@@ -74,6 +74,7 @@ int game_select(const char *name)
 				return -1;
 			if (instead_load(MAIN_FILE))
 				return -1;
+			instead_eval("game:ini()");
 			curgame_dir = games[i].dir;
 			return 0;
 		}
@@ -562,7 +563,6 @@ int game_init(const char *name)
 			return 0;
 		if (opt_autosave && !game_load(0))  /* autosave */
 			return 0;
-		instead_eval("game:ini()");
 		game_cmd("look");
 		custom_theme_warn();
 		if (opt_autosave)
