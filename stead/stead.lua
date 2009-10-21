@@ -1678,6 +1678,9 @@ allocator = obj {
 	end,
 	delete = function(s, w)
 		w = ref(w);
+		if type(w.key_name) ~= 'string' then
+			return
+		end
 		local f = loadstring(w.key_name..'= nil;');
 		if f then
 			f();
@@ -1685,6 +1688,9 @@ allocator = obj {
 	end,
 	new = function(s, n)
 		local v = ref(n);
+		if type(v) ~= 'table' or type(n) ~= 'string' then
+			error "Error in new.";
+		end
 		v.save = allocator_save;
 		v.constructor = n;
 		stead.table.insert(s.objects, v);
