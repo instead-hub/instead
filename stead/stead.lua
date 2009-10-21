@@ -1687,11 +1687,15 @@ allocator = obj {
 		local v = ref(n);
 		v.save = allocator_save;
 		v.constructor = n;
-		stead.table.insert(s._objects, v);
-		v.key_name = 'allocator._objects['..stead.table.maxn(s._objects)..']';
+		stead.table.insert(s.objects, v);
+		v.key_name = 'allocator.objects['..stead.table.maxn(s.objects)..']';
 		return v
 	end,
-	_objects = {},
+	objects = {
+		save = function(self, name, h, need)
+			savemembers(h, self, name, true);
+		end
+	},
 };
 
 function new(str)
