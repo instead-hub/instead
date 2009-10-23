@@ -3,7 +3,6 @@ instead (0.9.3) unstable; urgency=low
   * have and seen fixes
   * -encode option + doencfile
   * print reregister
-  * deref is more clever!!! It not do duble objects now
   * from() with argument
   * new()/delete() (allocator object)
   * game:ini() fix
