@@ -8,15 +8,23 @@ stead = {
 	txt = {},
 }
 
-function pstart()
+function ppush()
 	stead.txt_top = stead.txt_top + 1;
+end
+
+function ppop()
+	stead.txt_top = stead.txt_top - 1;
+	if stead.txt_top < 0 then
+		error "pstart/pend mismatch"
+	end 
+end
+
+function pstart()
 	stead.txt[stead.txt_top] = nil
 end
 
 function pend()
-	local r = stead.txt[stead.txt_top]
-	stead.txt_top = stead.txt_top - 1;
-	return r
+	return stead.txt[stead.txt_top]
 end
 
 function p(...)
@@ -558,13 +566,14 @@ function call(v, n, ...)
 		return v[n];
 	end 
 	if type(v[n]) == 'function' then
+		ppush()
 		pstart()
 		local a,b = v[n](v, unpack(arg));
 		if a == nil and b == nil then
-			return pend();
-		else
-			pend();
+			a = pend();
+			b = nil;
 		end
+		ppop()
 		return a,b
 	end
 	error ("Method not string nor function:"..tostring(n));
