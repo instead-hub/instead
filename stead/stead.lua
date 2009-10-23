@@ -6,6 +6,26 @@ stead = {
 	io = io,
 }
 
+function pstart()
+	stead.txt = nil
+end
+
+function pend()
+	return stead.txt;
+end
+
+function p(...)
+	local i
+	for i = 1, stead.table.maxn(arg) do
+		stead.txt = par('',stead.txt, arg[i]);
+	end
+	stead.txt = cat(stead.txt, ' ');
+end
+
+function pn(...)
+	p(unpack(arg));
+	stead.txt = par('',stead.txt,'^');
+end
 
 -- merge strings with "space" as separator
 function par(space,...)
@@ -533,7 +553,12 @@ function call(v, n, ...)
 		return v[n];
 	end 
 	if type(v[n]) == 'function' then
-		return v[n](v, unpack(arg));
+		pstart()
+		local a,b = v[n](v, unpack(arg));
+		if a == nil and b == nil then
+			return pend();
+		end
+		return a,b
 	end
 	error ("Method not string nor function:"..tostring(n));
 end
