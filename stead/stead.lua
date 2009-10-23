@@ -1827,16 +1827,21 @@ function take(obj, wh)
 end
 
 function putto(obj, w, pos)
+	local wh
 	local o = ref(obj);
 	if not isObject(o) then
 		error "Trying to put wrong object.";
 	end
 	if not w then
-		here().obj:add(obj, pos);
-		o.__where__ = deref(here());
+		wh = deref(here());
+		w = here();
 	else
-		ref(w).obj:add(obj, pos);
-		o.__where__ = deref(w);
+		wh = deref(w);
+		w = ref(w);
+	end
+	w.obj:add(obj, pos);
+	if type(wh) == 'string' then
+		o.__where__ = wh;
 	end
 	return o;
 end
