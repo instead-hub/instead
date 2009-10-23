@@ -4,27 +4,32 @@ stead = {
 	string = string,
 	math = math,
 	io = io,
+	txt_top = 0,
+	txt = {},
 }
 
 function pstart()
-	stead.txt = nil
+	stead.txt_top = stead.txt_top + 1;
+	stead.txt[stead.txt_top] = nil
 end
 
 function pend()
-	return stead.txt;
+	local r = stead.txt[stead.txt_top]
+	stead.txt_top = stead.txt_top - 1;
+	return r
 end
 
 function p(...)
 	local i
 	for i = 1, stead.table.maxn(arg) do
-		stead.txt = par('',stead.txt, arg[i]);
+		stead.txt[stead.txt_top] = par('',stead.txt[stead.txt_top], arg[i]);
 	end
-	stead.txt = cat(stead.txt, ' ');
+	stead.txt[stead.txt_top] = cat(stead.txt[stead.txt_top], ' ');
 end
 
 function pn(...)
 	p(unpack(arg));
-	stead.txt = par('',stead.txt,'^');
+	stead.txt[stead.txt_top] = par('',stead.txt[stead.txt_top],'^');
 end
 
 -- merge strings with "space" as separator
@@ -557,6 +562,8 @@ function call(v, n, ...)
 		local a,b = v[n](v, unpack(arg));
 		if a == nil and b == nil then
 			return pend();
+		else
+			pend();
 		end
 		return a,b
 	end
