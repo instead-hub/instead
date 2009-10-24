@@ -120,7 +120,6 @@ int main(int argc, char **argv)
 	// Initialize SDL
 	if (gfx_init() < 0)
 		return -1;
-
 	if (game_init(opt_game)) {
 		game_error(opt_game);
 	}

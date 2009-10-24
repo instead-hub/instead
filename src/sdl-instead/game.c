@@ -318,10 +318,16 @@ int game_apply_theme(void)
 	layout_t lay;
 	textbox_t box;
 
+	if (game_theme_init(opt_mode[0], opt_mode[1]))
+		return -1;
+		
 	memset(objs, 0, sizeof(struct el) * el_max);
 
-	if (gfx_setmode(game_theme.w, game_theme.h, opt_fs))
-		return -1;	
+	if (gfx_set_mode(game_theme.w, game_theme.h, opt_fs)) {
+		opt_mode[0] = opt_mode[1] = -1; opt_fs = 0; /* safe options */
+		return -1;
+	}
+	
 	gfx_bg(game_theme.bgcol);
 	game_clear(0, 0, game_theme.w, game_theme.h);
 	gfx_flip();
@@ -835,7 +841,8 @@ img_t	game_pict_scale(img_t img, int ww, int hh)
 		if (www <= 0 || hhh <=0)
 			break;
 	}
-	
+	if (scale < 0)
+		scale = 0;
 	img2 = gfx_scale(img, scale, scale);
 	gfx_free_image(img);
 	return img2;
