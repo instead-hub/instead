@@ -199,7 +199,7 @@ static char *opt_get_mode(void)
 {
 	static char buff[128];
 	if (opt_mode[0] == -1 || opt_mode[1] == -1) {
-		snprintf(buff, sizeof(buff), "%s %dx%d", FROM_THEME, game_theme.w, game_theme.h);
+		snprintf(buff, sizeof(buff), "%s", FROM_THEME);
 		return buff;
 	}
 	snprintf(buff, sizeof(buff), "%dx%d", opt_mode[0], opt_mode[1]);
