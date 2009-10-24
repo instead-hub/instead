@@ -286,14 +286,14 @@ int game_menu_act(const char *a)
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/fs--")) {
 		opt_fsize --;
-		if (FONT_SZ(game_theme.font_size) > FONT_MIN_SZ) {
+		if (FONT_SZ(game_theme.font_size) > FONT_MIN_SZ * game_theme.scale) {
 			restart_needed = 1;
 		} else
 			opt_fsize ++;
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/fs++")) {
 		opt_fsize ++;
-		if (FONT_SZ(game_theme.font_size) < FONT_MAX_SZ) {
+		if (FONT_SZ(game_theme.font_size) < FONT_MAX_SZ * game_theme.scale) {
 			restart_needed = 1;
 		} else
 			opt_fsize --;
