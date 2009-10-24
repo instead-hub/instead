@@ -248,7 +248,8 @@ help2 = room {
 	-window - windowed mode;^
 	-fullscreen  - fullscreen mode;^
 	-noautosave - disable autosave/autoload option;^
-	-encode <game.lua> [encoded.lua] - encode lua source code (use doencfile from lua to load it).
+	-encode <game.lua> [encoded.lua] - encode lua source code (use doencfile from lua to load it);^
+	-mode [WxH] - use WxH resolution.
 	]],
 	obj = { vway('keys', 'See {list of keyboard shortcuts}.', 'help')},
 };

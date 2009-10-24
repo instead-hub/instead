@@ -233,7 +233,7 @@ static  int game_theme_scale(int w, int h)
 	int xoff, yoff;
 	struct game_theme *t = &game_theme;
 
-	if (w == -1 || h == -1) {
+	if (w < 0 || h < 0) {
 		t->scale = 1.0f;
 		return 0;
 	}
