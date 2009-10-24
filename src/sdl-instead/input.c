@@ -27,7 +27,7 @@ int input_init(void)
 {
 	SDL_EnableKeyRepeat(500, 30);
 	m_focus = !!(SDL_GetAppState() & SDL_APPMOUSEFOCUS);
-//	putenv("SDL_MOUSE_RELATIVE=0");
+	putenv("SDL_MOUSE_RELATIVE=0"); /* test this! */
 	return 0;
 }
 
