@@ -6,6 +6,7 @@ instead (0.9.3) unstable; urgency=low
   * from() with argument
   * new()/delete() (allocator object)
   * game:ini() fix
+  * theme scaling (yahoo!!!)
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 12 Oct 2009 11:09:19 +0400
 
