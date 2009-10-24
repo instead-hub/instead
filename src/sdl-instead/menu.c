@@ -354,7 +354,9 @@ int game_menu_act(const char *a)
 //		free_last();
 		game_select(curgame_dir);
 		game_menu_box(0, NULL);
-		instead_eval("game:ini()");
+		s = instead_eval("game:ini()");
+		if (s)
+			free(s);
 		game_cmd("look");
 		s = game_save_path(0, 0);
 		if (s && !access(s, R_OK) && opt_autosave)
@@ -631,7 +633,7 @@ int menu_langs_lookup(const char *path)
 		
 	rewinddir(d);
 	if (!n)
-		return 0;
+		goto out;
 
 	langs = realloc(langs, sizeof(struct lang) * (n + langs_nr));
 
@@ -645,6 +647,7 @@ int menu_langs_lookup(const char *path)
 		langs_nr ++;
 		i ++;
 	}
+out:	
 	closedir(d);
 	return 0;
 }

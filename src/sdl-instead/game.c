@@ -67,6 +67,7 @@ int game_select(const char *name)
 	chdir(game_cwd);
 	for (i = 0; i<games_nr; i ++) {
 		if (!strcmp(games[i].dir, name)) {
+			char *p;
 			instead_done();
 			if (instead_init())
 				return -1;
@@ -74,7 +75,9 @@ int game_select(const char *name)
 				return -1;
 			if (instead_load(MAIN_FILE))
 				return -1;
-			instead_eval("game:ini()");
+			p = instead_eval("game:ini()");
+			if (p)
+				free(p);
 			curgame_dir = games[i].dir;
 			return 0;
 		}
@@ -128,7 +131,7 @@ int games_lookup(const char *path)
 		
 	rewinddir(d);
 	if (!n)
-		return 0;
+		goto out;
 	games = realloc(games, sizeof(struct game) * (n + games_nr));
 	while ((de = readdir(d)) && i < n) {
 		/*if (de->d_type != DT_DIR)
@@ -142,6 +145,7 @@ int games_lookup(const char *path)
 		games_nr ++;
 		i ++;
 	}
+out:	
 	closedir(d);
 	return 0;
 }

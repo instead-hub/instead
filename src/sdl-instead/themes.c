@@ -312,6 +312,7 @@ static int theme_gfx_scale(void)
 		gfx_img_fill(pic, 0, 0, t->w, t->h, gfx_col(0,0,0));
 		gfx_draw(t->bg, xoff, yoff);
 		gfx_screen(screen);
+		gfx_free_image(t->bg);
 		t->bg = pic;
 	}	
 	return 0;
@@ -501,7 +502,7 @@ int themes_lookup(const char *path)
 		
 	rewinddir(d);
 	if (!n)
-		return 0;
+		goto out;
 	themes = realloc(themes, sizeof(struct theme) * (n + themes_nr));
 	while ((de = readdir(d)) && i < n) {
 		/*if (de->d_type != DT_DIR)
@@ -515,6 +516,7 @@ int themes_lookup(const char *path)
 		themes_nr ++;
 		i ++;
 	}
+out:
 	closedir(d);
 	return 0;
 }
