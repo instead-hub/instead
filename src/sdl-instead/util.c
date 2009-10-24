@@ -222,6 +222,7 @@ int parse_full_path(const char *v, void *data)
 	strcpy(*p, cwd);
 	strcat(*p,"/");
 	strcat(*p, v);
+	unix_path(*p);
 	return 0;
 }
 

@@ -23,6 +23,24 @@ int opt_kbd = KBD_SMART;
 char *opt_game = NULL;
 char *opt_theme = NULL;
 char *opt_lang = NULL;
+int opt_mode[2] = {-1, -1};
+
+int parse_mode(const char *v, void *data)
+{
+	int w, h;
+	char *eptr;
+	int *p = ((int *)data);
+	w = strtol(v, &eptr, 10);
+	if (!w || (eptr == v) || (*eptr != 'x'))
+		return -1;
+	eptr ++;
+	h = strtol(eptr, &eptr, 10);
+	if (!h || (*eptr))
+		return -1;
+	p[0] = w;
+	p[1] = h;
+	return 0;	
+}
 
 static struct parser cfg_parser[] = {
 	{ "hz", parse_int, &opt_hz },
@@ -40,6 +58,7 @@ static struct parser cfg_parser[] = {
 	{ "owntheme", parse_int, &opt_owntheme },
 	{ "lang", parse_string, &opt_lang },
 	{ "kbd", parse_int, &opt_kbd },
+	{ "mode", parse_mode, opt_mode },
 	{ NULL, },
 };
 
@@ -70,12 +89,11 @@ int cfg_save(void)
 	fprintf(fp, "fs = %d\nhl = %d\nhz = %d\nvol = %d\nautosave = %d\n\
 game = %s\nfscale = %d\nmotion = %d\n\
 click = %d\nmusic = %d\ntheme = %s\n\
-filter = %d\nowntheme = %d\nlang = %s\nkbd = %d", 
+filter = %d\nowntheme = %d\nlang = %s\nkbd = %d\nmode = %dx%d", 
 		opt_fs, opt_hl, opt_hz, opt_vol, opt_autosave, 
 		curgame_dir?curgame_dir:"", opt_fsize, opt_motion, 
 		opt_click, opt_music, curtheme_dir?curtheme_dir:DEFAULT_THEME, 
-		opt_filter, opt_owntheme, opt_lang, opt_kbd);
+		opt_filter, opt_owntheme, opt_lang, opt_kbd, opt_mode[0], opt_mode[1]);
 	fclose(fp);
 	return 0;
 }
-

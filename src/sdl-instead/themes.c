@@ -54,12 +54,12 @@ struct parser cmd_parser[] = {
 	{ "scr.w", parse_int, &game_theme.w },
 	{ "scr.h", parse_int, &game_theme.h },
 	{ "scr.col.bg", parse_color, &game_theme.bgcol },
-	{ "scr.gfx.bg", parse_string, &game_theme.bg_name },
-	{ "scr.gfx.cursor.normal", parse_string, &game_theme.cursor_name },
+	{ "scr.gfx.bg", parse_full_path, &game_theme.bg_name },
+	{ "scr.gfx.cursor.normal", parse_full_path, &game_theme.cursor_name },
 	{ "scr.gfx.cursor.x", parse_int, &game_theme.cur_x },
 	{ "scr.gfx.cursor.y", parse_int, &game_theme.cur_y },
-	{ "scr.gfx.use", parse_string, &game_theme.use_name }, /* compat */
-	{ "scr.gfx.cursor.use", parse_string, &game_theme.use_name },
+	{ "scr.gfx.use", parse_full_path, &game_theme.use_name }, /* compat */
+	{ "scr.gfx.cursor.use", parse_full_path, &game_theme.use_name },
 	{ "scr.gfx.pad", parse_int, &game_theme.pad  }, 
 	{ "scr.gfx.x", parse_int, &game_theme.gfx_x },
 	{ "scr.gfx.y", parse_int, &game_theme.gfx_y },
@@ -71,13 +71,13 @@ struct parser cmd_parser[] = {
 	{ "win.y", parse_int, &game_theme.win_y },
 	{ "win.w", parse_int, &game_theme.win_w },	
 	{ "win.h", parse_int, &game_theme.win_h },	
-	{ "win.fnt.name", parse_string, &game_theme.font_name },
+	{ "win.fnt.name", parse_full_path, &game_theme.font_name },
 	{ "win.fnt.size", parse_int, &game_theme.font_size },
 /* compat mode directive */
 	{ "win.gfx.h", parse_int, &game_theme.max_scene_h },
 /* here it was */
-	{ "win.gfx.up", parse_string, &game_theme.a_up_name },
-	{ "win.gfx.down", parse_string, &game_theme.a_down_name },
+	{ "win.gfx.up", parse_full_path, &game_theme.a_up_name },
+	{ "win.gfx.down", parse_full_path, &game_theme.a_down_name },
 	{ "win.col.fg", parse_color, &game_theme.fgcol }, 
 	{ "win.col.link", parse_color, &game_theme.lcol },
 	{ "win.col.alink", parse_color, &game_theme.acol }, 
@@ -92,10 +92,10 @@ struct parser cmd_parser[] = {
 	{ "inv.col.fg", parse_color, &game_theme.icol }, 
 	{ "inv.col.link", parse_color, &game_theme.ilcol },
 	{ "inv.col.alink", parse_color, &game_theme.iacol }, 
-	{ "inv.fnt.name", parse_string, &game_theme.inv_font_name },
+	{ "inv.fnt.name", parse_full_path, &game_theme.inv_font_name },
 	{ "inv.fnt.size", parse_int, &game_theme.inv_font_size },
-	{ "inv.gfx.up", parse_string, &game_theme.inv_a_up_name },
-	{ "inv.gfx.down", parse_string, &game_theme.inv_a_down_name },
+	{ "inv.gfx.up", parse_full_path, &game_theme.inv_a_up_name },
+	{ "inv.gfx.down", parse_full_path, &game_theme.inv_a_down_name },
 
 	{ "menu.col.bg", parse_color, &game_theme.menu_bg },
 	{ "menu.col.fg", parse_color, &game_theme.menu_fg },
@@ -104,9 +104,9 @@ struct parser cmd_parser[] = {
 	{ "menu.col.alpha", parse_int, &game_theme.menu_alpha },
 	{ "menu.col.border", parse_color, &game_theme.border_col },
 	{ "menu.bw", parse_int, &game_theme.border_w },
-	{ "menu.fnt.name", parse_string, &game_theme.menu_font_name },
+	{ "menu.fnt.name", parse_full_path, &game_theme.menu_font_name },
 	{ "menu.fnt.size", parse_int, &game_theme.menu_font_size },
-	{ "menu.gfx.button", parse_string, &game_theme.menu_button_name },
+	{ "menu.gfx.button", parse_full_path, &game_theme.menu_button_name },
 	{ "menu.button.x", parse_int, &game_theme.menu_button_x },
 	{ "menu.button.y", parse_int, &game_theme.menu_button_y },
 /* compat */
@@ -119,6 +119,7 @@ struct parser cmd_parser[] = {
 };
 
 struct game_theme game_theme = {
+	.scale = 1.0f,
 	.w = 800,
 	.h = 480,
 	.bg_name = NULL,
@@ -212,11 +213,116 @@ int game_theme_free(void)
 	return 0;
 }
 
-
-static int game_theme_init(void)
+static int theme_img_scale(img_t *p, float v)
 {
+	img_t pic;
+	if (!p || !*p)
+		return 0;
+	pic = gfx_scale(*p, v, v); 
+	if (!pic)
+		return -1;
+	gfx_free_image(*p); 
+	*p = pic;
+	return 0;
+}
+
+static  int game_theme_scale(int w, int h)
+{
+	float xs, ys, v;
+	int xoff, yoff;
 	struct game_theme *t = &game_theme;
 
+	if (w == -1 || h == -1) {
+		t->scale = 1.0f;
+		return 0;
+	}
+	
+	xs = (float)w / (float)t->w;
+	ys = (float)h / (float)t->h;
+	
+	v = (xs < ys)?xs:ys;
+
+	xoff = (w - t->w*v)/2;
+	yoff = (h - t->h*v)/2;
+	t->w = w;
+	t->h = h;
+
+	if (xoff < 0)
+		xoff = 0;
+	if (yoff < 0)
+		yoff = 0;
+
+	t->pad *= v;
+	t->win_x *= v; t->win_x += xoff;
+	t->win_y *= v; t->win_y += yoff;
+	t->win_w *= v;
+	t->win_h *= v;
+	t->font_size *= v;
+	t->gfx_x *= v; t->gfx_x += xoff;
+	t->gfx_y *= v; t->gfx_y += yoff;
+
+	if (t->max_scene_w != -1)
+		t->max_scene_w *= v;
+
+	if (t->max_scene_h != -1)
+		t->max_scene_h *= v;
+		
+	t->inv_x *= v; t->inv_x += xoff;
+	t->inv_y *= v; t->inv_y += yoff;
+	t->inv_w *= v;
+	t->inv_h *= v;
+
+	t->inv_font_size *= v;
+	t->menu_font_size *= v;
+	t->menu_button_x *= v; t->menu_button_x += xoff;
+	t->menu_button_y *= v; t->menu_button_y += yoff;
+	
+	t->scale = v;
+	return 0;
+}
+
+static int theme_gfx_scale(void)
+{
+	struct game_theme *t = &game_theme;
+	float v = t->scale;
+	if (v == 1.0f)
+		return 0;
+	if (theme_img_scale(&t->a_up, v) ||
+		theme_img_scale(&t->a_down, v) ||
+		theme_img_scale(&t->inv_a_up, v) ||
+		theme_img_scale(&t->inv_a_down, v) ||
+		theme_img_scale(&t->use, v) ||
+		theme_img_scale(&t->cursor, v) ||
+		theme_img_scale(&t->menu_button, v) ||
+		theme_img_scale(&t->bg, v))
+		return -1;
+
+	if (t->bg) {
+		img_t screen, pic;
+		int xoff = (t->w - gfx_img_w(t->bg))/2;
+		int yoff = (t->h - gfx_img_h(t->bg))/2;
+		if (xoff < 0)
+			xoff = 0;
+		if (yoff < 0)
+			yoff = 0;
+		pic = gfx_new(t->w, t->h);
+		if (!pic)
+			return -1;
+		screen = gfx_screen(pic);
+		gfx_img_fill(pic, 0, 0, t->w, t->h, gfx_col(0,0,0));
+		gfx_draw(t->bg, xoff, yoff);
+		gfx_screen(screen);
+		t->bg = pic;
+	}	
+	return 0;
+}
+
+int game_theme_init(int w, int h)
+{
+	struct game_theme *t = &game_theme;
+	
+	game_theme_scale(w, h);
+	
 	if (t->font_name) {
 		fnt_free(t->font);
 		if (!(t->font = fnt_load(t->font_name, FONT_SZ(t->font_size))))
@@ -228,7 +334,6 @@ static int game_theme_init(void)
 		if (!(t->inv_font = fnt_load(t->inv_font_name, FONT_SZ(t->inv_font_size))))
 			goto err;
 	}
-
 
 	if (t->menu_font_name) {
 		fnt_free(t->menu_font);
@@ -297,7 +402,12 @@ static int game_theme_init(void)
 	if (!t->cursor || !t->use || !t->inv_a_up || !t->inv_a_down || !t->a_down || !t->a_up ||
 		!t->font || !t->inv_font || !t->menu_font || !t->menu_button) {
 		fprintf(stderr,"Can't init theme. Not all required elements are defined.\n");
-		return -1;
+		goto err;
+	}
+	
+	if (theme_gfx_scale()) {
+		fprintf(stderr, "Can't scale theme.\n");
+		goto err;
 	}
 	return 0;
 err:
@@ -305,6 +415,7 @@ err:
 	game_theme_free();
 	return -1;
 }
+
 
 static int theme_parse(const char *path)
 {
@@ -320,8 +431,8 @@ int theme_load(const char *name)
 {
 	if (theme_parse(name))
 		return 0; /* no theme loaded if error in parsing */
-	if (game_theme_init()) 
-		return -1;
+//	if (game_theme_init()) 
+//		return -1;
 	return 0;
 }
 

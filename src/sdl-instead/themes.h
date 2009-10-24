@@ -12,6 +12,7 @@
 #define THEME_FILE	"theme.ini"
 
 struct game_theme {
+	float	scale;
 	int 	w;
 	int 	h;
 	color_t	bgcol;
@@ -106,6 +107,7 @@ extern int 	game_theme_select(const char *name);
 extern int 	themes_lookup(const char *path);
 extern int 	game_theme_load(const char *name);
 extern int 	game_theme_free(void);
+extern int 	game_theme_init(int w, int h);
 extern int 	theme_load(const char *name);
 extern char 	*game_local_themes_path(void);
 

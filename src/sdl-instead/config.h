@@ -23,6 +23,7 @@ extern int opt_autosave;
 extern int opt_filter;
 extern int opt_kbd;
 
+extern int opt_mode[2];
 extern char *opt_game;
 extern char *opt_theme;
 extern char *opt_lang;

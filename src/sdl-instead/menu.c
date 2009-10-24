@@ -38,6 +38,8 @@ char *KBD_MODE_SMART = NULL;
 char *KBD_MODE_SCROLL = NULL;
 char *CANCEL_MENU = NULL;
 
+char *FROM_THEME = NULL;
+
 static char  menu_buff[4096];
 
 static char *slot_name(const char *path)
@@ -193,6 +195,15 @@ static void themes_menu(void)
 	}
 }
 
+static char *opt_get_mode(void)
+{
+	static char buff[128];
+	if (opt_mode[0] == -1 || opt_mode[1] == -1)
+		return FROM_THEME;
+	snprintf(buff, sizeof(buff), "%dx%d", opt_mode[0], opt_mode[1]);
+	return buff;
+}
+
 char *game_menu_gen(void)
 {
 	if (cur_menu == menu_main) {
@@ -203,7 +214,7 @@ char *game_menu_gen(void)
 		char *kbd [KBD_MAX] = { KBD_MODE_SMART, KBD_MODE_LINKS, KBD_MODE_SCROLL };
 		snprintf(menu_buff, sizeof(menu_buff), SETTINGS_MENU, 
 		snd_vol_to_pcn(snd_volume_mus(-1)), snd_hz(), opt_music?ON:OFF, opt_click?ON:OFF,
-		opt_fs?ON:OFF, opt_fsize, opt_hl?ON:OFF, opt_motion?ON:OFF, opt_filter?ON:OFF, kbd[opt_kbd],
+		opt_get_mode(), opt_fs?ON:OFF, opt_fsize, opt_hl?ON:OFF, opt_motion?ON:OFF, opt_filter?ON:OFF, kbd[opt_kbd],
 		langs[cur_lang].name, opt_owntheme?ON:OFF, opt_autosave?ON:OFF);
 	} else if (cur_menu == menu_askquit) {
 		snprintf(menu_buff, sizeof(menu_buff), QUIT_MENU);
@@ -262,6 +273,16 @@ int game_menu_act(const char *a)
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/click")) {
 		opt_click ^= 1;
+		game_menu_box(1, game_menu_gen());
+	} else if (!strcmp(a, "/mode++")) {
+		if (gfx_next_mode(&opt_mode[0], &opt_mode[1]))
+			opt_mode[0] = opt_mode[1] = -1;
+		restart_needed = 1;
+		game_menu_box(1, game_menu_gen());
+	} else if (!strcmp(a, "/mode--")) {	
+		if (gfx_prev_mode(&opt_mode[0], &opt_mode[1]))
+			opt_mode[0] = opt_mode[1] = -1;
+		restart_needed = 1;
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/fs--")) {
 		opt_fsize --;
@@ -493,6 +514,7 @@ static void lang_free(void)
 	FREE(KBD_MODE_SMART);
 	FREE(KBD_MODE_SCROLL);
 	FREE(CANCEL_MENU);
+	FREE(FROM_THEME);
 }
 
 static int lang_ok(void)
@@ -502,7 +524,8 @@ static int lang_ok(void)
 		MAIN_MENU && ABOUT_MENU && BACK_MENU && SETTINGS_MENU &&
 		CUSTOM_THEME_MENU && OWN_THEME_MENU && SELECT_GAME_MENU && SELECT_THEME_MENU &&
 		SAVED_MENU && NOGAMES_MENU && NOTHEMES_MENU && QUIT_MENU &&
-		ON && OFF && KBD_MODE_LINKS && KBD_MODE_SMART && KBD_MODE_SCROLL && CANCEL_MENU)
+		ON && OFF && KBD_MODE_LINKS && KBD_MODE_SMART && KBD_MODE_SCROLL && CANCEL_MENU &&
+		FROM_THEME)
 		return 0;
 	return -1;
 }	
@@ -534,6 +557,7 @@ struct parser lang_parser[] = {
 	{ "KBD_MODE_SMART", parse_esc_string, &KBD_MODE_SMART },
 	{ "KBD_MODE_SCROLL", parse_esc_string, &KBD_MODE_SCROLL },
 	{ "CANCEL_MENU", parse_esc_string, &CANCEL_MENU },
+	{ "FROM_THEME", parse_esc_string, &FROM_THEME },
 	{ NULL,  },
 };
 

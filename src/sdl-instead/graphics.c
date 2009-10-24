@@ -10,7 +10,7 @@
 
 #define Surf(p) ((SDL_Surface *)p)
 
-static SDL_Surface *screen;
+static SDL_Surface *screen = NULL;
 
 static struct {
 	const char *name;
@@ -411,12 +411,21 @@ void gfx_clip(int x, int y, int w, int h)
 img_t 	gfx_new(int w, int h)
 {
 	SDL_Surface *dst;
-	dst = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 
-		screen->format->BitsPerPixel, 
-		screen->format->Rmask, 
-		screen->format->Gmask, 
-		screen->format->Bmask, 
-		screen->format->Amask);
+	if (!screen) {
+		dst = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 
+			32, 
+			0xff, 
+			0xff00, 
+			0xff0000, 
+			0xff000000);
+	} else {
+		dst = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 
+			screen->format->BitsPerPixel, 
+			screen->format->Rmask, 
+			screen->format->Gmask, 
+			screen->format->Bmask, 
+			screen->format->Amask);
+	}
 	return dst;
 }
 
@@ -697,15 +706,103 @@ void gfx_clear(int x, int y, int w, int h)
 int gfx_width;
 int gfx_height;
 
-int gfx_setmode(int w, int h, int fs)
+static SDL_Rect** vid_modes = NULL;
+static SDL_Rect m640x480 = { .w = 640, .h = 480 };
+static SDL_Rect m800x480 = { .w = 800, .h = 480 };
+static SDL_Rect m800x600 = { .w = 800, .h = 600 };
+static SDL_Rect m1024x768 = { .w = 1024, .h = 768 };
+static SDL_Rect m1280x800 = { .w = 1280, .h = 800 };
+
+static SDL_Rect* std_modes[] = { &m640x480, &m800x480, &m800x600, &m1024x768, &m1280x800, NULL };
+int gfx_modes(void)
+{
+	int i = 0;
+	SDL_Rect** modes;
+	modes = SDL_ListModes(NULL, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_ANYFORMAT);
+	if (modes == (SDL_Rect**)0)/* no modes */
+		return 0;
+	if (modes == (SDL_Rect**)-1) {
+		vid_modes = std_modes;
+		return 5;
+	}
+	for (i = 0; modes[i]; ++i);
+	vid_modes = modes;
+	return i;
+}
+
+int gfx_get_mode(int n, int *w, int *h)
+{
+	if (!vid_modes)
+		gfx_modes();
+			
+	if (!vid_modes || !vid_modes[n])
+		return -1;
+	if (w)
+		*w = vid_modes[n]->w;
+	if (h)
+		*h = vid_modes[n]->h;
+	return 0;
+}
+
+int gfx_prev_mode(int *w, int *h)
+{
+	int ww, hh, i = 0;
+
+	if (!w || !h)
+		return -1;
+
+			
+	while ((*w != -1 && *h != -1) && 
+		!gfx_get_mode(i, &ww, &hh)) {
+		if (ww == *w && hh == *h)
+			break;
+		i ++;
+	}
+	
+	if (*w == -1 || *h == -1)
+		i = gfx_modes();
+
+	if (!i)
+		return -1;
+	i --;	
+		
+	if (gfx_get_mode(i, &ww, &hh))
+		return -1;
+		
+	*w = ww; *h = hh;
+	return 0;
+}
+
+int gfx_next_mode(int *w, int *h)
+{
+	int ww, hh, i = 0;
+
+	if (!w || !h)
+		return -1;
+
+	while ((*w != -1 && *h != -1) && 
+		!gfx_get_mode(i, &ww, &hh)) {
+		i ++;
+		if (ww == *w && hh == *h)
+			break;
+	}
+	
+	if (gfx_get_mode(i, &ww, &hh))
+		return -1;
+		
+	*w = ww; *h = hh;
+	return 0;
+}
+
+int gfx_set_mode(int w, int h, int fs)
 {
 	gfx_width = w;
 	gfx_height = h;
 	SDL_ShowCursor(SDL_DISABLE);
 #ifndef MAEMO	
 	screen = SDL_SetVideoMode(gfx_width, gfx_height, 32, SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
-	if (screen == NULL) /* ok, fallback to 16 bit */
-		screen = SDL_SetVideoMode(gfx_width, gfx_height, 16, SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
+	if (screen == NULL) /* ok, fallback to anyformat */
+		screen = SDL_SetVideoMode(gfx_width, gfx_height, 32, SDL_ANYFORMAT | SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 #else
 	screen = SDL_SetVideoMode(gfx_width, gfx_height, 16, SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 #endif
