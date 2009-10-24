@@ -822,6 +822,10 @@ img_t	game_pict_scale(img_t img, int ww, int hh)
 	img_t img2 = img;
 	int w, h, www, hhh;
 	float scale1, scale2, scale = 1.0f;
+	
+	if (game_theme.scale > 1.0f)
+		theme_img_scale(&img);
+
 	w = gfx_img_w(img);
 	h = gfx_img_h(img);
 
@@ -832,7 +836,7 @@ img_t	game_pict_scale(img_t img, int ww, int hh)
 
 	if (w <= ww && h <= hh)
 		return img;
-	
+
 	www = ww;
 	hhh = hh;
 	

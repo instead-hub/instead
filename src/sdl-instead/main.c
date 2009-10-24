@@ -12,6 +12,7 @@ char *theme_sw = NULL;
 char *themes_sw = NULL;
 char *encode_sw = NULL;
 char *encode_output = NULL;
+char *mode_sw = NULL;
 
 int main(int argc, char **argv)
 {
@@ -24,7 +25,12 @@ int main(int argc, char **argv)
 			nosound_sw = 1;
 		else if (!strcmp(argv[i], "-fullscreen"))
 			fullscreen_sw = 1;
-		else if (!strcmp(argv[i], "-window"))
+		else if (!strcmp(argv[i], "-mode")) {	
+			if ((i + 1) < argc)
+				mode_sw = argv[++i];
+			else
+				mode_sw = "-1x-1";
+		} else if (!strcmp(argv[i], "-window"))
 			window_sw = 1;
 		else if (!strcmp(argv[i], "-debug"))
 			debug_sw = 1;
@@ -101,6 +107,8 @@ int main(int argc, char **argv)
 	if (fullscreen_sw)
 		opt_fs = 1;
 	
+	if (mode_sw)
+		parse_mode(mode_sw, opt_mode);
 	
 	if (game_sw) {
 		FREE(opt_game);

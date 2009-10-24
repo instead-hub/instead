@@ -213,9 +213,10 @@ int game_theme_free(void)
 	return 0;
 }
 
-static int theme_img_scale(img_t *p, float v)
+int theme_img_scale(img_t *p)
 {
 	img_t pic;
+	float v = game_theme.scale;
 	if (!p || !*p)
 		return 0;
 	pic = gfx_scale(*p, v, v); 
@@ -284,17 +285,16 @@ static  int game_theme_scale(int w, int h)
 static int theme_gfx_scale(void)
 {
 	struct game_theme *t = &game_theme;
-	float v = t->scale;
-	if (v == 1.0f)
+	if (t->scale == 1.0f)
 		return 0;
-	if (theme_img_scale(&t->a_up, v) ||
-		theme_img_scale(&t->a_down, v) ||
-		theme_img_scale(&t->inv_a_up, v) ||
-		theme_img_scale(&t->inv_a_down, v) ||
-		theme_img_scale(&t->use, v) ||
-		theme_img_scale(&t->cursor, v) ||
-		theme_img_scale(&t->menu_button, v) ||
-		theme_img_scale(&t->bg, v))
+	if (theme_img_scale(&t->a_up) ||
+		theme_img_scale(&t->a_down) ||
+		theme_img_scale(&t->inv_a_up) ||
+		theme_img_scale(&t->inv_a_down) ||
+		theme_img_scale(&t->use) ||
+		theme_img_scale(&t->cursor) ||
+		theme_img_scale(&t->menu_button) ||
+		theme_img_scale(&t->bg))
 		return -1;
 
 	if (t->bg) {

@@ -31,4 +31,6 @@ extern char *opt_lang;
 extern int cfg_load(void);
 extern int cfg_save(void);
 
+extern int parse_mode(const char *v, void *data);
+
 #endif

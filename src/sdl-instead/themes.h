@@ -110,7 +110,7 @@ extern int 	game_theme_free(void);
 extern int 	game_theme_init(int w, int h);
 extern int 	theme_load(const char *name);
 extern char 	*game_local_themes_path(void);
-
+extern int 	theme_img_scale(img_t *p);
 #define GFX_MODE_FLOAT 0
 #define GFX_MODE_FIXED 1
 #define GFX_MODE_EMBEDDED 2

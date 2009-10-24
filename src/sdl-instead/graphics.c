@@ -412,12 +412,24 @@ img_t 	gfx_new(int w, int h)
 {
 	SDL_Surface *dst;
 	if (!screen) {
+		Uint32 rmask, gmask, bmask, amask;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+		rmask = 0xff000000;
+		gmask = 0x00ff0000;
+		bmask = 0x0000ff00;
+		amask = 0x000000ff;
+#else
+		rmask = 0x000000ff;
+		gmask = 0x0000ff00;
+		bmask = 0x00ff0000;
+		amask = 0xff000000;
+#endif
 		dst = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 
-			32, 
-			0xff, 
-			0xff00, 
-			0xff0000, 
-			0xff000000);
+			32,
+			rmask, 
+			gmask, 
+			bmask, 
+			amask);	
 	} else {
 		dst = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 
 			screen->format->BitsPerPixel, 
@@ -874,6 +886,7 @@ void gfx_video_done(void)
 {
 	if (icon)
 		SDL_FreeSurface(icon);
+	screen = NULL;
 	TTF_Quit();
 }
 
@@ -2037,7 +2050,9 @@ img_t get_img(struct layout *layout, char *p)
 	p[len] = 0;
 	img = layout_lookup_image(layout, p);
 	if (!img && (img = gfx_load_image(p))) {
-		struct image *image = image_new(p, img);
+		struct image *image;
+		theme_img_scale(&img); /* bad style, no gfx layer :( */
+		image = image_new(p, img);
 		if (!image) {
 			gfx_free_image(img);
 			img = NULL;
