@@ -1,6 +1,6 @@
 #ifndef __GRAPHICS_H__
 #define __GRAPHICS_H__
-typedef void*	timer_t;
+typedef void*	gtimer_t;
 typedef void*	img_t;
 typedef void*	fnt_t;
 typedef void*	layout_t;
@@ -129,8 +129,8 @@ extern void	xref_update(xref_t xref, int x, int y, clear_fn clear, update_fn upd
 extern void 	gfx_start_gif(img_t img);
 extern void	gfx_stop_gif(img_t img);
 extern int	gfx_frame_gif(img_t img);
-extern void	gfx_del_timer(timer_t han);
-extern timer_t 	gfx_add_timer(int delay, int (*fn)(int, void*), void *aux);
+extern void	gfx_del_timer(gtimer_t han);
+extern gtimer_t gfx_add_timer(int delay, int (*fn)(int, void*), void *aux);
 extern void	gfx_update_gif(img_t img);
 extern void 	gfx_dispose_gif(img_t p);
 #endif
