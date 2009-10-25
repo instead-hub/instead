@@ -18,6 +18,7 @@ int main(int argc, char **argv)
 {
 	int err = 0;
 	int i;
+	putenv("SDL_MOUSE_RELATIVE=0"); /* test this! */
 	for (i = 1; i < argc; i++) {
 		if (!strcmp(argv[i],"-alsa")) 
 			alsa_sw = 1;
