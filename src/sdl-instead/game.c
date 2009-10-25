@@ -464,7 +464,7 @@ int game_change_hz(int hz)
 
 unsigned int	timer_counter = 0;
 
-timer_t timer_han = NULL;
+gtimer_t timer_han = NULL;
 
 static void anigif_do(void *data)
 {

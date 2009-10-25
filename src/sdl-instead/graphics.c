@@ -2546,12 +2546,12 @@ void gfx_done(void)
 	SDL_Quit();
 }
 
-timer_t gfx_add_timer(int delay, int (*fn)(int, void*), void *aux)
+gtimer_t gfx_add_timer(int delay, int (*fn)(int, void*), void *aux)
 {
-	return (timer_t)SDL_AddTimer(delay, (SDL_NewTimerCallback)fn, aux);
+	return (gtimer_t)SDL_AddTimer(delay, (SDL_NewTimerCallback)fn, aux);
 }
 
-void gfx_del_timer(timer_t han)
+void gfx_del_timer(gtimer_t han)
 {
 	if (han)
 		SDL_RemoveTimer((SDL_TimerID)han);
