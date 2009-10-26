@@ -72,30 +72,37 @@ function cat(v,...)
 end
 
 function img(v)
+	if type(v) ~= 'string' then return nil; end; 
 	return iface:img(v);
 end
 
 function txtem(v)
+	if type(v) ~= 'string' then return nil; end; 
 	return iface:em(v)
 end
 
 function txtr(v)
+	if type(v) ~= 'string' then return nil; end; 
 	return iface:right(v)
 end
 
 function txtl(v)
+	if type(v) ~= 'string' then return nil; end; 
 	return iface:left(v)
 end
 
 function txtc(v)
+	if type(v) ~= 'string' then return nil; end; 
 	return iface:center(v)
 end
 
 function txtb(v)
+	if type(v) ~= 'string' then return nil; end; 
 	return iface:bold(v)
 end
 
 function txtu(v)
+	if type(v) ~= 'string' then return nil; end; 
 	return iface:under(v)
 end
 
@@ -1574,7 +1581,6 @@ iface = {
 		end
 		
 		ACTION_TEXT = r; -- here, life methods can redefine this
-		
 		if st and v ~= false then
 			local av, pv -- av -- active lifes, pv -- background
 			pv,av = game:step();
@@ -1584,8 +1590,8 @@ iface = {
 				if isForcedsc(here()) then
 					l,v = me():look();
 				end
-				ACTION_TEXT = iface:em(ACTION_TEXT);
-				vv = par("^^",iface:em(av), here():look(), iface:em(vv));
+				ACTION_TEXT = txtem(ACTION_TEXT);
+				vv = par("^^",txtem(av), here():look(), txtem(vv));
 			else
 				vv = par("^^",av, here():look(), vv);
 			end
@@ -1670,6 +1676,7 @@ function ways(w)
 end
 
 function xref(str, obj)
+	if type(str) ~= 'string' then return nil; end; 
 	return iface:xref(str, obj);
 end
 
