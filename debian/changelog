@@ -7,6 +7,7 @@ instead (0.9.3) unstable; urgency=low
   * new()/delete() (allocator object)
   * game:ini() fix
   * theme scaling (yahoo!!!)
+  * scene_use attribute (scene objects using on each other)
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 12 Oct 2009 11:09:19 +0400
 
