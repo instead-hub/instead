@@ -8,6 +8,10 @@ stead = {
 	cctx = { txt = nil, self = nil },
 }
 
+function cctx()
+	return stead.cctx[stead.call_top];
+end
+
 function callpush()
 	stead.call_top = stead.call_top + 1;
 	stead.cctx[stead.call_top] = { txt = nil, self = nil };
@@ -23,30 +27,30 @@ end
 
 function self(v)
 	if v ~= nil then
-		stead.cctx[stead.call_top].self = v;
+		cctx().self = v;
 	end
-	return stead.cctx[stead.call_top].self;
+	return cctx().self;
 end
 
 function pclr()
-	stead.cctx[stead.call_top].txt = nil
+	cctx().txt = nil
 end
 
 function pget()
-	return stead.cctx[stead.call_top].txt;
+	return cctx().txt;
 end
 
 function p(...)
 	local i
 	for i = 1, stead.table.maxn(arg) do
-		stead.cctx[stead.call_top].txt = par('',stead.cctx[stead.call_top].txt, arg[i]);
+		cctx().txt = par('',cctx().txt, arg[i]);
 	end
-	stead.cctx[stead.call_top].txt = cat(stead.cctx[stead.call_top].txt, ' ');
+	cctx().txt = cat(cctx().txt, ' ');
 end
 
 function pn(...)
 	p(unpack(arg));
-	stead.cctx[stead.call_top].txt = par('',stead.cctx[stead.call_top].txt,'^');
+	cctx().txt = par('',cctx().txt,'^');
 end
 
 -- merge strings with "space" as separator
