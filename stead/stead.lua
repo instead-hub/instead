@@ -4,40 +4,49 @@ stead = {
 	string = string,
 	math = math,
 	io = io,
-	txt_top = 0,
-	txt = {},
+	call_top = 0,
+	cctx = { txt = nil, self = nil },
 }
 
-function ppush()
-	stead.txt_top = stead.txt_top + 1;
+function callpush()
+	stead.call_top = stead.call_top + 1;
+	stead.cctx[stead.call_top] = { txt = nil, self = nil };
 end
 
-function ppop()
-	stead.txt_top = stead.txt_top - 1;
-	if stead.txt_top < 0 then
-		error "pstart/pend mismatch"
+function callpop()
+	stead.cctx[stead.call_top] = nil;
+	stead.call_top = stead.call_top - 1;
+	if stead.call_top < 0 then
+		error "callpush/callpop mismatch"
 	end 
 end
 
-function pstart()
-	stead.txt[stead.txt_top] = nil
+function self(v)
+	if v ~= nil then
+		stead.cctx[stead.call_top].self = v;
+	end
+	return stead.cctx[stead.call_top].self;
 end
 
-function pend()
-	return stead.txt[stead.txt_top]
+function pclr()
+	stead.cctx[stead.call_top].txt = nil
+end
+
+function pget()
+	return stead.cctx[stead.call_top].txt;
 end
 
 function p(...)
 	local i
 	for i = 1, stead.table.maxn(arg) do
-		stead.txt[stead.txt_top] = par('',stead.txt[stead.txt_top], arg[i]);
+		stead.cctx[stead.call_top].txt = par('',stead.cctx[stead.call_top].txt, arg[i]);
 	end
-	stead.txt[stead.txt_top] = cat(stead.txt[stead.txt_top], ' ');
+	stead.cctx[stead.call_top].txt = cat(stead.cctx[stead.call_top].txt, ' ');
 end
 
 function pn(...)
 	p(unpack(arg));
-	stead.txt[stead.txt_top] = par('',stead.txt[stead.txt_top],'^');
+	stead.cctx[stead.call_top].txt = par('',stead.cctx[stead.call_top].txt,'^');
 end
 
 -- merge strings with "space" as separator
@@ -573,14 +582,15 @@ function call(v, n, ...)
 		return v[n];
 	end 
 	if type(v[n]) == 'function' then
-		ppush()
-		pstart()
+		callpush()
+		pclr()
+		self(v)
 		local a,b = v[n](v, unpack(arg));
 		if a == nil and b == nil then
-			a = pend();
-			b = nil;
+			a = pget()
+			b = nil
 		end
-		ppop()
+		callpop()
 		return a,b
 	end
 	error ("Method not string nor function:"..tostring(n));
