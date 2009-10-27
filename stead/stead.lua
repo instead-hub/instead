@@ -743,17 +743,23 @@ end
 
 function dialog_phrase(self, num)
 	if not tonumber(num) then
+		if isPhrase(ref(num)) then
+			return ref(num);
+		end
 		return nil
 	end
 	return ref(self.obj[tonumber(num)]);
 end
 
-function ponoff(self, on, ...)
+function ponoff(s, on, ...)
 	local i, ph
+	if stead.table.maxn(arg) == 0 then
+		stead.table.insert(arg, self());
+	end
 	for i=1,stead.table.maxn(arg) do
-		ph = dialog_phrase(self, arg[i]);
+		ph = dialog_phrase(s, arg[i]);
 		if isPhrase(ph) and not isRemoved(ph) then
-			 if on then
+			if on then
 				ph:enable();
 			else 
 				ph:disable();
@@ -763,10 +769,13 @@ function ponoff(self, on, ...)
 	end
 end
 
-function dialog_prem(self, ...)
+function dialog_prem(s, ...)
 	local i, ph
+	if stead.table.maxn(arg) == 0 then
+		stead.table.insert(arg, self());
+	end
 	for i=1,stead.table.maxn(arg) do
-		ph = dialog_phrase(self, arg[i]);
+		ph = dialog_phrase(s, arg[i]);
 		if isPhrase(ph) then
 			ph:remove();
 --			ph.__changed__=true
