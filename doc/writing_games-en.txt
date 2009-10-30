@@ -858,16 +858,18 @@ And then enabling them by their index in the “obj” array:
         objs()[1]:enable();
 }}}
 
-=== Compiling games ===
-If you do not want to show source code of your games, you can compile the source with luac compiler. However, it's better to keep main.lua a text, since its header is scanned by the interpreter when choosing games. The recommended scheme is (game.lua is a compiled lua code): 
+=== Encoding game sources (from version 0.9.3) ===
+If you want hide a game source code, you can encode it with command: “sdl-instead -encode <lua file> [encoded file]” and load encode file from lua with “doencfile”. It's neccessary to keep main.lua as plain text file. So, the recommended scheme is (game is a encoded game.lua ): 
 
 main.lua
 {{{
 -- $Name: My closed source game!$
-dofile("game.lua");
+doencfile("game");
 }}}
 
-Game compilation is also useful to find errors in the game code.
+WARNING about using luac compiler:
+Do not use lua compiler luac, it produces platform-dependent code!
+But game compilation is useful to find errors in the game code.
 
 === Switching between players ===
 You can create a game with several characters and switch between them from time to time (see “switch_pl”). But you can also use the same trick to switch between different types of inventory. 
