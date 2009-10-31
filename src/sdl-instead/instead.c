@@ -265,7 +265,7 @@ static int loadfile (lua_State *L, const char *filename) {
 	int fnameindex = lua_gettop(L) + 1;  /* index of filename on the stack */
 	lf.extraline = 0;
 	lua_pushfstring(L, "@%s", filename);
-	lf.f = fopen(filename, "r");
+	lf.f = fopen(filename, "rb");
 	lf.byte = 0xcc;
 	if (lf.f == NULL) return errfile(L, "open", fnameindex);
 	status = lua_load(L, getF, &lf, lua_tostring(L, -1));
@@ -358,12 +358,12 @@ int  instead_encode(const char *s, const char *d)
 	unsigned char byte = 0xcc;
 	unsigned char buff[4096];
 
-	src = fopen(s, "r");
+	src = fopen(s, "rb");
 	if (!src) {
 		fprintf(stderr,"Can't open on read: '%s'.\n", s);
 		return -1;
 	}
-	dst = fopen(d, "w");
+	dst = fopen(d, "wb");
 	if (!dst) {
 		fprintf(stderr,"Can't open on write: '%s'.\n", s);
 		return -1;
