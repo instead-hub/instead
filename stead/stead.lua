@@ -2002,6 +2002,9 @@ function get_music()
 end
 
 function get_music_loop()
+	if game._music_loop == nil then
+		return -1; -- no counter, but we want get it
+	end
 	return game._music_loop;
 end
 
