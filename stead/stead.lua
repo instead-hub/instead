@@ -2034,6 +2034,10 @@ function set_music(s, count)
 	end
 end
 
+function stop_music()
+	set_music(nil, -1);
+end
+
 function get_sound()
 	return game._sound;
 end
