@@ -1148,7 +1148,10 @@ end
 function game_life(self)
 	local i,o
 	local av,v
-	
+
+	stead.in_life_call = true;
+	stead.lifes_off = list {}; -- lifes to off 
+
 	for i,o in opairs(self.lifes) do
 		local vv
 		local pre
@@ -1161,7 +1164,12 @@ function game_life(self)
 				av = par(' ', av, vv);
 			end
 		end
+	end	
+	stead.in_life_call = false;
+	for i,o in ipairs(stead.lifes_off) do
+		lifeoff(o);
 	end
+	stead.lifes_off = nil;
 	return v, av;
 end
 
@@ -1727,6 +1735,10 @@ function lifeon(what)
 end
 
 function lifeoff(what)
+	if stead.in_life_call then
+		stead.lifes_off:add(what);
+		return
+	end
 	game.lifes:del(what);
 end
 
