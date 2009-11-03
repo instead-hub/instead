@@ -94,20 +94,21 @@ int input(struct inp_event *inp, int wait)
 		inp->type = MOUSE_UP;
 		inp->x = event.button.x;
 		inp->y = event.button.y;
+		inp->code = event.button.button;
 		if (event.button.button == 4)
 			inp->type = 0;
 		else if (event.button.button == 5)
-			inp->type = 0;
+			inp->type = 0;	
 		break;
 	case SDL_MOUSEBUTTONDOWN:
 		inp->type = MOUSE_DOWN;
 		inp->x = event.button.x;
 		inp->y = event.button.y;
+		inp->code = event.button.button;
 		if (event.button.button == 4)
 			inp->type = MOUSE_WHEEL_UP;
 		else if (event.button.button == 5)
 			inp->type = MOUSE_WHEEL_DOWN;
-
 		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_EVENTMASK (SDL_MOUSEBUTTONDOWN)) > 0) {
 			if (!((event.button.button == 4 &&
 				inp->type == MOUSE_WHEEL_UP) ||
