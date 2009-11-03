@@ -1,3 +1,11 @@
+instead (1.0.1) unstable; urgency=low
+
+  * aother mouse buttons -- escape
+  * escape as use cancel
+  * lifeoff from life methid
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 3 Nov 2009 19:43:00 +0400
+
 instead (0.9.3) unstable; urgency=low
 
   * have and seen fixes

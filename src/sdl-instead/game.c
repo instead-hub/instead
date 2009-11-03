@@ -2072,7 +2072,10 @@ int game_loop(void)
 				if (game_click(x, y, 1) == -1)
 					break;
 			} else if (!is_key(&ev, "escape")) {
-				menu_toggle();
+				if (use_xref)
+					disable_use();
+				else	
+					menu_toggle();
 			} else if (!is_key(&ev, "tab")) {
 				select_frame(shift_pressed);
 			} /*else if (!is_key(&ev, "home") || !is_key(&ev, "[7]")) {
@@ -2124,10 +2127,14 @@ int game_loop(void)
 					game_menu(old_menu);
 			}
 		} else if (ev.type == MOUSE_DOWN) {
-			game_highlight(-1, -1, 0);
-			game_click(ev.x, ev.y, 0);
-			x = ev.x;
-			y = ev.y;
+			if (ev.code != 1)
+				disable_use();
+			else {	
+				game_highlight(-1, -1, 0);
+				game_click(ev.x, ev.y, 0);
+				x = ev.x;
+				y = ev.y;
+			}
 		} else if (ev.type == MOUSE_UP) {
 			game_highlight(-1, -1, 0);
 			if (game_click(ev.x, ev.y, 1) == -1)
