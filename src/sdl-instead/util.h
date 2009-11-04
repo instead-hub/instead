@@ -9,6 +9,7 @@ struct parser {
 	void		*p;
 };
 
+extern int is_space(int c);
 extern int parse_ini(const char *path, struct parser *cmd_parser);
 extern char *getpath(const char *d, const char *n);
 extern char *strip(char *s);

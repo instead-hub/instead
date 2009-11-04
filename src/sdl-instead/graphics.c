@@ -2462,13 +2462,13 @@ void txt_layout_real_size(layout_t lay, int *pw, int *ph)
 	if (!layout)
 		return;	
 	for (line = layout->lines; line; line = line->next) {
-		if (line->w > w)
-			w = line->w;
-
 		while (!line->num && line->next)
 			line = line->next;
 
-		if (line->num && line->y + line->h > h)
+		if (line->w > w)
+			w = line->w;
+			
+		if (line->num && line->y + line->h > h) 
 			h = line->y + line->h;
 	}
 	if (pw)
