@@ -1529,15 +1529,58 @@ int get_token(const char *ptr, char **eptr, char **val, int *sp)
 	return 0;
 }
 
+static int is_delim(int c)
+{
+	switch(c) {
+	case '.':
+	case ',':
+	case ':':
+	case '!':
+	case '+':
+	case '?':
+	case '/':
+		return 1;
+	}
+	return 0;
+}
+
+static int word_img(const char *p, char **eptr)
+{
+	int len = 0;
+	if (eptr)
+		*eptr = (char*)p;
+	if (!p)
+		return 0;
+	if (p[0] != '<' || p[1] != 'g' || p[2] != ':')
+		return 0;
+	p += 3;
+	len = strcspn(p, ">");
+	if (p[len] != '>')
+		return 0;
+	if (eptr)	
+		*eptr = (char*)p + len + 1;	
+	return len + 1;
+}
+
+
 static const char *lookup_token_or_sp(const char *ptr)
 {
 	char *eptr;
 	const char *p = ptr;
 	while (*p) {
-		p += strcspn(p, " <\n\t");
-		if (*p != '<' )
+		p += strcspn(p, " .,:!+?/<\t\n");
+
+		if (*p != '<' ) {
+			if (is_delim(*p))
+				p ++;
 			return p;
+		}
+		
 		if (!get_token(p, &eptr, NULL, NULL)) {
+			if (word_img(p, &eptr)) {
+				p = eptr;
+				continue;
+			}
 			p ++;
 			continue;
 		}
@@ -1545,6 +1588,9 @@ static const char *lookup_token_or_sp(const char *ptr)
 	}
 	return ptr;
 }
+
+#define BREAK_NONE 0
+#define BREAK_SPACE 1
 
 static char *get_word(const char *ptr, char **eptr, int *sp)
 {
@@ -1555,19 +1601,24 @@ static char *get_word(const char *ptr, char **eptr, int *sp)
 	o = (char*)ptr;
 	ptr += strspn(ptr, " \t");
 	if (sp) {
-		*sp = 0;
+		*sp = BREAK_NONE;
 		if (o != ptr)
-			*sp = 1;
+			*sp = BREAK_SPACE;
 	}
 	if (!*ptr)
 		return NULL;
+
 	ep = lookup_token_or_sp(ptr);
 //	ep += strcspn(ep, " \t\n");
 	sz = ep - ptr;
 	o = malloc(sz + 1);
 	memcpy(o, ptr, sz);
 	o[sz] = 0;
-	*eptr = (char*)ep;
+	
+	sz = word_img(ptr, eptr);
+	if (sz)
+		return o;
+	*eptr = (char*)ep;	
 	return o; 
 }
 
@@ -2034,20 +2085,17 @@ void txt_layout_update_links(layout_t layout, int x, int y, clear_fn clear)
 //	gfx_noclip();
 }
 
+
 img_t get_img(struct layout *layout, char *p)
 {
 	int len;
 	img_t img;
-	if (!p)
-		return NULL;
-
-	if (p[0] != '<' || p[1] != 'g' || p[2] != ':')
+	len = word_img(p, NULL);
+	if (!len)
 		return NULL;
 	p += 3;
-	len = strcspn(p, ">");
-	if (p[len] != '>')
-		return NULL;
-	p[len] = 0;
+	p[len - 1] = 0;
+	
 	img = layout_lookup_image(layout, p);
 	if (!img && (img = gfx_load_image(p))) {
 		struct image *image;
@@ -2061,7 +2109,7 @@ img_t get_img(struct layout *layout, char *p)
 			image->free_it = 1; /* free on layout destroy */
 		}
 	}
-	p[len] = '>';
+	p[len - 1] = '>';
 	return img;
 }
 
@@ -2140,7 +2188,7 @@ int get_unbrakable_len(struct layout *layout, const char *ptr)
 	char *p, *eptr;
 	while (ptr && *ptr) {
 		int sp, sp2 = 0;
-		while(get_token(ptr, &eptr, NULL, &sp)) {
+		while (get_token(ptr, &eptr, NULL, &sp)) {
 			if (sp)
 				sp2 ++;
 			ptr = eptr;
@@ -2157,12 +2205,16 @@ int get_unbrakable_len(struct layout *layout, const char *ptr)
 		}
 		TTF_SizeUTF8((TTF_Font *)(layout->fn), p, &ww, NULL);
 		ptr = eptr;
+		w += ww;
 		if (!*p)
 			ptr ++;
-		w += ww;
+		else if (is_delim(*(ptr - 1))) {
+			free(p);
+			break;
+		}
 		free(p);
 	}
-	return ww;
+	return w;
 }
 
 void _txt_layout_add(layout_t lay, char *txt)
@@ -2211,10 +2263,10 @@ void _txt_layout_add(layout_t lay, char *txt)
 			if (!ptr || !*ptr)
 				break;
 			if (sp2)
-				sp = 2;
+				sp = -1;
 			continue;
 		} 
-		if (sp == 2) {
+		if (sp == -1) {
 			p = get_word(ptr, &eptr, NULL);
 			sp = 1;
 		} else
@@ -2222,7 +2274,6 @@ void _txt_layout_add(layout_t lay, char *txt)
 
 		if (!p)
 			break;
-
 		addlen = get_unbrakable_len(layout, eptr);
 		img = get_img(layout, p);
 		if (img) {
@@ -2264,8 +2315,10 @@ void _txt_layout_add(layout_t lay, char *txt)
 			line_free(line);
 			goto err;
 		}
+		
 		if (!sp && line->num)
 			word->unbrake = 1;
+		
 		word->style = layout->style;
 		
 		if (line->w && !word->unbrake)
@@ -2464,11 +2517,9 @@ void txt_layout_real_size(layout_t lay, int *pw, int *ph)
 	for (line = layout->lines; line; line = line->next) {
 		while (!line->num && line->next)
 			line = line->next;
-
 		if (line->w > w)
 			w = line->w;
-			
-		if (line->num && line->y + line->h > h) 
+		if (line->num && line->y + line->h > h)
 			h = line->y + line->h;
 	}
 	if (pw)
