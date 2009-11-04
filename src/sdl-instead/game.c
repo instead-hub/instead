@@ -725,7 +725,7 @@ int box_isscroll_down(int n)
 		return -1;
 	el_size(n, NULL, &h);
 	l = txt_box_layout(el_box(n));
-	txt_layout_size(l, NULL, &hh);
+	txt_layout_real_size(l, NULL, &hh);
 	off = txt_box_off(el_box(n));
 
 	if (hh - off > h)
@@ -755,7 +755,7 @@ void box_update_scrollbar(int n)
 	y2 = y1 + h - gfx_img_h(game_theme.a_down);
 
 	l = txt_box_layout(el_box(n));
-	txt_layout_size(l, NULL, &hh);
+	txt_layout_real_size(l, NULL, &hh);
 	off = txt_box_off(el_box(n));
 	if (n == el_scene) {
 		elup = el(el_sup);
@@ -1485,6 +1485,8 @@ static void menu_toggle(void)
 
 static void scroll_pup(int id)
 {
+	if (box_isscroll_up(id))
+		return;		
 	game_highlight(-1, -1, 0);
 	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) {
 		int hh;
@@ -1499,6 +1501,8 @@ static void scroll_pup(int id)
 
 static void scroll_pdown(int id)
 {
+	if (box_isscroll_down(id))
+		return;		
 	game_highlight(-1, -1, 0);
 	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) {
 		int hh;
@@ -1722,6 +1726,8 @@ void game_cursor(int on)
 static void scroll_up(int id, int count)
 {
 	int i;
+	if (box_isscroll_up(id))
+		return;		
 	game_highlight(-1, -1, 0);
 	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED)
 		txt_box_scroll(el_box(id), -(FONT_SZ(game_theme.font_size)) * count);
@@ -1736,6 +1742,8 @@ static void scroll_up(int id, int count)
 static void scroll_down(int id, int count)
 {
 	int i;
+	if (box_isscroll_down(id))
+		return;		
 	game_highlight(-1, -1, 0);
 	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED)
 		txt_box_scroll(el_box(id), (FONT_SZ(game_theme.font_size)) * count);
