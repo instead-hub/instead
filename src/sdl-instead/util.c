@@ -21,7 +21,7 @@ char *getpath(const char *d, const char *n)
 	return p;
 }
 
-static int is_space(int c)
+int is_space(int c)
 {
 	return (c == ' ' || c == '\t');
 }
