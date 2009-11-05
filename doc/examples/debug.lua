@@ -69,8 +69,10 @@ debug_tool = obj {
 	debug = true,
 	nam = txtb('debug'),
 	inv = function(s)
+		debug_dlg.__from__ = deref(here());
 		me().where = 'debug_dlg'; -- force to go
-		return goto('debug_dlg');
+		local r = call(debug_dlg, 'enter');
+		return r;
 	end
 };
 
