@@ -27,9 +27,9 @@ choose_object = dlg {
 		local k,v
 		objs(s):zap();
 		for k,v in pairs(_G) do
-			if isObject(v) and not isRoom(v) and not isPlayer(v) and not v.debug and not have(v) then
+			if isObject(v) and not isRoom(v) and not isPlayer(v) and not v.debug and not have(v) and not isStatus(v) then
 				local n = call(v, 'nam');
-				put(phr(n, '', [[return take("]]..k..[[")]]), s);
+				put(phr(n, '', k..':enable(); return take("'..k..'")'), s);
 			end
 		end
 		put (phr('Exit','','back()'), s)
@@ -69,8 +69,9 @@ debug_tool = obj {
 	debug = true,
 	nam = txtb('debug'),
 	inv = function(s)
+		me().where = 'debug_dlg'; -- force to go
 		return goto('debug_dlg');
 	end
 };
 
-inv():add('debug_tool', 1000);
+putf('debug_tool', me());
