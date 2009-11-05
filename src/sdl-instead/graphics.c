@@ -822,7 +822,6 @@ int gfx_set_mode(int w, int h, int fs)
 		fprintf(stderr, "Unable to set %dx%d video: %s\n", w, h, SDL_GetError());
 		return -1;
 	}
-		
 	gfx_clear(0, 0, gfx_width, gfx_height);
 	return 0;
 }
@@ -1569,10 +1568,11 @@ static const char *lookup_token_or_sp(const char *ptr)
 	const char *p = ptr;
 	while (*p) {
 		p += strcspn(p, " .,:!+?/<\t\n");
-
 		if (*p != '<' ) {
-			if (is_delim(*p))
+			while (is_delim(*p))
 				p ++;
+/*			if (is_delim(*p))
+				p ++; */
 			return p;
 		}
 		
