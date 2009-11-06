@@ -588,6 +588,8 @@ void free_last_music(void)
 	last_music = NULL;
 }
 
+static void sounds_free(void);
+
 void free_last(void)
 {
 	if (last_pict)
@@ -596,15 +598,13 @@ void free_last(void)
 		free(last_title);
 	last_pict = last_title = NULL;
 	game_stop_mus(500);
+	sounds_free();
 }
-
-static void sounds_free(void);
 
 void game_done(int err)
 {
 	int i;
 
-	sounds_free();
 	gfx_del_timer(timer_han);
 	timer_han = NULL;
 
