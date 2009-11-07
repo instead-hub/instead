@@ -1,8 +1,12 @@
 instead (1.0.0) unstable; urgency=low
 
-  * aother mouse buttons -- escape
+  * another mouse buttons -- escape
   * escape as use cancel
   * lifeoff from life methid
+  * bug in anigif logic
+  * bug in img()
+  * more clever linebreaking
+  * kill empty lines at end of layout
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 3 Nov 2009 19:43:00 +0400
 
