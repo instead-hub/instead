@@ -7,7 +7,7 @@ clean:
 all:
 install:
 	$(INSTALLD) $(DOCPATH)
-	$(INSTALL) *.jpg *.html *.txt $(DOCPATH)
+	$(INSTALL) *.jpg *.html *.txt *.pdf $(DOCPATH)
 	$(INSTALLD) $(MANPATH)
 	$(INSTALL) *.6 $(MANPATH)
 
