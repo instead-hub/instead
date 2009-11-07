@@ -2301,7 +2301,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 			TTF_SizeUTF8((TTF_Font *)(layout->fn), p, &w, &h);
 		}
 		nl = !*p;
-		if ((line->num && (line->w + ((sp && line->w)?spw:0) + w + addlen) > layout->w) || nl) {
+		if ((sp && (line->num && (line->w + ((sp && line->w)?spw:0) + w + addlen) > layout->w)) || nl) {
 			struct line *ol = line;
 			if ((layout->h) && (line->y + line->h) >= layout->h)
 				break;
