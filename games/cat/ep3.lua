@@ -1173,7 +1173,7 @@ function checkloc()
 end
 p1 = obj {
 	_off = false,
-	nam = 'разъеденитель',
+	nam = 'разъединитель',
 	dsc = function(s)
 		local st = 'включено.';
 		if s._off then
