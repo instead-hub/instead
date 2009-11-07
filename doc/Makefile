@@ -1,4 +1,8 @@
 include ../Rules.make
+pdf:
+	pdflatex manual.tex
+	pdflatex manual.tex
+	$(RM) manual.aux manual.log manual.toc manual.out
 clean:
 all:
 install:
@@ -10,4 +14,3 @@ install:
 uninstall:
 	$(RM) -rf $(DOCPATH)
 	$(RM) $(MANPATH)/instead.*
-
