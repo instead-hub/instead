@@ -348,12 +348,12 @@ static anigif_t anigif_add(anigif_t g)
 
 static anigif_t anigif_del(anigif_t g)
 {
-	if (g->prev == NULL) {
+	if (g->prev == NULL)
 		anim_gifs = g->next;
-	}
-	if (g->next) {
+	else
+		g->prev->next = g->next;
+	if (g->next)
 		g->next->prev = g->prev;
-	}
 	return g;
 }
 
