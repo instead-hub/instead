@@ -529,7 +529,7 @@ img_t gfx_load_image(char *filename)
 	int nr = 0;
 	if (strstr(filename,".gif") || strstr(filename,".GIF"))
 		nr = AG_LoadGIF(filename, NULL, 0, NULL);
-	if (nr > 0) { /* anigif logic */
+	if (nr > 1) { /* anigif logic */
 		int loop = 0;
 		anigif_t agif = malloc(sizeof(struct _anigif_t) + nr * sizeof(AG_Frame));
 		if (!agif)
