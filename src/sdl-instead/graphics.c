@@ -2197,7 +2197,6 @@ int get_unbrakable_len(struct layout *layout, const char *ptr)
 	int ww = 0;
 	char *p, *eptr;
 	while (ptr && *ptr) {
-		img_t img;
 		int sp, sp2 = 0;
 		while (get_token(ptr, &eptr, NULL, &sp)) {
 			if (sp)
@@ -2210,17 +2209,12 @@ int get_unbrakable_len(struct layout *layout, const char *ptr)
 		if (!p)
 			return w;
 
-		if (sp || !*p) {
+		if (sp || !*p || word_img(p, NULL)) {
 			free(p);
 			return w;
 		}
 
-		img = get_img(layout, p);
-		
-		if (img)
-			ww = gfx_img_w(img);
-		else
-			TTF_SizeUTF8((TTF_Font *)(layout->fn), p, &ww, NULL);
+		TTF_SizeUTF8((TTF_Font *)(layout->fn), p, &ww, NULL);
 			
 		ptr = eptr;
 		w += ww;
@@ -2301,7 +2295,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 			TTF_SizeUTF8((TTF_Font *)(layout->fn), p, &w, &h);
 		}
 		nl = !*p;
-		if ((sp && (line->num && (line->w + ((sp && line->w)?spw:0) + w + addlen) > layout->w)) || nl) {
+		if ((line->num && (line->w + ((sp && line->w)?spw:0) + w + addlen) > layout->w) || nl) {
 			struct line *ol = line;
 			if ((layout->h) && (line->y + line->h) >= layout->h)
 				break;
