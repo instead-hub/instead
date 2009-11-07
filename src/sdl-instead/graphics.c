@@ -1689,15 +1689,20 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 		word = xref->words[i];
 		line = word->line;
 
+		if (word->img)
+			yy = (line->h - gfx_img_h(word->img)) / 2;
+		else
+			yy = (line->h - TTF_FontHeight((TTF_Font *)(layout->fn))) / 2; // TODO
+
 		if (clear) {
 			if (word->img)
-				clear(x + word->x, y + line->y, gfx_img_w(word->img), gfx_img_h(word->img));
+				clear(x + word->x, y + line->y + yy, gfx_img_w(word->img), gfx_img_h(word->img));
 			else
-				clear(x + word->x, y + line->y, word->w, line->h);
+				clear(x + word->x, y + line->y + yy, word->w, line->h);
 		}
 		if (word->img) {
-			gfx_draw(word->img, x + word->x, y + line->y);
-			update(x + word->x, y + line->y, gfx_img_w(word->img), gfx_img_h(word->img));
+			gfx_draw(word->img, x + word->x, y + line->y + yy);
+			update(x + word->x, y + line->y + yy, gfx_img_w(word->img), gfx_img_h(word->img));
 			continue;
 		}
 		if (!word->style)
@@ -1711,9 +1716,8 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 		else
 			col = lcol;
 		s = TTF_RenderUTF8_Blended((TTF_Font *)(layout->fn), word->word, col);
-		yy = (line->h - TTF_FontHeight((TTF_Font *)(layout->fn))) / 2; // TODO
 		gfx_draw(s, x + word->x, y + line->y + yy);
-		update(x + word->x, y + line->y, word->w, line->h);
+		update(x + word->x, y + line->y + yy, word->w, line->h);
 		SDL_FreeSurface(s);
 	}
 	gfx_noclip();
@@ -1741,12 +1745,16 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 		for (word = line->words; word; word = word->next ) {
 			if (clear && !word->xref)
 				continue;
-
+			if (word->img)
+				yy = (line->h - gfx_img_h(word->img)) / 2;
+			else
+				yy = (line->h - TTF_FontHeight((TTF_Font *)(layout->fn))) / 2; // TODO
+			
 			if (clear) {
 				if (word->img)
-					clear(x + word->x, y + line->y, gfx_img_w(word->img), gfx_img_h(word->img));
+					clear(x + word->x, y + line->y + yy, gfx_img_w(word->img), gfx_img_h(word->img));
 				else
-					clear(x + word->x, y + line->y, word->w, line->h);
+					clear(x + word->x, y + line->y + yy, word->w, line->h);
 			}
 			SDL_Surface *s;
 			if (word->img) {
@@ -1770,7 +1778,6 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 					word->word, col);
 				word->prerend = s;
 			}
-			yy = (line->h - TTF_FontHeight((TTF_Font *)(layout->fn))) / 2; // TODO
 			gfx_draw(s, x + word->x, y + line->y + yy);
 //			SDL_FreeSurface(s);
 		}
