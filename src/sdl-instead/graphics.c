@@ -1579,8 +1579,9 @@ static const char *lookup_token_or_sp(const char *ptr)
 		
 		if (!get_token(p, &eptr, NULL, NULL)) {
 			if (word_img(p, &eptr)) {
-				p = eptr;
-				continue;
+				if (p == ptr) /* first one */
+					p = eptr;
+				return p;
 			}
 			p ++;
 			continue;
@@ -1749,7 +1750,8 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 			}
 			SDL_Surface *s;
 			if (word->img) {
-				gfx_draw(word->img, x + word->x, y + line->y);
+				yy = (line->h - gfx_img_h(word->img)) / 2;
+				gfx_draw(word->img, x + word->x, y + line->y + yy);
 				continue;
 			}
 			if (word->xref && !word->style)
@@ -2188,6 +2190,7 @@ int get_unbrakable_len(struct layout *layout, const char *ptr)
 	int ww = 0;
 	char *p, *eptr;
 	while (ptr && *ptr) {
+		img_t img;
 		int sp, sp2 = 0;
 		while (get_token(ptr, &eptr, NULL, &sp)) {
 			if (sp)
@@ -2204,7 +2207,14 @@ int get_unbrakable_len(struct layout *layout, const char *ptr)
 			free(p);
 			return w;
 		}
-		TTF_SizeUTF8((TTF_Font *)(layout->fn), p, &ww, NULL);
+
+		img = get_img(layout, p);
+		
+		if (img)
+			ww = gfx_img_w(img);
+		else
+			TTF_SizeUTF8((TTF_Font *)(layout->fn), p, &ww, NULL);
+			
 		ptr = eptr;
 		w += ww;
 		if (!*p)
