@@ -1,6 +1,6 @@
 %На будущее даю инструкции по стилю кода.
 %Использовать \verb вместо \texttt
-%Пробелы ДО и ПОСЛЕ таблиц. Да,это рождает много ошибок underfull'а, но таблицы хотя бы немного отделены от текста.
+%Пробелы ДО и ПОСЛЕ таблиц. Только при помощи \medskip.
 \documentclass[a4paper,12pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[russian]{babel}
@@ -822,153 +822,67 @@ iface:shell();
 
 Цвет задаётся в форме \verb/#rgb/, где \verb/r/, \verb/g/ и \verb/b/ --- компоненты цвета в шестнадцатеричном виде. Кроме того некоторые основные цвета распознаются по своим именам:
 
-%По-хорошему, здесь нужен ПЕРЕВОД, а ещё лучше - ПРИМЕР цвета.
+\newcommand{\tabParam}[6]{
+\texttt{#1} & #2 & \texttt{#3} & #4 & \texttt{#5} & #6 & & \\
+\hline
+}
 
-\begin{itemize}
-\item aliceblue
-\item antiquewhite
-\item aqua
-\item aquamarine
-\item azure
-\item beige
-\item bisque
-\item black
-\item blanchedalmond
-\item blue
-\item blueviolet
-\item brown
-\item burlywood
-\item cadetblue
-\item chartreuse
-\item chocolate
-\item coral
-\item cornflowerblue
-\item cornsilk
-\item crimson
-\item cyan
-\item darkblue
-\item darkcyan
-\item darkgoldenrod
-\item darkgray
-\item darkgreen
-\item darkkhaki
-\item darkmagenta
-\item darkolivegreen
-\item darkorange
-\item darkorchid
-\item darkred
-\item darksalmon
-\item darkseagreen
-\item darkslateblue
-\item darkslategray
-\item darkturquoise
-\item darkviolet
-\item deeppink
-\item deepskyblue
-\item dimgray
-\item dodgerblue
-\item feldspar
-\item firebrick
-\item floralwhite
-\item forestgreen
-\item fuchsia
-\item gainsboro
-\item ghostwhite
-\item gold
-\item goldenrod
-\item gray
-\item green
-\item greenyellow
-\item honeydew
-\item hotpink
-\item indianred
-\item indigo
-\item ivory
-\item khaki
-\item lavender
-\item lavenderblush
-\item lawngreen
-\item lemonchiffon
-\item lightblue
-\item lightcoral
-\item lightcyan
-\item lightgoldenrodyellow
-\item lightgrey
-\item lightgreen
-\item lightpink
-\item lightsalmon
-\item lightseagreen
-\item lightskyblue
-\item lightslateblue
-\item lightslategray
-\item lightsteelblue
-\item lightyellow
-\item lime
-\item limegreen
-\item linen
-\item magenta
-\item maroon
-\item mediumaquamarine
-\item mediumblue
-\item mediumorchid
-\item mediumpurple
-\item mediumseagreen
-\item mediumslateblue
-\item mediumspringgreen
-\item mediumturquoise
-\item mediumvioletred
-\item midnightblue
-\item mintcream
-\item mistyrose
-\item moccasin
-\item navajowhite
-\item navy
-\item oldlace
-\item olive
-\item olivedrab
-\item orange
-\item orangered
-\item orchid
-\item palegoldenrod
-\item palegreen
-\item paleturquoise
-\item palevioletred
-\item papayawhip
-\item peachpuff
-\item peru
-\item pink
-\item plum
-\item powderblue
-\item purple
-\item red
-\item rosybrown
-\item royalblue
-\item saddlebrown
-\item salmon
-\item sandybrown
-\item seagreen
-\item seashell
-\item sienna
-\item silver
-\item skyblue
-\item slateblue
-\item slategray
-\item snow
-\item springgreen
-\item steelblue
-\item tan
-\item teal
-\item thistle
-\item tomato
-\item turquoise
-\item violet
-\item violetred
-\item wheat
-\item white
-\item whitesmoke
-\item yellow
-\item yellowgreen
-\end{itemize}
+\newcommand{\tabsParam}[8]{
+\texttt{#1} & #2 & \texttt{#3} & #4 & \texttt{#5} & #6 & \texttt{#7} & #8\\
+\hline
+}
+
+\begin{tabular}{|l|c|l|c|l|c|l|c}
+\hline
+параметр &  & параметр & & параметр &  \\
+\hline
+\tabsParam{aliceblue}{\colorbox[HTML]{F0F8FF}{T.}}{forestgreen}{\colorbox[HTML]{228B22}{T.}}{mediumvioletred}{\colorbox[HTML]{C71585}{T.}}{violet}{\colorbox[HTML]{EE82EE}{T.}}
+\tabsParam{antiquewhite}{\colorbox[HTML]{FAEBD7}{T.}}{fuchsia}{\colorbox[HTML]{FF00FF}{T.}}{midnightblue}{\colorbox[HTML]{191970}{T.}}{violetred}{\colorbox[HTML]{D02090}{T.}}
+\tabsParam{aqua}{\colorbox[HTML]{00FFFF}{T.}}{gainsboro}{\colorbox[HTML]{DCDCDC}{T.}}{mintcream}{\colorbox[HTML]{F5FFFA}{T.}}{wheat}{\colorbox[HTML]{F5DEB3}{T.}}
+\tabsParam{aquamarine}{\colorbox[HTML]{7FFFD4}{T.}}{ghostwhite}{\colorbox[HTML]{F8F8FF}{T.}}{mistyrose}{\colorbox[HTML]{FFE4E1}{T.}}{white}{\colorbox[HTML]{FFFFFF}{T.}}
+\tabsParam{azure}{\colorbox[HTML]{F0FFFF}{T.}}{gold}{\colorbox[HTML]{FFD700}{T.}}{moccasin}{\colorbox[HTML]{FFE4B5}{T.}}{whitesmoke}{\colorbox[HTML]{F5F5F5}{T.}}
+\tabsParam{beige}{\colorbox[HTML]{F5F5DC}{T.}}{goldenrod}{\colorbox[HTML]{DAA520}{T.}}{navajowhite}{\colorbox[HTML]{FFDEAD}{T.}}{yellow}{\colorbox[HTML]{FFFF00}{T.}}
+\tabsParam{bisque}{\colorbox[HTML]{FFE4C4}{T.}}{gray}{\colorbox[HTML]{808080}{T.}}{navy}{\colorbox[HTML]{000080}{T.}}{yellowgreen}{\colorbox[HTML]{9ACD32}{T.}}
+\tabParam{black}{\colorbox[HTML]{000000}{T.}}{green}{\colorbox[HTML]{008000}{T.}}{oldlace}{\colorbox[HTML]{FDF5E6}{T.}}
+\tabParam{blanchedalmond}{\colorbox[HTML]{FFEBCD}{T.}}{greenyellow}{\colorbox[HTML]{ADFF2F}{T.}}{olive}{\colorbox[HTML]{808000}{T.}}
+\tabParam{blue}{\colorbox[HTML]{0000FF}{T.}}{honeydew}{\colorbox[HTML]{F0FFF0}{T.}}{olivedrab}{\colorbox[HTML]{6B8E23}{T.}}
+\tabParam{blueviolet}{\colorbox[HTML]{8A2BE2}{T.}}{hotpink}{\colorbox[HTML]{FF69B4}{T.}}{orange}{\colorbox[HTML]{FFA500}{T.}}
+\tabParam{brown}{\colorbox[HTML]{A52A2A}{T.}}{indianred}{\colorbox[HTML]{CD5C5C}{T.}}{orangered}{\colorbox[HTML]{FF4500}{T.}}
+\tabParam{burlywood}{\colorbox[HTML]{DEB887}{T.}}{indigo}{\colorbox[HTML]{4B0082}{T.}}{orchid}{\colorbox[HTML]{DA70D6}{T.}}
+\tabParam{cadetblue}{\colorbox[HTML]{5F9EA0}{T.}}{ivory}{\colorbox[HTML]{FFFFF0}{T.}}{palegoldenrod}{\colorbox[HTML]{EEE8AA}{T.}}
+\tabParam{chartreuse}{\colorbox[HTML]{7FFF00}{T.}}{lavender}{\colorbox[HTML]{E6E6FA}{T.}}{palegreen}{\colorbox[HTML]{98FB98}{T.}}
+\tabParam{chocolate}{\colorbox[HTML]{D2691E}{T.}}{lavenderblush}{\colorbox[HTML]{FFF0F5}{T.}}{paleturquoise}{\colorbox[HTML]{AFEEEE}{T.}}
+\tabParam{coral}{\colorbox[HTML]{FF7F50}{T.}}{lawngreen}{\colorbox[HTML]{7CFC00}{T.}}{palevioletred}{\colorbox[HTML]{D87093}{T.}}
+\tabParam{cornflowerblue}{\colorbox[HTML]{6495ED}{T.}}{lemonchiffon}{\colorbox[HTML]{FFFACD}{T.}}{papayawhip}{\colorbox[HTML]{FFEFD5}{T.}}
+\tabParam{cornsilk}{\colorbox[HTML]{FFF8DC}{T.}}{lightblue}{\colorbox[HTML]{ADD8E6}{T.}}{peachpuff}{\colorbox[HTML]{FFDAB9}{T.}}
+\tabParam{crimson}{\colorbox[HTML]{DC143C}{T.}}{lightcoral}{\colorbox[HTML]{F08080}{T.}}{peru}{\colorbox[HTML]{CD853F}{T.}}
+\tabParam{cyan}{\colorbox[HTML]{00FFFF}{T.}}{lightcyan}{\colorbox[HTML]{E0FFFF}{T.}}{pink}{\colorbox[HTML]{FFC0CB}{T.}}
+\tabParam{darkblue}{\colorbox[HTML]{00008B}{T.}}{lightgoldenrodyellow}{\colorbox[HTML]{FAFAD2}{T.}}{plum}{\colorbox[HTML]{DDA0DD}{T.}}
+\tabParam{darkcyan}{\colorbox[HTML]{008B8B}{T.}}{lightgrey}{\colorbox[HTML]{D3D3D3}{T.}}{powderblue}{\colorbox[HTML]{B0E0E6}{T.}}
+\tabParam{darkgoldenrod}{\colorbox[HTML]{B8860B}{T.}}{lightgreen}{\colorbox[HTML]{90EE90}{T.}}{purple}{\colorbox[HTML]{800080}{T.}}
+\tabParam{darkgray}{\colorbox[HTML]{A9A9A9}{T.}}{lightpink}{\colorbox[HTML]{FFB6C1}{T.}}{red}{\colorbox[HTML]{FF0000}{T.}}
+\tabParam{darkgreen}{\colorbox[HTML]{006400}{T.}}{lightsalmon}{\colorbox[HTML]{FFA07A}{T.}}{rosybrown}{\colorbox[HTML]{BC8F8F}{T.}}
+\tabParam{darkkhaki}{\colorbox[HTML]{BDB76B}{T.}}{lightseagreen}{\colorbox[HTML]{20B2AA}{T.}}{royalblue}{\colorbox[HTML]{4169E1}{T.}}
+\tabParam{darkmagenta}{\colorbox[HTML]{8B008B}{T.}}{lightskyblue}{\colorbox[HTML]{87CEFA}{T.}}{saddlebrown}{\colorbox[HTML]{8B4513}{T.}}
+\tabParam{darkolivegreen}{\colorbox[HTML]{556B2F}{T.}}{lightslateblue}{\colorbox[HTML]{8470FF}{T.}}{salmon}{\colorbox[HTML]{FA8072}{T.}}
+\tabParam{darkorange}{\colorbox[HTML]{FF8C00}{T.}}{lightslategray}{\colorbox[HTML]{778899}{T.}}{sandybrown}{\colorbox[HTML]{F4A460}{T.}}
+\tabParam{darkorchid}{\colorbox[HTML]{9932CC}{T.}}{lightsteelblue}{\colorbox[HTML]{B0C4DE}{T.}}{seagreen}{\colorbox[HTML]{2E8B57}{T.}}
+\tabParam{darkred}{\colorbox[HTML]{8B0000}{T.}}{lightyellow}{\colorbox[HTML]{FFFFE0}{T.}}{seashell}{\colorbox[HTML]{FFF5EE}{T.}}
+\tabParam{darksalmon}{\colorbox[HTML]{E9967A}{T.}}{lime}{\colorbox[HTML]{00FF00}{T.}}{sienna}{\colorbox[HTML]{A0522D}{T.}}
+\tabParam{darkseagreen}{\colorbox[HTML]{8FBC8F}{T.}}{limegreen}{\colorbox[HTML]{32CD32}{T.}}{silver}{\colorbox[HTML]{C0C0C0}{T.}}
+\tabParam{darkslateblue}{\colorbox[HTML]{483D8B}{T.}}{linen}{\colorbox[HTML]{FAF0E6}{T.}}{skyblue}{\colorbox[HTML]{87CEEB}{T.}}
+\tabParam{darkslategray}{\colorbox[HTML]{2F4F4F}{T.}}{magenta}{\colorbox[HTML]{FF00FF}{T.}}{slateblue}{\colorbox[HTML]{6A5ACD}{T.}}
+\tabParam{darkturquoise}{\colorbox[HTML]{00CED1}{T.}}{maroon}{\colorbox[HTML]{800000}{T.}}{slategray}{\colorbox[HTML]{708090}{T.}}
+\tabParam{darkviolet}{\colorbox[HTML]{9400D3}{T.}}{mediumaquamarine}{\colorbox[HTML]{66CDAA}{T.}}{snow}{\colorbox[HTML]{FFFAFA}{T.}}
+\tabParam{deeppink}{\colorbox[HTML]{FF1493}{T.}}{mediumblue}{\colorbox[HTML]{0000CD}{T.}}{springgreen}{\colorbox[HTML]{00FF7F}{T.}}
+\tabParam{deepskyblue}{\colorbox[HTML]{00BFFF}{T.}}{mediumorchid}{\colorbox[HTML]{BA55D3}{T.}}{steelblue}{\colorbox[HTML]{4682B4}{T.}}
+\tabParam{dimgray}{\colorbox[HTML]{696969}{T.}}{mediumpurple}{\colorbox[HTML]{9370D8}{T.}}{tan}{\colorbox[HTML]{D2B48C}{T.}}
+\tabParam{dodgerblue}{\colorbox[HTML]{1E90FF}{T.}}{mediumseagreen}{\colorbox[HTML]{3CB371}{T.}}{teal}{\colorbox[HTML]{008080}{T.}}
+\tabParam{feldspar}{\colorbox[HTML]{D19275}{T.}}{mediumslateblue}{\colorbox[HTML]{7B68EE}{T.}}{thistle}{\colorbox[HTML]{D8BFD8}{T.}}
+\tabParam{firebrick}{\colorbox[HTML]{B22222}{T.}}{mediumspringgreen}{\colorbox[HTML]{00FA9A}{T.}}{tomato}{\colorbox[HTML]{FF6347}{T.}}
+\tabParam{floralwhite}{\colorbox[HTML]{FFFAF0}{T.}}{mediumturquoise}{\colorbox[HTML]{48D1CC}{T.}}{turquoise}{\colorbox[HTML]{40E0D0}{T.}}
+%ЗДЕСЬ КОНЧАЕТСЯ СТРАНИЦА
+\end{tabular}
 
 \newpage
 
@@ -976,9 +890,11 @@ iface:shell();
 
 Окно изображений --- область, в которой располагается картинка сцены. Интерпретация зависит от режима расположения.
 
-Для окна изображений заданы следующие параметры:\\
+Для окна изображений заданы следующие параметры:
 
-\newcommand{\tabParam}[3]{
+\medskip
+
+\renewcommand{\tabParam}[3]{
 \texttt{#1} & #2 & #3 \\
 \hline
 }
@@ -1003,7 +919,9 @@ iface:shell();
 \tabParam{scr.gfx.h}{число}{высота окна изображений, пиксели}
 \tabParam{win.gfx.h}{число}{синоним \texttt{scr.gfx.h}}
 \tabParam{scr.gfx.mode}{строка}{режим расположения}
-\end{tabular}\\
+\end{tabular}
+
+\medskip
 
 Параметр \verb/scr.gfx.mode/ может принимать одно из значений: \verb/fixed/, \verb/embedded/ или \verb/float/.
 
@@ -1016,7 +934,9 @@ iface:shell();
 \subsection{Параметры главного окна}
 
 Главное окно --- область, в которой располагается описание сцены.
-Для главного окна заданы следующие параметры:\\
+Для главного окна заданы следующие параметры:
+
+\medskip
 
 \begin{tabular}{|l|c|l|}
 \hline
@@ -1034,13 +954,17 @@ iface:shell();
 \tabParam{win.col.fg}{цвет}{цвет текста главного окна}
 \tabParam{win.col.link}{цвет}{цвет ссылок главного окна}
 \tabParam{win.col.alink}{цвет}{цвет активных ссылок главного окна}
-\end{tabular}\\
+\end{tabular}
+
+\medskip
 
 \clearpage
 
 \subsection{Параметры области инвентаря}
 
-Для области инвентаря заданы следующие параметры:\\
+Для области инвентаря заданы следующие параметры:
+
+\medskip
 
 \begin{tabular}{|l|c|l|}
 \hline
@@ -1058,7 +982,9 @@ iface:shell();
 \tabParam{inv.gfx.up}{строка}{путь к изображению скроллера вверх для инвентаря}
 \tabParam{inv.gfx.down}{строка}{путь к изображению скроллера вниз для инвентаря}
 \tabParam{inv.mode}{строка}{режим инвентаря}
-\end{tabular}\\
+\end{tabular}
+
+\medskip
 
 Параметр \verb/inv.mode/ может принимать значение \verb/horizontal/ или \verb/vertical/.
 
@@ -1066,7 +992,9 @@ iface:shell();
 
 \subsection{Параметры главного меню}
 
-Для главного меню INSTEAD-SDL заданы следующие параметры:\\
+Для главного меню INSTEAD-SDL заданы следующие параметры:
+
+\medskip
 
 \begin{tabular}{|l|c|l|}
 \hline
@@ -1086,7 +1014,9 @@ iface:shell();
 \tabParam{menu.button.y}{число}{ордината кнопки меню, пиксели}
 \tabParam{snd.click}{строка}{путь к звуку щелчка}
 \tabParam{include}{строка}{имя темы}
-\end{tabular}\\
+\end{tabular}
+
+\medskip
 
 Напоминаю,что имя темы есть имя каталога с нею.
 
