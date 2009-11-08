@@ -1,3 +1,6 @@
+%На будущее даю инструкции по стилю кода.
+%Использовать \verb вместо \texttt
+%Пробелы ДО и ПОСЛЕ таблиц. Да,это рождает много ошибок underfull'а, но таблицы хотя бы немного отделены от текста.
 \documentclass[a4paper,12pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[russian]{babel}
@@ -49,7 +52,7 @@
 
 Игра представляет из себя каталог, в котором должен находиться скрипт main.lua. Другие ресурсы игры (скрипты на lua, графика и музыка) должны находиться в рамках этого каталога. Все ссылки на ресурсы делаются относительно текущего каталога -- каталога игры.
 
-Игра начинается именно с main.lua. В начале файла main.lua может быть определён заголовок, состоящий из тегов. Теги должны начинаться с символов комментария ``--''. На данный момент существует один тег: \verb/$Name:/, который должен содержать название игры. Пример использования тега:
+Игра начинается именно с main.lua. В начале файла main.lua может быть определён заголовок, состоящий из тегов. Теги должны начинаться с символов комментария \verb/--/. На данный момент существует один тег: \verb/$Name:/, который должен содержать название игры. Пример использования тега:
 
 \begin{verbatim}
 -- $Name: Самая интересная игра!$
@@ -817,7 +820,155 @@ iface:shell();
 
 Значения могут быть следующих типов: строка, цвет, число.
 
-Цвет задаётся в форме \verb/#rgb/, где r, g и b --- компоненты цвета в шестнадцатеричном виде. Кроме того некоторые основные цвета распознаются по своим именам. Например: \verb/yellowgreen/, или \verb/violet/. Какие именно цвета распознаются --- написано в коде движка.
+Цвет задаётся в форме \verb/#rgb/, где \verb/r/, \verb/g/ и \verb/b/ --- компоненты цвета в шестнадцатеричном виде. Кроме того некоторые основные цвета распознаются по своим именам:
+
+%По-хорошему, здесь нужен ПЕРЕВОД, а ещё лучше - ПРИМЕР цвета.
+
+\begin{itemize}
+\item aliceblue
+\item antiquewhite
+\item aqua
+\item aquamarine
+\item azure
+\item beige
+\item bisque
+\item black
+\item blanchedalmond
+\item blue
+\item blueviolet
+\item brown
+\item burlywood
+\item cadetblue
+\item chartreuse
+\item chocolate
+\item coral
+\item cornflowerblue
+\item cornsilk
+\item crimson
+\item cyan
+\item darkblue
+\item darkcyan
+\item darkgoldenrod
+\item darkgray
+\item darkgreen
+\item darkkhaki
+\item darkmagenta
+\item darkolivegreen
+\item darkorange
+\item darkorchid
+\item darkred
+\item darksalmon
+\item darkseagreen
+\item darkslateblue
+\item darkslategray
+\item darkturquoise
+\item darkviolet
+\item deeppink
+\item deepskyblue
+\item dimgray
+\item dodgerblue
+\item feldspar
+\item firebrick
+\item floralwhite
+\item forestgreen
+\item fuchsia
+\item gainsboro
+\item ghostwhite
+\item gold
+\item goldenrod
+\item gray
+\item green
+\item greenyellow
+\item honeydew
+\item hotpink
+\item indianred
+\item indigo
+\item ivory
+\item khaki
+\item lavender
+\item lavenderblush
+\item lawngreen
+\item lemonchiffon
+\item lightblue
+\item lightcoral
+\item lightcyan
+\item lightgoldenrodyellow
+\item lightgrey
+\item lightgreen
+\item lightpink
+\item lightsalmon
+\item lightseagreen
+\item lightskyblue
+\item lightslateblue
+\item lightslategray
+\item lightsteelblue
+\item lightyellow
+\item lime
+\item limegreen
+\item linen
+\item magenta
+\item maroon
+\item mediumaquamarine
+\item mediumblue
+\item mediumorchid
+\item mediumpurple
+\item mediumseagreen
+\item mediumslateblue
+\item mediumspringgreen
+\item mediumturquoise
+\item mediumvioletred
+\item midnightblue
+\item mintcream
+\item mistyrose
+\item moccasin
+\item navajowhite
+\item navy
+\item oldlace
+\item olive
+\item olivedrab
+\item orange
+\item orangered
+\item orchid
+\item palegoldenrod
+\item palegreen
+\item paleturquoise
+\item palevioletred
+\item papayawhip
+\item peachpuff
+\item peru
+\item pink
+\item plum
+\item powderblue
+\item purple
+\item red
+\item rosybrown
+\item royalblue
+\item saddlebrown
+\item salmon
+\item sandybrown
+\item seagreen
+\item seashell
+\item sienna
+\item silver
+\item skyblue
+\item slateblue
+\item slategray
+\item snow
+\item springgreen
+\item steelblue
+\item tan
+\item teal
+\item thistle
+\item tomato
+\item turquoise
+\item violet
+\item violetred
+\item wheat
+\item white
+\item whitesmoke
+\item yellow
+\item yellowgreen
+\end{itemize}
 
 \newpage
 
@@ -825,9 +976,9 @@ iface:shell();
 
 Окно изображений --- область, в которой располагается картинка сцены. Интерпретация зависит от режима расположения.
 
-Для окна изображений заданы следующие параметры:
+Для окна изображений заданы следующие параметры:\\
 
-\newcommand{\tabParam}[3]{%
+\newcommand{\tabParam}[3]{
 \texttt{#1} & #2 & #3 \\
 \hline
 }
@@ -836,25 +987,25 @@ iface:shell();
 \hline
 параметр & тип & описание \\
 \hline
-\tabParam{scr.w}{число}{ширина игрового пространства в пикселях}
-\tabParam{scr.h}{число}{высота игрового пространства в пикселях}
+\tabParam{scr.w}{число}{ширина игрового пространства, пиксели}
+\tabParam{scr.h}{число}{высота игрового пространства, пиксели}
 \tabParam{scr.col.bg}{цвет}{цвет фона}
-\tabParam{scr.gfx.bg}{строка}{путь к картинке фонового изображения}
-\tabParam{scr.gfx.cursor.x}{число}{абсцисса центра курсора}
-\tabParam{scr.gfx.cursor.y}{число}{ордината центра курсора}
+\tabParam{scr.gfx.bg}{строка}{путь к файлу фонового изображения}
+\tabParam{scr.gfx.cursor.x}{число}{абсцисса центра курсора, пиксели}
+\tabParam{scr.gfx.cursor.y}{число}{ордината центра курсора, пиксели}
 \tabParam{scr.gfx.cursor.normal}{строка}{путь к картинке-курсору}
 \tabParam{scr.gfx.cursor.use}{строка}{путь к картинке-курсору режима использования}
 \tabParam{scr.gfx.use}{строка}{путь к картинке-индикатору режима использования}
-\tabParam{scr.gfx.pad}{число}{размер отступов к скролл-барам и краям меню}
-\tabParam{scr.gfx.x}{число}{абсцисса окна изображений}
-\tabParam{scr.gfx.y}{число}{ордината окна изображений}
-\tabParam{scr.gfx.w}{число}{ширина окна изображений}
-\tabParam{scr.gfx.h}{число}{высота окна изображений}
+\tabParam{scr.gfx.pad}{число}{размер отступов к скролл-барам и краям меню, пиксели}
+\tabParam{scr.gfx.x}{число}{абсцисса окна изображений, пиксели}
+\tabParam{scr.gfx.y}{число}{ордината окна изображений, пиксели}
+\tabParam{scr.gfx.w}{число}{ширина окна изображений, пиксели}
+\tabParam{scr.gfx.h}{число}{высота окна изображений, пиксели}
 \tabParam{win.gfx.h}{число}{синоним \texttt{scr.gfx.h}}
 \tabParam{scr.gfx.mode}{строка}{режим расположения}
-\end{tabular}
+\end{tabular}\\
 
-Параметр \texttt{scr.gfx.mode} может принимать одно из значений: \verb/fixed/, \verb/embedded/ или \verb/float/.
+Параметр \verb/scr.gfx.mode/ может принимать одно из значений: \verb/fixed/, \verb/embedded/ или \verb/float/.
 
 В режиме \verb/embedded/ картинка является частью содержимого главного окна, параметры главного окна (см. ниже) \verb/win.x/, \verb/win.y/, \verb/win.w/ игнорируются.
 
@@ -865,75 +1016,79 @@ iface:shell();
 \subsection{Параметры главного окна}
 
 Главное окно --- область, в которой располагается описание сцены.
-Для главного окна заданы следующие параметры:
+Для главного окна заданы следующие параметры:\\
 
 \begin{tabular}{|l|c|l|}
 \hline
 параметр & тип & описание \\
 \hline
-\tabParam{win.x}{число}{абсцисса главного окна}
-\tabParam{win.y}{число}{ордината главного окна}
-\tabParam{win.w}{число}{ширина главного окна}
-\tabParam{win.h}{число}{высота главного окна}
+\tabParam{win.x}{число}{абсцисса главного окна, пиксели}
+\tabParam{win.y}{число}{ордината главного окна, пиксели}
+\tabParam{win.w}{число}{ширина главного окна, пиксели}
+\tabParam{win.h}{число}{высота главного окна, пиксели}
 \tabParam{win.fnt.name}{строка}{путь к файлу шрифта}
-\tabParam{win.fnt.size}{число}{размер шрифта главного окна}
+\tabParam{win.fnt.size}{число}{размер шрифта главного окна, пункты}
 \tabParam{win.gfx.up}{строка}{путь к файлу изображения скроллера вверх для главного окна}
 \tabParam{win.gfx.down}{строка}{путь к файлу изображения скроллера вниз для главного окна}
+\tabParam{win.gfx.h}{число}{синоним \texttt{scr.gfx.h}}%интересно, почему для scr.gfx.w нету?
 \tabParam{win.col.fg}{цвет}{цвет текста главного окна}
 \tabParam{win.col.link}{цвет}{цвет ссылок главного окна}
 \tabParam{win.col.alink}{цвет}{цвет активных ссылок главного окна}
-\end{tabular}
+\end{tabular}\\
 
-\newpage
+\clearpage
 
 \subsection{Параметры области инвентаря}
 
-Для области инвентаря заданы следующие параметры:
+Для области инвентаря заданы следующие параметры:\\
 
 \begin{tabular}{|l|c|l|}
 \hline
 параметр & тип & описание \\
 \hline
-\tabParam{inv.x}{число}{абсцисса области инвентаря}
-\tabParam{inv.y}{число}{ордината области инвентаря}
-\tabParam{inv.w}{число}{ширина области инвентаря}
-\tabParam{inv.h}{число}{высота области инвентаря}
+\tabParam{inv.x}{число}{абсцисса области инвентаря,пиксели}
+\tabParam{inv.y}{число}{ордината области инвентаря,пиксели}
+\tabParam{inv.w}{число}{ширина области инвентаря,пиксели}
+\tabParam{inv.h}{число}{высота области инвентаря,пиксели}
 \tabParam{inv.col.fg}{цвет}{цвет текста инвентаря}
 \tabParam{inv.col.link}{цвет}{цвет ссылок инвентаря}
 \tabParam{inv.col.alink}{цвет}{цвет активных ссылок инвентаря}
 \tabParam{inv.fnt.name}{строка}{путь к шрифту инвентаря}
-\tabParam{inv.fnt.size}{число}{размер шрифта инвентаря}
+\tabParam{inv.fnt.size}{число}{размер шрифта инвентаря,пункты}
 \tabParam{inv.gfx.up}{строка}{путь к изображению скроллера вверх для инвентаря}
 \tabParam{inv.gfx.down}{строка}{путь к изображению скроллера вниз для инвентаря}
 \tabParam{inv.mode}{строка}{режим инвентаря}
-\end{tabular}
+\end{tabular}\\
 
-Параметр \texttt{inv.mode} может принимать значение \verb/horizontal/ или \verb/vertical/.
+Параметр \verb/inv.mode/ может принимать значение \verb/horizontal/ или \verb/vertical/.
 
 В горизонтальном режиме инвентаря в одной строке могут быть несколько предметов. В вертикальном режиме, в каждой строке инвентаря содержится только один предмет.
 
-\subsection{Параметры меню}
-Для меню заданы следующие параметры:
+\subsection{Параметры главного меню}
+
+Для главного меню INSTEAD-SDL заданы следующие параметры:\\
 
 \begin{tabular}{|l|c|l|}
 \hline
 параметр & тип & описание \\
 \hline
-\tabParam{menu.col.bg}{цвет}{фон меню}
+\tabParam{menu.col.bg}{цвет}{цвет фона меню}
 \tabParam{menu.col.fg}{цвет}{цвет текста меню}
 \tabParam{menu.col.link}{цвет}{цвет ссылок меню}
 \tabParam{menu.col.alink}{цвет}{цвет активных ссылок меню}
 \tabParam{menu.col.alpha}{цвет}{прозрачность меню (0---255)}
 \tabParam{menu.col.border}{цвет}{цвет границы меню}
-\tabParam{menu.bw}{число}{толщина границы меню}
+\tabParam{menu.bw}{число}{толщина границы меню, пиксели}
 \tabParam{menu.fnt.name}{строка}{путь к шрифту меню}
-\tabParam{menu.fnt.size}{число}{размер шрифта меню}
+\tabParam{menu.fnt.size}{число}{размер шрифта меню, пункты}
 \tabParam{menu.gfx.button}{строка}{путь к значку меню}
-\tabParam{menu.button.x}{число}{абсцисса кнопки меню}
-\tabParam{menu.button.y}{число}{ордината кнопки меню}
+\tabParam{menu.button.x}{число}{абсцисса кнопки меню, пиксели}
+\tabParam{menu.button.y}{число}{ордината кнопки меню, пиксели}
 \tabParam{snd.click}{строка}{путь к звуку щелчка}
-\tabParam{include}{строка}{имя темы (последний компонент в пути каталога)}
-\end{tabular}
+\tabParam{include}{строка}{имя темы}
+\end{tabular}\\
+
+Напоминаю,что имя темы есть имя каталога с нею.
 
 \subsection{Прочее}
 
@@ -946,13 +1101,16 @@ include = book
 scr.gfx.h = 500
 \end{verbatim}
 
-Интерпретатор выполняет поиск тем в каталоге \verb.themes..\\
+Интерпретатор ищет доступные темы в каталогах:
 
-Unix версия кроме этого каталога, просматривает также каталог \verb;~/.instead/themes/;\\
+Unix версия интерпретатора просматривает игры в:\\
+\verb;/usr/local/share/instead/themes; (по умолчанию),\\
+\verb,~/.instead/themes,.\\
+WinXP версия:\\
+\verb;Documents and Settings/USER/Local Settings/Application Data/instead/themes;\\
+WinVista: \verb;Users\USER\AppData\Local\instead\themes;\\
+Все Windows: \verb;куда-вы-установили-INSTEAD/themes;
 
-Версия WinXP выполняет дополнительный поиск тем в каталоге
-
- \verb.Documents and Settings/USER/Local Settings/Application Data/instead/themes.\\
 
 Игра может задавать собственную тему; для этого в каталоге с игрой должен лежать тот самый \verb/theme.ini/. Его формат никак при этом не меняется, просто он загружается в первую очередь вместе с игрой.
 
