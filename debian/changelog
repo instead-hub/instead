@@ -2,7 +2,7 @@ instead (1.0.0) unstable; urgency=low
 
   * another mouse buttons -- escape
   * escape as use cancel
-  * lifeoff from life methid
+  * lifeoff from life method
   * bug in anigif logic
   * bug in img()
   * more clever linebreaking
