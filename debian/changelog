@@ -7,6 +7,7 @@ instead (1.0.0) unstable; urgency=low
   * bug in img()
   * more clever linebreaking
   * kill empty lines at end of layout
+  * typo in colortable (graphics.c) by Alexander
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 3 Nov 2009 19:43:00 +0400
 
