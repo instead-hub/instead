@@ -723,6 +723,10 @@ From version 0.7.7 the set_music() function can get an additional parameter — 
 From version 0.9.2 the set_sound() function lets to play sound file. get_sound() returns sound filename, that will be played.
 
 
+To stop music use stop_music() function (from version 1.0.0).
+
+Use is_music() to check if music is playing. (from version 1.0.0)
+
 == 18. Advices ==
 
 === Formatting  ===
