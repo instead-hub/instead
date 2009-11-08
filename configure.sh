@@ -24,6 +24,7 @@ fi
 echo -n "Checking sdl-config..."
 if ! sdl-config --version >/dev/null 2>&1; then
 	echo "error: no sdl-config in PATH."
+	echo "Please, install sdl devel package."
 	exit 1
 fi
 echo "ok"
