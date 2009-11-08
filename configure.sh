@@ -1,10 +1,12 @@
 #!/bin/sh
+
 echo -n "Checking pkg-config..."
 if ! pkg-config --version >/dev/null 2>&1; then
 	echo "error: no pkg-config in PATH."
 	exit 1
 fi
 echo "ok"
+
 echo -n "Checking pkg-config --cflags lua[5.1]..."
 if ! pkg-config --cflags lua5.1 >/dev/null 2>&1; then
 	if ! pkg-config --cflags lua >/dev/null 2>&1; then
@@ -35,6 +37,7 @@ if ! sdl-config --cflags  >/dev/null 2>&1; then
 	exit 1
 fi
 echo "ok"
+
 ops=`$lua_cflags`
 ops=$ops" "`$lua_libs`
 
