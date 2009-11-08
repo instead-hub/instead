@@ -2,16 +2,21 @@ include Rules.make
 
 SUBDIRS = src/sdl-instead stead games themes icon desktop doc languages 
 
-all:	
+all:	config.make
 	@for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir $(@) || exit 1; \
 	done;
+
+config.make:
+	echo "# you can define own flags here" > config.make
+
+include config.make
 
 clean:
 	@for dir in $(SUBDIRS); do \
 		$(MAKE) clean -C $$dir $(@) || exit 1; \
 	done;
-	echo "# you can define own flags here" > config.make
+	$(RM) config.make
 
 install: all
 ifeq ($(SYSTEMSETUP), yes)

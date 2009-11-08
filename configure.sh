@@ -70,11 +70,11 @@ echo -n $cc /tmp/sdl-test.c $ops `sdl-config --cflags` `sdl-config --libs` -lSDL
 if ! $cc /tmp/sdl-test.c $ops `sdl-config --cflags` `sdl-config --libs` -lSDL_ttf -lSDL_mixer -lSDL_image -o /tmp/sdl-test; then
 	echo ") failed".
 	echo "Please, check those dev packages installed: SDL_ttf SDL_mixer SDL_image."
-	rm /tmp/sdl-test.c /tmp/sdl-test
+	rm -f /tmp/sdl-test.c /tmp/sdl-test
 	exit 1
 fi
 echo ") ok"
-rm /tmp/sdl-test.c /tmp/sdl-test
+rm -f /tmp/sdl-test.c /tmp/sdl-test
 if ! make clean >/dev/null 2>&1; then
 	echo " * Warning!!! Can not do make clean..."
 fi
