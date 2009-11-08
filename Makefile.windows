@@ -1,8 +1,12 @@
 MAKE=mingw32-make
 
-all:	
+all: config.make
 	$(MAKE) -C src\sdl-instead all
 	$(MAKE) -C themes -f Makefile.windows all
+
+config.make:
+	echo > config.make
+
 clean:
 	$(MAKE) -C src\sdl-instead clean
 
