@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 EOF
 echo $cc
 echo -n "Checking test build...("
-echo $cc /tmp/sdl-test.c $ops `sdl-config --cflags` `sdl-config --libs` -lSDL_ttf -lSDL_mixer -lSDL_image
+echo -n $cc /tmp/sdl-test.c $ops `sdl-config --cflags` `sdl-config --libs` -lSDL_ttf -lSDL_mixer -lSDL_image
 if ! $cc /tmp/sdl-test.c $ops `sdl-config --cflags` `sdl-config --libs` -lSDL_ttf -lSDL_mixer -lSDL_image; then
 	echo ") failed".
 	echo "Please, check those dev packages installed: SDL_ttf SDL_mixer SDL_image."
