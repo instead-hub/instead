@@ -71,7 +71,7 @@ echo -n "Checking test build...("
 echo -n $cc /tmp/sdl-test.c $ops `sdl-config --cflags` `sdl-config --libs` -lSDL_ttf -lSDL_mixer -lSDL_image -o /tmp/sdl-test
 if ! $cc /tmp/sdl-test.c $ops `sdl-config --cflags` `sdl-config --libs` -lSDL_ttf -lSDL_mixer -lSDL_image -o /tmp/sdl-test; then
 	echo ") failed".
-	echo "Please, check those dev packages installed: SDL, SDL_ttf, SDL_mixer, SDL_image."
+	echo "Please, check those dev packages installed: sdl, sdl_ttf, sdl_mixer, sdl_image."
 	rm -f /tmp/sdl-test.c /tmp/sdl-test
 	exit 1
 fi
