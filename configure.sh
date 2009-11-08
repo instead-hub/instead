@@ -98,7 +98,7 @@ elif [ "$ans" == "2" ]; then
 	echo "Ok, now do:"
 	echo "    make; make install; sdl-instead"
 else
-	echo "Wrong answer."
+	echo "Huh!!! Wrong answer."
 	exit 1
 fi
 echo "Bye..."
