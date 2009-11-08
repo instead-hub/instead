@@ -16,7 +16,6 @@ clean:
 	@for dir in $(SUBDIRS); do \
 		$(MAKE) clean -C $$dir $(@) || exit 1; \
 	done;
-	$(RM) config.make
 
 install: all
 ifeq ($(SYSTEMSETUP), yes)
