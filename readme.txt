@@ -24,3 +24,7 @@ On debian systems:
 building deb package:
 	apt-get install build-essential
 	debuild
+
+***
+
+Or you can try ./configure.sh.

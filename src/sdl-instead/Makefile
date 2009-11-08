@@ -1,4 +1,5 @@
 include ../../Rules.make
+include ../../config.make
 
 CFLAGS += $(SDL_CFLAGS) $(LUA_CFLAGS) -DLANG_PATH=\"${LANGPATH}/\" -DSTEAD_PATH=\"${STEADPATH}/\"  -DGAMES_PATH=\"${GAMESPATH}/\" -DTHEMES_PATH=\"${THEMESPATH}/\" -DVERSION=$(VERSION) -DICON_PATH=\"${ICONPATH}/\"
 
