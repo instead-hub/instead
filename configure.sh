@@ -95,7 +95,6 @@ if [ "x$ans" == "x1" -o "x$ans" == "x" ]; then
 	echo "Ok, now do:"
 	echo "    make && ./sdl-instead"
 elif [ "x$ans" == "x2" ]; then
-	echo " * System version"
 	echo -n "Enter prefix path [/usr/local]:"
 	read ans
 
@@ -108,7 +107,9 @@ elif [ "x$ans" == "x2" ]; then
 	rm -f Rules.make
 	ln -s Rules.make.system Rules.make
 
-	echo "PREFIX=/usr/local" >> config.make
+	echo " * System version, with prefix: $prefix"
+
+	echo "PREFIX=$prefix" >> config.make
 	echo "BIN=\$(DESTDIR)\$(PREFIX)/bin/" >> config.make 
 	echo "STEADPATH=\$(DESTDIR)\$(PREFIX)/share/instead" >> config.make
 	echo "THEMESPATH=\$(STEADPATH)/themes" >> config.make
