@@ -11,6 +11,7 @@ clean:
 	@for dir in $(SUBDIRS); do \
 		$(MAKE) clean -C $$dir $(@) || exit 1; \
 	done;
+	echo "# you can define own flags here" > config.make
 
 install: all
 ifeq ($(SYSTEMSETUP), yes)
