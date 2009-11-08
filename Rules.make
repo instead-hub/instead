@@ -1,1 +1,1 @@
-Rules.make.standalone
+Rules.make.system
