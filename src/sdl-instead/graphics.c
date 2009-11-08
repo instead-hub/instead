@@ -1705,7 +1705,7 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 			update(x + word->x, y + line->y + yy, gfx_img_w(word->img), gfx_img_h(word->img));
 			continue;
 		}
-		if (!word->style)
+		if (word->xref && !word->style)
 			TTF_SetFontStyle((TTF_Font *)(layout->fn), layout->lstyle);
 		else
 			TTF_SetFontStyle((TTF_Font *)(layout->fn), word->style);
