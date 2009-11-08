@@ -1,5 +1,4 @@
 #!/bin/sh
-
 echo -n "Checking pkg-config..."
 if ! pkg-config --version >/dev/null 2>&1; then
 	echo "error: no pkg-config in PATH."
@@ -96,7 +95,7 @@ if [ "x$ans" = "x1" -o "x$ans" = "x" ]; then
 	echo "Ok, now do:"
 	echo "    make && ./sdl-instead"
 elif [ "x$ans" = "x2" ]; then
-	echo -n "Enter prefix path [/usr/local]:"
+	echo -n "Enter prefix path [/usr/local]: "
 	read ans
 
 	if [ "x$ans" = "x" ]; then
