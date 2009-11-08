@@ -25,7 +25,7 @@ fi
 echo -n "Checking sdl-config..."
 if ! sdl-config --version >/dev/null 2>&1; then
 	echo "error: no sdl-config in PATH."
-	echo "Please, install sdl devel package."
+	echo "Please, install sdl, sdl_ttf, sdl_mixer and sdl_image devel packages."
 	exit 1
 fi
 echo "ok"
@@ -71,7 +71,7 @@ echo -n "Checking test build...("
 echo -n $cc /tmp/sdl-test.c $ops `sdl-config --cflags` `sdl-config --libs` -lSDL_ttf -lSDL_mixer -lSDL_image -o /tmp/sdl-test
 if ! $cc /tmp/sdl-test.c $ops `sdl-config --cflags` `sdl-config --libs` -lSDL_ttf -lSDL_mixer -lSDL_image -o /tmp/sdl-test; then
 	echo ") failed".
-	echo "Please, check those dev packages installed: sdl, sdl_ttf, sdl_mixer, sdl_image."
+	echo "Please, check those devel packages installed: sdl, sdl_ttf, sdl_mixer, sdl_image."
 	rm -f /tmp/sdl-test.c /tmp/sdl-test
 	exit 1
 fi
