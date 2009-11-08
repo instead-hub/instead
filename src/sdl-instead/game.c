@@ -999,6 +999,7 @@ static void dec_music(void *data)
 	if (atoi(mus) == -1)
 		free_last_music();
 	free(mus);
+	snd_volume_mus(cur_vol); /* reset volume */
 }
 
 void game_music_finished(void)
