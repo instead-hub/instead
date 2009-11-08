@@ -89,17 +89,17 @@ echo "SDL_LFLAGS=\$(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer -lSDL_image" 
 echo "ok"
 echo -n "Do you want game will run standalone(1) or will be installed in system(2) [1]: "
 read ans
-if [ "x$ans" == "x1" -o "x$ans" == "x" ]; then
+if [ "x$ans" = "x1" -o "x$ans" = "x" ]; then
 	echo " * Standalone version"
 	rm -f Rules.make
 	ln -s Rules.make.standalone Rules.make
 	echo "Ok, now do:"
 	echo "    make && ./sdl-instead"
-elif [ "x$ans" == "x2" ]; then
+elif [ "x$ans" = "x2" ]; then
 	echo -n "Enter prefix path [/usr/local]:"
 	read ans
 
-	if [ "x$ans" == "x" ]; then
+	if [ "x$ans" = "x" ]; then
 		prefix="/usr/local"
 	else
 		prefix="$ans"
