@@ -1,13 +1,13 @@
 echo -n "Checking pkg-config..."
 if ! pkg-config --version >/dev/null 2>&1; then
-	echo "no pkg-config in PATH."
+	echo "error: no pkg-config in PATH."
 	exit 1
 fi
 echo "ok"
-echo -n "Checking pkg-config --cflags lua..."
+echo -n "Checking pkg-config --cflags lua[5.1]..."
 if ! pkg-config --cflags lua >/dev/null 2>&1; then
 	if ! pkg-config --cflags lua5.1 >/dev/null 2>&1; then
-		echo "failed"
+		echo "failed: no package lua/lua5.1"
 		exit 1
 	fi
 	echo "lua5.1"
@@ -21,7 +21,7 @@ fi
 
 echo -n "Checking sdl-config..."
 if ! sdl-config --version >/dev/null 2>&1; then
-	echo "no sdl-config in PATH."
+	echo "error: no sdl-config in PATH."
 	exit 1
 fi
 echo "ok"
@@ -59,7 +59,7 @@ cat << EOF >/tmp/sdl-test.c
 #include <SDL_mixer.h>
 int main(int argc, char **argv)
 {
-	return 1;
+	return 0;
 }
 EOF
 echo $cc
