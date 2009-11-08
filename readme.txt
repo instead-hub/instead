@@ -27,4 +27,4 @@ building deb package:
 
 ***
 
-Or you can try ./configure.sh.
+Or you can try run ./configure.sh
