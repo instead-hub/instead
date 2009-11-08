@@ -107,7 +107,7 @@ elif [ "x$ans" = "x2" ]; then
 	rm -f Rules.make
 	ln -s Rules.make.system Rules.make
 
-	echo " * System version, with prefix: $prefix"
+	echo " * System version with prefix: $prefix"
 
 	echo "PREFIX=$prefix" >> config.make
 	echo "BIN=\$(DESTDIR)\$(PREFIX)/bin/" >> config.make 
