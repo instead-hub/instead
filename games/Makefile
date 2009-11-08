@@ -1,4 +1,6 @@
 include ../Rules.make
+include ../config.make
+
 all:
 install:
 	$(INSTALLD) $(GAMESPATH)

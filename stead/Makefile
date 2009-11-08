@@ -1,4 +1,6 @@
 include ../Rules.make
+include ../config.make
+
 clean:
 all:	stead.lua
 

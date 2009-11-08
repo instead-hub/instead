@@ -1,4 +1,6 @@
 include ../Rules.make
+include ../config.make
+
 pdf:
 	pdflatex manual.tex
 	pdflatex manual.tex
