@@ -1,3 +1,5 @@
+#!/bin/sh
+
 echo -n "Checking pkg-config..."
 if ! pkg-config --version >/dev/null 2>&1; then
 	echo "error: no pkg-config in PATH."
