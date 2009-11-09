@@ -5,6 +5,7 @@
 #include "sound.h"
 
 #define DEFAULT_THEME "default"
+#define FIRST_THEME "default-large"
 #ifndef THEMES_PATH
 #define THEMES_PATH "./themes"
 #endif
