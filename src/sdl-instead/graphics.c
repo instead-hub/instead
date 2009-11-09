@@ -914,6 +914,13 @@ fnt_t fnt_load(const char *fname, int size)
 	return (fnt_t) fn;
 }
 
+int fnt_height(fnt_t fn)
+{
+	if (!fn)
+		return 0;
+	return TTF_FontHeight((TTF_Font *)(fn));
+}
+
 void fnt_free(fnt_t fnt)
 {
 	if (!fnt)
@@ -1692,7 +1699,7 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 		if (word->img)
 			yy = (line->h - gfx_img_h(word->img)) / 2;
 		else
-			yy = (line->h - TTF_FontHeight((TTF_Font *)(layout->fn))) / 2; // TODO
+			yy = (line->h - fnt_height(layout->fn)) / 2; // TODO
 
 		if (clear) {
 			if (word->img)
@@ -1748,7 +1755,7 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 			if (word->img)
 				yy = (line->h - gfx_img_h(word->img)) / 2;
 			else
-				yy = (line->h - TTF_FontHeight((TTF_Font *)(layout->fn))) / 2; // TODO
+				yy = (line->h - fnt_height(layout->fn)) / 2; // TODO
 			
 			if (clear) {
 				if (word->img)
@@ -2314,7 +2321,6 @@ void _txt_layout_add(layout_t lay, char *txt)
 			line->y = ol->y + ol->h;
 			if (nl) {
 				ptr = eptr + 1;
-//				line->y += TTF_FontLineSkip((TTF_Font*)(layout->fn));
 			}
 			free(p);
 //			ptr = eptr;

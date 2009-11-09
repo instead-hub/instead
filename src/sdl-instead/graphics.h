@@ -71,6 +71,7 @@ extern void	gfx_fill(int x, int y, int w, int h, color_t col);
 
 extern fnt_t 	fnt_load(const char *fname, int size);
 extern void 	fnt_free(fnt_t);
+extern int	fnt_height(fnt_t fn);
 
 extern void 	txt_draw(fnt_t fnt, const char *txt, int x, int y, color_t col);
 extern void 	txt_size(fnt_t fnt, const char *txt, int *w, int *h);
