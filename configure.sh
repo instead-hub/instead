@@ -70,14 +70,14 @@ int main(int argc, char **argv)
 EOF
 echo $cc
 echo -n "Checking test build...("
-echo -n $cc /tmp/sdl-test.c $ops `sdl-config --cflags` `sdl-config --libs` -lSDL_ttf -lSDL_mixer -lSDL_image -o /tmp/sdl-test
+echo -n $cc /tmp/sdl-test.c $ops `sdl-config --cflags` `sdl-config --libs` -lSDL_ttf -lSDL_mixer -lSDL_image -o /tmp/sdl-test ")..."
 if ! $cc /tmp/sdl-test.c $ops `sdl-config --cflags` `sdl-config --libs` -lSDL_ttf -lSDL_mixer -lSDL_image -o /tmp/sdl-test; then
-	echo ") failed".
+	echo "failed".
 	echo "Please sure if these development packages are installed: sdl, sdl_ttf, sdl_mixer, sdl_image."
 	rm -f /tmp/sdl-test.c /tmp/sdl-test
 	exit 1
 fi
-echo ") ok"
+echo "ok"
 rm -f /tmp/sdl-test.c /tmp/sdl-test
 if ! make clean >/dev/null 2>&1; then
 	echo " * Warning!!! Can not do make clean..."
