@@ -2,7 +2,7 @@
 
 echo -n "Checking pkg-config..."
 if ! pkg-config --version >/dev/null 2>&1; then
-	echo "error: no pkg-config in PATH."
+	echo "error: no pkg-config in \$PATH."
 	exit 1
 fi
 echo "ok"
@@ -11,7 +11,7 @@ echo -n "Checking pkg-config --cflags lua[5.1]..."
 if ! pkg-config --cflags lua5.1 >/dev/null 2>&1; then
 	if ! pkg-config --cflags lua >/dev/null 2>&1; then
 		echo "failed: no package lua/lua5.1"
-		echo "Please, install lua devel package."
+		echo "Please install lua development package."
 		exit 1
 	fi
 	echo "lua"
@@ -25,8 +25,8 @@ fi
 
 echo -n "Checking sdl-config..."
 if ! sdl-config --version >/dev/null 2>&1; then
-	echo "error: no sdl-config in PATH."
-	echo "Please, install sdl, sdl_ttf, sdl_mixer and sdl_image devel packages."
+	echo "error: no sdl-config in \$PATH."
+	echo "Please install sdl, sdl_ttf, sdl_mixer and sdl_image development packages."
 	exit 1
 fi
 echo "ok"
@@ -45,7 +45,7 @@ echo -n "Looking for compiler..."
 if ! cc --version >/dev/null 2>&1; then
 	if ! gcc --version >/dev/null 2>&1; then
 		if ! $(CC) --version >/dev/null 2>&1; then
-			echo "cc, gcc, \$(CC) are not valid compilers... Please, export CC for valid one...";
+			echo "cc, gcc, \$(CC) are not valid compilers... Please export CC for valid one...";
 			exit 1;
 		else
 			cc=$CC;	
@@ -73,7 +73,7 @@ echo -n "Checking test build...("
 echo -n $cc /tmp/sdl-test.c $ops `sdl-config --cflags` `sdl-config --libs` -lSDL_ttf -lSDL_mixer -lSDL_image -o /tmp/sdl-test
 if ! $cc /tmp/sdl-test.c $ops `sdl-config --cflags` `sdl-config --libs` -lSDL_ttf -lSDL_mixer -lSDL_image -o /tmp/sdl-test; then
 	echo ") failed".
-	echo "Please, check those devel packages installed: sdl, sdl_ttf, sdl_mixer, sdl_image."
+	echo "Please sure if these development packages are installed: sdl, sdl_ttf, sdl_mixer, sdl_image."
 	rm -f /tmp/sdl-test.c /tmp/sdl-test
 	exit 1
 fi
@@ -89,7 +89,7 @@ echo "LUA_LFLAGS=\$(shell $lua_libs)" >> config.make
 echo "SDL_CFLAGS=\$(shell sdl-config --cflags)" >> config.make
 echo "SDL_LFLAGS=\$(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer -lSDL_image" >> config.make
 echo "ok"
-echo -n "Do you want game will run standalone(1) or will be installed in system(2) [1]: "
+echo -n "Choose installation mode. Standalone(1) or system(2) [1]: "
 read ans
 if [ "x$ans" = "x1" -o "x$ans" = "x" ]; then
 	echo " * Standalone version"
@@ -97,8 +97,9 @@ if [ "x$ans" = "x1" -o "x$ans" = "x" ]; then
 	ln -sf Rules.make.standalone Rules.make
 	rm -f sdl-instead
 	ln -sf src/sdl-instead/sdl-instead sdl-instead
-	echo "Ok, now do:"
-	echo "    make && ./sdl-instead"
+	echo "Ok. We are ready to build. Use these commands:"
+	echo "    \$ make"
+	echo "    \$ ./sdl-instead"
 elif [ "x$ans" = "x2" ]; then
 	echo -n "Enter prefix path [/usr/local]: "
 	read ans
@@ -123,12 +124,16 @@ elif [ "x$ans" = "x2" ]; then
 	echo "DOCPATH=\$(DESTDIR)\$(PREFIX)/share/doc/instead" >> config.make
 	echo "LANGPATH=\$(STEADPATH)/languages" >> config.make
 	echo "MANPATH=\$(DESTDIR)\$(PREFIX)/share/man/man6" >> config.make
-	
-	echo "Ok, now do:"
-	echo "    make && make install && sdl-instead"
+
+	echo "Ok. We are ready to build and install. Use these commands:"
+	echo "    \$ make"
+	echo "    \$ sudo make install"
+	echo "    \$ sdl-instead"
 else
 	echo "Huh!!! Wrong answer."
 	exit 1
 fi
 
-echo "Bye..."
+echo " Enjoy..."
+
+
