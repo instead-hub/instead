@@ -25,7 +25,7 @@ tarball: clean
 	$(RM) -f Rules.make
 	ln -sf Rules.make.standalone Rules.make
 	ln -sf ./ $(VERTITLE)
-	tar -cz --exclude $(VERTITLE)/$(VERTITLE) --exclude .svn --exclude $(ARCHIVE) -f $(ARCHIVE) $(VERTITLE)/*
+	tar -cz --exclude fantasy --exclude $(VERTITLE)/$(VERTITLE) --exclude .svn --exclude $(ARCHIVE) -f $(ARCHIVE) $(VERTITLE)/*
 	$(RM) -f $(VERTITLE)
 
 clean:
