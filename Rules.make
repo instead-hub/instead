@@ -1,1 +1,0 @@
-Rules.make.standalone
