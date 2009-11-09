@@ -94,7 +94,9 @@ read ans
 if [ "x$ans" = "x1" -o "x$ans" = "x" ]; then
 	echo " * Standalone version"
 	rm -f Rules.make
-	ln -s Rules.make.standalone Rules.make
+	ln -sf Rules.make.standalone Rules.make
+	rm -f sdl-instead
+	ln -sf src/sdl-instead/sdl-instead sdl-instead
 	echo "Ok, now do:"
 	echo "    make && ./sdl-instead"
 elif [ "x$ans" = "x2" ]; then
