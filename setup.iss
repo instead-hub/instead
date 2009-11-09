@@ -39,8 +39,6 @@ ru.CreateDesktopIcon=Создать &ярлык на рабочем столе
 ru.LaunchGame=Запустить &игру
 ru.UninstallMsg=Удалить INSTEAD
 ru.RmSettingsMsg=Удалить настройки и сохранённые игры?
-ru.UninstalledAll=Программа %1 была успешно удалена с Вашего компьютера.
-; "полностью удалена" -> "успешно удалена"
 
 [Tasks]
 Name: desktopicon; Description: {cm:CreateDesktopIcon}
