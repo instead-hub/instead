@@ -1785,7 +1785,7 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 			if (word->img)
 				clear(x + word->x, y + line->y + yy, gfx_img_w(word->img), gfx_img_h(word->img));
 			else
-				clear(x + word->x, y + line->y + yy, word->w, line->h);
+				clear(x + word->x, y + line->y/* + yy*/, word->w, line->h);
 		}
 		if (word->img) {
 			gfx_draw(word->img, x + word->x, y + line->y + yy);
@@ -1841,7 +1841,7 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 				if (word->img)
 					clear(x + word->x, y + line->y + yy, gfx_img_w(word->img), gfx_img_h(word->img));
 				else
-					clear(x + word->x, y + line->y + yy, word->w, line->h);
+					clear(x + word->x, y + line->y/* + yy*/, word->w, line->h);
 			}
 			SDL_Surface *s;
 			if (word->img) {
