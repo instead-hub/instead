@@ -6,6 +6,7 @@
 #include <SDL_ttf.h>
 #include <SDL_mutex.h>
 #include "SDL_rotozoom.h"
+#include "SDL_gfxBlitFunc.h"
 #include "SDL_anigif.h"
 
 #define Surf(p) ((SDL_Surface *)p)
@@ -523,7 +524,7 @@ img_t gfx_combine(img_t src, img_t dst)
 	return new;	
 }
 
-img_t gfx_load_image(char *filename)
+static img_t _gfx_load_image(char *filename)
 {
 	SDL_Surface *img;
 	int nr = 0;
@@ -547,6 +548,68 @@ img_t gfx_load_image(char *filename)
 		fprintf(stderr, "File not found: '%s'\n", filename);
 		return NULL;
 	}
+	return img;
+}
+
+/* x.png;a.png@1,2;b.png@3,4 */
+static img_t _gfx_load_combined_image(char *filename)
+{
+	char *str;
+	char *p, *ep;
+	img_t	base = NULL, img = NULL;
+	p = str = strdup(filename);
+	if (!str)
+		return NULL;
+	ep = p + strcspn(p, ";");
+	if (*ep != ';')
+		goto err; /* first image is a base image */
+	*ep = 0;
+
+	base = _gfx_load_image(p);
+	if (!base)
+		goto err;
+	p = ep + 1;
+	while (*p) {
+		int x = 0, y = 0;
+		SDL_Rect to;
+		ep = p + strcspn(p, ";@");
+		if (*ep == '@') {
+			*ep = 0; ep ++;
+			sscanf(ep, "%d,%d", &x, &y);
+			ep += strcspn(ep, ";");
+			if (*ep)
+				ep ++;
+		} else if (*ep == ';') {
+			*ep = 0; ep ++;
+		} else if (*ep) {
+			goto err;
+		}
+		img = _gfx_load_image(p);
+		if (img) {
+			to.x = x; to.y = y;
+			to.w = to.h = 0;
+			SDL_gfxBlitRGBA(img, NULL, base, &to);
+			gfx_free_image(img);
+		}
+		p = ep;
+	}
+	free(str);
+	return base;
+err:
+	gfx_free_image(base);
+	free(str);
+	return NULL;
+}
+
+img_t gfx_load_image(char *filename)
+{
+	img_t img = NULL;
+	if (!filename)
+		return NULL;
+	if (!access(filename, R_OK))
+		img = _gfx_load_image(filename);
+	else
+		img = _gfx_load_combined_image(filename);
 	return img;
 }
 
