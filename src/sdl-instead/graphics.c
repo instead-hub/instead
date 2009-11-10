@@ -487,6 +487,18 @@ img_t	gfx_grab_screen(int x, int y, int w, int h)
 	return img;
 }
 
+img_t gfx_display_alpha(img_t src)
+{
+	SDL_Surface* res;
+	if (!src)
+		return NULL;
+	if (!screen)
+		return src;
+	res = SDL_DisplayFormatAlpha(Surf(src));
+	gfx_free_image(src);
+	return res;
+}
+
 img_t gfx_alpha_img(img_t src, int alpha)
 {
 	Uint32 *ptr;
@@ -568,6 +580,9 @@ static img_t _gfx_load_combined_image(char *filename)
 	base = _gfx_load_image(p);
 	if (!base)
 		goto err;
+	base = gfx_display_alpha(base);
+	if (!base)
+		goto err;
 	p = ep + 1;
 	while (*p) {
 		int x = 0, y = 0;
@@ -585,6 +600,8 @@ static img_t _gfx_load_combined_image(char *filename)
 			goto err;
 		}
 		img = _gfx_load_image(p);
+		if (img)
+			img = gfx_display_alpha(img);
 		if (img) {
 			to.x = x; to.y = y;
 			to.w = to.h = 0;
