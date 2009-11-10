@@ -20,7 +20,7 @@ config.make:
 svnclean:
 	svn st | grep "^?" | awk '{ print $$2 }' | grep -v "config.make" | while read l; do $(RM) -rf $$l; done
 
-tarball: clean
+tarball: clean svnclean
 	echo "# you can define own flags here" > config.make
 	$(RM) -f Rules.make
 	ln -sf Rules.make.standalone Rules.make
