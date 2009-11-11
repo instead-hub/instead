@@ -1522,18 +1522,18 @@ static void scroll_pdown(int id)
 	el_update(id);
 }
 
-int mouse_filter(void)
+int mouse_filter(int filter)
 {
 	static unsigned int old_counter = 0;
 	if (!opt_filter)
 		return 0;
-	if (abs(old_counter - timer_counter) <= (400 / HZ)) /* 400 ms */
+	if (filter && (abs(old_counter - timer_counter) <= (400 / HZ))) /* 400 ms */
 		return -1;
 	old_counter = timer_counter;
 	return 0;
 }
 
-int game_click(int x, int y, int action)
+int game_click(int x, int y, int action, int filter)
 {
 	int menu_mode 	= 0;
 	int use_mode	= 0;
@@ -1546,7 +1546,7 @@ int game_click(int x, int y, int action)
 	if (action)
 		motion_mode = 0;
 
-	if (opt_filter && action) {
+	if (filter && opt_filter && action) {
 		xref_t new_xref;
 		struct el *new_elem;
 		new_xref = look_xref(x, y, &new_elem);
@@ -1643,7 +1643,7 @@ int game_click(int x, int y, int action)
 				snprintf(buf, sizeof(buf), "%s", xref_txt);
 		} else
 			snprintf(buf, sizeof(buf), "%s", xref_get_text(xref));
-		if (mouse_filter())
+		if (mouse_filter(filter))
 			return 0;
 		if (opt_click)
 			snd_play(game_theme.click);
@@ -1663,7 +1663,7 @@ int game_click(int x, int y, int action)
 		else
 			snprintf(buf,sizeof(buf), "use %s,%s", xref_get_text(use_xref), xref_txt);
 	}	
-	if (mouse_filter())
+	if (mouse_filter(filter))
 		return 0;
 		
 	disable_use();
@@ -2079,12 +2079,11 @@ int game_loop(void)
 				gfx_cursor(&x, &y, NULL, NULL);
 				game_highlight(-1, -1, 0); /* reset */
 
-				game_click(x, y, 0);
-
+				game_click(x, y, 0, 0); 
 				game_highlight(x, y, 1); /* hl on/off */
 				game_highlight(x, y, 0);
 
-				if (game_click(x, y, 1) == -1)
+				if (game_click(x, y, 1, 0) == -1) 
 					break;
 			} else if (!is_key(&ev, "escape")) {
 				if (use_xref)
@@ -2146,13 +2145,13 @@ int game_loop(void)
 				disable_use();
 			else {	
 				game_highlight(-1, -1, 0);
-				game_click(ev.x, ev.y, 0);
+				game_click(ev.x, ev.y, 0, 1);
 				x = ev.x;
 				y = ev.y;
 			}
 		} else if (ev.type == MOUSE_UP) {
 			game_highlight(-1, -1, 0);
-			if (game_click(ev.x, ev.y, 1) == -1)
+			if (game_click(ev.x, ev.y, 1, 1) == -1)
 				break;
 		} else if (ev.type == MOUSE_WHEEL_UP && !menu_shown) {
 			game_scroll_up(ev.count);
