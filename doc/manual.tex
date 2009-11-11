@@ -852,11 +852,6 @@ iface:shell();
 
 Цвет задаётся в форме \verb/#rgb/, где \verb/r/, \verb/g/ и \verb/b/ --- компоненты цвета в шестнадцатеричном виде. Кроме того некоторые основные цвета распознаются по своим именам:
 
-\newcommand{\tabParam}[6]{
-\texttt{#1} & #2 & \texttt{#3} & #4 & \texttt{#5} & #6 & & \\
-\hline
-}
-
 \newcommand{\tabColor}[2]{
 \texttt{#1} & \colorbox[HTML]{#2}{T.} 
 }
@@ -922,21 +917,19 @@ iface:shell();
 \tabColort{firebrick}{B22222}{mediumspringgreen}{00FA9A}{tomato}{FF6347}
 \tabColort{floralwhite}{FFFAF0}{mediumturquoise}{48D1CC}{turquoise}{40E0D0}
 \end{tabular}
+\caption{Цветовые константы INSTEAD}
 \end{table}
 
 \subsection{Параметры окна изображений}
 
-Окно изображений --- область, в которой располагается картинка сцены. Интерпретация зависит от режима расположения.
+Окно изображений --- область, в которой располагается картинка сцены. Интерпретация зависит от режима расположения. (см. таблицу~\ref{param_screen})
 
-Для окна изображений заданы следующие параметры:
-
-\medskip
-
-\renewcommand{\tabParam}[3]{
+\newcommand{\tabParam}[3]{
 \texttt{#1} & #2 & #3 \\
 \hline
 }
-\begin{table}[h]
+
+\begin{table}[ht]
 \begin{tabular}{|l|c|l|}
 \hline
 параметр & тип & описание \\
@@ -958,6 +951,7 @@ iface:shell();
 \tabParam{win.gfx.h}{число}{синоним \texttt{scr.gfx.h}}
 \tabParam{scr.gfx.mode}{строка}{режим расположения}
 \end{tabular}
+\caption{Параметры окна изображений}\label{param_screen}
 \end{table}
 
 \medskip
@@ -972,12 +966,11 @@ iface:shell();
 
 \subsection{Параметры главного окна}
 
-Главное окно --- область, в которой располагается описание сцены.
-Для главного окна заданы следующие параметры:
+Главное окно --- область, в которой располагается описание сцены. (табл.~\ref{param_window})
 
 \medskip
 
-\begin{table}[h]
+\begin{table}[ht]
 \begin{tabular}{|l|c|l|}
 \hline
 параметр & тип & описание \\
@@ -995,17 +988,18 @@ iface:shell();
 \tabParam{win.col.link}{цвет}{цвет ссылок главного окна}
 \tabParam{win.col.alink}{цвет}{цвет активных ссылок главного окна}
 \end{tabular}
+\caption{Параметры главного окна}\label{param_window}
 \end{table}
 
 \medskip
 
 \subsection{Параметры области инвентаря}
 
-Для области инвентаря заданы следующие параметры:
+См. таблицу \ref{param_inventory}.
 
 \medskip
 
-\begin{table}[h]
+\begin{table}[ht]
 \begin{tabular}{|l|c|l|}
 \hline
 параметр & тип & описание \\
@@ -1023,6 +1017,7 @@ iface:shell();
 \tabParam{inv.gfx.down}{строка}{путь к изображению скроллера вниз для инвентаря}
 \tabParam{inv.mode}{строка}{режим инвентаря}
 \end{tabular}
+\caption{Параметры области инвентаря}\label{param_inventory}
 \end{table}
 
 \medskip
@@ -1033,11 +1028,11 @@ iface:shell();
 
 \subsection{Параметры главного меню}
 
-Для главного меню INSTEAD-SDL заданы следующие параметры:
+Параметры главного меню INSTEAD-SDL перечислены в таблице \ref{param_menu}
 
 \medskip
 
-\begin{table}[h]
+\begin{table}[ht]
 \begin{tabular}{|l|c|l|}
 \hline
 параметр & тип & описание \\
@@ -1057,6 +1052,7 @@ iface:shell();
 \tabParam{snd.click}{строка}{путь к звуку щелчка}
 \tabParam{include}{строка}{имя темы}
 \end{tabular}
+\caption{Параметры главного меню}\label{param_menu}
 \end{table}
 
 \medskip
