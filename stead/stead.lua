@@ -2063,8 +2063,17 @@ function get_sound()
 	return game._sound;
 end
 
-function set_sound(s)
+function get_sound_chan()
+	return game._sound_channel
+end
+
+function set_sound(s, chan)
 	game._sound = s;
+	if not tonumber(chan) then
+		game._sound_channel = -1;
+	else
+		game._sound_channel = tonumber(chan);
+	end
 end
 
 function change_pl(p)
