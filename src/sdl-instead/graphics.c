@@ -585,11 +585,15 @@ static img_t _gfx_load_combined_image(char *filename)
 		goto err;
 	p = ep + 1;
 	while (*p) {
-		int x = 0, y = 0;
+		int x = 0, y = 0, c = 0;
 		SDL_Rect to;
 		ep = p + strcspn(p, ";@");
 		if (*ep == '@') {
 			*ep = 0; ep ++;
+			if (*ep == 'c') {
+				c = 1;
+				ep ++;
+			}
 			sscanf(ep, "%d,%d", &x, &y);
 			ep += strcspn(ep, ";");
 			if (*ep)
@@ -604,6 +608,10 @@ static img_t _gfx_load_combined_image(char *filename)
 			img = gfx_display_alpha(img);
 		if (img) {
 			to.x = x; to.y = y;
+			if (c) {
+				to.x -= gfx_img_w(img) / 2;
+				to.y -= gfx_img_h(img) / 2;
+			}
 			to.w = to.h = 0;
 			SDL_gfxBlitRGBA(img, NULL, base, &to);
 			gfx_free_image(img);
