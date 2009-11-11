@@ -824,8 +824,8 @@ end
 
 function phrase_action(self)
 	local ph = self;
-	local r = here();
-	local ret;
+	local r = nil;
+	local ret = nil;
 	if isDisabled(ph) then
 		return nil, false
 	end
@@ -837,21 +837,26 @@ function phrase_action(self)
 		if f ~= nil then
 			ret = f();
 		else
-			error ("Error while eval phrase action");
+			error ("Error while eval phrase action.");
 		end
 	elseif type(ph.do_act) == 'function' then
 		ret = ph.do_act(self, nam);
 	end
 	local last = call(ph, 'ans');
+	if last == true or ret == true then
+		r = true;
+	end
 	if isDialog(here()) and not dialog_rescan(here()) then
 		ret = par(' ', ret, me():back());
 	end
-	return par("^^", last, ret);
---	if dialog_getn(self, 1) == nil then
---		me():back();
---	end
---	self._last = call(ph, 'ans');
---	return self._last;
+	
+	ret = par("^^", last, ret);
+	
+	if ret == nil then
+		return r -- hack?
+	end
+	
+	return ret
 end
 
 function phrase_save(self, name, h, need)
