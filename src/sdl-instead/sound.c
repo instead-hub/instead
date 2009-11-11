@@ -193,9 +193,11 @@ void snd_play(void *chunk, int channel)
 	if (!sound_on)
 		return;
 	if (!chunk)
-		return;	
+		return;		
 	if (channel >= MIX_CHANNELS)
 		channel %= MIX_CHANNELS;
+	if (channel < 0)
+		channel = -1;	
 	Mix_PlayChannel(channel, (Mix_Chunk*)chunk, 0);
 }
 
