@@ -719,7 +719,7 @@ street = room {
 From version 1.0.0 the interpreter can compose picture from base image and overlays:
 
 {{{
-pic = 'gfx/mycat.png';gfx/milk.png@120,25;gfx/fish.png@32,32'
+pic = 'gfx/mycat.png;gfx/milk.png@120,25;gfx/fish.png@32,32'
 }}}
 
 get_music() returns the current track name.
