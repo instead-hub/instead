@@ -1131,7 +1131,7 @@ char *horiz_inv(char *invstr)
 	char *p = invstr;
 	char *ns;
 	char *np;
-
+	int item = 0;
 	if (!p || !(*p))
 		return invstr;
 
@@ -1142,13 +1142,18 @@ char *horiz_inv(char *invstr)
 	while (*p) {
 		if (*p == '\n') {
 			if (p[strspn(p, " \n\t")]) {
-				*(np++) = ' ';
-				*(np++) = '|';
+				if (item) {
+					*(np++) = ' ';
+					*(np++) = '|';
+				}
 				*(np) = ' ';
+				item = 0;
 			} else
 				break;
-		} else
+		} else {
+			item = 1;
 			*np = *p;
+		}
 		p ++;
 		np ++;
 	}
@@ -1180,7 +1185,6 @@ int game_cmd(char *cmd)
 		goto inv; /* hackish? ok, yes  it is... */
 	
 	title = instead_eval("return get_title();");
-	unix_path(title);
 	if (title) {
 		snprintf(buf, sizeof(buf), "<b><c><a:look>%s</a></c></b>", title);
 		txt_layout_set(el_layout(el_title), buf);
@@ -1188,11 +1192,13 @@ int game_cmd(char *cmd)
 		txt_layout_set(el_layout(el_title), NULL);
 
 	new_place = check_new_place(title);
-
+	
 	txt_layout_size(el_layout(el_title), NULL, &title_h);
 	title_h += game_theme.font_size / 2; // todo?	
-	pict = instead_eval("return get_picture();");
 
+	pict = instead_eval("return get_picture();");
+	unix_path(pict);
+	
 	new_pict = check_new_pict(pict);
 
 	if (pict) {
