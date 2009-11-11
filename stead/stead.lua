@@ -2067,8 +2067,18 @@ function get_sound_chan()
 	return game._sound_channel
 end
 
-function set_sound(s, chan)
-	game._sound = s;
+function get_sound_loop()
+	return game._sound_loop
+end
+
+function set_sound(s, chan, loop)
+	game._sound = s;	
+	if not tonumber(loop) then
+		game._sound_loop = 1;
+	else
+		game._sound_loop = tonumber(loop);
+	end
+
 	if not tonumber(chan) then
 		game._sound_channel = -1;
 	else
