@@ -16,7 +16,7 @@ typedef void*  mus_t;
 extern void	snd_free_mus(mus_t mus);
 extern int	snd_init(int hz);
 extern int	snd_hz(void);
-extern void	snd_play(wav_t chunk, int channel);
+extern void	snd_play(wav_t chunk, int channel, int loop);
 extern void 	snd_halt_chan(int han);
 
 extern void	snd_free_wav(wav_t chunk);

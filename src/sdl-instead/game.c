@@ -1105,12 +1105,19 @@ void game_sound_player(void)
 	wav_t		w;
 	char		*snd;
 	int		chan = -1;
+	int		loop = 1;
 	
 	if (!snd_volume_mus(-1))
 		return;	
 	snd = instead_eval("return get_sound_chan()");
 	if (snd) {
 		chan = atoi(snd);
+		free(snd);
+	}
+
+	snd = instead_eval("return get_sound_loop()");
+	if (snd) {
+		loop = atoi(snd);
 		free(snd);
 	}
 	
@@ -1135,7 +1142,7 @@ void game_sound_player(void)
 	free(snd);
 	if (!w)
 		return;
-	snd_play(w, chan);
+	snd_play(w, chan, loop - 1);
 }
 
 char *horiz_inv(char *invstr)
@@ -1658,7 +1665,7 @@ int game_click(int x, int y, int action, int filter)
 		if (mouse_filter(filter))
 			return 0;
 		if (opt_click)
-			snd_play(game_theme.click, -1);
+			snd_play(game_theme.click, -1, 0);
 		game_cmd(buf);
 		return 1;
 
@@ -1681,7 +1688,7 @@ int game_click(int x, int y, int action, int filter)
 	disable_use();
 
 	if (opt_click)
-		snd_play(game_theme.click, -1);
+		snd_play(game_theme.click, -1, 0);
 		
 	game_cmd(buf);
 	return 1;
