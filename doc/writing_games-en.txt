@@ -1,6 +1,6 @@
 == 0. General information ==
 
-Game code for STEAD is written in lua (5.1), therefore it is useful to know the language, though not necessary. The engine code in lua is only ~900 lines long. And, of course it is the best documentation.
+Game code for STEAD is written in lua (5.1), therefore it is useful to know the language, though not necessary. The engine code in lua is about ~2000 lines long. And it is the best documentation.
 
 The main game window contains information about static and dynamic parts of the scene, active events and the scene picture with possible passages to other scenes (in the graphic interpreter).
 
@@ -714,6 +714,12 @@ street = room {
         nam = 'on the street',
         dsc = 'It is raining outside.',
 };
+}}}
+
+From version 1.0.0 the interpreter can compose picture from base image and overlays:
+
+{{{
+pic = 'gfx/mycat.png';gfx/milk.png@120,25;gfx/fish.png@32,32'
 }}}
 
 get_music() returns the current track name.
