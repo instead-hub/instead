@@ -109,6 +109,11 @@ void	snd_free_wav(wav_t w)
 	Mix_FreeChunk((Mix_Chunk*)w);
 }
 
+void snd_halt_chan(int han)
+{
+	Mix_HaltChannel(han);
+}
+
 Mix_Music *snd_load_mus(const char *fname)
 {
 	Mix_Music *mus;
@@ -183,13 +188,13 @@ void snd_free_mus(mus_t mus)
 	Mix_FreeMusic((Mix_Music*) mus);
 }
 
-void snd_play(void *chunk)
+void snd_play(void *chunk, int channel)
 {
 	if (!sound_on)
 		return;
 	if (!chunk)
 		return;	
-	Mix_PlayChannel(-1, (Mix_Chunk*)chunk, 0);
+	Mix_PlayChannel(channel, (Mix_Chunk*)chunk, 0);
 }
 
 void snd_done(void)
