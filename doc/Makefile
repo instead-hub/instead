@@ -3,8 +3,9 @@ include ../config.make
 
 pdf:
 	pdflatex manual.tex
+	makeindex manual.idx
 	pdflatex manual.tex
-	$(RM) manual.aux manual.log manual.toc manual.out
+	$(RM) manual.aux manual.log manual.toc manual.out manual.idx manual.ind
 clean:
 all:
 install:
