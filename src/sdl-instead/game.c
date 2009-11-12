@@ -1661,7 +1661,7 @@ int game_click(int x, int y, int action, int filter)
 		if (mouse_filter(filter))
 			return 0;
 		if (opt_click)
-			snd_play(game_theme.click, 0, 0);
+			snd_play(game_theme.click, -1, 0);
 		game_cmd(buf);
 		return 1;
 
@@ -1684,7 +1684,7 @@ int game_click(int x, int y, int action, int filter)
 	disable_use();
 
 	if (opt_click)
-		snd_play(game_theme.click, 0, 0);
+		snd_play(game_theme.click, -1, 0);
 		
 	game_cmd(buf);
 	return 1;
