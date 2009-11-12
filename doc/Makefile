@@ -5,7 +5,7 @@ pdf:
 	pdflatex manual.tex
 	makeindex manual.idx
 	pdflatex manual.tex
-	$(RM) manual.aux manual.log manual.toc manual.out manual.idx manual.ind
+	$(RM) -f manual.aux manual.log manual.toc manual.out manual.idx manual.ind manual.ilg
 clean:
 all:
 install:
