@@ -131,16 +131,19 @@ static void save_menu(void)
 
 static void games_menu(void)
 {
-	int i;
+	int i, n;
 	*menu_buff = 0;
 	sprintf(menu_buff, SELECT_GAME_MENU);
-	for (i = games_menu_from; i < games_nr && i - games_menu_from < MENU_GAMES_MAX; i ++) {
+	for (i = games_menu_from, n = 0; i < games_nr && n < MENU_GAMES_MAX; i ++) {
 		char tmp[PATH_MAX];
+		if (!games[i].name[0]) /* empty */
+			continue;
 		if (curgame_dir && !strcmp(games[i].dir, curgame_dir))
 			snprintf(tmp, sizeof(tmp), "<l><a:/resume><b>%s</b></a></l>\n", games[i].name);
 		else
 			snprintf(tmp, sizeof(tmp), "<l><a:%s>%s</a></l>\n", games[i].dir, games[i].name);
 		strcat(menu_buff, tmp);
+		n ++;
 	}	
 	if (!games_nr)
 		sprintf(menu_buff, NOGAMES_MENU, GAMES_PATH);
@@ -165,16 +168,19 @@ static void games_menu(void)
 
 static void themes_menu(void)
 {
-	int i;
+	int i, n;
 	*menu_buff = 0;
 	sprintf(menu_buff, SELECT_THEME_MENU);
-	for (i = themes_menu_from; i < themes_nr && i - themes_menu_from < MENU_THEMES_MAX; i ++) {
+	for (i = themes_menu_from, n = 0; i < themes_nr && n < MENU_THEMES_MAX; i ++) {
 		char tmp[PATH_MAX];
+		if (!themes[i].name[0]) /* empty */
+			continue;
 		if (curtheme_dir && !strcmp(themes[i].dir, curtheme_dir))
 			snprintf(tmp, sizeof(tmp), "<l><a:/resume><b>%s</b></a></l>\n", themes[i].name);
 		else
 			snprintf(tmp, sizeof(tmp), "<l><a:%s>%s</a></l>\n", themes[i].dir, themes[i].name);
 		strcat(menu_buff, tmp);
+		n ++;
 	}	
 	if (!themes_nr)
 		sprintf(menu_buff, NOTHEMES_MENU, THEMES_PATH);
