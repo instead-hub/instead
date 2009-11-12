@@ -11,6 +11,7 @@ instead (1.0.0) unstable; urgency=low
   * manual.tex by Alexander and commiters
   * default-large theme by default
   * combined images. ;)
+  * page up page down clever logic;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 3 Nov 2009 19:43:00 +0400
 
