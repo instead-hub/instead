@@ -12,7 +12,8 @@ instead (1.0.0) unstable; urgency=low
   * default-large theme by default
   * combined images. ;)
   * page up page down clever logic;
-
+  * f8/f9 - quicksave/quickload
+  
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 3 Nov 2009 19:43:00 +0400
 
 instead (0.9.3) unstable; urgency=low

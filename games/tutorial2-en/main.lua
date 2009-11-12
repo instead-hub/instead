@@ -217,7 +217,9 @@ help = room {
 	PgUp/PgDn - Scroll the active zone.^
 	Arrows left/right - Choose links in the active zone.^
 	F2 - Save game.^
-	F3 - Load game.^^
+	F3 - Load game.^
+	F8 - Quick save.^
+	F9 - Quick load.^^
 
 	Shortcuts, that depend on the chosen keyboard mode
 	(see Menu -> Settings -> Keyboard mode):^^
