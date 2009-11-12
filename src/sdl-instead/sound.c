@@ -204,19 +204,19 @@ void snd_free_mus(mus_t mus)
 	Mix_FreeMusic((Mix_Music*) mus);
 }
 
-void snd_play(void *chunk, int channel, int loop)
+int snd_play(void *chunk, int channel, int loop)
 {
 	if (!sound_on)
-		return;
+		return -1;
 	if (!chunk)
-		return;		
+		return -1;		
 	if (channel >= MIX_CHANNELS)
 		channel %= MIX_CHANNELS;
 	if (channel < 0)
 		channel = -1;
 	if (channel != -1)
 		snd_halt_chan(channel, 0);
-	Mix_PlayChannel(channel, (Mix_Chunk*)chunk, loop);
+	return Mix_PlayChannel(channel, (Mix_Chunk*)chunk, loop);
 }
 
 void snd_done(void)
