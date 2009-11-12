@@ -86,11 +86,22 @@ char *getstring(char *cmd)
 }
 
 
-char *instead_eval(char *s)
+int instead_eval(char *s)
 {
-	char *p;
-	p = getstring(s);
-	return p;
+	if (!L)
+		return -1;
+	if (dostring(L, s))
+		return -1;
+	return 0;
+}
+
+char *instead_retval(int n)
+{
+	char *s;
+	s = (char*)lua_tostring(L, -n);
+	if (s)
+		s = fromgame(s);
+	return s;
 }
 
 char *instead_cmd(char *s)
@@ -308,9 +319,22 @@ static int luaB_print (lua_State *L) {
 	return 0;
 }
 
+static int luaB_is_sound(lua_State *L) {
+	const char *chan = luaL_optstring(L, 1, NULL);
+	int c, r;
+	if (!chan)
+		c = -1;
+	else
+		c = atoi(chan);
+	r = snd_playing(c);
+	lua_pushboolean(L, (r != 0));  /* else not a number */
+	return 1;
+}
+
 static const luaL_Reg base_funcs[] = {
 	{"doencfile", luaB_doencfile},
 	{"print", luaB_print}, /* for some mystic, it is needed in win version (with -debug) */
+	{"is_sound", luaB_is_sound},
 	{NULL, NULL}
 };
 

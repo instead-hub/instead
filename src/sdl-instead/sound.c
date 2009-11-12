@@ -94,11 +94,15 @@ int snd_volume_mus(int vol)
 
 wav_t	snd_load_wav(const char *fname)
 {
+	wav_t r;
 	if (!sound_on)
 		return NULL;
 	if (!fname)
 		return NULL;
-	return (wav_t)Mix_LoadWAV(fname);
+	r = (wav_t)Mix_LoadWAV(fname);
+	if (!r)
+		fprintf(stderr,"Can't load '%s'.\n", fname);
+	return r;
 }
 
 void	snd_free_wav(wav_t w)
@@ -109,9 +113,12 @@ void	snd_free_wav(wav_t w)
 	Mix_FreeChunk((Mix_Chunk*)w);
 }
 
-void snd_halt_chan(int han)
+void snd_halt_chan(int han, int ms)
 {
-	Mix_HaltChannel(han);
+	if (ms)
+		Mix_FadeOutChannel(han, ms);
+	else
+		Mix_HaltChannel(han);
 }
 
 Mix_Music *snd_load_mus(const char *fname)
@@ -178,6 +185,15 @@ int snd_playing_mus(void)
 	if (Mix_PlayingMusic() | Mix_FadingMusic())
 		return 1;
 	return 0;
+}
+
+int snd_playing(int channel)
+{
+	if (channel >= MIX_CHANNELS)
+		channel %= MIX_CHANNELS;
+	if (channel < 0)
+		channel = -1;	
+	return Mix_Playing(channel);
 }
 
 void snd_free_mus(mus_t mus)

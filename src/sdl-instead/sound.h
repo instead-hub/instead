@@ -17,7 +17,7 @@ extern void	snd_free_mus(mus_t mus);
 extern int	snd_init(int hz);
 extern int	snd_hz(void);
 extern void	snd_play(wav_t chunk, int channel, int loop);
-extern void 	snd_halt_chan(int han);
+extern void 	snd_halt_chan(int han, int ms);
 
 extern void	snd_free_wav(wav_t chunk);
 extern wav_t	snd_load_wav(const char *fname);
@@ -28,5 +28,6 @@ extern int 	snd_volume_mus(int vol);
 extern	void	snd_done(void);
 extern int 	snd_vol_from_pcn(int v);
 extern int 	snd_vol_to_pcn(int v);
+extern int 	snd_playing(int channel);
 
 #endif
