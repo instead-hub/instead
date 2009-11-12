@@ -1979,7 +1979,7 @@ static int select_ref(int prev, int last)
 		elem = el(sel_el);
 	}
 	if (last) {
-		if (!(xref = get_xref(elem->id, prev)))
+		if (!(xref = get_xref(elem->id, !prev)))
 			return -1;
 	} else if (xref) {
 		if (prev) {
@@ -2107,11 +2107,7 @@ int game_loop(void)
 					menu_toggle();
 			} else if (!is_key(&ev, "tab")) {
 				select_frame(shift_pressed);
-			} /*else if (!is_key(&ev, "home") || !is_key(&ev, "[7]")) {
-				select_ref(0, 1);
-			} else if (!is_key(&ev, "end") || !is_key(&ev, "[1]")) {
-				select_ref(1, 1);
-			} */else if (!is_key(&ev, "up") || !is_key(&ev, "down") ||
+			} else if (!is_key(&ev, "up") || !is_key(&ev, "down") ||
 					!is_key(&ev, "[8]") || !is_key(&ev, "[2]")) {
 		
 				int lm;
@@ -2132,6 +2128,29 @@ int game_loop(void)
 					}
 				} else
 					(prev)?game_scroll_up(1):game_scroll_down(1);
+			} else if (!is_key(&ev, "page up") || !is_key(&ev, "[9]") || 
+					!is_key(&ev, "page down") || !is_key(&ev, "[3]")) {
+				int lm;
+				int prev = !is_key(&ev, "page up") || !is_key(&ev, "[9]");
+				
+				if (opt_kbd == KBD_INVERSE)
+					lm = (alt_pressed || shift_pressed);
+				else
+					lm = (!alt_pressed && !shift_pressed);
+				if (menu_shown || lm) {
+					if (select_ref(prev, 0) || select_ref(prev, 1)) {
+						if (opt_kbd == KBD_SMART) {
+							(prev)?game_scroll_pup():game_scroll_pdown();
+							select_ref(!prev, 1);
+						} else
+							select_ref(prev, 1);
+					}
+				} else {
+					if (prev)
+						game_scroll_pup();
+					else
+						game_scroll_pdown();
+				}
 			} else if (!is_key(&ev, "left") || !is_key(&ev, "[4]")) {
 				select_ref(1, 0);
 			} else if (!is_key(&ev, "right") || !is_key(&ev, "[6]")) {
@@ -2140,10 +2159,6 @@ int game_loop(void)
 				scroll_pup(el_scene);
 			} else if (!is_key(&ev, "space") && !menu_shown) {
 				scroll_pdown(el_scene);
-			} else if ((!is_key(&ev, "page up") || !is_key(&ev, "[9]")) && !menu_shown) {
-				game_scroll_pup();
-			} else if ((!is_key(&ev, "page down") || !is_key(&ev, "[3]")) && !menu_shown) {
-				game_scroll_pdown();
 			} else if (alt_pressed && !is_key(&ev, "q")) {
 				break;
 			} else if (alt_pressed &&
