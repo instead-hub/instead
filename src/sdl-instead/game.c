@@ -2084,9 +2084,9 @@ int game_loop(void)
 			} if (!is_key(&ev, "f3") && curgame_dir) {
 				mouse_reset();
 				game_menu(menu_load);
-			} if (!is_key(&ev, "f8") && curgame_dir) {
+			} if (!is_key(&ev, "f8") && curgame_dir && !menu_shown) {
 				game_save(9);
-			} if (!is_key(&ev, "f9") && curgame_dir) {
+			} if (!is_key(&ev, "f9") && curgame_dir && !menu_shown) {
 				mouse_reset();
 				game_select(curgame_dir);
 				game_load(9);
