@@ -124,7 +124,7 @@ int main(int argc, char **argv)
 	if (opt_theme)
 		game_theme_select(opt_theme);
 	if (!curtheme_dir)
-		game_theme_select(FIRST_THEME);
+		game_theme_select(DEFAULT_THEME);
 	
 	// Initialize SDL
 	if (gfx_init() < 0)
