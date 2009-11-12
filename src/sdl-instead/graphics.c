@@ -1955,16 +1955,18 @@ void txt_box_size(textbox_t tbox, int *w, int *h)
 
 void txt_box_scroll_next(textbox_t tbox, int disp)
 {
-	int off;
+	int off, h;
 	struct textbox *box = (struct textbox *)tbox;
 	struct line  *line = box->line;
 	if (!line)
 		return;
 
-	if (box->lay->h - box->off < box->h)
+	txt_layout_real_size(box->lay, NULL, &h);
+	
+	if (h - box->off < box->h)
 		return;
 
-	off = box->lay->h - box->off - box->h;
+	off = h - box->off - box->h;
 	if (disp > off)
 		disp = off;
 	

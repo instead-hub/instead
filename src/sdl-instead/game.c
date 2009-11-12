@@ -2141,9 +2141,9 @@ int game_loop(void)
 					if (select_ref(prev, 0) || select_ref(prev, 1)) {
 						if (opt_kbd == KBD_SMART) {
 							(prev)?game_scroll_pup():game_scroll_pdown();
-							select_ref(!prev, 1);
+							select_ref(prev, 0);
 						} else
-							select_ref(prev, 1);
+							select_ref(!prev, 0);
 					}
 				} else {
 					if (prev)
