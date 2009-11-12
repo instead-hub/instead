@@ -2015,7 +2015,7 @@ function get_title()
 end
 
 function get_music()
-	return game._music;
+	return game._music, game._music_loop;
 end
 
 function get_music_loop()
@@ -2059,8 +2059,14 @@ function is_music()
 	return game._music ~= nil and game._music_loop ~= -1
 end
 
+if is_sound == nil then
+	function is_sound()
+		return false -- sdl-instead export own function
+	end
+end
+
 function get_sound()
-	return game._sound;
+	return game._sound, game._sound_channel, game._sound_loop;
 end
 
 function get_sound_chan()

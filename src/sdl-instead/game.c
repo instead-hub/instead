@@ -67,7 +67,6 @@ int game_select(const char *name)
 	chdir(game_cwd);
 	for (i = 0; i<games_nr; i ++) {
 		if (!strcmp(games[i].dir, name)) {
-			char *p;
 			instead_done();
 			if (instead_init())
 				return -1;
@@ -75,9 +74,7 @@ int game_select(const char *name)
 				return -1;
 			if (instead_load(MAIN_FILE))
 				return -1;
-			p = instead_eval("game:ini()");
-			if (p)
-				free(p);
+			instead_eval("game:ini()");
 			curgame_dir = games[i].dir;
 			return 0;
 		}
@@ -993,7 +990,8 @@ static void dec_music(void *data)
 	char *mus;
 	if (!curgame_dir)
 		return;
-	mus = instead_eval("return dec_music_loop()");
+	instead_eval("return dec_music_loop()");
+	mus = instead_retval(1);
 	if (!mus)
 		return;
 	if (atoi(mus) == -1)
@@ -1015,23 +1013,21 @@ void game_music_player(void)
 		return;
 	if (!opt_music)
 		return;
-		
-	mus = instead_eval("return get_music_loop()");
-
+	instead_eval("return get_music()");
+	mus = instead_retval(1);
 	if (mus) {
 		loop = atoi(mus);
 		free(mus);
 	} else
 		loop = -1;
 		
-	mus = instead_eval("return get_music()");
+	mus = instead_retval(2);
 	unix_path(mus);
 	
 	if (mus && loop == -1) { /* disabled, 0 - forever, 1-n - loops */
 		free(mus);
 		mus = NULL;
 	}
-	
 	if (!mus) {
 		if (last_music) {
 			game_stop_mus(500);
@@ -1109,31 +1105,29 @@ void game_sound_player(void)
 	
 	if (!snd_volume_mus(-1))
 		return;	
-	snd = instead_eval("return get_sound_chan()");
+	instead_eval("return get_sound()");
+
+	snd = instead_retval(1);
+	if (snd) {
+		loop = atoi(snd);
+		free(snd);
+	}
+
+	snd = instead_retval(2);
 	if (snd) {
 		chan = atoi(snd);
 		free(snd);
 	}
 
-	snd = instead_eval("return get_sound_loop()");
-	if (snd) {
-		loop = atoi(snd);
-		free(snd);
-	}
-	
-	snd = instead_eval("return get_sound()");
+	snd = instead_retval(3);
 	if (!snd) {
 		if (chan != -1) {
 			/* halt channel */
-			snd_halt_chan(chan);
+			snd_halt_chan(chan, 500);
 		}
 		return;
 	}	
-	do { /* reset sound */
-		char *p = instead_eval("set_sound(nil, -1)");
-		if (p)
-			free(p);
-	} while(0);
+	instead_eval("set_sound(nil, -1)");
 	
 	unix_path(snd);
 	w = sound_find(snd);
@@ -1203,7 +1197,8 @@ int game_cmd(char *cmd)
 	if (!cmdstr) 
 		goto inv; /* hackish? ok, yes  it is... */
 	
-	title = instead_eval("return get_title();");
+	instead_eval("return get_title();");
+	title = instead_retval(1);
 	if (title) {
 		snprintf(buf, sizeof(buf), "<b><c><a:look>%s</a></c></b>", title);
 		txt_layout_set(el_layout(el_title), buf);
@@ -1215,7 +1210,8 @@ int game_cmd(char *cmd)
 	txt_layout_size(el_layout(el_title), NULL, &title_h);
 	title_h += game_theme.font_size / 2; // todo?	
 
-	pict = instead_eval("return get_picture();");
+	instead_eval("return get_picture();");
+	pict = instead_retval(1);
 	unix_path(pict);
 	
 	new_pict = check_new_pict(pict);
@@ -1665,7 +1661,7 @@ int game_click(int x, int y, int action, int filter)
 		if (mouse_filter(filter))
 			return 0;
 		if (opt_click)
-			snd_play(game_theme.click, -1, 0);
+			snd_play(game_theme.click, 0, 0);
 		game_cmd(buf);
 		return 1;
 
@@ -1688,7 +1684,7 @@ int game_click(int x, int y, int action, int filter)
 	disable_use();
 
 	if (opt_click)
-		snd_play(game_theme.click, -1, 0);
+		snd_play(game_theme.click, 0, 0);
 		
 	game_cmd(buf);
 	return 1;
