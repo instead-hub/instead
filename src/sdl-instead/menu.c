@@ -362,7 +362,7 @@ int game_menu_act(const char *a)
 //		free_last();
 		game_select(curgame_dir);
 		game_menu_box(0, NULL);
-		instead_eval("game:ini()");
+		instead_eval("game:ini()"); instead_clear();
 		game_cmd("look");
 		s = game_save_path(0, 0);
 		if (s && !access(s, R_OK) && opt_autosave)
