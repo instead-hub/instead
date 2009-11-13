@@ -74,7 +74,7 @@ int game_select(const char *name)
 				return -1;
 			if (instead_load(MAIN_FILE))
 				return -1;
-			instead_eval("game:ini()");
+			instead_eval("game:ini()"); instead_clear();
 			curgame_dir = games[i].dir;
 			return 0;
 		}
@@ -309,6 +309,11 @@ int game_save(int nr)
 		p = instead_cmd(cmd);
 		if (p)
 			free(p);
+		if (!instead_bretval(1)) {
+			instead_clear();
+			return -1;
+		}
+		instead_clear();
 		return 0;
 	}
 	return -1;
@@ -991,7 +996,8 @@ static void dec_music(void *data)
 	if (!curgame_dir)
 		return;
 	instead_eval("return dec_music_loop()");
-	mus = instead_retval(1);
+	mus = instead_retval(0); 
+	instead_clear();
 	if (!mus)
 		return;
 	if (atoi(mus) == -1)
@@ -1021,9 +1027,10 @@ void game_music_player(void)
 	} else
 		loop = -1;
 		
-	mus = instead_retval(2);
+	mus = instead_retval(0);
 	unix_path(mus);
-	
+	instead_clear();
+
 	if (mus && loop == -1) { /* disabled, 0 - forever, 1-n - loops */
 		free(mus);
 		mus = NULL;
@@ -1107,19 +1114,21 @@ void game_sound_player(void)
 		return;	
 	instead_eval("return get_sound()");
 
-	snd = instead_retval(1);
+	snd = instead_retval(2);
 	if (snd) {
 		loop = atoi(snd);
 		free(snd);
 	}
 
-	snd = instead_retval(2);
+	snd = instead_retval(1);
 	if (snd) {
 		chan = atoi(snd);
 		free(snd);
 	}
 
-	snd = instead_retval(3);
+	snd = instead_retval(0); 
+	instead_clear();
+
 	if (!snd) {
 		if (chan != -1) {
 			/* halt channel */
@@ -1127,7 +1136,7 @@ void game_sound_player(void)
 		}
 		return;
 	}	
-	instead_eval("set_sound(nil, -1)");
+	instead_eval("set_sound(nil, -1)"); instead_clear();
 	
 	unix_path(snd);
 	w = sound_find(snd);
@@ -1189,7 +1198,7 @@ int game_cmd(char *cmd)
 	char 		*pict = NULL;
 	img_t		oldscreen = NULL;
 
-	cmdstr = instead_cmd(cmd);
+	cmdstr = instead_cmd(cmd); instead_clear();
 //		goto err;
 	game_music_player();	
 	game_sound_player();
@@ -1197,8 +1206,10 @@ int game_cmd(char *cmd)
 	if (!cmdstr) 
 		goto inv; /* hackish? ok, yes  it is... */
 	
-	instead_eval("return get_title();");
-	title = instead_retval(1);
+	instead_eval("return get_title();"); 
+	title = instead_retval(0); 
+	instead_clear();
+
 	if (title) {
 		snprintf(buf, sizeof(buf), "<b><c><a:look>%s</a></c></b>", title);
 		txt_layout_set(el_layout(el_title), buf);
@@ -1211,7 +1222,9 @@ int game_cmd(char *cmd)
 	title_h += game_theme.font_size / 2; // todo?	
 
 	instead_eval("return get_picture();");
-	pict = instead_retval(1);
+	pict = instead_retval(0);
+	instead_clear();
+
 	unix_path(pict);
 	
 	new_pict = check_new_pict(pict);
@@ -1252,7 +1265,7 @@ int game_cmd(char *cmd)
 		el(el_spic)->p.p = NULL;
 	}
 
-	waystr = instead_cmd("way");	
+	waystr = instead_cmd("way"); instead_clear();
 
 	if (waystr) {
 		waystr[strcspn(waystr,"\n")] = 0;
@@ -1330,7 +1343,7 @@ int game_cmd(char *cmd)
 	el_draw(el_scene);
 	
 inv:
-	invstr = instead_cmd("inv");
+	invstr = instead_cmd("inv"); instead_clear();
 
 	if (invstr && game_theme.inv_mode == INV_MODE_HORIZ) {
 		invstr = horiz_inv(invstr);
