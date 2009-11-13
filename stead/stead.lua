@@ -1447,7 +1447,7 @@ function game_save(self, name, file)
 end
 
 function game_load(self, name) 
-	if name == nil or not isEnableSave() then
+	if name == nil then
 		return nil, false
 	end
 	local f, err = loadfile(name);

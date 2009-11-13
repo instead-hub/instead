@@ -75,11 +75,12 @@ static void load_menu(void)
 {
 	int i;
 	*menu_buff = 0;
+	/*
 	if (!game_saves_enabled()) {
 		strcat(menu_buff, DISABLED_SAVE_MENU);
 		strcat(menu_buff, CANCEL_MENU);
 		return;
-	}
+	} */
 	sprintf(menu_buff, SELECT_LOAD_MENU);
 	for (i = 0; i < MAX_SAVE_SLOTS; i ++) {
 		char tmp[PATH_MAX];
