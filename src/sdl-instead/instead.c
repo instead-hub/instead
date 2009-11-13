@@ -75,11 +75,15 @@ static int dostring (lua_State *L, const char *s) {
 char *getstring(char *cmd)
 {
 	char *s;
+	int N;
 	if (!L)
 		return NULL;
 	if (dostring(L, cmd))
 		return NULL;
-	s = (char*)lua_tostring(L, -1);
+	N = lua_gettop(L);  /* number of arguments */
+	if (N <=0)
+		return NULL;
+	s = (char*)lua_tostring(L, -N);
 	if (s)
 		s = fromgame(s);
 	return s;
@@ -95,13 +99,40 @@ int instead_eval(char *s)
 	return 0;
 }
 
+int instead_clear(void)
+{
+	int N;
+	if (!L)
+		return -1;
+	N = lua_gettop(L);  /* number of arguments */
+	lua_pop(L, N);
+	return 0;
+}
+
 char *instead_retval(int n)
 {
 	char *s;
-	s = (char*)lua_tostring(L, -n);
+	int N;
+	if (!L)
+		return NULL;
+	N = lua_gettop(L);  /* number of arguments */
+	if (n - N >= 0)
+		return NULL;
+	s = (char*)lua_tostring(L, n - N);
 	if (s)
 		s = fromgame(s);
 	return s;
+}
+
+int instead_bretval(int n)
+{
+	int N;
+	if (!L)
+		return 0;
+	N = lua_gettop(L);  /* number of arguments */
+	if (n - N >= 0)
+		return 1;
+	return lua_toboolean(L, n - N);
 }
 
 char *instead_cmd(char *s)
@@ -231,6 +262,7 @@ int instead_load(char *game)
 	if (fromcp)
 		free(fromcp);
 	fromcp = getstring("return game.codepage;");
+	instead_clear();
 #endif
 	return 0;
 }

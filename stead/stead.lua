@@ -1633,7 +1633,7 @@ iface = {
 			end
 		end
 		if v == false then
-			return fmt(ACTION_TEXT);
+			return fmt(ACTION_TEXT), false;
 		end
 		vv = fmt(cat(par("^^",l,ACTION_TEXT,vv),'^'));
 		if st then

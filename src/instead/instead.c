@@ -16,24 +16,33 @@ extern char *fromgame(char *s);
 char *getstring(char *cmd)
 {
 	char *s;
+	int N;
 	if (luaL_dostring(L, cmd)) {
 		fprintf(stderr,"Error: %s\n", lua_tostring(L, -1));
 		exit(1);
 	}
-	s = (char*)lua_tostring(L, -1);
+	N = lua_gettop(L); 
+	if (N <= 0)
+		return NULL;
+	s = (char*)lua_tostring(L, -N);
 	if (s)
 		s = fromgame(s);
+	lua_pop(L, N);
 	return s;
 }
 
 int luacall(char *cmd)
 {
-	int rc;
+	int rc, N;
 	if (luaL_dostring(L, cmd)) {
 		fprintf(stderr,"Error: %s\n", lua_tostring(L, -1));
 		exit(1);
 	}
+	N = lua_gettop(L); 
+	if (N <= 0)
+		return 0;
 	rc = lua_tonumber(L, -1);
+	lua_pop(L, N);
 	return rc;
 }
 
