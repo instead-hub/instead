@@ -299,6 +299,15 @@ int game_load(int nr)
 	return -1;
 }
 
+int game_saves_enabled(void)
+{
+	int rc;
+	instead_eval("return isEnableSave()");
+	rc = instead_bretval(0);
+	instead_clear();
+	return rc;
+}
+
 int game_save(int nr)
 {
 	char *s = game_save_path(1, nr);

@@ -49,6 +49,7 @@ extern void	game_menu_box(int show, const char *txt); /* show menu */
 
 extern int	game_load(int nr);
 extern int	game_save(int nr);
+extern int	game_saves_enabled(void);
 
 extern char 	*game_cfg_path(void);
 extern char 	*game_save_path(int rc, int nr);

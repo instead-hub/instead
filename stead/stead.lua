@@ -1288,6 +1288,12 @@ function game(v)
 	return v;
 end
 
+function isEnableSave()
+	if game.enable_save == nil then
+		return true
+	end
+	return call_bool(game, 'enable_save');
+end
 
 function for_each(o, n, f, fv, ...)
 	local k,v
@@ -1412,6 +1418,11 @@ end
 
 function game_save(self, name, file) 
 	local h;
+
+	if not isEnableSave() then
+		return nil, false
+	end
+
 	if file ~= nil then
 		file:write(name..".pl = '"..deref(self.pl).."'\n");
 		savemembers(file, self, name, false);
@@ -1436,7 +1447,7 @@ function game_save(self, name, file)
 end
 
 function game_load(self, name) 
-	if name == nil then
+	if name == nil or not isEnableSave() then
 		return nil, false
 	end
 	local f, err = loadfile(name);

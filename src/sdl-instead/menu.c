@@ -40,6 +40,8 @@ char *CANCEL_MENU = NULL;
 
 char *FROM_THEME = NULL;
 
+char *DISABLED_SAVE_MENU = NULL;
+
 static char  menu_buff[4096];
 
 static char *slot_name(const char *path)
@@ -73,6 +75,11 @@ static void load_menu(void)
 {
 	int i;
 	*menu_buff = 0;
+	if (!game_saves_enabled()) {
+		strcat(menu_buff, DISABLED_SAVE_MENU);
+		strcat(menu_buff, CANCEL_MENU);
+		return;
+	}
 	sprintf(menu_buff, SELECT_LOAD_MENU);
 	for (i = 0; i < MAX_SAVE_SLOTS; i ++) {
 		char tmp[PATH_MAX];
@@ -104,6 +111,11 @@ static void save_menu(void)
 {
 	int i;
 	*menu_buff = 0;
+	if (!game_saves_enabled()) {
+		strcat(menu_buff, DISABLED_SAVE_MENU);
+		strcat(menu_buff, CANCEL_MENU);
+		return;
+	}
 	sprintf(menu_buff, SELECT_SAVE_MENU);
 	for (i = 1; i < MAX_SAVE_SLOTS; i ++) {
 		char tmp[PATH_MAX];
@@ -523,6 +535,7 @@ static void lang_free(void)
 	FREE(KBD_MODE_SCROLL);
 	FREE(CANCEL_MENU);
 	FREE(FROM_THEME);
+	FREE(DISABLED_SAVE_MENU);
 }
 
 static int lang_ok(void)
@@ -533,7 +546,7 @@ static int lang_ok(void)
 		CUSTOM_THEME_MENU && OWN_THEME_MENU && SELECT_GAME_MENU && SELECT_THEME_MENU &&
 		SAVED_MENU && NOGAMES_MENU && NOTHEMES_MENU && QUIT_MENU &&
 		ON && OFF && KBD_MODE_LINKS && KBD_MODE_SMART && KBD_MODE_SCROLL && CANCEL_MENU &&
-		FROM_THEME)
+		FROM_THEME && DISABLED_SAVE_MENU)
 		return 0;
 	return -1;
 }	
@@ -566,6 +579,7 @@ struct parser lang_parser[] = {
 	{ "KBD_MODE_SCROLL", parse_esc_string, &KBD_MODE_SCROLL },
 	{ "CANCEL_MENU", parse_esc_string, &CANCEL_MENU },
 	{ "FROM_THEME", parse_esc_string, &FROM_THEME },
+	{ "DISABLED_SAVE_MENU", parse_esc_string, &DISABLED_SAVE_MENU },
 	{ NULL,  },
 };
 
