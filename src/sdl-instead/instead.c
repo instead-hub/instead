@@ -116,6 +116,7 @@ char *instead_retval(int n)
 	if (!L)
 		return NULL;
 	N = lua_gettop(L);  /* number of arguments */
+/*	fprintf(stderr,"%d\n", N); */
 	if (n - N >= 0)
 		return NULL;
 	s = (char*)lua_tostring(L, n - N);
