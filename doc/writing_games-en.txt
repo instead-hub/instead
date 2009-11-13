@@ -390,7 +390,7 @@ In STEAD several functions are defined, that return some frequently used objects
  * objs() returns the list of objects of the current scene; (from 0.8.5 it has an optional paremeter — the scene for which to return objects;
  * ways() returns the list of passages from the current scene; (from 0.8.5 has an optional paremeter — the scene for which to return the list);
  * me() returns the player object;
- * here() returns the current scene; (from 0.8.5 another function where() returns the current scene as a string-object name, not the object itself)
+ * here() returns the current scene; (from 0.8.5 another function where(obj) returns the scene where is object placed. Works only if it was placed with put/drop/move).
  * from() returns an object from a previous scene;
 
 Combining those functions with “add” and “del” methods one can dynamically alter the scene, for example:
@@ -1028,7 +1028,7 @@ scr.gfx.x, scr.gfx.y, scr.gfx.w, scr.gfx.h = coordinates, width and height of th
 
 win.gfx.h - synonymous to scr.gfx.h (for compatibility)
 
-scr.gfx.mode = layout mode (string “fixed”, “embedded” or “float”). Sets the mode for the picture. If “embedded”, the picture is part of the main window, win.x, win.y and win.w are ignored. If “float”, the picture is placed in the coordinates (win.x, win.y) and downscaled to win.w by win.h if larger. If “fixed”, the picture is part of the main window as in “embedded”, but stays above the text and is not scrolled with it.
+scr.gfx.mode = layout mode (string “fixed”, “embedded” or “float”). Sets the mode for the picture. If “embedded”, the picture is part of the main window, scr.gfx.x, scr.gfx.y and scr.gfx.w are ignored. If “float”, the picture is placed in the coordinates (scr.gfx.x, scr.gfx.y) and downscaled to scr.gfx.w by scr.gfx.h if larger. If “fixed”, the picture is part of the main window as in “embedded”, but stays above the text and is not scrolled with it.
 
 win.x, win.y, win.w, win.h = coordinates, width and height of the main wiindow. — the area with the scene description (numbers)
 
