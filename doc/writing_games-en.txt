@@ -269,9 +269,8 @@ As we see, the handlers can return two values: the string and the status. In our
 The player may use an inventory object on other objects. In this case “use” handler is invoked for the object in the inventory and “used” for the other one.
 
 For example:
-/* Translator's note: replaced “knife” with “knif” */
 {{{
-knif = obj {
+knife = obj {
 	nam = 'knife',
 	dsc = 'There is a {knife} on the table',
 	inv = 'Sharp!',
@@ -283,7 +282,7 @@ tabl = obj {
 	nam = 'table',
 	dsc = 'There is a {table} in the room.',
 	act = 'Hm... Just a table...',
-	obj = { 'aple', 'knif' },
+	obj = { 'aple', 'knife' },
 	used = 'You try to do something with the table...',
 };
 }}}
@@ -293,7 +292,7 @@ If “use” returns “false” status, then “used” is not invoked (if ther
 
 Example:
 {{{
-knif = obj {
+knife = obj {
 	nam = 'knife',
 	dsc = 'There is a knife on the {table}',
 	inv = 'Sharp!',
@@ -357,7 +356,7 @@ List methods are: “add”, “del”, “look”, “srch”. The most used ar
 
 Starting from version 0.8 the object itself may be a parameter of “add”. Also from this version an optional second parameter is added — position in list. From 0.8 you also can modify the list by the index with the “set” method. For example:
 {{{
-objs():set('knif',1);
+objs():set('knife',1);
 }}}
 
 You've seen the above example with the eaten apple. It used inv():del('aple');
@@ -366,18 +365,18 @@ You've seen the above example with the eaten apple. It used inv():del('aple');
 
 Similarly, “tak” may be implemented this way:
 {{{
-knif = obj {
+knife = obj {
 	nam = 'knife',
 	dsc = 'There is a {knife} on the table,
 	inv = 'Sharp!',
 	act = function(s)
-		objs():del('knif');
-		inv():add('knif');
+		objs():del('knife');
+		inv():add('knife');
 	end,
 };
 }}}
 
-Apart from adding and deleting objects from lists you may switch them on and off  with “enable()” and “disable()” methods. E.g. “knif:disable()”. This way the object “knif” will disappear from the scene description, but may be switched on later with “knif:enable()”.
+Apart from adding and deleting objects from lists you may switch them on and off  with “enable()” and “disable()” methods. E.g. “knife:disable()”. This way the object “knife” will disappear from the scene description, but may be switched on later with “knife:enable()”.
 
 “enable_all()” and “disable_all()” methods works (from 0.9.1) with embedded objects (objects in object).
 
@@ -434,7 +433,7 @@ have() — checks if the object is in the inventory by object name or by object 
 {{{
 ...
 act = function(s)
-	if have('knif') then
+	if have('knife') then
 		return 'But I\'ve got a knife!';
 	end
 end
@@ -461,7 +460,7 @@ From 0.8.6 has an optional second parameter — the scene.
 
 drop(o) — drop an object from the inventory to the scene:
 
-	drop('knif');
+	drop('knife');
 
 From 0.8 there's a function “dropf” similar to “drop”, but adding the object to the list start. From 0.8.5 there's an optional second parameter — a room where to place the object. Also from >=0.8.5 there's a “put” function that does not remove the object from the inventory.
 
@@ -469,7 +468,7 @@ From version 0.8.9 there's a function remove(o, [from]), which deletes an object
 
 take(o) — take an object.
 
-	take('knif');
+	take('knife');
 
 From 0.8.5 has optional second parameter — a room where to take the object from.
 
@@ -887,11 +886,11 @@ You can create a game with several characters and switch between them from time 
 === Using the first parameter of a handler ===
 Code example.
 {{{
-knif = obj {
+knife = obj {
         nam = 'stone',
         dsc = 'There is a {stone} at the edge.',
         act = function()
-                objs():del('knif');
+                objs():del('knife');
                 return 'I pushed the stone, it fell and flew down...';
         end
 }}}
