@@ -12,9 +12,9 @@ function cctx()
 	return stead.cctx[stead.call_top];
 end
 
-function callpush()
+function callpush(v)
 	stead.call_top = stead.call_top + 1;
-	stead.cctx[stead.call_top] = { txt = nil, self = nil };
+	stead.cctx[stead.call_top] = { txt = nil, self = v };
 end
 
 function callpop()
@@ -586,9 +586,7 @@ function call(v, n, ...)
 		return v[n];
 	end 
 	if type(v[n]) == 'function' then
-		callpush()
-		pclr()
-		self(v)
+		callpush(v)
 		local a,b = v[n](v, unpack(arg));
 		if a == nil and b == nil then
 			a = pget()
@@ -614,9 +612,7 @@ function call_bool(v, n, ...)
 	end
 	
 	if type(v[n]) == 'function' then
-		callpush()
-		pclr()
-		self(v)
+		callpush(v)
 		local r = v[n](v, unpack(arg));
 		callpop();
 		return r;
