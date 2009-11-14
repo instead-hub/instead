@@ -1290,7 +1290,8 @@ function game(v)
 end
 
 function isEnableSave()
-	if game.enable_save == nil then
+	if game.enable_save == nil or get_autosave() then
+		game.autosave = false -- we have only one try for autosave ;)
 		return true
 	end
 	return call_bool(game, 'enable_save');
@@ -2075,6 +2076,15 @@ if is_sound == nil then
 	function is_sound()
 		return false -- sdl-instead export own function
 	end
+end
+
+function autosave(slot)
+	game.autosave = true;
+	game.autosave_slot = slot;
+end
+
+function get_autosave()
+	return game.autosave, game.autosave_slot
 end
 
 function get_sound()
