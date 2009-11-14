@@ -1,8 +1,12 @@
+INSTEAD 1.0.0
+=============
+
 WARNING! For successfull building you must install these development packages (names may vary in your distribution):
 
 	sdl, sdl-mixer, sdl-image, sdl-ttf, lua5.1
 
 0) Prepare for building
+=======================
 
 Unpack source package with this command:
 	$ tar xzvf instead_<version>.tar.gz
@@ -12,26 +16,31 @@ Change current dir to project's build dir:
 
 There are several ways to build package.
 
-1) On Debian based systems you can build deb package:
+1) On Debian based systems you can build deb package
+====================================================
 	$ sudo apt-get install liblua5.1-dev libreadline-dev libsdl1.2-dev libsdl-ttf2.0-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libreadline5-dev
 	$ apt-get install build-essential
 	$ debuild
 	$ cd ..
 	$ sudo dpkg -i instead_<version>.deb		
 
-2) On gentooo or arch linux please copy-paste PKGBUILD or EBUILD from here:
-	http://code.google.com/p/instead/wiki/
-	And, I think, you have enough skills to build package yourself. ;)
+2) On gentooo or arch linux 
+===========================
+Please copy-paste PKGBUILD or EBUILD from here: http://code.google.com/p/instead/wiki/
+And, I think, you have enough skills to build package yourself. ;)
 
-3) For other distributions you have a two choices:
-	1) try run ./configure.sh and follow instructions
+3) For other distributions 
+==========================
+You have a two choices:
+	a) try run ./configure.sh and follow instructions
 or
-	2) do all things manually
+	b) do all things manually
 
 4) Manual build
+===============
 
-To build game, that runs just from build dir use Rules.make.standalone.
-
+To build game, that runs just from build dir use Rules.make.standalone
+----------------------------------------------------------------------
 	$ rm -f Rules.make
 	$ ln -s Rules.make.standalone Rules.make
 	$ make clean
@@ -40,10 +49,9 @@ To build game, that runs just from build dir use Rules.make.standalone.
 If build process has failed check Rules.make.standalone and make changes if needed.
 
 	$ ./sdl-instead
-	Enjoy. 
 
-To build game for system install.
-
+To build game for system install
+--------------------------------
 	$ rm -f Rules.make
 	$ ln -s Rules.make.system Rules.make
 	$ make clean
@@ -54,5 +62,5 @@ If build process has failed check Rules.make.system and make changes if needed.
 	$ sudo make install
 
 	$ sdl-instead
-	Enjoy.
 
+Enjoy.
