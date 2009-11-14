@@ -3,15 +3,15 @@ instead (1.0.0) unstable; urgency=low
   * another mouse buttons -- escape
   * escape as use cancel
   * lifeoff from life method
-  * bug in anigif logic
-  * bug in img()
+  * bug fix in anigif logic
+  * bug fix in img()
   * more clever linebreaking
   * kill empty lines at end of layout
-  * typo in colortable (graphics.c) by Alexander
+  * typo in color table (graphics.c) by Alexander
   * manual.tex by Alexander and commiters
-  * default-large theme by default
-  * combined images. ;)
-  * page up page down clever logic;
+  * default-large theme is default
+  * combined images!
+  * page up, page down clever logic;
   * f8/f9 - quicksave/quickload
   * game.enable_save
   * lua stack overflow???
