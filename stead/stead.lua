@@ -1291,7 +1291,6 @@ end
 
 function isEnableSave()
 	if game.enable_save == nil or get_autosave() then
-		game.autosave = false -- we have only one try for autosave ;)
 		return true
 	end
 	return call_bool(game, 'enable_save');
