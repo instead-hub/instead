@@ -1444,6 +1444,7 @@ function game_save(self, name, file)
 	clearvar(_G);
 	h:flush();
 	h:close();
+	game.autosave = false; -- we have only one try for autosave
 	return nil;
 end
 
