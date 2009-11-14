@@ -1227,7 +1227,6 @@ int game_cmd(char *cmd)
 
 	game_music_player();	
 	game_sound_player();
-	game_autosave();
 
 	if (!cmdstr) 
 		goto inv; /* hackish? ok, yes  it is... */
@@ -1301,7 +1300,6 @@ int game_cmd(char *cmd)
 		txt_layout_set(el_layout(el_ways), waystr);
 		txt_layout_size(el_layout(el_ways), NULL, &ways_h);
 	} 
-
 
 	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) {
 		int off = 0;
@@ -1403,6 +1401,7 @@ inv:
 	gfx_flip();
 //	input_clear();
 err:
+	game_autosave();
 	if (err_msg) {
 		game_menu(menu_warning);
 		return -1;

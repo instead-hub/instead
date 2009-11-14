@@ -373,13 +373,15 @@ int game_menu_act(const char *a)
 		if (!curgame_dir)
 			return 0;
 //		free_last();
+
+/* remove autlosave */
+		s = game_save_path(0, 0);
+		if (s && !access(s, R_OK) && opt_autosave)
+			unlink (s);
 		game_select(curgame_dir);
 		game_menu_box(0, NULL);
 		instead_eval("game:ini()"); instead_clear();
 		game_cmd("look");
-		s = game_save_path(0, 0);
-		if (s && !access(s, R_OK) && opt_autosave)
-			unlink (s);
 		custom_theme_warn();
 	} else if (!strcmp(a,"/main")) {
 		if (restart_needed) {
