@@ -427,7 +427,7 @@ have() -- проверяет, есть ли объект в инвентаре. 
 {{{
 ...
 act = function(s)
-	if have('knfie') then
+	if have('knife') then
 		return 'Но у меня же есть нож!';
 	end
 end
