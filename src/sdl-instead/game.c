@@ -998,6 +998,21 @@ void scene_scrollbar(void)
 		el_draw(el_sup);
 }
 
+static void game_autosave(void)
+{
+	int b,r;
+	if (!curgame_dir)
+		return;
+	instead_eval("return get_autosave();");
+	b = instead_bretval(0); 
+	r = instead_iretval(1); 
+	instead_clear();
+	if (b) {
+		r = r % MAX_SAVE_SLOTS;
+		game_save(r);
+/*		instead_eval("game.autosave = false;"); instead_clear(); */
+	}
+}
 
 static void dec_music(void *data)
 {
@@ -1209,8 +1224,10 @@ int game_cmd(char *cmd)
 
 	cmdstr = instead_cmd(cmd); instead_clear();
 //		goto err;
+
 	game_music_player();	
 	game_sound_player();
+	game_autosave();
 
 	if (!cmdstr) 
 		goto inv; /* hackish? ok, yes  it is... */

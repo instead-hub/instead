@@ -136,6 +136,17 @@ int instead_bretval(int n)
 	return lua_toboolean(L, n - N);
 }
 
+int instead_iretval(int n)
+{
+	int N;
+	if (!L)
+		return 0;
+	N = lua_gettop(L);  /* number of arguments */
+	if (n - N >= 0)
+		return 0;
+	return lua_tonumber(L, n - N);
+}
+
 char *instead_cmd(char *s)
 {
 	char buf[1024];
