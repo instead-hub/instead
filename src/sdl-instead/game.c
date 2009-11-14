@@ -1010,7 +1010,7 @@ static void game_autosave(void)
 	if (b) {
 		r = r % MAX_SAVE_SLOTS;
 		game_save(r);
-		instead_eval("game.autosave = false;"); instead_clear();
+/*		instead_eval("game.autosave = false;"); instead_clear();*/
 	}
 }
 
