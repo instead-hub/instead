@@ -1420,15 +1420,16 @@ end
 function game_save(self, name, file) 
 	local h;
 
-	if not isEnableSave() then
-		return nil, false
-	end
-
 	if file ~= nil then
 		file:write(name..".pl = '"..deref(self.pl).."'\n");
 		savemembers(file, self, name, false);
 		return nil, true
 	end
+
+	if not isEnableSave() then
+		return nil, false
+	end
+
 	if name == nil then
 		return nil, false
 	end
