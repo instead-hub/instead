@@ -2132,7 +2132,8 @@ int game_loop(void)
 				if (game_click(x, y, 1, 0) == -1) 
 					break;
 			} else if (!is_key(&ev, "f1")) {
-				menu_toggle();	
+				if (!menu_shown)
+					menu_toggle();
 			} else if (!is_key(&ev, "escape")) {
 				if (use_xref)
 					disable_use();
