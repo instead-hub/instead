@@ -314,6 +314,10 @@ int game_save(int nr)
 	char cmd[PATH_MAX];
 	char *p;
 	if (s) {
+		if (nr == -1) {
+			instead_eval("autosave(-1)"); /* enable saving for -1 */
+			instead_clear();
+		}
 		snprintf(cmd, sizeof(cmd) - 1, "save %s", s);
 		p = instead_cmd(cmd);
 		if (p)
@@ -1016,17 +1020,14 @@ static void game_autosave(void)
 
 static void dec_music(void *data)
 {
-	char *mus;
+	int rc;
 	if (!curgame_dir)
 		return;
 	instead_eval("return dec_music_loop()");
-	mus = instead_retval(0); 
+	rc = instead_iretval(0); 
 	instead_clear();
-	if (!mus)
-		return;
-	if (atoi(mus) == -1)
+	if (rc == -1)
 		free_last_music();
-	free(mus);
 	snd_volume_mus(cur_vol); /* reset volume */
 }
 
@@ -1044,14 +1045,8 @@ void game_music_player(void)
 	if (!opt_music)
 		return;
 	instead_eval("return get_music()");
-	mus = instead_retval(1);
-	if (mus) {
-		loop = atoi(mus);
-		free(mus);
-	} else
-		loop = -1;
-		
 	mus = instead_retval(0);
+	loop = instead_iretval(1);
 	unix_path(mus);
 	instead_clear();
 
@@ -1138,18 +1133,8 @@ void game_sound_player(void)
 		return;	
 	instead_eval("return get_sound()");
 
-	snd = instead_retval(2);
-	if (snd) {
-		loop = atoi(snd);
-		free(snd);
-	}
-
-	snd = instead_retval(1);
-	if (snd) {
-		chan = atoi(snd);
-		free(snd);
-	}
-
+	loop = instead_iretval(2);
+	chan = instead_iretval(1);
 	snd = instead_retval(0); 
 	instead_clear();
 
