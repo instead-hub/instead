@@ -2110,9 +2110,11 @@ int game_loop(void)
 			} if (!is_key(&ev, "f8") && curgame_dir && !menu_shown) {
 				game_save(9);
 			} if (!is_key(&ev, "f9") && curgame_dir && !menu_shown) {
-				mouse_reset();
-				game_select(curgame_dir);
-				game_load(9);
+				if (!access(game_save_path(0, 9), R_OK)) {
+					mouse_reset();
+					game_select(curgame_dir);
+					game_load(9);
+				}	
 			} if (!is_key(&ev, "f5") && curgame_dir) {
 				mouse_reset();
 				game_cmd("look");
