@@ -380,7 +380,7 @@ int game_menu_act(const char *a)
 			unlink (s);
 		game_select(curgame_dir);
 		game_menu_box(0, NULL);
-		instead_eval("game:ini()"); instead_clear();
+//		instead_eval("game:ini()"); instead_clear();
 		game_cmd("look");
 		custom_theme_warn();
 	} else if (!strcmp(a,"/main")) {
