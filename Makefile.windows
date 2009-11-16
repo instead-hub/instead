@@ -5,7 +5,7 @@ all: config.make
 	$(MAKE) -C themes -f Makefile.windows all
 
 config.make:
-	echo > config.make
+	echo # you can define own flags here > config.make
 
 clean:
 	$(MAKE) -C src\sdl-instead clean
