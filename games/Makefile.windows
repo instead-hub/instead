@@ -1,13 +1,9 @@
 all:
 install:
-	if not exist ..\bin\games\cat mkdir ..\bin\games\cat
-	copy cat ..\bin\games\cat
-	if not exist ..\bin\games\cat\gfx mkdir ..\bin\games\cat\gfx
-	copy cat\gfx ..\bin\games\cat\gfx
-	if not exist ..\bin\games\cat\mus mkdir ..\bin\games\cat\mus
-	copy cat\mus ..\bin\games\cat\mus
 	if not exist ..\bin\games\tutorial2 mkdir ..\bin\games\tutorial2
 	copy tutorial2 ..\bin\games\tutorial2
 	if not exist ..\bin\games\tutorial2-en mkdir ..\bin\games\tutorial2-en
 	copy tutorial2-en ..\bin\games\tutorial2-en
+	if not exist ..\bin\games\tutorial2-es mkdir ..\bin\games\tutorial2-es
+	copy tutorial2-es ..\bin\games\tutorial2-es
 clean:
