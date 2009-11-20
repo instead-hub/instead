@@ -15,6 +15,7 @@ extern char *getpath(const char *d, const char *n);
 extern char *strip(char *s);
 char *getfilepath(const char *d, const char *n);
 
+extern char *lookup_tag(const char *fname, const char *tag, const char *comm);
 extern int parse_esc_string(const char *v, void *data);
 extern int parse_string(const char *v, void *data);
 extern int parse_int(const char *v, void *data);

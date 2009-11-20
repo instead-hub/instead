@@ -461,22 +461,14 @@ static int is_theme(const char *path, const char *n)
 
 static char *theme_name(const char *path, const char *d_name)
 {
-	int brk = 0;
+	char *l;	
 	char *p = getfilepath(path, THEME_FILE);
-	if (p) {
-		char *l; char line[1024];
-		FILE *fd = fopen(p, "r");
-		free(p);
-		if (!fd)
-			goto err;
-
-		while ((l = fgets(line, sizeof(line), fd)) && !brk) {
-			l = parse_tag(l, "$Name:", ";", &brk);
-			if (l)
-				return l;
-		}
-		fclose(fd);
-	}
+	if (!p)
+		goto err;
+	l = lookup_tag(p, "$Name:", ";");
+	free(p);
+	if (l)
+		return l;
 err:
 	return strdup(d_name);
 }
