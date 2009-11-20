@@ -1,3 +1,11 @@
+instead (1.0.1) unstable; urgency=low
+
+  * bug: no fclose :(
+  * i18n + esp lang and tutorial
+  * cat removed
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 20 Nov 2009 13:33:36 +0300
+
 instead (1.0.0) unstable; urgency=low
 
   * another mouse buttons -- escape
