@@ -239,6 +239,25 @@ void unix_path(char *path)
 	return;
 }
 
+char *lookup_tag(const char *fname, const char *tag, const char *comm)
+{
+	int brk = 0;
+	char *l; char line[1024];
+	FILE *fd = fopen(fname, "r");
+	if (!fd)
+		return NULL;
+
+	while ((l = fgets(line, sizeof(line), fd)) && !brk) {
+		l = parse_tag(l, tag, comm, &brk);
+		if (l) {
+			fclose(fd);
+			return l;
+		}
+	}
+	fclose(fd);
+	return NULL;
+}
+
 char *parse_tag(char *line, const char *tag, const char *comm, int *brk)
 {
 	char *l = line;

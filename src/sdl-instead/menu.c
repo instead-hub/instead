@@ -47,21 +47,17 @@ static char  menu_buff[4096];
 static char *slot_name(const char *path)
 {
 	struct stat 	st;
-	int brk = 0;
-	char *l; char line[1024];
-	FILE *fd = fopen(path, "r");
+	char *l;
+	FILE *fd;
+	l = lookup_tag(path, "$Name:", "--");
+	if (l) {
+		char *s = fromgame(l);
+		free(l);
+		return s;
+	}
+	fd = fopen(path, "r");
 	if (!fd)
 		return NULL;
-
-	while ((l = fgets(line, sizeof(line), fd)) && !brk) {
-		l = parse_tag(l, "$Name:", "--", &brk);
-		if (l) {
-			char *s = fromgame(l);
-			free(l);
-			return s;
-		}
-	}
-	fclose(fd);
 	if (stat(path, &st))
 		return NULL;
 	l = ctime(&st.st_ctime);
@@ -619,18 +615,10 @@ static char *lang_code(const char *str)
 
 static char *lang_name(const char *path, const char *file)
 {
-	int brk = 0;
-	char *l; char line[1024];
-	FILE *fd = fopen(path, "r");
-	if (!fd)
-		goto err;
-	while ((l = fgets(line, sizeof(line), fd)) && !brk) {
-		l = parse_tag(l, "$Name:", ";", &brk);
-		if (l)
-			return l;
-	}
-	fclose(fd);
-err:	
+	char *l;
+	l = lookup_tag(path, "$Name:", ";");
+	if (l)
+		return l;
 	return lang_code(file);
 }
 
