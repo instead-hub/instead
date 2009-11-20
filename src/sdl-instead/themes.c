@@ -513,6 +513,20 @@ out:
 	return 0;
 }
 
+int themes_rename(void)
+{
+	int i;
+	char cwd[PATH_MAX];
+	getcwd(cwd, sizeof(cwd));
+	chdir(game_cwd);
+	for (i = 0; i < themes_nr; i++) {
+		FREE(themes[i].name);
+		themes[i].name = theme_name(themes[i].path, themes[i].dir);
+	}
+	chdir(cwd);
+	return 0;
+}
+
 static struct theme *theme_lookup(const char *name)
 {
 	int i;
