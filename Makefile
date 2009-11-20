@@ -27,7 +27,7 @@ tarball: clean svnclean
 	ln -sf ./ $(VERTITLE)
 	make -C doc/
 	man doc/instead.6 > doc/instead.txt
-	tar -cz --exclude fantasy --exclude $(VERTITLE)/$(VERTITLE) --exclude .svn --exclude $(ARCHIVE) -f $(ARCHIVE) $(VERTITLE)/*
+	tar -cz --exclude $(VERTITLE)/$(VERTITLE) --exclude .svn --exclude $(ARCHIVE) -f $(ARCHIVE) $(VERTITLE)/*
 	$(RM) -f $(VERTITLE)
 
 clean:
