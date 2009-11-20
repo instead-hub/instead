@@ -87,6 +87,11 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 	
+	cfg_load();
+	
+	if (!opt_lang || !opt_lang[0])
+		opt_lang = game_locale();
+	
 	if (games_sw)
 		games_lookup(games_sw);
 
@@ -99,8 +104,6 @@ int main(int argc, char **argv)
 	themes_lookup(game_local_themes_path());
 	games_lookup(game_local_games_path());
 
-	cfg_load();
-	
 	if (noauto_sw)
 		opt_autosave = 0;
 	if (window_sw)

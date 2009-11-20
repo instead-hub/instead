@@ -89,7 +89,7 @@ static char *game_name(const char *path, const char *d_name)
 	char *p = getfilepath(path, MAIN_FILE);
 	if (!p)
 		goto err;
-	l = lookup_tag(p, "$Name:", "--");
+	l = lookup_tag(p, "Name", "--");
 	free(p);
 	if (l)
 		return l;
@@ -534,8 +534,6 @@ int game_init(const char *name)
 {
 	getcwd(game_cwd, sizeof(game_cwd));
 	
-	if (!opt_lang || !opt_lang[0])
-		opt_lang = game_locale();
 	if (menu_lang_select(opt_lang) && menu_lang_select(LANG_DEF)) {
 		fprintf(stderr, "Can not load default language.\n");
 		exit(1);
