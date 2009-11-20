@@ -1,4 +1,5 @@
 #include "externals.h"
+#include "config.h"
 #include "util.h"
 
 char *getfilepath(const char *d, const char *n)
@@ -256,6 +257,19 @@ char *lookup_tag(const char *fname, const char *tag, const char *comm)
 	}
 	fclose(fd);
 	return NULL;
+}
+
+char *lookup_lang_tag(const char *fname, const char *tag, const char *comm)
+{
+	char lang_tag[1024];
+	char *l;
+	snprintf(lang_tag, sizeof(lang_tag), "$%s(%s):", tag, opt_lang);
+	l = lookup_tag(fname, lang_tag, comm);
+	if (!l) {
+		snprintf(lang_tag, sizeof(lang_tag), "$%s:", tag);
+		l = lookup_tag(fname, lang_tag, comm);
+	}
+	return l;
 }
 
 char *parse_tag(char *line, const char *tag, const char *comm, int *brk)
