@@ -49,7 +49,7 @@ static char *slot_name(const char *path)
 	struct stat 	st;
 	char *l;
 	FILE *fd;
-	l = lookup_tag(path, "$Name:", "--");
+	l = lookup_tag(path, "Name", "--");
 	if (l) {
 		char *s = fromgame(l);
 		free(l);
@@ -616,7 +616,7 @@ static char *lang_code(const char *str)
 static char *lang_name(const char *path, const char *file)
 {
 	char *l;
-	l = lookup_tag(path, "$Name:", ";");
+	l = lookup_tag(path, "Name", ";");
 	if (l)
 		return l;
 	return lang_code(file);

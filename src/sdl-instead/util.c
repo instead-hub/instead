@@ -263,12 +263,10 @@ char *lookup_lang_tag(const char *fname, const char *tag, const char *comm)
 {
 	char lang_tag[1024];
 	char *l;
-	snprintf(lang_tag, sizeof(lang_tag), "$%s(%s):", tag, opt_lang);
+	snprintf(lang_tag, sizeof(lang_tag), "%s(%s)", tag, opt_lang);
 	l = lookup_tag(fname, lang_tag, comm);
-	if (!l) {
-		snprintf(lang_tag, sizeof(lang_tag), "$%s:", tag);
-		l = lookup_tag(fname, lang_tag, comm);
-	}
+	if (!l) 
+		l = lookup_tag(fname, tag, comm);
 	return l;
 }
 
@@ -276,15 +274,17 @@ char *parse_tag(char *line, const char *tag, const char *comm, int *brk)
 {
 	char *l = line;
 	char *ns = NULL;
+	char ftag[1024];
+	snprintf(ftag, sizeof(ftag), "$%s:", tag);
 	l += strspn(l, " \t");
 	if (strncmp(l, comm, strlen(comm))) { /* non coment block */
 		*brk = 1;
 		return NULL;
 	}
 	l += strlen(comm); l += strspn(l, " \t");
-	if (strncmp(l, tag, strlen(tag)))
+	if (strncmp(l, ftag, strlen(ftag)))
 		return NULL;
-	l += strlen(tag);
+	l += strlen(ftag);
 	l += strspn(l, " \t");
 	ns = l;
 	l = find_in_esc(l, "\\$");
