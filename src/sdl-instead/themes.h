@@ -105,6 +105,7 @@ extern int 	game_default_theme(void);
 extern int 	game_theme_select(const char *name);
 
 extern int 	themes_lookup(const char *path);
+extern int 	themes_rename(void);
 extern int 	game_theme_load(const char *name);
 extern int 	game_theme_free(void);
 extern int 	game_theme_init(int w, int h);

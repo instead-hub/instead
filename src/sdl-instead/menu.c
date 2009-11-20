@@ -452,6 +452,7 @@ int game_menu_act(const char *a)
 			if (cur_lang >= langs_nr)
 				cur_lang = 0;
 		} while (menu_lang_select(langs[cur_lang].file));
+		themes_rename();
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/lang--")) {
 		do {
@@ -459,6 +460,7 @@ int game_menu_act(const char *a)
 			if (cur_lang < 0)
 			cur_lang = langs_nr - 1;
 		} while (menu_lang_select(langs[cur_lang].file));
+		themes_rename();
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a,"/quit")) {
 		return -1;
