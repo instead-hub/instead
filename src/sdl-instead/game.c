@@ -534,10 +534,6 @@ int game_init(const char *name)
 {
 	getcwd(game_cwd, sizeof(game_cwd));
 	
-	if (menu_lang_select(opt_lang) && menu_lang_select(LANG_DEF)) {
-		fprintf(stderr, "Can not load default language.\n");
-		exit(1);
-	}	
 	if (name)
 		game_err_msg(NULL);
 
