@@ -1,9 +1,5 @@
 all:
 install:
-	if not exist ..\bin\games\tutorial2 mkdir ..\bin\games\tutorial2
-	copy tutorial2 ..\bin\games\tutorial2
-	if not exist ..\bin\games\tutorial2-en mkdir ..\bin\games\tutorial2-en
-	copy tutorial2-en ..\bin\games\tutorial2-en
-	if not exist ..\bin\games\tutorial2-es mkdir ..\bin\games\tutorial2-es
-	copy tutorial2-es ..\bin\games\tutorial2-es
+	for /D %%f in (*) do ( if not exist "..\bin\games\%%f" mkdir "..\bin\games\%%f" )
+	for /D %%f in (*) do ( copy /Y %%f ..\bin\games\%%f )
 clean:
