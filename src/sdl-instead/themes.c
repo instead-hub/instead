@@ -465,7 +465,7 @@ static char *theme_name(const char *path, const char *d_name)
 	char *p = getfilepath(path, THEME_FILE);
 	if (!p)
 		goto err;
-	l = lookup_tag(p, "$Name:", ";");
+	l = lookup_lang_tag(p, "Name", ";");
 	free(p);
 	if (l)
 		return l;
