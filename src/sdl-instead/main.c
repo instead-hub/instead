@@ -6,6 +6,8 @@ extern void debug_done(void);
 
 int debug_sw = 0;
 int noauto_sw = 0;
+int nostdgames_sw = 0;
+int nostdthemes_sw = 0;
 char *game_sw = NULL;
 char *games_sw = NULL;
 char *theme_sw = NULL;
@@ -47,6 +49,10 @@ int main(int argc, char **argv)
 				theme_sw = argv[++i];
 			else
 				theme_sw = "";
+		} else if (!strcmp(argv[i], "-nostdgames")) {
+			nostdgames_sw = 1;
+		} else if (!strcmp(argv[i], "-nostdthemes")) {
+			nostdthemes_sw = 1;
 		} else if (!strcmp(argv[i], "-gamespath")) {
 			if ((i + 1) < argc)
 				games_sw = argv[++i];
@@ -100,14 +106,19 @@ int main(int argc, char **argv)
 	if (games_sw)
 		games_lookup(games_sw);
 
-	if (games_lookup(GAMES_PATH))
-			fprintf(stderr, "No games found in: %s.\n", GAMES_PATH);
+	if (!nostdgames_sw && games_lookup(GAMES_PATH))
+		fprintf(stderr, "No games found in: %s.\n", GAMES_PATH);
+
 	if (themes_sw)
 		themes_lookup(themes_sw);
-	themes_lookup(THEMES_PATH);
+
+	if (!nostdthemes_sw) {
+		themes_lookup(THEMES_PATH);
+		themes_lookup(game_local_themes_path());
+	}
 	
-	themes_lookup(game_local_themes_path());
-	games_lookup(game_local_games_path());
+	if (!nostdgames_sw)
+		games_lookup(game_local_games_path());
 
 	if (noauto_sw)
 		opt_autosave = 0;
