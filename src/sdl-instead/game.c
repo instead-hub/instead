@@ -1126,8 +1126,8 @@ void game_sound_player(void)
 		if (chan != -1) {
 			/* halt channel */
 			snd_halt_chan(chan, 500);
+			instead_eval("set_sound(nil, -1)"); instead_clear();
 		}
-		instead_eval("set_sound(nil, -1)"); instead_clear();
 		return;
 	}	
 	instead_eval("set_sound(nil, -1)"); instead_clear();
