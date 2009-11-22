@@ -216,6 +216,7 @@ int snd_play(void *chunk, int channel, int loop)
 		channel = -1;
 	if (channel != -1)
 		snd_halt_chan(channel, 0);
+	snd_volume_mus(snd_volume_mus(-1)); // SDL hack?
 	return Mix_PlayChannel(channel, (Mix_Chunk*)chunk, loop);
 }
 
