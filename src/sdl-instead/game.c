@@ -1122,12 +1122,12 @@ void game_sound_player(void)
 	chan = instead_iretval(1);
 	snd = instead_retval(0); 
 	instead_clear();
-
 	if (!snd) {
 		if (chan != -1) {
 			/* halt channel */
 			snd_halt_chan(chan, 500);
 		}
+		instead_eval("set_sound(nil, -1)"); instead_clear();
 		return;
 	}	
 	instead_eval("set_sound(nil, -1)"); instead_clear();
