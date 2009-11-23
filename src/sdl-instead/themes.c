@@ -217,7 +217,7 @@ int theme_img_scale(img_t *p)
 {
 	img_t pic;
 	float v = game_theme.scale;
-	if (!p || !*p)
+	if (!p || !*p || v == 1.0f)
 		return 0;
 	pic = gfx_scale(*p, v, v); 
 	if (!pic)
