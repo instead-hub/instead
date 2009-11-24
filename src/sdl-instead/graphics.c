@@ -1906,14 +1906,14 @@ void txt_box_norm(textbox_t tbox)
 {
 	struct textbox *box = (struct textbox *)tbox;
 	struct line  *line;
+	int off = box->off;
+
 	if (!box->lay)
 		return;
 	for (line = box->lay->lines; line; line = line->next) {
-		if (box->off < line->h) {
-			box->line = line;
+		if (off < line->h)
 			break;
-		}	
-		box->off -= line->h;
+		off -= line->h;
 	}
 	box->line = box->lay->lines;
 }
