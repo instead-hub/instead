@@ -1,3 +1,10 @@
+instead (1.0.2) unstable; urgency=low
+
+  * fix in box normalize
+  * fix in scaling
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 24 Nov 2009 11:00:20 +0300
+
 instead (1.0.1) unstable; urgency=low
 
   * bug: no fclose :(
