@@ -56,6 +56,8 @@ extern char 	*game_save_path(int rc, int nr);
 
 extern char 	*game_locale(void);
 
+extern int	game_paused(void);
+
 #define CURSOR_CLEAR -1
 #define CURSOR_OFF    0
 #define CURSOR_ON     1

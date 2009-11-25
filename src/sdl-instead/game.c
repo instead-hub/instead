@@ -15,6 +15,7 @@ void game_cursor(int on);
 static void mouse_reset(void);
 static void menu_toggle(void);
 
+
 void game_err_msg(const char *s)
 {
 	if (err_msg)
@@ -152,6 +153,11 @@ static img_t 	menubg = NULL;
 static img_t	menu = NULL;
 
 static int menu_shown = 0;
+
+int game_paused(void)
+{
+	return menu_shown;
+}
 
 int game_cmd(char *cmd);
 void game_clear(int x, int y, int w, int h)
@@ -1192,6 +1198,8 @@ int game_cmd(char *cmd)
 	char 		*pict = NULL;
 	img_t		oldscreen = NULL;
 
+	if (menu_shown)
+		return -1;
 	cmdstr = instead_cmd(cmd); instead_clear();
 //		goto err;
 
@@ -2100,7 +2108,7 @@ int game_loop(void)
 					game_select(curgame_dir);
 					game_load(9);
 				}	
-			} if (!is_key(&ev, "f5") && curgame_dir) {
+			} if (!is_key(&ev, "f5") && curgame_dir && !menu_shown) {
 				mouse_reset();
 				game_cmd("look");
 			} if (!is_key(&ev, "f10")) {
