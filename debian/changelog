@@ -2,6 +2,7 @@ instead (1.0.2) unstable; urgency=low
 
   * fix in box normalize
   * fix in scaling
+  * fixed f5 key
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 24 Nov 2009 11:00:20 +0300
 
