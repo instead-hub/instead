@@ -1510,7 +1510,6 @@ int game_highlight(int x, int y, int on)
 	static xref_t 	 hxref = NULL;
 	xref_t		xref = NULL;
 	int up = 0;
-	
 	if (on) {
 		xref = look_xref(x, y, &elem);
 		if (xref && opt_hl) {
@@ -2257,6 +2256,7 @@ int game_loop(void)
 			}
 		//	game_highlight(ev.x, ev.y, 1);
 		}
+ 		
 		if (old_xref)
 			game_highlight(x, y, 1);
 		else {
