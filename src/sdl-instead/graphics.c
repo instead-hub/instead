@@ -399,6 +399,22 @@ void gfx_noclip(void)
 	SDL_SetClipRect(screen, NULL);
 }
 
+void gfx_getclip(int *x, int *y, int *w, int *h)
+{
+	SDL_Rect clip;
+	if (!screen)
+		return;
+	SDL_GetClipRect(screen, &clip);
+	if (x)
+		*x = clip.x;
+	if (y)
+		*y = clip.y;
+	if (w)
+		*w = clip.w;
+	if (h)
+		*h = clip.h;
+}
+
 void gfx_clip(int x, int y, int w, int h)
 {
 	SDL_Rect src;
