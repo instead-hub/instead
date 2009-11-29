@@ -111,6 +111,7 @@ typedef void 	(*clear_fn)(int x, int y, int w, int h);
 extern void 	txt_box_update_links(textbox_t tbox, int x, int y, clear_fn);
 extern void 	txt_layout_update_links(layout_t layout, int x, int y, clear_fn clear);
 extern void 	txt_layout_real_size(layout_t lay, int *w, int *h);
+extern int 	txt_layout_pos2off(layout_t lay, int pos);
 
 extern img_t 	txt_box_render(textbox_t tbox);
 
