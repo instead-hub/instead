@@ -174,8 +174,6 @@ void game_clear(int x, int y, int w, int h)
 		int yy = y - my;
 		gfx_draw_from(menubg, xx, yy, x, y, w, h); 
 		gfx_draw_from(menu, xx, yy, x, y, w, h);
-	//	gfx_update(mx, my, ww, hh);
-		return;
 	}
 }
 
@@ -484,7 +482,6 @@ static void anigif_do(void *data)
 {
 	void *v;
 	img_t img;
-	
 	game_cursor(CURSOR_CLEAR);
 	
 	if (gfx_frame_gif(el_img(el_spic))) { /* scene */
@@ -1742,7 +1739,10 @@ void game_cursor(int on)
 	static img_t	grab = NULL;
 	static img_t 	cur = NULL;
 	static int xc = 0, yc = 0, w = 0, h = 0; //, w, h;
-
+	int xx, yy, ww, hh;
+	
+	gfx_getclip(&xx, &yy, &ww, &hh);
+	gfx_noclip();
 	if (on == CURSOR_OFF)	
 		cur = NULL;
 
@@ -1754,16 +1754,17 @@ void game_cursor(int on)
 	
 	if (on == CURSOR_OFF) {
 		gfx_update(xc, yc, w, h);
-		return;
+		goto out;
 	}
 
 	if (on == CURSOR_CLEAR || on == CURSOR_OFF)
-		return;
+		goto out;
+
 	if (on != CURSOR_DRAW)
 		cur = (use_xref) ? game_theme.use:game_theme.cursor;
 	
-	if (!cur)
-		return;	
+	if (!cur) 
+		goto out;
 
 	do {
 		int ox = xc; 
@@ -1789,6 +1790,9 @@ void game_cursor(int on)
 			gfx_update(ox, oy, ow, oh);
 		} 
 	} while (0);
+out:
+	gfx_clip(xx, yy, ww, hh);
+	return;
 }
 
 

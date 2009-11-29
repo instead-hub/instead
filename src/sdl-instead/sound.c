@@ -63,7 +63,7 @@ int snd_init(int hz)
 	else
 		audio_rate = hz;
 
-	audio_buffers = (audio_rate / 11025) * 2048;
+	audio_buffers = (audio_rate / 11025) * 4096;
 	if (!audio_buffers) /* wrong parameter? */
 		audio_buffers = 8192;
 
