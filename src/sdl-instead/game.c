@@ -148,6 +148,7 @@ static int motion_y = 0;
 static		char *last_pict = NULL;
 static 		char *last_title = NULL;
 static		char *last_music = NULL;
+static 		char *last_cmd = NULL;
 static int mx, my;
 static img_t 	menubg = NULL;
 static img_t	menu = NULL;
@@ -602,7 +603,9 @@ void free_last(void)
 		free(last_pict);
 	if (last_title)
 		free(last_title);
-	last_pict = last_title = NULL;
+	if (last_cmd)
+		free(last_cmd);
+	last_pict = last_title = last_cmd = NULL;
 	game_stop_mus(500);
 	sounds_free();
 }
@@ -1186,8 +1189,41 @@ char *horiz_inv(char *invstr)
 	return invstr;
 }
 
+static int find_diff_pos(const char *p1, const char *p2)
+{
+	int pos = 0;
+	if (!p1 || !p2)
+		return -1;
+		
+	while ((*p1 == *p2) && *p1) {
+		p1 ++;
+		p2 ++;
+		pos ++;
+	}
+	if (!*p1)
+		return -1;
+	return pos;
+}
+
+static void scroll_to_diff(const char *cmdstr, int cur_off)
+{
+	int off = 0;
+	int pos = 0;
+	int h = 0;
+	pos = find_diff_pos(cmdstr, last_cmd);
+	if (pos == -1)
+		off = cur_off;
+	else
+		off = txt_layout_pos2off(txt_box_layout(el_box(el_scene)), pos);
+	el_size(el_scene, NULL, &h);
+	if (cur_off <= off && (cur_off + h) > off)
+		off = cur_off;
+	txt_box_scroll(el_box(el_scene), off);
+}
+
 int game_cmd(char *cmd)
 {
+	int		old_off;
 	int		new_pict = 0, new_place = 0;
 	int		title_h = 0, ways_h = 0, pict_h = 0;
 	char 		buf[1024];
@@ -1278,14 +1314,8 @@ int game_cmd(char *cmd)
 		txt_layout_set(el_layout(el_ways), waystr);
 		txt_layout_size(el_layout(el_ways), NULL, &ways_h);
 	} 
-
+	old_off = txt_box_off(el_box(el_scene));
 	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) {
-		int off = 0;
-		if (!new_pict && !new_place) {
-			off = txt_box_off(el_box(el_scene));
-			if (off > pict_h)
-				off = pict_h;
-		}
 		pict_h = 0; /* to fake code bellow */
 		txt_layout_set(txt_box_layout(el_box(el_scene)), ""); /* hack, to null layout, but not images */
 		if (el_img(el_spic)) {
@@ -1296,15 +1326,16 @@ int game_cmd(char *cmd)
 		txt_layout_add(txt_box_layout(el_box(el_scene)), "<l></l>\n"); /* small hack */
 		txt_layout_add(txt_box_layout(el_box(el_scene)), cmdstr);
 		txt_box_set(el_box(el_scene), txt_box_layout(el_box(el_scene)));
-		if (!new_pict && !new_place) 
-			txt_box_scroll(el_box(el_scene), off);
 	} else {
 		if (game_theme.gfx_mode == GFX_MODE_FLOAT) 
 			pict_h = 0;	
 		txt_layout_set(txt_box_layout(el_box(el_scene)), cmdstr);
 		txt_box_set(el_box(el_scene), txt_box_layout(el_box(el_scene)));
 	}
-	free(cmdstr);
+	if (!new_pict && !new_place)
+		scroll_to_diff(cmdstr, old_off);
+	FREE(last_cmd);
+	last_cmd = cmdstr;
 	
 	el(el_ways)->y = el(el_title)->y + title_h + pict_h;
 	if (waystr)

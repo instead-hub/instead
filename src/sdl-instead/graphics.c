@@ -1090,6 +1090,7 @@ struct line {
 	int w;
 	int num;
 	int align;
+	int pos;
 	struct word *words;
 	struct line *next;
 	struct line *prev;
@@ -1111,6 +1112,7 @@ struct line *line_new(void)
 	l->num = 0;
 	l->layout = NULL;
 	l->align = 0;
+	l->pos = 0;
 	return l;
 }
 
@@ -2327,6 +2329,19 @@ int get_unbrakable_len(struct layout *layout, const char *ptr)
 	return w;
 }
 
+int txt_layout_pos2off(layout_t lay, int pos)
+{
+	int off = 0;
+	struct line *line;
+	struct layout *layout = (struct layout*)lay;
+	if (!layout)
+		return 0;
+	for (line = layout->lines; line && (line->pos <= pos); line = line->next) {
+		off = line->y;
+	}
+	return off;
+}
+
 void _txt_layout_add(layout_t lay, char *txt)
 {
 	int sp = 0;
@@ -2345,8 +2360,10 @@ void _txt_layout_add(layout_t lay, char *txt)
 	TTF_SetFontStyle((TTF_Font *)(layout->fn), 0);
 	TTF_SizeUTF8((TTF_Font *)(layout->fn), " ", &spw, &h);
 
-	for (line = layout->lines; line; line = line->next) 
+	for (line = layout->lines; line; line = line->next) {
 		lastline = line;
+		lastline->pos = 0;
+	}
 	
 	if (!lastline) {
 		line = line_new();
@@ -2415,6 +2432,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 			}
 			free(p);
 //			ptr = eptr;
+			line->pos = (int)(ptr - txt);
 			continue;
 		}
 		if (h > line->h)
