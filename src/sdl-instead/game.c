@@ -1313,14 +1313,24 @@ int game_cmd(char *cmd)
 	} 
 	old_off = txt_box_off(el_box(el_scene));
 	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) {
+		char *p;
 		pict_h = 0; /* to fake code bellow */
 		txt_layout_set(txt_box_layout(el_box(el_scene)), ""); /* hack, to null layout, but not images */
 		if (el_img(el_spic)) {
 			txt_layout_add_img(txt_box_layout(el_box(el_scene)),"scene", el_img(el_spic));
 			txt_layout_add(txt_box_layout(el_box(el_scene)), "<c><g:scene></c>\n");
 		}
-		txt_layout_add(txt_box_layout(el_box(el_scene)), waystr);
-		txt_layout_add(txt_box_layout(el_box(el_scene)), "<l></l>\n"); /* small hack */
+		p = malloc(strlen(cmdstr) + strlen(waystr) + 16);
+		if (p) {
+			strcpy(p, waystr);
+			strcat(p, "\n"); /* small hack */
+			strcat(p, cmdstr);
+			free(cmdstr);
+			cmdstr = p;
+		} else { /* paranoia? Yes... */
+			txt_layout_add(txt_box_layout(el_box(el_scene)), waystr);
+			txt_layout_add(txt_box_layout(el_box(el_scene)), "<l></l>\n"); /* small hack */
+		}
 		txt_layout_add(txt_box_layout(el_box(el_scene)), cmdstr);
 		txt_box_set(el_box(el_scene), txt_box_layout(el_box(el_scene)));
 	} else {
