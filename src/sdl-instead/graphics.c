@@ -1910,12 +1910,13 @@ void txt_box_norm(textbox_t tbox)
 
 	if (!box->lay)
 		return;
-	for (line = box->lay->lines; line; line = line->next) {
+	box->line = box->lay->lines;
+	for (line = box->line; line; line = line->next) {
 		if (off < line->h)
 			break;
 		off -= line->h;
+		box->line = line; 
 	}
-	box->line = box->lay->lines;
 }
 
 layout_t txt_box_layout(textbox_t tbox)
