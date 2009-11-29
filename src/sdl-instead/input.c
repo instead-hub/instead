@@ -54,19 +54,19 @@ int input(struct inp_event *inp, int wait)
 	inp->type = 0;
 	inp->count = 1;
 	switch(event.type){
-	case SDL_USEREVENT: {
-		void (*p) (void*) = event.user.data1;
-		p(event.user.data2);
-		return AGAIN;
-		}
 	case SDL_ACTIVEEVENT:
 		if (event.active.state & (SDL_APPMOUSEFOCUS | SDL_APPINPUTFOCUS)) {
 			if (event.active.gain)
 				m_focus = 1;
 			else if (event.active.state & SDL_APPMOUSEFOCUS)
-				m_focus = 0;
+				m_focus = !!(SDL_GetAppState() & SDL_APPMOUSEFOCUS);
 		}
 		return 0;
+	case SDL_USEREVENT: {
+		void (*p) (void*) = event.user.data1;
+		p(event.user.data2);
+		return AGAIN;
+		}
 	case SDL_QUIT:
 		game_running = 0;
 		return -1;
