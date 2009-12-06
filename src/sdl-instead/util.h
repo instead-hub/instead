@@ -22,7 +22,13 @@ extern int parse_string(const char *v, void *data);
 extern int parse_int(const char *v, void *data);
 extern int parse_full_path(const char *v, void *data);
 
+#ifdef _HAVE_ICONV
+extern char *decode(iconv_t hiconv, const char *s);
+#endif
+
 extern void unix_path(char *path);
+extern char *sdl_path(char *path);
+
 extern char *parse_tag(char *line, const char *tag, const char *comm, int *brk);
 
 #ifndef PATH_MAX

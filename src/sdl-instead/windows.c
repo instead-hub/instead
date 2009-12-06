@@ -6,7 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-
+#ifdef _HAVE_ICONV
+#include <iconv.h>
+#endif
 #include "internals.h"
 
 extern char *curgame;
@@ -32,6 +34,61 @@ char *game_locale(void)
 	return strdup(buff);
 }
 
+static char *game_codepage = NULL;
+
+#ifdef _HAVE_ICONV
+static char *game_cp(void)
+{
+	char cpbuff[64];
+	char buff[64];
+	buff[0] = 0;
+	if (!GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_IDEFAULTANSICODEPAGE,
+        	buff,sizeof(buff) - 1))
+		return NULL;
+	snprintf(cpbuff, sizeof(cpbuff), "WINDOWS-%s", buff);
+	return strdup(cpbuff);
+}
+
+char *mbs2utf8(const char *s)
+{
+	iconv_t han;
+	char *str;
+	if (!game_codepage)
+		game_codepage = game_cp();
+	if (!s)
+		return NULL;	
+	if (!game_codepage)
+		goto out0;
+	han = iconv_open("UTF-8", game_codepage);
+	if (han == (iconv_t)-1)
+		goto out0;
+	if (!(str = decode(han, s)))
+		goto out1;
+	iconv_close(han);
+	return str;
+out1:
+	iconv_close(han);
+out0:
+	return strdup(s);
+}
+#else
+char *mbs2utf8(const char *s)
+{
+	return strdup(s);
+}
+#endif
+
+extern void unix_path(char *);
+
+char *sdl_path(char *p)
+{
+	char *r = mbs2utf8(p);
+	if (p)
+		free(p);
+	unix_path(r);
+	return r;
+}
+
 char *app_dir( void );
 
 char *game_local_games_path(void)
@@ -46,11 +103,9 @@ char *game_local_themes_path(void)
 	return local_themes_path;
 }
 
-extern void unix_path(char *);
-
 char *app_dir( void )
 {
-	static char appdir[PATH_MAX];
+	static char appdir[PATH_MAX]="";
 	SHGetFolderPath( NULL, 
 		CSIDL_FLAG_CREATE | CSIDL_LOCAL_APPDATA,
 		NULL,

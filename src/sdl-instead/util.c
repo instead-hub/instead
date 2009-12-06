@@ -223,7 +223,7 @@ int parse_full_path(const char *v, void *data)
 	strcpy(*p, cwd);
 	strcat(*p,"/");
 	strcat(*p, v);
-	unix_path(*p);
+	*p = sdl_path(*p);
 	return 0;
 }
 
@@ -296,3 +296,32 @@ char *parse_tag(char *line, const char *tag, const char *comm, int *brk)
 	ns[strcspn(ns, "\n\r")] = 0;
 	return ns;
 }
+#ifdef _HAVE_ICONV
+#define CHAR_MAX_LEN 4
+char *decode(iconv_t hiconv, const char *s)
+{
+	size_t s_size, chs_size, outsz, insz;
+	char *inbuf, *outbuf, *chs_buf;
+	if (!s || hiconv == (iconv_t)(-1))
+		return NULL;
+	s_size = strlen(s) + 1; 
+	chs_size = s_size * CHAR_MAX_LEN; 
+	if ((chs_buf = malloc(chs_size + CHAR_MAX_LEN))==NULL)
+		goto exitf; 
+	outsz = chs_size; 
+	outbuf = chs_buf; 
+	insz = s_size; 
+	inbuf = (char*)s; 
+	while (insz) { 
+		if (iconv(hiconv, &inbuf, &insz, &outbuf, &outsz) 
+						== (size_t)(-1)) 
+	   	 	goto exitf; 
+	} 
+	*outbuf++ = 0; 
+	return chs_buf; 
+exitf: 
+	if(chs_buf) 
+		free(chs_buf); 
+	return NULL; 
+}
+#endif

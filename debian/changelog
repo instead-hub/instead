@@ -2,6 +2,7 @@ instead (1.0.3) unstable; urgency=low
 
   * autojump to text change
   * no cursor flickering
+  * sdl_path (i18n M$ win sdl paths)
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 01 Dec 2009 14:12:36 +0300
 

@@ -9,6 +9,11 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <locale.h>
+#include <langinfo.h>
+#ifdef _HAVE_ICONV
+#include <iconv.h>
+#endif
 #include "internals.h"
 
 #ifndef PATH_MAX
@@ -110,3 +115,8 @@ void debug_done()
 	
 }
 
+char *sdl_path(char *p)
+{
+	unix_path(p);
+	return p;
+}

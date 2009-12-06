@@ -1038,7 +1038,7 @@ void game_music_player(void)
 	instead_eval("return get_music()");
 	mus = instead_retval(0);
 	loop = instead_iretval(1);
-	unix_path(mus);
+	mus = sdl_path(mus);
 	instead_clear();
 
 	if (mus && loop == -1) { /* disabled, 0 - forever, 1-n - loops */
@@ -1138,7 +1138,7 @@ void game_sound_player(void)
 	}	
 	instead_eval("set_sound(nil, -1)"); instead_clear();
 	
-	unix_path(snd);
+	snd = sdl_path(snd);
 	w = sound_find(snd);
 	if (!w)
 		w = sound_add(snd);
@@ -1261,7 +1261,7 @@ int game_cmd(char *cmd)
 	pict = instead_retval(0);
 	instead_clear();
 
-	unix_path(pict);
+	pict = sdl_path(pict);
 	
 	new_pict = check_new_pict(pict);
 
