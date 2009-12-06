@@ -647,9 +647,9 @@ img_t gfx_load_image(char *filename)
 	img_t img = NULL;
 	if (!filename)
 		return NULL;
-	if (!access(filename, R_OK))
+/*	if (!access(filename, R_OK)) */
 		img = _gfx_load_image(filename);
-	else
+	if (!img)
 		img = _gfx_load_combined_image(filename);
 	return img;
 }
