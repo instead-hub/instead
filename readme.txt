@@ -24,8 +24,8 @@ There are several ways to build package.
 	$ cd ..
 	$ sudo dpkg -i instead_<version>.deb		
 
-2) On gentooo or arch linux 
-===========================
+2) On gentoo or arch linux 
+==========================
 Please copy-paste EBUILD (gentoo) or PKGBUILD (arch) from here: 
 http://code.google.com/p/instead/wiki/
 
