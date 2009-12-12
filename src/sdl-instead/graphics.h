@@ -118,6 +118,7 @@ extern img_t 	txt_box_render(textbox_t tbox);
 
 extern char	*xref_get_text(xref_t x);
 extern void 	xref_set_active(xref_t x, int val);
+extern int	xref_get_active(xref_t x);
 
 extern xref_t	xref_next(xref_t x);
 extern xref_t	xref_prev(xref_t x);

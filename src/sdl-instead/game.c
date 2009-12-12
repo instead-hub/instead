@@ -1518,21 +1518,19 @@ int game_highlight(int x, int y, int on)
 	struct el 	 *elem = NULL;
 	static struct el *oel = NULL;
 	static xref_t 	 hxref = NULL;
-	xref_t		xref = NULL;
-	int up = 0;
+	xref_t		 xref = NULL;
 	if (on) {
 		xref = look_xref(x, y, &elem);
-		if (xref && opt_hl) {
+		if (xref && opt_hl && !xref_get_active(xref)) {
 			xref_set_active(xref, 1);
 			game_xref_update(xref, elem->x, elem->y);
 		}
 	}
 	
 	if (hxref != xref && oel) {
-		if (hxref != use_xref) {
+		if (hxref != use_xref && xref_get_active(hxref)) {
 			xref_set_active(hxref, 0);
 			game_xref_update(hxref, oel->x, oel->y);
-			up = 1;
 		}
 		hxref = NULL;
 	}
