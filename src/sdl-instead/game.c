@@ -2017,7 +2017,8 @@ static xref_t get_xref(int i, int last)
 static void xref_jump(xref_t xref, struct el* elem)
 {
 	int x, y;
-	if (!elem || !xref || xref_rel_position(xref, elem, &x, &y))
+	if (!elem || !xref || xref_visible(xref, elem) || 
+		xref_rel_position(xref, elem, &x, &y))
 		return;
 	gfx_warp_cursor(elem->x + x, elem->y + y);
 }
