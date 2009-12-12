@@ -1560,7 +1560,7 @@ static void scroll_pup(int id)
 {
 	if (box_isscroll_up(id))
 		return;		
-	game_highlight(-1, -1, 0);
+//	game_highlight(-1, -1, 0);
 	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) {
 		int hh;
 		el_size(el_scene, NULL, &hh);
@@ -1576,7 +1576,7 @@ static void scroll_pdown(int id)
 {
 	if (box_isscroll_down(id))
 		return;		
-	game_highlight(-1, -1, 0);
+//	game_highlight(-1, -1, 0);
 	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) {
 		int hh;
 		el_size(el_scene, NULL, &hh);
@@ -1808,7 +1808,7 @@ static void scroll_up(int id, int count)
 	int i;
 	if (box_isscroll_up(id))
 		return;		
-	game_highlight(-1, -1, 0);
+//	game_highlight(-1, -1, 0);
 	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED)
 		txt_box_scroll(el_box(id), -(FONT_SZ(game_theme.font_size)) * count);
 	else
@@ -1824,7 +1824,7 @@ static void scroll_down(int id, int count)
 	int i;
 	if (box_isscroll_down(id))
 		return;		
-	game_highlight(-1, -1, 0);
+//	game_highlight(-1, -1, 0);
 	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED)
 		txt_box_scroll(el_box(id), (FONT_SZ(game_theme.font_size)) * count);
 	else
