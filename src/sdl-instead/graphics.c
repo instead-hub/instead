@@ -1065,6 +1065,7 @@ struct word {
 	struct line *line;
 	struct xref *xref;
 	SDL_Surface  *prerend;
+	SDL_Surface  *hlprerend;
 };
 
 struct word *word_new(const char *str)
@@ -1083,6 +1084,7 @@ struct word *word_new(const char *str)
 	w->img = NULL;
 	w->unbrake = 0;
 	w->prerend = NULL;
+	w->hlprerend = NULL;
 	return w;
 }
 
@@ -1096,7 +1098,9 @@ void word_free(struct word *word)
 		free(word->word);
 	if (word->prerend)
 		SDL_FreeSurface(word->prerend);
-	word->prerend = NULL;
+	if (word->hlprerend)
+		SDL_FreeSurface(word->hlprerend);
+	word->hlprerend = word->prerend = NULL;
 	free(word);
 }
 
@@ -1775,13 +1779,42 @@ void txt_layout_link_style(layout_t lay, int style)
 	layout->lstyle = style;	
 }
 
+static void xref_render(struct layout *layout, struct word *word, int x, int y)
+{
+	SDL_Surface *s;
+	SDL_Color fgcol = { .r = layout->col.r, .g = layout->col.g, .b = layout->col.b };
+	SDL_Color lcol = { .r = layout->lcol.r, .g = layout->lcol.g, .b = layout->lcol.b };
+	SDL_Color acol = { .r = layout->acol.r, .g = layout->acol.g, .b = layout->acol.b };
+
+	if (word->xref && !word->style)
+		TTF_SetFontStyle((TTF_Font *)(layout->fn), layout->lstyle);
+	else
+		TTF_SetFontStyle((TTF_Font *)(layout->fn), word->style);
+			
+	if (!word->xref) {
+		if (!word->prerend)
+			word->prerend = TTF_RenderUTF8_Blended((TTF_Font *)(layout->fn), word->word, fgcol);
+		s = word->prerend;
+	} else if (word->xref->active) {
+		if (!word->hlprerend)
+			word->hlprerend = TTF_RenderUTF8_Blended((TTF_Font *)(layout->fn), word->word, acol);
+		s = word->hlprerend;
+	} else {
+		if (!word->prerend)
+			word->prerend = TTF_RenderUTF8_Blended((TTF_Font *)(layout->fn), word->word, lcol);
+		s = word->prerend;
+	}
+	if (!s)
+		return;
+	gfx_draw(s, x, y);
+}
+
 void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 {
 	int i;
 	struct xref *xref = (struct xref*)pxref;
 	struct layout *layout;
 	struct word *word;
-	SDL_Color col;
 	if (!xref)
 		return;
 
@@ -1792,12 +1825,7 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 	}
 
 	for (i = 0; i < xref->num; i ++) {
-		SDL_Surface *s;
 		int yy;
-		SDL_Color fgcol = { .r = layout->col.r, .g = layout->col.g, .b = layout->col.b };
-		SDL_Color lcol = { .r = layout->lcol.r, .g = layout->lcol.g, .b = layout->lcol.b };
-		SDL_Color acol = { .r = layout->acol.r, .g = layout->acol.g, .b = layout->acol.b };
-
 		struct line *line;
 		word = xref->words[i];
 		line = word->line;
@@ -1818,20 +1846,8 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 			update(x + word->x, y + line->y + yy, gfx_img_w(word->img), gfx_img_h(word->img));
 			continue;
 		}
-		if (word->xref && !word->style)
-			TTF_SetFontStyle((TTF_Font *)(layout->fn), layout->lstyle);
-		else
-			TTF_SetFontStyle((TTF_Font *)(layout->fn), word->style);
-		if (!word->xref)
-			col = fgcol;
-		else if (word->xref->active)
-			col = acol;
-		else
-			col = lcol;
-		s = TTF_RenderUTF8_Blended((TTF_Font *)(layout->fn), word->word, col);
-		gfx_draw(s, x + word->x, y + line->y + yy);
+		xref_render(layout, word, x + word->x, y + yy + line->y);
 		update(x + word->x, y + line->y + yy, word->w, line->h);
-		SDL_FreeSurface(s);
 	}
 	gfx_noclip();
 }
@@ -1842,10 +1858,6 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 //	struct line *line;
 	struct word *word;
 //	line = layout->lines;
-	SDL_Color col;
-	SDL_Color fgcol = { .r = layout->col.r, .g = layout->col.g, .b = layout->col.b };
-	SDL_Color lcol = { .r = layout->lcol.r, .g = layout->lcol.g, .b = layout->lcol.b };
-	SDL_Color acol = { .r = layout->acol.r, .g = layout->acol.g, .b = layout->acol.b };
 //	gfx_clip(x, y, layout->w, layout->h);
 	if (!line)
 		line = layout->lines;
@@ -1869,30 +1881,12 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 				else
 					clear(x + word->x, y + line->y/* + yy*/, word->w, line->h);
 			}
-			SDL_Surface *s;
 			if (word->img) {
 				yy = (line->h - gfx_img_h(word->img)) / 2;
 				gfx_draw(word->img, x + word->x, y + line->y + yy);
 				continue;
 			}
-			if (word->xref && !word->style)
-				TTF_SetFontStyle((TTF_Font *)(layout->fn), layout->lstyle);
-			else
-				TTF_SetFontStyle((TTF_Font *)(layout->fn), word->style);
-			if (!word->xref)
-				col = fgcol;
-			else if (word->xref->active)
-				col = acol;
-			else
-				col = lcol;
-			s = word->prerend;
-			if (!s) {
-				s = TTF_RenderUTF8_Blended((TTF_Font *)(layout->fn),
-					word->word, col);
-				word->prerend = s;
-			}
-			gfx_draw(s, x + word->x, y + line->y + yy);
-//			SDL_FreeSurface(s);
+			xref_render(layout, word, x + word->x, y + yy + line->y);
 		}
 	}
 //	gfx_noclip();
