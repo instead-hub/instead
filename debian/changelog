@@ -1,3 +1,9 @@
+instead (1.0.4) unstable; urgency=low
+
+  * xref hl optimization
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 12 Dec 2009 17:15:00 +0300
+
 instead (1.0.3) unstable; urgency=low
 
   * autojump to text change
