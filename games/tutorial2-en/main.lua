@@ -109,7 +109,7 @@ apple = obj {
 
 desk = obj {
 	nam = 'desk',
-	dsc = 'In this lesson you see a wooden {desk}',
+	dsc = 'In this lesson you see a wooden {desk}.',
 	act = function(s)
 		if s._haswriting then
 			s._seen = true;
