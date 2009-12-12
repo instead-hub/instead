@@ -2626,6 +2626,14 @@ void xref_set_active(xref_t x, int val)
 	xref->active = val;
 }
 
+int xref_get_active(xref_t x)
+{
+	struct xref *xref = (struct xref*)x;
+	if (!xref)
+		return 0;
+	return xref->active;
+}
+
 
 layout_t txt_layout(fnt_t fn, int align, int width, int height)
 {
