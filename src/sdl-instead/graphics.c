@@ -1779,7 +1779,7 @@ void txt_layout_link_style(layout_t lay, int style)
 	layout->lstyle = style;	
 }
 
-static void xref_render(struct layout *layout, struct word *word, int x, int y)
+static void word_render(struct layout *layout, struct word *word, int x, int y)
 {
 	SDL_Surface *s;
 	SDL_Color fgcol = { .r = layout->col.r, .g = layout->col.g, .b = layout->col.b };
@@ -1846,7 +1846,7 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 			update(x + word->x, y + line->y + yy, gfx_img_w(word->img), gfx_img_h(word->img));
 			continue;
 		}
-		xref_render(layout, word, x + word->x, y + yy + line->y);
+		word_render(layout, word, x + word->x, y + yy + line->y);
 		update(x + word->x, y + line->y + yy, word->w, line->h);
 	}
 	gfx_noclip();
@@ -1886,7 +1886,7 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 				gfx_draw(word->img, x + word->x, y + line->y + yy);
 				continue;
 			}
-			xref_render(layout, word, x + word->x, y + yy + line->y);
+			word_render(layout, word, x + word->x, y + yy + line->y);
 		}
 	}
 //	gfx_noclip();
