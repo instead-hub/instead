@@ -86,6 +86,15 @@ char *game_save_path(int cr, int nr)
 	struct passwd *pw;
 	if (!curgame_dir)
 		return NULL;
+
+	if (!access("saves", R_OK)) {
+		if (nr)
+			snprintf(save_path, sizeof(save_path) - 1, "saves/save%d", nr);
+		else
+			snprintf(save_path, sizeof(save_path) - 1, "saves/autosave");
+		return save_path;
+	}
+	
 	pw = getpwuid(getuid());
 	if (!pw) 
 		return NULL;
