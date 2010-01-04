@@ -189,6 +189,8 @@ int snd_playing_mus(void)
 
 int snd_playing(int channel)
 {
+	if (!sound_on)
+		return 0;
 	if (channel >= MIX_CHANNELS)
 		channel %= MIX_CHANNELS;
 	if (channel < 0)
