@@ -1,8 +1,15 @@
+instead (1.0.5) unstable; urgency=low
+
+  * xref hl optimization
+  * now, write save slots in game/saves if game/saves exist
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 7 Jan 2010 14:34:00 +0300
+
 instead (1.0.4) unstable; urgency=low
 
   * xref hl optimization
   * now, write save slots in game/saves if game/saves exist
-  
+
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 12 Dec 2009 17:15:00 +0300
 
 instead (1.0.3) unstable; urgency=low
@@ -140,7 +147,7 @@ instead (0.8.6) unstable; urgency=low
 
   * cat game fixes
   * seen extra parameter
-  
+
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 27 Aug 2009 08:32:00 +0400
 
 instead (0.8.5) unstable; urgency=low
