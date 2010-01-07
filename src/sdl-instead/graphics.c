@@ -573,7 +573,7 @@ static img_t _gfx_load_image(char *filename)
 	}
 	img = IMG_Load(filename);
 	if (!img) {
-		fprintf(stderr, "File not found: '%s'\n", filename);
+		
 		return NULL;
 	}
 	return img;
@@ -651,6 +651,8 @@ img_t gfx_load_image(char *filename)
 		img = _gfx_load_image(filename);
 	if (!img)
 		img = _gfx_load_combined_image(filename);
+	if (!img)
+		fprintf(stderr, "Can not load image: '%s'\n", filename);
 	return img;
 }
 
