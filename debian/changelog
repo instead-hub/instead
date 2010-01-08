@@ -2,6 +2,7 @@ instead (1.0.5) unstable; urgency=low
 
   * segfault while is_sound with -nosound
   * snd volume hack
+  * arctic theme added
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 7 Jan 2010 14:34:00 +0300
 
