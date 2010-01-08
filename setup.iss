@@ -26,6 +26,7 @@ Source: themes\default\*; DestDir: {app}\themes\default
 Source: themes\book\*; DestDir: {app}\themes\book
 Source: themes\original\*; DestDir: {app}\themes\original
 Source: themes\fantasy\*; DestDir: {app}\themes\fantasy
+Source: themes\arctic\*; DestDir: {app}\themes\arctic
 Source: *.dll; DestDir: {app}
 
 [CustomMessages]
