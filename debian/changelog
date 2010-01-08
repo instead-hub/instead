@@ -1,7 +1,7 @@
 instead (1.0.5) unstable; urgency=low
 
-  * xref hl optimization
-  * now, write save slots in game/saves if game/saves exist
+  * segfault while is_sound with -nosound
+  * snd volume hack
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 7 Jan 2010 14:34:00 +0300
 
