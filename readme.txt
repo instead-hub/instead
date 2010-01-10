@@ -18,7 +18,7 @@ There are several ways to build package.
 
 1) On Debian based systems you can build deb package
 ====================================================
-	$ sudo apt-get install liblua5.1-dev libreadline-dev libsdl1.2-dev libsdl-ttf2.0-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libreadline5-dev
+	$ sudo apt-get install liblua5.1-dev libreadline-dev libsdl1.2-dev libsdl-ttf2.0-dev libsdl-image1.2-dev libsdl-mixer1.2-dev
 	$ apt-get install build-essential
 	$ debuild
 	$ cd ..
