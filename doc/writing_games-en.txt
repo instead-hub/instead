@@ -80,7 +80,7 @@ Object name “nam” is used when the object gets into the inventory or to addr
 
 “dsc” is an object descriptor. It will be shown in the dynamic part of the scene. Curly brackets indicate the text fragment which will be a link anchor in the graphic interpreter.
 
-“act” is a handler, called when the player uses a scene object. It has to return a text line, which will become a part of the scene events.
+“act” is a handler, called when the player uses a scene object. It has to return a text line, which will become a part of the scene events, or a boolean value (see chapter 5)
 
 WARNING: in the lua namespace some objects (tables) already exist. For example “table”, “io”, “string”... Be careful when creating objects. In the example above “tabl” is used instead of “table”.
 
@@ -191,6 +191,21 @@ From version 0.8.9 you can define a function “isForSave(k)”, which is called
 function isForSave(k)
         return string.find(k, '_') ==  1 or string.match(k,'^%u')
 }}}
+
+Sometimes we need a handler that would do something without showing any description, e.g.:
+{{{
+button = obj {
+  nam = "button",
+  dsc = "There is a big red {button} on the room wall.",
+  act = function (s)
+    here().dsc = [[The room transformed after I pressed the button. The book-case disappeared along with the table and the chest, and a strange looking device took its place.]];
+    return true;
+  end,
+}
+}}}
+In this case `act` handler is used to change room description but it is not supposed to add any description of its own. To achieve this we need to return true from the handler. It means the action is done successfully but does not require to diplay any additional description.
+
+If you need to show some action is impossible, you can return false or nil from its `act` handler. In this case default description will be shown for this action. Default actions can be set via game.act handler and are generally used for description of impossible actions.
 
 
 == 6. Inventory ==
