@@ -19,10 +19,10 @@ There are several ways to build package.
 1) On Debian based systems you can build deb package
 ====================================================
 	$ sudo apt-get install liblua5.1-dev libreadline-dev libsdl1.2-dev libsdl-ttf2.0-dev libsdl-image1.2-dev libsdl-mixer1.2-dev
-	$ apt-get install build-essential
+	$ sudo apt-get install build-essential debhelper
 	$ debuild
 	$ cd ..
-	$ sudo dpkg -i instead_<version>.deb		
+	$ sudo dpkg -i instead_<version>.deb
 
 2) On gentoo or arch linux 
 ==========================
