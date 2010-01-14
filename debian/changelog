@@ -1,3 +1,9 @@
+instead (1.0.6) unstable; urgency=low
+
+  * encode path in save (' in paths);
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 14 Jan 2010 15:47:50 +0300
+
 instead (1.0.5) unstable; urgency=low
 
   * segfault while is_sound with -nosound
