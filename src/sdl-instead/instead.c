@@ -149,16 +149,15 @@ int instead_iretval(int n)
 
 char *instead_cmd(char *s)
 {
-	char buf[1024];
-	char *p = s;
-	while (*p) {
-		if (*p == '\\' || *p == '\'' || *p == '\"' || *p == '[' || *p == ']')
-			return NULL;
-		p ++;
-	}
-	s = togame(s);
-	snprintf(buf, sizeof(buf), "return iface:cmd('%s')", s);
-	free(s);
+	char buf[4096];
+	char *p;
+	p = encode_esc_string(s);
+	if (!p)
+		return NULL;
+	s = togame(p); free(p);
+	if (!s)
+		return NULL;	
+	snprintf(buf, sizeof(buf), "return iface:cmd('%s')", s); free(s);
 	p = getstring(buf);
 	return p;
 }

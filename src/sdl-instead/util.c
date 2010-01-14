@@ -154,6 +154,39 @@ int parse_string(const char *v, void *data)
 	return 0;	
 }
 
+char *encode_esc_string(const char *v)
+{
+	char *r, *p;
+	if (!v)
+		return NULL;
+	p = r = malloc((strlen(v)*2) + 1);
+	if (!r)
+		return NULL;
+	while (*v) {
+		switch (*v) {
+		case ' ':
+			*p ++ = '\\';
+			*p ++ = ' ';
+			break;
+		case '"':
+			*p ++ = '\\';
+			*p ++ = '"';
+			break;
+		case '\'':
+			*p ++ = '\\';
+			*p ++ = '\'';
+			break;
+		case '\\':
+			*p ++ = '\\';
+			*p ++ = '\\';
+		default:
+			*p ++ = *v;
+		}
+		v ++;
+	}
+	*p ++ = 0;
+	return r;
+}
 
 int parse_esc_string(const char *v, void *data)
 {

@@ -21,6 +21,7 @@ extern int parse_esc_string(const char *v, void *data);
 extern int parse_string(const char *v, void *data);
 extern int parse_int(const char *v, void *data);
 extern int parse_full_path(const char *v, void *data);
+extern char *encode_esc_string(const char *v);
 
 #ifdef _HAVE_ICONV
 extern char *decode(iconv_t hiconv, const char *s);
