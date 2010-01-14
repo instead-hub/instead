@@ -1588,23 +1588,35 @@ iface = {
 			print(str);
 		end
 	end,
+	fmt = function(self, cmd, st, moved, r, av, objs, pv) -- r - action result, moved -- changed loc
+		local l
+		if st and not moved then
+			if cmd ~= 'look' and cmd ~= '' then
+				av = txtem(av);
+				pv = txtem(pv);
+				r  = txtem(r);
+				if isForcedsc(here()) then
+					l = me():look();
+				end
+			end
+		end
+		vv = fmt(cat(par("^^", l, r, av, objs, pv), '^'));
+		return vv
+	end,
 	cmd = function(self, inp)
-		local r, v, vv, l;
+		local r, v, vv;
 		v = false
-		local scene = false;
-		local st = false; -- changed state
+		local st = false; -- changed state (main screen)
 		local a = { };
 		local cmd;
 
-		cmd,a,n = stead.getcmd(inp);
---		me():tag();	
-		local oldloc = here();	
-		local look = false;
+		cmd,a = stead.getcmd(inp);
+--		me():tag();
+		local oldloc = here();
 
 		if cmd == 'look' or cmd == '' then
 			r,v = me():look();
 			st = true;
-			look = true;
 		elseif cmd == 'obj' then
 			r,v = me():objs();
 		elseif cmd == 'inv' then
@@ -1642,30 +1654,27 @@ iface = {
 		if st and r == nil and v == true then -- we do nothing
 			return nil;
 		end
+
+		if v == false then
+			return fmt(r), false;
+		end
 		
 		ACTION_TEXT = r; -- here, life methods can redefine this
-		if st and v ~= false then
-			local av, pv -- av -- active lifes, pv -- background
+
+		local av, pv -- av -- active lifes, pv -- background
+
+		if st then
 			pv,av = game:step();
-			vv = par(" ",vv, pv);
-			me():tag();		
-			if oldloc == here() and not look then
-				if isForcedsc(here()) then
-					l,v = me():look();
-				end
-				ACTION_TEXT = txtem(ACTION_TEXT);
-				vv = par("^^",txtem(av), here():look(), txtem(vv));
-			else
-				vv = par("^^",av, here():look(), vv);
-			end
+			me():tag();
+			vv = here():look();
 		end
-		if v == false then
-			return fmt(ACTION_TEXT), false;
-		end
-		vv = fmt(cat(par("^^",l,ACTION_TEXT,vv),'^'));
+
+		vv = self:fmt(cmd, st, oldloc ~= here(), ACTION_TEXT, av, vv, pv);
+
 		if st then
 			game._lastdisp = vv
 		end
+
 		if vv == nil then -- nil is error
 			return ''
 		end
