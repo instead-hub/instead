@@ -8,6 +8,32 @@ stead = {
 	cctx = { txt = nil, self = nil },
 }
 
+function stead.getcmd(str)
+	local a = {}
+	local n = 1
+	local cmd;
+	local i,k = stead.string.find(str,'[a-zA-Z0-9_]+', k);
+	if not i or not k then
+		cmd = str;
+	else
+		cmd = stead.string.sub(str, i, k);
+	end
+	if cmd == 'load' or cmd == 'save' then
+		a[1] = strip(stead.string.sub(str, k + 1));
+		return cmd, a
+	end
+	while i do
+		k = k + 1;
+		i,k = stead.string.find(str,'[^,]+', k);
+		if not i then
+			break
+		end
+		a[n] = strip(stead.string.sub(str, i, k));
+		n = n + 1;
+	end
+	return cmd, a
+end
+
 function cctx()
 	return stead.cctx[stead.call_top];
 end
@@ -1563,31 +1589,18 @@ iface = {
 		end
 	end,
 	cmd = function(self, inp)
-		local r, v, vv, i, k, cmd;
-		local scene = false;
-		local st = false;
-		local l;
-		i,k = stead.string.find(inp,'[a-zA-Z0-9_]+', k);
-		if not i or not k then
-			cmd = inp
-		else
-			cmd = stead.string.sub(inp, i, k);
-		end
-		local a = { };
-		local n = 1;
-		while i do
-			k = k + 1;
-			i,k = stead.string.find(inp,'[^,]+', k);
-			if not i then
-				break
-			end
-			a[n] = strip(stead.string.sub(inp, i, k));
-			n = n + 1;
-		end
+		local r, v, vv, l;
 		v = false
+		local scene = false;
+		local st = false; -- changed state
+		local a = { };
+		local cmd;
+
+		cmd,a,n = stead.getcmd(inp);
 --		me():tag();	
 		local oldloc = here();	
 		local look = false;
+
 		if cmd == 'look' or cmd == '' then
 			r,v = me():look();
 			st = true;
@@ -1621,7 +1634,7 @@ iface = {
 				return r;
 			end
 		else
-			r,v = me():action(strip(inp));
+			r,v = me():action(cmd, unpack(a));
 			st = true;
 		end
 		-- here r is action result, v - ret code value	
