@@ -1604,7 +1604,7 @@ iface = {
 		return vv
 	end,
 	cmd = function(self, inp)
-		local r, v, vv;
+		local r, v;
 		v = false
 		local st = false; -- changed state (main screen)
 		local a = { };
@@ -1662,6 +1662,7 @@ iface = {
 		ACTION_TEXT = r; -- here, life methods can redefine this
 
 		local av, pv -- av -- active lifes, pv -- background
+		local vv
 
 		if st then
 			pv,av = game:step();
