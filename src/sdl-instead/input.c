@@ -56,10 +56,15 @@ int input(struct inp_event *inp, int wait)
 	switch(event.type){
 	case SDL_ACTIVEEVENT:
 		if (event.active.state & (SDL_APPMOUSEFOCUS | SDL_APPINPUTFOCUS)) {
-			if (event.active.gain)
+			if (event.active.gain) {
 				m_focus = 1;
-			else if (event.active.state & SDL_APPMOUSEFOCUS)
+				if (opt_fs)
+					SDL_ShowCursor(SDL_DISABLE);
+			} else if (event.active.state & SDL_APPMOUSEFOCUS) {
 				m_focus = 0;
+				if (opt_fs)
+					SDL_ShowCursor(SDL_ENABLE);
+			}
 		}
 		return AGAIN;
 	case SDL_USEREVENT: {
