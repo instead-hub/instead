@@ -1,6 +1,9 @@
 instead (1.0.6) unstable; urgency=low
 
   * encode path in save (' in paths);
+  * mouse focus win problem;
+  * cleanups in stead.lua;
+  * doc updates;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 14 Jan 2010 15:47:50 +0300
 
