@@ -2140,21 +2140,25 @@ int game_loop(void)
 			if (!is_key(&ev, "f2") && curgame_dir) {
 				mouse_reset();
 				game_menu(menu_save);
-			} if (!is_key(&ev, "f3") && curgame_dir) {
+			} else if (!is_key(&ev, "f3") && curgame_dir) {
 				mouse_reset();
 				game_menu(menu_load);
-			} if (!is_key(&ev, "f8") && curgame_dir && !menu_shown) {
+			} else if (!is_key(&ev, "f8") && curgame_dir && !menu_shown) {
 				game_save(9);
-			} if (!is_key(&ev, "f9") && curgame_dir && !menu_shown) {
+			} else if (!is_key(&ev, "f9") && curgame_dir && !menu_shown) {
 				if (!access(game_save_path(0, 9), R_OK)) {
 					mouse_reset();
 					game_select(curgame_dir);
 					game_load(9);
 				}	
-			} if (!is_key(&ev, "f5") && curgame_dir && !menu_shown) {
+			} else if (!is_key(&ev, "f5") && curgame_dir && !menu_shown) {
 				mouse_reset();
 				game_cmd("look");
-			} if (!is_key(&ev, "f10")) {
+			} else if (alt_pressed && !is_key(&ev, "r") && curgame_dir && !menu_shown && debug_sw) {
+				mouse_reset();
+				game_menu_act("/new");
+				shift_pressed = alt_pressed = 0;
+			} else if (!is_key(&ev, "f10")) {
 				mouse_reset();
 				game_menu(menu_askquit);
 			} else if (!alt_pressed && (!is_key(&ev, "return") || !is_key(&ev, "enter"))) {

@@ -42,8 +42,6 @@ static int traceback (lua_State *L)
 	return 1;
 }
 
-extern int debug_sw;
-
 static int docall (lua_State *L) 
 {
 	int status;
