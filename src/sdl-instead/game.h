@@ -12,6 +12,7 @@ extern int	game_running;
 
 extern int 	nosound_sw;
 extern int 	alsa_sw;
+extern int	debug_sw;
 extern int 	fullscreen_sw;
 extern int 	window_sw;
 
