@@ -145,7 +145,7 @@ function txtu(v)
 	return iface:under(v)
 end
 
-function enum(n, v)
+function txtnm(n, v)
 	if type(v) ~= 'string' or not tonumber(n) then return nil; end
 	return iface:enum(n, v);
 end
@@ -748,9 +748,9 @@ function dialog_look(self)
 		ph = ref(ph);
 		if isPhrase(ph) and not isDisabled(ph) then
 			if game.hinting then
-				v = par('^', v, enum(n, xref(call(ph,'dsc'),ph)));
+				v = par('^', v, txtnm(n, xref(call(ph,'dsc'),ph)));
 			else
-				v = par('^', v, enum(n, stead.string.gsub(call(ph,'dsc'),'[{}]','')));
+				v = par('^', v, txtnm(n, stead.string.gsub(call(ph,'dsc'),'[{}]','')));
 			end
 			n = n + 1
 		end
