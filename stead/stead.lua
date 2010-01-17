@@ -275,7 +275,6 @@ function obj_look(self)
 		end
 	end
 	return v;
--- iface:xref(v,self.nam);
 end
 
 
@@ -290,9 +289,6 @@ function obj_disable(self)
 end
 
 function obj_enable(self)
---	if self._disabled == nil then
---		return
---	end
 	self._disabled = false;
 	return self
 end
@@ -345,9 +341,7 @@ function obj_str(self)
 		if o~= nil and not isDisabled(o) then -- isObject is better, but compat layer must be ok
 			vv = call(o, 'nam');
 			vv = xref(vv, o);
---			vv = cat(vv,'(',tostring(ref(self[i]).id),')');
 			v = par(',', v, vv, obj_str(o));
---			obj_str(o);
 		end
 	end
 	return v;
@@ -407,7 +401,6 @@ function ref(n) -- ref object by name
 	if type(n) == 'function' then
 		return ref(n());
 	end
-	-- error "Ref to unknown object."
 	return nil
 end
 
@@ -440,11 +433,9 @@ function list_str(self)
 	local i, v, vv, o;
 	for i,o in opairs(self) do
 		o = ref(o);
---		if isObject(o) and not isDisabled(o) then
 		if o~= nil and not isDisabled(o) then
 			vv = call(o, 'nam');
 			vv = xref(vv, o);
---			vv = cat(vv,'(',tostring(ref(self[i]).id),')');
 			v = par(',', v, vv);
 		end
 	end
@@ -454,9 +445,6 @@ end
 
 function list_add(self, name, pos)
 	local nam
---	if type(name) ~= 'string' then
---		error "No string adding to list."
---	end
 	nam = deref(name);
 	if self:look(nam) then
 		return nil
@@ -485,9 +473,6 @@ end
 
 function list_find(self, name)
 	local n, v, ii
---	if type(name) ~= 'string' then
---		error "No string finding in list."
---	end
 	for n,v,ii in opairs(self) do 
 		if ref(v) == ref(name) then
 			return ii; 
@@ -506,9 +491,6 @@ end
 
 function list_name(self, name)
 	local n, o, ii
---	if type(name) ~= 'string' then
---		error "No string finding in list."
---	end
 	for n,o,ii in opairs(self) do
 		o = ref(o);
 		if isObject(o) then
@@ -722,7 +704,6 @@ function room(v) --constructor
 end
 
 function dialog_enter(self)
---	self._last = nil;
 	if not dialog_rescan(self) then
 		return nil, false
 	end
@@ -733,11 +714,6 @@ function dialog_scene(self)
 	local v
 	v = iface:title(call(self,'nam'));
 	v = par('^^', v, call(self, 'dsc')); --obj_look(self));
---	if self._last then
---		v = par('^^', v, self._last);
---	else
---		v = par('^^', v, call(self, 'dsc'));
---	end
 	return v;	
 end
 
@@ -768,8 +744,6 @@ function dialog_rescan(self)
 		return false
 	end
 	return true
---	self._last = call(ph, 'ans');
---	return self._last;
 end
 
 
@@ -796,7 +770,6 @@ function ponoff(s, on, ...)
 			else 
 				ph:disable();
 			end
---			ph.__changed__ = true;
 		end
 	end
 end
@@ -810,7 +783,6 @@ function dialog_prem(s, ...)
 		ph = dialog_phrase(s, arg[i]);
 		if isPhrase(ph) then
 			ph:remove();
---			ph.__changed__=true
 		end
 	end
 end
@@ -912,12 +884,8 @@ end
 
 function phrase(o) --constructor
 	local ret = o;
---	if not tonumber(num) then
---		error "phrase not numbered.";
---	end
 	ret.look = phrase_look;
 	ret.nam = ''; -- for start
---	ret.key = tostring(num);
 	ret.phrase_type = true;
 	ret.act = phrase_action;
 	ret.save = phrase_save;
@@ -950,7 +918,6 @@ function player_objs(self)
 end
 
 function player_look(self)
-	--return par('',ref(self.where):scene(), ref(self.where):look());
 	return ref(self.where):scene();
 end
 
@@ -988,14 +955,6 @@ function player_tagall(self)
 	end
 end
 
---function player_do(self, what, ...)
---	local v,r = call(ref(self.where),'act', what, unpack(arg));
---	if v == nil then
---		return nil, false
---	end
---	return v;
---end
-
 function player_action(self, what, ...)
 	local v,r,obj
 	obj = ref(self.where):srch(what);
@@ -1023,7 +982,6 @@ function player_take(self, what)
 		take(obj, w);
 	end
 	return v;
---	return cat(v,'^^');
 end
 
 function player_use(self, what, onwhat)
@@ -1088,7 +1046,6 @@ function go(self, where, back)
 		error ("Trying to go from nowhere: "..self.where);
 	end
 	local v, r;
---	if not isDialog(ref(self.where)) then
 	if not isVroom(ref(where)) and not stead.in_exit_call then
 		stead.in_exit_call = true -- to break recurse
 		v,r = call(ref(self.where), 'exit', where);
@@ -1097,12 +1054,7 @@ function go(self, where, back)
 			return v, r
 		end
 	end
---	if ref(was) ~= ref(self.where) then -- jump !!!
---		where = self.where;
---		was = where;
---	end
 
---	end
 	local res = v;
 	v = nil;
 	if not back or not isDialog(ref(self.where)) or isDialog(ref(where)) then
@@ -1478,9 +1430,7 @@ function game_save(self, name, file)
 		return nil, false
 	end
 	h:write("-- $Name: "..call(here(),'nam').."$\n");
---	for_each_room(save_object, h);
 	for_each_object(save_object, h);
---	for_each_player(save_object, h);
 	save_object('game', self, h);
 	clearvar(_G);
 	h:flush();
@@ -1512,7 +1462,7 @@ end
 
 
 game = game {
-	nam = "INSTEAD -- Simple Text Adventure interpreter v"..stead.version.." '2009 by Peter Kosyh",
+	nam = "INSTEAD -- Simple Text Adventure interpreter v"..stead.version.." '2009-2010 by Peter Kosyh",
 	dsc = [[
 Commands:^
     look(or just enter), act <on what> (or just what), use <what> [on what], go <where>,^
@@ -1573,7 +1523,6 @@ iface = {
 		return n..' - '..str;
 	end,
 	xref = function(self, str, obj)
---		return "@"..str.."{"..obj.."}";
 		local o = ref(here():srch(obj));
 		if not o then 
 			o = ref(ways():srch(obj));
@@ -1583,10 +1532,8 @@ iface = {
 		end
 		if not o or not o.id then
 			return str;
---			error ("Xref to nowhere:"..str);
 		end
 		return cat(str,"("..tostring(o.id)..")");
---		return str;
 	end,
 	title = function(self, str)
 		return "["..str.."]";
