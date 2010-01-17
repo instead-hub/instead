@@ -747,11 +747,7 @@ function dialog_look(self)
 	for i,ph in opairs(self.obj) do
 		ph = ref(ph);
 		if isPhrase(ph) and not isDisabled(ph) then
-			if game.hinting then
-				v = par('^', v, txtnm(n, xref(call(ph,'dsc'),ph)));
-			else
-				v = par('^', v, txtnm(n, stead.string.gsub(call(ph,'dsc'),'[{}]','')));
-			end
+			v = par('^', v, txtnm(n, ph:look()));
 			n = n + 1
 		end
 	end
@@ -902,11 +898,24 @@ function phrase_save(self, name, h, need)
 	savemembers(h, self, name, false);
 end
 
+function phrase_look(self, n)
+	if isDisabled(self) then
+		return
+	end
+	local v = call(self, 'dsc');
+	if type(v) ~= 'string' then return; end
+	if game.hinting then
+		return obj_xref(self, '{'..v..'}');
+	end
+	return v;
+end
+
 function phrase(o) --constructor
 	local ret = o;
 --	if not tonumber(num) then
 --		error "phrase not numbered.";
 --	end
+	ret.look = phrase_look;
 	ret.nam = ''; -- for start
 --	ret.key = tostring(num);
 	ret.phrase_type = true;
