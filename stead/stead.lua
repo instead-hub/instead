@@ -1973,7 +1973,7 @@ function seen(obj, wh)
 	if not wh then
 		wh = here();
 	else
-		wh = ref(wh);	
+		wh = ref(wh);
 	end
 	local o,w = wh:srch(obj);
 	o = ref(o);
@@ -2110,7 +2110,7 @@ end
 function change_pl(p)
 	local o = ref(p);
 	if type(deref(p)) ~= 'string' or not o then
-		error "Wrong player name in change_pl...";	
+		error "Wrong player name in change_pl...";
 	end
 	game.pl = deref(p);
 	return goto(o.where);
