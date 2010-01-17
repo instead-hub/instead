@@ -1557,7 +1557,7 @@ iface = {
 			print(str);
 		end
 	end,
-	fmt = function(self, cmd, st, moved, r, av, objs, pv) -- r - action result, moved -- changed loc
+	fmt = function(self, cmd, st, moved, r, av, objs, pv) -- st -- changed state (main win), move -- loc changed
 		local l
 		if st and not moved then
 			if cmd ~= 'look' and cmd ~= '' then
