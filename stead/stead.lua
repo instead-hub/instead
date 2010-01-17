@@ -243,7 +243,7 @@ end
 
 function obj_xref(self,str)
 	function xrefrep(str)
-		local s =  stead.string.gsub(str,'[{}]','');
+		local s = stead.string.gsub(str,'[{}]','');
 		return xref(s, self);
 	end
 	if not str then
@@ -263,7 +263,7 @@ function obj_look(self)
 	end
 	local v = call(self,'dsc');
 	if game.hinting then
-		v = obj_xref(self, v);
+		v = self:xref(v);
 	elseif v then
 		v = stead.string.gsub(v, '[{}]','');
 	end
@@ -351,10 +351,15 @@ function obj(v)
 	if v.nam == nil then
 		error ("No object name in constructor.");
 	end
+	v.object_type = true;
+
+	if v.xref == nil then
+		v.xref = obj_xref;
+	end
+
 	if v.look == nil then
 		v.look = obj_look;
 	end
-	v.object_type = true;
 	if v.enable == nil then
 		v.enable = obj_enable;
 	end
@@ -714,7 +719,7 @@ function dialog_scene(self)
 	local v
 	v = iface:title(call(self,'nam'));
 	v = par('^^', v, call(self, 'dsc')); --obj_look(self));
-	return v;	
+	return v;
 end
 
 function dialog_look(self)
@@ -877,7 +882,7 @@ function phrase_look(self, n)
 	local v = call(self, 'dsc');
 	if type(v) ~= 'string' then return; end
 	if game.hinting then
-		return obj_xref(self, '{'..v..'}');
+		return self:xref('{'..v..'}');
 	end
 	return v;
 end
