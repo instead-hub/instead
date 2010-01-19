@@ -51,9 +51,12 @@ static char *slot_name(const char *path)
 	FILE *fd;
 	l = lookup_tag(path, "Name", "--");
 	if (l) {
-		char *s = fromgame(l);
+		if (!is_empty(l)) {
+			char *s = fromgame(l);
+			free(l);
+			return s;
+		}
 		free(l);
-		return s;
 	}
 	fd = fopen(path, "r");
 	if (!fd)
