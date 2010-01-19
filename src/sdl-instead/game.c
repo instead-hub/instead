@@ -1246,7 +1246,7 @@ int game_cmd(char *cmd)
 	title = instead_retval(0); 
 	instead_clear();
 
-	if (title) {
+	if (title && *title) {
 		snprintf(buf, sizeof(buf), "<b><c><a:look>%s</a></c></b>", title);
 		txt_layout_set(el_layout(el_title), buf);
 	} else
@@ -1254,7 +1254,8 @@ int game_cmd(char *cmd)
 
 	new_place = check_new_place(title);
 	
-	txt_layout_size(el_layout(el_title), NULL, &title_h);
+	if (title && *title)
+		txt_layout_size(el_layout(el_title), NULL, &title_h);
 	title_h += game_theme.font_size / 2; // todo?	
 
 	instead_eval("return get_picture();");
