@@ -467,8 +467,11 @@ static char *theme_name(const char *path, const char *d_name)
 		goto err;
 	l = lookup_lang_tag(p, "Name", ";");
 	free(p);
-	if (l)
-		return l;
+	if (l) {
+		if (!is_empty(l))
+			return l;
+		free(l);
+	}
 err:
 	return strdup(d_name);
 }
