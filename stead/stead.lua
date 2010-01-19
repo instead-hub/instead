@@ -1432,7 +1432,10 @@ function game_save(self, name, file)
 	if not h then
 		return nil, false
 	end
-	h:write("-- $Name: "..call(here(),'nam').."$\n");
+	local n = call(here(),'nam');
+	if type(n) == 'string' and n ~= "" then
+		h:write("-- $Name: "..n.."$\n");
+	end
 	for_each_object(save_object, h);
 	save_object('game', self, h);
 	clearvar(_G);
