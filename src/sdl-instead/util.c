@@ -27,6 +27,15 @@ int is_space(int c)
 	return (c == ' ' || c == '\t');
 }
 
+int is_empty(const char *str)
+{
+	if (!str || !*str)
+		return 1;
+	while (*str && !is_space(*str++))
+		return 0;
+	return 1;
+}
+
 char *strip(char *s)
 {
 	char *e;
