@@ -1321,10 +1321,13 @@ int game_cmd(char *cmd)
 			txt_layout_add_img(txt_box_layout(el_box(el_scene)),"scene", el_img(el_spic));
 			txt_layout_add(txt_box_layout(el_box(el_scene)), "<c><g:scene></c>\n");
 		}
-		p = malloc(strlen(cmdstr) + strlen(waystr) + 16);
+		p = malloc(strlen(cmdstr) + ((waystr)?strlen(waystr):0) + 16);
 		if (p) {
-			strcpy(p, waystr);
-			strcat(p, "\n"); /* small hack */
+			*p = 0;
+			if (waystr) {
+				strcpy(p, waystr);
+				strcat(p, "\n"); /* small hack */
+			}
 			strcat(p, cmdstr);
 			free(cmdstr);
 			cmdstr = p;
