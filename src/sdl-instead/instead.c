@@ -344,10 +344,49 @@ static int luaB_is_sound(lua_State *L) {
 	return 1;
 }
 
+static gtimer_t instead_timer = NULL;
+
+extern void mouse_reset(void); /* too bad */
+
+static void instead_timer_do(void *data)
+{
+	int b;
+	if (game_paused())
+		return;
+	instead_eval("return stead.timer()");
+	b = instead_bretval(0);
+	instead_clear();
+	if (!b)
+		return;
+	mouse_reset();
+	game_cmd("look");
+}
+
+static int instead_fn(int interval, void *p)
+{
+	push_user_event(instead_timer_do, NULL);
+	return interval;
+}
+
+static int luaB_set_timer(lua_State *L) {
+	const char *delay = luaL_optstring(L, 1, NULL);
+	int d;
+	gfx_del_timer(instead_timer);
+	if (!delay)
+		d = 0;
+	else	
+		d = atoi(delay);
+	if (!d)
+		return 0;	
+	instead_timer = gfx_add_timer(d, instead_fn, NULL);
+	return 0;
+}
+
 static const luaL_Reg base_funcs[] = {
 	{"doencfile", luaB_doencfile},
 	{"print", luaB_print}, /* for some mystic, it is needed in win version (with -debug) */
 	{"is_sound", luaB_is_sound},
+	{"set_timer", luaB_set_timer},
 	{NULL, NULL}
 };
 
@@ -374,6 +413,7 @@ int instead_init(void)
 
 void instead_done(void)
 {
+	gfx_del_timer(instead_timer);
 #ifdef _HAVE_ICONV
 	if (fromcp)
 		free(fromcp);

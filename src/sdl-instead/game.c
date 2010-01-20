@@ -12,7 +12,7 @@ char	*curgame_dir = NULL;
 int game_own_theme = 0;
 
 void game_cursor(int on);
-static void mouse_reset(void);
+void mouse_reset(void);
 static void menu_toggle(void);
 
 
@@ -158,10 +158,6 @@ static img_t	menu = NULL;
 
 static int menu_shown = 0;
 
-int game_paused(void)
-{
-	return menu_shown;
-}
 
 int game_cmd(char *cmd);
 void game_clear(int x, int y, int w, int h)
@@ -1420,6 +1416,11 @@ inv:
 //		input_clear();
 		goto err;
 	}
+	{ /* highlight new scene, to avoid flickering */
+		int x, y;
+		gfx_cursor(&x, &y, NULL, NULL);
+		game_highlight(x, y, 1);
+	}
 	game_cursor(CURSOR_DRAW);
 	gfx_flip();
 //	input_clear();
@@ -1445,6 +1446,7 @@ void game_xref_update(xref_t xref, int x, int y)
 }
 
 xref_t	use_xref = NULL;
+
 
 int disable_use(void)
 {
@@ -1510,6 +1512,11 @@ xref_t look_xref(int x, int y, struct el **elem)
 static xref_t old_xref = NULL;
 static struct el *old_el = NULL;
 
+int game_paused(void)
+{
+	return menu_shown || use_xref || old_xref;
+}
+
 void menu_update(struct el *elem)
 {
 	gfx_draw(menubg, mx, my);
@@ -1546,7 +1553,7 @@ int game_highlight(int x, int y, int on)
 	return 0;
 }
 
-static void mouse_reset(void)
+void mouse_reset(void)
 {
 	game_highlight(-1, -1, 0);
 	disable_use();
