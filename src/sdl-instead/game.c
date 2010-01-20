@@ -12,9 +12,8 @@ char	*curgame_dir = NULL;
 int game_own_theme = 0;
 
 void game_cursor(int on);
-void mouse_reset(void);
+void mouse_reset(int hl);
 static void menu_toggle(void);
-
 
 void game_err_msg(const char *s)
 {
@@ -620,7 +619,7 @@ void game_done(int err)
 
 	if (menu_shown)
 		menu_toggle();
-	mouse_reset();
+	mouse_reset(1);
 	game_cursor(CURSOR_OFF);	
 	if (el_img(el_spic))
 		gfx_free_image(el_img(el_spic));
@@ -1217,6 +1216,8 @@ static void scroll_to_diff(const char *cmdstr, int cur_off)
 	txt_box_scroll(el_box(el_scene), off);
 }
 
+int game_highlight(int x, int y, int on);
+
 int game_cmd(char *cmd)
 {
 	int		old_off;
@@ -1553,9 +1554,10 @@ int game_highlight(int x, int y, int on)
 	return 0;
 }
 
-void mouse_reset(void)
+void mouse_reset(int hl)
 {
-	game_highlight(-1, -1, 0);
+	if (hl)
+		game_highlight(-1, -1, 0);
 	disable_use();
 	motion_mode = 0;
 	old_xref = old_el = NULL;
@@ -1563,7 +1565,7 @@ void mouse_reset(void)
 
 static void menu_toggle(void)
 {
-	mouse_reset();
+	mouse_reset(1);
 	menu_shown ^= 1;
 	if (!menu_shown)
 		cur_menu = menu_main;
@@ -2152,28 +2154,28 @@ int game_loop(void)
 			shift_pressed = (ev.type == KEY_DOWN) ? 1:0;
 		} else if (ev.type == KEY_DOWN) {
 			if (!is_key(&ev, "f2") && curgame_dir) {
-				mouse_reset();
+				mouse_reset(1);
 				game_menu(menu_save);
 			} else if (!is_key(&ev, "f3") && curgame_dir) {
-				mouse_reset();
+				mouse_reset(1);
 				game_menu(menu_load);
 			} else if (!is_key(&ev, "f8") && curgame_dir && !menu_shown) {
 				game_save(9);
 			} else if (!is_key(&ev, "f9") && curgame_dir && !menu_shown) {
 				if (!access(game_save_path(0, 9), R_OK)) {
-					mouse_reset();
+					mouse_reset(1);
 					game_select(curgame_dir);
 					game_load(9);
 				}	
 			} else if (!is_key(&ev, "f5") && curgame_dir && !menu_shown) {
-				mouse_reset();
+				mouse_reset(1);
 				game_cmd("look");
 			} else if (alt_pressed && !is_key(&ev, "r") && curgame_dir && !menu_shown && debug_sw) {
-				mouse_reset();
+				mouse_reset(1);
 				game_menu_act("/new");
 				shift_pressed = alt_pressed = 0;
 			} else if (!is_key(&ev, "f10")) {
-				mouse_reset();
+				mouse_reset(1);
 				game_menu(menu_askquit);
 			} else if (!alt_pressed && (!is_key(&ev, "return") || !is_key(&ev, "enter"))) {
 				gfx_cursor(&x, &y, NULL, NULL);

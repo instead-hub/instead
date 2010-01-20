@@ -6,6 +6,9 @@ stead = {
 	io = io,
 	call_top = 0,
 	cctx = { txt = nil, self = nil },
+	timer = function(s)
+		return false
+	end
 }
 
 function stead.getcmd(str)

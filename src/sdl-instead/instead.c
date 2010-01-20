@@ -346,19 +346,22 @@ static int luaB_is_sound(lua_State *L) {
 
 static gtimer_t instead_timer = NULL;
 
-extern void mouse_reset(void); /* too bad */
+extern void mouse_reset(int hl); /* too bad */
 
 static void instead_timer_do(void *data)
 {
 	int b;
 	if (game_paused())
 		return;
-	instead_eval("return stead.timer()");
+	if (instead_eval("return stead.timer()")) {
+		instead_clear();
+		return;
+	}
 	b = instead_bretval(0);
 	instead_clear();
 	if (!b)
 		return;
-	mouse_reset();
+	mouse_reset(0);
 	game_cmd("look");
 }
 
