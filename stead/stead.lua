@@ -1221,7 +1221,7 @@ function do_ini(self)
 		v.key_name = k;
 	end
 	local function call_ini(k, v)
-		call(v, 'ini');
+		call(v, 'ini', k);
 	end
 
 	math.randomseed(tonumber(os.date("%m%d%H%M%S")))
