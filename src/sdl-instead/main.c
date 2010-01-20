@@ -8,6 +8,7 @@ int debug_sw = 0;
 int noauto_sw = 0;
 int nostdgames_sw = 0;
 int nostdthemes_sw = 0;
+int version_sw = 0;
 char *game_sw = NULL;
 char *games_sw = NULL;
 char *theme_sw = NULL;
@@ -74,18 +75,25 @@ int main(int argc, char **argv)
 				encode_output = argv[++i];
 			else
 				encode_output = "lua.enc";
+		} else if (!strcmp(argv[i], "-version")) {
+			version_sw = 1;
 		}
+	}
 
-	}	
-	
 	if (debug_sw) {
 		debug_init();
 	}
-	
+
+	if (version_sw) {
+		fprintf(stdout, VERSION"\n");
+		goto out;
+	}
+
 	if (encode_sw) {
 		err = instead_encode(encode_sw, encode_output);
 		goto out;		
 	}
+
 	menu_langs_lookup(LANG_PATH);
 	
 	if (!langs_nr) {
