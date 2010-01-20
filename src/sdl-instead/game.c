@@ -2132,6 +2132,33 @@ static int is_key(struct inp_event *ev, const char *name)
 	return strcmp(ev->sym, name);
 }
 
+static int game_input(int down, const char *key)
+{
+	int b;
+	char *p;
+	char buf[1024];
+
+	if (game_paused())
+		return -1;
+	p = encode_esc_string((key)?key:"unknown");
+ 	if (!p)
+ 		return -1;
+ 		
+	snprintf(buf, sizeof(buf), "return stead.input(%s, \"%s\")", 
+		((down)?"true":"false"), p);
+	free(p);
+	if (instead_eval(buf)) {
+		instead_clear();
+		return -1;
+	}
+
+	b = instead_bretval(0);
+	instead_clear();
+	if (!b)
+		return -1;
+	return 0;
+}
+
 int game_loop(void)
 {
 	static int alt_pressed = 0;
@@ -2146,6 +2173,10 @@ int game_loop(void)
 		while ((rc = input(&ev, 1)) == AGAIN);
 		if (rc == -1) {/* close */
 			break;
+		} else if (curgame_dir && (ev.type == KEY_DOWN || ev.type == KEY_UP) 
+				&& !game_input((ev.type == KEY_DOWN), ev.sym)) {
+			mouse_reset(0);
+			game_cmd("look");
 		} else if (((ev.type ==  KEY_DOWN) || (ev.type == KEY_UP)) && 
 			(!is_key(&ev, "left alt") || !is_key(&ev, "right alt"))) {
 			alt_pressed = (ev.type == KEY_DOWN) ? 1:0;
@@ -2284,7 +2315,7 @@ int game_loop(void)
 				motion_y = ev.y;
 			}
 		//	game_highlight(ev.x, ev.y, 1);
-		}
+		} 
  		
 		if (old_xref)
 			game_highlight(x, y, 1);

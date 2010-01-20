@@ -8,7 +8,10 @@ stead = {
 	cctx = { txt = nil, self = nil },
 	timer = function(s)
 		return false
-	end
+	end,
+	input = function(s)
+		return false
+	end,
 }
 
 function stead.getcmd(str)

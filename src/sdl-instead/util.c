@@ -188,6 +188,7 @@ char *encode_esc_string(const char *v)
 		case '\\':
 			*p ++ = '\\';
 			*p ++ = '\\';
+			break;
 		default:
 			*p ++ = *v;
 		}
