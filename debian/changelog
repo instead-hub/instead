@@ -5,7 +5,6 @@ instead (1.0.6) unstable; urgency=low
   * cleanups in stead.lua;
   * doc updates;
   * alt-r in debug mode (restart game);
-  * extra arg in :ini
   * -version arg
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 14 Jan 2010 15:47:50 +0300
