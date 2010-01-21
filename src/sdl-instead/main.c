@@ -77,6 +77,9 @@ int main(int argc, char **argv)
 				encode_output = "lua.enc";
 		} else if (!strcmp(argv[i], "-version")) {
 			version_sw = 1;
+		} else {
+			fprintf(stderr,"Unknow option: %s\n", argv[i]);
+			exit(1);
 		}
 	}
 
