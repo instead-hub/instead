@@ -6,11 +6,14 @@ stead = {
 	io = io,
 	call_top = 0,
 	cctx = { txt = nil, self = nil },
-	timer = function(s)
-		return false
+	timer = function()
+		if type(timer) == 'table' and type(timer.callback) == 'function' then
+			return timer:callback();
+		end
+		return
 	end,
-	input = function(s)
-		return false
+	input = function(pressed, event)
+		return
 	end,
 }
 
@@ -1816,7 +1819,7 @@ function delete(v)
 	allocator:delete(v);
 end
 
-timer = obj {
+timer = obj { -- timer calls stead.timer callback 
 	nam = 'timer',
 	ini = function(s)
 		if s._timer ~= nil and s._timer ~= 0 then
