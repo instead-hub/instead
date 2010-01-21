@@ -2173,7 +2173,7 @@ int game_loop(void)
 		while ((rc = input(&ev, 1)) == AGAIN);
 		if (rc == -1) {/* close */
 			break;
-		} else if (curgame_dir && (ev.type == KEY_DOWN || ev.type == KEY_UP) 
+		} else if (curgame_dir && (ev.type == KEY_DOWN || ev.type == KEY_UP)
 				&& !game_input((ev.type == KEY_DOWN), ev.sym)) {
 			; /* all is done in game_input */
 		} else if (((ev.type ==  KEY_DOWN) || (ev.type == KEY_UP)) && 
