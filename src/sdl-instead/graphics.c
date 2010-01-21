@@ -2363,14 +2363,14 @@ void _txt_layout_add(layout_t lay, char *txt)
 	char *p, *eptr;
 	char *ptr = txt;
 	struct xref *xref = NULL;
-	int w, h, nl = 0;
+	int w, h = 0, nl = 0;
 	int spw;
 	img_t img = NULL;
 	if (!layout || !layout->fn)
 		return;
 	saved_style = layout->style; 
 	TTF_SetFontStyle((TTF_Font *)(layout->fn), 0);
-	TTF_SizeUTF8((TTF_Font *)(layout->fn), " ", &spw, &h);
+	TTF_SizeUTF8((TTF_Font *)(layout->fn), " ", &spw, NULL);
 
 	for (line = layout->lines; line; line = line->next) {
 		lastline = line;
@@ -2420,8 +2420,12 @@ void _txt_layout_add(layout_t lay, char *txt)
 			h = gfx_img_h(img);
 		} else {
 			TTF_SizeUTF8((TTF_Font *)(layout->fn), p, &w, &h);
+			if (!*p && line->h)
+				h = 0;
 		}
 		nl = !*p;
+		if (h > line->h)
+			line->h = h;
 		if ((line->num && (line->w + ((sp && line->w)?spw:0) + w + addlen) > layout->w) || nl) {
 			struct line *ol = line;
 			if ((layout->h) && (line->y + line->h) >= layout->h)
@@ -2437,7 +2441,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 				goto err;
 			}
 			line->align = layout->align;
-			line->h = h;
+			line->h = 0;//h;
 			line->y = ol->y + ol->h;
 			if (nl) {
 				ptr = eptr + 1;
@@ -2447,8 +2451,6 @@ void _txt_layout_add(layout_t lay, char *txt)
 			line->pos = (int)(ptr - txt);
 			continue;
 		}
-		if (h > line->h)
-			line->h = h;
 		word = word_new(p);
 		if (!word) {
 			line_free(line);
