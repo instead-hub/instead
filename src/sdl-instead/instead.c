@@ -350,19 +350,18 @@ extern void mouse_reset(int hl); /* too bad */
 
 static void instead_timer_do(void *data)
 {
-	int b;
+	char *p;
 	if (game_paused())
 		return;
 	if (instead_eval("return stead.timer()")) {
 		instead_clear();
 		return;
 	}
-	b = instead_bretval(0);
-	instead_clear();
-	if (!b)
+	p = instead_retval(0); instead_clear();
+	if (!p)
 		return;
 	mouse_reset(0);
-	game_cmd("look");
+	game_cmd(p); free(p);
 }
 
 static int instead_fn(int interval, void *p)
