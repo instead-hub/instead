@@ -11,6 +11,9 @@ typedef struct {
 	int g;
 	int b;
 } color_t;
+
+extern int fade_step_nr;
+
 #define ALIGN_LEFT 	1
 #define ALIGN_RIGHT 	2
 #define ALIGN_CENTER 	4

@@ -2698,28 +2698,28 @@ void gfx_warp_cursor(int x, int y)
 	SDL_WarpMouse(x, y);
 }
 #define ALPHA_STEPS 5
-volatile int   step_nr = -1;
+int   fade_step_nr = -1;
 
 static void update_gfx(void *aux)
 {
 	img_t img = (img_t) aux;
-	if (step_nr == -1)
+	if (fade_step_nr == -1)
 		return;
 	game_cursor(CURSOR_CLEAR);
-	gfx_set_alpha(img, (255 * (step_nr + 1)) / ALPHA_STEPS);
+	gfx_set_alpha(img, (255 * (fade_step_nr + 1)) / ALPHA_STEPS);
 	gfx_draw(img, 0, 0);
 	game_cursor(CURSOR_DRAW);
 	gfx_flip();
-	step_nr ++;
-	if (step_nr == ALPHA_STEPS) {
-		step_nr = -1;
+	fade_step_nr ++;
+	if (fade_step_nr == ALPHA_STEPS) {
+		fade_step_nr = -1;
 	}
 }
 
 static Uint32 update(Uint32 interval, void *aux)
 {
 	push_user_event(update_gfx, aux);
-	return interval;	
+	return interval;
 }
 
 extern void nsleep(int delay);
@@ -2729,9 +2729,9 @@ void gfx_change_screen(img_t src)
 	struct inp_event ev;
 	memset(&ev, 0, sizeof(ev));
 	SDL_TimerID han;
-	step_nr = 0;
+	fade_step_nr = 0;
 	han = SDL_AddTimer(60, update, src);
-	while (input(&ev, 1) >=0 && step_nr != -1) /* just wait for change */
+	while (input(&ev, 1) >=0 && fade_step_nr != -1) /* just wait for change */
 		game_cursor(CURSOR_ON);
 	SDL_RemoveTimer(han);
 }

@@ -1515,7 +1515,7 @@ static struct el *old_el = NULL;
 
 int game_paused(void)
 {
-	return menu_shown || use_xref || old_xref;
+	return menu_shown || use_xref || old_xref || (fade_step_nr != -1);
 }
 
 void menu_update(struct el *elem)
