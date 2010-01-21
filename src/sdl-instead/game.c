@@ -2132,19 +2132,28 @@ static int is_key(struct inp_event *ev, const char *name)
 	return strcmp(ev->sym, name);
 }
 
-static int game_input(int down, const char *key)
+static int game_input(int down, const char *key, int x, int y)
 {
 	char *p;
 	char buf[1024];
-
 	if (game_paused())
 		return -1;
 	p = encode_esc_string((key)?key:"unknown");
  	if (!p)
  		return -1;
- 		
-	snprintf(buf, sizeof(buf), "return stead.input(%s, \"%s\")", 
-		((down)?"true":"false"), p);
+ 	
+ 	if (x == -1)
+		snprintf(buf, sizeof(buf), "return stead.input(%s, \"%s\")", 
+			((down)?"true":"false"), p);
+	else {
+		float v = game_theme.scale;
+		if (v != 1.0f) {
+			x = (int)((float)x / v);
+			y = (int)((float)y / v);
+		}
+		snprintf(buf, sizeof(buf), "return stead.input(%s, \"%s\", %d, %d)", 
+			((down)?"true":"false"), p, x, y);
+	}
 	free(p);
 	if (instead_eval(buf)) {
 		instead_clear();
@@ -2174,7 +2183,10 @@ int game_loop(void)
 		if (rc == -1) {/* close */
 			break;
 		} else if (curgame_dir && (ev.type == KEY_DOWN || ev.type == KEY_UP)
-				&& !game_input((ev.type == KEY_DOWN), ev.sym)) {
+				&& !game_input((ev.type == KEY_DOWN), ev.sym, -1, -1)) {
+			; /* all is done in game_input */
+		} else if (curgame_dir && (ev.type == MOUSE_DOWN || ev.type == MOUSE_UP)
+				&& !game_input((ev.type == MOUSE_DOWN), "mouse", ev.x, ev.y)) {
 			; /* all is done in game_input */
 		} else if (((ev.type ==  KEY_DOWN) || (ev.type == KEY_UP)) && 
 			(!is_key(&ev, "left alt") || !is_key(&ev, "right alt"))) {
@@ -2327,4 +2339,3 @@ int game_loop(void)
 	}
 	return 0;
 }
-

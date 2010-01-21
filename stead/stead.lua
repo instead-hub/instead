@@ -12,7 +12,18 @@ stead = {
 		end
 		return
 	end,
-	input = function(pressed, event)
+	input = function(pressed, event, x, y)
+		if type(input) == 'table' then
+			if event == 'mouse' then
+				if type(input.click) == 'function' then
+					return input:click(pressed, x, y);
+				end
+			else
+				if type(input.key) == 'function' then
+					return input:key(pressed, event);
+				end
+			end
+		end
 		return
 	end,
 }
@@ -1847,7 +1858,19 @@ timer = obj { -- timer calls stead.timer callback
 		end
 		set_timer(v)
 		return true
-	end
+	end,
+--[[ 	callback = function(s)
+	end, ]]
+};
+
+input = obj { -- input object
+	nam = 'input',
+--[[	key = function(s, down, key)
+		return
+	end, ]]
+--[[	click = function(s, down, x, y)
+		return
+	end ]]
 };
 
 function vobj_save(self, name, h, need)

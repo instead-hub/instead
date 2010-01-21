@@ -387,7 +387,7 @@ int game_menu_act(const char *a)
 			game_restart();
 			restart_needed = 0;
 		}
-		game_menu(menu_main);
+//		game_menu(menu_main);
 	} else if (!strcmp(a,"/ask_quit")) {
 		game_menu(menu_askquit);
 	} else if (!strcmp(a,"/about")) {
