@@ -1816,6 +1816,37 @@ function delete(v)
 	allocator:delete(v);
 end
 
+timer = obj {
+	nam = 'timer',
+	ini = function(s)
+		if s._timer ~= nil and s._timer ~= 0 then
+			set_timer(s._timer);
+		end
+	end,
+	get = function(s)
+		if s._timer == nil then
+			return 0
+		end
+		return tonumber(s._timer);
+	end,
+	del = function(s, v)
+		s._timer = nil;
+		if  set_timer == nil then
+			return false
+		end
+		set_timer(0)
+		return true
+	end,
+	set = function(s, v)
+		s._timer = tonumber(v);
+		if set_timer == nil then
+			return false
+		end
+		set_timer(v)
+		return true
+	end
+};
+
 function vobj_save(self, name, h, need)
 	local dsc;
 	local w
