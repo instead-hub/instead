@@ -1,4 +1,4 @@
-instead (1.0.6) unstable; urgency=low
+instead (1.1.0) unstable; urgency=low
 
   * encode path in save (' in paths);
   * mouse focus win problem;
@@ -6,6 +6,9 @@ instead (1.0.6) unstable; urgency=low
   * doc updates;
   * alt-r in debug mode (restart game);
   * -version arg
+  * timer
+  * kbd input
+  * mouse input
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 14 Jan 2010 15:47:50 +0300
 
