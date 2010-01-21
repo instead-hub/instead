@@ -156,7 +156,11 @@ static void games_menu(void)
 			snprintf(tmp, sizeof(tmp), "<l><a:%s>%s</a></l>\n", games[i].dir, games[i].name);
 		strcat(menu_buff, tmp);
 		n ++;
-	}	
+	}
+
+	for(;n < MENU_GAMES_MAX && games_nr > MENU_GAMES_MAX; n++) /* align h */
+		strcat(menu_buff, "\n");
+
 	if (!games_nr)
 		sprintf(menu_buff, NOGAMES_MENU, GAMES_PATH);
 	strcat(menu_buff,"\n");
@@ -193,7 +197,11 @@ static void themes_menu(void)
 			snprintf(tmp, sizeof(tmp), "<l><a:%s>%s</a></l>\n", themes[i].dir, themes[i].name);
 		strcat(menu_buff, tmp);
 		n ++;
-	}	
+	}
+
+	for(;n < MENU_THEMES_MAX && themes_nr > MENU_THEMES_MAX; n++) /* align h */
+		strcat(menu_buff, "\n");
+
 	if (!themes_nr)
 		sprintf(menu_buff, NOTHEMES_MENU, THEMES_PATH);
 	strcat(menu_buff,"\n");
@@ -387,7 +395,7 @@ int game_menu_act(const char *a)
 			game_restart();
 			restart_needed = 0;
 		}
-//		game_menu(menu_main);
+		game_menu(menu_main);
 	} else if (!strcmp(a,"/ask_quit")) {
 		game_menu(menu_askquit);
 	} else if (!strcmp(a,"/about")) {
