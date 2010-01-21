@@ -1237,11 +1237,11 @@ end
 
 function do_ini(self)
 	local v='',vv
-	local function call_key(k, v)
-		v.key_name = k;
+	local function call_key(k, o)
+		o.key_name = k;
 	end
-	local function call_ini(k, v)
-		call(v, 'ini');
+	local function call_ini(k, o)
+		v = par('', v, call(o, 'ini'));
 	end
 
 	math.randomseed(tonumber(os.date("%m%d%H%M%S")))
