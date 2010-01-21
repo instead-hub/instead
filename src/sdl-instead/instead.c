@@ -345,6 +345,7 @@ static int luaB_is_sound(lua_State *L) {
 }
 
 static gtimer_t instead_timer = NULL;
+static int instead_timer_nr = 0;
 
 extern void mouse_reset(int hl); /* too bad */
 
@@ -352,20 +353,25 @@ static void instead_timer_do(void *data)
 {
 	char *p;
 	if (game_paused())
-		return;
+		goto out;
 	if (instead_eval("return stead.timer()")) {
 		instead_clear();
-		return;
+		goto out;
 	}
 	p = instead_retval(0); instead_clear();
 	if (!p)
-		return;
+		goto out;
 	mouse_reset(0);
 	game_cmd(p); free(p);
+out:
+	instead_timer_nr = 0;
 }
 
 static int instead_fn(int interval, void *p)
 {
+	if (instead_timer_nr)
+		return interval; /* framedrop */
+	instead_timer_nr ++;
 	push_user_event(instead_timer_do, NULL);
 	return interval;
 }
@@ -379,7 +385,8 @@ static int luaB_set_timer(lua_State *L) {
 	else	
 		d = atoi(delay);
 	if (!d)
-		return 0;	
+		return 0;
+	instead_timer_nr = 0;
 	instead_timer = gfx_add_timer(d, instead_fn, NULL);
 	return 0;
 }
