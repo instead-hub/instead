@@ -363,6 +363,7 @@ static void instead_timer_do(void *data)
 		goto out;
 	mouse_reset(0);
 	game_cmd(p); free(p);
+	game_cursor(CURSOR_ON);
 out:
 	instead_timer_nr = 0;
 }
