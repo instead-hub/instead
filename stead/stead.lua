@@ -1022,7 +1022,7 @@ function player_use(self, what, onwhat)
 	end
 	if onwhat == nil then
 		if scene_use_mode then
-			return player_action(self, what);
+			return self:action(what);
 		else
 			v, r = call(ref(obj),'inv');
 		end
