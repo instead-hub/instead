@@ -12,16 +12,17 @@ stead = {
 		end
 		return
 	end,
-	input = function(pressed, event, x, y)
-		if type(input) == 'table' then
-			if event == 'mouse' then
-				if type(input.click) == 'function' then
-					return input:click(pressed, x, y);
-				end
-			else
-				if type(input.key) == 'function' then
-					return input:key(pressed, event);
-				end
+	input = function(event, ...)
+		if type(input) ~= 'table' then
+			return
+		end
+		if event == 'kbd' then
+			if type(input.key) == 'function' then
+				return input:key(unpack(arg)); -- pressed, event
+			end
+		elseif event == 'mouse' then
+			if type(input.click) == 'function' then
+				return input:click(unpack(arg)); -- pressed, x, y, mb
 			end
 		end
 		return
@@ -1868,7 +1869,7 @@ input = obj { -- input object
 --[[	key = function(s, down, key)
 		return
 	end, ]]
---[[	click = function(s, down, x, y)
+--[[	click = function(s, down, x, y, mb)
 		return
 	end ]]
 };
