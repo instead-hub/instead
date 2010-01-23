@@ -1290,6 +1290,7 @@ struct layout {
 	int saved_align;
 	int style;
 	int lstyle;
+	cache_t img_cache;
 };
 
 struct word_list {
@@ -1448,6 +1449,7 @@ struct layout *layout_new(fnt_t fn, int w, int h)
 	l->lcol = gfx_col(0, 0, 255);
 	l->acol = gfx_col(255, 0, 0);
 	l->box = NULL;
+	l->img_cache = cache_init(GFX_CACHE_SIZE, gfx_free_image);
 	return l;
 }
 void txt_layout_size(layout_t lay, int *w, int *h)
@@ -1499,6 +1501,9 @@ void _txt_layout_free(layout_t lay)
 	while (g) {
 		struct image *og = g;
 		g = g->next;
+		if (!cache_have(layout->img_cache, og->image))
+			og->free_it = 0; /* do not free from cache */
+		cache_forget(layout->img_cache, og->image);
 		image_free(og);
 	}
 	layout->images = NULL;
@@ -1508,7 +1513,10 @@ void _txt_layout_free(layout_t lay)
 
 void txt_layout_free(layout_t lay)
 {
+	struct layout *layout = (struct layout *)lay;
 	_txt_layout_free(lay);
+	cache_free(layout->img_cache);
+	layout->img_cache = NULL;
 	free(lay);
 }
 
@@ -2212,6 +2220,7 @@ img_t get_img(struct layout *layout, char *p)
 {
 	int len;
 	img_t img;
+	struct image *image;
 	len = word_img(p, NULL);
 	if (!len)
 		return NULL;
@@ -2219,18 +2228,25 @@ img_t get_img(struct layout *layout, char *p)
 	p[len - 1] = 0;
 	
 	img = layout_lookup_image(layout, p);
-	if (!img && (img = gfx_load_image(p))) {
-		struct image *image;
+	if (img)
+		goto out;
+	img = cache_get(layout->img_cache, p);
+	if (!img) {
+		if (!(img = gfx_load_image(p)))
+			return NULL;
 		theme_img_scale(&img); /* bad style, no gfx layer :( */
-		image = image_new(p, img);
-		if (!image) {
-			gfx_free_image(img);
-			img = NULL;
-		} else {
-			layout_add_image(layout, image);
-			image->free_it = 1; /* free on layout destroy */
-		}
+	}	
+	image = image_new(p, img);
+	if (!image) {
+		gfx_free_image(img);
+		img = NULL;
+	} else {
+		layout_add_image(layout, image);
+		image->free_it = 1; /* free on layout destroy */
+		if (gfx_img_w(img) <= GFX_MAX_CACHED_W && gfx_img_h(img) <= GFX_MAX_CACHED_H)
+			cache_add(layout->img_cache, p, img);
 	}
+out:
 	p[len - 1] = '>';
 	return img;
 }
