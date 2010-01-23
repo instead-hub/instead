@@ -5,7 +5,7 @@ CFLAGS += $(SDL_CFLAGS) $(LUA_CFLAGS) -DLANG_PATH=\"${LANGPATH}/\" -DSTEAD_PATH=
 
 LDFLAGS += $(SDL_LFLAGS) $(LUA_LFLAGS)
 
-SRC     := graphics.c input.c game.c main.c instead.c sound.c SDL_rotozoom.c SDL_anigif.c SDL_gfxBlitFunc.c config.c themes.c menu.c util.c $(PLATFORM)
+SRC     := graphics.c input.c game.c main.c instead.c sound.c SDL_rotozoom.c SDL_anigif.c SDL_gfxBlitFunc.c config.c themes.c menu.c util.c cache.c $(PLATFORM)
 
 OBJ     := $(patsubst %.c, %.o, $(SRC))
 
