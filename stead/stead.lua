@@ -1012,34 +1012,35 @@ end
 
 function player_use(self, what, onwhat)
 	local obj, obj2, v, vv, r;
-	local scene_use_mode
-	obj = self:srch(what);
-	if not obj then
-		obj = ref(self.where):srch(what);
-		if not obj then
+	local scene_use_mode = false
+
+	obj = self:srch(what); -- in inv?
+	if not obj then -- no
+		obj = ref(self.where):srch(what); -- in scene?
+		if not obj then -- no!
 			return game.err, false;
 		end
-		scene_use_mode = true
+		scene_use_mode = true -- scene_use_mode!
 	end
-	if onwhat == nil then
+	if onwhat == nil then -- only one?
 		if scene_use_mode then
-			return self:action(what);
+			return self:action(what); -- call act
 		else
-			v, r = call(ref(obj),'inv');
+			v, r = call(ref(obj),'inv'); -- call inv
 		end
 		if not v and r ~= true then
 			v, r = call(game, 'inv', obj);
 		end
 		return v, r;
 	end
-	obj2 = ref(self.where):srch(onwhat);
+	obj2 = ref(self.where):srch(onwhat); -- in scene?
 	if not obj2 then
-		obj2 = self:srch(onwhat);
+		obj2 = self:srch(onwhat); -- in inv?
 	end
 	if not obj2 or obj2 == obj then
 		return game.err, false;
 	end
-	if not use_mode or isSceneUse(obj) then
+	if not scene_use_mode or isSceneUse(ref(obj)) then
 		v, r = call(ref(obj), 'use', obj2);
 		if r ~= false then
 			vv = call(ref(obj2), 'used', obj);
