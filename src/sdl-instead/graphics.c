@@ -2514,14 +2514,11 @@ void _txt_layout_add(layout_t lay, char *txt)
 		layout_add_xref(layout, xref);
 //	layout->align = align;
 //	layout_debug(layout);
-//	fnt_draw_layout(layout, 300, 100, gfx_col(255,255,255));
 //	TTF_SetFontStyle((TTF_Font *)(layout->fn), saved_style);
 	layout->style = saved_style;
 	return;
 err:
 	txt_layout_free(layout);
-//	TTF_SetFontStyle((TTF_Font *)(layout->fn), saved_style);
-//	layout->style = saved_style;
 	return;
 }
 
