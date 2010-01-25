@@ -131,6 +131,11 @@ function cat(v,...)
 	return res;
 end
 
+function txtnb(v)
+	if type(v) ~= 'string' then return nil; end
+	return iface:nb(v);
+end
+
 function img(v)
 	if type(v) ~= 'string' then return nil; end; 
 	return iface:img(v);
@@ -1528,6 +1533,9 @@ end
 iface = {
 	img = function(self, str)
 		return '';
+	end,
+	nb = function(self, str)
+		return str;
 	end,
 	em = function(self, str)
 		return str;

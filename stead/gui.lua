@@ -1,61 +1,67 @@
 game.hinting = true;
 game.showlast = true;
 
-iface.img = function(self, str)
-	return "<g:"..str..">";
-end;
-
 iface.xref = function(self, str, obj)
-		local o = ref(obj);
-		local cmd=''
+	local o = ref(obj);
+	local cmd=''
 
-		if not isObject(o) or isStatus(o) or not o.id then
-			return str;
-		end
+	if not isObject(o) or isStatus(o) or not o.id then
+		return str;
+	end
 
-		if ref(ways():srch(obj)) then
-			cmd = 'go ';
-		elseif isMenu(o) then
-			cmd = 'act ';
-		elseif isSceneUse(o) then
-			cmd = 'use ';	
-		end
+	if ref(ways():srch(obj)) then
+		cmd = 'go ';
+	elseif isMenu(o) then
+		cmd = 'act ';
+	elseif isSceneUse(o) then
+		cmd = 'use ';	
+	end
 
-		return cat('<a:'..cmd..'0'..tostring(o.id)..'>',str,'</a>');
+	return cat('<a:'..cmd..'0'..tostring(o.id)..'>',str,'</a>');
 end;
 
 iface.title = function(self, str)
-		return nil
+	return nil
+end;
+
+iface.img = function(self, str)
+	if str == nil then return nil; end;
+	return "<g:"..str..">";
+end;
+
+iface.nb = function(self, str)
+	if str == nil then return nil; end;
+	return "<w:"..str..">";
 end;
 
 iface.under = function(self, str)
-		if str == nil then return nil; end; 
-		return cat('<u>',str,'</u>');
+	if str == nil then return nil; end; 
+	return cat('<u>',str,'</u>');
 end;
 
 iface.em = function(self, str)
-		if str == nil then return nil; end;
-		return cat('<i>',str,'</i>');
+	if str == nil then return nil; end;
+	return cat('<i>',str,'</i>');
 end;
 
 iface.right = function(self, str)
-		if str == nil then return nil; end; 
-		return cat('<r>',str,'</r>');
+	if str == nil then return nil; end; 
+	return cat('<r>',str,'</r>');
 end;
 
 iface.left = function(self, str)
-		if str == nil then return nil; end;
-		return cat('<l>',str,'</l>');
+	if str == nil then return nil; end;
+	return cat('<l>',str,'</l>');
 end;
 
 iface.center = function(self, str)
-		if str == nil then return nil; end;
-		return cat('<c>',str,'</c>');
+	if str == nil then return nil; end;
+	return cat('<c>',str,'</c>');
 end;
 
 iface.bold = function(self, str)
-		if str == nil then return nil; end;
-		return cat('<b>',str,'</b>');
+	if str == nil then return nil; end;
+	return cat('<b>',str,'</b>');
 end;
 
 iface.inv = function(self, str)
