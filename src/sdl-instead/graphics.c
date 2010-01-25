@@ -1671,14 +1671,14 @@ static int is_delim(int c)
 	return 0;
 }
 
-static int word_img(const char *p, char **eptr)
+static int process_word_token(const char *p, char **eptr, char ch)
 {
 	int len = 0;
 	if (eptr)
 		*eptr = (char*)p;
 	if (!p)
 		return 0;
-	if (p[0] != '<' || p[1] != 'g' || p[2] != ':')
+	if (p[0] != '<' || p[1] != ch || p[2] != ':')
 		return 0;
 	p += 3;
 	len = strcspn(p, ">");
@@ -1687,6 +1687,16 @@ static int word_img(const char *p, char **eptr)
 	if (eptr)	
 		*eptr = (char*)p + len + 1;	
 	return len + 1;
+}
+
+static int word_img(const char *p, char **eptr)
+{
+	return process_word_token(p, eptr, 'g');
+}
+
+static int word_token(const char *p, char **eptr)
+{
+	return process_word_token(p, eptr, 'w');
 }
 
 
@@ -1706,6 +1716,10 @@ static const char *lookup_token_or_sp(const char *ptr)
 		
 		if (!get_token(p, &eptr, NULL, NULL)) {
 			if (word_img(p, &eptr)) {
+				if (p == ptr) /* first one */
+					p = eptr;
+				return p;
+			} else if (word_token(p, &eptr)) {
 				if (p == ptr) /* first one */
 					p = eptr;
 				return p;
@@ -1745,6 +1759,9 @@ static char *get_word(const char *ptr, char **eptr, int *sp)
 	o[sz] = 0;
 	
 	sz = word_img(ptr, eptr);
+	if (sz)
+		return o;
+	sz = word_token(ptr, eptr);
 	if (sz)
 		return o;
 	*eptr = (char*)ep;	
@@ -2215,7 +2232,6 @@ void txt_layout_update_links(layout_t layout, int x, int y, clear_fn clear)
 //	gfx_noclip();
 }
 
-
 img_t get_img(struct layout *layout, char *p)
 {
 	int len;
@@ -2249,6 +2265,19 @@ img_t get_img(struct layout *layout, char *p)
 out:
 	p[len - 1] = '>';
 	return img;
+}
+
+char *get_word_token(char *p)
+{
+	int len;
+	char *r;
+	len = word_token(p, NULL);
+	if (!len)
+		return p;
+	p[len - 1 + 3] = 0;
+	r = strdup((p + 3));
+	free(p);
+	return r;
 }
 
 char *process_token(char *ptr, struct layout *layout, struct line *line, struct xref **xref, int *sp)
@@ -2337,7 +2366,7 @@ int get_unbrakable_len(struct layout *layout, const char *ptr)
 		if (!p)
 			return w;
 
-		if (sp || !*p || word_img(p, NULL)) {
+		if (sp || !*p || word_img(p, NULL) || word_token(p, NULL)) {
 			free(p);
 			return w;
 		}
@@ -2435,6 +2464,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 			w = gfx_img_w(img);
 			h = gfx_img_h(img);
 		} else {
+			p = get_word_token(p);
 			TTF_SizeUTF8((TTF_Font *)(layout->fn), p, &w, &h);
 			if (!*p && line->h)
 				h = 0;
