@@ -10,4 +10,3 @@ Exec=@BIN/sdl-instead
 Icon=sdl_instead.png
 Terminal=false
 Categories=Game;LogicGame;
-
