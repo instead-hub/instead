@@ -20,6 +20,11 @@ iface.xref = function(self, str, obj)
 	return cat('<a:'..cmd..'0'..tostring(o.id)..'>',str,'</a>');
 end;
 
+iface.enum = function(self, n, str)
+	if str == nil or n == nil then return nil; end;
+	return n..self:nb(' - ')..str;
+end
+
 iface.title = function(self, str)
 	return nil
 end;
