@@ -4,5 +4,4 @@ install:
 	if not exist ..\bin\doc mkdir ..\bin\doc
 	copy /Y *.txt ..\bin\doc
 	copy /Y *.html ..\bin\doc
-	copy /Y *.jpg ..\bin\doc
 	copy /Y *.pdf ..\bin\doc
