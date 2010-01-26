@@ -1645,6 +1645,10 @@ iface = {
 			if v ~= false and game.showlast then
 				return r;
 			end
+		elseif cmd == 'nop' then
+			v = true;
+			r = nil;
+			st = true;
 		else
 			r,v = me():action(cmd, unpack(a));
 			st = true;
