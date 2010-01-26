@@ -25,7 +25,8 @@ tarball: clean svnclean
 	$(RM) -f Rules.make
 	ln -sf Rules.make.standalone Rules.make
 	ln -sf ./ $(VERTITLE)
-	make -C doc/
+	make pdf -C doc/
+	make wiki -C doc/ 
 	man doc/instead.6 > doc/instead.txt
 	tar -cz --exclude $(VERTITLE)/$(VERTITLE) --exclude .svn --exclude $(ARCHIVE) -f $(ARCHIVE) $(VERTITLE)/*
 	$(RM) -f $(VERTITLE)
