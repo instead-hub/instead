@@ -1847,30 +1847,25 @@ end
 timer = obj { -- timer calls stead.timer callback 
 	nam = 'timer',
 	ini = function(s)
-		if s._timer ~= nil and s._timer ~= 0 then
+		if tonumber(s._timer) ~= nil and type(set_timer) == 'function' then
 			set_timer(s._timer);
 		end
 	end,
 	get = function(s)
-		if s._timer == nil then
+		if tonumber(s._timer) == nil then
 			return 0
 		end
 		return tonumber(s._timer);
 	end,
-	stop = function(s, v)
-		s._timer = nil;
-		if  set_timer == nil then
-			return false
-		end
-		set_timer(0)
-		return true
+	stop = function(s)
+		return s:set(0);
 	end,
-	del = function(s, v)
-		return s:stop(v);
+	del = function(s)
+		return s:set(0);
 	end,
 	set = function(s, v)
 		s._timer = tonumber(v);
-		if set_timer == nil then
+		if type(set_timer) ~= 'function' then
 			return false
 		end
 		set_timer(v)
