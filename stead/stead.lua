@@ -1857,13 +1857,16 @@ timer = obj { -- timer calls stead.timer callback
 		end
 		return tonumber(s._timer);
 	end,
-	del = function(s, v)
+	stop = function(s, v)
 		s._timer = nil;
 		if  set_timer == nil then
 			return false
 		end
 		set_timer(0)
 		return true
+	end,
+	del = function(s, v)
+		return s:stop(v);
 	end,
 	set = function(s, v)
 		s._timer = tonumber(v);
