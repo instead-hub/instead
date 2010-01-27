@@ -17,8 +17,6 @@ typedef struct {
 	int b;
 } color_t;
 
-extern int fade_step_nr;
-
 #define ALIGN_LEFT 	1
 #define ALIGN_RIGHT 	2
 #define ALIGN_CENTER 	4
@@ -70,11 +68,12 @@ extern img_t	gfx_combine(img_t src, img_t dst);
 extern void	gfx_set_alpha(img_t src, int alpha);
 extern img_t	gfx_alpha_img(img_t src, int alpha);
 extern img_t	gfx_scale(img_t src, float xscale, float yscale);
-extern void 	gfx_draw_bg(img_t p, int x, int y, int width, int height);
-extern void 	gfx_draw_from(img_t p, int x, int y, int xx, int yy, int width, int height);
-extern void 	gfx_cursor(int *xp, int *yp, int *w, int *h);
-extern void 	gfx_warp_cursor(int x, int y);
-extern void 	gfx_change_screen(img_t src);
+extern void	gfx_draw_bg(img_t p, int x, int y, int width, int height);
+extern void	gfx_draw_from(img_t p, int x, int y, int xx, int yy, int width, int height);
+extern void	gfx_cursor(int *xp, int *yp, int *w, int *h);
+extern void	gfx_warp_cursor(int x, int y);
+extern void	gfx_change_screen(img_t src);
+extern int	gfx_fading(void);
 extern void	gfx_img_fill(img_t img, int x, int y, int w, int h, color_t col);
 extern void	gfx_fill(int x, int y, int w, int h, color_t col);
 

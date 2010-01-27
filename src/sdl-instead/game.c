@@ -477,6 +477,10 @@ static void anigif_do(void *data)
 {
 	void *v;
 	img_t img;
+
+	if (menu_shown || gfx_fading())
+		return;
+
 	game_cursor(CURSOR_CLEAR);
 	
 	if (gfx_frame_gif(el_img(el_spic))) { /* scene */
@@ -869,11 +873,8 @@ void game_menu_box(int show, const char *txt)
 	layout_t lay;
 
 	menu_shown = show;
-	if (show)
-		gfx_stop_gif(el_img(el_spic));
-	else
-		gfx_start_gif(el_img(el_spic));
 	el(el_menu)->drawn = 0;
+
 	if (el_layout(el_menu)) {
 		txt_layout_free(el_layout(el_menu));
 		el(el_menu)->p.p = NULL;
@@ -1512,7 +1513,7 @@ static struct el *old_el = NULL;
 
 int game_paused(void)
 {
-	return menu_shown || use_xref || old_xref || (fade_step_nr != -1);
+	return menu_shown || use_xref || old_xref || gfx_fading();
 }
 
 void menu_update(struct el *elem)

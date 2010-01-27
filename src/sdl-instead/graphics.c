@@ -2741,7 +2741,12 @@ void gfx_warp_cursor(int x, int y)
 	SDL_WarpMouse(x, y);
 }
 #define ALPHA_STEPS 5
-int   fade_step_nr = -1;
+static int   fade_step_nr = -1;
+
+int gfx_fading(void)
+{
+	return (fade_step_nr != -1);
+}
 
 static void update_gfx(void *aux)
 {
@@ -2774,7 +2779,7 @@ void gfx_change_screen(img_t src)
 	SDL_TimerID han;
 	fade_step_nr = 0;
 	han = SDL_AddTimer(60, update, src);
-	while (input(&ev, 1) >=0 && fade_step_nr != -1) /* just wait for change */
+	while (input(&ev, 1) >=0 && gfx_fading()) /* just wait for change */
 		game_cursor(CURSOR_ON);
 	SDL_RemoveTimer(han);
 }
