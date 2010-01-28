@@ -92,17 +92,18 @@ static int fgetsesc(char *oline, size_t size, FILE *fp)
 static char *find_in_esc(char *l, const char *s)
 {
 	int esc = 0;
-	char *ns;
-	for (ns = l; *l; l++) {
-		l += strcspn(l, s);
-		if (*l == '\\') {
-			esc ^= 1;
+	for (; *l; l++) {
+		if (esc) {
+			esc = 0;
 			continue;
 		}
-		if (!esc) {
-			return l;
+		l += strcspn(l, s);
+		if (*l == '\\') {
+			esc = 1;
+			continue;
 		}
-		esc = 0;		
+		if (!esc)
+			return l;
 	}
 	return NULL;
 }
