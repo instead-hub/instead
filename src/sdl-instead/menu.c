@@ -141,11 +141,45 @@ static void save_menu(void)
 	strcat(menu_buff, CANCEL_MENU);
 }
 
+static int pages_menu(char *res, int nr, int max, const char *menu)
+{
+	static char buff[256];
+	int k = MENU_PER_PAGER;
+	int i = nr - MENU_PER_PAGER / 2;
+
+	if (i < 0)
+		i = 0;
+	else if (max - i < MENU_PER_PAGER)
+		i = max - MENU_PER_PAGER;
+	if (i < 0)
+		i = 0;
+	if (nr)
+		sprintf(buff, "<a:/%s prev><<</a> ", menu);
+	else
+		sprintf(buff, "<< ");
+	strcat(res, buff);
+	for (; i < max && k-- ; i ++) {
+		if (i != nr)
+			sprintf(buff, "<a:/%s %d>%d</a> ", menu, i, i + 1);
+		else
+			sprintf(buff, "<b>%d</b> ", i + 1);
+		strcat(res, buff);
+	}
+	if ((nr + 1) != max)
+		sprintf(buff, "<a:/%s next>>></a>", menu); 
+	else
+		sprintf(buff, ">>"); 
+	strcat(res, buff);
+	strcat(res, "\n");
+	return 0;
+}
+
 static void games_menu(void)
 {
 	int i, n;
-	*menu_buff = 0;
 	sprintf(menu_buff, SELECT_GAME_MENU);
+	if ((games_nr - 1) / MENU_GAMES_MAX)
+		pages_menu(menu_buff, games_menu_from / MENU_GAMES_MAX, (games_nr - 1) / MENU_GAMES_MAX + 1, "games");
 	for (i = games_menu_from, n = 0; i < games_nr && n < MENU_GAMES_MAX; i ++) {
 		char tmp[PATH_MAX];
 		if (!games[i].name[0]) /* empty */
@@ -160,33 +194,18 @@ static void games_menu(void)
 
 	for(;n < MENU_GAMES_MAX && games_nr > MENU_GAMES_MAX; n++) /* align h */
 		strcat(menu_buff, "\n");
-
 	if (!games_nr)
 		sprintf(menu_buff, NOGAMES_MENU, GAMES_PATH);
 	strcat(menu_buff,"\n");
-
-	i = games_menu_from || (games_menu_from + MENU_GAMES_MAX < games_nr);
-
-	if (i) {
-		if (games_menu_from)
-			strcat(menu_buff,"<a:/games_prev><<</a> ");
-		else
-			strcat(menu_buff,"<< ");
-	}
 	strcat(menu_buff, BACK_MENU); 
-	if (i) {
-		if (games_menu_from + MENU_GAMES_MAX < games_nr)
-			strcat(menu_buff," <a:/games_next>>></a>");
-		else
-			strcat(menu_buff," >>");
-	}
 }
 
 static void themes_menu(void)
 {
 	int i, n;
-	*menu_buff = 0;
 	sprintf(menu_buff, SELECT_THEME_MENU);
+	if ((themes_nr - 1) / MENU_THEMES_MAX)
+		pages_menu(menu_buff, themes_menu_from / MENU_THEMES_MAX, (themes_nr - 1) / MENU_THEMES_MAX + 1, "themes");
 	for (i = themes_menu_from, n = 0; i < themes_nr && n < MENU_THEMES_MAX; i ++) {
 		char tmp[PATH_MAX];
 		if (!themes[i].name[0]) /* empty */
@@ -204,21 +223,8 @@ static void themes_menu(void)
 
 	if (!themes_nr)
 		sprintf(menu_buff, NOTHEMES_MENU, THEMES_PATH);
-	strcat(menu_buff,"\n");
-	i = themes_menu_from || (themes_menu_from + MENU_THEMES_MAX < themes_nr);
-	if (i) {
-		if (themes_menu_from)
-			strcat(menu_buff,"<a:/themes_prev><<</a> ");
-		else
-			strcat(menu_buff,"<< ");
-	}
+	strcat(menu_buff, "\n");
 	strcat(menu_buff, BACK_MENU); 
-	if (i) {
-		if (themes_menu_from + MENU_THEMES_MAX < themes_nr)
-			strcat(menu_buff," <a:/themes_next>>></a>");
-		else
-			strcat(menu_buff," >>");
-	}
 }
 
 static char *opt_get_mode(void)
@@ -333,23 +339,31 @@ int game_menu_act(const char *a)
 		restart_needed = 1;
 		opt_fs ^= 1;
 		game_menu_box(1, game_menu_gen());
-	} else if (!strcmp(a, "/games_prev")) {
-		games_menu_from -= MENU_GAMES_MAX;
-		if (games_menu_from < 0)
-			games_menu_from = 0;
+	} else if (!strncmp(a, "/games ", 7)) {
+		if (!strcmp(a + 7, "prev")) {
+			games_menu_from -= MENU_GAMES_MAX;
+			if (games_menu_from < 0)
+				games_menu_from = 0;
+		} else if (!strcmp(a + 7, "next")) {
+			if (games_menu_from + MENU_GAMES_MAX < games_nr)
+				games_menu_from += MENU_GAMES_MAX;
+		} else {
+			int nr = atoi(a + 7);
+			games_menu_from = nr * MENU_GAMES_MAX;
+		}
 		game_menu_box(1, game_menu_gen());
-	} else if (!strcmp(a, "/games_next")) {
-		if (games_menu_from + MENU_GAMES_MAX < games_nr)
-			games_menu_from += MENU_GAMES_MAX;
-		game_menu_box(1, game_menu_gen());
-	} else if (!strcmp(a, "/themes_prev")) {
-		themes_menu_from -= MENU_THEMES_MAX;
-		if (themes_menu_from < 0)
-			themes_menu_from = 0;
-		game_menu_box(1, game_menu_gen());
-	} else if (!strcmp(a, "/themes_next")) {
-		if (themes_menu_from + MENU_THEMES_MAX < themes_nr)
-			themes_menu_from += MENU_THEMES_MAX;
+	} else if (!strncmp(a, "/themes ", 8)) {
+		if (!strcmp(a + 8, "prev")) {
+			themes_menu_from -= MENU_THEMES_MAX;
+			if (themes_menu_from < 0)
+				themes_menu_from = 0;
+		} else if (!strcmp(a + 8, "next")) {
+			if (themes_menu_from + MENU_THEMES_MAX < themes_nr)
+				themes_menu_from += MENU_THEMES_MAX;
+		} else {
+			int nr = atoi(a + 8);
+			themes_menu_from = nr * MENU_THEMES_MAX;
+		}
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/select")) {
 		game_menu(menu_games);

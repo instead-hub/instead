@@ -3,6 +3,7 @@
 
 #define MENU_GAMES_MAX 8
 #define MENU_THEMES_MAX 8
+#define MENU_PER_PAGER 7
 
 #define FONT_MIN_SZ	8
 #define FONT_MAX_SZ	64
