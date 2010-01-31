@@ -324,6 +324,11 @@ int game_save(int nr)
 	return -1;
 }
 
+static int inv_enabled(void)
+{
+	return (game_theme.inv_mode != INV_MODE_DISABLED);
+}
+
 int game_apply_theme(void)
 {
 	layout_t lay;
@@ -356,19 +361,23 @@ int game_apply_theme(void)
 	txt_box_set(box, lay);
 	el_set(el_scene, elt_box, game_theme.win_x, 0, box);
 
-	lay = txt_layout(game_theme.inv_font, (game_theme.inv_mode == INV_MODE_HORIZ)?
-			ALIGN_CENTER:ALIGN_LEFT, game_theme.inv_w, game_theme.inv_h);
-	if (!lay)
-		return -1;
-	txt_layout_color(lay, game_theme.icol);
-	txt_layout_link_color(lay, game_theme.ilcol);
-	txt_layout_active_color(lay, game_theme.iacol);
-	box = txt_box(game_theme.inv_w, game_theme.inv_h);
-	if (!box)
-		return -1;
 
-	txt_box_set(box, lay);
-	el_set(el_inv, elt_box, game_theme.inv_x, game_theme.inv_y, box);
+	if (inv_enabled()) {
+		lay = txt_layout(game_theme.inv_font, (game_theme.inv_mode == INV_MODE_HORIZ)?
+			ALIGN_CENTER:ALIGN_LEFT, game_theme.inv_w, game_theme.inv_h);
+		if (!lay)
+			return -1;
+		txt_layout_color(lay, game_theme.icol);
+		txt_layout_link_color(lay, game_theme.ilcol);
+		txt_layout_active_color(lay, game_theme.iacol);
+
+		box = txt_box(game_theme.inv_w, game_theme.inv_h);
+		if (!box)
+			return -1;
+		txt_box_set(box, lay);
+		el_set(el_inv, elt_box, game_theme.inv_x, game_theme.inv_y, box);
+	} else
+		el_set(el_inv, elt_box, game_theme.inv_x, game_theme.inv_y, NULL);
 
 	lay = txt_layout(game_theme.font, ALIGN_CENTER, game_theme.win_w, 0);
 	if (!lay)
@@ -1385,25 +1394,27 @@ int game_cmd(char *cmd)
 	el_draw(el_scene);
 	
 inv:
-	invstr = instead_cmd("inv"); instead_clear();
+	if (inv_enabled()) {
+		int off;
 
-	if (invstr && game_theme.inv_mode == INV_MODE_HORIZ) {
-		invstr = horiz_inv(invstr);
-	}
+		invstr = instead_cmd("inv"); instead_clear();
 
-	do {
-		int off = txt_box_off(el_box(el_inv));
+		if (invstr && game_theme.inv_mode == INV_MODE_HORIZ)
+			invstr = horiz_inv(invstr);
+
+		off = txt_box_off(el_box(el_inv));
 		txt_layout_set(txt_box_layout(el_box(el_inv)), invstr);
 		txt_box_set(el_box(el_inv), txt_box_layout(el_box(el_inv)));
 		txt_box_scroll(el_box(el_inv), off);
-	} while(0);
 	
-	if (invstr)
-		free(invstr);
+		if (invstr)
+			free(invstr);
 	
-	el_clear(el_inv);
-	el_draw(el_inv);
+		el_clear(el_inv);
+		el_draw(el_inv);
+	}
 //	scene_scrollbar();
+
 	if (new_pict || new_place) {
 		img_t offscreen;
 		game_cursor(CURSOR_CLEAR);
@@ -1869,6 +1880,8 @@ static int sel_el = 0;
 
 static void frame_next(void)
 {
+	if (sel_el == el_scene && !inv_enabled())
+		sel_el = el_inv;
 	switch(sel_el) {
 	default:
 	case 0:
@@ -1914,6 +1927,8 @@ static void frame_prev(void)
 		sel_el = el_scene;
 		break;
 	}
+	if (sel_el == el_inv && !inv_enabled())
+		sel_el = el_scene;
 }
 
 static int select_ref(int prev, int last);

@@ -24,6 +24,8 @@ static int parse_inv_mode(const char *v, void *data)
 		*i = INV_MODE_VERT;	
 	else if (!strcmp(v, "horizontal") || !strcmp(v, "1"))
 		*i = INV_MODE_HORIZ;
+	else if (!strcmp(v, "disabled") || !strcmp(v, "-1"))
+		*i = INV_MODE_DISABLED;
 	else
 		return -1;
 	return 0;	

@@ -116,6 +116,7 @@ extern int 	theme_img_scale(img_t *p);
 #define GFX_MODE_FIXED 1
 #define GFX_MODE_EMBEDDED 2
 
+#define INV_MODE_DISABLED -1
 #define INV_MODE_VERT 0
 #define INV_MODE_HORIZ 1
 

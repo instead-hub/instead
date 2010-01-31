@@ -1455,6 +1455,8 @@ struct layout *layout_new(fnt_t fn, int w, int h)
 void txt_layout_size(layout_t lay, int *w, int *h)
 {
 	struct layout *layout = (struct layout *)lay;
+	if (!lay)
+		return;
 	if (w)
 		*w = layout->w;
 	if (h)
@@ -1515,9 +1517,11 @@ void txt_layout_free(layout_t lay)
 {
 	struct layout *layout = (struct layout *)lay;
 	_txt_layout_free(lay);
-	cache_free(layout->img_cache);
-	layout->img_cache = NULL;
-	free(lay);
+	if (lay) {
+		cache_free(layout->img_cache);
+		layout->img_cache = NULL;
+		free(lay);
+	}
 }
 
 #define TOKEN_NONE	0
@@ -1788,21 +1792,29 @@ void	layout_debug(struct layout *layout)
 void txt_layout_color(layout_t lay, color_t fg)
 {
 	struct layout *layout = (struct layout*)lay;
+	if (!lay)
+		return;
 	layout->col = fg;
 }
 void txt_layout_link_color(layout_t lay, color_t link)
 {
 	struct layout *layout = (struct layout*)lay;
+	if (!lay)
+		return;
 	layout->lcol = link;	
 }
 void txt_layout_active_color(layout_t lay, color_t link)
 {
 	struct layout *layout = (struct layout*)lay;
+	if (!lay)
+		return;
 	layout->acol = link;	
 }
 void txt_layout_link_style(layout_t lay, int style)
 {
 	struct layout *layout = (struct layout*)lay;
+	if (!lay)
+		return;
 	layout->lstyle = style;	
 }
 
@@ -1886,6 +1898,8 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 	struct word *word;
 //	line = layout->lines;
 //	gfx_clip(x, y, layout->w, layout->h);
+	if (!lay)
+		return;
 	if (!line)
 		line = layout->lines;
 	for (; line; line= line->next) {
@@ -1947,7 +1961,7 @@ void txt_box_norm(textbox_t tbox)
 	struct line  *line;
 	int off = box->off;
 
-	if (!box->lay)
+	if (!tbox || !box->lay)
 		return;
 	box->line = box->lay->lines;
 	for (line = box->line; line; line = line->next) {
@@ -1961,12 +1975,16 @@ void txt_box_norm(textbox_t tbox)
 layout_t txt_box_layout(textbox_t tbox)
 {
 	struct textbox *box = (struct textbox *)tbox;
+	if (!box)
+		return NULL;
 	return box->lay;
 }
 
 void txt_box_set(textbox_t tbox, layout_t lay)
 {
 	struct textbox *box = (struct textbox *)tbox;
+	if (!box)
+		return;
 	box->lay = (struct layout*)lay;
 	box->off = 0;
 	if (lay)
@@ -1977,6 +1995,8 @@ void txt_box_set(textbox_t tbox, layout_t lay)
 void txt_box_resize(textbox_t tbox, int w, int h)
 {
 	struct textbox *box = (struct textbox *)tbox;
+	if (!tbox)
+		return;
 	box->w = w;
 	box->h = h;
 	txt_box_norm(tbox);	
@@ -1997,7 +2017,10 @@ void txt_box_scroll_next(textbox_t tbox, int disp)
 {
 	int off, h;
 	struct textbox *box = (struct textbox *)tbox;
-	struct line  *line = box->line;
+	struct line  *line;
+	if (!tbox)
+		return;
+	line = box->line;
 	if (!line)
 		return;
 
@@ -2024,7 +2047,10 @@ void txt_box_scroll_prev(textbox_t tbox, int disp)
 {
 	int off;
 	struct textbox *box = (struct textbox *)tbox;
-	struct line  *line = box->line;
+	struct line  *line;
+	if (!tbox)
+		return;
+	line = box->line;
 	if (!line)
 		return;
 	off = box->off - line->y; /* offset from cur line */
@@ -2044,6 +2070,8 @@ void txt_box_scroll_prev(textbox_t tbox, int disp)
 
 void txt_box_scroll(textbox_t tbox, int disp)
 {
+	if (!tbox)
+		return;
 	if (disp >0)
 		return txt_box_scroll_next(tbox, disp);
 	else if (disp <0)
@@ -2053,7 +2081,10 @@ void txt_box_scroll(textbox_t tbox, int disp)
 void txt_box_next_line(textbox_t tbox)
 {
 	struct textbox *box = (struct textbox *)tbox;
-	struct line  *line = box->line;
+	struct line  *line;
+	if (!box || !box->lay)
+		return;
+	line = box->line;
 	if (!line)
 		return;
 //	txt_box_norm(tbox);		
@@ -2069,7 +2100,10 @@ void txt_box_next_line(textbox_t tbox)
 void txt_box_prev_line(textbox_t tbox)
 {
 	struct textbox *box = (struct textbox *)tbox;
-	struct line  *line = box->line;
+	struct line  *line;
+	if (!box || !box->lay)
+		return;
+	line = box->line;
 	if (!line)
 		return;
 	line = line->prev;
@@ -2083,13 +2117,18 @@ void txt_box_prev_line(textbox_t tbox)
 int	txt_box_off(textbox_t tbox)
 {
 	struct textbox *box = (struct textbox *)tbox;
+	if (!box)
+		return -1;
 	return box->off;
 }
 
 void txt_box_next(textbox_t tbox)
 {
 	struct textbox *box = (struct textbox *)tbox;
-	struct line  *line = box->line;
+	struct line  *line;
+	if (!tbox)
+		return;
+	line = box->line;
 	if (!line)
 		return;
 	for (; line; line = line->next) {
@@ -2105,8 +2144,14 @@ void txt_box_next(textbox_t tbox)
 void txt_box_prev(textbox_t tbox)
 {
 	struct textbox *box = (struct textbox *)tbox;
-	struct layout *lay = box->lay;
-	struct line  *line = box->line;
+	struct layout *lay;
+	struct line  *line;
+	if (!tbox)
+		return;
+	lay = box->lay;
+	if (!lay)
+		return;
+	line = box->line;
 	if (!line)
 		return;
 	for (; line; line = line->prev) {
@@ -2128,7 +2173,8 @@ xref_t txt_box_xrefs(textbox_t tbox)
 	struct xref *xref = NULL;
 	struct word *word = NULL;
 	struct line *line;
-
+	if (!tbox)
+		return NULL;
 	for (line = box->line; line; line = line->next) {
 		if (line->y < box->off)
 			continue; /* too high */
@@ -2150,6 +2196,8 @@ xref_t txt_box_xref(textbox_t tbox, int x, int y)
 	struct xref *xref = NULL;
 	struct word *word = NULL;
 	struct line *line;
+	if (!tbox)
+		return NULL;
 	y += box->off;
 	if (x < 0)
 		return NULL;
@@ -2182,6 +2230,8 @@ xref_t txt_box_xref(textbox_t tbox, int x, int y)
 
 void txt_box_free(textbox_t tbox)
 {
+	if (!tbox)
+		return;
 	free(tbox);
 }
 
@@ -2190,6 +2240,8 @@ img_t txt_box_render(textbox_t tbox)
 	SDL_Surface *old_screen;
 	img_t		dst;
 	struct textbox *box = (struct textbox *)tbox;
+	if (!tbox)
+		return NULL;
 	dst = gfx_new(box->w, box->h);
 	if (!dst)
 		return NULL;
@@ -2207,6 +2259,8 @@ img_t txt_box_render(textbox_t tbox)
 void txt_box_draw(textbox_t tbox, int x, int y)
 {
 	struct textbox *box = (struct textbox *)tbox;
+	if (!tbox)
+		return;
 	gfx_clip(x, y, box->w, box->h);
 //	printf("line: %d\n", box->line->y);
 	txt_layout_draw_ex(box->lay, box->line, x, y - box->off, box->off, box->h, NULL);
@@ -2216,6 +2270,8 @@ void txt_box_draw(textbox_t tbox, int x, int y)
 void txt_box_update_links(textbox_t tbox, int x, int y, clear_fn clear)
 {
 	struct textbox *box = (struct textbox *)tbox;
+	if (!tbox)
+		return;
 	gfx_clip(x, y, box->w, box->h);
 //	printf("line: %d\n", box->line->y);
 	txt_layout_draw_ex(box->lay, box->line, x, y - box->off, box->off, box->h, clear);
@@ -2624,7 +2680,7 @@ xref_t txt_layout_xref(layout_t lay, int x, int y)
 	struct word *word;
 	struct line *line;
 	int i;
-	if (x < 0 || y < 0)
+	if (!lay || x < 0 || y < 0)
 		return NULL;
 	for (xref = layout->xrefs; xref; xref = xref->next) {
 		for (i = 0; i < xref->num; i ++) {
