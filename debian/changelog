@@ -13,6 +13,7 @@ instead (1.1.0) unstable; urgency=low
   * nop cmd added in stead.lua
   * anigif while menu bug
   * add inv.mode disabled
+  * txtnb added to stead.lua
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 14 Jan 2010 15:47:50 +0300
 
