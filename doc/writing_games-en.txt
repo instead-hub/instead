@@ -777,6 +777,17 @@ main = room {
       dsc = 'You are in the room: '..txtb('main')..'.',
 }
 </code>
+
+Since the version 1.1.0 you can create unwrapped strings by using txtnb();
+
+For example:
+<code>
+main = room {
+      nam = 'Intro',
+      dsc = 'You are in the room '..txtb('main')..'.',
+}
+</code>
+
 ==== Menus ====
 You can do menus in the inventory area, using menu constructor. Menu handler will be called after single mouse click. If handler have no return string the state of game will no change. For example, here is pocket realisation:
 <code>
@@ -983,6 +994,63 @@ horse = obj {
         end,
 };
 lifeon('horse');
+</code>
+==== Timer ====
+Since the version 1.1. 'instead' has a ''timer'' object. (Only for sdl version.)
+
+Timer controls through the ''timer'' object.
+
+  * timer:set(ms) -- set timer interval (ms)
+  * timer:stop() -- stop timer
+  * timer.callback(s) -- callback for timer, calling in fixed time interval
+
+Timer function can return a ''stead'' interface command that have to be invoked after the callback execution. For example:
+<code>
+timer.callback = function(s)
+    main._time = main._time + 1;  
+    return "look";
+end
+timer:set(100);
+main = room {
+    _time = 1,
+    force_dsc = true,
+    nam = 'Timer',
+    dsc = function(s)
+        return 'Example: '..tostring(s._time);
+    end
+};
+</code>
+
+==== Keyboard ====
+Since the version 1.1.0 ''instead'' supports the keyboard input. (Only for sdl version.) Use the ''input'' object for this.
+ 
+input.key(s, pressed, key) -- keyboard handler; pressed -- press or release action; key -- symbolic name of the key;
+
+Handler can return a ''stead'' interface command. In this case the interpreter doesn't handle a key.
+For example:
+<code>
+input.key = function(s, pr, key)
+    if not pr or key == "escape"then 
+        return 
+    elseif key == 'space' then 
+        key = ' ' 
+    elseif key == 'return' then
+        key = '^';
+    end 
+    if  key:len() > 1 then return end 
+    main._txt = main._txt:gsub('_$','');
+    main._txt = main._txt..key..'_';
+    return "look";
+end
+
+main = room {
+    _txt = '_',
+    force_dsc = true,
+    nam = 'Keyboard',
+    dsc = function(s)
+        return 'Exmaple: '..tostring(s._txt);
+    end 
+};
 </code>
 
 ==== Debugging ====

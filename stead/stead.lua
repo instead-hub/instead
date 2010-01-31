@@ -1374,7 +1374,7 @@ function savemembers(h, self, name, need)
 		local need2
 		if k ~= "__visited__" then
 			need2 = false
-			if isForSave(k) then
+			if isForSave(k, v, self) then
 				need2 = true;
 			end
 			
@@ -2196,7 +2196,7 @@ function disabled(o)
 	return isDisabled(ref(o))
 end
 
-function isForSave(k)
+function isForSave(k, v, s) -- k - key, v - value, s -- parent table
 	return stead.string.find(k, '_') ==  1 or stead.string.match(k,'^%u')
 end
 -- here the game begins
