@@ -411,14 +411,17 @@ int instead_init(void)
 		return -1;
 	luaL_openlibs(L);
 	luaL_register(L, "_G", base_funcs);
-   	if (dofile(L,STEAD_PATH"/stead.lua")) {
+	if (dofile(L,STEAD_PATH"/stead.lua")) {
+		instead_clear();
 		return -1;
 	}
 
    	if (dofile(L,STEAD_PATH"/gui.lua")) {
+		instead_clear();
 		return -1;
 	}
 	/* cleanup Lua */
+	instead_clear();
 	return 0;
 }
 
