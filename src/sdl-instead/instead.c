@@ -79,7 +79,7 @@ char *getstring(char *cmd)
 	if (dostring(L, cmd))
 		return NULL;
 	N = lua_gettop(L);  /* number of arguments */
-	if (N <=0)
+	if (-N >=0)
 		return NULL;
 	s = (char*)lua_tostring(L, -N);
 	if (s)
@@ -239,6 +239,7 @@ int instead_load(char *game)
    	if (dofile(L, game)) {
 		return -1;
 	}
+	instead_clear();
 #ifdef _HAVE_ICONV
 	if (fromcp)
 		free(fromcp);
