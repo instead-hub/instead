@@ -412,7 +412,6 @@ int instead_init(void)
 	luaL_openlibs(L);
 	luaL_register(L, "_G", base_funcs);
 	if (dofile(L,STEAD_PATH"/stead.lua")) {
-		instead_clear();
 		return -1;
 	}
 
