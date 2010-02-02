@@ -1734,7 +1734,7 @@ int game_click(int x, int y, int action, int filter)
 			if (elem->id == el_inv)
 				snprintf(buf, sizeof(buf), "use %s", xref_txt);
 			else
-				snprintf(buf, sizeof(buf), "%s", xref_txt);
+				snprintf(buf, sizeof(buf), "act %s", xref_txt);
 		} else
 			snprintf(buf, sizeof(buf), "%s", xref_get_text(xref));
 		if (mouse_filter(filter))
