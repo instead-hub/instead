@@ -1437,6 +1437,7 @@ inv:
 err:
 	game_autosave();
 	if (err_msg) {
+		mouse_reset(1);
 		game_menu(menu_warning);
 		return -1;
 	}
