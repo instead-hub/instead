@@ -1571,7 +1571,8 @@ int get_token(const char *ptr, char **eptr, char **val, int *sp)
 			return 0;
 		}
 		ptr += 2;
-		ep = (char*)ptr + strcspn(ptr, ">");
+//		ep = (char*)ptr + strcspn(ptr, ">");
+		ep = find_in_esc(ptr, "\\>");
 		if (*ep != '>') {
 			return 0;
 		}
@@ -1581,7 +1582,11 @@ int get_token(const char *ptr, char **eptr, char **val, int *sp)
 				return 0;
 			memcpy(p, ptr, ep - ptr);
 			p[ep - ptr] = 0;
-			*val = p;
+			parse_esc_string(p, val);
+			if (*val)
+				free(p);
+			else
+				*val = p;
 		}
 		*eptr = ep + 1;
 		return TOKEN_A;

@@ -89,7 +89,8 @@ static int fgetsesc(char *oline, size_t size, FILE *fp)
 	strncat(oline, line, size);
 	return nr;
 }
-static char *find_in_esc(char *l, const char *s)
+
+char *find_in_esc(const char *l, const char *s)
 {
 	int esc = 0;
 	for (; *l; l++) {
@@ -103,7 +104,7 @@ static char *find_in_esc(char *l, const char *s)
 			continue;
 		}
 		if (!esc)
-			return l;
+			return (char*)l;
 	}
 	return NULL;
 }
@@ -228,6 +229,7 @@ int parse_esc_string(const char *v, void *data)
 				*ptr = '\n';
 				break;
 			default:
+				*ptr = *v;
 				break;	
 			}
 			esc = 0;
