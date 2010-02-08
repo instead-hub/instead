@@ -404,6 +404,7 @@ static const luaL_Reg base_funcs[] = {
 int instead_init(void)
 {
 	setlocale(LC_ALL,"");
+	setlocale(LC_NUMERIC,"C"); /* to avoid . -> , in numbers */
 //	strcpy(curcp, "UTF-8");
 	/* initialize Lua */
 	L = lua_open();
