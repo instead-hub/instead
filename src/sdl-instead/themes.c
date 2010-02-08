@@ -287,8 +287,6 @@ static  int game_theme_scale(int w, int h)
 static int theme_gfx_scale(void)
 {
 	struct game_theme *t = &game_theme;
-	if (t->scale == 1.0f)
-		return 0;
 	if (theme_img_scale(&t->a_up) ||
 		theme_img_scale(&t->a_down) ||
 		theme_img_scale(&t->inv_a_up) ||
@@ -307,15 +305,17 @@ static int theme_gfx_scale(void)
 			xoff = 0;
 		if (yoff < 0)
 			yoff = 0;
-		pic = gfx_new(t->w, t->h);
-		if (!pic)
-			return -1;
-		screen = gfx_screen(pic);
-		gfx_img_fill(pic, 0, 0, t->w, t->h, gfx_col(0,0,0));
-		gfx_draw(t->bg, xoff, yoff);
-		gfx_screen(screen);
-		gfx_free_image(t->bg);
-		t->bg = pic;
+		if (t->scale != 1.0f || xoff || yoff) {
+			pic = gfx_new(t->w, t->h);
+			if (!pic)
+				return -1;
+			screen = gfx_screen(pic);
+			gfx_img_fill(pic, 0, 0, t->w, t->h, gfx_col(0,0,0));
+			gfx_draw(t->bg, xoff, yoff);
+			gfx_screen(screen);
+			gfx_free_image(t->bg);
+			t->bg = pic;
+		}
 	}	
 	return 0;
 }
