@@ -475,6 +475,18 @@ err:
 	return strdup(d_name);
 }
 
+static int cmp_theme(const void *p1, const void *p2)
+{
+	const struct theme *t1 = (const struct theme*)p1;
+	const struct theme *t2 = (const struct theme*)p2;
+	return strcmp(t1->name, t2->name);
+}
+
+static void themes_sort()
+{
+	qsort(themes, themes_nr, sizeof(struct theme), cmp_theme);
+}
+
 int themes_lookup(const char *path)
 {
 	char *p;
@@ -512,6 +524,7 @@ int themes_lookup(const char *path)
 	}
 out:
 	closedir(d);
+	themes_sort();
 	return 0;
 }
 
