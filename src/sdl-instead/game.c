@@ -97,6 +97,18 @@ err:
 	return strdup(d_name);
 }
 
+static int cmp_game(const void *p1, const void *p2)
+{
+	const struct game *g1 = (const struct game*)p1;
+	const struct game *g2 = (const struct game*)p2;
+	return strcmp(g1->name, g2->name);
+}
+
+static void games_sort()
+{
+	qsort(games, games_nr, sizeof(struct game), cmp_game);
+}
+
 int games_lookup(const char *path)
 {
 	char *p;
@@ -136,6 +148,7 @@ int games_lookup(const char *path)
 	}
 out:	
 	closedir(d);
+	games_sort();
 	return 0;
 }
 
