@@ -17,6 +17,7 @@ instead (1.1.1) unstable; urgency=low
   * bg scaling fix
   * broken codepage fix
   * esc strings in <a: > tag
+  * themes and games sorting
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 14 Jan 2010 15:47:50 +0300
 
