@@ -1,5 +1,5 @@
 stead = {
-	version = "1.1.1",
+	version = "1.1.2",
 	table = table,
 	string = string,
 	math = math,
@@ -1127,7 +1127,7 @@ function player_go(self, where)
 end
 
 function player_save(self, name, h)
-	h:write(tostring(name)..'.where = "'..deref(self.where)..'";\n');
+	h:write(tostring(name)..".where = '"..deref(self.where).."';\n");
 	savemembers(h, self, name, false);
 end
 
@@ -1790,7 +1790,7 @@ end
 
 function allocator_save(s, name, h, need)
 	if need then
-		local m = ' = allocator:get("'..name..'","'..s.constructor..'");';
+		local m = ' = allocator:get("'..name:gsub('"','\\"')..'","'..tostring(s.constructor):gsub('"','\\"')..'");';
 		h:write(name..m..'\n');
 	end
 	savemembers(h, s, name, false);
