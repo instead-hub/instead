@@ -1,3 +1,9 @@
+instead (1.1.2) unstable; urgency=low
+
+  * bug in saves
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 10 Feb 2010 13:39:47 +0300  
+
 instead (1.1.1) unstable; urgency=low
 
   * encode path in save (' in paths);
