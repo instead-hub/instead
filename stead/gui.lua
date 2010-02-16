@@ -86,6 +86,11 @@ iface.ways = function(self, str)
 	return str
 end;
 
+function get_title()
+	local s = call(here(), 'nam');
+	return stead.string.gsub(s, '\\,',',');
+end
+
 -- here is gui staff only
 function stat(v)
 	v.status_type = true
