@@ -2309,6 +2309,7 @@ img_t get_img(struct layout *layout, char *p)
 		goto out;
 	img = cache_get(layout->img_cache, p);
 	if (!img) {
+		unix_path(p);
 		if (!(img = gfx_load_image(p)))
 			return NULL;
 		theme_img_scale(&img); /* bad style, no gfx layer :( */

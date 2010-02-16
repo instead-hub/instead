@@ -1,5 +1,5 @@
 stead = {
-	version = "1.1.2",
+	version = "1.1.3",
 	table = table,
 	string = string,
 	math = math,
@@ -1379,7 +1379,7 @@ function savemembers(h, self, name, need)
 			end
 			
 			if type(k) == 'string' then
-				savevar(h, v, name..'["'..k..'"]', need or need2);
+				savevar(h, v, name..'["'..k:gsub('"','\\"')..'"]', need or need2);
 			else
 				savevar(h, v, name.."["..k.."]", need or need2)
 			end
