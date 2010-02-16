@@ -71,14 +71,15 @@ end;
 
 iface.inv = function(self, str)
 	if str then
-		return string.gsub(str,',','^');
+		str = stead.string.gsub(str,'([^\\]),','%1^');
+		str = stead.string.gsub(str,'\\,',',');
 	end
 	return str
 end;
 
 iface.ways = function(self, str)
 	if str then
-		return '<c>'..string.gsub(str,',',' | ')..'</c>';
+		return '<c>'..stead.string.gsub(str,',',' | ')..'</c>';
 	end
 	return str
 end;
