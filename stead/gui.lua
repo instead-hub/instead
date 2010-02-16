@@ -79,7 +79,9 @@ end;
 
 iface.ways = function(self, str)
 	if str then
-		return '<c>'..stead.string.gsub(str,',',' | ')..'</c>';
+		str = stead.string.gsub(str,'([^\\]),','%1 | ');
+		str = stead.string.gsub(str,'\\,',',');
+		return '<c>'..str..'</c>';
 	end
 	return str
 end;
