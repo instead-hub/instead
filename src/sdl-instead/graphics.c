@@ -573,8 +573,16 @@ static img_t _gfx_load_image(char *filename)
 	}
 	img = IMG_Load(filename);
 	if (!img) {
-		
 		return NULL;
+	}
+	if (img->format->BitsPerPixel == 32) { /* hack for 32 bit BMP :( */
+		SDL_RWops *rwop;
+		rwop = SDL_RWFromFile(filename, "rb");
+		if (rwop) {
+			if (IMG_isBMP(rwop))
+				SDL_SetAlpha(img, SDL_RLEACCEL, SDL_ALPHA_OPAQUE);
+			SDL_FreeRW(rwop);
+		}
 	}
 	return img;
 }
