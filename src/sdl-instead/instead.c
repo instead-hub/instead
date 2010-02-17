@@ -13,11 +13,15 @@ lua_State	*L = NULL;
 static int report (lua_State *L, int status) 
 {
 	if (status && !lua_isnil(L, -1)) {
+		char *p;
 		const char *msg = lua_tostring(L, -1);
 		if (msg == NULL) 
 			msg = "(error object is not a string)";
 		fprintf(stderr,"Error: %s\n", msg);
-		game_err_msg(msg);
+		p = fromgame(msg);
+		game_err_msg(p?p:msg);
+		if (p)
+			free(p);
 		lua_pop(L, 1);	
 		status = -1;
 	}
