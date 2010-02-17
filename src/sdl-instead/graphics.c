@@ -555,6 +555,7 @@ img_t gfx_combine(img_t src, img_t dst)
 static img_t _gfx_load_image(char *filename)
 {
 	SDL_Surface *img;
+	SDL_RWops *rwop;
 	int nr = 0;
 	if (strstr(filename,".gif") || strstr(filename,".GIF"))
 		nr = AG_LoadGIF(filename, NULL, 0, NULL);
@@ -571,19 +572,17 @@ static img_t _gfx_load_image(char *filename)
 		anigif_add(agif);
 		return agif->frames[0].surface;
 	}
-	img = IMG_Load(filename);
-	if (!img) {
+	rwop = SDL_RWFromFile(filename, "rb");
+	if (!rwop)
 		return NULL;
-	}
-	if (img->format->BitsPerPixel == 32) { /* hack for 32 bit BMP :( */
-		SDL_RWops *rwop;
-		rwop = SDL_RWFromFile(filename, "rb");
-		if (rwop) {
-			if (IMG_isBMP(rwop))
-				SDL_SetAlpha(img, SDL_RLEACCEL, SDL_ALPHA_OPAQUE);
-			SDL_FreeRW(rwop);
-		}
-	}
+	img = IMG_Load_RW(rwop, 0);
+	if (!img)
+		goto out;
+	if (img->format->BitsPerPixel == 32 && 
+			IMG_isBMP(rwop))/* hack for 32 bit BMP :( */
+		SDL_SetAlpha(img, 0, SDL_ALPHA_OPAQUE);
+out:
+	SDL_FreeRW(rwop);
 	return img;
 }
 
