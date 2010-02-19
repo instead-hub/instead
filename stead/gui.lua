@@ -71,16 +71,18 @@ end;
 
 iface.inv = function(self, str)
 	if str then
-		str = stead.string.gsub(str,'([^\\]),','%1^');
-		str = stead.string.gsub(str,'\\,',',');
+		str = stead.string.gsub(str,'\\,','<&comma;>');
+		str = stead.string.gsub(str,',','^');
+		str = stead.string.gsub(str,'<&comma;>',',');
 	end
 	return str
 end;
 
 iface.ways = function(self, str)
 	if str then
-		str = stead.string.gsub(str,'([^\\]),','%1 | ');
-		str = stead.string.gsub(str,'\\,',',');
+		str = stead.string.gsub(str,'\\,','<&comma;>');
+		str = stead.string.gsub(str,',',' | ');
+		str = stead.string.gsub(str,'<&comma;>',',');
 		return '<c>'..str..'</c>';
 	end
 	return str
