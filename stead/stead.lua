@@ -1,5 +1,5 @@
 stead = {
-	version = "1.1.3",
+	version = "1.1.4",
 	table = table,
 	string = string,
 	math = math,
