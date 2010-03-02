@@ -66,7 +66,7 @@ int input(struct inp_event *inp, int wait)
 					SDL_ShowCursor(SDL_ENABLE);
 			}
 		}
-		return 0; //AGAIN;
+		return 0;
 	case SDL_USEREVENT: {
 		void (*p) (void*) = event.user.data1;
 		p(event.user.data2);

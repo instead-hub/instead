@@ -138,6 +138,7 @@ extern layout_t	xref_layout(xref_t x);
 typedef void 	(*update_fn)(int x, int y, int w, int h);
 extern void	xref_update(xref_t xref, int x, int y, clear_fn clear, update_fn update);
 extern void 	gfx_start_gif(img_t img);
+extern int 	gfx_is_drawn_gifs(void);
 extern void	gfx_stop_gif(img_t img);
 extern int	gfx_frame_gif(img_t img);
 extern void	gfx_del_timer(gtimer_t han);

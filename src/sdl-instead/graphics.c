@@ -162,7 +162,6 @@ static struct {
 	{"yellowgreen", 0x9acd32},
 	{NULL, 0x0},
 };
-
 int gfx_parse_color (
 	const char *spec,
 	color_t *def)
@@ -246,6 +245,8 @@ struct _anigif_t {
 typedef struct _anigif_t *anigif_t;
 
 static anigif_t anim_gifs = NULL;
+
+static int anigif_drawn_nr = 0;
 
 static anigif_t anigif_find(anigif_t g)
 {
@@ -373,6 +374,8 @@ void gfx_free_image(img_t p)
 	if (!p)
 		return;
 	if ((ag = is_anigif(p))) {
+		if (ag->drawn)
+			anigif_drawn_nr --;
 		anigif_del(ag);
 		anigif_free(ag);
 		return;
@@ -710,6 +713,8 @@ void gfx_draw(img_t p, int x, int y)
 		ag->clip = clip;
 		ag->x = x;
 		ag->y = y;
+		if (!ag->drawn)
+			anigif_drawn_nr ++;
 		ag->drawn = 1;
 		ag->active = 1;
 		gfx_free_image(ag->bg);
@@ -733,9 +738,11 @@ void gfx_dispose_gif(img_t p)
 {
 	anigif_t ag;
 	ag = is_anigif(p);
-	if (ag)
+	if (ag) {
+		if (ag->drawn)
+			anigif_drawn_nr --;
 		ag->drawn = 0;
-
+	}
 }
 
 void gfx_start_gif(img_t p)
@@ -783,6 +790,11 @@ int gfx_frame_gif(img_t img)
 	if (ag->loop != -1)
 		anigif_frame(ag);
 	return 1;
+}
+
+int gfx_is_drawn_gifs(void)
+{
+	return anigif_drawn_nr;
 }
 
 void gfx_update_gif(img_t img)
