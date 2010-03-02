@@ -551,7 +551,8 @@ static void anigif_do(void *data)
 int counter_fn(int interval, void *p)
 {
 	timer_counter ++;
-	push_user_event(anigif_do, NULL);
+	if (gfx_is_drawn_gifs())
+		push_user_event(anigif_do, NULL);
 	return interval;
 }
 
