@@ -1598,10 +1598,10 @@ static void menu_toggle(void)
 	game_menu_box(menu_shown, game_menu_gen());
 }
 
-static void scroll_pup(int id)
+static int scroll_pup(int id)
 {
 	if (box_isscroll_up(id))
-		return;		
+		return -1;		
 //	game_highlight(-1, -1, 0);
 	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) {
 		int hh;
@@ -1612,12 +1612,13 @@ static void scroll_pup(int id)
 	el_clear(id);
 	el_draw(id);
 	el_update(id);
+	return 0;
 }
 
-static void scroll_pdown(int id)
+static int scroll_pdown(int id)
 {
 	if (box_isscroll_down(id))
-		return;		
+		return -1;
 //	game_highlight(-1, -1, 0);
 	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) {
 		int hh;
@@ -1628,6 +1629,7 @@ static void scroll_pdown(int id)
 	el_clear(id);
 	el_draw(id);
 	el_update(id);
+	return 0;
 }
 
 int mouse_filter(int filter)
@@ -2054,6 +2056,8 @@ static xref_t get_xref(int i, int last)
 			xref = xref_next(xref);
 	} else if (type == elt_box) {
 		xref = txt_box_xrefs(el_box(i));
+		while (!last && xref && !xref_visible(xref_prev(xref), el(i))) /* try find visible one */
+			xref = xref_prev(xref);
 		while (last && xref && !xref_visible(xref_next(xref), el(i)))
 			xref = xref_next(xref);
 	}
@@ -2107,7 +2111,7 @@ static int select_ref(int prev, int last)
 		xref = get_nearest_xref(elem->id, x, y);
 	if (!xref)
 		return -1;
-	xref_jump(xref, elem);		
+	xref_jump(xref, elem);
 	return 0;
 }
 
@@ -2133,26 +2137,28 @@ static void game_scroll_down(int count)
 	}
 }
 
-static void game_scroll_pup(void)
+static int game_scroll_pup(void)
 {
 	int xm, ym;
 	struct el *o;
 	gfx_cursor(&xm, &ym, NULL, NULL);
 	o = look_obj(xm, ym);
 	if (o && (o->id == el_scene || o->id == el_inv)) {
-		scroll_pup(o->id);
+		return scroll_pup(o->id);
 	}
+	return -1;
 }
 
-static void game_scroll_pdown(void)
+static int game_scroll_pdown(void)
 {
 	int xm, ym;
 	struct el *o;
 	gfx_cursor(&xm, &ym, NULL, NULL);
 	o = look_obj(xm, ym);
 	if (o && (o->id == el_scene || o->id == el_inv)) {
-		scroll_pdown(o->id);
+		return scroll_pdown(o->id);
 	}
+	return -1;
 }
 
 static int is_key(struct inp_event *ev, const char *name)
@@ -2287,7 +2293,7 @@ int game_loop(void)
 					if (select_ref(prev, 0)) {
 						if (opt_kbd == KBD_SMART) {
 							(prev)?game_scroll_up(1):game_scroll_down(1);
-							select_ref(!prev, 1);
+							select_ref(prev, 1);
 						} else
 							select_ref(prev, 1);
 					}
@@ -2305,10 +2311,11 @@ int game_loop(void)
 				if (menu_shown || lm) {
 					if (select_ref(prev, 0) || select_ref(prev, 1)) {
 						if (opt_kbd == KBD_SMART) {
-							(prev)?game_scroll_pup():game_scroll_pdown();
-							select_ref(prev, 0);
+							int s = (prev)?game_scroll_pup():game_scroll_pdown();
+							if (!s)
+								select_ref(!prev, 1);
 						} else
-							select_ref(!prev, 0);
+							select_ref(prev, 0);
 					}
 				} else {
 					if (prev)
