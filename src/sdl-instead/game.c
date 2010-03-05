@@ -2171,7 +2171,6 @@ static int is_key(struct inp_event *ev, const char *name)
 
 static int game_input(int down, const char *key, int x, int y, int mb)
 {
-	int a = 0;
 	char *p;
 	char buf[1024];
 	if (game_paused())
@@ -2198,13 +2197,11 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 		return -1;
 	}
 
-	p = instead_retval(0); a = instead_bretval(1); instead_clear();
+	p = instead_retval(0); instead_clear();
 	if (!p)
 		return -1;
 	mouse_reset(0);
 	game_cmd(p); free(p);
-	if (!a)
-		return -1;
 	return 0;
 }
 
