@@ -1,3 +1,11 @@
+instead (1.1.4) unstable; urgency=low
+
+  * keyboard navigation fix
+  * cursor while menu and lost focus
+  * lower cpu usage (no gif logic if no gifs are drawn)
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 05 Mar 2010 18:28:40 +0300  
+
 instead (1.1.3) unstable; urgency=low
 
   * unix_path in get_img
