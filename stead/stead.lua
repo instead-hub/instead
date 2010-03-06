@@ -2200,3 +2200,7 @@ function isForSave(k, v, s) -- k - key, v - value, s -- parent table
 	return stead.string.find(k, '_') ==  1 or stead.string.match(k,'^%u')
 end
 -- here the game begins
+main = room {
+	nam = 'main',
+	dsc = 'No main room defined.',
+}
