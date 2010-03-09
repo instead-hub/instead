@@ -2331,7 +2331,7 @@ img_t get_img(struct layout *layout, char *p)
 	if (!img) {
 		unix_path(p);
 		if (!(img = gfx_load_image(p)))
-			return NULL;
+			goto out;
 		theme_img_scale(&img); /* bad style, no gfx layer :( */
 	}	
 	image = image_new(p, img);
