@@ -1660,7 +1660,7 @@ iface = {
 		end
 
 		if v == false then
-			return fmt(r), false;
+			return cat(fmt(r),'\n'), false;
 		end
 		
 		ACTION_TEXT = r; -- here, life methods can redefine this

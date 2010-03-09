@@ -1053,6 +1053,32 @@ main = room {
 };
 </code>
 
+==== Dynamic object creation ====
+You can use ''new'' и ''delete'' functions to create and remove dynamic objects. An example follows.
+
+<code>
+new ("obj { nam = 'test', act = 'test' }")
+put(new [[obj {nam = 'test' } ]]);
+put(new('myconstructor()');
+n = new('myconstructor()');
+delete(n)
+</code>
+
+''new'' treats its string argument as an object constructor. The constructor must return an object. Thus, the string argument usually contains a constructor function call. For example:
+<code>
+function myconstructor()
+    local v = {}
+    v.nam = 'test object',
+    v.act = 'test feedback',
+    return obj(v);
+end
+</code>
+The object created will be saved every time the game is saved. ''new()'' returns a real object; to get its name you can use ''deref'' function:
+<code>
+o_name = deref(new('myconstructor()'));
+delete(o_name);
+</code>
+
 ==== Debugging ====
 To see lua call stack during an error, launch sdl-instead with “-debug” parameter. In Windows version debugging console will be created.
 
