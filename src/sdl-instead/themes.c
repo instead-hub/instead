@@ -152,6 +152,8 @@ struct game_theme game_theme = {
 	.inv_mode = INV_MODE_VERT,
 	.click_name = NULL,
 	.click = NULL,
+	.xoff = 0,
+	.yoff = 0,
 };
 
 
@@ -235,8 +237,10 @@ static  int game_theme_scale(int w, int h)
 	int xoff, yoff;
 	struct game_theme *t = &game_theme;
 
-	if (w < 0 || h < 0) {
+	if (w < 0 || h < 0 || (w == t->w && h == t->h)) {
 		t->scale = 1.0f;
+		t->xoff = 0;
+		t->yoff = 0;
 		return 0;
 	}
 	
@@ -281,6 +285,8 @@ static  int game_theme_scale(int w, int h)
 	t->menu_button_y *= v; t->menu_button_y += yoff;
 	
 	t->scale = v;
+	t->xoff = xoff;
+	t->yoff = yoff;
 	return 0;
 }
 
