@@ -11,6 +11,8 @@ typedef void*	fnt_t;
 typedef void*	layout_t;
 typedef void*	textbox_t;
 typedef void*	xref_t;
+typedef void*	word_t;
+
 typedef struct {
 	int r;
 	int g;
@@ -96,6 +98,7 @@ extern void 	txt_layout_active_color(layout_t lay, color_t link);
 extern void	txt_layout_link_style(layout_t lay, int style);
 extern int 	txt_layout_add_img(layout_t lay, const char *name, img_t img);
 extern img_t 	txt_layout_images(layout_t lay, void **v); /* enumerator */
+extern word_t 	txt_layout_words(layout_t lay, word_t w); /* enumerator */
 extern void	txt_layout_size(layout_t lay, int *w, int *h);
 extern textbox_t txt_box(int w, int h);
 extern layout_t txt_box_layout(textbox_t tbox);
