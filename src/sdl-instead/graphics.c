@@ -226,23 +226,52 @@ int gfx_parse_color (
 
 struct _anigif_t;
 
+struct agspawn {
+	SDL_Rect clip;
+	img_t	bg;	
+	int x;
+	int y;
+};
+#define AGSPAWN_BLOCK 8
 struct _anigif_t {
 	struct _anigif_t *next;
 	struct _anigif_t *prev;
 	int	cur_frame;
 	int	nr_frames;
 	int	loop;
-	int	x;
-	int	y;
 	int 	drawn;
 	int	active;
 	int	delay;
-	img_t	bg;	
-	SDL_Rect clip;
+	int	spawn_nr;
+	struct	agspawn *spawn;
 	AG_Frame frames[0];
 };
 
 typedef struct _anigif_t *anigif_t;
+
+static int anigif_spawn(anigif_t ag, int x, int y, int w, int h)
+{
+	int nr;
+	SDL_Rect clip;
+	SDL_GetClipRect(screen, &clip);
+	//gfx_free_image(ag->bg);
+	if (!ag->spawn && !(ag->spawn = malloc(AGSPAWN_BLOCK * sizeof(struct agspawn))))
+		return -1;
+	nr = ag->spawn_nr + 1;
+	if (!(nr % AGSPAWN_BLOCK)) { /* grow */
+		void *p = realloc(ag->spawn, AGSPAWN_BLOCK * sizeof(struct agspawn) * 
+						((nr / AGSPAWN_BLOCK) + 1));	
+		if (!p)
+			return -1;
+		ag->spawn = p;
+	}
+	ag->spawn[ag->spawn_nr].x = x;
+	ag->spawn[ag->spawn_nr].y = y;
+	ag->spawn[ag->spawn_nr].clip = clip;
+	ag->spawn[ag->spawn_nr].bg = gfx_grab_screen(x, y, w, h);
+	ag->spawn_nr = nr;
+	return 0;
+}
 
 static anigif_t anim_gifs = NULL;
 
@@ -263,23 +292,23 @@ static void anigif_disposal(anigif_t g)
 {
 	SDL_Rect dest;
 	SDL_Rect clip;
-
+	int i = 0;
 	img_t	*img = NULL;
 	AG_Frame *frame;
 	frame = &g->frames[g->cur_frame];
 	SDL_GetClipRect(screen, &clip);
 	
-	dest.x = g->x;
-	dest.y = g->y; 
+	dest.x = 0; //g->x;
+	dest.y = 0; //g->y; 
 
 	switch (frame->disposal) {
 	case AG_DISPOSE_NA:
 	case AG_DISPOSE_NONE: /* just show next frame */
 		break;
 	case AG_DISPOSE_RESTORE_BACKGROUND:
-		img = g->bg;
-		dest.w = Surf(img)->w; 
-		dest.h = Surf(img)->h;
+//		img = g->bg;
+//		dest.w = Surf(img)->w; 
+//		dest.h = Surf(img)->h;
 		break;
 	case AG_DISPOSE_RESTORE_PREVIOUS:
 		if (g->cur_frame) {
@@ -291,29 +320,44 @@ static void anigif_disposal(anigif_t g)
 		}
 		break;
 	}
-	SDL_SetClipRect(screen, &g->clip);
-	if (img) { /* draw bg */
-		SDL_BlitSurface(Surf(img), NULL, screen, &dest);
+	for (i = 0; i < g->spawn_nr; i++) {
+		SDL_Rect dst;
+		SDL_SetClipRect(screen, &g->spawn[i].clip);
+		dst = dest;
+
+		dst.x += g->spawn[i].x;
+		dst.y += g->spawn[i].y;
+		if (frame->disposal == AG_DISPOSE_RESTORE_BACKGROUND) {
+			img = g->spawn[i].bg;
+			dst.w = Surf(img)->w; 
+			dst.h = Surf(img)->h;
+		}
+		if (img) { /* draw bg */
+			SDL_BlitSurface(Surf(img), NULL, screen, &dst);
+		}
 	}
 	SDL_SetClipRect(screen, &clip);
 }
 
 static void anigif_frame(anigif_t g)
 {
+	int i;
 	SDL_Rect dest;
 	SDL_Rect clip;
 
 	AG_Frame *frame;
 	frame = &g->frames[g->cur_frame];
 	SDL_GetClipRect(screen, &clip);
-	
-	dest.x = g->x + frame->x;
-	dest.y = g->y + frame->y;
+
 	dest.w = frame->surface->w; 
 	dest.h = frame->surface->h;
 
-	SDL_SetClipRect(screen, &g->clip);
-	SDL_BlitSurface(frame->surface, NULL, screen, &dest);
+	for (i = 0; i < g->spawn_nr; i++) {	
+		dest.x = g->spawn[i].x + frame->x;
+		dest.y = g->spawn[i].y + frame->y;
+		SDL_SetClipRect(screen, &g->spawn[i].clip);
+		SDL_BlitSurface(frame->surface, NULL, screen, &dest);
+	}
 	g->delay = timer_counter;
 	SDL_SetClipRect(screen, &clip);
 }	
@@ -359,11 +403,22 @@ static anigif_t anigif_del(anigif_t g)
 	return g;
 }
 
+static void anigif_free_spawn(anigif_t g)
+{
+	int i;
+	for (i = 0; i < g->spawn_nr; i++)
+		gfx_free_image(g->spawn[i].bg);
+	if (g->spawn) {
+		free(g->spawn);
+		g->spawn = NULL;
+		g->spawn_nr = 0;
+	}
+}
 
 static void anigif_free(anigif_t g)
 {
 	AG_FreeSurfaces(g->frames, g->nr_frames);
-	gfx_free_image(g->bg);
+	anigif_free_spawn(g);
 	free(g);
 }
 
@@ -708,17 +763,11 @@ void gfx_draw(img_t p, int x, int y)
 	dest.h = pixbuf->h;
 	ag = is_anigif(pixbuf);
 	if (ag) {
-		SDL_Rect clip;
-		SDL_GetClipRect(screen, &clip);
-		ag->clip = clip;
-		ag->x = x;
-		ag->y = y;
+		anigif_spawn(ag, x, y, dest.w, dest.w);
 		if (!ag->drawn)
 			anigif_drawn_nr ++;
 		ag->drawn = 1;
 		ag->active = 1;
-		gfx_free_image(ag->bg);
-		ag->bg = gfx_grab_screen(x, y, dest.w, dest.h);
 		anigif_frame(ag);
 		return;
 	}
@@ -742,6 +791,7 @@ void gfx_dispose_gif(img_t p)
 		if (ag->drawn)
 			anigif_drawn_nr --;
 		ag->drawn = 0;
+		anigif_free_spawn(ag);
 	}
 }
 
@@ -799,13 +849,17 @@ int gfx_is_drawn_gifs(void)
 
 void gfx_update_gif(img_t img)
 {
+	int i = 0;
 	anigif_t ag;
 	ag = is_anigif(img);
 	if (!ag)
 		return;
 	if (!ag->drawn || !ag->active)
 		return;
-	gfx_update(ag->x, ag->y, gfx_img_w(img), gfx_img_h(img));
+	for (i = 0; i < ag->spawn_nr; i++) {
+		gfx_update(ag->spawn[i].x, ag->spawn[i].y, 
+			gfx_img_w(img), gfx_img_h(img));
+	}
 }
 
 void gfx_draw_wh(img_t p, int x, int y, int w, int h)
@@ -1533,6 +1587,24 @@ void _txt_layout_free(layout_t lay)
 	layout->lines = NULL;
 }
 
+word_t txt_layout_words(layout_t lay, word_t v)
+{
+	struct word *w = (struct word*)v;
+	struct layout *layout = (struct layout *)lay;
+	struct line *line;
+	if (!layout)
+		return NULL;
+	if (!w) {
+		if (!(line = layout->lines))
+			return NULL;
+		w = line->words;
+	} else {
+		line = w->line;
+		w = w->next;
+	}
+	for (; !w && line->next; line = line->next, w = line->words);
+	return w;	
+}
 void txt_layout_free(layout_t lay)
 {
 	struct layout *layout = (struct layout *)lay;
@@ -1918,6 +1990,8 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 
 void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, int height, clear_fn clear)
 {
+	void *v;
+	img_t img;
 	struct layout *layout = (struct layout*)lay;
 //	struct line *line;
 	struct word *word;
@@ -1925,6 +1999,8 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 //	gfx_clip(x, y, layout->w, layout->h);
 	if (!lay)
 		return;
+	for (v = NULL; (img = txt_layout_images(lay, &v)); )
+		gfx_dispose_gif(img);
 	if (!line)
 		line = layout->lines;
 	for (; line; line= line->next) {
