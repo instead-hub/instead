@@ -990,7 +990,7 @@ function player_action(self, what, ...)
 	local v,r,obj
 	obj = ref(self.where):srch(what);
 	if not obj then
-		return nil; --player_do(self, what, unpack(arg));
+		return call(ref(game), 'action', what, unpack(arg)); --player_do(self, what, unpack(arg));
 	end
 	v, r = player_take(self, what);
 	if not v then

@@ -2,6 +2,8 @@ instead (1.1.5) unstable; urgency=low
 
   * multiple anigif in one layout fix
   * click in picture event
+  * game.action callback
+  * bug in <g: > parsing
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 10 Mar 2010 15:20:51 +0300  
 
