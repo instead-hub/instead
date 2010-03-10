@@ -1144,6 +1144,15 @@ struct word {
 	SDL_Surface  *hlprerend;
 };
 
+
+img_t	word_image(word_t v)
+{
+	struct word *w = (struct word*)v;
+	if (!w)
+		return NULL;
+	return w->img;
+}
+
 struct word *word_new(const char *str)
 {
 	struct word *w;
@@ -1192,6 +1201,35 @@ struct line {
 	struct line *prev;
 	struct layout *layout;
 };
+
+int	word_geom(word_t v, int *x, int *y, int *w, int *h)
+{
+	int xx, yy, ww, hh;
+	struct line *line;
+	struct word *word = (struct word*)v;
+	img_t img;
+	if (!word || !word->line)
+		return -1;
+	img = word->img;
+	line = word->line;
+	xx = word->x;
+	yy = line->y;
+	ww = word->w;
+	hh = line->h;
+	if (img) { /* todo */
+		hh = gfx_img_h(img);
+		yy += (line->h - hh) / 2;
+	}
+	if (x)
+		*x = xx;
+	if (y)
+		*y = yy;
+	if (w)
+		*w = ww;
+	if (h)
+		*h = hh;
+	return 0;
+}
 
 struct line *line_new(void)
 {

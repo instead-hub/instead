@@ -1880,7 +1880,7 @@ input = obj { -- input object
 --[[	key = function(s, down, key)
 		return
 	end, ]]
---[[	click = function(s, down, x, y, mb)
+--[[	click = function(s, down, mb, x, y, [ px, py ] )
 		return
 	end ]]
 };

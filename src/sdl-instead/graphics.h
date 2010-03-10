@@ -99,6 +99,8 @@ extern void	txt_layout_link_style(layout_t lay, int style);
 extern int 	txt_layout_add_img(layout_t lay, const char *name, img_t img);
 extern img_t 	txt_layout_images(layout_t lay, void **v); /* enumerator */
 extern word_t 	txt_layout_words(layout_t lay, word_t w); /* enumerator */
+extern int	word_geom(word_t v, int *x, int *y, int *w, int *h);
+extern img_t	word_image(word_t v);
 extern void	txt_layout_size(layout_t lay, int *w, int *h);
 extern textbox_t txt_box(int w, int h);
 extern layout_t txt_box_layout(textbox_t tbox);

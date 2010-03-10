@@ -88,6 +88,8 @@ struct game_theme {
 	int	inv_mode;
 	char	*click_name;
 	void	*click;
+	int xoff;
+	int yoff;
 };
 
 struct theme {

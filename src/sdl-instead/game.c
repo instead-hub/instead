@@ -11,6 +11,9 @@ char	*curgame_dir = NULL;
 
 int game_own_theme = 0;
 
+static int game_pic_w = 0;
+static int game_pic_h = 0;
+
 void game_cursor(int on);
 void mouse_reset(int hl);
 static void menu_toggle(void);
@@ -850,7 +853,10 @@ img_t	game_pict_scale(img_t img, int ww, int hh)
 	img_t img2 = img;
 	int w, h, www, hhh;
 	float scale1, scale2, scale = 1.0f;
-	
+
+	game_pic_w = gfx_img_w(img);
+	game_pic_h = gfx_img_w(img);
+
 	if (game_theme.scale > 1.0f)
 		theme_img_scale(&img);
 
@@ -1238,6 +1244,65 @@ static void scroll_to_diff(const char *cmdstr, int cur_off)
 }
 
 int game_highlight(int x, int y, int on);
+
+static int game_bg_coord(int x, int y, int *ox, int *oy)
+{
+	struct game_theme *t = &game_theme;
+	if (x < t->xoff || y < t->yoff || x >= (t->w - t->xoff) || y >= (t->h - t->yoff))
+		return -1;
+	*ox = (int)((float)(x - t->xoff) / (float)t->scale);
+	*oy = (int)((float)(y - t->yoff) / (float)t->scale);
+	return 0;
+}
+
+static int game_pic_coord(int x, int y, int *ox, int *oy)
+{
+	int xx, yy, ww, hh;
+	img_t	img;
+	word_t	word;
+	img = el_img(el_spic);
+	if (!img)
+		return -1;
+	if (game_theme.gfx_mode != GFX_MODE_EMBEDDED) {
+		xx = el(el_spic)->x;
+		yy = el(el_spic)->y;
+		ww = gfx_img_w(img);
+		hh = gfx_img_h(img);
+		goto out;
+	}
+	el_size(el_scene, &ww, &hh);
+
+	if (x < el(el_scene)->x || y < el(el_scene)->y || x >= el(el_scene)->x + ww ||
+			y >= el(el_scene)->y + hh)
+		return -1; /* no scene layout */
+
+	for (word = NULL; (word = txt_layout_words(txt_box_layout(el_box(el_scene)), word)); ) { /* scene */
+		if (word_image(word) != el_img(el_spic))
+			continue;
+		word_geom(word, &xx, &yy, &ww, &hh);
+		yy -= txt_box_off(el_box(el_scene));
+		xx += el(el_scene)->x;
+		yy += el(el_scene)->y;
+		goto out;
+	}
+	if (!word)
+		return -1;
+out:
+	if (x >= xx && y >= yy && x < (xx + ww) && y < (yy + hh)) {
+		*ox = x - xx;
+		*oy = y - yy;
+		if (ww)
+			*ox = (int)((float)(*ox) * (float)game_pic_w / (float)ww);
+		else
+			*ox = 0;
+		if (hh)
+			*oy = (int)((float)(*oy) * (float)game_pic_h / (float)hh);
+		else
+			*oy = 0;
+		return 0;
+	}
+	return -1;
+}
 
 int game_cmd(char *cmd)
 {
@@ -2183,13 +2248,18 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 		snprintf(buf, sizeof(buf), "return stead.input(\"kbd\", %s, \"%s\")", 
 			((down)?"true":"false"), p);
 	else {
-		float v = game_theme.scale;
-		if (v != 1.0f) {
-			x = (int)((float)x / v);
-			y = (int)((float)y / v);
+		int px = -1;
+		int py = -1;
+		game_pic_coord(x, y, &px, &py); /* got picture coord */
+		if (game_bg_coord(x, y, &x, &y)) /* no click on bg */
+			return -1;
+		if (px == -1) {
+			snprintf(buf, sizeof(buf), "return stead.input(\"mouse\", %s, %d, %d, %d)", 
+				((down)?"true":"false"), mb, x, y);
+		} else {
+			snprintf(buf, sizeof(buf), "return stead.input(\"mouse\", %s, %d, %d, %d, %d, %d)", 
+				((down)?"true":"false"), mb, x, y, px, py);
 		}
-		snprintf(buf, sizeof(buf), "return stead.input(\"mouse\", %s, %d, %d, %d)", 
-			((down)?"true":"false"), x, y, mb);
 	}
 	free(p);
 	if (instead_eval(buf)) {
@@ -2201,6 +2271,8 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 	if (!p)
 		return -1;
 	mouse_reset(0);
+	if (opt_click && mb != -1)
+		snd_play(game_theme.click, -1, 0);
 	game_cmd(p); free(p);
 	return 0;
 }
