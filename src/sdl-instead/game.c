@@ -230,7 +230,27 @@ enum {
 	el_max,
 };
 
+static const char *el_names[] = {
+	"none",
+	"none",
+	"title",
+	"scene",
+	"inv",
+	"scene",
+	"up",
+	"down",
+	"iup",
+	"idown",
+	"pic",
+	"menu",
+};
+
 struct el objs[el_max];
+
+const char *el_name(int i)
+{
+	return el_names[objs[i].id];
+}
 
 void 	el_set(int i, int t, int x, int y, void *p)
 {
@@ -2250,6 +2270,9 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 	else {
 		int px = -1;
 		int py = -1;
+//		struct el *el = look_obj(x, y);
+//		if (el)
+//			fprintf(stderr,"%s\n", el_name(el->id));
 		game_pic_coord(x, y, &px, &py); /* got picture coord */
 		if (game_bg_coord(x, y, &x, &y)) /* no click on bg */
 			return -1;
