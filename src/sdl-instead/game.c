@@ -1245,64 +1245,7 @@ static void scroll_to_diff(const char *cmdstr, int cur_off)
 
 int game_highlight(int x, int y, int on);
 
-static int game_bg_coord(int x, int y, int *ox, int *oy)
-{
-	struct game_theme *t = &game_theme;
-	if (x < t->xoff || y < t->yoff || x >= (t->w - t->xoff) || y >= (t->h - t->yoff))
-		return -1;
-	*ox = (int)((float)(x - t->xoff) / (float)t->scale);
-	*oy = (int)((float)(y - t->yoff) / (float)t->scale);
-	return 0;
-}
 
-static int game_pic_coord(int x, int y, int *ox, int *oy)
-{
-	int xx, yy, ww, hh;
-	img_t	img;
-	word_t	word;
-	img = el_img(el_spic);
-	if (!img)
-		return -1;
-	if (game_theme.gfx_mode != GFX_MODE_EMBEDDED) {
-		xx = el(el_spic)->x;
-		yy = el(el_spic)->y;
-		ww = gfx_img_w(img);
-		hh = gfx_img_h(img);
-		goto out;
-	}
-	el_size(el_scene, &ww, &hh);
-
-	if (x < el(el_scene)->x || y < el(el_scene)->y || x >= el(el_scene)->x + ww ||
-			y >= el(el_scene)->y + hh)
-		return -1; /* no scene layout */
-
-	for (word = NULL; (word = txt_layout_words(txt_box_layout(el_box(el_scene)), word)); ) { /* scene */
-		if (word_image(word) != el_img(el_spic))
-			continue;
-		word_geom(word, &xx, &yy, &ww, &hh);
-		yy -= txt_box_off(el_box(el_scene));
-		xx += el(el_scene)->x;
-		yy += el(el_scene)->y;
-		goto out;
-	}
-	if (!word)
-		return -1;
-out:
-	if (x >= xx && y >= yy && x < (xx + ww) && y < (yy + hh)) {
-		*ox = x - xx;
-		*oy = y - yy;
-		if (ww)
-			*ox = (int)((float)(*ox) * (float)game_pic_w / (float)ww);
-		else
-			*ox = 0;
-		if (hh)
-			*oy = (int)((float)(*oy) * (float)game_pic_h / (float)hh);
-		else
-			*oy = 0;
-		return 0;
-	}
-	return -1;
-}
 
 int game_cmd(char *cmd)
 {
@@ -2232,6 +2175,73 @@ static int is_key(struct inp_event *ev, const char *name)
 	if (!ev->sym)
 		return -1;
 	return strcmp(ev->sym, name);
+}
+
+static int game_pic_coord(int x, int y, int *ox, int *oy)
+{
+	int xx, yy, ww, hh;
+	img_t	img;
+	word_t	word;
+	img = el_img(el_spic);
+	if (!img)
+		return -1;
+	if (game_theme.gfx_mode != GFX_MODE_EMBEDDED) {
+		xx = el(el_spic)->x;
+		yy = el(el_spic)->y;
+		ww = gfx_img_w(img);
+		hh = gfx_img_h(img);
+		goto out;
+	}
+	el_size(el_scene, &ww, &hh);
+
+	if (x < el(el_scene)->x || y < el(el_scene)->y || x >= el(el_scene)->x + ww ||
+			y >= el(el_scene)->y + hh)
+		return -1; /* no scene layout */
+
+	for (word = NULL; (word = txt_layout_words(txt_box_layout(el_box(el_scene)), word)); ) { /* scene */
+		if (word_image(word) != el_img(el_spic))
+			continue;
+		word_geom(word, &xx, &yy, &ww, &hh);
+		yy -= txt_box_off(el_box(el_scene));
+		xx += el(el_scene)->x;
+		yy += el(el_scene)->y;
+		goto out;
+	}
+	if (!word)
+		return -1;
+out:
+	if (x >= xx && y >= yy && x < (xx + ww) && y < (yy + hh)) {
+		*ox = x - xx;
+		*oy = y - yy;
+		if (ww)
+			*ox = (int)((float)(*ox) * (float)game_pic_w / (float)ww);
+		else
+			*ox = 0;
+		if (hh)
+			*oy = (int)((float)(*oy) * (float)game_pic_h / (float)hh);
+		else
+			*oy = 0;
+		return 0;
+	}
+	return -1;
+}
+
+static int game_bg_coord(int x, int y, int *ox, int *oy)
+{
+	struct el *o;
+	struct game_theme *t = &game_theme;
+	if (x < t->xoff || y < t->yoff || x >= (t->w - t->xoff) || y >= (t->h - t->yoff))
+		return -1;
+	o = look_obj(x, y);
+
+	if (o && (o->id == el_sup || o->id == el_sdown ||
+		o->id == el_iup || o->id == el_idown ||
+		o->id == el_menu_button))
+		return -1; /* ask Odyssey for that ;) */
+
+	*ox = (int)((float)(x - t->xoff) / (float)t->scale);
+	*oy = (int)((float)(y - t->yoff) / (float)t->scale);
+	return 0;
 }
 
 static int game_input(int down, const char *key, int x, int y, int mb)
