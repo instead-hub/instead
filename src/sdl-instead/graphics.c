@@ -763,7 +763,7 @@ void gfx_draw(img_t p, int x, int y)
 	dest.h = pixbuf->h;
 	ag = is_anigif(pixbuf);
 	if (ag) {
-		anigif_spawn(ag, x, y, dest.w, dest.w);
+		anigif_spawn(ag, x, y, dest.w, dest.h);
 		if (!ag->drawn)
 			anigif_drawn_nr ++;
 		ag->drawn = 1;

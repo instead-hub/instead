@@ -1406,8 +1406,10 @@ int game_cmd(char *cmd)
 
 	if (game_theme.gfx_mode != GFX_MODE_EMBEDDED) {
 		el_draw(el_ways);
-		if ((new_pict || new_place))
+		if ((new_pict || new_place)) {
+			gfx_dispose_gif(el_img(el_spic));
 			el_draw(el_spic);
+		}
 	}
 
 //	gfx_start_gif(el_img(el_spic));
