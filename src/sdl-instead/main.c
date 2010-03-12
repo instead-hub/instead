@@ -9,6 +9,7 @@ int noauto_sw = 0;
 int nostdgames_sw = 0;
 int nostdthemes_sw = 0;
 int version_sw = 0;
+int nopause_sw = 0;
 char *game_sw = NULL;
 char *games_sw = NULL;
 char *theme_sw = NULL;
@@ -77,6 +78,8 @@ int main(int argc, char **argv)
 				encode_output = "lua.enc";
 		} else if (!strcmp(argv[i], "-version")) {
 			version_sw = 1;
+		} else if (!strcmp(argv[i], "-nopause")) {
+			nopause_sw = 1;
 		} else if (argv[i][0] == '-') {
 			fprintf(stderr,"Unknow option: %s\n", argv[i]);
 			exit(1);
