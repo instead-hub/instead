@@ -503,7 +503,7 @@ static void anigif_do(void *data)
 	void *v;
 	img_t img;
 
-	if (menu_shown || gfx_fading())
+	if (menu_shown || gfx_fading() || minimized())
 		return;
 
 	game_cursor(CURSOR_CLEAR);
@@ -1549,7 +1549,7 @@ static struct el *old_el = NULL;
 
 int game_paused(void)
 {
-	return menu_shown || use_xref || old_xref || gfx_fading();
+	return menu_shown || use_xref || old_xref || gfx_fading() || minimized();
 }
 
 void menu_update(struct el *elem)
