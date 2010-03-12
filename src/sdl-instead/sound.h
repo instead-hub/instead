@@ -21,6 +21,6 @@ extern	void	snd_done(void);
 extern int 	snd_vol_from_pcn(int v);
 extern int 	snd_vol_to_pcn(int v);
 extern int 	snd_playing(int channel);
-extern int	snd_pause(int on);
+extern void	snd_pause(int on);
 
 #endif

@@ -54,10 +54,11 @@ int snd_hz(void)
 int alsa_sw = 0;
 int nosound_sw = 0;
 
-int snd_pause(int on)
+void snd_pause(int on)
 {
 	if (sound_on)
 		SDL_PauseAudio(on);
+	return;
 }
 
 int snd_init(int hz) 
