@@ -197,61 +197,77 @@ int AG_ConvertSurfacesToDisplayFormat( AG_Frame* frames, int nFrames )
 
 
 
-int AG_NormalizeSurfacesToDisplayFormat( AG_Frame* frames, int nFrames )
+int AG_NormalizeSurfacesToDisplayFormat( AG_Frame* frames, int nFrames, int skip, int *restore, int *lastdisp )
 {
 	int n = 0;
-
-	if ( nFrames > 0 && frames && frames[0].surface )
-	{
-		SDL_Surface* mainSurface = (frames[0].surface->flags & SDL_SRCCOLORKEY) ? SDL_DisplayFormatAlpha(frames[0].surface) : SDL_DisplayFormat(frames[0].surface);
-		const int newDispose = (frames[0].surface->flags & SDL_SRCCOLORKEY) ? AG_DISPOSE_RESTORE_BACKGROUND : AG_DISPOSE_NONE;
-
-		if ( mainSurface )
-		{
-			int i;
-			int lastDispose = AG_DISPOSE_NA;
-			int iRestore = 0;
-			const Uint8 alpha = (frames[0].disposal == AG_DISPOSE_NONE ||
-				frames[0].disposal == AG_DISPOSE_NA) ? SDL_ALPHA_OPAQUE : SDL_ALPHA_TRANSPARENT;
-
-			SDL_FillRect( mainSurface, NULL, SDL_MapRGBA(mainSurface->format,0,0,0,alpha) );
-
-			for ( i = 0; i < nFrames; i++ )
-			{
-				if ( frames[i].surface )
-				{
-					SDL_Surface* surface = SDL_ConvertSurface( mainSurface, mainSurface->format, mainSurface->flags );
-
-					if ( surface )
-					{
-						SDL_Rect r;
-
-						if ( lastDispose == AG_DISPOSE_NONE )
-							SDL_BlitSurface( frames[i-1].surface, NULL, surface, NULL );
-
-						if ( lastDispose == AG_DISPOSE_RESTORE_PREVIOUS )
-							SDL_BlitSurface( frames[iRestore].surface, NULL, surface, NULL );
-						if ( frames[i].disposal != AG_DISPOSE_RESTORE_PREVIOUS )
-							iRestore = i;
-
-						r.x = (Sint16)frames[i].x;
-						r.y = (Sint16)frames[i].y;
-						SDL_BlitSurface( frames[i].surface, NULL, surface, &r );
-
-						SDL_FreeSurface( frames[i].surface );
-						frames[i].surface = surface;
-						frames[i].x = frames[i].y = 0;
-						lastDispose = frames[i].disposal;
-						frames[i].disposal = newDispose;
-						n++;
-					}
-				}
-			}
-
-			SDL_FreeSurface( mainSurface );
-		}
+	SDL_Surface* mainSurface;
+	int i;
+	int lastDispose = AG_DISPOSE_NA;
+	int iRestore = 0;
+	int newDispose;
+	Uint8 alpha;
+	if ( !nFrames || !frames || !frames[0].surface)
+		return n;
+	if (skip) {
+	mainSurface = (4096 & SDL_SRCCOLORKEY) ? 
+		SDL_DisplayFormatAlpha(frames[0].surface) : 
+		SDL_DisplayFormat(frames[0].surface);
+	alpha = (1 == AG_DISPOSE_NONE ||
+		1 == AG_DISPOSE_NA) ? 
+		SDL_ALPHA_OPAQUE : SDL_ALPHA_TRANSPARENT;
+	newDispose = (4096 & SDL_SRCCOLORKEY) ? 
+		AG_DISPOSE_RESTORE_BACKGROUND : AG_DISPOSE_NONE;
+	} else {
+	mainSurface = (frames[0].surface->flags & SDL_SRCCOLORKEY) ? 
+		SDL_DisplayFormatAlpha(frames[0].surface) : 
+		SDL_DisplayFormat(frames[0].surface);
+	alpha = (frames[0].disposal == AG_DISPOSE_NONE ||
+		frames[0].disposal == AG_DISPOSE_NA) ? 
+		SDL_ALPHA_OPAQUE : SDL_ALPHA_TRANSPARENT;
+	newDispose = (frames[0].surface->flags & SDL_SRCCOLORKEY) ? 
+		AG_DISPOSE_RESTORE_BACKGROUND : AG_DISPOSE_NONE;
 	}
+	if (!mainSurface)
+		return n;
+	if (skip) {
+		if (lastdisp)
+			lastDispose = *lastdisp;
+		if (restore)
+			iRestore = *restore;
+	}
+	SDL_FillRect( mainSurface, NULL, SDL_MapRGBA(mainSurface->format,0,0,0,alpha) );
+	for ( i = skip; i < nFrames + skip; i++ ) {
+		SDL_Rect r;
+		SDL_Surface* surface;
+		if (!frames[i].surface)
+			continue;
+		surface = SDL_ConvertSurface( mainSurface, mainSurface->format, mainSurface->flags );
+		if (!surface)
+			continue;
 
+		if ( lastDispose == AG_DISPOSE_NONE )
+			SDL_BlitSurface( frames[i-1].surface, NULL, surface, NULL );
+		else if ( lastDispose == AG_DISPOSE_RESTORE_PREVIOUS )
+			SDL_BlitSurface( frames[iRestore].surface, NULL, surface, NULL );
+		
+		if ( frames[i].disposal != AG_DISPOSE_RESTORE_PREVIOUS )
+			iRestore = i;
+
+		r.x = (Sint16)frames[i].x;
+		r.y = (Sint16)frames[i].y;
+		SDL_BlitSurface( frames[i].surface, NULL, surface, &r );
+		SDL_FreeSurface( frames[i].surface );
+		frames[i].surface = surface;
+		frames[i].x = frames[i].y = 0;
+		lastDispose = frames[i].disposal;
+		frames[i].disposal = newDispose;
+		n++;
+	}
+	if (restore)
+		*restore = iRestore;
+	if (lastdisp)
+		*lastdisp = lastDispose;
+	SDL_FreeSurface( mainSurface );
 	return n;
 }
 
