@@ -4,6 +4,12 @@
 #include <SDL.h>
 
 static int m_focus = 0;
+static int m_minimized = 0;
+
+int minimized(void)
+{
+	return m_minimized;
+}
 
 int mouse_focus(void)
 {
@@ -55,6 +61,10 @@ int input(struct inp_event *inp, int wait)
 	inp->count = 1;
 	switch(event.type){
 	case SDL_ACTIVEEVENT:
+		if (event.active.state & SDL_APPACTIVE) {
+			m_minimized = !event.active.gain;
+			snd_pause(m_minimized);
+		}
 		if (event.active.state & (SDL_APPMOUSEFOCUS | SDL_APPINPUTFOCUS)) {
 			if (event.active.gain) {
 				m_focus = 1;
