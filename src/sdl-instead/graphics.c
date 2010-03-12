@@ -243,9 +243,6 @@ struct _anigif_t {
 	int	active;
 	int	delay;
 	int	spawn_nr;
-	int	lastdisp;
-	int	restore;
-	int	nr_rendered;
 	struct	agspawn *spawn;
 	AG_Frame frames[0];
 };
@@ -291,13 +288,6 @@ static anigif_t anigif_find(anigif_t g)
 }
 extern int timer_counter;
 
-static void anigif_render(anigif_t g)
-{
-	if (g->cur_frame >= g->nr_rendered) {
-		g->nr_rendered += AG_NormalizeSurfacesToDisplayFormat(g->frames, 1, g->cur_frame, &g->restore, &g->lastdisp);
-	}
-}
-
 static void anigif_disposal(anigif_t g)
 {
 	SDL_Rect dest;
@@ -306,8 +296,6 @@ static void anigif_disposal(anigif_t g)
 	img_t	*img = NULL;
 	AG_Frame *frame;
 	frame = &g->frames[g->cur_frame];
-//	anigif_render(g);
-
 	SDL_GetClipRect(screen, &clip);
 	
 	dest.x = 0; //g->x;
@@ -359,8 +347,6 @@ static void anigif_frame(anigif_t g)
 
 	AG_Frame *frame;
 	frame = &g->frames[g->cur_frame];
-//	anigif_render(g);
-
 	SDL_GetClipRect(screen, &clip);
 
 	dest.w = frame->surface->w; 
@@ -637,7 +623,7 @@ static img_t _gfx_load_image(char *filename)
 			return NULL;
 		memset(agif, 0, sizeof(struct _anigif_t) + nr * sizeof(AG_Frame));
 		AG_LoadGIF(filename, agif->frames, nr, &loop);
-		agif->nr_rendered = AG_NormalizeSurfacesToDisplayFormat(agif->frames, nr, 0, &agif->restore, &agif->lastdisp);
+		AG_NormalizeSurfacesToDisplayFormat( agif->frames, nr);
 		agif->loop = loop;
 		agif->nr_frames = nr;
 		anigif_add(agif);
