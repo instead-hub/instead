@@ -8,6 +8,8 @@ static int m_minimized = 0;
 
 int minimized(void)
 {
+	if (nopause_sw)
+		return 0;
 	return m_minimized;
 }
 
@@ -63,7 +65,7 @@ int input(struct inp_event *inp, int wait)
 	case SDL_ACTIVEEVENT:
 		if (event.active.state & SDL_APPACTIVE) {
 			m_minimized = !event.active.gain;
-			snd_pause(m_minimized);
+			snd_pause(!nopause_sw && m_minimized);
 		}
 		if (event.active.state & (SDL_APPMOUSEFOCUS | SDL_APPINPUTFOCUS)) {
 			if (event.active.gain) {
