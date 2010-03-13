@@ -58,11 +58,13 @@ void snd_pause(int on)
 {
 	if (!sound_on) 
 		return;
-	SDL_PauseAudio(on);
-	if (on)
+	if (on) {
+		Mix_Pause(-1);
 		Mix_PauseMusic();
-	else
+	} else {
+		Mix_Resume(-1);
 		Mix_ResumeMusic();
+	}
 	return;
 }
 
