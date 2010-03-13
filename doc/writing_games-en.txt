@@ -198,7 +198,7 @@ button = obj {
   nam = "button",
   dsc = "There is a big red {button} on the room wall.",
   act = function (s)
-    here().dsc = [[The room transformed after I pressed the button. The book-case disappeared along with the table and the chest, and a strange looking device took its place.]];
+    here()._dsc = [[The room transformed after I pressed the button. The book-case disappeared along with the table and the chest, and a strange looking device took its place.]];
     return true;
   end,
 }
@@ -837,13 +837,26 @@ pl.Life = 10;
 pl.Power = 10;
 
 status = obj {
-        nam = 'Life: '..pl.Life..',Power: '..pl.Power,
+        nam = function(s)
+            return 'Life: '..pl.Life..',Power: '..pl.Power
+        end
 };
 inv():add('status');
 status.object_type = false
 </code>
 
 From version 0.9.1 you can use stat constructor for status.
+<code>
+pl.Life = 10;
+pl.Power = 10;
+
+status = stat {
+        nam = function(s)
+                return 'Life: '..pl.Life..',Power: '..pl.Power
+        end
+};
+inv():add('status');
+</code>
 
 ==== “goto” from the “exit” handler ====
 
@@ -1022,9 +1035,9 @@ main = room {
 </code>
 
 ==== Keyboard ====
-Since the version 1.1.0 ''instead'' supports the keyboard input. (Only for sdl version.) Use the ''input'' object for this.
+Since version 1.1.0 ''instead'' supports keyboard input (works with SDL version only). This can be done using ''input'' object.
  
-input.key(s, pressed, key) -- keyboard handler; pressed -- press or release action; key -- symbolic name of the key;
+input.key(s, pressed, key) -- keyboard handler; pressed -- press or release event; key -- symbolic name of the key;
 
 Handler can return a ''stead'' interface command. In this case the interpreter doesn't handle a key.
 For example:
@@ -1048,13 +1061,72 @@ main = room {
     force_dsc = true,
     nam = 'Keyboard',
     dsc = function(s)
-        return 'Exmaple: '..tostring(s._txt);
+        return 'Example: '..tostring(s._txt);
     end 
 };
 </code>
 
+==== Mouse ====
+Since version 1.1.5 ''instead'' supports mouse click handling (works with SDL version only). This can be done using ''input'' object.
+ 
+input.click(s, pressed, mb, x, y, px, py) -- mouse click handler; pressed -- press or release event. mb -- mouse button index (1 is left button), x and y -- mouse cursor coordinates relative to upper left corner of the window. px and py parameters exist if a picture have been clicked, they contain mouse cursor coordinates relative to upper left corner of this picture.
+
+
+Handler can return a ''stead'' interface command. In this case the interpreter doesn't handle a key.
+For example:
+<code>
+input.click = function(s, press, mb, x, y, px, py)
+	if press and px then
+		click.x = px;
+		click.y = py;
+		click:enable();
+		return "look"
+	end
+end
+
+click = obj {
+	nam = 'click',
+	x = 0,
+	y = 0,
+	dsc = function(s)
+		return "You clicked a picture at "..s.x..','..s.y..'.';
+	end
+}:disable();
+
+main = room {
+	nam = 'test',
+	pic ='picture.png',
+	dsc = 'Example.',
+	obj = { 'click' },
+};
+</code>
+
+Here is an example of a code layer that implements calling ''click'' method in the current room once the picture is clicked:
+<code>
+input.click = function(s, press, mb, x, y, px, py)
+	if press and px then
+		return "click "..px..','..py;
+	end
+end
+
+game.action = function(s, cmd, x, y)
+	if cmd == 'click' then
+		return call(here(), 'click', x, y);
+	end
+end
+----------------------------------------------------------------------
+main = room {
+	nam = 'test',
+	pic ='picture.png',
+	dsc = 'Example.',
+	click = function(s, x, y)
+		return "You clicked a picture at "..x..','..y..'.';
+	end
+};
+</code>
+
 ==== Dynamic object creation ====
-You can use ''new'' и ''delete'' functions to create and remove dynamic objects. An example follows.
+You can use ''new'' and ''delete'' functions to create and remove dynamic objects. An example follows.
 
 <code>
 new ("obj { nam = 'test', act = 'test' }")
