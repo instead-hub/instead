@@ -5,6 +5,7 @@ instead (1.1.5) unstable; urgency=low
   * game.action callback
   * bug in <g: > parsing
   * pause game while minimize (-nopause option added) 
+  * 8 bit scaler fix
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 10 Mar 2010 15:20:51 +0300  
 
