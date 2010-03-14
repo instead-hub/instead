@@ -1461,7 +1461,7 @@ function game_save(self, name, file)
 	end
 	local n = call(here(),'nam');
 	if type(n) == 'string' and n ~= "" then
-		h:write("-- $Name: "..n.."$\n");
+		h:write("-- $Name: "..n:gsub("\n"," ").."$\n");
 	end
 	for_each_object(save_object, h);
 	save_object('game', self, h);
