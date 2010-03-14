@@ -865,7 +865,7 @@ SDL_Surface *rotozoomSurfaceXY(SDL_Surface * src, double angle, double zoomx, do
      * Determine if source surface is 32bit or 8bit 
      */
     is32bit = (src->format->BitsPerPixel == 32);
-    if ((is32bit)/* || (src->format->BitsPerPixel == 8)*/) {
+    if ((is32bit) || (src->format->BitsPerPixel == 8)) {
 	/*
 	 * Use source surface 'as is' 
 	 */
@@ -1131,7 +1131,6 @@ SDL_Surface *zoomSurface(SDL_Surface * src, double zoomx, double zoomy, int smoo
     int is32bit;
     int i, src_converted;
     int flipx, flipy;
-
     /*
      * Sanity check 
      */
@@ -1142,7 +1141,7 @@ SDL_Surface *zoomSurface(SDL_Surface * src, double zoomx, double zoomy, int smoo
      * Determine if source surface is 32bit or 8bit 
      */
     is32bit = (src->format->BitsPerPixel == 32);
-    if ((is32bit) /*|| (src->format->BitsPerPixel == 8)*/) {
+    if ((is32bit) || (src->format->BitsPerPixel == 8)) {
 	/*
 	 * Use source surface 'as is' 
 	 */
@@ -1220,7 +1219,8 @@ SDL_Surface *zoomSurface(SDL_Surface * src, double zoomx, double zoomy, int smoo
 	 * Call the 8bit transformation routine to do the zooming 
 	 */
 	zoomSurfaceY(rz_src, rz_dst, flipx, flipy);
-	SDL_SetColorKey(rz_dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, rz_src->format->colorkey);
+	if (rz_src->flags & SDL_SRCCOLORKEY)
+		SDL_SetColorKey(rz_dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, rz_src->format->colorkey);
     }
     /*
      * Unlock source surface 
@@ -1258,7 +1258,7 @@ SDL_Surface *shrinkSurface(SDL_Surface * src, int factorx, int factory)
      * Determine if source surface is 32bit or 8bit 
      */
     is32bit = (src->format->BitsPerPixel == 32);
-    if ((is32bit) /*|| (src->format->BitsPerPixel == 8)*/) {
+    if ((is32bit) || (src->format->BitsPerPixel == 8)) {
 	/*
 	 * Use source surface 'as is' 
 	 */
@@ -1334,7 +1334,8 @@ SDL_Surface *shrinkSurface(SDL_Surface * src, int factorx, int factory)
 	 * Call the 8bit transformation routine to do the shrinking 
 	 */
 	shrinkSurfaceY(rz_src, rz_dst, factorx, factory);
-	SDL_SetColorKey(rz_dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, rz_src->format->colorkey);
+	if (rz_src->flags & SDL_SRCCOLORKEY)
+		SDL_SetColorKey(rz_dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, rz_src->format->colorkey);
     }
     /*
      * Unlock source surface 
