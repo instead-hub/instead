@@ -186,11 +186,14 @@ And then always use “sw” or some other auxiliary function.
 
 Warning!!! The variables outside any of the following object types: room, object, game, player — never get saved.
 
-From version 0.8.9 you can define a function “isForSave(k)”, which is called to  determine whether to save a variable to a savegame file. By default it is defined this way:
+From version 0.8.9 you can define a function “isForSave(k)”, which is called to determine whether to save a variable to a savegame file. By default it is defined this way:
 <code>
 function isForSave(k)
         return string.find(k, '_') ==  1 or string.match(k,'^%u')
+end
 </code>
+
+There are two extra parameters for isForSave() (for instead versions > 1.0.0). v -- value, s -- parent table.
 
 Sometimes we need a handler that would do something without showing any description, e.g.:
 <code>
@@ -198,15 +201,24 @@ button = obj {
   nam = "button",
   dsc = "There is a big red {button} on the room wall.",
   act = function (s)
-    here()._dsc = [[The room transformed after I pressed the button. The book-case disappeared along with the table and the chest, and a strange looking device took its place.]];
+    here()._dynamic_dsc = [[The room transformed after I pressed the button. 
+    The book-case disappeared along with the table and the chest, and a strange 
+    looking device took its place.]];
     return true;
   end,
 }
+r12 = room {
+  nam = 'room',
+  _dynamic_dsc = 'I am in the room.',
+  dsc = function (s) return s._dynamic_dsc end,
+  obj = {'button'}
+}
 </code>
-In this case `act` handler is used to change room description but it is not supposed to add any description of its own. To achieve this we need to return true from the handler. It means the action is done successfully but does not require to diplay any additional description.
+In this case ''act'' handler is used to change room description but it is not supposed to add any description of its own. To achieve this we need to return true from the handler. It means the action is done successfully but does not require to diplay any additional description.
 
-If you need to show some action is impossible, you can return false or nil from its `act` handler. In this case default description will be shown for this action. Default actions can be set via game.act handler and are generally used for description of impossible actions.
+If you need to show some action is impossible, you can return false or nil from its ''act'' handler. In this case default description will be shown for this action. Default actions can be set via ''game.act'' handler and are generally used for description of impossible actions.
 
+Please note the new variable ''_dynamic_dsc'' is used to make a dynamic description in the above example. This is done to ensure new description is saved during the game save. Since the name 'dsc' does not start with underscore or capital letter it will not be saved by default.
 
 ===== 6. Inventory =====
 
