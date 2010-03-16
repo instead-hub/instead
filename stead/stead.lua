@@ -639,6 +639,9 @@ function call(v, n, ...)
 		callpop()
 		return a,b
 	end
+	if type(v[n]) == 'boolean' then
+		return v[n]
+	end
 	error ("Method not string nor function:"..tostring(n));
 end
 
