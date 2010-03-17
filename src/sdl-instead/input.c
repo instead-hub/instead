@@ -80,7 +80,7 @@ int input(struct inp_event *inp, int wait)
 			}
 		}
 		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, 
-			SDL_EVENTMASK ( (SDL_APPMOUSEFOCUS | SDL_APPINPUTFOCUS))) > 0)
+			SDL_EVENTMASK (SDL_APPMOUSEFOCUS) | SDL_EVENTMASK(SDL_APPINPUTFOCUS)) > 0)
 			return AGAIN; /* to avoid flickering */
 		return 0;
 	case SDL_USEREVENT: {
