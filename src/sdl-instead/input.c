@@ -61,6 +61,7 @@ int input(struct inp_event *inp, int wait)
 	inp->sym = NULL;	
 	inp->type = 0;
 	inp->count = 1;
+
 	switch(event.type){
 	case SDL_ACTIVEEVENT:
 		if (event.active.state & SDL_APPACTIVE) {
@@ -75,9 +76,12 @@ int input(struct inp_event *inp, int wait)
 			} else if (event.active.state & SDL_APPMOUSEFOCUS) {
 				m_focus = 0;
 				if (opt_fs)
-					SDL_ShowCursor(SDL_ENABLE);
+					SDL_ShowCursor(SDL_ENABLE); /* is it hack?*/
 			}
 		}
+		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, 
+			SDL_EVENTMASK ( (SDL_APPMOUSEFOCUS | SDL_APPINPUTFOCUS))) > 0)
+			return AGAIN; /* to avoid flickering */
 		return 0;
 	case SDL_USEREVENT: {
 		void (*p) (void*) = event.user.data1;
