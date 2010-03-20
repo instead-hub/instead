@@ -1163,6 +1163,31 @@ o_name = deref(new('myconstructor()'));
 delete(o_name);
 </code>
 
+==== Complex output from event handlers ====
+Sometimes the we need to form event handler output from several parts depending on some conditions. In this case ''p()'' and ''pn()'' functions can be useful. These functions add text to the internal buffer of the handler. The content of this buffer is returned from the handler.
+<code>
+dsc = function(s)
+    p "There is a {barrel} standing on the floor."
+    if s._opened then
+       p "The barrel lid lies nearby."
+    end
+end
+</code>
+''pn()'' function adds line feed to the text and outputs the result to the buffer. ''p()'' does almost the same thing but adds a space instead of line feed.
+
+To clear the buffer you can use ''pclr()''. To return the status of the action along with the text, use ''pget()''.
+<code>
+use = function(s, w)
+    if w == 'apple' then
+        p 'I peeled the apple';
+        apple._peeled = true
+        return
+    end
+    p 'You cannot use it this way!'
+    return pget(), false
+end
+</code>
+
 ==== Debugging ====
 To see lua call stack during an error, launch sdl-instead with “-debug” parameter. In Windows version debugging console will be created.
 

@@ -88,11 +88,15 @@ function pget()
 end
 
 function p(...)
+	pr(unpack(arg))
+	cctx().txt = cat(cctx().txt, ' ');
+end
+
+function pr(...)
 	local i
 	for i = 1, stead.table.maxn(arg) do
 		cctx().txt = par('',cctx().txt, arg[i]);
 	end
-	cctx().txt = cat(cctx().txt, ' ');
 end
 
 function pn(...)

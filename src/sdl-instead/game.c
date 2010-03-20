@@ -1259,7 +1259,6 @@ int game_cmd(char *cmd)
 	char		*title = NULL;
 	char 		*pict = NULL;
 	img_t		oldscreen = NULL;
-
 	if (menu_shown)
 		return -1;
 	cmdstr = instead_cmd(cmd); instead_clear();
