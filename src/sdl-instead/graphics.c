@@ -2666,8 +2666,6 @@ void _txt_layout_add(layout_t lay, char *txt)
 				h = 0;
 		}
 		nl = !*p;
-		if (h > line->h)
-			line->h = h;
 		if ((line->num && (line->w + ((sp && line->w)?spw:0) + w + addlen) > layout->w) || nl) {
 			struct line *ol = line;
 			if ((layout->h) && (line->y + line->h) >= layout->h)
@@ -2693,6 +2691,10 @@ void _txt_layout_add(layout_t lay, char *txt)
 			line->pos = (int)(ptr - txt);
 			continue;
 		}
+
+		if (h > line->h)
+			line->h = h;
+
 		word = word_new(p);
 		if (!word) {
 			line_free(line);
