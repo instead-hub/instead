@@ -2662,12 +2662,15 @@ void _txt_layout_add(layout_t lay, char *txt)
 		} else {
 			p = get_word_token(p);
 			TTF_SizeUTF8((TTF_Font *)(layout->fn), p, &w, &h);
-			if (!*p && line->h)
-				h = 0;
 		}
 		nl = !*p;
+
+		if (!line->h) /* first word ? */
+			line->h = h;
+
 		if ((line->num && (line->w + ((sp && line->w)?spw:0) + w + addlen) > layout->w) || nl) {
 			struct line *ol = line;
+			h = 0; /* reset h for new line */
 			if ((layout->h) && (line->y + line->h) >= layout->h)
 				break;
 			if (line != lastline) {
