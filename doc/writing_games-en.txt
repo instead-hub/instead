@@ -157,27 +157,27 @@ If the attribute or handler is laid out as a function, then the first argument o
 If you know lua, you can simplify:
 <code>
 function sw(v, a, b)
-        if v then
-                return a;
-        end
-        return b
+	if v then
+		return a;
+	end
+	return b
 end
 
 aple = obj {
-        nam = function(s)
-                return sw(not s._seen, 'unknown','apple');
-        end,
-        dsc = function(s)
-                return sw(not s._seen,'There is {something} on the table.', 'There is an {apple} on the table.');
-        end,
-        act = function(s)
-                if s._seen then
-                        return 'It\'s an apple!';
-                else
-                        s._seen = true;
-                        return 'Hm... But it\'s an apple!';
-                end
-        end,
+	nam = function(s)
+		return sw(not s._seen, 'unknown','apple');
+	end,
+	dsc = function(s)
+		return sw(not s._seen,'There is {something} on the table.', 'There is an {apple} on the table.');
+	end,
+	act = function(s)
+		if s._seen then
+			return 'It\'s an apple!';
+		else
+			s._seen = true;
+			return 'Hm... But it\'s an apple!';
+		end
+	end,
 };
 </code>
 And then always use “sw” or some other auxiliary function.
@@ -189,7 +189,7 @@ Warning!!! The variables outside any of the following object types: room, object
 From version 0.8.9 you can define a function “isForSave(k)”, which is called to determine whether to save a variable to a savegame file. By default it is defined this way:
 <code>
 function isForSave(k)
-        return string.find(k, '_') ==  1 or string.match(k,'^%u')
+	return string.find(k, '_') ==  1 or string.match(k,'^%u')
 end
 </code>
 
@@ -198,20 +198,20 @@ There are two extra parameters for isForSave() (for instead versions > 1.0.0). v
 Sometimes we need a handler that would do something without showing any description, e.g.:
 <code>
 button = obj {
-  nam = "button",
-  dsc = "There is a big red {button} on the room wall.",
-  act = function (s)
-    here()._dynamic_dsc = [[The room transformed after I pressed the button. 
-    The book-case disappeared along with the table and the chest, and a strange 
-    looking device took its place.]];
-    return true;
-  end,
+	nam = "button",
+	dsc = "There is a big red {button} on the room wall.",
+	act = function (s)
+		here()._dynamic_dsc = [[The room transformed after I pressed the button. 
+			The book-case disappeared along with the table and the chest, and a strange 
+			looking device took its place.]];
+		return true;
+	end,
 }
 r12 = room {
-  nam = 'room',
-  _dynamic_dsc = 'I am in the room.',
-  dsc = function (s) return s._dynamic_dsc end,
-  obj = {'button'}
+	nam = 'room',
+	_dynamic_dsc = 'I am in the room.',
+	dsc = function (s) return s._dynamic_dsc end,
+	obj = {'button'}
 }
 </code>
 In this case ''act'' handler is used to change room description but it is not supposed to add any description of its own. To achieve this we need to return true from the handler. It means the action is done successfully but does not require to diplay any additional description.
@@ -271,7 +271,7 @@ room2 = room {
 };
 </code>
 
-“exit” and “enter” may be functions. Then the first parameter is the object itself (as usual) and the second parameter is a reference to the room where the  player is heading (for “exit”) or which he is leaving (for “enter”). For example:
+“exit” and “enter” may be functions. Then the first parameter is the object itself (as usual) and the second parameter is a reference to the room where the player is heading (for “exit”) or which he is leaving (for “enter”). For example:
 <code>
 room2 = room {
 	enter = function(s, f)
@@ -325,7 +325,7 @@ knife = obj {
 	inv = 'Sharp!',
 	tak = 'I took the knife!',
 	use = function(s, w)
-		if w ~= 'tabl'
+		if w ~= 'tabl' then
 			return 'I don\'t want to cut this.', false
 		else
 			return 'You incise your initials on the table.';
@@ -340,9 +340,9 @@ You can use the knife only on the table.
 In STEAD the player is represented by the object “pl”. The object type is “player”. In the engine it's created thie way:
 <code>
 pl = player {
-        nam = "Incognito",
-        where = 'main',
-        obj = { }
+	nam = "Incognito",
+	where = 'main',
+	obj = { }
 };
 </code>
 The “obj” attribute represents the player's inventory.
@@ -352,17 +352,17 @@ The “obj” attribute represents the player's inventory.
 The game is also represented by the object “game” of type “game”. In the engine it is defined this way:
 <code>
 game = game {
-        nam = "INSTEAD -- Simple Text Adventure interpreter v"..version.." '2009 by Peter Kosyh",
-        dsc = [[
+	nam = "INSTEAD -- Simple Text Adventure interpreter v"..version.." '2009 by Peter Kosyh",
+	dsc = [[
 Commands:^
     look(or just enter), act <on what> (or just what), use <what> [on what], go <where>,^
     back, inv, way, obj, quit, save <fname>, load <fname>.]],
-        pl ='pl',
-        showlast = true,
+	pl ='pl',
+	showlast = true,
 };
 </code>
 As we can see, the object keeps the reference to the current player ('pl') and some parameters. For example at the start of your game you can set the encoding the following way:
-<code> game.codepage="UTF-8"; </code>
+<code>game.codepage="UTF-8"; </code>
 
 The support of arbitrary encodings is present in every UNIX version of the interpreter and in windows versions from 0.7.7.
 
@@ -469,11 +469,11 @@ end
 
 move(o, w) — moves an object from the current scene to another:
 
-<code>	move('mycat','inmycar');</code>
+<code>move('mycat','inmycar');</code>
 
 If you want to move an object from an arbitrary scene, you'll have to delete it from the original scene with the “del” method. To create objects, that move in complex ways, you'll have to write a method that would save the object's position in the object itself and delete it from the original scene. You can set the initial position (room) as the third parameter of “move”.
 
-<code>    move('mycat','inmycar', 'forest'); </code>
+<code>move('mycat','inmycar', 'forest'); </code>
 
 From version 0.8 there is a “movef” function similar to “move”, but adding the object to the start of the list.
 
@@ -509,11 +509,11 @@ change_pl(p) — switch to another player (with one's own inventory and position
 
 <code>
 mycar = obj {
-        nam = 'my car',
-        dsc = 'In front of the cabin there is my old Toyota {pickup}.',
-        act = function(s)
-                return goto('inmycar');
-        end
+	nam = 'my car',
+	dsc = 'In front of the cabin there is my old Toyota {pickup}.',
+	act = function(s)
+		return goto('inmycar');
+	end
 };
 </code>
 
@@ -530,42 +530,42 @@ par(...) — returns the string, concatenating argument strings split by the fir
 Dialogs are scenes with phrase objects. The simplest dialog may look like this:
 <code>
 povardlg = dlg {
-        nam = 'in the kitchen',
-        dsc = 'I see a fat face of a lady cook wearing a white hat with a tired look...',
-        obj = {
-        [1] = phr('“Those green, please... Yeah, and beans too!”', '“Enjoy!”'),
-        [2] = phr('“Fried potato with lard, please!”', '“Bon appetit!”'),
-        [3] = phr('“Two helpings of garlic sooup!!!”', '“Good choice!”'),
-        [4] = phr('“Something light, please, I've got an ulcer...”', '“Oatmeal!”'),
-        },
+	nam = 'in the kitchen',
+	dsc = 'I see a fat face of a lady cook wearing a white hat with a tired look...',
+	obj = {
+	[1] = phr('“Those green, please... Yeah, and beans too!”', '“Enjoy!”'),
+	[2] = phr('“Fried potato with lard, please!”', '“Bon appetit!”'),
+	[3] = phr('“Two helpings of garlic sooup!!!”', '“Good choice!”'),
+	[4] = phr('“Something light, please, I've got an ulcer...”', '“Oatmeal!”'),
+	},
 };
 </code>
 
 “phr” creates a phrase. A phrase contains a question, an answer and a reaction (the example has no reaction). When the player picks one of the phrases, it is disabled. When all phrases are disabled, the dialog is over. Reaction is a line of lua code, which is executed when the phrase is disabled. E.g.:
 <code>
 food = obj {
-        nam = 'food',
-        inv = function (s)
-                inv():del('food');
-                return 'I eat.';
-        end
+	nam = 'food',
+	inv = function (s)
+		inv():del('food');
+		return 'I eat.';
+	end
 };
 
 gotfood = function(w)
-        inv():add('food');
-        food._num = w;
-        return back();
+	inv():add('food');
+	food._num = w;
+	return back();
 end
 
 povardlg = dlg {
-        nam = 'in the kitchen',
-        dsc = 'I see a fat face of a lady cook wearing a white hat with a tired look...',
-        obj = {
-        [1] = phr('“Those green, please... Yeah, and beans too!”', '“Enjoy!”', [[pon(1); return gotfood(1);]]),
-        [2] = phr('“Fried potato with lard, please!”', '“Bon appetit!”', [[pon(2); return gotfood(2);]]),
-        [3] = phr('“Two helpings of garlic sooup!!!”', '“Good choice!”', [[pon(3);return gotfood(3);]]),
-        [4] = phr('“Something light, please, I've got an ulcer...”', '“Oatmeal!”', [[pon(4); return gotfood(4);]]),
-        },
+	nam = 'in the kitchen',
+	dsc = 'I see a fat face of a lady cook wearing a white hat with a tired look...',
+	obj = {
+	[1] = phr('“Those green, please... Yeah, and beans too!”', '“Enjoy!”', [[pon(1); return gotfood(1);]]),
+	[2] = phr('“Fried potato with lard, please!”', '“Bon appetit!”', [[pon(2); return gotfood(2);]]),
+	[3] = phr('“Two helpings of garlic sooup!!!”', '“Good choice!”', [[pon(3);return gotfood(3);]]),
+	[4] = phr('“Something light, please, I've got an ulcer...”', '“Oatmeal!”', [[pon(4); return gotfood(4);]]),
+	},
 };
 </code>
 In the example the player chooses his dinner. After getting the food (recording the choice in the “food._num” variable) he returns back to the scene from where he got in the dialog.
@@ -591,23 +591,23 @@ You can pass from one dialog to another, organizing hierarchic dialogs.
 You can also hide some phrases when initializing the dialog and show them under certain conditions.
 <code>
 facectrl = dlg {
-        nam = 'фэйсконтроль',
-        dsc = 'I see an unpleasant face of a fat guard.',
-        obj = {
-                [1] = phr('“I came to the Belin's lecture...”', 
-                '“I do not know who you are,” he smiles, “but I have orders to let in only decent people.”',
-                [[pon(2);]]),
-                [2] = _phr('“I\'ve got an invitation!”', 
-                '“And I don\'t care! Look at yourself in a mirror!!! You\'ve come to listen to Belin himself — the right hand of...” he made a respectful pause. “So get lost...”', [[pon(3,4)]]),
-                [3] = _phr(' “I\'m gonna kick your ass!”', '“I\'ve had enough...” Strong arms push me out to the corridor...',
-                        [[poff(4)]]),
-                [4] = _phr('“You, boar! I\'ve told you, I\'ve got an invitation!”',
-                        '“Whaaat?” The guard\'s eyes start getting bloodshot... A powerful kick sends me out to the corridor...',
-                        [[poff(3)]]),
-        },
-        exit = function(s,w)
-                s:pon(1);
-        end,
+	nam = 'facecontrol',
+	dsc = 'I see an unpleasant face of a fat guard.',
+	obj = {
+		[1] = phr('“I came to the Belin's lecture...”', 
+		'“I do not know who you are,” he smiles, “but I have orders to let in only decent people.”',
+		[[pon(2);]]),
+		[2] = _phr('“I\'ve got an invitation!”', 
+		'“And I don\'t care! Look at yourself in a mirror!!! You\'ve come to listen to Belin himself — the right hand of...” he made a respectful pause. “So get lost...”', [[pon(3,4)]]),
+		[3] = _phr(' “I\'m gonna kick your ass!”', '“I\'ve had enough...” Strong arms push me out to the corridor...',
+			[[poff(4)]]),
+		[4] = _phr('“You, boar! I\'ve told you, I\'ve got an invitation!”',
+			'“Whaaat?” The guard\'s eyes start getting bloodshot... A powerful kick sends me out to the corridor...',
+			[[poff(3)]]),
+	},
+	exit = function(s,w)
+		s:pon(1);
+	end,
 };
 </code>
 
@@ -620,19 +620,19 @@ You can enable/disable phrases not only of the current put of any arbitrary dial
 Sometimes a scene has to be filled with decorations with a limited functionality to add variety to the game. For that lightweight objects can be used. For example:
 <code>
 sside = room {
-        nam = 'southern side',
-        dsc = [[I am near the southern wall of an institute building. ]],
-        act = function(s, w)
-                if w == 1 then
-                        ways():add('stolcorridor');
-                        return "I walked to the porch. The sign on the door read 'Canteen'. Hm... should I get in?";
-                end
-                if w == 2 then
-                        return 'The ones going out look happier...';
-                end
-        end,
-        obj = { vobj(1, "porch", "There is a small {porch} by the eastern corner."),
-                vobj(2, "people", "From time to time the porch door slams letting {people} in and out..")},
+	nam = 'southern side',
+	dsc = [[I am near the southern wall of an institute building. ]],
+	act = function(s, w)
+		if w == 1 then
+			ways():add('stolcorridor');
+			return "I walked to the porch. The sign on the door read 'Canteen'. Hm... should I get in?";
+		end
+		if w == 2 then
+			return 'The ones going out look happier...';
+		end
+	end,
+	obj = { vobj(1, "porch", "There is a small {porch} by the eastern corner."),
+		vobj(2, "people", "From time to time the porch door slams letting {people} in and out..")},
 };
 </code>
 As you see, “vobj” allows to create a lightweight version of a static object, with which it will still be possible to interact (defining an “act” handler in the scene an analyzing the object key). “vobj” also calls the “used” method with the third parameter being the object which acts on the virtual object.
@@ -649,7 +649,7 @@ There is a modification of “vobj” object — “vway”. It creates a refere
 You can dynamically fill the scene with “vobj” and “vway” objects. Use methods “add” and “del”. For example:
 
 <code>
-	home.objs:add(vway("next", "{Next}.", 'next_room');
+	home.objs:add(vway("next", "{Next}.", 'next_room'));
 -- some code here
 	home.objs:del("next");
 </code>
@@ -666,32 +666,32 @@ Syntax: vroom(passage name, destination scene). For example:
 You can define handlers, that would execute every time when the game time increments by 1. E.g.:
 <code>
 mycat = obj {
-        nam = 'Barsik',
-        lf = {
-                [1] = 'Barsik is moving in my bosom.',
-                [2] = 'Barsik peers out of my bosom.',
-                [3] = 'Barsik purrs in my bosom.',
-                [4] = 'Barsik shivers in my bosom.',
-                [5] = 'I feel Barsik's warmth in my bosom.',
-                [6] = 'Barsik leans out of my bosom and looks around.',
-        },
-        life = function(s)
-                local r = rnd(6);
-                if r > 2 then
-                        return;
-                end
-                r = rnd(6);
-                return s.lf[r];
-        end,
+	nam = 'Barsik',
+	lf = {
+		[1] = 'Barsik is moving in my bosom.',
+		[2] = 'Barsik peers out of my bosom.',
+		[3] = 'Barsik purrs in my bosom.',
+		[4] = 'Barsik shivers in my bosom.',
+		[5] = 'I feel Barsik's warmth in my bosom.',
+		[6] = 'Barsik leans out of my bosom and looks around.',
+	},
+	life = function(s)
+		local r = rnd(6);
+		if r > 2 then
+			return;
+		end
+		r = rnd(6);
+		return s.lf[r];
+	end,
 ....
 
 profdlg2 = dlg {
-        nam = 'Belin',
-        dsc = 'Belin is pale. He absently looks at the shotgun.',
-        obj = {
-                [1] = phr('“I came for my cat.”',
-        'I snatch Barsik from Belin's hand and put in my bosom.',
-                [[inv():add('mycat'); lifeon('mycat')]]),
+	nam = 'Belin',
+	dsc = 'Belin is pale. He absently looks at the shotgun.',
+	obj = {
+		[1] = phr('“I came for my cat.”',
+	'I snatch Barsik from Belin's hand and put in my bosom.',
+		[[inv():add('mycat'); lifeon('mycat')]]),
 ....
 </code>
 Any object or scene may have their “life” handler, which is called every time the game time advances, if the object or the scene have been added to the list of living objects with “lifeon”. Don't forget to remofe living objects from the list with “lifeoff”, when you no longer need them. You can do this, for example, in the “exit” handler or some other way.
@@ -709,9 +709,9 @@ Graphic interpreter analyzes the scene “pic” attribute and treats it as a pa
 
 <code>
 home = room {
-        pic = 'gfx/home.png',
-        nam = 'at home',
-        dsc = 'I am at home',
+	pic = 'gfx/home.png',
+	nam = 'at home',
+	dsc = 'I am at home',
 };
 </code>
 
@@ -724,7 +724,7 @@ From version 0.9.2 graphics can be embedded everywhere in text or inventory with
 
 <code>
 knife = obj {
-        nam = 'Knife'..img('img/knife.png'),
+	nam = 'Knife'..img('img/knife.png'),
 }
 </code>
 
@@ -733,12 +733,12 @@ The interpreter cycles the current music defined by the function ”set_music(mu
 For example:
 <code>
 street = room {
-        pic = 'gfx/street.png',
-        enter = function()
-                set_music('mus/rain.ogg');
-        end,
-        nam = 'on the street',
-        dsc = 'It is raining outside.',
+	pic = 'gfx/street.png',
+	enter = function()
+		set_music('mus/rain.ogg');
+	end,
+	nam = 'on the street',
+	dsc = 'It is raining outside.',
 };
 </code>
 
@@ -771,8 +771,8 @@ txtl() - left align;
 For example:
 <code>
 main = room {
-      nam = 'Intro',
-      dsc = txtc('Welcome!'),
+	nam = 'Intro',
+	dsc = txtc('Welcome!'),
 }
 </code>
 
@@ -785,8 +785,8 @@ txtu() - underline;
 For example:
 <code>
 main = room {
-      nam = 'Intro',
-      dsc = 'You are in the room: '..txtb('main')..'.',
+	nam = 'Intro',
+	dsc = 'You are in the room: '..txtb('main')..'.',
 }
 </code>
 
@@ -795,8 +795,8 @@ Since the version 1.1.0 you can create unwrapped strings by using txtnb();
 For example:
 <code>
 main = room {
-      nam = 'Intro',
-      dsc = 'You are in the room '..txtb('main')..'.',
+	nam = 'Intro',
+	dsc = 'You are in the room '..txtb('main')..'.',
 }
 </code>
 
@@ -804,33 +804,33 @@ main = room {
 You can do menus in the inventory area, using menu constructor. Menu handler will be called after single mouse click. If handler have no return string the state of game will no change. For example, here is pocket realisation:
 <code>
 pocket = menu {
-        State = false,
-        nam = function(s)
-                if s.State then
-                        return txtu('pocket');
-                end 
-                return 'pocket';
-        end,
-        gen = function(s)
-                if s.State then
-                        s:enable_all();
-                else
-                        s:disable_all();
-                end 
-        end,
-        menu = function(s)
-                if s.State then
-                        s.State = false;
-                else
-                        s.State = true;
-                end 
-                s:gen();
-        end,
+	State = false,
+	nam = function(s)
+		if s.State then
+			return txtu('pocket');
+		end
+		return 'pocket';
+	end,
+	gen = function(s)
+		if s.State then
+			s:enable_all();
+		else
+			s:disable_all();
+		end 
+	end,
+	menu = function(s)
+		if s.State then
+			s.State = false;
+		else
+			s.State = true;
+		end 
+		s:gen();
+	end,
 };
 
 knife = obj {
-        nam = 'knife',
-        inv = 'This is knife',
+	nam = 'knife',
+	inv = 'This is knife',
 };
 
 inv():add(pocket);
@@ -838,7 +838,7 @@ put(knife, pocket);
 pocket:gen();
 
 main = room {
-        nam = 'test',
+	nam = 'test',
 };
 </code>
 ==== Player status ====
@@ -849,9 +849,9 @@ pl.Life = 10;
 pl.Power = 10;
 
 status = obj {
-        nam = function(s)
-            return 'Life: '..pl.Life..',Power: '..pl.Power
-        end
+	nam = function(s)
+		return 'Life: '..pl.Life..',Power: '..pl.Power
+	end
 };
 inv():add('status');
 status.object_type = false
@@ -863,9 +863,9 @@ pl.Life = 10;
 pl.Power = 10;
 
 status = stat {
-        nam = function(s)
-                return 'Life: '..pl.Life..',Power: '..pl.Power
-        end
+	nam = function(s)
+		return 'Life: '..pl.Life..',Power: '..pl.Power
+	end
 };
 inv():add('status');
 </code>
@@ -875,8 +875,9 @@ inv():add('status');
 If you use “goto” from the “exit” handler, you get stack overflow, because goto would call “exit” again and again. You can prevent it by aadding a check that breaks the recursioon. For example:
 <code>
 exit = function(s, t)
-        if t == 'dialog' then return; end
-        return goto('dialog');
+	if t == 'dialog' then return; end
+	return goto('dialog');
+end
 </code>
 
 From version 0.9.1 this is done by stead engine.
@@ -895,27 +896,27 @@ home.obj:del('Road');
 The “srch” method can check if the reference is present in the scene.
 <code>
 if not home.obj:srch('Road') then
-        home.obj:add(vway('Road', 'I noticed a {road} going into the forest...', 'forest'));
+	home.obj:add(vway('Road', 'I noticed a {road} going into the forest...', 'forest'));
 end
 </code>
 It's convenient to create dynamic references either in the “enter” handler, or in the arbitrary place in the game code, where they are required. If the reference is created in the current scene, the example can be simplified:
 <code>
 if not seen('Road') then
-        objs():add(vway('Road', 'I noticed a {road} going into the forest...', 'forest'));
+	objs():add(vway('Road', 'I noticed a {road} going into the forest...', 'forest'));
 end
 </code>
 Or you can just enable and disable references with “enable()” and “disable()”, for example:
 <code>
-        objs()[1]:disable();
+	objs()[1]:disable();
 </code>
 
 Creating disabled “vobj” and “vway”:
 <code>
-        obj = {vway('Road', 'I noticed a {road} going into the forest...', 'forest'):disable()},
+	obj = {vway('Road', 'I noticed a {road} going into the forest...', 'forest'):disable()},
 </code>
 And then enabling them by their index in the “obj” array:
 <code>
-        objs()[1]:enable();
+	objs()[1]:enable();
 </code>
 
 ==== Encoding game sources (from version 0.9.3) ====
@@ -937,21 +938,21 @@ You can create a game with several characters and switch between them from time 
 ==== Using the first parameter of a handler ====
 Code example.
 <code>
-knife = obj {
-        nam = 'stone',
-        dsc = 'There is a {stone} at the edge.',
-        act = function()
-                objs():del('knife');
-                return 'I pushed the stone, it fell and flew down...';
-        end
+stone = obj {
+	nam = 'stone',
+	dsc = 'There is a {stone} at the edge.',
+	act = function()
+		objs():del('stone');
+		return 'I pushed the stone, it fell and flew down...';
+	end
 </code>
 
 The “act” handler could look simpler:
 <code>
-        act = function(s)
-                objs():del(s);
-                return 'I pushed the stone, it fell and flew down...';
-        end
+	act = function(s)
+		objs():del(s);
+		return 'I pushed the stone, it fell and flew down...';
+	end
 </code>
 
 ==== Using “set_music” ====
@@ -962,20 +963,20 @@ You can write your own music player, creating it from a live object, e.g:
 -- plays tracks in random order, starting from 2-nd
 tracks = {"mus/astro2.mod", "mus/aws_chas.xm", "mus/dmageofd.xm", "mus/doomsday.s3m"}
 mplayer = obj {
-        nam = 'плеер',
-        life = function(s)
-                local n = get_music();
-                local v = get_music_loop();
-                if not n or not v then
-                        set_music(tracks[2], 1);
-                elseif v == -1 then
-                        local n = get_music();
-                        while get_music() == n do
-                                n = tracks[rnd(4)]
-                        end
-                        set_music(n, 1);
-                end
-        end,
+	nam = 'media player',
+	life = function(s)
+		local n = get_music();
+		local v = get_music_loop();
+		if not n or not v then
+			set_music(tracks[2], 1);
+		elseif v == -1 then
+			local n = get_music();
+			while get_music() == n do
+				n = tracks[rnd(4)]
+			end
+			set_music(n, 1);
+		end
+	end,
 };
 lifeon('mplayer');
 </code>
@@ -984,20 +985,20 @@ You can use “get_music_loop” and “get_music” functions to remember the l
 
 <code>
 function save_music(s)
-        s.OldMusic = get_music();
-        s.OldMusicLoop = get_music_loop();
+	s.OldMusic = get_music();
+	s.OldMusicLoop = get_music_loop();
 end
 
 function restore_music(s)
-        set_music(s.OldMusic, s.OldMusicLoop);
+	set_music(s.OldMusic, s.OldMusicLoop);
 end
 
 -- ....
 enter = function(s)
-        save_music(s);
+	save_music(s);
 end,
 exit = function(s)
-        restore_music(s);
+	restore_music(s);
 end,
 -- ....
 
@@ -1009,14 +1010,14 @@ From version 0.8.5 functions “save_music” and “restore_music” are alread
 If your hero needs a friend, one of the ways is the “life” method of that character, that would always bring the object to the player's location:
 <code>
 horse = obj {
-        nam = 'horse',
-        dsc = 'A {horse} is standing next to me.',
-        life = function(s)
-                 if not seen('horse') then
-                         move('horse', here(), s.__where);
-                         s.__where = pl.where;
-                 end
-        end,
+	nam = 'horse',
+	dsc = 'A {horse} is standing next to me.',
+	life = function(s)
+		if not seen('horse') then
+			move('horse', here(), s.__where);
+			s.__where = pl.where;
+		end
+	end,
 };
 lifeon('horse');
 </code>
@@ -1032,17 +1033,17 @@ Timer controls through the ''timer'' object.
 Timer function can return a ''stead'' interface command that have to be invoked after the callback execution. For example:
 <code>
 timer.callback = function(s)
-    main._time = main._time + 1;  
-    return "look";
+	main._time = main._time + 1;  
+	return "look";
 end
 timer:set(100);
 main = room {
-    _time = 1,
-    force_dsc = true,
-    nam = 'Timer',
-    dsc = function(s)
-        return 'Example: '..tostring(s._time);
-    end
+	_time = 1,
+	force_dsc = true,
+	nam = 'Timer',
+	dsc = function(s)
+	return 'Example: '..tostring(s._time);
+	end
 };
 </code>
 
@@ -1055,26 +1056,26 @@ Handler can return a ''stead'' interface command. In this case the interpreter d
 For example:
 <code>
 input.key = function(s, pr, key)
-    if not pr or key == "escape"then 
-        return 
-    elseif key == 'space' then 
-        key = ' ' 
-    elseif key == 'return' then
-        key = '^';
-    end 
-    if  key:len() > 1 then return end 
-    main._txt = main._txt:gsub('_$','');
-    main._txt = main._txt..key..'_';
-    return "look";
+	if not pr or key == "escape"then 
+		return
+	elseif key == 'space' then 
+		key = ' '
+	elseif key == 'return' then
+		key = '^';
+	end
+	if key:len() > 1 then return end 
+	main._txt = main._txt:gsub('_$','');
+	main._txt = main._txt..key..'_';
+	return "look";
 end
 
 main = room {
-    _txt = '_',
-    force_dsc = true,
-    nam = 'Keyboard',
-    dsc = function(s)
-        return 'Example: '..tostring(s._txt);
-    end 
+	_txt = '_',
+	force_dsc = true,
+	nam = 'Keyboard',
+	dsc = function(s)
+		return 'Example: '..tostring(s._txt);
+	end 
 };
 </code>
 
@@ -1151,10 +1152,10 @@ delete(n)
 ''new'' treats its string argument as an object constructor. The constructor must return an object. Thus, the string argument usually contains a constructor function call. For example:
 <code>
 function myconstructor()
-    local v = {}
-    v.nam = 'test object',
-    v.act = 'test feedback',
-    return obj(v);
+	local v = {}
+	v.nam = 'test object',
+	v.act = 'test feedback',
+	return obj(v);
 end
 </code>
 The object created will be saved every time the game is saved. ''new()'' returns a real object; to get its name you can use ''deref'' function:
@@ -1167,24 +1168,26 @@ delete(o_name);
 Sometimes the we need to form event handler output from several parts depending on some conditions. In this case ''p()'' and ''pn()'' functions can be useful. These functions add text to the internal buffer of the handler. The content of this buffer is returned from the handler.
 <code>
 dsc = function(s)
-    p "There is a {barrel} standing on the floor."
-    if s._opened then
-       p "The barrel lid lies nearby."
-    end
+	p "There is a {barrel} standing on the floor."
+	if s._opened then
+		p "The barrel lid lies nearby."
+	end
 end
 </code>
 ''pn()'' function adds line feed to the text and outputs the result to the buffer. ''p()'' does almost the same thing but adds a space instead of line feed.
 
+There is a function ''pr()'' in versions 1.1.6 and later, that does not add anything at end of output. 
+
 To clear the buffer you can use ''pclr()''. To return the status of the action along with the text, use ''pget()''.
 <code>
 use = function(s, w)
-    if w == 'apple' then
-        p 'I peeled the apple';
-        apple._peeled = true
-        return
-    end
-    p 'You cannot use it this way!'
-    return pget(), false
+	if w == 'apple' then
+		p 'I peeled the apple';
+		apple._peeled = true
+		return
+	end
+	p 'You cannot use it this way!'
+	return pget(), false
 end
 </code>
 
