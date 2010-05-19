@@ -639,6 +639,7 @@ static img_t _gfx_load_image(char *filename)
 		if (rwop) {
 			if (IMG_isBMP(rwop))
 				SDL_SetAlpha(img, SDL_RLEACCEL, SDL_ALPHA_OPAQUE);
+			SDL_RWclose(rwop);
 			SDL_FreeRW(rwop);
 		}
 	}
