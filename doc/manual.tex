@@ -500,7 +500,6 @@ game.use = 'Не сработает...';
 
 \begin{verbatim}
 game.inv = function()
- local a = rnd(7);
  local reaction = {
   [1] = 'Либо я ошибся карманом, либо мне нужно что-то другое.',
   [2] = 'Откуда у меня в кармане ЭТО?!',
@@ -510,7 +509,7 @@ game.inv = function()
   [6] = 'Я не представляю, как я могу тащить ЭТО с собою.',
   [7] = 'Мне показалось или оно на меня смотрит?',
  };
- return reaction[a];
+ return reaction[rnd(#reaction)];
 end;
 \end{verbatim}
 
