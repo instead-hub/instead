@@ -10,6 +10,9 @@ GAMESPATH=./games
 ICONPATH=./icon
 LANGPATH=./languages
 
+ZLIB_CFLAGS=-I../zlib
+ZLIB_LFLAGS=../zlib/libz.a
+
 LUA_CFLAGS=
 LUA_LFLAGS=-llua5.1
 

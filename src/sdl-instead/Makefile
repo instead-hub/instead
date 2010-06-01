@@ -1,10 +1,10 @@
 include ../../Rules.make
 include ../../config.make
 
-CFLAGS += $(SDL_CFLAGS) $(LUA_CFLAGS) -I../zlib -DLANG_PATH=\"${LANGPATH}/\" -DSTEAD_PATH=\"${STEADPATH}/\"  -DGAMES_PATH=\"${GAMESPATH}/\" -DTHEMES_PATH=\"${THEMESPATH}/\" -DVERSION=\"$(VERSION)\" -DICON_PATH=\"${ICONPATH}/\"
+CFLAGS += $(SDL_CFLAGS) $(LUA_CFLAGS) $(ZLIB_CFLAGS) -DLANG_PATH=\"${LANGPATH}/\" -DSTEAD_PATH=\"${STEADPATH}/\"  -DGAMES_PATH=\"${GAMESPATH}/\" -DTHEMES_PATH=\"${THEMESPATH}/\" -DVERSION=\"$(VERSION)\" -DICON_PATH=\"${ICONPATH}/\"
 
-LDFLAGS += $(SDL_LFLAGS) $(LUA_LFLAGS) ../zlib/libz.a
-
+LDFLAGS += $(SDL_LFLAGS) $(LUA_LFLAGS) $(ZLIB_LFLAGS)
+ 
 SRC     := graphics.c input.c game.c main.c instead.c sound.c SDL_rotozoom.c SDL_anigif.c SDL_gfxBlitFunc.c config.c themes.c menu.c util.c cache.c unzip.c ioapi.c unpack.c $(PLATFORM)
 
 OBJ     := $(patsubst %.c, %.o, $(SRC))

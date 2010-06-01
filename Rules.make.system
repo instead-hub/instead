@@ -12,6 +12,9 @@ LANGPATH=$(STEADPATH)/languages
 MANPATH=$(DESTDIR)$(PREFIX)/share/man/man6
 SYSTEMSETUP=yes
 
+ZLIB_CFLAGS=
+ZLIB_LFLAGS=-lz
+
 LUA_CFLAGS=$(shell pkg-config --cflags lua5.1)
 LUA_LFLAGS=$(shell pkg-config --libs lua5.1)
 
