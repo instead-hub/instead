@@ -154,11 +154,8 @@ char *newdir;
 	return 1;
 }
 
-static int do_extract_currentfile(uf, popt_extract_without_path, popt_overwrite,
-				  password)
+static int do_extract_currentfile(uf, password)
 unzFile uf;
-const int *popt_extract_without_path;
-int *popt_overwrite;
 const char *password;
 {
 	char filename_inzip[256];
@@ -194,25 +191,20 @@ const char *password;
 	}
 
 	if ((*filename_withoutpath) == '\0') {
-		if ((*popt_extract_without_path) == 0) {
-			printf("creating directory: %s\n", filename_inzip);
-			mymkdir(filename_inzip);
-			if (!*zip_game_dirname) {
-				int s = strlen(filename_inzip);
-				if (s && (filename_inzip[s - 1] == '/' || filename_inzip[s - 1] == '\\'))
-					s --;
-				memcpy(zip_game_dirname, filename_inzip, s);
-				zip_game_dirname[s] = 0;
-			}
+		printf("creating directory: %s\n", filename_inzip);
+		mymkdir(filename_inzip);
+		if (!*zip_game_dirname) {
+			int s = strlen(filename_inzip);
+			if (s && (filename_inzip[s - 1] == '/' || filename_inzip[s - 1] == '\\'))
+				s --;
+			memcpy(zip_game_dirname, filename_inzip, s);
+			zip_game_dirname[s] = 0;
 		}
 	} else {
 		const char *write_filename;
 		int skip = 0;
 
-		if ((*popt_extract_without_path) == 0)
-			write_filename = filename_inzip;
-		else
-			write_filename = filename_withoutpath;
+		write_filename = filename_inzip;
 
 		err = unzOpenCurrentFilePassword(uf, password);
 		if (err != UNZ_OK) {
@@ -221,44 +213,11 @@ const char *password;
 			     err);
 		}
 
-		if (((*popt_overwrite) == 0) && (err == UNZ_OK)) {
-			char rep = 0;
-			FILE *ftestexist;
-			ftestexist = fopen64(write_filename, "rb");
-			if (ftestexist != NULL) {
-				fclose(ftestexist);
-				do {
-					char answer[128];
-					int ret;
-
-					printf
-					    ("The file %s exists. Overwrite ? [y]es, [n]o, [A]ll: ",
-					     write_filename);
-					ret = scanf("%1s", answer);
-					if (ret != 1) {
-						exit(EXIT_FAILURE);
-					}
-					rep = answer[0];
-					if ((rep >= 'a') && (rep <= 'z'))
-						rep -= 0x20;
-				}
-				while ((rep != 'Y') && (rep != 'N')
-				       && (rep != 'A'));
-			}
-
-			if (rep == 'N')
-				skip = 1;
-
-			if (rep == 'A')
-				*popt_overwrite = 1;
-		}
-
 		if ((skip == 0) && (err == UNZ_OK)) {
 			fout = fopen64(write_filename, "wb");
 
 			/* some zipfile don't contain directory alone before file */
 			if ((fout == NULL)
-			    && ((*popt_extract_without_path) == 0)
 			    && (filename_withoutpath != (char *)filename_inzip)) {
 				char c = *(filename_withoutpath - 1);
 				*(filename_withoutpath - 1) = '\0';
@@ -316,10 +275,8 @@ const char *password;
 	return err;
 }
 
-static int do_extract(uf, opt_extract_without_path, opt_overwrite, password)
+static int do_extract(uf, password)
 unzFile uf;
-int opt_extract_without_path;
-int opt_overwrite;
 const char *password;
 {
 	uLong i;
@@ -330,8 +287,7 @@ const char *password;
 		printf("error %d with zipfile in unzGetGlobalInfo \n", err);
 
 	for (i = 0; i < gi.number_entry; i++) {
-		if (do_extract_currentfile(uf, &opt_extract_without_path,
-					   &opt_overwrite, password) != UNZ_OK)
+		if (do_extract_currentfile(uf, password) != UNZ_OK)
 			break;
 
 		if ((i + 1) < gi.number_entry) {
@@ -397,7 +353,7 @@ int unpack(const char *zipfilename, const char *dirname)
 		printf("Error changing dir to %s, aborting\n", dirname);
 		goto out;
 	}
-	ret_value = do_extract(uf, 0, 1, NULL);
+	ret_value = do_extract(uf, NULL);
  out:
 	unzClose(uf);
 #ifdef _WIN32
