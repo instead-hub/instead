@@ -18,6 +18,11 @@ clean:
 	$(RM) -rf src/windows
 	$(MAKE) -C src/sdl-instead clean
 
+docs:
+	$(MAKE) pdf -C doc/
+	man doc/instead.6 > doc/instead.txt
+	$(MAKE) wiki -C doc/ 
+
 install: all
 	cp src/sdl-instead/sdl-instead.exe bin
 	$(MAKE) DESTDIR=../bin/ -C themes install
@@ -27,6 +32,6 @@ install: all
 	$(MAKE) DESTDIR=../bin/ -C languages install
 	$(MAKE) DESTDIR=../bin/ -C doc install
 
-setup:  install
+setup:  install docs
 	cp setup.iss bin
 	cd bin; $(ISCC) setup.iss
