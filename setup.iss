@@ -1,11 +1,11 @@
 [Setup]
 AppName=INSTEAD
-AppVerName=INSTEAD 1.1.6
+AppVerName=INSTEAD 1.2
 DefaultDirName={pf}\Pinebrush games\INSTEAD
 DefaultGroupName=Pinebrush games
 UninstallDisplayIcon={app}\sdl-instead.exe
 OutputDir=.
-OutputBaseFilename=instead-1.1.6
+OutputBaseFilename=instead-1.2
 AllowNoIcons=true
 
 [Languages]
@@ -14,7 +14,7 @@ Name: ru; MessagesFile: compiler:Languages\Russian.isl
 
 [Files]
 Source: sdl-instead.exe; DestDir: {app}
-Source: Microsoft.VC80.CRT\*; DestDir: {app}\Microsoft.VC80.CRT
+; Source: Microsoft.VC80.CRT\*; DestDir: {app}\Microsoft.VC80.CRT
 Source: games\tutorial2\*; DestDir: {app}\games\tutorial2
 Source: games\tutorial2-en\*; DestDir: {app}\games\tutorial2-en
 Source: games\tutorial2-es\*; DestDir: {app}\games\tutorial2-es

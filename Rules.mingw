@@ -1,0 +1,39 @@
+VERSION := 1.2
+
+PREFIX=./
+DESTDIR=
+
+BIN=$(DESTDIR)$(PREFIX)
+STEADPATH=$(DESTDIR)$(PREFIX)stead
+THEMESPATH=$(DESTDIR)$(PREFIX)themes
+GAMESPATH=$(DESTDIR)$(PREFIX)games
+ICONPATH=$(DESTDIR)$(PREFIX)icon
+DOCPATH=$(DESTDIR)$(PREFIX)doc
+LANGPATH=$(DESTDIR)$(PREFIX)languages
+MANPATH=$(DESTDIR)$(PREFIX)doc
+
+
+LUA_CFLAGS=-I../windows/
+LUA_LFLAGS=-llua5.1 -L../windows/
+
+SDL_CFLAGS=-I../windows/SDL
+SDL_LFLAGS=-lSDL -lSDLmain -lSDL_ttf -lSDL_mixer -lSDL_image -L../windows/SDL
+
+CFLAGS	+= -Wall -mwindows -D_HAVE_ICONV -D_USE_UNPACK
+LDFLAGS += -liconv
+
+CC=i486-mingw32-gcc
+AR=i486-mingw32-ar rc
+RANLIB=i486-mingw32-ranlib
+
+RM=rm
+EXE=.exe
+
+INSTALLD=install -d -m 0755
+INSTALLB=install -m 0755
+INSTALL=install -m 0644
+PLATFORM=windows.c iowin32.c
+RESOURCES=resources.o
+
+resources.o: resources.rc
+	i486-mingw32-windres -i resources.rc -o resources.o
