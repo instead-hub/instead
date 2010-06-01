@@ -24,7 +24,7 @@ LUA_LFLAGS=$(shell pkg-config --libs lua5.1)
 SDL_CFLAGS=$(shell sdl-config --cflags)
 SDL_LFLAGS=$(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer -lSDL_image
 
-CFLAGS	+= -Wall -D_HAVE_ICONV
+CFLAGS	+= -Wall -D_HAVE_ICONV -D_USE_UNPACK
 
 INSTALLD=install -d -m 0755
 INSTALLB=install -m 0755
@@ -34,3 +34,5 @@ EXE=
 PLATFORM=unix.c
 RESOURCES=
 RM=rm
+AR=ar rc
+RANLIB=ranlib

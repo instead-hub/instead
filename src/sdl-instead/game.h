@@ -22,6 +22,7 @@ extern char 	game_cwd[]; /* current game cwd */
 extern char 	*curgame_dir;
 
 extern char 	*game_local_games_path(void);
+extern char 	*game_tmp_path(void);
 extern int 	game_theme_select(const char *name);
 
 extern int 	game_init(const char *game);

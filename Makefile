@@ -2,9 +2,9 @@ include Rules.make
 include config.make
 
 VERTITLE := instead-$(VERSION)
-ARCHIVE := instead_$(VERSION).tar.gz
+ARCHIVE := instead_$(VERSION).tar.gz#
 
-SUBDIRS = src/sdl-instead stead games themes icon desktop doc languages 
+SUBDIRS = src/zlib src/sdl-instead stead games themes icon desktop doc languages 
 
 all:
 	@for dir in $(SUBDIRS); do \
