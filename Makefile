@@ -25,7 +25,7 @@ docs:
 	make wiki -C doc/ 
 	man doc/instead.6 > doc/instead.txt
 	
-tarball: clean svnclean doc
+tarball: clean svnclean docs
 	echo "# you can define own flags here" > config.make
 	$(RM) -f Rules.make
 	ln -sf Rules.make.standalone Rules.make
