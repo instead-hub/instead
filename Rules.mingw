@@ -12,6 +12,8 @@ DOCPATH=$(DESTDIR)$(PREFIX)doc
 LANGPATH=$(DESTDIR)$(PREFIX)languages
 MANPATH=$(DESTDIR)$(PREFIX)doc
 
+ZLIB_CFLAGS=-I../zlib
+ZLIB_LFLAGS=../zlib/libz.a
 
 LUA_CFLAGS=-I../windows/
 LUA_LFLAGS=-llua5.1 -L../windows/
