@@ -18,6 +18,9 @@ char *encode_sw = NULL;
 char *encode_output = NULL;
 char *mode_sw = NULL;
 
+extern int unpack(const char *zipfilename, const char *where);
+extern char zip_game_dirname[];
+
 int main(int argc, char **argv)
 {
 	int err = 0;
@@ -83,7 +86,23 @@ int main(int argc, char **argv)
 		} else if (argv[i][0] == '-') {
 			fprintf(stderr,"Unknow option: %s\n", argv[i]);
 			exit(1);
+		} 
+#ifdef _USE_UNPACK
+		else {
+			char *p;
+			if (games_sw)
+				p = games_sw;
+			else
+				p = game_tmp_path();
+			if (p) {
+				fprintf(stderr,"Trying to install: %s\n", argv[i]);
+				if (!unpack(argv[i], p)) {
+					game_sw = zip_game_dirname;
+					games_sw = p;
+				}
+			}
 		}
+#endif
 	}
 
 	if (debug_sw) {

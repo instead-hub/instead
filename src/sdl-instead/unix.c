@@ -42,6 +42,12 @@ char *game_locale(void)
 	return s;
 }
 
+char *game_tmp_path(void)
+{
+	static char *tmp="/tmp";
+	return tmp;
+}
+
 char *game_local_games_path(void)
 {
 	struct passwd *pw;
@@ -50,7 +56,6 @@ char *game_local_games_path(void)
 		return NULL;
 	snprintf(local_games_path, sizeof(local_games_path) - 1 , "%s/.instead/games/", pw->pw_dir);
 	return local_games_path;
-	
 }
 
 char *game_local_themes_path(void)
