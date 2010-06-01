@@ -9,9 +9,8 @@ all: config.make src/windows
 src/windows:
 	tar xzvf windows.tar.gz
 
-
 config.make:
-	echo # you can define own flags here > config.make
+	echo "# you can define own flags here" > config.make
 
 clean:
 	$(RM) -rf bin
