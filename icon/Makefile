@@ -9,4 +9,3 @@ install:
 
 uninstall:
 	$(RM) $(ICONPATH)/sdl_instead.png
-

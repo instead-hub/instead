@@ -1,4 +1,4 @@
-VERSION := 1.1.6
+VERSION := 1.2
 
 PREFIX=
 DESTDIR=
@@ -25,7 +25,7 @@ EXE=.exe
 
 INSTALLD=echo mkdir
 INSTALL=copy
-PLATFORM=windows.c
+PLATFORM=windows.c iowin32.c
 RESOURCES=resources.o
 
 resources.o: resources.rc

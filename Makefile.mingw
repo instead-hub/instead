@@ -1,0 +1,32 @@
+MAKE=make
+ISCC = wine ~/.wine/drive_c/Program\ Files/Inno\ Setup\ 5/ISCC.exe
+
+all: config.make src/windows
+	$(MAKE) -C src/zlib all
+	$(MAKE) -C src/sdl-instead all
+	$(MAKE) -C themes all
+
+src/windows:
+	tar xzvf windows.tar.gz
+
+
+config.make:
+	echo # you can define own flags here > config.make
+
+clean:
+	$(RM) -rf bin
+	$(RM) -rf src/windows
+	$(MAKE) -C src/sdl-instead clean
+
+install: all
+	cp src/sdl-instead/sdl-instead.exe bin
+	$(MAKE) DESTDIR=../bin/ -C themes install
+	$(MAKE) DESTDIR=../bin/ -C games install
+	$(MAKE) DESTDIR=../bin/ -C stead install
+	$(MAKE) DESTDIR=../bin/ -C icon install
+	$(MAKE) DESTDIR=../bin/ -C languages install
+	$(MAKE) DESTDIR=../bin/ -C doc install
+
+setup:  install
+	cp setup.iss bin
+	cd bin; $(ISCC) setup.iss
