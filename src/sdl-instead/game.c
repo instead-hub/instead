@@ -201,14 +201,16 @@ int games_remove(const char *path)
 		return 0;
 	d = opendir(path);
 	if (!d) {
-		if (!access(path, F_OK))
-			return unlink(path);
+		if (!access(path, F_OK)) {
+			unlink(path);
+		}
 		return -1;
 	}
 	while ((de = readdir(d))) {
-		/*if (de->d_type != DT_DIR)
-			continue;*/
-		p = getpath(path, de->d_name);
+		char *p;
+		if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, ".."))
+			continue;
+		p = getfilepath(path, de->d_name);
 		if (p) {
 			games_remove(p);
 			free(p);
@@ -219,7 +221,6 @@ int games_remove(const char *path)
 	return 0;
 }
 #endif
-
 static int motion_mode = 0;
 static int motion_id = 0;
 static int motion_y = 0;
