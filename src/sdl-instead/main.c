@@ -194,6 +194,9 @@ int main(int argc, char **argv)
 out:
 	if (debug_sw)
 		debug_done();
+#ifdef _USE_GTK
+	gtk_main_quit ();
+#endif
 	return err;
 }
 

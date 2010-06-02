@@ -63,6 +63,8 @@ extern int	game_paused(void);
 
 extern char	*open_file_dialog(void);
 
+extern int	game_from_disk(void);
+
 #define CURSOR_CLEAR -1
 #define CURSOR_OFF    0
 #define CURSOR_ON     1

@@ -2352,11 +2352,15 @@ int game_from_disk(void)
 	d = dirname(d);
 	b = basename(b);
 /*	fprintf(stderr,"%s:%s\n", d, b); */
+#ifdef _USE_UNPACK
 	p = game_tmp_path();
 	fprintf(stderr,"Trying to install: %s\n", g);
 	if (!unpack(g, p) && zip_game_dirname[0]) {
 		games_replace(p, zip_game_dirname);
 		p = zip_game_dirname;
+#else
+	if (0) {
+#endif
 	} else if (games_replace(d, b)) {
 		return -1;
 	} else
