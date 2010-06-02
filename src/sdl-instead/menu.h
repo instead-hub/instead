@@ -42,6 +42,7 @@ enum {
 	menu_save, 
 	menu_error, 
 	menu_warning,
+	menu_remove,
 };
 
 

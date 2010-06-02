@@ -31,6 +31,7 @@ char *NOGAMES_MENU = NULL;
 char *NOTHEMES_MENU = NULL;
 char *BROWSE_MENU = NULL;
 char *QUIT_MENU = NULL;
+char *REMOVE_MENU = NULL;
 char *ON = NULL;
 char *OFF = NULL;
 
@@ -194,9 +195,15 @@ static void games_menu(void)
 		if (!games[i].name[0]) /* empty */
 			continue;
 		if (curgame_dir && !strcmp(games[i].dir, curgame_dir))
-			snprintf(tmp, sizeof(tmp), "<l><a:/resume><b>%s</b></a></l>\n", games[i].name);
+			snprintf(tmp, sizeof(tmp), "<l><a:/resume><b>%s</b></a></l>", games[i].name);
 		else
-			snprintf(tmp, sizeof(tmp), "<l><a:%s>%s</a></l>\n", games[i].dir, games[i].name);
+			snprintf(tmp, sizeof(tmp), "<l><a:%s>%s</a></l>", games[i].dir, games[i].name);
+
+		if (!access(games[i].path, W_OK))
+			snprintf(tmp + strlen(tmp), sizeof(tmp), " [<a:/remove_%d>X</a>]\n", i);
+		else
+			strcat(tmp, "\n");
+
 		strcat(menu_buff, tmp);
 		n ++;
 	}
@@ -291,6 +298,8 @@ char *game_menu_gen(void)
 		snprintf(menu_buff, sizeof(menu_buff),
 		WARNING_MENU, err_msg?err_msg:UNKNOWN_ERROR);
 		game_err_msg(NULL);
+	} else if (cur_menu == menu_remove) {
+		snprintf(menu_buff, sizeof(menu_buff), "%s", REMOVE_MENU);
 	}
 	return menu_buff;
 }
@@ -298,7 +307,8 @@ char *game_menu_gen(void)
 
 int game_menu_act(const char *a)
 {
-	int static old_vol = 0;
+	static int gtr = 0;
+	static int old_vol = 0;
 
 	if (!strcmp(a, "/autosave")) {
 		opt_autosave ^= 1;
@@ -381,6 +391,19 @@ int game_menu_act(const char *a)
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/select")) {
 		game_menu(menu_games);
+	} else if (!strcmp(a, "/remove")) {
+		fprintf(stderr,"%s\n", games[gtr].path);
+		if (curgame_dir && !strcmp(curgame_dir, games[gtr].dir)) {
+			game_done(0);
+			if (game_init(NULL)) {
+				game_error("");
+				return 0;
+			}
+		}
+		games_remove(games[gtr].path);
+		free(games[gtr].name);
+		games[gtr].name = strdup("");
+		game_menu(menu_games);
 	} else if (!strcmp(a, "/themes")) {
 		game_menu(menu_themes);
 	} else if (!strcmp(a, "/save_menu")) {
@@ -426,6 +449,9 @@ int game_menu_act(const char *a)
 		game_menu(menu_main);
 	} else if (!strcmp(a,"/ask_quit")) {
 		game_menu(menu_askquit);
+	} else if (!strncmp(a, "/remove_", 8)) {
+		gtr = atoi(a + 8);
+		game_menu(menu_remove);
 	} else if (!strcmp(a,"/about")) {
 		game_menu(menu_about);
 	} else if (!strcmp(a,"/mtoggle")) {
@@ -571,6 +597,7 @@ static void lang_free(void)
 	FREE(NOGAMES_MENU);
 	FREE(NOTHEMES_MENU);
 	FREE(QUIT_MENU);
+	FREE(REMOVE_MENU);
 	FREE(ON);
 	FREE(OFF);
 	FREE(KBD_MODE_LINKS);
@@ -588,7 +615,7 @@ static int lang_ok(void)
 		SELECT_LOAD_MENU && AUTOSAVE_SLOT && BROKEN_SLOT && SELECT_SAVE_MENU &&
 		MAIN_MENU && ABOUT_MENU && BACK_MENU && SETTINGS_MENU &&
 		CUSTOM_THEME_MENU && OWN_THEME_MENU && SELECT_GAME_MENU && SELECT_THEME_MENU &&
-		SAVED_MENU && NOGAMES_MENU && NOTHEMES_MENU && QUIT_MENU &&
+		SAVED_MENU && NOGAMES_MENU && NOTHEMES_MENU && QUIT_MENU && REMOVE_MENU &&
 		ON && OFF && KBD_MODE_LINKS && KBD_MODE_SMART && KBD_MODE_SCROLL && CANCEL_MENU &&
 		FROM_THEME && DISABLED_SAVE_MENU && BROWSE_MENU)
 		return 0;
@@ -616,6 +643,7 @@ struct parser lang_parser[] = {
 	{ "NOGAMES_MENU", parse_esc_string, &NOGAMES_MENU },
 	{ "NOTHEMES_MENU", parse_esc_string, &NOTHEMES_MENU },
 	{ "QUIT_MENU", parse_esc_string, &QUIT_MENU },
+	{ "REMOVE_MENU", parse_esc_string, &REMOVE_MENU },
 	{ "ON", parse_esc_string, &ON },
 	{ "OFF", parse_esc_string, &OFF },
 	{ "KBD_MODE_LINKS", parse_esc_string, &KBD_MODE_LINKS },
