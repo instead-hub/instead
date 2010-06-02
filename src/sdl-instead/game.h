@@ -38,6 +38,7 @@ extern int 	game_change_vol(int d, int val);
 extern int 	game_change_hz(int hz);
 
 extern int 	games_lookup(const char *path);
+extern int	games_replace(const char *path, const char *dir);
 
 extern void 	game_err_msg(const char *s);
 extern int 	game_error(const char *name);
@@ -59,6 +60,8 @@ extern char 	*game_save_path(int rc, int nr);
 extern char 	*game_locale(void);
 
 extern int	game_paused(void);
+
+extern char	*open_file_dialog(void);
 
 #define CURSOR_CLEAR -1
 #define CURSOR_OFF    0

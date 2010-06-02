@@ -187,6 +187,27 @@ int debug_init(void)
 
 void debug_done()
 {
-	FreeConsole();	
+	FreeConsole();
 }
 
+char *open_file_dialog(void)
+{
+        OPENFILENAME ofn;
+	static char szFile[MAX_PATH];
+	ZeroMemory( &ofn , sizeof( ofn));
+	ofn.lStructSize = sizeof ( ofn );
+	ofn.hwndOwner = NULL ;
+	ofn.lpstrFile = szFile ;
+	ofn.lpstrFile[0] = '\0';
+	ofn.nMaxFile = sizeof( szFile );
+	ofn.lpstrFilter = "*.*\0*.*\0*.zip\0*.zip\0main.lua\0main.lua";
+	ofn.nFilterIndex = 2;
+	ofn.lpstrFileTitle = NULL;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir=NULL;
+	ofn.Flags = OFN_PATHMUSTEXIST|OFN_FILEMUSTEXIST|OFN_HIDEREADONLY|OFN_READONLY;
+	if (!GetOpenFileName(&ofn))
+		return NULL;
+	unix_path(ofn.lpstrFile);
+	return ofn.lpstrFile;
+}

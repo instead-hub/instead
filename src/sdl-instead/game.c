@@ -111,10 +111,46 @@ static void games_sort()
 {
 	qsort(games, games_nr, sizeof(struct game), cmp_game);
 }
+int games_add(const char *path, const char *dir)
+{
+	char *p;
+	if (!is_game(path, dir))
+		return -1;
+	p = getpath(path, dir);
+	if (!p)
+		return -1;
+	games[games_nr].path = p;
+	games[games_nr].dir = strdup(dir);
+	games[games_nr].name = game_name(p, dir);
+	games_nr ++;
+	return 0;
+}
+
+int games_replace(const char *path, const char *dir)
+{
+	int i;
+	char *p;
+	if (!is_game(path, dir))
+		return -1;
+	for (i = 0; i<games_nr; i ++) {
+		if (!strcmp(games[i].dir, dir)) {
+			p = getpath(path, dir);
+			if (!p)
+				return -1;
+			free(games[i].path);
+			free(games[i].dir);
+			free(games[i].name);
+			games[i].path = p;
+			games[i].dir = strdup(dir);
+			games[i].name = game_name(p, dir);
+			return 0;
+		}
+	}
+	return games_add(path, dir);
+}
 
 int games_lookup(const char *path)
 {
-	char *p;
 	int n = 0, i = 0;
 	DIR *d;
 	struct dirent *de;
@@ -140,13 +176,8 @@ int games_lookup(const char *path)
 	while ((de = readdir(d)) && i < n) {
 		/*if (de->d_type != DT_DIR)
 			continue;*/
-		if (!is_game(path, de->d_name))
+		if (games_add(path, de->d_name))
 			continue;
-		p = getpath(path, de->d_name);
-		games[games_nr].path = p;
-		games[games_nr].dir = strdup(de->d_name);
-		games[games_nr].name = game_name(p, de->d_name);
-		games_nr ++;
 		i ++;
 	}
 out:	
@@ -2288,6 +2319,55 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 	return 0;
 }
 
+extern char zip_game_dirname[];
+extern int unpack(const char *zipfilename, const char *dirname);
+
+int game_from_disk(void)
+{
+	int i = 0;
+	char *g, *p, *b, *d;
+	char dir[PATH_MAX];
+	char base[PATH_MAX];
+	if (opt_fs) {
+		int old_menu = (menu_shown) ? cur_menu: -1;
+		opt_fs ^= 1;
+		game_restart();
+		if (old_menu != -1)
+			game_menu(old_menu);
+	}
+
+	g = p = open_file_dialog();
+	if (!p)
+		return -1;
+
+	strcpy(dir, p);
+	strcpy(base, p);
+	d = dir; b = base;
+	
+	i = strlen(d);
+	if (i && d[i - 1] != '/') { /* file */
+		d = dirname(d);
+		strcpy(b, d);
+	}
+	d = dirname(d);
+	b = basename(b);
+/*	fprintf(stderr,"%s:%s\n", d, b); */
+	p = game_tmp_path();
+	fprintf(stderr,"Trying to install: %s\n", g);
+	if (!unpack(g, p) && zip_game_dirname[0]) {
+		games_replace(p, zip_game_dirname);
+		p = zip_game_dirname;
+	} else if (games_replace(d, b)) {
+		return -1;
+	} else
+		p = b;
+	game_done(0);
+	if (game_init(p)) {
+		game_error(p);
+	}
+	return 0;
+}
+
 int game_loop(void)
 {
 	static int alt_pressed = 0;
@@ -2352,6 +2432,13 @@ int game_loop(void)
 			} else if (!is_key(&ev, "f1")) {
 				if (!menu_shown)
 					menu_toggle();
+			} else if (!is_key(&ev, "f4")) {
+#ifdef _USE_UNPACK
+				mouse_reset(1);
+				if (!game_from_disk()) {
+					shift_pressed = alt_pressed = 0;
+				}
+#endif
 			} else if (!is_key(&ev, "escape")) {
 				if (use_xref)
 					disable_use();

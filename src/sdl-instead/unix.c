@@ -15,6 +15,9 @@
 #include <iconv.h>
 #endif
 #include "internals.h"
+#ifdef _USE_GTK
+#include <gtk/gtk.h>
+#endif
 
 #ifndef PATH_MAX
 #define PATH_MAX 	4096
@@ -48,12 +51,100 @@ char *game_tmp_path(void)
 	return tmp;
 }
 
+#ifdef _USE_GTK
+static volatile int gtk_response = -1;
+static void
+run_response_handler (GtkDialog *dialog,
+                      gint response_id,
+                      gpointer data)
+{
+	gtk_response = response_id;
+}
+#endif
+
+char *open_file_dialog(void)
+{
+#ifndef _USE_GTK
+	/* unix people don't need win solutions */
+	return NULL;
+#else
+	gulong response_handler;
+	char *filename = NULL;
+	static char file[PATH_MAX];
+	GtkWidget *file_dialog;
+
+	GtkFileFilter *file_filter_all;
+	GtkFileFilter *file_filter_zip;
+	GtkFileFilter *file_filter_lua;
+
+	file_filter_all = gtk_file_filter_new();
+	gtk_file_filter_add_pattern(file_filter_all, "*");
+	gtk_file_filter_set_name(file_filter_all, "*");
+
+
+	file_filter_zip = gtk_file_filter_new();
+	gtk_file_filter_add_pattern(file_filter_zip, "*.zip");
+	gtk_file_filter_set_name(file_filter_zip, "*.zip");
+
+	file_filter_lua = gtk_file_filter_new();
+	gtk_file_filter_add_pattern(file_filter_lua, "main.lua");
+	gtk_file_filter_set_name(file_filter_lua, "main.lua");
+
+	
+	file[0] = 0;
+	file_dialog = gtk_file_chooser_dialog_new ("Open File", 
+			NULL, GTK_FILE_CHOOSER_ACTION_OPEN,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			GTK_STOCK_OPEN,   GTK_RESPONSE_ACCEPT, NULL);
+
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_dialog),
+		file_filter_all);
+
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_dialog),
+		file_filter_zip);
+
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_dialog),
+		file_filter_lua);
+
+	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(file_dialog), file_filter_zip);
+
+	response_handler = g_signal_connect (file_dialog, "response",
+		G_CALLBACK (run_response_handler), NULL);
+
+	gtk_window_set_modal (GTK_WINDOW (file_dialog), TRUE);
+	gtk_widget_show(file_dialog);
+
+	gtk_response = -1; /* dirty, but we need both SDL and gtk */
+
+	while (gtk_response == -1) {
+		struct inp_event ev;
+		gtk_main_iteration();
+		memset(&ev, 0, sizeof(struct inp_event));
+		while ((input(&ev, 0)) == AGAIN);
+	}
+/*	if (gtk_dialog_run (GTK_DIALOG (file_dialog)) == GTK_RESPONSE_ACCEPT) { */
+	if (gtk_response == GTK_RESPONSE_ACCEPT) {
+		filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (file_dialog));
+		if (filename) {
+			strcpy(file, filename);
+			g_free (filename);
+		}
+	}
+	g_signal_handler_disconnect (file_dialog, response_handler);
+	gtk_widget_destroy(file_dialog);
+	while(gtk_events_pending())
+		gtk_main_iteration();
+	return (file[0])?file:NULL;
+#endif
+}
+
 char *game_local_games_path(void)
 {
 	struct passwd *pw;
 	pw = getpwuid(getuid());
 	if (!pw) 
 		return NULL;
+
 	snprintf(local_games_path, sizeof(local_games_path) - 1 , "%s/.instead/games/", pw->pw_dir);
 	return local_games_path;
 }
