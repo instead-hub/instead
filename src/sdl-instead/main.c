@@ -1,6 +1,10 @@
 #include "externals.h"
 #include "internals.h"
 
+#ifdef _USE_GTK
+#include <gtk/gtk.h>
+#endif
+
 extern int debug_init(void);
 extern void debug_done(void);
 
