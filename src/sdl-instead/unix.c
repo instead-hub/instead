@@ -143,14 +143,18 @@ char *open_file_dialog(void)
 #endif
 }
 
-char *game_local_games_path(void)
+char *game_local_games_path(int cr)
 {
 	struct passwd *pw;
 	pw = getpwuid(getuid());
 	if (!pw) 
 		return NULL;
-
-	snprintf(local_games_path, sizeof(local_games_path) - 1 , "%s/.instead/games/", pw->pw_dir);
+	snprintf(local_games_path, sizeof(local_games_path) - 1 , "%s/.instead", pw->pw_dir);
+	if (mkdir(local_games_path, S_IRWXU) && errno != EEXIST)
+        	return NULL;
+        strcat(local_games_path,"/games");
+	if (mkdir(local_games_path, S_IRWXU) && errno != EEXIST)
+        	return NULL;
 	return local_games_path;
 }
 

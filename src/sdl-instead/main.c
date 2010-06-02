@@ -158,7 +158,7 @@ int main(int argc, char **argv)
 	}
 	
 	if (!nostdgames_sw)
-		games_lookup(game_local_games_path());
+		games_lookup(game_local_games_path(0));
 
 	if (noauto_sw)
 		opt_autosave = 0;
