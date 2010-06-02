@@ -128,7 +128,7 @@ static int games_add(const char *path, const char *dir)
 
 int games_replace(const char *path, const char *dir)
 {
-	int i;
+	int i, rc;
 	char *p;
 	if (!is_game(path, dir))
 		return -1;
@@ -143,13 +143,17 @@ int games_replace(const char *path, const char *dir)
 			games[i].path = p;
 			games[i].dir = strdup(dir);
 			games[i].name = game_name(p, dir);
+			games_sort();
 			return 0;
 		}
 	}
 	games = realloc(games, sizeof(struct game) * (1 + games_nr));
 	if (!games)
 		return -1;
-	return games_add(path, dir);
+	rc = games_add(path, dir);
+	if (!rc)
+		games_sort();
+	return rc;
 }
 
 int games_lookup(const char *path)
@@ -188,7 +192,33 @@ out:
 	games_sort();
 	return 0;
 }
-
+#if 0
+int games_remove(const char *path)
+{
+	DIR *d;
+	struct dirent *de;
+	if (!path)
+		return 0;
+	d = opendir(path);
+	if (!d) {
+		if (!access(path, F_OK))
+			return unlink(path);
+		return -1;
+	}
+	while ((de = readdir(d))) {
+		/*if (de->d_type != DT_DIR)
+			continue;*/
+		p = getpath(path, de->d_name);
+		if (p) {
+			games_remove(p);
+			free(p);
+		}
+	}
+	closedir(d);
+	rmdir(path);
+	return 0;
+}
+#endif
 
 static int motion_mode = 0;
 static int motion_id = 0;
