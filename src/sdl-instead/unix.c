@@ -47,7 +47,10 @@ char *game_locale(void)
 
 char *game_tmp_path(void)
 {
-	static char *tmp="/tmp";
+	static char tmp[PATH_MAX]="/tmp";
+	strcat(tmp, "/instead-games");
+	if (mkdir(tmp, S_IRWXU) && errno != EEXIST)
+		return NULL;
 	return tmp;
 }
 

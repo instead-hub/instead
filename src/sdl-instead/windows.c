@@ -101,6 +101,10 @@ char *game_tmp_path(void)
 	if (dwRetVal > MAX_PATH || (dwRetVal == 0)) {
 		return NULL;
 	}
+	strcat((char*)lpTempPathBuffer, "/instead-games");
+	if (mkdir((char*)lpTempPathBuffer) && errno != EEXIST)
+		return NULL;
+	unix_path((char*)lpTempPathBuffer);
 	return (char*)lpTempPathBuffer;
 }
 
@@ -115,7 +119,19 @@ char *game_local_themes_path(void)
 	snprintf(local_themes_path, sizeof(local_themes_path) - 1 , "%s/instead/themes/", app_dir());
 	return local_themes_path;
 }
-
+#if 0
+char *home_dir( void )
+{
+	static char homedir[PATH_MAX]="";
+	SHGetFolderPath( NULL, 
+		CSIDL_FLAG_CREATE | CSIDL_PROFILE,
+		NULL,
+		0, 
+		(LPTSTR)homedir );
+	unix_path(homedir);
+	return homedir;
+}
+#endif
 char *app_dir( void )
 {
 	static char appdir[PATH_MAX]="";
