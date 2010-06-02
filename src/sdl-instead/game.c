@@ -2339,7 +2339,6 @@ int game_from_disk(void)
 	g = p = open_file_dialog();
 	if (!p)
 		return -1;
-
 	strcpy(dir, p);
 	strcpy(base, p);
 	d = dir; b = base;
