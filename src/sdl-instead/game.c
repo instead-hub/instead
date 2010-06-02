@@ -192,7 +192,6 @@ out:
 	games_sort();
 	return 0;
 }
-#if 0
 int games_remove(const char *path)
 {
 	DIR *d;
@@ -220,7 +219,7 @@ int games_remove(const char *path)
 	rmdir(path);
 	return 0;
 }
-#endif
+
 static int motion_mode = 0;
 static int motion_id = 0;
 static int motion_y = 0;
