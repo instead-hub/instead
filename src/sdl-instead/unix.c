@@ -62,6 +62,8 @@ run_response_handler (GtkDialog *dialog,
 }
 #endif
 
+extern char *BROWSE_MENU;
+
 char *open_file_dialog(void)
 {
 #ifndef _USE_GTK
@@ -92,7 +94,7 @@ char *open_file_dialog(void)
 
 	
 	file[0] = 0;
-	file_dialog = gtk_file_chooser_dialog_new ("Open File", 
+	file_dialog = gtk_file_chooser_dialog_new (BROWSE_MENU, 
 			NULL, GTK_FILE_CHOOSER_ACTION_OPEN,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			GTK_STOCK_OPEN,   GTK_RESPONSE_ACCEPT, NULL);
