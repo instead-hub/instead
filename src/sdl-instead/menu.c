@@ -29,6 +29,7 @@ char *SELECT_THEME_MENU = NULL;
 char *SAVED_MENU = NULL;
 char *NOGAMES_MENU = NULL;
 char *NOTHEMES_MENU = NULL;
+char *BROWSE_MENU = NULL;
 char *QUIT_MENU = NULL;
 char *ON = NULL;
 char *OFF = NULL;
@@ -141,7 +142,7 @@ static void save_menu(void)
 	strcat(menu_buff, CANCEL_MENU);
 }
 
-static int pages_menu(char *res, int nr, int max, const char *menu)
+static int pages_menu(char *res, int nr, int max, const char *menu, const char *append)
 {
 	static char buff[256];
 	int k = MENU_PER_PAGER;
@@ -170,18 +171,26 @@ static int pages_menu(char *res, int nr, int max, const char *menu)
 	else
 		sprintf(buff, ">>"); 
 	strcat(res, buff);
-	strcat(res, "\n");
+	strcat(res, append);
 	return 0;
 }
 
 static void games_menu(void)
 {
-	int i, n;
+	int i, n, append_browse = 0;
+	char tmp[PATH_MAX];
+#ifdef _USE_BROWSE
+	snprintf(tmp, sizeof(tmp), " <u><a:/browse>%s</a></u>\n", BROWSE_MENU);
+#else
+	snprintf(tmp, sizeof(tmp), "\n");
+#endif
 	sprintf(menu_buff, SELECT_GAME_MENU);
 	if ((games_nr - 1) / MENU_GAMES_MAX)
-		pages_menu(menu_buff, games_menu_from / MENU_GAMES_MAX, (games_nr - 1) / MENU_GAMES_MAX + 1, "games");
+		pages_menu(menu_buff, games_menu_from / MENU_GAMES_MAX, (games_nr - 1) / MENU_GAMES_MAX + 1, "games", tmp);
+	else 
+		append_browse = 1;
 	for (i = games_menu_from, n = 0; i < games_nr && n < MENU_GAMES_MAX; i ++) {
-		char tmp[PATH_MAX];
+		
 		if (!games[i].name[0]) /* empty */
 			continue;
 		if (curgame_dir && !strcmp(games[i].dir, curgame_dir))
@@ -191,9 +200,14 @@ static void games_menu(void)
 		strcat(menu_buff, tmp);
 		n ++;
 	}
-
 	for(;n < MENU_GAMES_MAX && games_nr > MENU_GAMES_MAX; n++) /* align h */
 		strcat(menu_buff, "\n");
+#ifdef _USE_BROWSE
+	if (append_browse) {
+		snprintf(tmp, sizeof(tmp), "<u><a:/browse>%s</a></u>\n", BROWSE_MENU);
+		strcat(menu_buff, tmp);
+	}
+#endif
 	if (!games_nr)
 		sprintf(menu_buff, NOGAMES_MENU, GAMES_PATH);
 	strcat(menu_buff,"\n");
@@ -205,7 +219,7 @@ static void themes_menu(void)
 	int i, n;
 	sprintf(menu_buff, SELECT_THEME_MENU);
 	if ((themes_nr - 1) / MENU_THEMES_MAX)
-		pages_menu(menu_buff, themes_menu_from / MENU_THEMES_MAX, (themes_nr - 1) / MENU_THEMES_MAX + 1, "themes");
+		pages_menu(menu_buff, themes_menu_from / MENU_THEMES_MAX, (themes_nr - 1) / MENU_THEMES_MAX + 1, "themes", "\n");
 	for (i = themes_menu_from, n = 0; i < themes_nr && n < MENU_THEMES_MAX; i ++) {
 		char tmp[PATH_MAX];
 		if (!themes[i].name[0]) /* empty */
@@ -489,6 +503,9 @@ int game_menu_act(const char *a)
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a,"/quit")) {
 		return -1;
+	} else if (!strcmp(a,"/browse")) {
+		game_from_disk();
+		return 0;
 	} else if (cur_menu == menu_games) {
 		char *p;
 		p = strdup(a);
@@ -562,6 +579,7 @@ static void lang_free(void)
 	FREE(CANCEL_MENU);
 	FREE(FROM_THEME);
 	FREE(DISABLED_SAVE_MENU);
+	FREE(BROWSE_MENU);
 }
 
 static int lang_ok(void)
@@ -572,7 +590,7 @@ static int lang_ok(void)
 		CUSTOM_THEME_MENU && OWN_THEME_MENU && SELECT_GAME_MENU && SELECT_THEME_MENU &&
 		SAVED_MENU && NOGAMES_MENU && NOTHEMES_MENU && QUIT_MENU &&
 		ON && OFF && KBD_MODE_LINKS && KBD_MODE_SMART && KBD_MODE_SCROLL && CANCEL_MENU &&
-		FROM_THEME && DISABLED_SAVE_MENU)
+		FROM_THEME && DISABLED_SAVE_MENU && BROWSE_MENU)
 		return 0;
 	return -1;
 }	
@@ -606,6 +624,7 @@ struct parser lang_parser[] = {
 	{ "CANCEL_MENU", parse_esc_string, &CANCEL_MENU },
 	{ "FROM_THEME", parse_esc_string, &FROM_THEME },
 	{ "DISABLED_SAVE_MENU", parse_esc_string, &DISABLED_SAVE_MENU },
+	{ "BROWSE_MENU", parse_esc_string, &BROWSE_MENU },
 	{ NULL,  },
 };
 
