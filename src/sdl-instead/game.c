@@ -111,7 +111,7 @@ static void games_sort()
 {
 	qsort(games, games_nr, sizeof(struct game), cmp_game);
 }
-int games_add(const char *path, const char *dir)
+static int games_add(const char *path, const char *dir)
 {
 	char *p;
 	if (!is_game(path, dir))
@@ -146,6 +146,9 @@ int games_replace(const char *path, const char *dir)
 			return 0;
 		}
 	}
+	games = realloc(games, sizeof(struct game) * (1 + games_nr));
+	if (!games)
+		return -1;
 	return games_add(path, dir);
 }
 
@@ -2352,7 +2355,7 @@ int game_from_disk(void)
 	b = basename(b);
 /*	fprintf(stderr,"%s:%s\n", d, b); */
 #ifdef _USE_UNPACK
-	p = game_tmp_path();
+	p = game_local_games_path(1);
 	fprintf(stderr,"Trying to install: %s\n", g);
 	if (!unpack(g, p) && zip_game_dirname[0]) {
 		games_replace(p, zip_game_dirname);

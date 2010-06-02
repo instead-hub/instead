@@ -108,9 +108,14 @@ char *game_tmp_path(void)
 	return (char*)lpTempPathBuffer;
 }
 
-char *game_local_games_path(void)
+char *game_local_games_path(int cr)
 {
-	snprintf(local_games_path, sizeof(local_games_path) - 1 , "%s/instead/games/", app_dir());
+	snprintf(local_games_path, sizeof(local_games_path) - 1 , "%s/instead", app_dir());
+	if (mkdir(local_games_path) && errno != EEXIST)
+		return NULL;
+	strcat(local_games_path,"/games");
+	if (mkdir(local_games_path) && errno != EEXIST)
+		return NULL;
 	return local_games_path;
 }
 
