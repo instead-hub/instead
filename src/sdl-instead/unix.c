@@ -122,11 +122,14 @@ char *open_file_dialog(void)
 
 	while (gtk_response == -1) {
 		struct inp_event ev;
-		gtk_main_iteration();
 		memset(&ev, 0, sizeof(struct inp_event));
+		while (gtk_events_pending()) {
+			gtk_main_iteration();
+			while ((input(&ev, 0)) == AGAIN);
+		} 
 		while ((input(&ev, 0)) == AGAIN);
+		nsleep(100);
 	}
-/*	if (gtk_dialog_run (GTK_DIALOG (file_dialog)) == GTK_RESPONSE_ACCEPT) { */
 	if (gtk_response == GTK_RESPONSE_ACCEPT) {
 		filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (file_dialog));
 		if (filename) {
