@@ -1,4 +1,4 @@
-instead (1.2) unstable; urgency=low
+instead (1.2.0) unstable; urgency=low
 
   * unpack/install feature;
   * browse feature (win32 and gtk);

@@ -128,7 +128,7 @@ char *open_file_dialog(void)
 			while ((input(&ev, 0)) == AGAIN);
 		} 
 		while ((input(&ev, 0)) == AGAIN);
-		nsleep(100);
+		nsleep(HZ*100);
 	}
 	if (gtk_response == GTK_RESPONSE_ACCEPT) {
 		filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (file_dialog));
