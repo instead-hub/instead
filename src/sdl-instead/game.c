@@ -192,32 +192,16 @@ out:
 	games_sort();
 	return 0;
 }
-int games_remove(const char *path)
+
+int games_remove(int gtr)
 {
-	DIR *d;
-	struct dirent *de;
-	if (!path)
-		return 0;
-	d = opendir(path);
-	if (!d) {
-		if (!access(path, F_OK)) {
-			unlink(path);
-		}
-		return -1;
-	}
-	while ((de = readdir(d))) {
-		char *p;
-		if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, ".."))
-			continue;
-		p = getfilepath(path, de->d_name);
-		if (p) {
-			games_remove(p);
-			free(p);
-		}
-	}
-	closedir(d);
-	rmdir(path);
-	return 0;
+	int rc;
+	rc = remove_dir(games[gtr].path);
+	free(games[gtr].name); free(games[gtr].dir); free(games[gtr].path);
+	games_nr --;
+	memmove(&games[gtr], &games[gtr + 1], (games_nr - gtr) * sizeof(struct game));
+	games = realloc(games, games_nr * sizeof(struct game));
+	return rc;
 }
 
 static int motion_mode = 0;
