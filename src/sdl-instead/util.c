@@ -375,3 +375,30 @@ exitf:
 	return NULL; 
 }
 #endif
+int remove_dir(const char *path)
+{
+	DIR *d;
+	struct dirent *de;
+	if (!path)
+		return 0;
+	d = opendir(path);
+	if (!d) {
+		if (!access(path, F_OK)) {
+			unlink(path);
+		}
+		return -1;
+	}
+	while ((de = readdir(d))) {
+		char *p;
+		if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, ".."))
+			continue;
+		p = getfilepath(path, de->d_name);
+		if (p) {
+			remove_dir(p);
+			free(p);
+		}
+	}
+	closedir(d);
+	rmdir(path);
+	return 0;
+}

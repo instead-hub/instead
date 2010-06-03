@@ -38,7 +38,7 @@ extern int 	game_change_vol(int d, int val);
 extern int 	game_change_hz(int hz);
 
 extern int 	games_lookup(const char *path);
-extern int	games_remove(const char *path);
+extern int	games_remove(int nr);
 extern int	games_replace(const char *path, const char *dir);
 
 extern void 	game_err_msg(const char *s);

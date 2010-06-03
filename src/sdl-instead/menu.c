@@ -400,9 +400,11 @@ int game_menu_act(const char *a)
 				return 0;
 			}
 		}
-		games_remove(games[gtr].path);
-		free(games[gtr].name);
-		games[gtr].name = strdup("");
+		games_remove(gtr);
+		if (games_menu_from >= games_nr)
+			games_menu_from -= MENU_GAMES_MAX;
+		if (games_menu_from < 0)
+			games_menu_from = 0;
 		game_menu(menu_games);
 	} else if (!strcmp(a, "/themes")) {
 		game_menu(menu_themes);

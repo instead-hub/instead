@@ -33,7 +33,7 @@ extern void unix_path(char *path);
 extern char *sdl_path(char *path);
 
 extern char *parse_tag(char *line, const char *tag, const char *comm, int *brk);
-
+extern int remove_dir(const char *path);
 #ifndef PATH_MAX
 #define PATH_MAX 	4096
 #endif
