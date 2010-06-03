@@ -349,6 +349,11 @@ static int luaB_is_sound(lua_State *L) {
 	return 1;
 }
 
+static int luaB_savespath(lua_State *L) {
+	lua_pushstring(L, dirname(game_save_path(0, 0)));
+	return 1;
+}
+
 static gtimer_t instead_timer = NULL;
 static int instead_timer_nr = 0;
 
@@ -401,6 +406,7 @@ static const luaL_Reg base_funcs[] = {
 	{"doencfile", luaB_doencfile},
 	{"print", luaB_print}, /* for some mystic, it is needed in win version (with -debug) */
 	{"is_sound", luaB_is_sound},
+	{"savespath", luaB_savespath},
 	{"set_timer", luaB_set_timer},
 	{NULL, NULL}
 };
