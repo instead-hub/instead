@@ -1,6 +1,9 @@
 instead (1.2) unstable; urgency=low
 
-  * unpack feature;
+  * unpack/install feature;
+  * browse feature (win32 and gtk);
+  * clever sorting;
+  * remove games;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 01 Jun 2010 17:40:00 +0300  
 

@@ -104,6 +104,10 @@ static int cmp_game(const void *p1, const void *p2)
 {
 	const struct game *g1 = (const struct game*)p1;
 	const struct game *g2 = (const struct game*)p2;
+	int g1_s = !!strncmp(g1->path, GAMES_PATH, strlen(GAMES_PATH));
+	int g2_s = !!strncmp(g2->path, GAMES_PATH, strlen(GAMES_PATH));
+	if (g1_s != g2_s)
+		return g1_s - g2_s;
 	return strcmp(g1->name, g2->name);
 }
 
