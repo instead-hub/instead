@@ -25,8 +25,21 @@ char *mode_sw = NULL;
 extern int unpack(const char *zipfilename, const char *where);
 extern char zip_game_dirname[];
 
+static int setup_zip(const char *file, char *p)
+{
+	if (!p)
+		return -1;
+	fprintf(stderr,"Trying to install: %s\n", file);
+	if (unpack(file, p))
+		return -1;
+	game_sw = zip_game_dirname;
+	games_sw = p;
+	return 0;
+}
+
 int main(int argc, char **argv)
 {
+	int clean_tmp = 0;
 	int err = 0;
 	int i;
 #ifdef _USE_GTK
@@ -90,10 +103,24 @@ int main(int argc, char **argv)
 			version_sw = 1;
 		} else if (!strcmp(argv[i], "-nopause")) {
 			nopause_sw = 1;
+#ifdef _USE_UNPACK
+		} else if (!strcmp(argv[i], "-install")) {
+			if ((i + 1) < argc) {
+				char *file = argv[++i];
+				char *p;
+				if (games_sw)
+					p = games_sw;
+				else
+					p = game_local_games_path(1);
+				setup_zip(file, p);
+			}
+#endif
+		} else if (!strcmp(argv[i], "-quit")) {
+			exit(0);
 		} else if (argv[i][0] == '-') {
 			fprintf(stderr,"Unknow option: %s\n", argv[i]);
 			exit(1);
-		} 
+		}
 #ifdef _USE_UNPACK
 		else {
 			char *p;
@@ -101,13 +128,8 @@ int main(int argc, char **argv)
 				p = games_sw;
 			else
 				p = game_tmp_path();
-			if (p) {
-				fprintf(stderr,"Trying to install: %s\n", argv[i]);
-				if (!unpack(argv[i], p)) {
-					game_sw = zip_game_dirname;
-					games_sw = p;
-				}
-			}
+			setup_zip(argv[i], p);
+			clean_tmp = 1;
 		}
 #endif
 	}
@@ -200,6 +222,10 @@ out:
 		debug_done();
 #ifdef _USE_GTK
 	gtk_main_quit ();
+#endif
+#ifdef _USE_UNPACK
+	if (clean_tmp)
+		remove_dir(game_tmp_path());
 #endif
 	return err;
 }
