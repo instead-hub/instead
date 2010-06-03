@@ -392,7 +392,7 @@ int game_menu_act(const char *a)
 	} else if (!strcmp(a, "/select")) {
 		game_menu(menu_games);
 	} else if (!strcmp(a, "/remove")) {
-		fprintf(stderr,"%s\n", games[gtr].path);
+		fprintf(stderr,"Removing '%s'\n", games[gtr].path);
 		if (curgame_dir && !strcmp(curgame_dir, games[gtr].dir)) {
 			game_done(0);
 			if (game_init(NULL)) {
