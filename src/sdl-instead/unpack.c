@@ -38,6 +38,7 @@
 #endif
 
 #include "unzip.h"
+#include "util.h"
 
 #define CASESENSITIVITY (0)
 #define WRITEBUFFERSIZE (8192)
@@ -191,19 +192,24 @@ const char *password;
 	}
 
 	if ((*filename_withoutpath) == '\0') {
+		if (zip_game_dirname[0] && strncmp(zip_game_dirname, 
+				filename_inzip, strlen(zip_game_dirname))) {
+			err = -1;
+			fprintf(stderr, "Too many dirs in zip...\n");
+			goto out;
+		}
 		printf("creating directory: %s\n", filename_inzip);
 		mymkdir(filename_inzip);
-		if (!*zip_game_dirname) {
-			int s = strlen(filename_inzip);
-			if (s && (filename_inzip[s - 1] == '/' || filename_inzip[s - 1] == '\\'))
-				s --;
-			memcpy(zip_game_dirname, filename_inzip, s);
-			zip_game_dirname[s] = 0;
-		}
+		if (!*zip_game_dirname)
+			strcpy(zip_game_dirname, filename_inzip);
 	} else {
 		const char *write_filename;
 		int skip = 0;
-
+		if (!*zip_game_dirname) {
+			err = -1;
+			fprintf(stderr, "No dir in zip...\n");
+			goto out;
+		}
 		write_filename = filename_inzip;
 
 		err = unzOpenCurrentFilePassword(uf, password);
@@ -271,6 +277,14 @@ const char *password;
 			unzCloseCurrentFile(uf);	/* don't lose the error */
 	}
 
+	if (*zip_game_dirname) {
+		int s = strlen(zip_game_dirname);
+		unix_path(zip_game_dirname);
+		if (s && (zip_game_dirname[s - 1] == '/'))
+			s --;
+		zip_game_dirname[s] = 0;
+	}
+out:
 	free(buf);
 	return err;
 }
@@ -288,7 +302,7 @@ const char *password;
 
 	for (i = 0; i < gi.number_entry; i++) {
 		if (do_extract_currentfile(uf, password) != UNZ_OK)
-			break;
+			return -1;
 
 		if ((i + 1) < gi.number_entry) {
 			err = unzGoToNextFile(uf);
@@ -296,7 +310,7 @@ const char *password;
 				printf
 				    ("error %d with zipfile in unzGoToNextFile\n",
 				     err);
-				break;
+				return -1;
 			}
 		}
 	}
