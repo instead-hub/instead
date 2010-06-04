@@ -79,8 +79,7 @@ int input(struct inp_event *inp, int wait)
 					SDL_ShowCursor(SDL_ENABLE); /* is it hack?*/
 			}
 		}
-		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, 
-			SDL_EVENTMASK (SDL_APPMOUSEFOCUS) | SDL_EVENTMASK(SDL_APPINPUTFOCUS)) > 0)
+		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_EVENTMASK(SDL_ACTIVEEVENT)) > 0)
 			return AGAIN; /* to avoid flickering */
 		return 0;
 	case SDL_USEREVENT: {
@@ -122,6 +121,7 @@ int input(struct inp_event *inp, int wait)
 			inp->type = 0;	
 		break;
 	case SDL_MOUSEBUTTONDOWN:
+		m_focus = 1; /* ahhh */
 		inp->type = MOUSE_DOWN;
 		inp->x = event.button.x;
 		inp->y = event.button.y;
