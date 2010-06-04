@@ -2375,14 +2375,14 @@ int game_from_disk(void)
 #ifdef _USE_UNPACK
 	p = game_local_games_path(1);
 	fprintf(stderr,"Trying to install: %s\n", g);
-	if (!unpack(g, p) && zip_game_dirname[0]) {
-		if (games_replace(p, zip_game_dirname)) {
-			p = getpath(p, zip_game_dirname);
-			remove_dir(p);
-			free(p);
+	if (!unpack(g, p)) {
+		if (!zip_game_dirname[0])
 			return -1;
-		}
+		if (games_replace(p, zip_game_dirname))
+			goto clean;
 		p = zip_game_dirname;
+	} else if (zip_game_dirname[0]) { /* error, needs to clean */
+		goto clean;
 #else
 	if (0) {
 #endif
@@ -2395,6 +2395,14 @@ int game_from_disk(void)
 		game_error(p);
 	}
 	return 0;
+#ifdef _USE_UNPACK
+clean:
+	p = getpath(p, zip_game_dirname);
+	fprintf(stderr, "Cleaning: '%s'...\n", p);
+	remove_dir(p);
+	free(p);
+	return -1;
+#endif
 }
 
 int game_loop(void)

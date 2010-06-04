@@ -30,8 +30,15 @@ static int setup_zip(const char *file, char *p)
 	if (!p)
 		return -1;
 	fprintf(stderr,"Trying to install: %s\n", file);
-	if (unpack(file, p))
+	if (unpack(file, p)) {
+		if (zip_game_dirname[0]) {
+			p = getpath(p, zip_game_dirname);
+			fprintf(stderr, "Cleaning: '%s'...\n", p);
+			remove_dir(p);
+			free(p);
+		}
 		return -1;
+	}
 	game_sw = zip_game_dirname;
 	games_sw = p;
 	return 0;
