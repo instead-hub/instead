@@ -2376,7 +2376,12 @@ int game_from_disk(void)
 	p = game_local_games_path(1);
 	fprintf(stderr,"Trying to install: %s\n", g);
 	if (!unpack(g, p) && zip_game_dirname[0]) {
-		games_replace(p, zip_game_dirname);
+		if (games_replace(p, zip_game_dirname)) {
+			p = getpath(p, zip_game_dirname);
+			remove_dir(p);
+			free(p);
+			return -1;
+		}
 		p = zip_game_dirname;
 #else
 	if (0) {
