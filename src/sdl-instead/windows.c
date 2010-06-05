@@ -110,18 +110,25 @@ char *game_tmp_path(void)
 
 char *game_local_games_path(int cr)
 {
-	snprintf(local_games_path, sizeof(local_games_path) - 1 , "%s/instead", app_dir());
-	if (mkdir(local_games_path) && errno != EEXIST)
+	char *app = app_dir();
+	if (!app)
 		return NULL;
+	snprintf(local_games_path, sizeof(local_games_path) - 1 , "%s/", app);
+	if (cr) {
+		if (mkdir(local_games_path) && errno != EEXIST)
+			return NULL;
+	}
 	strcat(local_games_path,"/games");
-	if (mkdir(local_games_path) && errno != EEXIST)
-		return NULL;
+	if (cr) {
+		if (mkdir(local_games_path) && errno != EEXIST)
+			return NULL;
+	}
 	return local_games_path;
 }
 
 char *game_local_themes_path(void)
 {
-	snprintf(local_themes_path, sizeof(local_themes_path) - 1 , "%s/instead/themes/", app_dir());
+	snprintf(local_themes_path, sizeof(local_themes_path) - 1 , "%s/themes", app_dir());
 	return local_themes_path;
 }
 #if 0
@@ -140,32 +147,46 @@ char *home_dir( void )
 char *app_dir( void )
 {
 	static char appdir[PATH_MAX]="";
+#ifdef _LOCAL_APPDATA
+	strcpy(appdir, game_cwd);
+	strcat(appdir, "/appdata");
+	if (!access(appdir, W_OK))
+		return appdir;
+#endif
+
 	SHGetFolderPath( NULL, 
 		CSIDL_FLAG_CREATE | CSIDL_LOCAL_APPDATA,
 		NULL,
 		0, 
 		(LPTSTR)appdir );
 	unix_path(appdir);
+	strcat(appdir, "/instead");
 	return appdir;
 }
 
 char *game_cfg_path( void )
 {
-	snprintf(save_path, sizeof(save_path) - 1 , "%s\\insteadrc", app_dir());
+	char *p = app_dir();
+	if (!p)
+		return NULL;
+
+	snprintf(save_path, sizeof(save_path) - 1 , "%src", p); /* appdir/insteadrc ;) */
 	if (!access(save_path, R_OK)) 
-		return save_path;
+		return save_path; 
 /* no at home? Try in dir */
-	snprintf(save_path, sizeof(save_path) - 1 , "%s\\instead", app_dir());
-	if (mkdir(save_path) && errno != EEXIST)
-		snprintf(save_path, sizeof(save_path) - 1 , "%s\\insteadrc", app_dir()); /* fallback to home */
-	else
-		snprintf(save_path, sizeof(save_path) - 1 , "%s\\instead\\insteadrc", app_dir());
+	snprintf(save_path, sizeof(save_path) - 1 , "%s", p);
+	if (mkdir(save_path) && errno != EEXIST) {
+		snprintf(save_path, sizeof(save_path) - 1 , "%src", p); /* appdir/insteadrc ;) */
+		return save_path;
+	}
+	snprintf(save_path, sizeof(save_path) - 1 , "%s/insteadrc", p);
 	return save_path;
 }
 
 char *game_save_path( int cr, int nr )
 {
 	char appdir[PATH_MAX];
+	char *p = app_dir();
 
 	if (!curgame_dir)
 		return NULL;
@@ -177,22 +198,27 @@ char *game_save_path( int cr, int nr )
 			snprintf(save_path, sizeof(save_path) - 1, "saves/autosave");
 		return save_path;
 	}
+        if (!p)
+        	return NULL;
+	strcpy( appdir, p );
 
-	strcpy( appdir, app_dir() );
+	if (cr && mkdir(save_path) && errno != EEXIST)
+		return NULL;
 
-	snprintf(save_path, sizeof(save_path) - 1 , "%s/instead", appdir);
+	snprintf(save_path, sizeof(save_path) - 1 , "%s/saves", appdir);
+
 	if (cr && mkdir(save_path) && errno != EEXIST)
 		return NULL;
-	snprintf(save_path, sizeof(save_path) - 1 , "%s/instead/saves", appdir);
+	snprintf(save_path, sizeof(save_path) - 1, "%s/saves/%s", appdir, curgame_dir);
+
 	if (cr && mkdir(save_path) && errno != EEXIST)
 		return NULL;
-	snprintf(save_path, sizeof(save_path) - 1, "%s/instead/saves/%s", appdir, curgame_dir);
-	if (cr && mkdir(save_path) && errno != EEXIST)
-		return NULL;
+
 	if (nr)
-		snprintf(save_path, sizeof(save_path) - 1, "%s/instead/saves/%s/save%d", appdir, curgame_dir, nr);
+		snprintf(save_path, sizeof(save_path) - 1, "%s/saves/%s/save%d", appdir, curgame_dir, nr);
 	else
-		snprintf(save_path, sizeof(save_path) - 1, "%s/instead/saves/%s/autosave", appdir, curgame_dir);
+		snprintf(save_path, sizeof(save_path) - 1, "%s/saves/%s/autosave", appdir, curgame_dir);
+
 	return save_path; 
 }
 

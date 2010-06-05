@@ -53,6 +53,7 @@ int main(int argc, char **argv)
 	gtk_init(&argc, &argv);
 #endif
 	putenv("SDL_MOUSE_RELATIVE=0"); /* test this! */
+	getcwd(game_cwd, sizeof(game_cwd));
 	for (i = 1; i < argc; i++) {
 		if (!strcmp(argv[i],"-alsa")) 
 			alsa_sw = 1;

@@ -18,7 +18,7 @@ extern int 	window_sw;
 extern int	nopause_sw;
 extern int 	game_own_theme; /* current game has own theme */
 extern char 	*err_msg; /* last error message */
-extern char 	game_cwd[]; /* current game cwd */
+extern char 	game_cwd[PATH_MAX]; /* current game cwd */
 extern char 	*curgame_dir;
 
 extern char 	*game_local_games_path(int cr);
