@@ -145,34 +145,53 @@ char *open_file_dialog(void)
 #endif
 }
 
-char *game_local_games_path(int cr)
+char *appdir(void)
 {
+	static char dir[PATH_MAX];
 	struct passwd *pw;
+#ifdef _LOCAL_APPDATA
+	strcpy(dir, game_cwd);
+	strcat(dir, "/appdata");
+	if (!access(dir, W_OK))
+		return dir;
+#endif
 	pw = getpwuid(getuid());
 	if (!pw) 
 		return NULL;
-	snprintf(local_games_path, sizeof(local_games_path) - 1 , "%s/.instead", pw->pw_dir);
-	if (mkdir(local_games_path, S_IRWXU) && errno != EEXIST)
-        	return NULL;
+	snprintf(dir, sizeof(dir) - 1 , "%s/.instead", pw->pw_dir);
+	return dir;
+}
+
+char *game_local_games_path(int cr)
+{
+	char *app = appdir();
+	if (!app)
+		return NULL;
+	strcpy(local_games_path, app);
+	if (cr) {
+		if (mkdir(local_games_path, S_IRWXU) && errno != EEXIST)
+        		return NULL;
+        }
         strcat(local_games_path,"/games");
-	if (mkdir(local_games_path, S_IRWXU) && errno != EEXIST)
-        	return NULL;
+        if (cr) { 
+		if (mkdir(local_games_path, S_IRWXU) && errno != EEXIST)
+        		return NULL;
+        }
 	return local_games_path;
 }
 
 char *game_local_themes_path(void)
 {
-	struct passwd *pw;
-	pw = getpwuid(getuid());
-	if (!pw) 
+	char *app = appdir();
+	if (!app)
 		return NULL;
-	snprintf(local_themes_path, sizeof(local_themes_path) - 1 , "%s/.instead/themes/", pw->pw_dir);
+	snprintf(local_themes_path, sizeof(local_themes_path) - 1 , "%s/themes", app);
 	return local_themes_path;
-	
 }
 
 char *game_cfg_path(void)
 {
+	char *app = appdir();
 	struct passwd *pw;
 	pw = getpwuid(getuid());
 	if (!pw) 
@@ -181,16 +200,19 @@ char *game_cfg_path(void)
 	if (!access(save_path, R_OK)) 
 		return save_path;
 /* no at home? Try in dir */
-	snprintf(save_path, sizeof(save_path) - 1 , "%s/.instead/", pw->pw_dir);
-	if (mkdir(save_path, S_IRWXU) && errno != EEXIST)
+	if (app)
+		snprintf(save_path, sizeof(save_path) - 1 , "%s/", app);
+	if (!app || (mkdir(save_path, S_IRWXU) && errno != EEXIST))
 		snprintf(save_path, sizeof(save_path) - 1 , "%s/.insteadrc", pw->pw_dir); /* fallback to home */
 	else
-		snprintf(save_path, sizeof(save_path) - 1 , "%s/.instead/insteadrc", pw->pw_dir);
+		snprintf(save_path, sizeof(save_path) - 1 , "%s/insteadrc", app);
 	return save_path;
 }
+
 char *game_save_path(int cr, int nr)
 {
-	struct passwd *pw;
+	char *app = appdir();
+
 	if (!curgame_dir)
 		return NULL;
 
@@ -200,24 +222,22 @@ char *game_save_path(int cr, int nr)
 		else
 			snprintf(save_path, sizeof(save_path) - 1, "saves/autosave");
 		return save_path;
-	}
-	
-	pw = getpwuid(getuid());
-	if (!pw) 
+	}	
+	if (!app) 
 		return NULL;
-	snprintf(save_path, sizeof(save_path) - 1 , "%s/.instead/", pw->pw_dir);
+	snprintf(save_path, sizeof(save_path) - 1 , "%s/", app);
 	if (cr && mkdir(save_path, S_IRWXU) && errno != EEXIST)
 		return NULL;
-	snprintf(save_path, sizeof(save_path) - 1 , "%s/.instead/saves", pw->pw_dir);
+	snprintf(save_path, sizeof(save_path) - 1 , "%s/saves", app);
 	if (cr && mkdir(save_path, S_IRWXU) && errno != EEXIST)
 		return NULL;
-	snprintf(save_path, sizeof(save_path) - 1, "%s/.instead/saves/%s/", pw->pw_dir, curgame_dir);
+	snprintf(save_path, sizeof(save_path) - 1, "%s/saves/%s/", app, curgame_dir);
 	if (cr && mkdir(save_path, S_IRWXU) && errno != EEXIST)
 		return NULL;	
 	if (nr)
-		snprintf(save_path, sizeof(save_path) - 1, "%s/.instead/saves/%s/save%d", pw->pw_dir, curgame_dir, nr);
+		snprintf(save_path, sizeof(save_path) - 1, "%s/saves/%s/save%d", app, curgame_dir, nr);
 	else
-		snprintf(save_path, sizeof(save_path) - 1, "%s/.instead/saves/%s/autosave", pw->pw_dir, curgame_dir);
+		snprintf(save_path, sizeof(save_path) - 1, "%s/saves/%s/autosave", app, curgame_dir);
 	return save_path;
 }
 
