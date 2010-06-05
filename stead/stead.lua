@@ -4,6 +4,7 @@ stead = {
 	string = string,
 	math = math,
 	io = io,
+	os = os,
 	call_top = 0,
 	cctx = { txt = nil, self = nil },
 	timer = function()
@@ -1895,6 +1896,28 @@ input = obj { -- input object
 	end ]]
 };
 
+prefs = obj {
+	nam = 'preferences',
+	ini = function(s)
+		local name = get_savepath() .. '/prefs';
+		local f, err = loadfile(name);
+		if not f then return nil end
+		f();
+	end,
+	store = function(s)
+		local name = get_savepath() .. '/prefs';
+		local h = stead.io.open(name,"w");
+		if not h then return false end
+		savemembers(h, s, 'prefs', true);
+		h:flush();
+		h:close();
+	end,
+	purge = function(s)
+		local name = get_savepath() .. '/prefs';
+		return stead.os.remove(name);
+	end
+};
+
 function vobj_save(self, name, h, need)
 	local dsc;
 	local w
@@ -2154,6 +2177,12 @@ end
 if is_sound == nil then
 	function is_sound()
 		return false -- sdl-instead export own function
+	end
+end
+
+if get_savepath == nil then
+	function get_savepath()
+		return "./"
 	end
 end
 

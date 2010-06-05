@@ -70,15 +70,22 @@ int game_select(const char *name)
 	chdir(game_cwd);
 	for (i = 0; i<games_nr; i ++) {
 		if (!strcmp(games[i].dir, name)) {
-			instead_done();
-			if (instead_init())
-				return -1;
-			if (chdir(games[i].path))
-				return -1;
-			if (instead_load(MAIN_FILE))
-				return -1;
-			instead_eval("game:ini()"); instead_clear();
+			char *oldgame = curgame_dir;
 			curgame_dir = games[i].dir;
+			instead_done();
+			if (instead_init()) {
+				curgame_dir = oldgame;
+				return -1;
+			}
+			if (chdir(games[i].path)) {
+				curgame_dir = oldgame;
+				return -1;
+			}
+			if (instead_load(MAIN_FILE)) {
+				curgame_dir = oldgame;
+				return -1;
+			}
+			instead_eval("game:ini()"); instead_clear();
 			return 0;
 		}
 	}
@@ -347,7 +354,6 @@ int game_load(int nr)
 {
 	char *s;
 	s = game_save_path(0, nr);
-
 	if (s && !access(s, R_OK)) {
 		char cmd[PATH_MAX];
 		snprintf(cmd, sizeof(cmd) - 1, "load %s", s);

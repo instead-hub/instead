@@ -4,6 +4,8 @@ instead (1.2.0) unstable; urgency=low
   * browse feature (win32 and gtk);
   * clever sorting;
   * remove games;
+  * local appdata mode;
+  * prefs object;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 01 Jun 2010 17:40:00 +0300  
 

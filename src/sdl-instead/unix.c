@@ -212,10 +212,8 @@ char *game_cfg_path(void)
 char *game_save_path(int cr, int nr)
 {
 	char *app = appdir();
-
 	if (!curgame_dir)
 		return NULL;
-
 	if (!access("saves", R_OK)) {
 		if (nr)
 			snprintf(save_path, sizeof(save_path) - 1, "saves/save%d", nr);
