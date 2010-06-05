@@ -1287,6 +1287,9 @@ function game_ini(self)
 	v = do_ini(self);
 	vv = iface:title(call(self,'nam'));
 	vv = par('^^', vv, call(self,'dsc'));
+	if type(init) == 'function' then
+		init();
+	end
 	return par("^^", vv, v);
 end
 
@@ -1513,6 +1516,7 @@ Commands:^
     back, inv, way, obj, quit, save <fname>, load <fname>.]],
 	pl ='pl',
 	showlast = true, 
+	_snapshots = {},
 };
 function strip(s)
 	local s = tostring(s);
@@ -1671,7 +1675,7 @@ iface = {
 		end
 
 		if v == false then
-			return cat(fmt(r),'\n'), false;
+			return cat(r, '\n'), false;
 		end
 		
 		ACTION_TEXT = r; -- here, life methods can redefine this
@@ -1709,11 +1713,6 @@ iface = {
 	end
 };
 
-pl = player {
-	nam = "Incognito",
-	where = 'main',
-	obj = { }
-};
 
 function me()
 	return ref(game.pl);
@@ -2238,8 +2237,61 @@ end
 function isForSave(k, v, s) -- k - key, v - value, s -- parent table
 	return stead.string.find(k, '_') ==  1 or stead.string.match(k,'^%u')
 end
--- here the game begins
+
+function make_snapshot(nr)
+	if not tonumber(nr) then nr = 0 end
+	local h = { };
+	h.txt = ''
+	h.write = function(s, ...)
+		local i
+		for i = 1, stead.table.maxn(arg) do
+			s.txt = s.txt .. tostring(arg[i]);
+		end
+	end
+	local old = game._snapshots;
+	game._snapshots = {}
+	for_each_object(save_object, h);
+	save_object('game', game, h);
+	clearvar(_G);
+	game._snapshots = old
+	game._snapshots[nr] = h.txt;
+end
+
+function restore_snapshot(nr)
+	if not tonumber(nr) then nr = 0 end
+	local ss = game._snapshots
+	if not ss[nr] then return nil, true end -- nothing todo
+	stead_init();
+	dofile('main.lua');
+	if type(init) == 'function' then -- no hooks here!!!
+		init();
+	end
+	local f, err = loadstring(ss[nr]);
+	if not f then return end
+	local i,r = f();
+	game._snapshots = ss
+	if r then
+		return nil, false
+	end
+	i = do_ini(game);
+	return i, false;
+end
+
+function delete_snapshot(nr)
+	if not tonumber(nr) then nr = 0 end
+	game._snapshots[nr] = nil
+end
+--- here the game begins
+function stead_init()
+pl = player {
+	nam = "Incognito",
+	where = 'main',
+	obj = { }
+};
+
 main = room {
 	nam = 'main',
 	dsc = 'No main room defined.',
 }
+end
+stead_init();

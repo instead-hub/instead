@@ -16,7 +16,6 @@ iface.xref = function(self, str, obj)
 	elseif isSceneUse(o) then
 		cmd = 'use ';	
 	end
-
 	return cat('<a:'..cmd..'0'..tostring(o.id)..'>',str,'</a>');
 end;
 
@@ -123,22 +122,24 @@ function menu(v)
 	v.menu_type = true
 	if v.inv == nil then
 		v.inv = function(s)
-			local r
-			r = call(s, 'menu');
+			local r,v
+			r,v = call(s, 'menu');
+			if v == nil then v = true end
 			if r == nil then
 				obj_tag(me(), MENU_TAG_ID); -- retag menu field
 			end
-			return r, true
+			return r, v
 		end
 	end
 	if v.act == nil then
 		v.act = function(s)
-			local r
-			r = call(s, 'menu');
+			local r,v
+			r,v = call(s, 'menu');
+			if v == nil then v = true end
 			if r == nil then
 				obj_tag(me(), MENU_TAG_ID); -- retag menu field
 			end
-			return r, true
+			return r, v
 		end
 	end
 	if v.save == nil then
