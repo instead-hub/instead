@@ -215,8 +215,14 @@ static void games_menu(void)
 		strcat(menu_buff, tmp);
 	}
 #endif
-	if (!games_nr)
+	if (!games_nr) {
 		sprintf(menu_buff, NOGAMES_MENU, GAMES_PATH);
+#ifdef _USE_BROWSE
+		strcat(menu_buff,"\n");
+		snprintf(tmp, sizeof(tmp), "<u><a:/browse>%s</a></u>\n", BROWSE_MENU);
+		strcat(menu_buff, tmp);
+#endif
+	}
 	strcat(menu_buff,"\n");
 	strcat(menu_buff, BACK_MENU); 
 }
