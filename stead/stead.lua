@@ -1290,9 +1290,9 @@ function game_ini(self)
 	if type(init) == 'function' then
 		init();
 	end
-	if type(hooks) == 'function' then
-		hooks();
-	end
+--	if type(hooks) == 'function' then
+--		hooks();
+--	end
 	return par("^^", vv, v);
 end
 
@@ -2284,6 +2284,19 @@ function delete_snapshot(nr)
 	if not tonumber(nr) then nr = 0 end
 	game._snapshots[nr] = nil
 end
+
+function inherit(o, f)
+	return function(...)
+		return f(o(unpack(arg)))
+	end
+end
+
+function hook(o, f)
+	return function(...)
+		return f(o, unpack(arg))
+	end
+end
+
 --- here the game begins
 function stead_init()
 pl = player {
