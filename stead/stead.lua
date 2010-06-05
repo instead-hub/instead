@@ -1290,6 +1290,9 @@ function game_ini(self)
 	if type(init) == 'function' then
 		init();
 	end
+	if type(hooks) == 'function' then
+		hooks();
+	end
 	return par("^^", vv, v);
 end
 
