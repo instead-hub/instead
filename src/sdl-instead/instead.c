@@ -406,7 +406,7 @@ static const luaL_Reg base_funcs[] = {
 	{"doencfile", luaB_doencfile},
 	{"print", luaB_print}, /* for some mystic, it is needed in win version (with -debug) */
 	{"is_sound", luaB_is_sound},
-	{"savespath", luaB_get_savepath},
+	{"get_savepath", luaB_get_savepath},
 	{"set_timer", luaB_set_timer},
 	{NULL, NULL}
 };
