@@ -1088,6 +1088,11 @@ function go(self, where, back)
 	if not isRoom(ref(self.where)) then
 		error ("Trying to go from nowhere: "..self.where);
 	end
+
+	if stead.in_entered_call then
+		error ("Do not use goto from entered action! Use enter action instead:" .. self.where);
+	end
+
 	local v, r;
 	if not isVroom(ref(where)) and not stead.in_exit_call then
 		stead.in_exit_call = true -- to break recurse
@@ -1116,10 +1121,14 @@ function go(self, where, back)
 		ref(where).__from__ = deref(self.where);
 	end
 
-	v = call(ref(was), 'onexit', deref(where));
-	res = par('^^',res,v);
+--[[	v = call(ref(was), 'onexit', deref(where));
+	res = par('^^',res,v); ]]--
+
 	self.where = deref(where);
-	v = call(ref(where), 'onenter', deref(was));
+	stead.in_entered_call = true
+	v = call(ref(where), 'entered', deref(was));
+	stead.in_entered_call = false
+
 	res = par('^^',res,v);
 	
 	if need_scene then -- or isForcedsc(ref(where)) then -- i'am not sure...
@@ -1680,6 +1689,11 @@ iface = {
 		-- st -- game state changed
 		if st and r == nil and v == true then -- we do nothing
 			return nil;
+		end
+
+		if RAW_TEXT then
+			RAW_TEXT = nil
+			v = false
 		end
 
 		if v == false then
@@ -2281,7 +2295,8 @@ function restore_snapshot(nr)
 		return nil, false
 	end
 	i = do_ini(game);
-	return i, false;
+	RAW_TEXT = true
+	return i;
 end
 
 function delete_snapshot(nr)
