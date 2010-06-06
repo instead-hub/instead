@@ -40,8 +40,10 @@ function stead.getcmd(str)
 	else
 		cmd = stead.string.sub(str, i, k);
 	end
+	stead.cmd = cmd
 	if cmd == 'load' or cmd == 'save' then
 		a[1] = strip(stead.string.sub(str, k + 1));
+		stead.args = a;
 		return cmd, a
 	end
 	while i do
@@ -53,6 +55,7 @@ function stead.getcmd(str)
 		a[n] = strip(stead.string.sub(str, i, k));
 		n = n + 1;
 	end
+	stead.args = a;
 	return cmd, a
 end
 
