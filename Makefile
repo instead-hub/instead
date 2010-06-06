@@ -20,15 +20,17 @@ config.make:
 svnclean:
 	svn st | grep "^?" | awk '{ print $$2 }' | grep -v "config.make" | while read l; do $(RM) -rf $$l; done
 
-docs:
+rules:
+	$(RM) -f Rules.make
+	ln -sf Rules.make.standalone Rules.make
+
+docs: rules
 	make pdf -C doc/
 	make wiki -C doc/ 
 	man doc/instead.6 > doc/instead.txt
 	
-tarball: clean svnclean docs
+tarball: clean svnclean docs rules
 	echo "# you can define own flags here" > config.make
-	$(RM) -f Rules.make
-	ln -sf Rules.make.standalone Rules.make
 	ln -sf ./ $(VERTITLE)
 	tar -cz --exclude $(VERTITLE)/$(VERTITLE) --exclude .svn --exclude $(ARCHIVE) --exclude windows.tar.gz -f $(ARCHIVE) $(VERTITLE)/*
 	$(RM) -f $(VERTITLE)
