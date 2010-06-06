@@ -2251,8 +2251,7 @@ function make_snapshot(nr)
 			s.txt = s.txt .. tostring(arg[i]);
 		end
 	end
-	local old = game._snapshots;
-	game._snapshots = {}
+	local old = game._snapshots; game._snapshots = nil
 	for_each_object(save_object, h);
 	save_object('game', game, h);
 	clearvar(_G);
