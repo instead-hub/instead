@@ -1114,12 +1114,17 @@ function go(self, where, back)
 	res = par('^^',res,v);
 	if not back then
 		ref(where).__from__ = deref(self.where);
-	end	
+	end
+
+	v = call(ref(was), 'onexit', deref(where));
+	res = par('^^',res,v);
+	self.where = deref(where);
+	v = call(ref(where), 'onenter', deref(was));
+	res = par('^^',res,v);
+	
 	if need_scene then -- or isForcedsc(ref(where)) then -- i'am not sure...
-		self.where = deref(where);
 		return par('^^',res,ref(where):scene());
 	end
-	self.where = deref(where);
 	return res;
 end
 
