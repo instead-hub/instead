@@ -1092,8 +1092,8 @@ function go(self, where, back)
 		error ("Trying to go from nowhere: "..self.where);
 	end
 
-	if stead.in_entered_call then
-		error ("Do not use goto from entered action! Use enter action instead:" .. self.where);
+	if stead.in_entered_call or stead.in_onexit_call then
+		error ("Do not use goto from onexit/entered action! Use exit/enter action instead:" .. self.where);
 	end
 
 	local v, r;
@@ -1124,8 +1124,10 @@ function go(self, where, back)
 		ref(where).__from__ = deref(self.where);
 	end
 
---[[	v = call(ref(was), 'onexit', deref(where));
-	res = par('^^',res,v); ]]--
+	stead.in_onexit_call = true
+	v = call(ref(was), 'onexit', deref(where));
+	stead.in_onexit_call = false
+	res = par('^^',res,v);
 
 	self.where = deref(where);
 	stead.in_entered_call = true
