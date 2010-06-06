@@ -11,7 +11,7 @@ depends=('sdl' 'sdl_image' 'sdl_mixer' 'sdl_ttf' 'lua')
 makedepends=( 'pkgconfig' )
 
 source=(http://instead.googlecode.com/files/instead_$pkgver.tar.gz)
-md5sums=(e917080c1627f6e72b0f750fc485e49c)
+md5sums=(MD5SUM)
 optdepends=('instead-launcher: install and update INSTEAD games from net')
 
 build() {
