@@ -28,6 +28,9 @@ docs: rules
 	make pdf -C doc/
 	make wiki -C doc/ 
 	man doc/instead.6 > doc/instead.txt
+
+PKGBUILD: PKGBUILD.in tarball
+	cat PKGBUILD.in | sed -e s/MD5SUM/`md5sum $(ARCHIVE) | cut -f1 -d' '`/g > PKGBUILD
 	
 tarball: clean svnclean docs rules
 	echo "# you can define own flags here" > config.make
