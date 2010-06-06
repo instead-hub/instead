@@ -120,7 +120,8 @@ int main(int argc, char **argv)
 					p = games_sw;
 				else
 					p = game_local_games_path(1);
-				setup_zip(file, p);
+				if (setup_zip(file, p))
+					exit(1);
 			}
 #endif
 		} else if (!strcmp(argv[i], "-quit")) {
@@ -136,7 +137,8 @@ int main(int argc, char **argv)
 				p = games_sw;
 			else
 				p = game_tmp_path();
-			setup_zip(argv[i], p);
+			if (setup_zip(argv[i], p))
+				exit(1);
 			clean_tmp = 1;
 		}
 #endif
