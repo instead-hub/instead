@@ -356,10 +356,12 @@ int game_load(int nr)
 	s = game_save_path(0, nr);
 	if (s && !access(s, R_OK)) {
 		char cmd[PATH_MAX];
+		char sav[PATH_MAX];
+		strcpy(sav, s);
 		snprintf(cmd, sizeof(cmd) - 1, "load %s", s);
 		game_cmd(cmd);
 		if (nr == -1)
-			unlink(s);
+			unlink(sav);
 		return 0;
 	}
 	return -1;

@@ -24,6 +24,7 @@
 #endif
 
 static char save_path[PATH_MAX];
+static char cfg_path[PATH_MAX];
 static char local_games_path[PATH_MAX];
 static char local_themes_path[PATH_MAX];
 
@@ -196,17 +197,17 @@ char *game_cfg_path(void)
 	pw = getpwuid(getuid());
 	if (!pw) 
 		return NULL;
-	snprintf(save_path, sizeof(save_path) - 1 , "%s/.insteadrc", pw->pw_dir); /* at home */
-	if (!access(save_path, R_OK)) 
-		return save_path;
+	snprintf(cfg_path, sizeof(cfg_path) - 1 , "%s/.insteadrc", pw->pw_dir); /* at home */
+	if (!access(cfg_path, R_OK)) 
+		return cfg_path;
 /* no at home? Try in dir */
 	if (app)
-		snprintf(save_path, sizeof(save_path) - 1 , "%s/", app);
-	if (!app || (mkdir(save_path, S_IRWXU) && errno != EEXIST))
-		snprintf(save_path, sizeof(save_path) - 1 , "%s/.insteadrc", pw->pw_dir); /* fallback to home */
+		snprintf(cfg_path, sizeof(cfg_path) - 1 , "%s/", app);
+	if (!app || (mkdir(cfg_path, S_IRWXU) && errno != EEXIST))
+		snprintf(cfg_path, sizeof(cfg_path) - 1 , "%s/.insteadrc", pw->pw_dir); /* fallback to home */
 	else
-		snprintf(save_path, sizeof(save_path) - 1 , "%s/insteadrc", app);
-	return save_path;
+		snprintf(cfg_path, sizeof(cfg_path) - 1 , "%s/insteadrc", app);
+	return cfg_path;
 }
 
 char *game_save_path(int cr, int nr)

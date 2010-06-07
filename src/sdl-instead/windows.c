@@ -18,6 +18,7 @@ static char local_games_path[PATH_MAX];
 static char local_themes_path[PATH_MAX];
 
 static char save_path[PATH_MAX];
+static char cfg_path[PATH_MAX];
 
 void	nsleep(int u)
 {
@@ -170,17 +171,17 @@ char *game_cfg_path( void )
 	if (!p)
 		return NULL;
 
-	snprintf(save_path, sizeof(save_path) - 1 , "%src", p); /* appdir/insteadrc ;) */
-	if (!access(save_path, R_OK)) 
-		return save_path; 
+	snprintf(cfg_path, sizeof(cfg_path) - 1 , "%src", p); /* appdir/insteadrc ;) */
+	if (!access(cfg_path, R_OK)) 
+		return cfg_path; 
 /* no at home? Try in dir */
-	snprintf(save_path, sizeof(save_path) - 1 , "%s", p);
-	if (mkdir(save_path) && errno != EEXIST) {
-		snprintf(save_path, sizeof(save_path) - 1 , "%src", p); /* appdir/insteadrc ;) */
-		return save_path;
+	snprintf(cfg_path, sizeof(cfg_path) - 1 , "%s", p);
+	if (mkdir(cfg_path) && errno != EEXIST) {
+		snprintf(cfg_path, sizeof(cfg_path) - 1 , "%src", p); /* appdir/insteadrc ;) */
+		return cfg_path;
 	}
-	snprintf(save_path, sizeof(save_path) - 1 , "%s/insteadrc", p);
-	return save_path;
+	snprintf(cfg_path, sizeof(cfg_path) - 1 , "%s/insteadrc", p);
+	return cfg_path;
 }
 
 char *game_save_path( int cr, int nr )

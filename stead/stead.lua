@@ -1082,8 +1082,19 @@ end
 function go(self, where, back)
 	local was = self.where;
 	local need_scene = false;	
+
+	local ret
+
+	if not stead.in_goto_call then
+		ret = function(rc) stead.in_goto_call = false return nil end
+	else
+		ret = function(rc) return rc end
+	end
+
+	stead.in_goto_call = true
+
 	if where == nil then
-		return nil,false
+		return nil,ret(false)
 	end
 	if not isRoom(ref(where)) then
 		error ("Trying to go nowhere: "..where);
@@ -1102,7 +1113,7 @@ function go(self, where, back)
 		v,r = call(ref(self.where), 'exit', where);
 		stead.in_exit_call = nil
 		if r == false then
-			return v, r
+			return v, ret(r)
 		end
 	end
 
@@ -1111,7 +1122,7 @@ function go(self, where, back)
 	if not back or not isDialog(ref(self.where)) or isDialog(ref(where)) then
 		v, r = call(ref(where), 'enter', self.where);
 		if r == false then
-			return v, r
+			return v, ret(r)
 		end
 		need_scene = true;
 		if ref(was) ~= ref(self.where) then -- jump !!!
@@ -1135,7 +1146,8 @@ function go(self, where, back)
 	stead.in_entered_call = false
 
 	res = par('^^',res,v);
-	
+
+	ret();
 	if need_scene then -- or isForcedsc(ref(where)) then -- i'am not sure...
 		return par('^^',res,ref(where):scene());
 	end
@@ -1144,16 +1156,16 @@ end
 
 
 function player_goto(self, where)
-	local v = go(self, where, false);
-	return v;
+	local v, r = go(self, where, false);
+	return v, r;
 end
 function player_go(self, where)
 	local w = ref(self.where).way:srch(where);
 	if not w then
 		return nil,false
 	end
-	local v = go(self, w, false);
-	return v;
+	local v, r = go(self, w, false);
+	return v, r;
 end
 
 function player_save(self, name, h)
