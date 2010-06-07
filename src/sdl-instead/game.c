@@ -228,7 +228,7 @@ static img_t 	menubg = NULL;
 static img_t	menu = NULL;
 
 static int menu_shown = 0;
-
+static int browse_dialog = 0;
 
 int game_cmd(char *cmd);
 void game_clear(int x, int y, int w, int h)
@@ -1639,7 +1639,7 @@ static struct el *old_el = NULL;
 
 int game_paused(void)
 {
-	return menu_shown || use_xref || old_xref || gfx_fading() || minimized();
+	return browse_dialog || menu_shown || use_xref || old_xref || gfx_fading() || minimized();
 }
 
 void menu_update(struct el *elem)
@@ -2396,7 +2396,9 @@ int game_from_disk(void)
 			game_menu(old_menu);
 	}
 	mouse_cursor(1);
+	browse_dialog = 1;
 	g = p = open_file_dialog();
+	browse_dialog = 0;
 	mouse_cursor(0);
 	if (!p)
 		return -1;
