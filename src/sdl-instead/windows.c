@@ -16,6 +16,7 @@ extern char *curgame_dir;
 
 static char local_games_path[PATH_MAX];
 static char local_themes_path[PATH_MAX];
+static char local_stead_path[PATH_MAX];
 
 static char save_path[PATH_MAX];
 static char cfg_path[PATH_MAX];
@@ -132,6 +133,13 @@ char *game_local_themes_path(void)
 	snprintf(local_themes_path, sizeof(local_themes_path) - 1 , "%s/themes", app_dir());
 	return local_themes_path;
 }
+
+char *game_local_stead_path(void)
+{
+	snprintf(local_stead_path, sizeof(local_stead_path) - 1 , "%s/stead", app_dir());
+	return local_stead_path;
+}
+
 #if 0
 char *home_dir( void )
 {
