@@ -23,7 +23,7 @@ int mouse_cursor(int on)
 	if (on)
 		SDL_ShowCursor(SDL_ENABLE);
 	else
-		SDL_ShowCursor(SDL_ENABLE);
+		SDL_ShowCursor(SDL_DISABLE);
 	return 0;
 }
 
