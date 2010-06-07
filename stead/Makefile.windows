@@ -5,3 +5,5 @@ install:
 	if not exist ..\bin\stead mkdir ..\bin\stead
 	copy stead.lua ..\bin\stead
 	copy gui.lua ..\bin\stead
+	copy goto.lua ..\bin\stead
+	copy xobj.lua ..\bin\stead
