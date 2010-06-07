@@ -2395,8 +2395,9 @@ int game_from_disk(void)
 		if (old_menu != -1)
 			game_menu(old_menu);
 	}
-
+	mouse_cursor(1);
 	g = p = open_file_dialog();
+	mouse_cursor(0);
 	if (!p)
 		return -1;
 	strcpy(dir, p);
