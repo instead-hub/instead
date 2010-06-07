@@ -21,6 +21,8 @@ extern char 	*err_msg; /* last error message */
 extern char 	game_cwd[PATH_MAX]; /* current game cwd */
 extern char 	*curgame_dir;
 
+extern char	*game_local_stead_path(void);
+
 extern char 	*game_local_games_path(int cr);
 extern char 	*game_tmp_path(void);
 extern int 	game_theme_select(const char *name);

@@ -27,6 +27,7 @@ static char save_path[PATH_MAX];
 static char cfg_path[PATH_MAX];
 static char local_games_path[PATH_MAX];
 static char local_themes_path[PATH_MAX];
+static char local_stead_path[PATH_MAX];
 
 
 void	nsleep(int u)
@@ -188,6 +189,15 @@ char *game_local_themes_path(void)
 		return NULL;
 	snprintf(local_themes_path, sizeof(local_themes_path) - 1 , "%s/themes", app);
 	return local_themes_path;
+}
+
+char *game_local_stead_path(void)
+{
+	char *app = appdir();
+	if (!app)
+		return NULL;
+	snprintf(local_stead_path, sizeof(local_stead_path) - 1 , "%s/stead", app);
+	return local_stead_path;
 }
 
 char *game_cfg_path(void)

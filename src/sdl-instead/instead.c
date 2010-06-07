@@ -413,8 +413,27 @@ static const luaL_Reg base_funcs[] = {
 
 int instead_init(void)
 {
+	char *p;
+	static char stead_path[PATH_MAX];
 	setlocale(LC_ALL,"");
-	setlocale(LC_NUMERIC,"C"); /* to avoid . -> , in numbers */
+	setlocale(LC_NUMERIC,"C"); /* to avoid . -> , in numbers */	
+	
+	if (STEAD_PATH[0] == '.') {
+		strcpy(stead_path, game_cwd);
+		strcat(stead_path, "/");
+		strcat(stead_path, STEAD_PATH);
+	} else {
+		strcpy(stead_path, STEAD_PATH);
+	}
+	strcat(stead_path, "/?.lua");
+	p = game_local_stead_path();
+	if (p) {
+		strcat(stead_path, ";");
+		strcat(stead_path, p);
+		strcat(stead_path, "/?.lua");
+	}
+
+	setenv("LUA_PATH", stead_path, 1);
 //	strcpy(curcp, "UTF-8");
 	/* initialize Lua */
 	L = lua_open();
@@ -426,7 +445,7 @@ int instead_init(void)
 		return -1;
 	}
 
-   	if (dofile(L,STEAD_PATH"/gui.lua")) {
+	if (dofile(L,STEAD_PATH"/gui.lua")) {
 		instead_clear();
 		return -1;
 	}
