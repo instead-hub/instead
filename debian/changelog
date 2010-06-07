@@ -9,7 +9,7 @@ instead (1.2.0) unstable; urgency=low
   * init function;
   * snapshots;
   * hook and inherit;
-  * entered human friendly action;
+  * entered/left human friendly action;
   * stead.cmd, stead.args added;
   * require added (module goto);
   * aligned width for themes/games dialog;
