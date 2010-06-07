@@ -1,6 +1,6 @@
-require "kbd/kbd-en"
-require "kbd/kbd-ru"
-require "kbd/kbd-lower"
+require "kbd-en"
+require "kbd-ru"
+require "kbd-lower"
 
 input.cursor = '_'
 
