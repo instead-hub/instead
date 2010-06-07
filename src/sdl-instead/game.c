@@ -951,9 +951,20 @@ img_t	game_pict_scale(img_t img, int ww, int hh)
 	return img2;
 }
 
+int game_menu_box_wh(const char *txt, int *w, int *h)
+{
+	layout_t lay;
+	int b = game_theme.border_w;
+	int pad = game_theme.pad;
 
+	lay = txt_layout(game_theme.menu_font, ALIGN_CENTER, game_theme.win_w - 2 * (b + pad), 0);
+	txt_layout_set(lay, (char*)txt);
+	txt_layout_real_size(lay, w, h);
+	txt_layout_free(lay);
+	return 0;
+}
 
-void game_menu_box(int show, const char *txt)
+void game_menu_box_width(int show, const char *txt, int width)
 {	
 //	img_t	menu;
 	int w, h, mw, mh;
@@ -987,21 +998,27 @@ void game_menu_box(int show, const char *txt)
 		gfx_flip();
 		return;
 	}
-	lay = txt_layout(game_theme.menu_font, ALIGN_CENTER, game_theme.win_w - 2 * (b + pad), 0);
-	txt_layout_set(lay, (char*)txt);
-	txt_layout_real_size(lay, &w, &h);	
-	txt_layout_free(lay);
+
+
+	game_menu_box_wh(txt, &w, &h);
+
+	if (width)
+		w = width;
 
 	lay = txt_layout(game_theme.menu_font, ALIGN_CENTER, w, 0);
 
 	txt_layout_set(lay, (char*)txt);
-	txt_layout_real_size(lay, &w, &h);	
+	txt_layout_real_size(lay, &w, &h);
+	if (width)
+		w = width;
 
 	txt_layout_color(lay, game_theme.menu_fg);
 	txt_layout_link_color(lay, game_theme.menu_link);
 	txt_layout_active_color(lay, game_theme.menu_alink);
 	txt_layout_set(lay, (char*)txt);
 	txt_layout_real_size(lay, &w, &h);	
+	if (width)
+		w = width;
 	if (menu) {
 		gfx_free_image(menu);
 		menu = NULL;
@@ -1023,6 +1040,19 @@ void game_menu_box(int show, const char *txt)
 	el_draw(el_menu);
 	game_cursor(CURSOR_DRAW);
 	gfx_flip();
+}
+
+void game_menu_box(int show, const char *txt)
+{
+	int w = 0;
+	if (cur_menu == menu_games) { /* hack a bit :( */
+		w = games_menu_maxw();
+		game_menu_gen();
+	} else if (cur_menu == menu_themes) {
+		w = themes_menu_maxw();
+		game_menu_gen();
+	}
+	return game_menu_box_width(show, txt, w);
 }
 
 int check_new_place(char *title)

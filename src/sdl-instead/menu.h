@@ -18,6 +18,8 @@ extern int game_menu_act(const char *a);
 extern void custom_theme_warn(void);
 extern int menu_langs_lookup(const char *path);
 extern int menu_lang_select(const char *name);
+extern int games_menu_maxw(void);
+extern int themes_menu_maxw(void);
 
 struct lang {
 	char *path;

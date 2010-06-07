@@ -44,7 +44,7 @@ char *FROM_THEME = NULL;
 
 char *DISABLED_SAVE_MENU = NULL;
 
-static char  menu_buff[4096];
+static char  menu_buff[8192];
 
 static char *slot_name(const char *path)
 {
@@ -227,6 +227,23 @@ static void games_menu(void)
 	strcat(menu_buff, BACK_MENU); 
 }
 
+int games_menu_maxw(void)
+{
+	int i = 0;
+	int oldm = games_menu_from;
+	int maxw = 0;
+	for (i = 0; i < games_nr; i += MENU_GAMES_MAX) {
+		int w;
+		games_menu_from = i;
+		games_menu();
+		game_menu_box_wh(menu_buff, &w, NULL);
+		if (w > maxw)
+			maxw = w;
+	}
+	games_menu_from = oldm;
+	return maxw;
+}
+
 static void themes_menu(void)
 {
 	int i, n;
@@ -252,6 +269,23 @@ static void themes_menu(void)
 		sprintf(menu_buff, NOTHEMES_MENU, THEMES_PATH);
 	strcat(menu_buff, "\n");
 	strcat(menu_buff, BACK_MENU); 
+}
+
+int themes_menu_maxw(void)
+{
+	int i = 0;
+	int oldm = themes_menu_from;
+	int maxw = 0;
+	for (i = 0; i < themes_nr; i += MENU_THEMES_MAX) {
+		int w;
+		themes_menu_from = i;
+		themes_menu();
+		game_menu_box_wh(menu_buff, &w, NULL);
+		if (w > maxw)
+			maxw = w;
+	}
+	themes_menu_from = oldm;
+	return maxw;
 }
 
 static char *opt_get_mode(void)
