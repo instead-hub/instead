@@ -2,14 +2,14 @@ instead (1.2.0) unstable; urgency=low
 
   * unpack/install feature;
   * browse feature (win32 and gtk);
-  * clever sorting;
+  * clever game/themes sorting;
   * remove games;
-  * local appdata mode;
+  * local appdata mode (portable app);
   * prefs object;
-  * init function;
-  * snapshots;
+  * init() function;
+  * snapshots (not documented?);
   * hook and inherit;
-  * entered/left human friendly action;
+  * entered/left human friendly actions;
   * stead.cmd, stead.args added;
   * require added (module goto);
   * aligned width for themes/games dialog;
