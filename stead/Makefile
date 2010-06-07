@@ -10,6 +10,7 @@ install:
 	$(INSTALL) gui.lua $(STEADPATH)/gui.lua
 	$(INSTALL) goto.lua $(STEADPATH)/goto.lua
 	$(INSTALL) xobj.lua $(STEADPATH)/xobj.lua
+	$(INSTALL) input.lua $(STEADPATH)/input.lua
 
 uninstall:
 	$(RM) $(STEADPATH)/stead.lua
