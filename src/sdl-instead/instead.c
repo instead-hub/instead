@@ -411,19 +411,17 @@ static const luaL_Reg base_funcs[] = {
 	{NULL, NULL}
 };
 
-int instead_init(void)
+static int instead_package(void)
 {
 	char *p;
-	static char stead_path[PATH_MAX];
-	setlocale(LC_ALL,"");
-	setlocale(LC_NUMERIC,"C"); /* to avoid . -> , in numbers */	
-	
+	char stead_path[PATH_MAX] = "package.path=\"";
+
 	if (STEAD_PATH[0] == '.') {
-		strcpy(stead_path, game_cwd);
+		strcat(stead_path, game_cwd);
 		strcat(stead_path, "/");
 		strcat(stead_path, STEAD_PATH);
 	} else {
-		strcpy(stead_path, STEAD_PATH);
+		strcat(stead_path, STEAD_PATH);
 	}
 	strcat(stead_path, "/?.lua");
 	p = game_local_stead_path();
@@ -432,15 +430,28 @@ int instead_init(void)
 		strcat(stead_path, p);
 		strcat(stead_path, "/?.lua");
 	}
-
-	setenv("LUA_PATH", stead_path, 1);
+	strcat(stead_path, "\"");
+	instead_eval(stead_path); instead_clear();
+/*	putenv(stead_path); */
+	return 0;
+}
+int instead_init(void)
+{
+	setlocale(LC_ALL,"");
+	setlocale(LC_NUMERIC,"C"); /* to avoid . -> , in numbers */	
 //	strcpy(curcp, "UTF-8");
+
 	/* initialize Lua */
+
 	L = lua_open();
 	if (!L)
 		return -1;
+
 	luaL_openlibs(L);
 	luaL_register(L, "_G", base_funcs);
+
+	instead_package();
+
 	if (dofile(L,STEAD_PATH"/stead.lua")) {
 		return -1;
 	}

@@ -622,7 +622,8 @@ int counter_fn(int interval, void *p)
 int game_init(const char *name)
 {
 	getcwd(game_cwd, sizeof(game_cwd));
-	
+	unix_path(game_cwd);
+
 	if (name)
 		game_err_msg(NULL);
 
