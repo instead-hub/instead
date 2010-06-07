@@ -195,7 +195,7 @@ game.action = hook(game.action, function (f, s, cmd, ...)
 	if cmd == 'kbd_enter' then
 		return call(here(), 'kbd_enter');
 	end
-	if f then return f(s, cmd, unpack(args)) end
+	if f then return f(s, cmd, unpack(arg)) end
 end)
 
 input_kbd = function(s, down, key)
