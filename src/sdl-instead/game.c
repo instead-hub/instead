@@ -563,7 +563,7 @@ static void anigif_do(void *data)
 	void *v;
 	img_t img;
 
-	if (menu_shown || gfx_fading() || minimized())
+	if (browse_dialog || menu_shown || gfx_fading() || minimized())
 		return;
 
 	game_cursor(CURSOR_CLEAR);
