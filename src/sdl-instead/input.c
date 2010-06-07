@@ -18,6 +18,15 @@ int mouse_focus(void)
 	return m_focus;
 }
 
+int mouse_cursor(int on)
+{
+	if (on)
+		SDL_ShowCursor(SDL_ENABLE);
+	else
+		SDL_ShowCursor(SDL_ENABLE);
+	return 0;
+}
+
 void push_user_event(void (*p) (void*), void *data)
 {
 	SDL_Event event;
@@ -72,11 +81,11 @@ int input(struct inp_event *inp, int wait)
 			if (event.active.gain) {
 				m_focus = 1;
 				if (opt_fs)
-					SDL_ShowCursor(SDL_DISABLE);
+					mouse_cursor(0);
 			} else if (event.active.state & SDL_APPMOUSEFOCUS) {
 				m_focus = 0;
 				if (opt_fs)
-					SDL_ShowCursor(SDL_ENABLE); /* is it hack?*/
+					mouse_cursor(1); /* is it hack?*/
 			}
 		}
 		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_EVENTMASK(SDL_ACTIVEEVENT)) > 0)

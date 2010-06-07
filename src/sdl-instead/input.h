@@ -26,5 +26,6 @@ void input_clear(void);
 void push_user_event(void (*p) (void*), void *data);
 int mouse_focus(void);
 extern int minimized(void);
+extern int mouse_cursor(int on);
 
 #endif
