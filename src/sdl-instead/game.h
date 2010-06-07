@@ -52,6 +52,8 @@ extern int	game_cmd(char *cmd);
 
 extern void	game_menu(int nr); /* select and show menu */
 extern void	game_menu_box(int show, const char *txt); /* show menu */
+extern int	game_menu_box_wh(const char *txt, int *w, int *h);
+extern void	game_menu_box_width(int show, const char *txt, int width);
 
 extern int	game_load(int nr);
 extern int	game_save(int nr);

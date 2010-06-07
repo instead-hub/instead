@@ -11,6 +11,8 @@ instead (1.2.0) unstable; urgency=low
   * hook and inherit;
   * entered human friendly action;
   * stead.cmd, stead.args added;
+  * require added (module goto);
+  * aligned width for themes/games dialog;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 01 Jun 2010 17:40:00 +0300  
 
