@@ -4,11 +4,12 @@ PREFIX=
 DESTDIR=
 BIN=..\..\bin\\
 
-STEADPATH=./stead
-THEMESPATH=./themes/
-GAMESPATH=./games
-ICONPATH=./icon
-LANGPATH=./languages
+DATAPATH=.
+STEADPATH=$(DATAPATH)/stead
+THEMESPATH=$(DATAPATH)/themes/
+GAMESPATH=$(DATAPATH)/games
+ICONPATH=$(DATAPATH)/icon
+LANGPATH=$(DATAPATH)/languages
 
 ZLIB_CFLAGS=-I../zlib
 ZLIB_LFLAGS=../zlib/libz.a

@@ -9,13 +9,19 @@ echo "ok"
 
 echo -n "Checking pkg-config --cflags zlib..."
 if ! pkg-config --cflags zlib >/dev/null 2>&1; then
-	echo "internal"
-	zlib_cflags=
-	zlib_libs=
+	if [[ -f /usr/include/zlib.h ]]; then
+		echo "not found, but /usr/include/zlib.h exists..."
+		zlib_cflags="x"
+		zlib_libs=
+	else 
+		echo "internal"
+		zlib_cflags=
+		zlib_libs=
+	fi
 else
 	echo "system"
-	zlib_cflags="pkg-config --cflags zlib"	
-	zlib_libs="pkg-config --libs zlib"	
+	zlib_cflags="pkg-config --cflags zlib"
+	zlib_libs="pkg-config --libs zlib"
 fi
 
 echo -n "Checking pkg-config --cflags gtk+-2.0..."
@@ -117,6 +123,9 @@ if [[ -z "$zlib_cflags" ]]; then
 	echo "SUBDIRS=src/zlib" >> config.make
 	echo "ZLIB_CFLAGS=-I../zlib" >> config.make
 	echo "ZLIB_LFLAGS=../zlib/libz.a" >> config.make
+elif [ "$zlib_cflags" = "x" ]; then
+	echo "ZLIB_CFLAGS=" >> config.make
+	echo "ZLIB_LFLAGS=" >> config.make
 else
 	echo "ZLIB_CFLAGS=\$(shell $zlib_cflags)" >> config.make
 	echo "ZLIB_LFLAGS=\$(shell $zlib_libs)" >> config.make
@@ -154,12 +163,13 @@ elif [ "x$ans" = "x2" ]; then
 
 	echo "PREFIX=$prefix" >> config.make
 	echo "BIN=\$(DESTDIR)\$(PREFIX)/bin/" >> config.make 
-	echo "STEADPATH=\$(DESTDIR)\$(PREFIX)/share/instead" >> config.make
-	echo "THEMESPATH=\$(STEADPATH)/themes" >> config.make
-	echo "GAMESPATH=\$(STEADPATH)/games" >> config.make
+	echo "DATAPATH=\$(DESTDIR)\$(PREFIX)/share/instead" >> config.make
+	echo "STEADPATH=\$(DATAPATH)/stead" >> config.make
+	echo "THEMESPATH=\$(DATAPATH)/themes" >> config.make
+	echo "GAMESPATH=\$(DATAPATH)/games" >> config.make
 	echo "ICONPATH=\$(DESTDIR)\$(PREFIX)/share/pixmaps" >> config.make
 	echo "DOCPATH=\$(DESTDIR)\$(PREFIX)/share/doc/instead" >> config.make
-	echo "LANGPATH=\$(STEADPATH)/languages" >> config.make
+	echo "LANGPATH=\$(DATAPATH)/languages" >> config.make
 	echo "MANPATH=\$(DESTDIR)\$(PREFIX)/share/man/man6" >> config.make
 
 	echo "Ok. We are ready to build and install. Use these commands:"
