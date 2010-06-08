@@ -30,7 +30,7 @@ build-stamp: configure-stamp
 	rm -rf Rules.make
 	ln -s Rules.make.system Rules.make
 	echo "2" | ./configure.sh
-	$(MAKE) PREFIX=/usr BIN=/usr/games STEADPATH=/usr/share/games/instead
+	$(MAKE) PREFIX=/usr BIN=/usr/games DATAPATH=/usr/share/games/instead
 	rm -rf Rules.make
 	#docbook-to-man debian/instead.sgml > instead.1
 	touch $@
@@ -58,7 +58,7 @@ install: build
 	# Add here commands to install the package into debian/instead.
 	rm -rf Rules.make
 	ln -s Rules.make.system Rules.make
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/instead PREFIX=/usr STEADPATH=$(CURDIR)/debian/instead/usr/share/games/instead BIN=$(CURDIR)/debian/instead/usr/games
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/instead PREFIX=/usr DATAPATH=$(CURDIR)/debian/instead/usr/share/games/instead BIN=$(CURDIR)/debian/instead/usr/games
 	rm -rf Rules.make
 
 
