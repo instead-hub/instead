@@ -232,7 +232,7 @@ out:
 	if (debug_sw)
 		debug_done();
 #ifdef _USE_GTK
-	gtk_main_quit ();
+/*	gtk_main_quit (); */
 #endif
 #ifdef _USE_UNPACK
 	if (clean_tmp)
