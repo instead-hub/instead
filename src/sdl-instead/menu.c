@@ -50,21 +50,50 @@ static char *slot_name(const char *path)
 {
 	struct stat 	st;
 	char *l;
-	FILE *fd;
+	if (stat(path, &st))
+		return NULL;
 	l = lookup_tag(path, "Name", "--");
 	if (l) {
 		if (!is_empty(l)) {
+			int y;
+			char *m;
+			static char *months[] = {/* to work on every locale ;)*/
+				"Jan", "Feb",
+				"Mar", "Apr", "May",
+				"Jun", "Jul", "Aug",
+				"Sep", "Oct", "Nov",
+				"Dec",
+			};
+			struct tm *tm;
+			time_t t;
+
 			char *s = fromgame(l);
 			free(l);
-			return s;
+			if (!s)
+				return s;
+			time(&t);
+			tm = localtime(&t);
+			y = tm->tm_year;
+			tm = localtime(&st.st_ctime);
+			l = malloc(strlen(s) + 64);
+			if (!l)
+				return s;
+			if (tm->tm_mon >=0 && tm->tm_mon < 12)
+				m = months[tm->tm_mon];
+			else
+				m = "?";
+			if (tm->tm_year == y)
+				snprintf(l, 64, "%02d %s %02d:%02d - ", 
+					tm->tm_mday, m, tm->tm_hour, tm->tm_min);
+			else
+				snprintf(l, 64, "%02d %s %02d:%02d %04d - ", 
+					tm->tm_mday, m, tm->tm_hour, tm->tm_min, tm->tm_year);
+			strcat(l, s);
+			free(s);
+			return l;
 		}
 		free(l);
 	}
-	fd = fopen(path, "r");
-	if (!fd)
-		return NULL;
-	if (stat(path, &st))
-		return NULL;
 	l = ctime(&st.st_ctime);
 	if (!l)
 		return NULL;
