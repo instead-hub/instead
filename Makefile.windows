@@ -1,6 +1,7 @@
 MAKE=mingw32-make
 
 all: config.make
+	$(MAKE) -C src\zlib all
 	$(MAKE) -C src\sdl-instead all
 	$(MAKE) -C themes -f Makefile.windows all
 
