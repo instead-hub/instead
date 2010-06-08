@@ -29,6 +29,7 @@ build-stamp: configure-stamp
 	# Add here commands to compile the package.
 	rm -rf Rules.make
 	ln -s Rules.make.system Rules.make
+	echo "2" | ./configure.sh
 	$(MAKE) PREFIX=/usr BIN=/usr/games STEADPATH=/usr/share/games/instead
 	rm -rf Rules.make
 	#docbook-to-man debian/instead.sgml > instead.1
