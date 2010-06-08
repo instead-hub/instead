@@ -414,7 +414,14 @@ static const luaL_Reg base_funcs[] = {
 static int instead_package(void)
 {
 	char *p;
-	char stead_path[PATH_MAX] = "package.path=\"";
+	char stead_path[PATH_MAX] = "package.path=\"./?.lua;";
+
+	p = game_local_stead_path();
+	if (p) {
+		strcat(stead_path, p);
+		strcat(stead_path, "/?.lua");
+		strcat(stead_path, ";");
+	}
 
 	if (STEAD_PATH[0] == '.') {
 		strcat(stead_path, game_cwd);
@@ -424,12 +431,6 @@ static int instead_package(void)
 		strcat(stead_path, STEAD_PATH);
 	}
 	strcat(stead_path, "/?.lua");
-	p = game_local_stead_path();
-	if (p) {
-		strcat(stead_path, ";");
-		strcat(stead_path, p);
-		strcat(stead_path, "/?.lua");
-	}
 	strcat(stead_path, "\"");
 	instead_eval(stead_path); instead_clear();
 /*	putenv(stead_path); */

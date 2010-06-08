@@ -571,9 +571,11 @@ int game_menu_act(const char *a)
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a,"/quit")) {
 		return -1;
+#ifdef _USE_BROWSE
 	} else if (!strcmp(a,"/browse")) {
 		game_from_disk();
 		return 0;
+#endif
 	} else if (cur_menu == menu_games) {
 		char *p;
 		p = strdup(a);

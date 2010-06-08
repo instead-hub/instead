@@ -2381,7 +2381,7 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 
 extern char zip_game_dirname[];
 extern int unpack(const char *zipfilename, const char *dirname);
-
+#ifdef _USE_BROWSE
 int game_from_disk(void)
 {
 	int i = 0;
@@ -2396,9 +2396,11 @@ int game_from_disk(void)
 			game_menu(old_menu);
 	}
 	mouse_cursor(1);
+	game_cursor(CURSOR_OFF);
 	browse_dialog = 1;
 	g = p = open_file_dialog();
 	browse_dialog = 0;
+	game_cursor(CURSOR_ON);
 	mouse_cursor(0);
 	if (!p)
 		return -1;
@@ -2446,7 +2448,7 @@ clean:
 	return -1;
 #endif
 }
-
+#endif
 int game_loop(void)
 {
 	static int alt_pressed = 0;
@@ -2513,10 +2515,12 @@ int game_loop(void)
 					menu_toggle();
 			} else if (!is_key(&ev, "f4")) {
 #ifdef _USE_UNPACK
+#ifdef _USE_BROWSE
 				mouse_reset(1);
 				if (!game_from_disk()) {
 					shift_pressed = alt_pressed = 0;
 				}
+#endif
 #endif
 			} else if (!is_key(&ev, "escape")) {
 				if (use_xref)
