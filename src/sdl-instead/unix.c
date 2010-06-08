@@ -139,8 +139,11 @@ char *open_file_dialog(void)
 			g_free (filename);
 		}
 	}
-	g_signal_handler_disconnect (GTK_WIDGET(file_dialog), response_handler);
-	gtk_widget_destroy(GTK_WIDGET(file_dialog));
+
+	if (gtk_response != GTK_RESPONSE_DELETE_EVENT) {
+		g_signal_handler_disconnect (GTK_WIDGET(file_dialog), response_handler);
+		gtk_widget_destroy(GTK_WIDGET(file_dialog));
+	}
 	while(gtk_events_pending())
 		gtk_main_iteration();
 	return (file[0])?file:NULL;
