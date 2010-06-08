@@ -43,6 +43,7 @@ clean:
 		$(MAKE) clean -C $$dir $(@) || exit 1; \
 	done;
 	$(RM) -f $(ARCHIVE)
+	$(RM) -f PKGBUILD
 
 install: all
 ifeq ($(SYSTEMSETUP), yes)
