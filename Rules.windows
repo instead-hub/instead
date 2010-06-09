@@ -26,6 +26,8 @@ LDFLAGS += -liconv
 CC=gcc
 RM=del
 EXE=.exe
+AR=ar -rc
+RANLIB=ranlib
 
 INSTALLD=echo mkdir
 INSTALL=copy

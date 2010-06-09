@@ -12,3 +12,6 @@ libz.a: $(OBJS) $(OBJA)
 
 clean:
 	rm -f *.o *.a
+
+install:
+	
