@@ -7,7 +7,13 @@ end
 game.action = hook(game.action, 
 function(f, s, cmd, x, y, ...)
 	if cmd == 'click' then
-		return call(here(), 'click', x, y);
+		if here().click then
+			return call(here(), 'click', x, y, unpack(arg));
+		end
+		if game.click then
+			return call(game, 'click', x, y, unpack(arg));
+		end
+		return nil,true
 	end
 	if f then return f(s, cmd, x, y, unpack(arg)) end
 end)
