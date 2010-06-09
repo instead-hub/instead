@@ -1,7 +1,7 @@
 MAKE=mingw32-make
 
 all: config.make
-	$(MAKE) -C src\zlib all
+	$(MAKE) -C src\zlib -f Makefile.windows all
 	$(MAKE) -C src\sdl-instead all
 	$(MAKE) -C themes -f Makefile.windows all
 
@@ -10,6 +10,7 @@ config.make:
 
 clean:
 	$(MAKE) -C src\sdl-instead clean
+	$(MAKE) -C src\zlib -f Makefile.windows clean
 
 install: all
 	if not exist bin mkdir bin
@@ -20,5 +21,3 @@ install: all
 	$(MAKE) -C icon -f Makefile.windows install
 	$(MAKE) -C languages -f Makefile.windows install
 	$(MAKE) -C doc -f Makefile.windows install
-
-
