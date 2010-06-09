@@ -125,7 +125,7 @@ if [[ -z "$zlib_cflags" ]]; then
 	echo "ZLIB_LFLAGS=../zlib/libz.a" >> config.make
 elif [ "$zlib_cflags" = "x" ]; then
 	echo "ZLIB_CFLAGS=" >> config.make
-	echo "ZLIB_LFLAGS=" >> config.make
+	echo "ZLIB_LFLAGS=-z" >> config.make
 else
 	echo "ZLIB_CFLAGS=\$(shell $zlib_cflags)" >> config.make
 	echo "ZLIB_LFLAGS=\$(shell $zlib_libs)" >> config.make
