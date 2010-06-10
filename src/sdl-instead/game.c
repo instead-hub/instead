@@ -2514,6 +2514,9 @@ int game_loop(void)
 				if (!menu_shown)
 					menu_toggle();
 			} else if (!is_key(&ev, "f4")) {
+				mouse_reset(1);
+				game_menu(menu_games);
+			} else if (!is_key(&ev, "f6")) {
 #ifdef _USE_UNPACK
 #ifdef _USE_BROWSE
 				mouse_reset(1);
