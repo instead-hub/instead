@@ -64,6 +64,24 @@ run_response_handler (GtkDialog *dialog,
 {
 	gtk_response = response_id;
 }
+GdkPixbuf *create_pixbuf(const gchar * filename)
+{
+	gchar path[PATH_MAX];
+	GdkPixbuf *pixbuf;
+	GError *error = NULL;
+	path[0] = 0;
+	if (filename[0] == '.') {
+		strcpy(path, game_cwd);
+		strcat(path, "/");
+	}
+	strcat(path, filename);
+	pixbuf = gdk_pixbuf_new_from_file(path, &error);
+	if(!pixbuf) {
+		fprintf(stderr, "%s\n", error->message);
+		g_error_free(error);
+	}
+	return pixbuf;
+}
 #endif
 
 extern char *BROWSE_MENU;
@@ -102,6 +120,8 @@ char *open_file_dialog(void)
 			NULL, GTK_FILE_CHOOSER_ACTION_OPEN,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			GTK_STOCK_OPEN,   GTK_RESPONSE_ACCEPT, NULL);
+
+	gtk_window_set_icon(GTK_WINDOW(file_dialog), create_pixbuf(ICON_PATH"/sdl_instead.png"));
 
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_dialog),
 		file_filter_all);
