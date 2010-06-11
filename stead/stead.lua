@@ -2341,6 +2341,15 @@ function hook(o, f)
 	end
 end
 
+function check_version(v)
+	if not tostring(v) then
+		return
+	end
+	if stead.version < v then
+		error ([[The game requires instead engine of version ]] ..v.. [[ or higher. http://instead.googlecode.com]])
+	end
+end
+
 --- here the game begins
 function stead_init()
 pl = player {
