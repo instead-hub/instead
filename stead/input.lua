@@ -193,7 +193,13 @@ end
 
 game.action = hook(game.action, function (f, s, cmd, ...)
 	if cmd == 'kbd_enter' then
-		return call(here(), 'kbd_enter');
+		if here().inp_enter then
+			return call(here(), 'inp_enter');
+		end
+		if game.inp_enter then
+			return call(here(), 'inp_enter');
+		end
+		return nil, true -- nothing todo
 	end
 	if f then return f(s, cmd, unpack(arg)) end
 end)
