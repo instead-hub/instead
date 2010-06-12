@@ -2065,14 +2065,22 @@ function remove(obj, from)
 	return o
 end
 
-function take(obj, wh)
+function taketo(obj, wh, pos)
 	local o = remove(obj, wh);
 	if not isObject(o) then
 		error "Trying to take wrong object.";
 	end
-	inv():add(obj);
+	inv():add(obj, pos);
 	o._taken = true
 	return o
+end
+
+function take(obj, wh)
+	return taketo(obj, wh);
+end
+
+function takef(obj, wh)
+	return taketo(obj, wh, 1);
 end
 
 function putto(obj, w, pos)
