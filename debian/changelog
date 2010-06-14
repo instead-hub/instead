@@ -4,6 +4,7 @@ instead (1.2.0) unstable; urgency=low
   * browse feature (win32 and gtk);
   * clever game/themes sorting;
   * remove games;
+  * aligned width for themes/games dialog;
   * local appdata mode (portable app);
   * prefs object;
   * init() function;
@@ -12,10 +13,11 @@ instead (1.2.0) unstable; urgency=low
   * entered/left human friendly actions;
   * stead.cmd, stead.args added;
   * require added (modules: goto, xobj, input, click);
-  * aligned width for themes/games dialog;
   * time of save slots;
   * check_version added;
   * taketo/takef added;
+  * disable/enable/disable_all/enable_all added;
+  * exist() added (seen over disabled objects);
   * many small bugfixes...
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 01 Jun 2010 17:40:00 +0300  
