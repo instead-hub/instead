@@ -544,29 +544,31 @@ function list_name(self, name)
 	end
 	return nil
 end
-function list_id(self, id)
+function list_id(self, id, dis)
 	local n,o,ii
 	for n,o,ii in opairs(self) do
 		o = ref(o);
-		if isObject(o) and not isDisabled(o) and id == o.id then
-			return ii;
+		if dis or not isDisabled(o) then
+			if isObject(o) and id == o.id then
+				return ii;
+			end
 		end
 	end
 end
 
-function list_search(self, n)
+function list_search(self, n, dis)
 	local i;
 	i = self:look(n);
 	if not i then
 		i = self:name(n);
 	end
 	if not i and tonumber(n) then
-		i = self:byid(tonumber(n));
+		i = self:byid(tonumber(n), dis);
 		if not i then
 			return nil
 		end
 	end
-	if isDisabled(ref(self[i])) then
+	if not dis and isDisabled(ref(self[i])) then
 		return nil;
 	end
 	return self[i], i;
@@ -696,20 +698,20 @@ function room_look(self)
 	return cat(vv,' ');
 end
 
-function obj_search(v, n)
+function obj_search(v, n, dis)
 	local i;
 	local o;
-	if isDisabled(v) then
+	if not dis and isDisabled(v) then
 		return
 	end
-	o = v.obj:srch(n);
+	o = v.obj:srch(n, dis);
 	if o then
 		return o, v;
 	end
 	for i,o in opairs(v.obj) do
 		o = ref(o);
 		if isObject(o) then
-			local r,rr = obj_search(o, n);
+			local r,rr = obj_search(o, n, dis);
 			if r then
 				return r, rr;
 			end
@@ -2146,6 +2148,20 @@ function seen(obj, wh)
 	return nil
 end
 
+function exist(obj, wh)
+	if not wh then
+		wh = here();
+	else
+		wh = ref(wh);
+	end
+	local o,w = wh:srch(obj, true);
+	o = ref(o);
+	if isObject(o) then
+		return o,w
+	end
+	return nil
+end
+
 function have(obj)
 	local o = inv():srch(obj);
 	o = ref(o);
@@ -2287,6 +2303,38 @@ end
 
 function disabled(o)
 	return isDisabled(ref(o))
+end
+
+function disable(o)
+	o = ref(o)
+	if isObject(o) then
+		o:disable()
+	end
+	return o
+end
+
+function enable(o)
+	o = ref(o)
+	if isObject(o) then
+		o:enable()
+	end
+	return o
+end
+
+function disable_all(o)
+	o = ref(o)
+	if isObject(o) then
+		o:disable_all()
+	end
+	return o
+end
+
+function enable_all(o)
+	o = ref(o)
+	if isObject(o) then
+		o:enable_all()
+	end
+	return o
 end
 
 function isForSave(k, v, s) -- k - key, v - value, s -- parent table
