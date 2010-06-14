@@ -1,6 +1,26 @@
 -- add this: reuire "dbg"
 -- in your project
 -- for debug tools
+require "input"
+input.kbd_alt = true
+execute_cmd = room {
+	nam = "Execute Lua code",
+	debug = true,
+	forcedsc = true,
+	dsc = "Enter Lua code here to exec.",
+	inp_enter = function(s)
+		if type(s.obj[1]._txt) == 'string' then
+			local f = loadstring(s.obj[1]._txt);
+			if f then
+				return f();
+			end
+			return "Error in exec.";
+		end
+		return back();
+	end,
+	obj = { inp('{Enter cmd}:', 'return "Hello World!"'), vway('Back', '^{Back}', 'debug_dlg')}
+}
+
 choose_location = dlg {
 	debug = true,
 	forcedsc = true,
@@ -15,7 +35,7 @@ choose_location = dlg {
 				put(phr(n, true, [[return goto("]]..k..[[")]]), s);
 			end
 		end
-		put (phr('Exit',true, 'return back()'), s)
+		put (phr('Back',true, 'return back()'), s)
 	end
 }
 
@@ -33,7 +53,7 @@ choose_object = dlg {
 				put(phr(n, true, k..':enable(); return take("'..k..'")'), s);
 			end
 		end
-		put (phr('Exit',true, 'return back()'), s)
+		put (phr('Back',true, 'return back()'), s)
 	end
 }
 
@@ -51,7 +71,7 @@ drop_object = dlg {
 				put (phr(k, true, 'drop("'..k..'","'..deref(from())..'")'), s)
 			end
 		end
-		put (phr('Exit', true, 'return back()'), s)
+		put (phr('Back', true, 'return back()'), s)
 	end
 }
 
@@ -61,10 +81,11 @@ debug_dlg = dlg {
 	nam = 'Debug Tool',
 	dsc = 'Select tool.',
 	obj = {
-		[1]=phr('Go to location...', true, [[pon(1); choose_location:gen(); return goto('choose_location')]]),
-		[2]=phr('Get object...', true, [[pon(2); choose_object:gen(); return goto('choose_object')]]),
-		[3]=phr('Put object...', true, [[pon(3); drop_object:gen(); return goto('drop_object')]]),
-		[4]=phr('Exit',true , [[pon(4); return goto(from())]]),
+		phr('Go to location...', true, [[pon(); choose_location:gen(); return goto('choose_location')]]),
+		phr('Get object...', true, [[pon(); choose_object:gen(); return goto('choose_object')]]),
+		phr('Put object...', true, [[pon(); drop_object:gen(); return goto('drop_object')]]),
+		phr('Exec Lua string...', true, [[pon(); drop_object:gen(); return goto('execute_cmd')]]),
+		phr('Exit',true , [[pon(); return goto(from())]]),
 	},
 };
 
