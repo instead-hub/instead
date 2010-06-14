@@ -204,6 +204,16 @@ game.action = hook(game.action, function (f, s, cmd, ...)
 	if f then return f(s, cmd, unpack(arg)) end
 end)
 
+lookup_inp = function()
+	local i,o 
+	for i,o in opairs(objs()) do
+		o = ref(o)
+		if o._edit then
+			return o
+		end
+	end
+end
+
 input_kbd = function(s, down, key)
 	if not input._txt then
 		return
@@ -214,8 +224,13 @@ input_kbd = function(s, down, key)
 		input.kbd_alt = not input.kbd_alt;
 	elseif down then
 		if key == "return" then
-			input.txte = true
-			return "kbd_enter"
+			local o = lookup_inp();
+			if o then
+				o._edit = false
+				o._txt = input._txt
+				input._txt = false
+				return "kbd_enter"
+			end
 		end
 		if key == "backspace" then
 			if input._txt == '' then
@@ -243,12 +258,6 @@ function inp(info, txt)
 		v._txt = txt
 	end
 	v.dsc = function(s)
-		if input.txte and s._edit then -- enter!!!
-			input.txte = false
-			s._edit = false
-			s._txt = input._txt
-			input._txt = false
-		end
 		if s._edit then
 			return s.info..input._txt..input.cursor
 		end
