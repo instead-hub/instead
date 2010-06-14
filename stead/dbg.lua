@@ -116,7 +116,7 @@ debug_tool = menu {
 	inv = function(s)
 		debug_dlg.__from__ = deref(here());
 		me().where = 'debug_dlg'; -- force to go
-		local r = call(debug_dlg, 'enter');
+		local r = par('^^', call(debug_dlg, 'enter'), call(debug_dlg, 'dsc'));
 		return r;
 	end
 };
