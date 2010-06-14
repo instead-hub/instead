@@ -12,6 +12,7 @@ install:
 	$(INSTALL) xobj.lua $(STEADPATH)/xobj.lua
 	$(INSTALL) input.lua $(STEADPATH)/input.lua
 	$(INSTALL) click.lua $(STEADPATH)/click.lua
+	$(INSTALL) dbg.lua $(STEADPATH)/dbg.lua
 
 uninstall:
 	$(RM) $(STEADPATH)/stead.lua
