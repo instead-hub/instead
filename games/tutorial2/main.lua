@@ -1,5 +1,4 @@
 -- $Name:Обучение$
-require 'dbg'
 game.codepage="UTF-8";
 game.act = 'Не получается.';
 game.inv = "Гм.. Не то..";
