@@ -2,6 +2,22 @@
 -- in your project
 -- for debug tools
 require "input"
+
+list_objects = function()
+	local i,o
+	local rc = par(' ', 'Room:', tostring(deref(from())), 'Nam:', 
+		call(from(),'nam'));
+	rc = cat(rc,'^');
+	for i,o in opairs(objs(from())) do
+		o = ref(o)
+		rc = cat(rc, par(' ', 'Id:', tostring(o.id), 'Obj:', tostring(deref(o)), 
+			'Nam:', call(o, 'nam'), 'Disabled:', 
+			tostring(isDisabled(o))),
+			'^');
+	end
+	return rc
+end
+
 execute_cmd = room {
 	nam = "Execute Lua code",
 	debug = true,
@@ -87,6 +103,7 @@ debug_dlg = dlg {
 		phr('Go to location...', true, [[pon(); choose_location:gen(); return goto('choose_location')]]),
 		phr('Get object...', true, [[pon(); choose_object:gen(); return goto('choose_object')]]),
 		phr('Put object...', true, [[pon(); drop_object:gen(); return goto('drop_object')]]),
+		phr('Current scene...', true, [[pon(); return list_objects();]]),
 		phr('Exec Lua string...', true, [[pon(); drop_object:gen(); return goto('execute_cmd')]]),
 		phr('Exit',true , [[pon(); return goto(from())]]),
 	},
