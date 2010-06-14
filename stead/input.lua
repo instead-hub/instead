@@ -173,9 +173,9 @@ function kbdxlat(s)
 	end
 
 	if input.kbd_alt then
-		kbd = kbden;
+		kbd = kbdru;
 	else
-		kbd = kbdru
+		kbd = kbden
 	end
 
 	if kbd and input.kbd_shift then

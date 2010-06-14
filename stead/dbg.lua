@@ -2,7 +2,6 @@
 -- in your project
 -- for debug tools
 require "input"
-input.kbd_alt = true
 execute_cmd = room {
 	nam = "Execute Lua code",
 	debug = true,
@@ -18,7 +17,11 @@ execute_cmd = room {
 		end
 		return back();
 	end,
-	obj = { inp('{Enter cmd}:', 'return "Hello World!"'), vway('Back', '^{Back}', 'debug_dlg')}
+	act = function(s, w)
+		return back();
+	end,
+	obj = { inp('{Enter cmd}:', 'return "Hello World!"'), 
+	    vobj(1, 'Back', '^{Back}')}
 }
 
 choose_location = dlg {
