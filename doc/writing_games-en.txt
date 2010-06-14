@@ -291,6 +291,8 @@ room2 = room {
 </code>
 As we see, the handlers can return two values: the string and the status. In our example the “exit” function returns “false” if the player tries to go to the “main” room from the hall. “false” means that the player will not pass. Same logic works for “enter” and “tak”.
 
+Keep in mind that the current scene may not be changed by the moment of an enter action handler invocation. Since the version 1.2.0 available two new action handlers: 'left' and 'entered'. They are invoked immediately after the transition and recommended to use in case when transition prohibition is not required.
+
 ===== 8. Using an object on an object =====
 
 The player may use an inventory object on other objects. In this case “use” handler is invoked for the object in the inventory and “used” for the other one.
