@@ -6,7 +6,7 @@ game.use = 'Won\'t work...';
 game.dsc = [[Commands:^
 	look(or just Enter), act <on what> (or just on what), use <what> [on what], go <where>,
 	back, inv, way, obj, quit, save <fname>, load <fname>. Tab to autocomplete.^^]];
-game.pic = '../tutorial2/stead.png';
+game.pic = '../tutorial2/instead.png';
 
 set_music('../tutorial2/ramparts.mod');
 
