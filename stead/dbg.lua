@@ -3,18 +3,48 @@
 -- for debug tools
 require "input"
 
+dump_obj = function(w)
+	w = ref(w)
+	if type(w) ~= 'table' then
+		return 'No such object.';
+	end
+	local i,o
+	local rc=''
+	for i,o in pairs(w) do
+		if rc ~='' then rc = rc..'^' end
+		rc = cat(rc, par(' ', 'Key:'..tostring(i),
+			'Val:'..tostring(o)));
+	end
+	return rc;
+end
+
 list_objects = function()
 	local i,o
-	local rc = par(' ', 'Room:', tostring(deref(from())), 'Nam:', 
-		call(from(),'nam'));
-	rc = cat(rc,'^');
+	local rc = par(' ', 'Room:'..tostring(deref(from())), 
+			'Nam:'..tostring(call(from(),'nam')));
 	for i,o in opairs(objs(from())) do
+		rc = rc..'^';
 		o = ref(o)
-		rc = cat(rc, par(' ', 'Id:', tostring(o.id), 'Obj:', tostring(deref(o)), 
-			'Nam:', call(o, 'nam'), 'Disabled:', 
-			tostring(isDisabled(o))),
-			'^');
+		rc = cat(rc, par(' ', 'Id:'..tostring(o.id), 
+			'Obj:'..tostring(deref(o)), 
+			'Nam:'..tostring(call(o, 'nam')), 
+			'Disabled:'..tostring(isDisabled(o))));
 	end
+	return rc
+end
+
+list_inv = function()
+	local i,o
+	local rc=''
+	for i,o in opairs(inv()) do
+		if rc ~='' then rc = rc..'^' end
+		o = ref(o)
+		rc = cat(rc, par(' ', 'Id:'..tostring(o.id), 'Obj:'..tostring(deref(o)), 
+			'Nam:'..tostring(call(o, 'nam')), 
+			'Disabled:'..tostring(isDisabled(o)), 
+			'Taken:'..tostring(taken(o))));
+	end
+	if rc == '' then return end
 	return rc
 end
 
@@ -36,7 +66,25 @@ execute_cmd = room {
 	act = function(s, w)
 		return back();
 	end,
-	obj = { inp('{Enter cmd}:', 'return "Hello World!"'), 
+	obj = { inp('{Enter cmd}: ', 'return "Hello World!"'), 
+	    vobj(1, 'Back', '^{Back}')}
+}
+
+dump_object = room {
+	nam = "Dump object",
+	debug = true,
+	forcedsc = true,
+	dsc = "Enter object name here to dump.",
+	inp_enter = function(s)
+		if type(s.obj[1]._txt) == 'string' then
+			return dump_obj(s.obj[1]._txt);
+		end
+		return back();
+	end,
+	act = function(s, w)
+		return back();
+	end,
+	obj = { inp('{Enter object}: ', 'main'), 
 	    vobj(1, 'Back', '^{Back}')}
 }
 
@@ -93,7 +141,10 @@ drop_object = dlg {
 		put (phr('Back', true, 'return back()'), s)
 	end
 }
-
+function dbg_exit()
+	local r = call(from(), 'dsc');
+	return par ('^^', back(), r);
+end
 debug_dlg = dlg {
 	debug = true,
 	forcedsc = true,
@@ -104,8 +155,10 @@ debug_dlg = dlg {
 		phr('Get object...', true, [[pon(); choose_object:gen(); return goto('choose_object')]]),
 		phr('Put object...', true, [[pon(); drop_object:gen(); return goto('drop_object')]]),
 		phr('Current scene...', true, [[pon(); return list_objects();]]),
+		phr('Inventory...', true, [[pon(); return list_inv();]]),
+		phr('Dump object...', true, [[pon(); drop_object:gen(); return goto('dump_object')]]),
 		phr('Exec Lua string...', true, [[pon(); drop_object:gen(); return goto('execute_cmd')]]),
-		phr('Exit',true , [[pon(); return goto(from())]]),
+		phr('Exit',true , [[pon(); return dbg_exit()]]),
 	},
 };
 
@@ -118,6 +171,21 @@ debug_tool = menu {
 		me().where = 'debug_dlg'; -- force to go
 		local r = par('^^', call(debug_dlg, 'enter'), call(debug_dlg, 'dsc'));
 		return r;
-	end
+	end,
 };
+
+game.action = hook(game.action, 
+function (f, s, cmd, ...)
+	if cmd == 'use_debug' then
+		return debug_tool:inv()
+	end
+	if f then return f(s, cmd, unpack(arg)) end
+end)
+
+input.key = hook(input.key,
+function(f, s, down, key, ...)
+	if not here().debug and down and key == 'f7' then return 'use_debug' end
+	if f then return f(s, down, key, unpack(arg)) end
+end)
+
 putf('debug_tool', me());

@@ -250,7 +250,12 @@ input_kbd = function(s, down, key)
 	end
 end
 
-input.key = input_kbd;
+input.key = hook(input.key,
+function(f, ...)
+	local r = input_kbd(unpack(arg))
+	if r then return r end
+	if f then return f(unpack(arg)) end
+end)
 
 function inp(info, txt)
 	local v = { nam = '', _txt = '', info = info }
