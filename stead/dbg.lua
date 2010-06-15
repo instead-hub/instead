@@ -13,7 +13,7 @@ dump_obj = function(w)
 	for i,o in pairs(w) do
 		if rc ~='' then rc = rc..'^' end
 		rc = cat(rc, par(' ', 'Key:'..tostring(i),
-			'Val:'..tostring(o)));
+			'Val:'..tostring(deref(o))));
 	end
 	return rc;
 end
@@ -82,10 +82,25 @@ dump_object = room {
 		return back();
 	end,
 	act = function(s, w)
-		return back();
+		if w == 1 then
+			return back();
+		elseif w == 2 then
+			return dump_obj(from(from()));
+		elseif w == 3 then
+			return dump_obj(me());
+		elseif w == 4 then
+			return dump_obj(game.lifes);
+		elseif w == 5 then
+			return dump_obj(ways(from(from())));
+		end
+
 	end,
 	obj = { inp('{Enter object}: ', 'main'), 
-	    vobj(1, 'Back', '^{Back}')}
+		vobj(2, 'Here', '^{Dump here}'),
+		vobj(3, 'Player', '^{Dump player}'),
+		vobj(4, 'Lifes', '^{Dump lifes}'),
+		vobj(5, 'Ways', '^{Dump ways}'),
+		vobj(1, 'Back', '^{Back}')}
 }
 
 choose_location = dlg {
@@ -156,8 +171,8 @@ debug_dlg = dlg {
 		phr('Put object...', true, [[pon(); drop_object:gen(); return goto('drop_object')]]),
 		phr('Current scene...', true, [[pon(); return list_objects();]]),
 		phr('Inventory...', true, [[pon(); return list_inv();]]),
-		phr('Dump object...', true, [[pon(); drop_object:gen(); return goto('dump_object')]]),
-		phr('Exec Lua string...', true, [[pon(); drop_object:gen(); return goto('execute_cmd')]]),
+		phr('Dump object...', true, [[pon(); return goto(dump_object);]]),
+		phr('Exec Lua string...', true, [[pon(); return goto('execute_cmd')]]),
 		phr('Exit',true , [[pon(); return dbg_exit()]]),
 	},
 };
