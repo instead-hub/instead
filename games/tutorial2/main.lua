@@ -6,7 +6,7 @@ game.use = 'Не сработает...';
 game.dsc = [[Команды:^
 	look(или просто ввод), act <на что> (или просто на что), use <что> [на что], go <куда>,^
 	back, inv, way, obj, quit, save <fname>, load <fname>. Работает автодополнение по табуляции.^^]];
-game.pic = 'stead.png';
+game.pic = 'instead.png';
 
 set_music('ramparts.mod');
 
