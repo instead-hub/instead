@@ -2417,7 +2417,7 @@ int game_from_disk(void)
 	b = basename(b);
 /*	fprintf(stderr,"%s:%s\n", d, b); */
 #ifdef _USE_UNPACK
-	p = game_local_games_path(1);
+	p = games_sw ? games_sw:game_local_games_path(1);
 	fprintf(stderr,"Trying to install: %s\n", g);
 	if (!unpack(g, p)) {
 		if (!zip_game_dirname[0])
