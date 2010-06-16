@@ -189,7 +189,7 @@ function txtnm(n, v)
 	return iface:enum(n, v);
 end
 
-function fmt(...)
+stead.fmt = function(...)
 	local i, res
 	if arg == nil then
 		return false
@@ -1661,7 +1661,7 @@ iface = {
 				end
 			end
 		end
-		vv = fmt(cat(par("^^", l, r, av, objs, pv), '^'));
+		vv = stead.fmt(cat(par("^^", l, r, av, objs, pv), '^'));
 		return vv
 	end,
 	cmd = function(self, inp)

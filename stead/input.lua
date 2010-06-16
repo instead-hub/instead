@@ -259,8 +259,11 @@ function(f, ...)
 end)
 
 function input_esc(s)
+	local rep = function(s)
+		return txtnb(s)
+	end
 	if not s then return end
-	return s:gsub("\\","\\\\"):gsub(">","\\>");
+	return s:gsub("\\","\\\\"):gsub(">","\\>"):gsub("[^ ]+", rep):gsub("[ \t]", rep);
 end
 
 function inp(info, txt)
@@ -270,9 +273,9 @@ function inp(info, txt)
 	end
 	v.dsc = function(s)
 		if s._edit then
-			return s.info..txtnb(input_esc(input._txt))..input.cursor
+			return s.info..input_esc(input._txt)..input.cursor
 		end
-		return s.info..txtnb(input_esc(s._txt))
+		return s.info..input_esc(s._txt)
 	end
 	v.text = function(s)
 		if s._edit then return input._txt end
