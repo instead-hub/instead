@@ -45,15 +45,17 @@ go = function (self, where, back)
 		self.where = deref(where);
 	end
 
-	v, r = call(ref(where), 'enter', deref(was));
-	if r == false then
-		self.where = was;
-		return par('^^', res, v), ret(r)
-	end
+	if not back or not isDialog(ref(self.where)) or isDialog(ref(where)) then
+		v, r = call(ref(where), 'enter', deref(was));
+		if r == false then
+			self.where = was;
+			return par('^^', res, v), ret(r)
+		end
 
-	need_scene = true;
-	if ref(where) ~= ref(self.where) then -- jump !!!
-		need_scene = false;
+		need_scene = true;
+		if ref(where) ~= ref(self.where) then -- jump !!!
+			need_scene = false;
+		end
 	end
 
 	res = par('^^',res,v);
