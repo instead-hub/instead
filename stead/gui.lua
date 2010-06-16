@@ -16,7 +16,7 @@ iface.xref = function(self, str, obj)
 	elseif isSceneUse(o) then
 		cmd = 'use ';	
 	end
-	return cat('<a:'..cmd..'0'..tostring(o.id)..'>',str,'</a>');
+	return stead.cat('<a:'..cmd..'0'..tostring(o.id)..'>',str,'</a>');
 end;
 
 iface.enum = function(self, n, str)
@@ -41,32 +41,32 @@ end;
 
 iface.under = function(self, str)
 	if str == nil then return nil; end; 
-	return cat('<u>',str,'</u>');
+	return stead.cat('<u>',str,'</u>');
 end;
 
 iface.em = function(self, str)
 	if str == nil then return nil; end;
-	return cat('<i>',str,'</i>');
+	return stead.cat('<i>',str,'</i>');
 end;
 
 iface.right = function(self, str)
 	if str == nil then return nil; end; 
-	return cat('<r>',str,'</r>');
+	return stead.cat('<r>',str,'</r>');
 end;
 
 iface.left = function(self, str)
 	if str == nil then return nil; end;
-	return cat('<l>',str,'</l>');
+	return stead.cat('<l>',str,'</l>');
 end;
 
 iface.center = function(self, str)
 	if str == nil then return nil; end;
-	return cat('<c>',str,'</c>');
+	return stead.cat('<c>',str,'</c>');
 end;
 
 iface.bold = function(self, str)
 	if str == nil then return nil; end;
-	return cat('<b>',str,'</b>');
+	return stead.cat('<b>',str,'</b>');
 end;
 
 iface.inv = function(self, str)
@@ -159,7 +159,7 @@ function isMenu(v)
 	return false
 end
 
-stead.fmt = function(...)
+fmt = function(...)
 	local i, res
 	if arg == nil then
 		return false
@@ -167,8 +167,10 @@ stead.fmt = function(...)
 	for i=1,stead.table.maxn(arg) do
 		if type(arg[i]) == 'string' then
 			local s = stead.string.gsub(arg[i],'\t',' '):gsub('[\n]+', ' '):gsub('%^','\n');
- 			res = par('', res, s);
+ 			res = stead.par('', res, s);
 		end
 	end
 	return res
 end
+
+stead.fmt = fmt

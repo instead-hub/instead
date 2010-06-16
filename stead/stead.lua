@@ -96,21 +96,21 @@ end
 function p(...)
 	local i
 	for i = 1, stead.table.maxn(arg) do
-		cctx().txt = par('',cctx().txt, arg[i]);
+		cctx().txt = stead.par('',cctx().txt, arg[i]);
 	end
-	cctx().txt = cat(cctx().txt, ' ');
+	cctx().txt = stead.cat(cctx().txt, ' ');
 end
 
 function pr(...)
 	local i
 	for i = 1, stead.table.maxn(arg) do
-		cctx().txt = par('',cctx().txt, arg[i]);
+		cctx().txt = stead.par('',cctx().txt, arg[i]);
 	end
 end
 
 function pn(...)
 	p(unpack(arg));
-	cctx().txt = par('',cctx().txt,'^');
+	cctx().txt = stead.par('',cctx().txt,'^');
 end
 
 -- merge strings with "space" as separator
@@ -128,7 +128,7 @@ function par(space,...)
 	end
 	return res;
 end
-
+stead.par = par
 -- add to not nill string any string
 function cat(v,...)
 	local i, res
@@ -143,6 +143,7 @@ function cat(v,...)
 	end
 	return res;
 end
+stead.cat = cat;
 
 function txtnb(v)
 	if type(v) ~= 'string' then return nil; end
@@ -189,7 +190,7 @@ function txtnm(n, v)
 	return iface:enum(n, v);
 end
 
-stead.fmt = function(...)
+fmt = function(...)
 	local i, res
 	if arg == nil then
 		return false
@@ -199,11 +200,13 @@ stead.fmt = function(...)
 			local s = stead.string.gsub(arg[i],'[\t ]+',' ');
 			s = stead.string.gsub(s, '[\n]+', ' ');
 			s = stead.string.gsub(s,'%^','\n');
- 			res = par('',res,s);
+ 			res = stead.par('',res,s);
 		end
 	end
 	return res
 end
+stead.fmt = fmt
+
 -- integer lists
 function inext(t, k)
 	local v
@@ -310,7 +313,7 @@ function obj_look(self)
 		o = ref(o);
 		if isObject(o) then
 			vv = obj_look(o);
-			v = par(' ',v, vv); 
+			v = stead.par(' ',v, vv); 
 		end
 	end
 	return v;
@@ -380,7 +383,7 @@ function obj_str(self)
 		if o~= nil and not isDisabled(o) then -- isObject is better, but compat layer must be ok
 			vv = call(o, 'nam');
 			vv = xref(vv, o);
-			v = par(',', v, vv, obj_str(o));
+			v = stead.par(',', v, vv, obj_str(o));
 		end
 	end
 	return v;
@@ -480,7 +483,7 @@ function list_str(self)
 		if o~= nil and not isDisabled(o) then
 			vv = call(o, 'nam');
 			vv = xref(vv, o);
-			v = par(',', v, vv);
+			v = stead.par(',', v, vv);
 		end
 	end
 	return v;
@@ -685,8 +688,8 @@ end
 function room_scene(self)
 	local v;
 	v = iface:title(call(self,'nam'));
-	v = par('^^', v, call(self,'dsc')); --obj_look(self));
-	return cat(v,' ');
+	v = stead.par('^^', v, call(self,'dsc')); --obj_look(self));
+	return stead.cat(v,' ');
 end
 
 function room_look(self)
@@ -694,10 +697,10 @@ function room_look(self)
 	for i,o in opairs(self.obj) do
 		o = ref(o);
 		if isObject(o) then
-			vv = par(' ',vv, o:look());
+			vv = stead.par(' ',vv, o:look());
 		end
 	end
-	return cat(vv,' ');
+	return stead.cat(vv,' ');
 end
 
 function obj_search(v, n, dis)
@@ -762,7 +765,7 @@ end
 function dialog_scene(self)
 	local v
 	v = iface:title(call(self,'nam'));
-	v = par('^^', v, call(self, 'dsc')); --obj_look(self));
+	v = stead.par('^^', v, call(self, 'dsc')); --obj_look(self));
 	return v;
 end
 
@@ -772,7 +775,7 @@ function dialog_look(self)
 	for i,ph in opairs(self.obj) do
 		ph = ref(ph);
 		if isPhrase(ph) and not isDisabled(ph) then
-			v = par('^', v, txtnm(n, ph:look()));
+			v = stead.par('^', v, txtnm(n, ph:look()));
 			n = n + 1
 		end
 	end
@@ -896,10 +899,10 @@ function phrase_action(self)
 		r = true;
 	end
 	if isDialog(here()) and not dialog_rescan(here()) then
-		ret = par(' ', ret, me():back());
+		ret = stead.par(' ', ret, me():back());
 	end
 	
-	ret = par("^^", last, ret);
+	ret = stead.par("^^", last, ret);
 	
 	if ret == nil then
 		return r -- hack?
@@ -955,15 +958,15 @@ function phr(ask, answ, act)
 end
 
 function player_inv(self)
-	return iface:inv(cat(self:str()));
+	return iface:inv(stead.cat(self:str()));
 end
 
 function player_ways(self)
-	return iface:ways(cat(ref(self.where).way:str()));
+	return iface:ways(stead.cat(ref(self.where).way:str()));
 end
 
 function player_objs(self)
-	return iface:objs(cat(ref(self.where):str()));
+	return iface:objs(stead.cat(ref(self.where):str()));
 end
 
 function player_look(self)
@@ -1072,7 +1075,7 @@ function player_use(self, what, onwhat)
 	if not v and not vv then
 		v, r = call(game, 'use', obj, obj2);
 	end
-	return par(' ', v, vv);
+	return stead.par(' ', v, vv);
 end
 
 function player_back(self)
@@ -1134,7 +1137,7 @@ function go(self, where, back)
 			need_scene = false;
 		end
 	end
-	res = par('^^',res,v);
+	res = stead.par('^^',res,v);
 
 	if not back then
 		ref(where).__from__ = deref(self.where);
@@ -1151,18 +1154,18 @@ function go(self, where, back)
 		stead.in_onexit_call = true
 		v = call(ref(was), 'left', deref(to));
 		stead.in_onexit_call = false
-		res = par('^^',res,v);
+		res = stead.par('^^',res,v);
 
 		self.where = deref(to)
 
 		stead.in_entered_call = true
 		v = call(ref(to), 'entered', deref(was));
 		stead.in_entered_call = false
-		res = par('^^',res,v);
+		res = stead.par('^^',res,v);
 	end
 
 	if need_scene then -- or isForcedsc(ref(where)) then -- i'am not sure...
-		return par('^^',res,ref(where):scene());
+		return stead.par('^^',res,ref(where):scene());
 	end
 	return res;
 end
@@ -1243,9 +1246,9 @@ function game_life(self)
 		if not isDisabled(o) then
 			vv,pre = call(o,'life');
 			if not pre then
-				v = par(' ',v, vv);
+				v = stead.par(' ',v, vv);
 			else
-				av = par(' ', av, vv);
+				av = stead.par(' ', av, vv);
 			end
 		end
 	end	
@@ -1302,7 +1305,7 @@ function do_ini(self)
 		o.key_name = k;
 	end
 	local function call_ini(k, o)
-		v = par('', v, call(o, 'ini'));
+		v = stead.par('', v, call(o, 'ini'));
 	end
 
 	math.randomseed(tonumber(os.date("%m%d%H%M%S")))
@@ -1322,21 +1325,21 @@ function do_ini(self)
 	if not self.showlast then
 		self._lastdisp = nil;
 	end
-	return par('',v, self._lastdisp); --par('^^',v);
+	return stead.par('',v, self._lastdisp); --stead.par('^^',v);
 end
 
 function game_ini(self)
 	local v,vv
 	v = do_ini(self);
 	vv = iface:title(call(self,'nam'));
-	vv = par('^^', vv, call(self,'dsc'));
+	vv = stead.par('^^', vv, call(self,'dsc'));
 	if type(init) == 'function' then
 		init();
 	end
 --	if type(hooks) == 'function' then
 --		hooks();
 --	end
-	return par("^^", vv, v);
+	return stead.par("^^", vv, v);
 end
 
 function game(v)
@@ -1630,7 +1633,7 @@ iface = {
 		if not o or not o.id then
 			return str;
 		end
-		return cat(str,"("..tostring(o.id)..")");
+		return stead.cat(str,"("..tostring(o.id)..")");
 	end,
 	title = function(self, str)
 		return "["..str.."]";
@@ -1661,7 +1664,7 @@ iface = {
 				end
 			end
 		end
-		vv = stead.fmt(cat(par("^^", l, r, av, objs, pv), '^'));
+		vv = stead.fmt(stead.cat(stead.par("^^", l, r, av, objs, pv), '^'));
 		return vv
 	end,
 	cmd = function(self, inp)
@@ -1685,7 +1688,7 @@ iface = {
 		elseif cmd == 'way' then
 			r,v = me():ways();
 		elseif cmd == 'ls' then
-			r = par('^^', me():objs(), me():inv(), me():ways());
+			r = stead.par('^^', me():objs(), me():inv(), me():ways());
 			v = nil;
 		elseif cmd == 'go' then
 			r,v = me():go(unpack(a));
@@ -1726,7 +1729,7 @@ iface = {
 		end
 
 		if v == false then
-			return cat(r, '\n'), false;
+			return stead.cat(r, '\n'), false;
 		end
 		
 		ACTION_TEXT = r; -- here, life methods can redefine this
