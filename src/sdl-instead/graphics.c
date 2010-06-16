@@ -1813,7 +1813,7 @@ static int is_delim(int c)
 
 static int process_word_token(const char *p, char **eptr, char ch)
 {
-	int len = 0;
+	char *ep;
 	if (eptr)
 		*eptr = (char*)p;
 	if (!p)
@@ -1821,12 +1821,12 @@ static int process_word_token(const char *p, char **eptr, char ch)
 	if (p[0] != '<' || p[1] != ch || p[2] != ':')
 		return 0;
 	p += 3;
-	len = strcspn(p, ">");
-	if (p[len] != '>')
+	ep = find_in_esc(p, "\\>");
+	if (*ep != '>')
 		return 0;
 	if (eptr)	
-		*eptr = (char*)p + len + 1;	
-	return len + 1;
+		*eptr = ep + 1;	
+	return (ep - p + 1);
 }
 
 static int word_img(const char *p, char **eptr)
@@ -2468,12 +2468,18 @@ char *get_word_token(char *p)
 {
 	int len;
 	char *r;
+	char *val = NULL;
 	len = word_token(p, NULL);
 	if (!len)
 		return p;
 	p[len - 1 + 3] = 0;
 	r = strdup((p + 3));
+	parse_esc_string(r, &val);
 	free(p);
+	if (val) {
+		free(r);
+		r = val;
+	}
 	return r;
 }
 

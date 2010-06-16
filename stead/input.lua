@@ -258,6 +258,11 @@ function(f, ...)
 	return f(unpack(arg))
 end)
 
+function input_esc(s)
+	if not s then return end
+	return s:gsub("\\","\\\\"):gsub(">","\\>");
+end
+
 function inp(info, txt)
 	local v = { nam = '', _txt = '', info = info }
 	if txt then
@@ -265,9 +270,9 @@ function inp(info, txt)
 	end
 	v.dsc = function(s)
 		if s._edit then
-			return s.info..input._txt..input.cursor
+			return s.info..txtnb(input_esc(input._txt))..input.cursor
 		end
-		return s.info..s._txt
+		return s.info..txtnb(input_esc(s._txt))
 	end
 	v.text = function(s)
 		if s._edit then return input._txt end
