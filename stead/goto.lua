@@ -45,7 +45,7 @@ go = function (self, where, back)
 		self.where = deref(where);
 	end
 
-	if not back or not isDialog(ref(self.where)) or isDialog(ref(where)) then
+	if not back or not isDialog(ref(was)) or isDialog(ref(where)) then
 		v, r = call(ref(where), 'enter', deref(was));
 		if r == false then
 			self.where = was;
