@@ -25,21 +25,21 @@ dump_obj = function(w)
 	local rc=''
 	for i,o in pairs(w) do
 		if rc ~='' then rc = rc..'^' end
-		rc = cat(rc, par(' ', 'Key:'..tostring(i),
+		rc = stead.cat(rc, stead.par(' ', 'Key:'..tostring(i),
 			'Val:'..tostring(deref(o))));
 	end
-	seen('disp')._txt = cat('^^', rc)
+	seen('disp')._txt = stead.cat('^^', rc)
 	return true;
 end
 
 list_objects = function()
 	local i,o
-	local rc = par(' ', 'Room:'..tostring(deref(from())), 
+	local rc = stead.par(' ', 'Room:'..tostring(deref(from())), 
 			'Nam:'..tostring(call(from(),'nam')));
 	for i,o in opairs(objs(from())) do
 		rc = rc..'^';
 		o = ref(o)
-		rc = cat(rc, par(' ', 'Id:'..tostring(o.id), 
+		rc = stead.cat(rc, stead.par(' ', 'Id:'..tostring(o.id), 
 			'Obj:'..tostring(deref(o)), 
 			'Nam:'..tostring(call(o, 'nam')), 
 			'Disabled:'..tostring(isDisabled(o))));
@@ -54,7 +54,7 @@ list_inv = function()
 	for i,o in opairs(inv()) do
 		if rc ~='' then rc = rc..'^' end
 		o = ref(o)
-		rc = cat(rc, par(' ', 'Id:'..tostring(o.id), 'Obj:'..tostring(deref(o)), 
+		rc = stead.cat(rc, stead.par(' ', 'Id:'..tostring(o.id), 'Obj:'..tostring(deref(o)), 
 			'Nam:'..tostring(call(o, 'nam')), 
 			'Disabled:'..tostring(isDisabled(o)), 
 			'Taken:'..tostring(taken(o))));
@@ -73,7 +73,7 @@ execute_cmd = room {
 		if type(s.obj[1]._txt) == 'string' then
 			local f = loadstring(s.obj[1]._txt);
 			if f then
-				seen('disp')._txt = cat('^^', f());
+				seen('disp')._txt = stead.cat('^^', f());
 				return true
 			end
 			seen('disp')._txt = "^^Error in exec.";
@@ -206,7 +206,7 @@ debug_tool = menu {
 	inv = function(s)
 		debug_dlg.__from__ = deref(here());
 		me().where = 'debug_dlg'; -- force to go
-		local r = par('^^', call(debug_dlg, 'enter'), call(debug_dlg, 'dsc'));
+		local r = stead.par('^^', call(debug_dlg, 'enter'), call(debug_dlg, 'dsc'));
 		return r;
 	end,
 };
