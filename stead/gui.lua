@@ -159,3 +159,16 @@ function isMenu(v)
 	return false
 end
 
+stead.fmt = function(...)
+	local i, res
+	if arg == nil then
+		return false
+	end
+	for i=1,stead.table.maxn(arg) do
+		if type(arg[i]) == 'string' then
+			local s = stead.string.gsub(arg[i],'\t',' '):gsub('[\n]+', ' '):gsub('%^','\n');
+ 			res = par('', res, s);
+		end
+	end
+	return res
+end
