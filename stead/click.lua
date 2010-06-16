@@ -15,6 +15,6 @@ function(f, s, cmd, x, y, ...)
 		end
 		return nil,true
 	end
-	if f then return f(s, cmd, x, y, unpack(arg)) end
+	return f(s, cmd, x, y, unpack(arg))
 end)
 
