@@ -1,8 +1,10 @@
-input.click = function(s, press, mb, x, y, px, py)
+input.click = hook(input.click, 
+function(f, s, press, mb, x, y, px, py, ...)
 	if press and px then
 		return "click "..px..','..py;
 	end
-end
+	return f(s, press, mb, x, y, px, py, unpack(arg))
+end)
 
 game.action = hook(game.action, 
 function(f, s, cmd, x, y, ...)
