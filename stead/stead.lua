@@ -7,6 +7,8 @@ stead = {
 	os = os,
 	call_top = 0,
 	cctx = { txt = nil, self = nil },
+	nullfn = function()
+	end,
 	timer = function()
 		if type(timer) == 'table' and type(timer.callback) == 'function' then
 			return timer:callback();
@@ -2393,6 +2395,9 @@ end
 
 function hook(o, f)
 	return function(...)
+		if not o then
+			o = stead.nullfn
+		end
 		return f(o, unpack(arg))
 	end
 end

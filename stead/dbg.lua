@@ -3,10 +3,23 @@
 -- for debug tools
 require "input"
 
+function disp_obj()
+	local v = obj{
+		nam = 'disp',
+		dsc = function(s)
+			local r = s._txt
+			s._txt = nil;
+			return r
+		end
+	}
+	return v;
+end
+
 dump_obj = function(w)
 	w = ref(w)
 	if type(w) ~= 'table' then
-		return 'No such object.';
+		seen('disp')._txt = '^^No such object.';
+		return true
 	end
 	local i,o
 	local rc=''
@@ -15,7 +28,8 @@ dump_obj = function(w)
 		rc = cat(rc, par(' ', 'Key:'..tostring(i),
 			'Val:'..tostring(deref(o))));
 	end
-	return rc;
+	seen('disp')._txt = cat('^^', rc)
+	return true;
 end
 
 list_objects = function()
@@ -30,6 +44,7 @@ list_objects = function()
 			'Nam:'..tostring(call(o, 'nam')), 
 			'Disabled:'..tostring(isDisabled(o))));
 	end
+	seen('disp')._txt = rc
 	return rc
 end
 
@@ -45,6 +60,7 @@ list_inv = function()
 			'Taken:'..tostring(taken(o))));
 	end
 	if rc == '' then return end
+	seen('disp')._txt = rc
 	return rc
 end
 
@@ -57,9 +73,11 @@ execute_cmd = room {
 		if type(s.obj[1]._txt) == 'string' then
 			local f = loadstring(s.obj[1]._txt);
 			if f then
-				return f();
+				seen('disp')._txt = cat('^^', f());
+				return true
 			end
-			return "Error in exec.";
+			seen('disp')._txt = "^^Error in exec.";
+			return true
 		end
 		return back();
 	end,
@@ -67,7 +85,9 @@ execute_cmd = room {
 		return back();
 	end,
 	obj = { inp('{Enter cmd}: ', 'return "Hello World!"'), 
-	    vobj(1, 'Back', '^{Back}')}
+		vobj(1, 'Back', '^{Back}'),
+		new [[ disp_obj() ]],
+	}
 }
 
 dump_object = room {
@@ -100,7 +120,8 @@ dump_object = room {
 		vobj(3, 'Player', '^{Dump player}'),
 		vobj(4, 'Lifes', '^{Dump lifes}'),
 		vobj(5, 'Ways', '^{Dump ways}'),
-		vobj(1, 'Back', '^{Back}')}
+		vobj(1, 'Back', '^{Back}'),
+		new[[ disp_obj() ]]}
 }
 
 choose_location = dlg {
@@ -174,6 +195,7 @@ debug_dlg = dlg {
 		phr('Dump object...', true, [[pon(); return goto(dump_object);]]),
 		phr('Exec Lua string...', true, [[pon(); return goto('execute_cmd')]]),
 		phr('Exit',true , [[pon(); return dbg_exit()]]),
+		new [[ disp_obj ]]
 	},
 };
 
@@ -194,13 +216,13 @@ function (f, s, cmd, ...)
 	if cmd == 'use_debug' then
 		return debug_tool:inv()
 	end
-	if f then return f(s, cmd, unpack(arg)) end
+	return f(s, cmd, unpack(arg))
 end)
 
 input.key = hook(input.key,
 function(f, s, down, key, ...)
 	if not here().debug and down and key == 'f7' then return 'use_debug' end
-	if f then return f(s, down, key, unpack(arg)) end
+	return f(s, down, key, unpack(arg))
 end)
 
 putf('debug_tool', me());

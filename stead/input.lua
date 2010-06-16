@@ -201,7 +201,7 @@ game.action = hook(game.action, function (f, s, cmd, ...)
 		end
 		return nil, true -- nothing todo
 	end
-	if f then return f(s, cmd, unpack(arg)) end
+	return f(s, cmd, unpack(arg))
 end)
 
 lookup_inp = function()
@@ -231,6 +231,7 @@ input_kbd = function(s, down, key)
 				input._txt = false
 				return "kbd_enter"
 			end
+			return
 		end
 		if key == "backspace" then
 			if input._txt == '' then
@@ -254,7 +255,7 @@ input.key = hook(input.key,
 function(f, ...)
 	local r = input_kbd(unpack(arg))
 	if r then return r end
-	if f then return f(unpack(arg)) end
+	return f(unpack(arg))
 end)
 
 function inp(info, txt)
