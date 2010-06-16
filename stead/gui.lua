@@ -35,6 +35,7 @@ end;
 
 iface.nb = function(self, str)
 	if str == nil then return nil; end;
+	if str == '' then return ''; end
 	return "<w:"..str..">";
 end;
 
