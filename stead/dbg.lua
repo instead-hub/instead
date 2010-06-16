@@ -44,7 +44,7 @@ list_objects = function()
 			'Nam:'..tostring(call(o, 'nam')), 
 			'Disabled:'..tostring(isDisabled(o))));
 	end
-	seen('disp')._txt = rc
+--	seen('disp')._txt = rc
 	return rc
 end
 
@@ -60,7 +60,7 @@ list_inv = function()
 			'Taken:'..tostring(taken(o))));
 	end
 	if rc == '' then return end
-	seen('disp')._txt = rc
+--	seen('disp')._txt = rc
 	return rc
 end
 
@@ -195,7 +195,7 @@ debug_dlg = dlg {
 		phr('Dump object...', true, [[pon(); return goto(dump_object);]]),
 		phr('Exec Lua string...', true, [[pon(); return goto('execute_cmd')]]),
 		phr('Exit',true , [[pon(); return dbg_exit()]]),
-		new [[ disp_obj ]]
+--		new [[ disp_obj ]]
 	},
 };
 
