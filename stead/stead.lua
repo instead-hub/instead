@@ -2409,6 +2409,9 @@ function check_version(v)
 	if stead.version < v then
 		error ([[The game requires instead engine of version ]] ..v.. [[ or higher. http://instead.googlecode.com]])
 	end
+	if v >= "1.2.0" then
+		require ("goto")
+	end
 end
 
 --- here the game begins
