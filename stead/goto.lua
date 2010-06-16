@@ -45,23 +45,22 @@ go = function (self, where, back)
 		self.where = deref(where);
 	end
 
-	if not back or not isDialog(ref(self.where)) or isDialog(ref(where)) then
-		v, r = call(ref(where), 'enter', deref(was));
-		if r == false then
-			self.where = was;
-			return par('^^', res, v), ret(r)
-		end
-		need_scene = true;
-		if ref(where) ~= ref(self.where) then -- jump !!!
-			need_scene = false;
-		end
+	v, r = call(ref(where), 'enter', deref(was));
+	if r == false then
+		self.where = was;
+		return par('^^', res, v), ret(r)
 	end
+
+	need_scene = true;
+	if ref(where) ~= ref(self.where) then -- jump !!!
+		need_scene = false;
+	end
+
 	res = par('^^',res,v);
 
 	if not back then
 		ref(where).__from__ = deref(was);
 	end
-
 
 	ret()
 
@@ -81,7 +80,6 @@ go = function (self, where, back)
 		stead.in_entered_call = false
 		res = par('^^',res,v);
 	end
-
 
 	if need_scene then -- or isForcedsc(ref(where)) then -- i'am not sure...
 		return par('^^',res,ref(where):scene());
