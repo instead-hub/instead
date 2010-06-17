@@ -1528,6 +1528,7 @@ function game_save(self, name, file)
 	end
 	for_each_object(save_object, h);
 	save_object('game', self, h);
+	save_object('_G', _G, h);
 	clearvar(_G);
 	h:flush();
 	h:close();
@@ -2369,6 +2370,7 @@ function restore_snapshot(nr)
 	local ss = game._snapshots
 	if not ss[nr] then return nil, true end -- nothing todo
 	stead_init();
+	game.lifes:zap();
 	dofile('main.lua');
 	if type(init) == 'function' then -- no hooks here!!!
 		init();
