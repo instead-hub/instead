@@ -2416,6 +2416,7 @@ function check_version(v)
 	end
 	if v >= "1.2.0" then
 		require ("goto")
+		require ("vars");
 	end
 end
 
