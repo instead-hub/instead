@@ -20,6 +20,9 @@ function __vars_fill(v)
 			if tonumber(k) and type(o) == 'string' then
 				stead.table.insert(vars, o)
 			else
+				if v[k] then
+					error ("Variable overwrites object property: "..tostring(k));
+				end
 				v[k] = o
 				stead.table.insert(vars, k);
 			end
