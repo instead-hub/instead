@@ -224,8 +224,6 @@ const char *password;
 				char c = *(filename_withoutpath - 1);
 				*(filename_withoutpath - 1) = '\0';
 				makedir(write_filename);
-				if (!*zip_game_dirname)
-					strcpy(zip_game_dirname, filename_inzip);
 				*(filename_withoutpath - 1) = c;
 				fout = fopen64(write_filename, "wb");
 			}
@@ -233,6 +231,12 @@ const char *password;
 			if (fout == NULL) {
 				fprintf(stderr, "error opening %s\n", write_filename);
 			}
+		}
+
+		if ((filename_withoutpath != (char *)filename_inzip) && 
+			!*zip_game_dirname) {
+			strcpy(zip_game_dirname, filename_inzip);
+			zip_game_dirname[strcspn(zip_game_dirname,"/\\")] = 0;
 		}
 
 		if (!*zip_game_dirname) {
