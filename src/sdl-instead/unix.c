@@ -94,7 +94,11 @@ char *open_file_dialog(void)
 #else
 	gulong response_handler;
 	char *filename = NULL;
+
+	static int old_dir_set = 0;
 	static char file[PATH_MAX];
+	static char old_dir[PATH_MAX];
+
 	GtkWidget *file_dialog;
 
 	GtkFileFilter *file_filter_all;
@@ -120,6 +124,10 @@ char *open_file_dialog(void)
 			NULL, GTK_FILE_CHOOSER_ACTION_OPEN,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			GTK_STOCK_OPEN,   GTK_RESPONSE_ACCEPT, NULL);
+
+	if (old_dir_set)
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(file_dialog),
+			old_dir);
 
 	gtk_window_set_icon(GTK_WINDOW(file_dialog), create_pixbuf(ICON_PATH"/sdl_instead.png"));
 
@@ -157,6 +165,12 @@ char *open_file_dialog(void)
 		if (filename) {
 			strcpy(file, filename);
 			g_free (filename);
+		}
+		filename = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(file_dialog));
+		if (filename) {
+			strcpy(old_dir, filename);
+			g_free (filename);
+			old_dir_set = 1;
 		}
 	}
 

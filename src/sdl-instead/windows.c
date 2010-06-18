@@ -249,8 +249,10 @@ void debug_done()
 
 char *open_file_dialog(void)
 {
-        OPENFILENAME ofn;
+	OPENFILENAME ofn;
 	static char szFile[MAX_PATH];
+	static char szOldDir[MAX_PATH];
+	static int old_dir_set = 0;
 	ZeroMemory( &ofn , sizeof( ofn));
 	ofn.lStructSize = sizeof ( ofn );
 	ofn.hwndOwner = NULL ;
@@ -261,10 +263,16 @@ char *open_file_dialog(void)
 	ofn.nFilterIndex = 2;
 	ofn.lpstrFileTitle = NULL;
 	ofn.nMaxFileTitle = 0;
-	ofn.lpstrInitialDir=NULL;
+	if (!old_dir_set)
+		ofn.lpstrInitialDir = NULL;
+	else
+		ofn.lpstrInitialDir = szOldDir;
 	ofn.Flags = OFN_PATHMUSTEXIST|OFN_FILEMUSTEXIST|OFN_HIDEREADONLY|OFN_READONLY;
 	if (!GetOpenFileName(&ofn))
 		return NULL;
+	old_dir_set = 1;
+	strcpy(szOldDir, ofn.lpstrFile);
+	dirname(szOldDir);
 	unix_path(ofn.lpstrFile);
 	return ofn.lpstrFile;
 }
