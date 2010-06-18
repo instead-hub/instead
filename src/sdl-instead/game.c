@@ -56,38 +56,50 @@ struct	game *games = NULL;
 int	games_nr = 0;
 
 void free_last(void);
-	
-int game_select(const char *name)
+
+static struct game *game_lookup(const char *name)
 {
 	int i;
-	free_last();
 	if (!name || !*name) {
 		if (games_nr == 1) 
-			name = games[0].dir;
-		else
-			return 0;
-	} 
-	chdir(game_cwd);
+			return &games[0];
+		return NULL;
+	}
 	for (i = 0; i<games_nr; i ++) {
 		if (!strcmp(games[i].dir, name)) {
-			char *oldgame = curgame_dir;
-			curgame_dir = games[i].dir;
-			instead_done();
-			if (instead_init()) {
-				curgame_dir = oldgame;
-				return -1;
-			}
-			if (chdir(games[i].path)) {
-				curgame_dir = oldgame;
-				return -1;
-			}
-			if (instead_load(MAIN_FILE)) {
-				curgame_dir = oldgame;
-				return -1;
-			}
-			instead_eval("game:ini()"); instead_clear();
-			return 0;
+			return &games[i];
 		}
+	}
+	return NULL;
+}
+
+int game_select(const char *name)
+{
+	struct game *g;
+	free_last();
+	g = game_lookup(name);
+	if ((!name || !*name) && !g)
+		return 0;
+	if (chdir(game_cwd))
+		return -1;
+	if (g) {
+		char *oldgame = curgame_dir;
+		curgame_dir = g->dir;
+		instead_done();
+		if (instead_init()) {
+			curgame_dir = oldgame;
+			return -1;
+		}
+		if (chdir(g->path)) {
+			curgame_dir = oldgame;
+			return -1;
+		}
+		if (instead_load(MAIN_FILE)) {
+			curgame_dir = oldgame;
+			return -1;
+		}
+		instead_eval("game:ini()"); instead_clear();
+		return 0;
 	}
 	return 0;
 }
@@ -139,24 +151,24 @@ static int games_add(const char *path, const char *dir)
 
 int games_replace(const char *path, const char *dir)
 {
-	int i, rc;
+	int rc;
 	char *p;
+	struct game *g;
 	if (!is_game(path, dir))
 		return -1;
-	for (i = 0; i<games_nr; i ++) {
-		if (!strcmp(games[i].dir, dir)) {
-			p = getpath(path, dir);
-			if (!p)
-				return -1;
-			free(games[i].path);
-			free(games[i].dir);
-			free(games[i].name);
-			games[i].path = p;
-			games[i].dir = strdup(dir);
-			games[i].name = game_name(p, dir);
-			games_sort();
-			return 0;
-		}
+	g = game_lookup(dir);
+	if (g) {
+		p = getpath(path, dir);
+		if (!p)
+			return -1;
+		free(g->path);
+		free(g->dir);
+		free(g->name);
+		g->path = p;
+		g->dir = strdup(dir);
+		g->name = game_name(p, dir);
+		games_sort();
+		return 0;
 	}
 	games = realloc(games, sizeof(struct game) * (1 + games_nr));
 	if (!games)
@@ -182,6 +194,9 @@ int games_lookup(const char *path)
 	while ((de = readdir(d))) {
 		/*if (de->d_type != DT_DIR)
 			continue;*/
+		if (game_lookup(de->d_name))
+			continue;
+
 		if (!is_game(path, de->d_name))
 			continue;
 		n ++;
@@ -194,6 +209,9 @@ int games_lookup(const char *path)
 	while ((de = readdir(d)) && i < n) {
 		/*if (de->d_type != DT_DIR)
 			continue;*/
+		if (game_lookup(de->d_name))
+			continue;
+
 		if (games_add(path, de->d_name))
 			continue;
 		i ++;
