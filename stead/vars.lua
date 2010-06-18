@@ -31,14 +31,15 @@ function __vars_fill(v)
 	end
 end
 
+vars_object = obj {
+	nam = 'vars',
+	ini = function(s)
+		__vars_fill(_G)
+	end
+}
+
 obj = inherit(obj, 
 function(v)
 	__vars_fill(v)
 	return v
-end)
-
-init = hook(init, 
-function (f, ...) -- k - key, v - value, s -- parent table
-	__vars_fill(_G)
-	return f(k, unpack(arg))
 end)
