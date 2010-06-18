@@ -13,6 +13,7 @@ install:
 	$(INSTALL) input.lua $(STEADPATH)/input.lua
 	$(INSTALL) click.lua $(STEADPATH)/click.lua
 	$(INSTALL) dbg.lua $(STEADPATH)/dbg.lua
+	$(INSTALL) vars.lua $(STEADPATH)/vars.lua
 
 uninstall:
 	$(RM) $(STEADPATH)/stead.lua
