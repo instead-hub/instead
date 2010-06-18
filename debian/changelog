@@ -12,7 +12,7 @@ instead (1.2.0) unstable; urgency=low
   * hook and inherit;
   * entered/left human friendly actions;
   * stead.cmd, stead.args added;
-  * require added (modules: goto, xobj, input, click, dbg);
+  * require added (modules: goto, xobj, input, click, vars, dbg);
   * time of save slots;
   * check_version added;
   * taketo/takef added;
