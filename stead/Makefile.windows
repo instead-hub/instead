@@ -10,3 +10,4 @@ install:
 	copy input.lua ..\bin\stead
 	copy click.lua ..\bin\stead
 	copy dbg.lua ..\bin\stead
+	copy vars.lua ..\bin\stead
