@@ -493,6 +493,8 @@ static void themes_sort()
 	qsort(themes, themes_nr, sizeof(struct theme), cmp_theme);
 }
 
+static struct theme *theme_lookup(const char *name);
+
 int themes_lookup(const char *path)
 {
 	char *p;
@@ -507,6 +509,8 @@ int themes_lookup(const char *path)
 	if (!d)
 		return -1;
 	while ((de = readdir(d))) {
+		if (theme_lookup(de->d_name))
+			continue;
 		if (!is_theme(path, de->d_name))
 			continue;
 		n ++;
@@ -519,6 +523,8 @@ int themes_lookup(const char *path)
 	while ((de = readdir(d)) && i < n) {
 		/*if (de->d_type != DT_DIR)
 			continue;*/
+		if (theme_lookup(de->d_name))
+			continue;
 		if (!is_theme(path, de->d_name))
 			continue;
 		p = getpath(path, de->d_name);
@@ -554,6 +560,7 @@ static struct theme *theme_lookup(const char *name)
 	if (!name || !*name) {
 		if (themes_nr == 1) 
 			return &themes[0];
+		return NULL;
 	}
 	for (i = 0; i<themes_nr; i ++) {
 		if (!strcmp(themes[i].dir, name)) {
