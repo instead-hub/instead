@@ -121,7 +121,7 @@ char *newdir;
 
 	buffer = (char *)malloc(len + 1);
 	if (buffer == NULL) {
-		printf("Error allocating memory\n");
+		fprintf(stderr, "Error allocating memory\n");
 		return UNZ_INTERNALERROR;
 	}
 	strcpy(buffer, newdir);
@@ -143,7 +143,7 @@ char *newdir;
 		hold = *p;
 		*p = 0;
 		if ((mymkdir(buffer) == -1) && (errno == ENOENT)) {
-			printf("couldn't create directory %s\n", buffer);
+			fprintf(stderr, "couldn't create directory %s\n", buffer);
 			free(buffer);
 			return 0;
 		}
@@ -173,14 +173,14 @@ const char *password;
 				    sizeof(filename_inzip), NULL, 0, NULL, 0);
 
 	if (err != UNZ_OK) {
-		printf("error %d with zipfile in unzGetCurrentFileInfo\n", err);
+		fprintf(stderr, "error %d with zipfile in unzGetCurrentFileInfo\n", err);
 		return err;
 	}
 
 	size_buf = WRITEBUFFERSIZE;
 	buf = (void *)malloc(size_buf);
 	if (buf == NULL) {
-		printf("Error allocating memory\n");
+		fprintf(stderr, "Error allocating memory\n");
 		return UNZ_INTERNALERROR;
 	}
 
@@ -198,28 +198,24 @@ const char *password;
 			fprintf(stderr, "Too many dirs in zip...\n");
 			goto out;
 		}
-		printf("creating directory: %s\n", filename_inzip);
+		fprintf(stderr, "creating directory: %s\n", filename_inzip);
 		mymkdir(filename_inzip);
 		if (!*zip_game_dirname)
 			strcpy(zip_game_dirname, filename_inzip);
 	} else {
 		const char *write_filename;
 		int skip = 0;
-		if (!*zip_game_dirname) {
-			err = -1;
-			fprintf(stderr, "No dir in zip...\n");
-			goto out;
-		}
 		write_filename = filename_inzip;
 
 		err = unzOpenCurrentFilePassword(uf, password);
 		if (err != UNZ_OK) {
-			printf
-			    ("error %d with zipfile in unzOpenCurrentFilePassword\n",
+			fprintf
+			    (stderr, "error %d with zipfile in unzOpenCurrentFilePassword\n",
 			     err);
+			goto out;
 		}
 
-		if ((skip == 0) && (err == UNZ_OK)) {
+		if (skip == 0) {
 			fout = fopen64(write_filename, "wb");
 
 			/* some zipfile don't contain directory alone before file */
@@ -228,30 +224,41 @@ const char *password;
 				char c = *(filename_withoutpath - 1);
 				*(filename_withoutpath - 1) = '\0';
 				makedir(write_filename);
+				if (!*zip_game_dirname)
+					strcpy(zip_game_dirname, filename_inzip);
 				*(filename_withoutpath - 1) = c;
 				fout = fopen64(write_filename, "wb");
 			}
 
 			if (fout == NULL) {
-				printf("error opening %s\n", write_filename);
+				fprintf(stderr, "error opening %s\n", write_filename);
 			}
 		}
 
+		if (!*zip_game_dirname) {
+			err = -1;
+			fprintf(stderr, "No dir in zip...\n");
+			if (fout)
+				fclose(fout);
+			unzCloseCurrentFile(uf);
+			goto out;
+		}
+
 		if (fout != NULL) {
-			printf(" extracting: %s\n", write_filename);
+			fprintf(stderr, " extracting: %s\n", write_filename);
 
 			do {
 				err = unzReadCurrentFile(uf, buf, size_buf);
 				if (err < 0) {
-					printf
-					    ("error %d with zipfile in unzReadCurrentFile\n",
+					fprintf
+					    (stderr, "error %d with zipfile in unzReadCurrentFile\n",
 					     err);
 					break;
 				}
 				if (err > 0)
 					if (fwrite(buf, err, 1, fout) != 1) {
-						printf
-						    ("error in writing extracted file\n");
+						fprintf
+						    (stderr, "error in writing extracted file\n");
 						err = UNZ_ERRNO;
 						break;
 					}
@@ -269,8 +276,8 @@ const char *password;
 		if (err == UNZ_OK) {
 			err = unzCloseCurrentFile(uf);
 			if (err != UNZ_OK) {
-				printf
-				    ("error %d with zipfile in unzCloseCurrentFile\n",
+				fprintf
+				    (stderr, "error %d with zipfile in unzCloseCurrentFile\n",
 				     err);
 			}
 		} else
@@ -298,7 +305,7 @@ const char *password;
 	int err;
 	err = unzGetGlobalInfo64(uf, &gi);
 	if (err != UNZ_OK)
-		printf("error %d with zipfile in unzGetGlobalInfo \n", err);
+		fprintf(stderr, "error %d with zipfile in unzGetGlobalInfo \n", err);
 
 	for (i = 0; i < gi.number_entry; i++) {
 		if (do_extract_currentfile(uf, password) != UNZ_OK)
@@ -307,8 +314,8 @@ const char *password;
 		if ((i + 1) < gi.number_entry) {
 			err = unzGoToNextFile(uf);
 			if (err != UNZ_OK) {
-				printf
-				    ("error %d with zipfile in unzGoToNextFile\n",
+				fprintf
+				    (stderr, "error %d with zipfile in unzGoToNextFile\n",
 				     err);
 				return -1;
 			}
@@ -364,7 +371,7 @@ int unpack(const char *zipfilename, const char *dirname)
 #endif
 	{
 		ret_value = -1;
-		printf("Error changing dir to %s, aborting\n", dirname);
+		fprintf(stderr, "Error changing dir to %s, aborting\n", dirname);
 		goto out;
 	}
 	ret_value = do_extract(uf, NULL);
