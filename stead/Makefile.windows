@@ -11,3 +11,5 @@ install:
 	copy click.lua ..\bin\stead
 	copy dbg.lua ..\bin\stead
 	copy vars.lua ..\bin\stead
+	copy prefs.lua ..\bin\stead
+	copy snapshot.lua ..\bin\stead

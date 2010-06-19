@@ -14,6 +14,8 @@ install:
 	$(INSTALL) click.lua $(STEADPATH)/click.lua
 	$(INSTALL) dbg.lua $(STEADPATH)/dbg.lua
 	$(INSTALL) vars.lua $(STEADPATH)/vars.lua
+	$(INSTALL) prefs.lua $(STEADPATH)/prefs.lua
+	$(INSTALL) snapshot.lua $(STEADPATH)/snapshot.lua
 
 uninstall:
 	$(RM) $(STEADPATH)/stead.lua
