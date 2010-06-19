@@ -660,7 +660,7 @@ static img_t _gfx_load_combined_image(char *filename)
 		goto err; /* first image is a base image */
 	*ep = 0;
 
-	base = _gfx_load_image(p);
+	base = _gfx_load_image(strip(p));
 	if (!base)
 		goto err;
 	base = gfx_display_alpha(base);
@@ -686,7 +686,7 @@ static img_t _gfx_load_combined_image(char *filename)
 		} else if (*ep) {
 			goto err;
 		}
-		img = _gfx_load_image(p);
+		img = _gfx_load_image(strip(p));
 		if (img)
 			img = gfx_display_alpha(img);
 		if (img) {
