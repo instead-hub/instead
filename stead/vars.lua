@@ -38,8 +38,8 @@ vars_object = obj {
 	end
 }
 
-obj = inherit(obj, 
-function(v)
+obj = hook(obj, 
+function(f, v, ...)
 	__vars_fill(v)
-	return v
+	return f(v, unpack(arg))
 end)
