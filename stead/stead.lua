@@ -1566,7 +1566,6 @@ Commands:^
     back, inv, way, obj, quit, save <fname>, load <fname>.]],
 	pl ='pl',
 	showlast = true, 
-	_snapshots = {},
 };
 function strip(s)
 	local s = tostring(s);
@@ -1950,28 +1949,6 @@ input = obj { -- input object
 	end ]]
 };
 
-prefs = obj {
-	nam = 'preferences',
-	ini = function(s)
-		local name = get_savepath() .. '/prefs';
-		local f, err = loadfile(name);
-		if not f then return nil end
-		f();
-	end,
-	store = function(s)
-		local name = get_savepath() .. '/prefs';
-		local h = stead.io.open(name,"w");
-		if not h then return false end
-		savemembers(h, s, 'prefs', true);
-		h:flush();
-		h:close();
-	end,
-	purge = function(s)
-		local name = get_savepath() .. '/prefs';
-		return stead.os.remove(name);
-	end
-};
-
 function vobj_save(self, name, h, need)
 	local dsc;
 	local w
@@ -2347,51 +2324,6 @@ function isForSave(k, v, s) -- k - key, v - value, s -- parent table
 	return stead.string.find(k, '_') ==  1 or stead.string.match(k,'^%u')
 end
 
-function make_snapshot(nr)
-	if not tonumber(nr) then nr = 0 end
-	local h = { };
-	h.txt = ''
-	h.write = function(s, ...)
-		local i
-		for i = 1, stead.table.maxn(arg) do
-			s.txt = s.txt .. tostring(arg[i]);
-		end
-	end
-	local old = game._snapshots; game._snapshots = nil
-	for_each_object(save_object, h);
-	save_object('game', game, h);
-	clearvar(_G);
-	game._snapshots = old
-	game._snapshots[nr] = h.txt;
-end
-
-function restore_snapshot(nr)
-	if not tonumber(nr) then nr = 0 end
-	local ss = game._snapshots
-	if not ss[nr] then return nil, true end -- nothing todo
-	stead_init();
-	game.lifes:zap();
-	dofile('main.lua');
-	if type(init) == 'function' then -- no hooks here!!!
-		init();
-	end
-	local f, err = loadstring(ss[nr]);
-	if not f then return end
-	local i,r = f();
-	game._snapshots = ss
-	if r then
-		return nil, false
-	end
-	i = do_ini(game);
-	RAW_TEXT = true
-	return i;
-end
-
-function delete_snapshot(nr)
-	if not tonumber(nr) then nr = 0 end
-	game._snapshots[nr] = nil
-end
-
 function inherit(o, f)
 	return function(...)
 		return f(o(unpack(arg)))
@@ -2414,6 +2346,7 @@ function check_version(v)
 	if stead.version < v then
 		error ([[The game requires instead engine of version ]] ..v.. [[ or higher. http://instead.googlecode.com]])
 	end
+	game.version = v
 	if v >= "1.2.0" then
 		require ("goto")
 		require ("vars");
