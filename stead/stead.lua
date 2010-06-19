@@ -2330,12 +2330,15 @@ end
 
 function hook(o, f)
 	return function(...)
+		local ff
 		if type(o) ~= 'function' then
-			o = function(s)
+			ff = function(s)
 				return o;
 			end
+		else
+			ff = o
 		end
-		return f(o, unpack(arg))
+		return f(ff, unpack(arg))
 	end
 end
 
