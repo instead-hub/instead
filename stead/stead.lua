@@ -1320,7 +1320,6 @@ function do_ini(self)
 
 	for_each(game, "game", check_list, isList)
 
-	stead.fixups:apply();
 	for_each_object(call_ini);
 
 	me():tag();
@@ -1444,7 +1443,7 @@ function savemembers(h, self, name, need)
 			end
 			
 			if type(k) == 'string' then
-				savevar(h, v, name..'["'..k:gsub('"','\\"')..'"]', need or need2);
+				savevar(h, v, name..'['..stead.string.format("%q",k)..']', need or need2);
 			else
 				savevar(h, v, name.."["..k.."]", need or need2)
 			end
@@ -1478,8 +1477,7 @@ function savevar (h, v, n, need)
 		if type(v.key_name) == 'string' and v.key_name ~= n and
 			'_G["'..v.key_name..'"]' ~= n then -- just xref
 			if need then
-				local w = stead.string.format("%s = ref(%q)", n, v.key_name);
-				h:write(stead.string.format("%s = stead.fixups:add(%q)\n", n, w));
+				h:write(stead.string.format("%s = %s\n", n, v.key_name));
 			end
 			return
 		end
@@ -1538,6 +1536,7 @@ function game_save(self, name, file)
 	if type(n) == 'string' and n ~= "" then
 		h:write("-- $Name: "..n:gsub("\n","\\n").."$\n");
 	end
+	save_object('allocator', allocator, h); -- always first!
 	for_each_object(save_object, h);
 	save_object('game', self, h);
 	save_object('_G', _G, h);
@@ -1919,25 +1918,6 @@ end
 function delete(v)
 	allocator:delete(v);
 end
-
-stead.fixups = {
-	fix = {},
-	apply = function(s)
-		local i,v
-		for i,v in ipairs(s.fix) do
-			local f = loadstring(v);
-			if type(f) ~= 'function' then
-				error ("Error while fixup:" .. tostring(v))
-			end
-			f();
-		end
-		s.fix = {}
-	end,
-	add = function(s, str)
-		stead.table.insert(s.fix, str)
-		return nil
-	end
-}
 
 timer = obj { -- timer calls stead.timer callback 
 	nam = 'timer',
