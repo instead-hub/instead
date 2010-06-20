@@ -13,3 +13,4 @@ install:
 	copy vars.lua ..\bin\stead
 	copy prefs.lua ..\bin\stead
 	copy snapshot.lua ..\bin\stead
+	copy object.lua ..\bin\stead
