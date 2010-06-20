@@ -1,9 +1,9 @@
 isForSave = hook(isForSave, 
 function (f, k, v, s, ...) -- k - key, v - value, s -- parent table
-	local i,v
+	local i,o
 	if type(s.var) == 'table' then
-		for i,v in ipairs(s.var) do
-			if v == k then
+		for i,o in ipairs(s.var) do
+			if o == k then
 				return true
 			end
 		end
