@@ -19,7 +19,7 @@ room = inherit(room, function(v)
 		end)
 	end
 	if v.entered then
-		v.entered = hook(v.enter, function(f, s, from, ...)
+		v.entered = hook(v.entered, function(f, s, from, ...)
 			return f(s, ref(from), unpack(arg))
 		end)
 	end
