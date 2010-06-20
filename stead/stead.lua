@@ -72,7 +72,7 @@ function callpop()
 	stead.cctx[stead.call_top] = nil;
 	stead.call_top = stead.call_top - 1;
 	if stead.call_top < 0 then
-		error "callpush/callpop mismatch"
+		error ("callpush/callpop mismatch")
 	end 
 end
 
@@ -363,7 +363,8 @@ end
 function obj_save(self, name, h, need)
 	local dsc;
 	if need then
-		h:write(name.." = obj {nam = '"..tostring(self.nam).."'}\n");
+		error ("Object "..name.." can not be saved!");
+		return
 	end
 	savemembers(h, self, name, need);
 end
@@ -389,7 +390,7 @@ end
 
 function obj(v)
 	if v.nam == nil then
-		error ("No object name in constructor.");
+		error ("No object name in constructor.", 2);
 	end
 	v.object_type = true;
 
@@ -465,6 +466,7 @@ function list_check(self)
 	for i,v,ii in opairs(self) do
 		local o = ref(v);
 		if not o then -- isObject(o) then -- compat
+			error ("No object: "..tostring(v))
 			return false
 		end
 		if deref(v) then
@@ -494,7 +496,7 @@ function list_add(self, name, pos)
 	if self:look(nam) then
 		return nil
 	end
-	self.__modifyed__ = true;
+	self.__modified__ = true;
 	if tonumber(pos) then
 		stead.table.insert(self, tonumber(pos), nam);
 		self[tonumber(pos)] = nam; -- for spare lists
@@ -511,7 +513,7 @@ function list_set(self, name, pos)
 		return nil
 	end
 	nam = deref(name);
-	self.__modifyed__ = true;
+	self.__modified__ = true;
 	self[i] = nam; -- for spare lists
 	return true
 end
@@ -527,7 +529,7 @@ function list_find(self, name)
 end
 
 function list_save(self, name, h, need)
-	if self.__modifyed__ then
+	if self.__modifyed__ or self.__modified__ then -- compat
 		h:write(name.." = list({});\n");
 		need = true;
 	end
@@ -582,7 +584,7 @@ function list_zap(self)
 	for n,o,ii in opairs(self) do
 		self[ii] = nil;
 	end
-	self.__modifyed__ = true
+	self.__modified__ = true
 	return self
 end
 
@@ -605,7 +607,7 @@ function list_del(self, name)
 	if n == nil then
 		return nil;
 	end
-	self.__modifyed__ = true
+	self.__modified__ = true
 	v = stead.table.remove(self, n);
 	if not v then
 		v = self[n];
@@ -637,7 +639,7 @@ end
 
 function call(v, n, ...)
 	if type(v) ~= 'table' then
-		error ("Call on non table object:"..n);
+		error ("Call on non table object:"..n, 2);
 	end
 	if v[n] == nil then
 		return nil,nil;
@@ -658,12 +660,12 @@ function call(v, n, ...)
 	if type(v[n]) == 'boolean' then
 		return v[n]
 	end
-	error ("Method not string nor function:"..tostring(n));
+	error ("Method not string nor function:"..tostring(n), 2);
 end
 
 function call_bool(v, n, ...)
 	if type(v) ~= 'table' then
-		error ("Call bool on non table object:"..n);
+		error ("Call bool on non table object:"..n, 2);
 	end
 	
 	if v[n] == nil then
@@ -726,14 +728,15 @@ end
 function room_save(self, name, h, need)
 	local dsc;
 	if need then
-		h:write(name.." = room {nam = '"..tostring(self.nam).."'}\n");
+		error ("Room "..name.." can not be saved!");
+		return
 	end
 	savemembers(h, self, name, need);
 end
 
 function room(v) --constructor
 	if v.nam == nil then
-		error "No room name in constructor.";
+		error ("No room name in constructor.", 2);
 	end
 	if v.scene == nil then
 		v.scene = room_scene;
@@ -1101,14 +1104,14 @@ function go(self, where, back)
 		return nil,ret(false)
 	end
 	if not isRoom(ref(where)) then
-		error ("Trying to go nowhere: "..where);
+		error ("Trying to go nowhere: "..where, 2);
 	end
 	if not isRoom(ref(self.where)) then
-		error ("Trying to go from nowhere: "..self.where);
+		error ("Trying to go from nowhere: "..self.where, 2);
 	end
 
 	if stead.in_entered_call or stead.in_onexit_call then
-		error ("Do not use goto from onexit/entered action! Use exit/enter action instead:" .. self.where);
+		error ("Do not use goto from onexit/entered action! Use exit/enter action instead:" .. self.where, 2);
 	end
 
 	local v, r;
@@ -1188,7 +1191,7 @@ end
 
 function player(v)
 	if v.nam == nil then
-		error "No player name in constructor.";
+		error ("No player name in constructor.", 2);
 	end
 	if v.where == nil then
 		v.where = 'main';
@@ -1316,7 +1319,8 @@ function do_ini(self)
 	game.where = deref(game.where);
 
 	for_each(game, "game", check_list, isList)
-	
+
+	stead.fixups:apply();
 	for_each_object(call_ini);
 
 	me():tag();
@@ -1342,7 +1346,7 @@ end
 
 function game(v)
 	if v.nam == nil then
-		error "No game name in constructor.";
+		error ("No game name in constructor.", 2);
 	end
 	if v.pl == nil then
 		v.pl = 'player';
@@ -1450,9 +1454,11 @@ end
 
 function savevar (h, v, n, need)
 	local r,f
-	
 	if v == nil or type(v)=="userdata" or
-			 type(v)=="function" then 
+			 type(v)=="function" then
+--		if need then
+--			error ("Variable "..n.." can not be saved!");
+--		end 
 		return 
 	end
 
@@ -1469,6 +1475,14 @@ function savevar (h, v, n, need)
 	end
  	
 	if type(v) == "table" then
+		if type(v.key_name) == 'string' and v.key_name ~= n and
+			'_G["'..v.key_name..'"]' ~= n then -- just xref
+			if need then
+				local w = stead.string.format("%s = ref(%q)", n, v.key_name);
+				h:write(stead.string.format("%s = stead.fixups:add(%q)\n", n, w));
+			end
+			return
+		end
 		if v.__visited__ ~= nil then
 			return
 		end
@@ -1479,7 +1493,7 @@ function savevar (h, v, n, need)
 			v:save(n, h, need);
 			return;
 		end
-		
+
 		if need then
 			h:write(n.." = {};\n");
 		end
@@ -1880,24 +1894,24 @@ allocator = obj {
 	new = function(s, n)
 		local v = ref(n);
 		if type(v) ~= 'table' or type(n) ~= 'string' then
-			error "Error in new.";
+			error ("Error in new.", 2);
 		end
 		v.save = allocator_save;
 		v.constructor = n;
 		stead.table.insert(s.objects, v);
-		v.key_name = 'allocator.objects['..stead.table.maxn(s.objects)..']';
+		v.key_name = 'allocator["objects"]['..stead.table.maxn(s.objects)..']';
 		return v
 	end,
 	objects = {
 		save = function(self, name, h, need)
 			savemembers(h, self, name, true);
-		end
+		end,
 	},
 };
 
 function new(str)
 	if type(str) ~= 'string' then
-		error("Non string constructor in new.");
+		error("Non string constructor in new.", 2);
 	end
 	return allocator:new(str);
 end
@@ -1905,6 +1919,25 @@ end
 function delete(v)
 	allocator:delete(v);
 end
+
+stead.fixups = {
+	fix = {},
+	apply = function(s)
+		local i,v
+		for i,v in ipairs(s.fix) do
+			local f = loadstring(v);
+			if type(f) ~= 'function' then
+				error ("Error while fixup:" .. tostring(v))
+			end
+			f();
+		end
+		s.fix = {}
+	end,
+	add = function(s, str)
+		stead.table.insert(s.fix, str)
+		return nil
+	end
+}
 
 timer = obj { -- timer calls stead.timer callback 
 	nam = 'timer',
@@ -1983,7 +2016,7 @@ end
 
 function vobj(key, name, dsc, w)
 	if not tonumber(key) then
-		error ("vobj key must be number!");
+		error ("vobj key must be number!", 2);
 	end
 	return obj{ key = key, nam = name, dsc = dsc, where = deref(w), act = vobj_act, used = vobj_used, save = vobj_save, obj = list({}) };
 end
@@ -2051,7 +2084,7 @@ end
 function taketo(obj, wh, pos)
 	local o = remove(obj, wh);
 	if not isObject(o) then
-		error "Trying to take wrong object.";
+		error ("Trying to take wrong object.", 2);
 	end
 	inv():add(obj, pos);
 	o._taken = true
@@ -2070,7 +2103,7 @@ function putto(obj, w, pos)
 	local wh
 	local o = ref(obj);
 	if not isObject(o) then
-		error "Trying to put wrong object.";
+		error ("Trying to put wrong object.", 2);
 	end
 	if not w then
 		wh = deref(here());
@@ -2098,7 +2131,7 @@ end
 function drop(obj, w)
 	local o = put(obj, w);
 	if not isObject(o) then
-		error "Trying to drop wrong object:";
+		error ("Trying to drop wrong object.", 2);
 	end
 	inv():del(obj);
 	o._taken = false
@@ -2108,7 +2141,7 @@ end
 function dropf(obj)
 	local o = putf(obj);
 	if not isObject(o) then
-		error "Trying to dropf wrong object:";
+		error ("Trying to dropf wrong object.", 2);
 	end
 	inv():del(obj);
 	o._taken = false
@@ -2276,7 +2309,7 @@ end
 function change_pl(p)
 	local o = ref(p);
 	if type(deref(p)) ~= 'string' or not o then
-		error "Wrong player name in change_pl...";
+		error ("Wrong player name in change_pl...", 2);
 	end
 	game.pl = deref(p);
 	return goto(o.where);
@@ -2319,6 +2352,9 @@ function enable_all(o)
 end
 
 function isForSave(k, v, s) -- k - key, v - value, s -- parent table
+	if type(v) == 'function' or type(v) == 'userdata' then
+		return false
+	end
 	return stead.string.find(k, '_') ==  1 or stead.string.match(k,'^%u')
 end
 
@@ -2347,7 +2383,7 @@ function check_version(v)
 		return
 	end
 	if stead.version < v then
-		error ([[The game requires instead engine of version ]] ..v.. [[ or higher. http://instead.googlecode.com]])
+		error ([[The game requires instead engine of version ]] ..v.. [[ or higher. http://instead.googlecode.com]], 2)
 	end
 	game.version = v
 	if v >= "1.2.0" then
