@@ -11,7 +11,6 @@ obj = inherit(obj, function(v)
 	end
 	return v
 end)
-
 room = inherit(room, function(v)
 	if v._enter then
 		v.enter = hook(v.enter, function(f, s, from, ...)
@@ -33,4 +32,5 @@ room = inherit(room, function(v)
 			return f(s, ref(to), unpack(arg))
 		end)
 	end
+	return v
 end)
