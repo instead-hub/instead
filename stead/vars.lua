@@ -13,6 +13,9 @@ end)
 
 function __vars_fill(v)
 	local k,o
+	if type(v) ~= 'table' then
+		return
+	end
 	if type(v.var) == 'table' then
 		local k,o
 		local vars = {}
@@ -34,11 +37,9 @@ end
 vars_object = obj {
 	nam = 'vars',
 	ini = function(s)
-		local fill = function(k, o)
-			__vars_fill(o)
-		end
 		__vars_fill(_G)
-		for_each_object(fill);
+		__vars_fill(pl)
+		__vars_fill(game)
 	end
 }
 
