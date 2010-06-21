@@ -2335,6 +2335,9 @@ function isForSave(k, v, s) -- k - key, v - value, s -- parent table
 	if type(v) == 'function' or type(v) == 'userdata' then
 		return false
 	end
+	if game.version and game.version >= "1.2.0" then
+		return stead.string.find(k, '_') ==  1
+	end
 	return stead.string.find(k, '_') ==  1 or stead.string.match(k,'^%u')
 end
 
