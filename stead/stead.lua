@@ -65,7 +65,8 @@ end
 
 function callpush(v, ...)
 	stead.call_top = stead.call_top + 1;
-	stead.cctx[stead.call_top] = { txt = nil, self = v, args = arg };
+	stead.cctx[stead.call_top] = { txt = nil, self = v };
+	args = arg
 end
 
 function callpop()
@@ -81,13 +82,6 @@ function self(v)
 		cctx().self = v;
 	end
 	return cctx().self;
-end
-
-function args(v)
-	if v ~= nil then
-		cctx().args = v;
-	end
-	return cctx().args;
 end
 
 function pclr()
@@ -652,8 +646,19 @@ function call(v, n, ...)
 		return nil,nil;
 	end
 	if type(v[n]) == 'string' then
+		if v[n]:sub(1,1) == '@' then
+			callpush(v, unpack(arg))
+			local f = loadstring(v[n]:sub(2))
+			local a,b = f();
+			if a == nil and b == nil then
+				a = pget()
+				b = nil
+			end
+			callpop()
+			return a,b
+		end
 		return v[n];
-	end 
+	end
 	if type(v[n]) == 'function' then
 		callpush(v, unpack(arg))
 		local a,b = v[n](v, unpack(arg));
