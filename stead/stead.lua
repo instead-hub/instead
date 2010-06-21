@@ -63,9 +63,9 @@ function cctx()
 	return stead.cctx[stead.call_top];
 end
 
-function callpush(v)
+function callpush(v, ...)
 	stead.call_top = stead.call_top + 1;
-	stead.cctx[stead.call_top] = { txt = nil, self = v };
+	stead.cctx[stead.call_top] = { txt = nil, self = v, args = arg };
 end
 
 function callpop()
@@ -81,6 +81,13 @@ function self(v)
 		cctx().self = v;
 	end
 	return cctx().self;
+end
+
+function args(v)
+	if v ~= nil then
+		cctx().args = v;
+	end
+	return cctx().args;
 end
 
 function pclr()
@@ -648,7 +655,7 @@ function call(v, n, ...)
 		return v[n];
 	end 
 	if type(v[n]) == 'function' then
-		callpush(v)
+		callpush(v, unpack(arg))
 		local a,b = v[n](v, unpack(arg));
 		if a == nil and b == nil then
 			a = pget()
@@ -2374,7 +2381,13 @@ function check_version(v)
 		require ("vars");
 	end
 end
-
+function code(v)
+	local f = loadstring(v)
+	if not f then
+		error ("Wrong script: "..tostring(v), 2);
+	end
+	return f;
+end
 --- here the game begins
 function stead_init()
 pl = player {
