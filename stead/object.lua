@@ -42,10 +42,11 @@ function vobj_save(self, name, h, need)
 	if w == nil then
 		w = "nil"
 	else
-		w = "\""..w:format("%q").."\""
+		w = stead.string.format("%q", w)
 	end
 	if need then
-		h:write(name.." = vobj(\""..tostring(self.nam):format("%q").."\",\""..tostring(self.dsc):format("%q").."\","..w..");\n");
+		h:write(stead.string.format("%s  = vobj(%q,%q,%s);\n",
+			name, tostring(self.nam), tostring(self.dsc), w));
 	end
 	savemembers(h, self, name, false);
 end
