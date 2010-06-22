@@ -532,13 +532,13 @@ function list_save(self, name, h, need)
 	savemembers(h, self, name, need);
 end
 
-function list_name(self, name)
+function list_name(self, name, dis)
 	local n, o, ii
 	for n,o,ii in opairs(self) do
 		o = ref(o);
 		if isObject(o) then
 			local nam = call(o,'nam') ;
-			if not isDisabled(o) and name == tostring(nam) then
+			if ( not isDisabled(o) or dis ) and name == tostring(nam) then
 				return ii;
 			end
 		end
@@ -561,7 +561,7 @@ function list_search(self, n, dis)
 	local i;
 	i = self:look(n);
 	if not i then
-		i = self:name(n);
+		i = self:name(n, dis);
 	end
 	if not i and tonumber(n) then
 		i = self:byid(tonumber(n), dis);
