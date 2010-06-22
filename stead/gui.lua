@@ -112,7 +112,7 @@ end
 function menu_save(self, name, h, need)
 	local dsc;
 	if need then
-		h:write(name.." = menu {nam = '"..tostring(self.nam).."'}\n");
+		error ("Menu "..name.." can not be saved!");
 	end
 	savemembers(h, self, name, need);
 end

@@ -68,6 +68,7 @@ function callpush(v, ...)
 	stead.call_top = stead.call_top + 1;
 	stead.cctx[stead.call_top] = { txt = nil, self = v };
 	args = arg
+	self = v
 end
 
 function callpop()
@@ -76,13 +77,6 @@ function callpop()
 	if stead.call_top < 0 then
 		error ("callpush/callpop mismatch")
 	end 
-end
-
-function self(v)
-	if v ~= nil then
-		cctx().self = v;
-	end
-	return cctx().self;
 end
 
 function pclr()
@@ -822,7 +816,7 @@ end
 function ponoff(s, on, ...)
 	local i, ph
 	if stead.table.maxn(arg) == 0 then
-		stead.table.insert(arg, self());
+		stead.table.insert(arg, self);
 	end
 	for i=1,stead.table.maxn(arg) do
 		ph = dialog_phrase(s, arg[i]);
@@ -839,7 +833,7 @@ end
 function dialog_prem(s, ...)
 	local i, ph
 	if stead.table.maxn(arg) == 0 then
-		stead.table.insert(arg, self());
+		stead.table.insert(arg, self);
 	end
 	for i=1,stead.table.maxn(arg) do
 		ph = dialog_phrase(s, arg[i]);
@@ -2386,7 +2380,8 @@ function check_version(v)
 	game.version = v
 	if v >= "1.2.0" then
 		require ("goto")
-		require ("vars");
+		require ("vars")
+		require ("object")
 	end
 end
 function code(v)
