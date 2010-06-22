@@ -22,7 +22,8 @@ instead (1.2.0) unstable; urgency=low
   * save vars in _G;
   * no duplicated games while looking gamespaths;
   * code function!!!;
-  * args in call
+  * args in call;
+  * self() is now self;
   * no return goto needed;
   * many small bugfixes...
 
