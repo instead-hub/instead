@@ -1533,17 +1533,17 @@ function savevar (h, v, n, need)
 end
 
 
-function save_object(key, value, h)
-	savevar(h, value, key, false);
-	return true;
-end
-
-function save_var(key, value, h)
-	savevar(h, value, key, isForSave(key, value, _G))
-end
 
 function game_save(self, name, file) 
 	local h;
+	local function save_object(key, value, h)
+		savevar(h, value, key, false);
+		return true;
+	end
+
+	local function save_var(key, value, h)
+		savevar(h, value, key, isForSave(key, value, _G))
+	end
 
 	if file ~= nil then
 		file:write(name..".pl = '"..deref(self.pl).."'\n");
