@@ -35,3 +35,49 @@ room = inherit(room, function(v)
 	end
 	return v
 end)
+
+function vobj_save(self, name, h, need)
+	local w
+	w = deref(self.where)
+	if w == nil then
+		w = "nil"
+	else
+		w = "\""..w:format("%q").."\""
+	end
+	if need then
+		h:write(name.." = vobj(\""..tostring(self.nam):format("%q").."\",\""..tostring(self.dsc):format("%q").."\","..w..");\n");
+	end
+	savemembers(h, self, name, false);
+end
+
+function vobj_act(self, ...)
+	local o, r = here():srch(self); -- self.nam
+	if ref(o) and ref(o).where then
+		return goto(ref(o).where);
+	end
+	return call(ref(r),'act', self.nam, unpack(arg));
+end
+
+function vobj_used(self, ...)
+	local o, r = here():srch(self.nam);
+	return call(ref(r),'used', self.nam, unpack(arg));
+end
+
+function vobj(name, dsc, w)
+	return obj{ nam = tostring(name), 
+		dsc = dsc, 
+		where = deref(w), 
+		act = vobj_act, 
+		used = vobj_used, 
+		save = vobj_save };
+end
+
+function vway(name, dsc, w)
+--	o.object_type = true;
+	return  obj{ nam = tostring(name), 
+		dsc = dsc, 
+		act = vobj_act, 
+		where = deref(w), 
+		used = vobj_used, 
+		save = vobj_save };
+end
