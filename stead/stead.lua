@@ -1311,6 +1311,9 @@ function do_ini(self)
 	local function call_key(k, o)
 		o.key_name = k;
 	end
+	local function call_codekey(k, o)
+		stead.functions[o].key_name = k;
+	end
 	local function call_ini(k, o)
 		v = stead.par('', v, call(o, 'ini'));
 	end
@@ -1319,6 +1322,7 @@ function do_ini(self)
 	rnd(1); rnd(1); rnd(1); -- Lua bug?
 
 	for_each_object(call_key);
+	for_each_codeblock(call_codekey);
 	for_each_object(check_object);
 
 	game.pl = deref(game.pl);
@@ -1395,7 +1399,7 @@ function for_each(o, n, f, fv, ...)
 	end
 	stead.object = n;
 	for k,v in pairs(o) do
-		if type(v) == 'table' and fv(v) then
+		if fv(v) then
 			local i = tonumber(k);
 			local nn
 			if i then
@@ -1410,6 +1414,13 @@ function for_each(o, n, f, fv, ...)
 			f(k, v, unpack(arg));
 		end
 	end
+end
+
+function for_each_codeblock(f,...)
+	local function isCode(s)
+		return type(s) == 'function' and type(stead.functions[s]) == 'table'
+	end
+	for_each(_G, '_G', f, isCode, unpack(arg))
 end
 
 function for_each_object(f,...)
@@ -1462,7 +1473,12 @@ function savevar (h, v, n, need)
 	if v == nil or type(v) == "userdata" or
 			 type(v) == "function" then
 		if type(v) == "function" and stead.functions[v] and need then
-			h:write(stead.string.format("%s=code %q\n", n, stead.functions[v].code))
+			if type(stead.functions[v].key_name) == 'string' 
+				and stead.functions[v].key_name ~= n then
+				h:write(stead.string.format("%s=%s\n", n, stead.functions[v].key_name))
+			else
+				h:write(stead.string.format("%s=code %q\n", n, stead.functions[v].code))
+			end
 		end
 --		if need then
 --			error ("Variable "..n.." can not be saved!");
@@ -1483,8 +1499,8 @@ function savevar (h, v, n, need)
 	end
  	
 	if type(v) == "table" then
-		if type(v.key_name) == 'string' and v.key_name ~= n and
-			'_G["'..v.key_name..'"]' ~= n then -- just xref
+		if v == _G then return end
+		if type(v.key_name) == 'string' and v.key_name ~= n then -- just xref
 			if need then
 				h:write(stead.string.format("%s = %s\n", n, v.key_name));
 			end
@@ -1504,6 +1520,7 @@ function savevar (h, v, n, need)
 		if need then
 			h:write(n.." = {};\n");
 		end
+
 		savemembers(h, v, n, need);
 		return;
 	end
@@ -1519,6 +1536,10 @@ end
 function save_object(key, value, h)
 	savevar(h, value, key, false);
 	return true;
+end
+
+function save_var(key, value, h)
+	savevar(h, value, key, isForSave(key, value, _G))
 end
 
 function game_save(self, name, file) 
@@ -1548,7 +1569,8 @@ function game_save(self, name, file)
 	save_object('allocator', allocator, h); -- always first!
 	for_each_object(save_object, h);
 	save_object('game', self, h);
-	save_object('_G', _G, h);
+	for_everything(save_var, h);
+--	save_object('_G', _G, h);
 	clearvar(_G);
 	h:flush();
 	h:close();
