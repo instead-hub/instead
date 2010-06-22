@@ -88,3 +88,11 @@ go = function (self, where, back)
 	end
 	return res;
 end
+
+go = hook(go, function(f, ...)
+	local r,v = f(unpack(arg))
+	if type(r) == 'string' then 
+		pr (r)
+	end
+	return r,v
+end)

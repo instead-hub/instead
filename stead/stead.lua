@@ -652,7 +652,10 @@ function call(v, n, ...)
 	if type(v[n]) == 'function' then
 		callpush(v, unpack(arg))
 		local a,b = v[n](v, unpack(arg));
-		if a == nil and b == nil then
+		if a == false and b == nil then
+			b = a
+			a = stead.pget()
+		elseif a == nil and b == nil then
 			a = stead.pget()
 			b = nil
 		end
