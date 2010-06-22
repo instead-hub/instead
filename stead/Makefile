@@ -17,6 +17,7 @@ install:
 	$(INSTALL) prefs.lua $(STEADPATH)/prefs.lua
 	$(INSTALL) snapshot.lua $(STEADPATH)/snapshot.lua
 	$(INSTALL) object.lua $(STEADPATH)/object.lua
+	$(INSTALL) para.lua $(STEADPATH)/para.lua
 
 uninstall:
 	$(RM) $(STEADPATH)/stead.lua

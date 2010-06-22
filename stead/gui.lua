@@ -166,7 +166,7 @@ fmt = function(...)
 	end
 	for i=1,stead.table.maxn(arg) do
 		if type(arg[i]) == 'string' then
-			local s = stead.string.gsub(arg[i],'\t', ' '):gsub('[\n]+', ' '):gsub('%^','\n'):gsub('~', txtnb('    '));
+			local s = stead.string.gsub(arg[i],'\t', ' '):gsub('[\n]+', ' '):gsub('%^','\n');
 			res = stead.par('', res, s);
 		end
 	end

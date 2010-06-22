@@ -94,5 +94,8 @@ go = hook(go, function(f, ...)
 	if type(r) == 'string' then 
 		pr (r)
 	end
+	if stead.in_life_call then
+		ACTION_TEXT = nil
+	end
 	return r,v
 end)
