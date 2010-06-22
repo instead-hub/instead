@@ -22,7 +22,7 @@ instead (1.2.0) unstable; urgency=low
   * save vars in _G;
   * no duplicated games while looking gamespaths;
   * code function!!!;
-  * args() function;
+  * args in call;
   * many small bugfixes...
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 01 Jun 2010 17:40:00 +0300  
