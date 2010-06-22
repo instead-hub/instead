@@ -92,7 +92,7 @@ end
 function pget()
 	return cctx().txt;
 end
-
+stead.pget = pget
 function p(...)
 	local i
 	for i = 1, stead.table.maxn(arg) do
@@ -100,19 +100,19 @@ function p(...)
 	end
 	cctx().txt = stead.cat(cctx().txt, ' ');
 end
-
+stead.p = p
 function pr(...)
 	local i
 	for i = 1, stead.table.maxn(arg) do
 		cctx().txt = stead.par('',cctx().txt, arg[i]);
 	end
 end
-
+stead.pr = pr
 function pn(...)
 	p(unpack(arg));
 	cctx().txt = stead.par('',cctx().txt,'^');
 end
-
+stead.pn = pn
 -- merge strings with "space" as separator
 function par(space,...)
 	local i, res
@@ -653,7 +653,7 @@ function call(v, n, ...)
 		callpush(v, unpack(arg))
 		local a,b = v[n](v, unpack(arg));
 		if a == nil and b == nil then
-			a = pget()
+			a = stead.pget()
 			b = nil
 		end
 		callpop()
@@ -1458,7 +1458,7 @@ function savevar (h, v, n, need)
 	if v == nil or type(v) == "userdata" or
 			 type(v) == "function" then
 		if type(v) == "function" and stead.functions[v] and need then
-			h:write(stead.string.format("%s=code %q\n", n, stead.functions[v]))
+			h:write(stead.string.format("%s=code %q\n", n, stead.functions[v].code))
 		end
 --		if need then
 --			error ("Variable "..n.." can not be saved!");
@@ -2387,7 +2387,7 @@ function code(v)
 	if not f then
 		error ("Wrong script: "..tostring(v), 2);
 	end
-	stead.functions[f] = v;
+	stead.functions[f] = { f = f, code = v };
 	return f;
 end
 --- here the game begins
