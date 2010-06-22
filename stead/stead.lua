@@ -68,6 +68,9 @@ function callpush(v, ...)
 	stead.call_top = stead.call_top + 1;
 	stead.cctx[stead.call_top] = { txt = nil, self = v };
 	args = arg
+	arg1 = arg[1]
+	arg2 = arg[2]
+	arg3 = arg[3]
 	self = v
 end
 
