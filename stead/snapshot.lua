@@ -22,7 +22,7 @@ function restore_snapshot(nr)
 	if not tonumber(nr) then nr = 0 end
 	local ss = game._snapshots
 	if not ss[nr] then return nil, true end -- nothing todo
-	stead_init();
+	stead:init();
 	game.lifes:zap();
 	dofile('main.lua');
 	if type(init) == 'function' then -- no hooks here!!!

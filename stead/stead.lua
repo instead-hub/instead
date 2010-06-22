@@ -7,6 +7,7 @@ stead = {
 	os = os,
 	call_top = 0,
 	cctx = { txt = nil, self = nil },
+--	functions = {}, -- code blocks
 	timer = function()
 		if type(timer) == 'table' and type(timer.callback) == 'function' then
 			return timer:callback();
@@ -646,17 +647,6 @@ function call(v, n, ...)
 		return nil,nil;
 	end
 	if type(v[n]) == 'string' then
-		if v[n]:sub(1,1) == '@' then
-			callpush(v, unpack(arg))
-			local f = loadstring(v[n]:sub(2))
-			local a,b = f();
-			if a == nil and b == nil then
-				a = pget()
-				b = nil
-			end
-			callpop()
-			return a,b
-		end
 		return v[n];
 	end
 	if type(v[n]) == 'function' then
@@ -1456,7 +1446,7 @@ function savemembers(h, self, name, need)
 			
 			if type(k) == 'string' then
 				savevar(h, v, name..'['..stead.string.format("%q",k)..']', need or need2);
-			else
+			elseif type(k) ~= 'function' then
 				savevar(h, v, name.."["..k.."]", need or need2)
 			end
 		end
@@ -1465,8 +1455,11 @@ end
 
 function savevar (h, v, n, need)
 	local r,f
-	if v == nil or type(v)=="userdata" or
-			 type(v)=="function" then
+	if v == nil or type(v) == "userdata" or
+			 type(v) == "function" then
+		if type(v) == "function" and stead.functions[v] and need then
+			h:write(stead.string.format("%s=code %q\n", n, stead.functions[v]))
+		end
 --		if need then
 --			error ("Variable "..n.." can not be saved!");
 --		end 
@@ -2344,6 +2337,9 @@ function enable_all(o)
 end
 
 function isForSave(k, v, s) -- k - key, v - value, s -- parent table
+	if type(k) == 'function' then
+		return false
+	end
 	if type(v) == 'function' or type(v) == 'userdata' then
 		return false
 	end
@@ -2391,19 +2387,21 @@ function code(v)
 	if not f then
 		error ("Wrong script: "..tostring(v), 2);
 	end
+	stead.functions[f] = v;
 	return f;
 end
 --- here the game begins
-function stead_init()
-pl = player {
-	nam = "Incognito",
-	where = 'main',
-	obj = { }
-};
+stead.init = function(s)
+	pl = player {
+		nam = "Incognito",
+		where = 'main',
+		obj = { }
+	};
 
-main = room {
-	nam = 'main',
-	dsc = 'No main room defined.',
-}
+	main = room {
+		nam = 'main',
+		dsc = 'No main room defined.',
+	}
+	s.functions = {} -- code blocks
 end
-stead_init();
+stead:init();
