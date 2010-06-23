@@ -27,7 +27,7 @@ go = function (self, where, back)
 		error ("Do not use goto from left/entered action! Use exit/enter action instead:" .. self.where);
 	end
 
-	local v, r;
+	local v, r, jump;
 
 	if not isVroom(ref(where)) and not stead.in_exit_call then
 		stead.in_exit_call = true -- to break recurse
@@ -35,6 +35,10 @@ go = function (self, where, back)
 		stead.in_exit_call = nil
 		if r == false then
 			return v, ret(r)
+		end
+		if self.where ~= was then
+			where = deref(self.where) -- jump
+			jump = true
 		end
 	end
 
@@ -45,7 +49,7 @@ go = function (self, where, back)
 		self.where = deref(where);
 	end
 
-	if not back or not isDialog(ref(was)) or isDialog(ref(where)) then
+	if not jump and (not back or not isDialog(ref(was)) or isDialog(ref(where))) then
 		v, r = call(ref(where), 'enter', deref(was));
 		if r == false then
 			self.where = was;
