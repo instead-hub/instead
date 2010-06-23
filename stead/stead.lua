@@ -2382,6 +2382,7 @@ function inherit(o, f)
 		return f(o(unpack(arg)))
 	end
 end
+stead.inherit = inherit
 
 function hook(o, f)
 	return function(...)
@@ -2396,6 +2397,7 @@ function hook(o, f)
 		return f(ff, unpack(arg))
 	end
 end
+stead.hook = hook
 
 function check_version(v)
 	if not tostring(v) then

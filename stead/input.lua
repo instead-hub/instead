@@ -191,7 +191,7 @@ function kbdxlat(s)
 	return kbd[s]
 end
 
-game.action = hook(game.action, function (f, s, cmd, ...)
+game.action = stead.hook(game.action, function (f, s, cmd, ...)
 	if cmd == 'kbd_enter' then
 		if here().inp_enter then
 			return call(here(), 'inp_enter');
@@ -251,7 +251,7 @@ input_kbd = function(s, down, key)
 	end
 end
 
-input.key = hook(input.key,
+input.key = stead.hook(input.key,
 function(f, ...)
 	local r = input_kbd(unpack(arg))
 	if r then return r end

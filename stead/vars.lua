@@ -1,4 +1,4 @@
-isForSave = hook(isForSave, 
+isForSave = stead.hook(isForSave, 
 function (f, k, v, s, ...) -- k - key, v - value, s -- parent table
 	local i,o
 	if type(s.var) == 'table' then
@@ -43,7 +43,7 @@ vars_object = obj {
 	end
 }
 
-obj = hook(obj, 
+obj = stead.hook(obj, 
 function(f, v, ...)
 	__vars_fill(v)
 	return f(v, unpack(arg))

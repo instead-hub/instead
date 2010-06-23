@@ -211,7 +211,7 @@ debug_tool = menu {
 	end,
 };
 
-game.action = hook(game.action, 
+game.action = stead.hook(game.action, 
 function (f, s, cmd, ...)
 	if cmd == 'use_debug' then
 		return debug_tool:inv()
@@ -219,7 +219,7 @@ function (f, s, cmd, ...)
 	return f(s, cmd, unpack(arg))
 end)
 
-input.key = hook(input.key,
+input.key = stead.hook(input.key,
 function(f, s, down, key, ...)
 	if not here().debug and down and key == 'f7' then return 'use_debug' end
 	return f(s, down, key, unpack(arg))
