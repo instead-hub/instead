@@ -108,7 +108,7 @@ iface.fmt = function(self, cmd, st, moved, r, av, objs, pv) -- st -- changed sta
 	return vv
 end
 
-go = hook(go, function(f, ...)
+go = stead.hook(go, function(f, ...)
 	local r,v = f(unpack(arg))
 	if type(r) == 'string' and cctx() then 
 		pr (r)
@@ -119,12 +119,12 @@ go = hook(go, function(f, ...)
 	return r,v
 end)
 
-iface.cmd = hook(iface.cmd, function(f, ...)
+iface.cmd = stead.hook(iface.cmd, function(f, ...)
 	NEED_SCENE = nil
 	return f(unpack(arg))
 end)
 
-player  = inherit(player, function(v)
+player  = stead.inherit(player, function(v)
 	v.look = function(s)
 		NEED_SCENE = true
 	end

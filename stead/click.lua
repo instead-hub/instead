@@ -1,4 +1,4 @@
-input.click = hook(input.click, 
+input.click = stead.hook(input.click, 
 function(f, s, press, mb, x, y, px, py, ...)
 	if press and px then
 		return "click "..px..','..py;
@@ -6,7 +6,7 @@ function(f, s, press, mb, x, y, px, py, ...)
 	return f(s, press, mb, x, y, px, py, unpack(arg))
 end)
 
-game.action = hook(game.action, 
+game.action = stead.hook(game.action, 
 function(f, s, cmd, x, y, ...)
 	if cmd == 'click' then
 		if here().click then
