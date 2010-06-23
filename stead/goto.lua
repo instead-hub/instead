@@ -91,7 +91,7 @@ end
 
 go = hook(go, function(f, ...)
 	local r,v = f(unpack(arg))
-	if type(r) == 'string' then 
+	if type(r) == 'string' and cctx() then 
 		pr (r)
 	end
 	if stead.in_life_call then

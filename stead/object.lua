@@ -64,21 +64,34 @@ function vobj_used(self, ...)
 	return call(ref(r),'used', self.nam, unpack(arg));
 end
 
+function vobj_use(self, ...)
+	local o, r = here():srch(self.nam);
+	return call(ref(r),'use', self.nam, unpack(arg));
+end
+
 function vobj(name, dsc, w)
 	return obj{ nam = tostring(name), 
+		vobject_type = true,
 		dsc = dsc, 
 		where = deref(w), 
 		act = vobj_act, 
 		used = vobj_used, 
+		use = vobj_use,
 		save = vobj_save };
 end
 
 function vway(name, dsc, w)
 --	o.object_type = true;
 	return  obj{ nam = tostring(name), 
+		vobject_type = true,
 		dsc = dsc, 
 		act = vobj_act, 
 		where = deref(w), 
-		used = vobj_used, 
+		used = vobj_used,
+		use = vobj_use, 
 		save = vobj_save };
+end
+
+function isVobject(v)
+	return (type(v) == 'table') and (v.vobject_type)
 end

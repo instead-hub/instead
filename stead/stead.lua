@@ -683,7 +683,7 @@ function call_bool(v, n, ...)
 	end
 	
 	if type(v[n]) == 'function' then
-		callpush(v)
+		callpush(v, unpack(arg))
 		local r = v[n](v, unpack(arg));
 		callpop();
 		return r;
@@ -1622,7 +1622,7 @@ function isForcedsc(v)
 	if r then
 		return true
 	end
-	g = call_bool(game, 'forcedsc');
+	g = call_bool(game, 'forcedsc', v);
 	return g and r ~= false
 end
 
@@ -1632,7 +1632,7 @@ function isSceneUse(v)
 	if o then
 		return true
 	end
-	g = call_bool(game, 'scene_use');
+	g = call_bool(game, 'scene_use', v);
 	return g and o ~= false
 end
 
