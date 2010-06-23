@@ -1698,7 +1698,7 @@ iface = {
 	fmt = function(self, cmd, st, moved, r, av, objs, pv) -- st -- changed state (main win), move -- loc changed
 		local l
 		if st and not moved then
-			if cmd ~= 'look' and cmd ~= '' then
+			if cmd ~= 'look' then
 				av = txtem(av);
 				pv = txtem(pv);
 				r  = txtem(r);
@@ -1719,10 +1719,11 @@ iface = {
 		RAW_TEXT = nil
 		PLAYER_MOVED = nil
 		cmd,a = stead.getcmd(inp);
+		if cmd == '' then cmd = 'look' end
 --		me():tag();
 		local oldloc = here();
 
-		if cmd == 'look' or cmd == '' then
+		if cmd == 'look' then
 			r,v = me():look();
 			st = true;
 		elseif cmd == 'obj' then
@@ -1761,6 +1762,7 @@ iface = {
 			r,v = me():action(cmd, unpack(a));
 			st = true;
 		end
+		stead.tick = st
 		-- here r is action result, v - ret code value	
 		-- st -- game state changed
 		if st and r == nil and v == true then -- we do nothing
@@ -1839,6 +1841,7 @@ end
 function time()
 	return game._time;
 end
+stead.time = time
 
 function inv()
 	return me().obj;
