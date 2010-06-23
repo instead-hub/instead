@@ -82,11 +82,30 @@ go = function (self, where, back)
 		stead.in_entered_call = false
 		res = par('^^',res,v);
 	end
-
+	PLAYER_MOVED = true
 	if need_scene then -- or isForcedsc(ref(where)) then -- i'am not sure...
-		return par('^^',res,ref(where):scene());
+		NEED_SCENE = true
+--		return par('^^',res,ref(where):scene());
 	end
 	return res;
+end
+
+iface.fmt = function(self, cmd, st, moved, r, av, objs, pv) -- st -- changed state (main win), move -- loc changed
+	local l
+	if st then
+		av = txtem(av);
+		pv = txtem(pv);
+		r = txtem(r)
+		if isForcedsc(here()) or NEED_SCENE then
+			l = here():scene();
+		end
+	end
+	if moved then
+		vv = stead.fmt(stead.cat(stead.par("^^", r, av, l, objs, pv), '^'));
+	else
+		vv = stead.fmt(stead.cat(stead.par("^^", l, r, av, objs, pv), '^'));
+	end
+	return vv
 end
 
 go = hook(go, function(f, ...)
@@ -99,3 +118,17 @@ go = hook(go, function(f, ...)
 	end
 	return r,v
 end)
+
+iface.cmd = hook(iface.cmd, function(f, ...)
+	NEED_SCENE = nil
+	return f(unpack(arg))
+end)
+
+player  = inherit(player, function(v)
+	v.look = function(s)
+		NEED_SCENE = true
+	end
+	return v
+end)
+
+pl = player(pl) -- reinit
