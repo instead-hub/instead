@@ -2421,6 +2421,7 @@ function code(v)
 	stead.functions[f] = { f = f, code = v };
 	return f;
 end
+stead.code = code
 --- here the game begins
 stead.init = function(s)
 	pl = player {
