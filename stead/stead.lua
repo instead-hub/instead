@@ -1170,7 +1170,7 @@ function go(self, where, back)
 		stead.in_entered_call = false
 		res = stead.par('^^',res,v);
 	end
-
+	PLAYER_MOVED = true
 	if need_scene then -- or isForcedsc(ref(where)) then -- i'am not sure...
 		return stead.par('^^',res,ref(where):scene());
 	end
@@ -1715,7 +1715,8 @@ iface = {
 		local st = false; -- changed state (main screen)
 		local a = { };
 		local cmd;
-
+		RAW_TEXT = nil
+		PLAYER_MOVED = nil
 		cmd,a = stead.getcmd(inp);
 --		me():tag();
 		local oldloc = here();
@@ -1766,14 +1767,13 @@ iface = {
 		end
 
 		if RAW_TEXT then
-			RAW_TEXT = nil
 			v = false
 		end
 
 		if v == false then
 			return stead.cat(r, '\n'), false;
 		end
-		
+
 		ACTION_TEXT = r; -- here, life methods can redefine this
 
 		local av, pv -- av -- active lifes, pv -- background
@@ -1785,7 +1785,8 @@ iface = {
 			vv = here():look();
 		end
 
-		vv = self:fmt(cmd, st, oldloc ~= here(), ACTION_TEXT, av, vv, pv);
+		vv = self:fmt(cmd, st, (oldloc ~= here()) or PLAYER_MOVED, 
+			ACTION_TEXT, av, vv, pv);
 
 		if st then
 			game._lastdisp = vv
