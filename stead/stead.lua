@@ -1762,7 +1762,6 @@ iface = {
 			r,v = me():action(cmd, unpack(a));
 			st = true;
 		end
-		stead.tick = st
 		-- here r is action result, v - ret code value	
 		-- st -- game state changed
 		if st and r == nil and v == true then -- we do nothing
