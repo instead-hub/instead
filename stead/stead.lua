@@ -1244,21 +1244,22 @@ function game_life(self)
 	local av,v
 	stead.in_life_call = true;
 	stead.lifes_off = list {}; -- lifes to off 
-
+	local m = PLAYER_MOVED
 	for i,o in opairs(self.lifes) do
 		local vv
 		local pre
 		o = ref(o);
 		if not isDisabled(o) then
-			local m = PLAYER_MOVED
+			PLAYER_MOVED = false
 			vv,pre = call(o,'life');
-			if pre or (m ~= PLAYER_MOVED and pre ~= false) then
+			if pre or (PLAYER_MOVED and pre ~= false) then
 				av = stead.par(' ', av, vv);
 			else
 				v = stead.par(' ',v, vv);
 			end
 		end
-	end	
+	end
+	if not PLAYER_MOVED then PLAYER_MOVED = m end
 	stead.in_life_call = false;
 	for i,o in ipairs(stead.lifes_off) do
 		lifeoff(o);
