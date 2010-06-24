@@ -1713,7 +1713,7 @@ iface = {
 	cmd = function(self, inp)
 		local r, v;
 		v = false
-		local st = false; -- changed state (main screen)
+		stead.state = false; -- changed state (main screen)
 		local a = { };
 		local cmd;
 		RAW_TEXT = nil
@@ -1725,7 +1725,6 @@ iface = {
 
 		if cmd == 'look' then
 			r,v = me():look();
-			st = true;
 		elseif cmd == 'obj' then
 			r,v = me():objs();
 		elseif cmd == 'inv' then
@@ -1736,17 +1735,17 @@ iface = {
 			r = stead.par('^^', me():objs(), me():inv(), me():ways());
 			v = nil;
 		elseif cmd == 'go' then
+			stead.state = true
 			r,v = me():go(unpack(a));
-			st = true;
 		elseif cmd == 'back' then
+			stead.state = true
 			r,v = me():go(from());
-			st = true;
 		elseif cmd == 'act' then
+			stead.state = true
 			r,v = me():action(unpack(a));
-			st = true;	
 		elseif cmd == 'use' then
+			stead.state = true
 			r,v = me():use(unpack(a));
-			st = true;
 		elseif cmd == 'save' then
 			r, v = game:save(unpack(a));
 		elseif cmd == 'load' then
@@ -1757,14 +1756,14 @@ iface = {
 		elseif cmd == 'nop' then
 			v = true;
 			r = nil;
-			st = true;
+			stead.state = true
 		else
+			stead.state = true
 			r,v = me():action(cmd, unpack(a));
-			st = true;
 		end
 		-- here r is action result, v - ret code value	
-		-- st -- game state changed
-		if st and r == nil and v == true then -- we do nothing
+		-- state -- game state changed
+		if stead.state and r == nil and v == true then -- we do nothing
 			return nil;
 		end
 
@@ -1781,16 +1780,16 @@ iface = {
 		local av, pv -- av -- active lifes, pv -- background
 		local vv
 
-		if st then
+		if stead.state then
 			pv,av = game:step();
 			me():tag();
 			vv = here():look();
 		end
 
-		vv = self:fmt(cmd, st, (oldloc ~= here()) or PLAYER_MOVED, 
+		vv = self:fmt(cmd, stead.state, (oldloc ~= here()) or PLAYER_MOVED, 
 			ACTION_TEXT, av, vv, pv);
 
-		if st then
+		if stead.state then
 			game._lastdisp = vv
 		end
 
@@ -1862,9 +1861,9 @@ function ways(w)
 	end
 end
 
-function xref(str, obj)
+function xref(str, obj, ...)
 	if type(str) ~= 'string' then return nil; end; 
-	return iface:xref(str, obj);
+	return iface:xref(str, obj, unpack(arg));
 end
 
 function pon(...)
