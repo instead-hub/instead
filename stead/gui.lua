@@ -1,7 +1,7 @@
 game.hinting = true;
 game.showlast = true;
 
-iface.xref = function(self, str, obj)
+iface.xref = function(self, str, obj, ...)
 	local o = ref(obj);
 	local cmd=''
 
@@ -16,7 +16,12 @@ iface.xref = function(self, str, obj)
 	elseif isSceneUse(o) then
 		cmd = 'use ';	
 	end
-	return stead.cat('<a:'..cmd..'0'..tostring(o.id)..'>',str,'</a>');
+	local a = ''
+	local i
+	for i = 1, stead.table.maxn(arg) do
+		a = a..','..arg[i]
+	end
+	return stead.cat('<a:'..cmd..'0'..tostring(o.id)..a..'>',str,'</a>');
 end;
 
 iface.enum = function(self, n, str)
