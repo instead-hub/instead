@@ -1724,6 +1724,7 @@ iface = {
 		local oldloc = here();
 
 		if cmd == 'look' then
+			stead.state = true
 			r,v = me():look();
 		elseif cmd == 'obj' then
 			r,v = me():objs();
