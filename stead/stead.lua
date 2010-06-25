@@ -29,7 +29,17 @@ stead = {
 		end
 		return
 	end,
+	modules_ini = {},
+	module_init = function(f, ...)
+		if type(f) ~= 'function' then
+			error ("Wrong parameter to mod_init.", 2);
+		end
+		stead.table.insert(stead.modules_ini, f);
+		f();
+	end
 }
+
+module_init = stead.module_init;
 
 function stead.getcmd(str)
 	local a = {}
@@ -2439,5 +2449,9 @@ stead.init = function(s)
 		dsc = 'No main room defined.',
 	}
 	s.functions = {} -- code blocks
+	local k,v
+	for k,v in ipairs(s.modules_ini) do
+		v();
+	end
 end
 stead:init();
