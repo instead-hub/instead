@@ -1,40 +1,50 @@
-obj = stead.inherit(obj, function(v)
-	if v.use then
-		v.use = stead.hook(v.use, function(f, s, on, ...)
-			return f(s, ref(on), unpack(arg))
-		end)
-	end
-	if v.used then
-		v.used = stead.hook(v.used, function(f, s, by, ...)
-			return f(s, ref(by), unpack(arg))
-		end)
-	end
-	return v
-end)
+function player_use(self, what, onwhat, ...)
+	local obj, obj2, v, vv, r;
+	local scene_use_mode = false
 
-room = stead.inherit(room, function(v)
-	if v.enter then
-		v.enter = stead.hook(v.enter, function(f, s, from, ...)
-			return f(s, ref(from), unpack(arg))
-		end)
+	obj = self:srch(what); -- in inv?
+	if not obj then -- no
+		obj = ref(self.where):srch(what); -- in scene?
+		if not obj then -- no!
+			return game.err, false;
+		end
+		scene_use_mode = true -- scene_use_mode!
 	end
-	if v.entered then
-		v.entered = stead.hook(v.entered, function(f, s, from, ...)
-			return f(s, ref(from), unpack(arg))
-		end)
+	if onwhat == nil then -- only one?
+		if scene_use_mode then
+			return self:action(what, unpack(arg)); -- call act
+		else
+			v, r = call(ref(obj),'inv', unpack(arg)); -- call inv
+		end
+		if not v and r ~= true then
+			v, r = call(game, 'inv', obj, unpack(arg));
+		end
+		return v, r;
 	end
-	if v.exit then
-		v.exit = stead.hook(v.exit, function(f, s, to, ...)
-			return f(s, ref(to), unpack(arg))
-		end)
+	obj2 = ref(self.where):srch(onwhat); -- in scene?
+	if not obj2 then
+		obj2 = self:srch(onwhat); -- in inv?
 	end
-	if v.left then
-		v.left = stead.hook(v.left, function(f, s, to, ...)
-			return f(s, ref(to), unpack(arg))
-		end)
+	if not obj2 or obj2 == obj then
+		return game.err, false;
 	end
-	return v
-end)
+	
+	obj = ref(obj)
+	obj2 = ref(obj2)
+
+	if not scene_use_mode or isSceneUse(obj) then
+		v, r = call(obj, 'use', obj2, unpack(arg));
+		if r ~= false then
+			vv = call(obj2, 'used', obj, unpack(arg));
+		end
+	end
+	if not v and not vv then
+		v, r = call(game, 'use', obj, obj2, unpack(arg));
+	end
+	return stead.par(' ', v, vv);
+end
+
+pl.use = player_use;
 
 function vobj_save(self, name, h, need)
 	local w

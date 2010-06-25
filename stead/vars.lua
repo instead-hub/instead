@@ -1,5 +1,4 @@
-isForSave = stead.hook(isForSave, 
-function (f, k, v, s, ...) -- k - key, v - value, s -- parent table
+function isForSave(k, v, s) -- k - key, v - value, s -- parent table
 	local i,o
 	if type(s.var) == 'table' then
 		for i,o in ipairs(s.var) do
@@ -8,8 +7,14 @@ function (f, k, v, s, ...) -- k - key, v - value, s -- parent table
 			end
 		end
 	end
-	return f(k, v, s, unpack(arg))
-end)
+	if type(k) == 'function' then
+		return false
+	end
+	if type(v) == 'function' or type(v) == 'userdata' then
+		return false
+	end
+	return stead.string.find(k, '_') ==  1
+end
 
 function __vars_fill(v)
 	local k,o

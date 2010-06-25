@@ -199,7 +199,7 @@ game.action = stead.hook(game.action, function (f, s, cmd, ...)
 		if game.inp_enter then
 			return call(here(), 'inp_enter');
 		end
-		return nil, true -- nothing todo
+		return nil -- nothing todo
 	end
 	return f(s, cmd, unpack(arg))
 end)
@@ -242,12 +242,12 @@ input_kbd = function(s, down, key)
 			else
 				input._txt = input._txt:sub(1, input._txt:len() - 1);
 			end
-			return "look"
+			return "wait"
 		end
 		local c = kbdxlat(key);
 		if not c then return end
 		input._txt = input._txt..c;
-		return "look"
+		return "wait"
 	end
 end
 
@@ -266,8 +266,11 @@ function input_esc(s)
 	return s:gsub("\\","\\\\"):gsub(">","\\>"):gsub("[^ ]+", rep):gsub("[ \t]", rep);
 end
 
-function inp(info, txt)
-	local v = { nam = '', _txt = '', info = info }
+function inp(n, info, txt)
+	if type(n) ~= 'string' or type(info) ~= 'string' then
+		error ("Wrong parameter to inp.", 2);
+	end
+	local v = { nam = n, _txt = '', info = info }
 	if txt then
 		v._txt = txt
 	end
@@ -298,6 +301,13 @@ function inp(info, txt)
 			input._txt = false
 		end
 		return true
+	end
+	v.save = function(self, name, h, need)
+		if need then
+			h:write(stead.string.format("%s = inp (%q, %q, %q);\n", 
+				name, self.nam, self.info, self._txt))
+		end
+		savemembers(h, self, name, false);
 	end
 	return obj(v)
 end

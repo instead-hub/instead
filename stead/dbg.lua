@@ -6,6 +6,7 @@ require "input"
 function disp_obj()
 	local v = obj{
 		nam = 'disp',
+		act = true,
 		dsc = function(s)
 			local r = s._txt
 			s._txt = nil;
@@ -25,6 +26,7 @@ dump_obj = function(w)
 	local rc=''
 	for i,o in pairs(w) do
 		if rc ~='' then rc = rc..'^' end
+		if isCode(o) then o = stead.string.format("code [[%s]]", stead.functions[o].code); end
 		rc = stead.cat(rc, stead.par(' ', 'Key:'..tostring(i),
 			'Val:'..tostring(deref(o))));
 	end
@@ -32,11 +34,15 @@ dump_obj = function(w)
 	return true;
 end
 
+dbg_here = function()
+	return debug_tool._here
+end
+
 list_objects = function()
 	local i,o
-	local rc = stead.par(' ', 'Room:'..tostring(deref(from())), 
-			'Nam:'..tostring(call(from(),'nam')));
-	for i,o in opairs(objs(from())) do
+	local rc = stead.par(' ', 'Room:'..tostring(deref(dbg_here())), 
+			'Nam:'..tostring(call(dbg_here(),'nam')));
+	for i,o in opairs(objs(dbg_here())) do
 		rc = rc..'^';
 		o = ref(o)
 		rc = stead.cat(rc, stead.par(' ', 'Id:'..tostring(o.id), 
@@ -81,11 +87,8 @@ execute_cmd = room {
 		end
 		return back();
 	end,
-	act = function(s, w)
-		return back();
-	end,
-	obj = { inp('{Enter cmd}: ', 'return "Hello World!"'), 
-		vobj(1, 'Back', '^{Back}'),
+	obj = { inp('inp', '{Enter cmd}: ', 'return "Hello World!"'), 
+		obj { nam = 'Back', dsc = '^{Back}', act = code [[ back() ]]},
 		new [[ disp_obj() ]],
 	}
 }
@@ -96,31 +99,19 @@ dump_object = room {
 	forcedsc = true,
 	dsc = "Enter object name here to dump.",
 	inp_enter = function(s)
-		if type(s.obj[1]._txt) == 'string' then
-			return dump_obj(s.obj[1]._txt);
+		local w = s.obj[1]._txt
+		if type(w) == 'string' then
+			if not ref(w) then w = objs(dbg_here()):srch(w); end
+			return dump_obj(w);
 		end
 		return back();
 	end,
-	act = function(s, w)
-		if w == 1 then
-			return back();
-		elseif w == 2 then
-			return dump_obj(from(from()));
-		elseif w == 3 then
-			return dump_obj(me());
-		elseif w == 4 then
-			return dump_obj(game.lifes);
-		elseif w == 5 then
-			return dump_obj(ways(from(from())));
-		end
-
-	end,
-	obj = { inp('{Enter object}: ', 'main'), 
-		vobj(2, 'Here', '^{Dump here}'),
-		vobj(3, 'Player', '^{Dump player}'),
-		vobj(4, 'Lifes', '^{Dump lifes}'),
-		vobj(5, 'Ways', '^{Dump ways}'),
-		vobj(1, 'Back', '^{Back}'),
+	obj = { inp('inp', '{Enter object}: ', 'main'), 
+		obj{nam = 'Here', dsc = '^{Dump here}', act = code[[ return dump_obj(dbg_here())]]},
+		obj{nam = 'Player',dsc =  '^{Dump player}', act = code[[ return dump_obj(me())]]},
+		obj{nam = 'Lifes', dsc = '^{Dump lifes}', act = code[[ return dump_obj(game.lifes)]]},
+		obj{nam = 'Ways', dsc = '^{Dump ways}', act = code[[ return dump_obj(ways(dbg_here()))]]},
+		obj{nam = 'Back', dsc = '^{Back}', act = code [[ return back() ]] },
 		new[[ disp_obj() ]]}
 }
 
@@ -171,14 +162,17 @@ drop_object = dlg {
 		for k,v in pairs(_G) do
 			if isObject(v) and not isRoom(v) and not isPlayer(v) and not v.debug and have(v) then
 				local n = call(v, 'nam');
-				put (phr(k, true, 'drop("'..k..'","'..deref(from())..'")'), s)
+				put (phr(k, true, 'drop("'..k..'","'..deref(dbg_here())..'")'), s)
 			end
 		end
 		put (phr('Back', true, 'return back()'), s)
 	end
 }
 function dbg_exit()
-	local r = call(from(), 'dsc');
+	local r
+	if game.version < "1.2.0" then
+		r = call(dbg_here(), 'dsc');
+	end
 	return par ('^^', back(), r);
 end
 debug_dlg = dlg {
@@ -204,10 +198,13 @@ debug_tool = menu {
 	forcedsc = true,
 	nam = txtb('debug'),
 	inv = function(s)
-		debug_dlg.__from__ = deref(here());
+		if here().debug then
+			return nil, true --nothing todo
+		end
+		debug_dlg.__from__ = here();
+		s._here = here();
 		me().where = 'debug_dlg'; -- force to go
-		local r = stead.par('^^', call(debug_dlg, 'enter'), call(debug_dlg, 'dsc'));
-		return r;
+		return goto(self.where);
 	end,
 };
 

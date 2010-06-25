@@ -31,7 +31,7 @@ go = function (self, where, back)
 
 	if not isVroom(ref(where)) and not stead.in_exit_call then
 		stead.in_exit_call = true -- to break recurse
-		v,r = call(ref(self.where), 'exit', where);
+		v,r = call(ref(self.where), 'exit', ref(where));
 		stead.in_exit_call = nil
 		if r == false then
 			return v, ret(r)
@@ -50,7 +50,7 @@ go = function (self, where, back)
 	end
 
 	if not jump and (not back or not isDialog(ref(was)) or isDialog(ref(where))) then
-		v, r = call(ref(where), 'enter', deref(was));
+		v, r = call(ref(where), 'enter', ref(was));
 		if r == false then
 			self.where = was;
 			return par('^^', res, v), ret(r)
@@ -75,14 +75,14 @@ go = function (self, where, back)
 		self.where = was
 
 		stead.in_onexit_call = true
-		v = call(ref(was), 'left', deref(to));
+		v = call(ref(was), 'left', ref(to));
 		stead.in_onexit_call = false
 		res = par('^^',res,v);
 
 		self.where = deref(to)
 
 		stead.in_entered_call = true
-		v = call(ref(to), 'entered', deref(was));
+		v = call(ref(to), 'entered', ref(was));
 		stead.in_entered_call = false
 		res = par('^^',res,v);
 	end
