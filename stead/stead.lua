@@ -85,6 +85,7 @@ end
 function pclr()
 	cctx().txt = nil
 end
+stead.pclr = pclr
 
 function pget()
 	return cctx().txt;
@@ -1020,7 +1021,7 @@ function player_action(self, what, ...)
 	if not obj then
 		return call(ref(game), 'action', what, unpack(arg)); --player_do(self, what, unpack(arg));
 	end
-	v, r = player_take(self, what);
+	v, r = player_take(self, what, unpack(arg));
 	if not v then
 		v, r = call(ref(obj), 'act', unpack(arg));
 		if not v and r ~= true then
@@ -1030,20 +1031,20 @@ function player_action(self, what, ...)
 	return v, r;
 end
 
-function player_take(self, what)
+function player_take(self, what, ...)
 	local v,r,obj,w
 	obj,w = ref(self.where):srch(what);
 	if not obj then
 		return nil, false;
 	end
-	v,r = call(ref(obj), 'tak');
+	v,r = call(ref(obj), 'tak', unpack(arg));
 	if v and r ~= false then
 		take(obj, w);
 	end
 	return v;
 end
 
-function player_use(self, what, onwhat)
+function player_use(self, what, onwhat, ...)
 	local obj, obj2, v, vv, r;
 	local scene_use_mode = false
 
@@ -1057,12 +1058,12 @@ function player_use(self, what, onwhat)
 	end
 	if onwhat == nil then -- only one?
 		if scene_use_mode then
-			return self:action(what); -- call act
+			return self:action(what, unpack(arg)); -- call act
 		else
-			v, r = call(ref(obj),'inv'); -- call inv
+			v, r = call(ref(obj),'inv', unpack(arg)); -- call inv
 		end
 		if not v and r ~= true then
-			v, r = call(game, 'inv', obj);
+			v, r = call(game, 'inv', obj, unpack(arg));
 		end
 		return v, r;
 	end
@@ -1074,13 +1075,13 @@ function player_use(self, what, onwhat)
 		return game.err, false;
 	end
 	if not scene_use_mode or isSceneUse(ref(obj)) then
-		v, r = call(ref(obj), 'use', obj2);
+		v, r = call(ref(obj), 'use', obj2, unpack(arg));
 		if r ~= false then
-			vv = call(ref(obj2), 'used', obj);
+			vv = call(ref(obj2), 'used', obj, unpack(arg));
 		end
 	end
 	if not v and not vv then
-		v, r = call(game, 'use', obj, obj2);
+		v, r = call(game, 'use', obj, obj2, unpack(arg));
 	end
 	return stead.par(' ', v, vv);
 end
@@ -1417,10 +1418,10 @@ function for_each(o, n, f, fv, ...)
 	end
 end
 
+function isCode(s)
+	return type(s) == 'function' and type(stead.functions[s]) == 'table'
+end
 function for_each_codeblock(f,...)
-	local function isCode(s)
-		return type(s) == 'function' and type(stead.functions[s]) == 'table'
-	end
 	for_each(_G, '_G', f, isCode, unpack(arg))
 end
 
@@ -1473,7 +1474,7 @@ function savevar (h, v, n, need)
 	local r,f
 	if v == nil or type(v) == "userdata" or
 			 type(v) == "function" then
-		if type(v) == "function" and stead.functions[v] and need then
+		if isCode(v) and need then
 			if type(stead.functions[v].key_name) == 'string' 
 				and stead.functions[v].key_name ~= n then
 				h:write(stead.string.format("%s=%s\n", n, stead.functions[v].key_name))
@@ -1609,6 +1610,7 @@ Commands:^
     back, inv, way, obj, quit, save <fname>, load <fname>.]],
 	pl ='pl',
 	showlast = true, 
+	version = "1.1.6", -- last version before 1.2.0
 };
 function strip(s)
 	local s = tostring(s);
@@ -1722,7 +1724,6 @@ iface = {
 		if cmd == '' then cmd = 'look' end
 --		me():tag();
 		local oldloc = here();
-
 		if cmd == 'look' then
 			stead.state = true
 			r,v = me():look();
@@ -1754,6 +1755,10 @@ iface = {
 			if v ~= false and game.showlast then
 				return r;
 			end
+		elseif cmd == 'wait' then
+			v = nil;
+			r = nil;
+			stead.state = true
 		elseif cmd == 'nop' then
 			v = true;
 			r = nil;
@@ -2372,9 +2377,6 @@ function isForSave(k, v, s) -- k - key, v - value, s -- parent table
 	end
 	if type(v) == 'function' or type(v) == 'userdata' then
 		return false
-	end
-	if game.version and game.version >= "1.2.0" then
-		return stead.string.find(k, '_') ==  1
 	end
 	return stead.string.find(k, '_') ==  1 or stead.string.match(k,'^%u')
 end
