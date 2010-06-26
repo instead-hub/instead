@@ -93,6 +93,7 @@ do_xact = function(self, str)
 		return xref(d, ref(oo), unpack(aarg));
 	end
 	if type(str) ~= 'string' then return end
+	me():tag()
 	local s = stead.string.gsub(str,'{[^}]+}', xrefrep);
 	return s;
 end
