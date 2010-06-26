@@ -2420,7 +2420,7 @@ function hook(o, f)
 end
 stead.hook = hook
 
-function check_version(v)
+function version(v)
 	if not tostring(v) then
 		return
 	end

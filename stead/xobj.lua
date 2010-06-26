@@ -2,38 +2,38 @@ function isXobject(s)
 	return type(s) == 'table' and s.xobject_type;
 end
 
-xobj = stead.hook(obj, function(f, v, ...) -- object without name and dsc, but with xact attribute
-	local hook_act = function(v, n)
-		local k,o
-		if type(v.var) == 'table' then
-			for k,o in ipairs(v.var) do -- var add
-				if o == n then
-					stead.table.insert(v.var, 'x'..n);
-					break
-				end
+__hook_act = function(v, n)
+	local k,o
+	if type(v.var) == 'table' then
+		for k,o in ipairs(v.var) do -- var add
+			if o == n then
+				stead.table.insert(v.var, 'x'..n);
+				break
 			end
-		end
-		return function(s, ...)
-			local r, v = call(s, 'x'..n, unpack(arg));
-			if type(r) == 'string' then
-				r = do_xact(s, r);
-			end
-			return r,v
 		end
 	end
-	v = f(v, unpack(arg))
+	return function(s, ...)
+		local r, v = call(s, 'x'..n, unpack(arg));
+		if type(r) == 'string' then
+			r = do_xact(s, r);
+		end
+		return r,v
+	end
+end
+
+xobj = stead.inherit(obj, function(v) -- object without name and dsc, but with xact attribute
 	v.xdsc = v.dsc
-	v.dsc = hook_act(v, 'dsc');
+	v.dsc = __hook_act(v, 'dsc');
 	v.xact = v.act
-	v.act = hook_act(v, 'act');
+	v.act = __hook_act(v, 'act');
 	v.xinv = v.inv
-	v.inv = hook_act(v, 'inv');
+	v.inv = __hook_act(v, 'inv');
 	v.xtak = v.tak
-	v.tak = hook_act(v, 'tak');
+	v.tak = __hook_act(v, 'tak');
 	v.xuse = v.use
-	v.use = hook_act(v, 'use');
+	v.use = __hook_act(v, 'use');
 	v.xused = v.used
-	v.used = hook_act(v, 'used');
+	v.used = __hook_act(v, 'used');
 	v.xobject_type = true
 	return v
 end)
@@ -86,9 +86,9 @@ do_xact = function(self, str)
 			o = self
 			d = s;
 		end
-		local oo = ref(o)
+		local oo = objs():srch(o)
 		if not oo then
-			oo = objs():srch(o)
+			oo = ref(o)
 		end
 		return xref(d, ref(oo), unpack(aarg));
 	end
@@ -97,18 +97,8 @@ do_xact = function(self, str)
 	return s;
 end
 
-xdsc_obj = obj {
-	nam = '',
-	dsc = function(s)
-		local str = call(here(), 'xdsc');
-		if type(str) == 'string' then
-			return do_xact(s, str);
-		end
-		return str
-	end,
-}
-
 xroom = stead.inherit(room, function(v)
-	v.obj:add('xdsc_obj', 1); -- first object is always meta-descriptor
+	v.xdsc = v.dsc
+	v.dsc = __hook_act(v, 'dsc');
 	return v;
 end)
