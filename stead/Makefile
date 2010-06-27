@@ -9,7 +9,7 @@ install:
 	$(INSTALL) stead.lua $(STEADPATH)/stead.lua
 	$(INSTALL) gui.lua $(STEADPATH)/gui.lua
 	$(INSTALL) goto.lua $(STEADPATH)/goto.lua
-	$(INSTALL) xobj.lua $(STEADPATH)/xobj.lua
+	$(INSTALL) xact.lua $(STEADPATH)/xact.lua
 	$(INSTALL) input.lua $(STEADPATH)/input.lua
 	$(INSTALL) click.lua $(STEADPATH)/click.lua
 	$(INSTALL) dbg.lua $(STEADPATH)/dbg.lua
