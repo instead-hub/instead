@@ -111,7 +111,7 @@ stead.pget = pget
 function p(...)
 	local i
 	for i = 1, stead.table.maxn(arg) do
-		cctx().txt = stead.par('',cctx().txt, arg[i]);
+		cctx().txt = stead.par('',cctx().txt, tostring(arg[i]));
 	end
 	cctx().txt = stead.cat(cctx().txt, ' ');
 end
@@ -119,7 +119,7 @@ stead.p = p
 function pr(...)
 	local i
 	for i = 1, stead.table.maxn(arg) do
-		cctx().txt = stead.par('',cctx().txt, arg[i]);
+		cctx().txt = stead.par('',cctx().txt, tostring(arg[i]));
 	end
 end
 stead.pr = pr
