@@ -21,7 +21,7 @@ xact = function(n, f) -- just simple action!
 	return v
 end
 
-__do_xact = function(str)
+__do_xact = function(str, self)
 	local aarg = {}
 	local function parg(v)
 		stead.table.insert(aarg, v);
@@ -29,7 +29,7 @@ __do_xact = function(str)
 	end
 	local xrefrep = function(str)
 		local s = stead.string.gsub(str,'[{}]','');
-		local o,d, a;
+		local o,d,a, oo;
 		local i = s:find(":", 1, true);
 		aarg = {}
 		if i then
@@ -42,14 +42,22 @@ __do_xact = function(str)
 				a:gsub('[^,()]+', parg);
 			end
 			if o == '' then 
-				error("Empty link: "..s, 3);
+				if isObject(self) then
+					oo = self
+				else
+					error("Empty link: "..s, 3);
+				end
+			else
+				oo = objs():srch(o)
+				if not oo then
+					oo = ref(o)
+				end
 			end
+		elseif isObject(self) then
+			oo = self
+			d = s;
 		else
 			error("Wrong link: "..s, 3);
-		end
-		local oo = objs():srch(o)
-		if not oo then
-			oo = ref(o)
 		end
 		return xref(d, ref(oo), unpack(aarg));
 	end
@@ -66,9 +74,9 @@ stead.fmt = stead.hook(stead.fmt, function(f, ...)
 	return r;
 end)
 
-xobj = stead.inherit(obj, function(v)
+obj = stead.inherit(obj, function(v)
 	v.xref = function(s, str)
-		return str
+		return __do_xact(str, s);
 	end
 	return v
 end)

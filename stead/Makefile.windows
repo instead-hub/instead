@@ -6,7 +6,7 @@ install:
 	copy stead.lua ..\bin\stead
 	copy gui.lua ..\bin\stead
 	copy goto.lua ..\bin\stead
-	copy xobj.lua ..\bin\stead
+	copy xact.lua ..\bin\stead
 	copy input.lua ..\bin\stead
 	copy click.lua ..\bin\stead
 	copy dbg.lua ..\bin\stead
