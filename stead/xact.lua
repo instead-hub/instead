@@ -42,10 +42,10 @@ __do_xact = function(str)
 				a:gsub('[^,()]+', parg);
 			end
 			if o == '' then 
-				error("Empty link: "..s, 2);
+				error("Empty link: "..s, 3);
 			end
 		else
-			error("Wrong link: "..s, 2);
+			error("Wrong link: "..s, 3);
 		end
 		local oo = objs():srch(o)
 		if not oo then
