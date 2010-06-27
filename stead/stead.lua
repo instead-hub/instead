@@ -2420,6 +2420,13 @@ function hook(o, f)
 end
 stead.hook = hook
 
+function nameof(v)
+	if isObject(v) then
+		local r = call(v, 'nam');
+		return r
+	end
+end
+
 function version(v)
 	if not tostring(v) then
 		return

@@ -12,7 +12,7 @@ instead (1.2.0) unstable; urgency=low
   * hook and inherit;
   * entered/left human friendly actions;
   * stead.cmd, stead.args added;
-  * require added (modules: goto, xobj, input, click, vars, dbg, snapshot, prefs);
+  * require added (modules: goto, xact, input, click, vars, dbg, snapshot, prefs);
   * time of save slots;
   * check_version added;
   * taketo/takef added;
@@ -24,6 +24,7 @@ instead (1.2.0) unstable; urgency=low
   * code function!!!;
   * args in call;
   * self() is now self;
+  * nameof();
   * no return goto needed;
   * many small bugfixes...
 
