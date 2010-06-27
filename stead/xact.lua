@@ -1,8 +1,13 @@
+function isXaction(v)
+	return type(v) == 'table' and v.xaction_type
+end
+
 xact = function(n, f) -- just simple action!
 	local v = {};
 	if type(n) ~= 'string' or (type(f) ~= 'string' and not isCode(f)) then
 		error ("Wrong parameter to xact.", 2)
 	end
+	v.xaction_type = true
 	v.nam = n
 	v.act = f;
 	v = obj(v);
