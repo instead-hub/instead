@@ -65,3 +65,10 @@ stead.fmt = stead.hook(stead.fmt, function(f, ...)
 	end
 	return r;
 end)
+
+xobj = stead.inherit(obj, function(v)
+	v.xref = function(s, str)
+		return str
+	end
+	return v
+end)
