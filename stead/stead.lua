@@ -97,6 +97,16 @@ function callpop()
 	if stead.call_top < 0 then
 		error ("callpush/callpop mismatch")
 	end 
+	arg1 = nil
+	arg2 = nil
+	arg3 = nil
+	arg4 = nil
+	arg5 = nil
+	arg6 = nil
+	arg7 = nil
+	arg8 = nil
+	arg9 = nil
+	self = nil
 end
 
 function pclr()

@@ -13,7 +13,7 @@ xact = function(n, f) -- just simple action!
 	v = obj(v);
 	v.save = function(self, name, h, need)
 		if need then
-			local f = self.xact;
+			local f = self.act;
 			if isCode(f) then
 				f = stead.string.format("code %q", stead.functions[f].code);
 			else
@@ -85,3 +85,25 @@ obj = stead.inherit(obj, function(v)
 	end
 	return v
 end)
+
+function xdsc(n)
+	local v = {}
+	v.nam = true
+	if n == nil then
+		v.disp = 'xdsc'
+	elseif type(n) == 'string' then
+		v.disp = n;
+	else
+		error("Wrong parameter to xdsc.", 2);
+	end
+	v.dsc = function(s)
+		return call(here(), s.disp);
+	end
+	v.save = function(self, name, h, need)
+		if need then
+			h:write(stead.string.format("%s = xdsc(%q);\n", name, self.disp))
+		end
+		savemembers(h, self, name, false);
+	end
+	return obj(v)
+end
