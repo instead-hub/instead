@@ -408,7 +408,7 @@ int game_save(int nr)
 		p = instead_cmd(cmd);
 		if (p)
 			free(p);
-		if (!instead_bretval(1) || !p) {
+		if (!instead_bretval(1) || (!p && err_msg)) {
 			instead_clear();
 			game_menu(menu_warning);
 			return -1;
