@@ -14,12 +14,14 @@ One should note that the “inventory” is defined rather vaguely. For example 
 
 Possible actions of the player are:
 
- * looking at the scene;
- * using a scene object;
- * using an inventory object;
- * using an inventory object on a scene object;
- * using an inventory object on an inventory object;
- * passing to another scene;
+  * looking at the scene;
+  * using a scene object;
+  * using an inventory object;
+  * using an inventory object on a scene object;
+  * using an inventory object on an inventory object;
+  * using a scene object on a scene object (scene_use mode);
+  * using a scene object on an inventroy object (scene_use mode);
+  * passing to another scene;
 
 Each game is a directory with a “main.lua” script. Other game resources (lua scripts, images, music) should be in this directory. All references to the resources are given relative to this game directory.
 
@@ -28,7 +30,26 @@ At the beginning of “main.lua” file a header may be defined. It consists of 
 -- $Name: The most interesting game!$
 </code>
 
+From version 1.2.0 after headers you must define required STEAD API version. It is "1.2.0" currently.
+<code>
+version "1.2.0"
+</code>
+
+Game initialization should be defined as init function. For example:
+<code>
+function init()
+    me()._know_truth = false
+    take(knife);
+    take(paper);
+end
+</code>
+
+Without this line STEAD API will stay in compatible(legacy) mode.
+
+
 The graphic interpreter searches for available games in the “games” directory. Unix version also checks “~/.instead/games”. Windows version (>=0.8.7) checks “Documents and Settings/USER/Local Settings/Application Data/instead/games”.
+
+From version 1.2.0 Windows and Unix standalone builds looks into ./appdata/games dir, if it exists.
 
 ===== 1. Scene =====
 
@@ -45,6 +66,13 @@ The “nam” attribute for a scene will be the scene name when it is played. Th
 
 The “dsc” attribute is a description of a static part of the scene. It is shown once when entering the scene or after the explicit “look” command.
 
+Attention!!! You may use symbol “;” instead of “,”. For example:
+<code>
+main = room {
+	nam = 'main room';
+	dsc = 'You are in a large room.';
+};
+</code>
 Attention!!! If your creative design requires the static part description to be shown every time, you may define the “forcedsc” parameter for your game (at the start).
 <code>
 game.forcedsc = true;
@@ -82,7 +110,7 @@ Object name “nam” is used when the object gets into the inventory or to addr
 
 “act” is a handler, called when the player uses a scene object. It has to return a text line, which will become a part of the scene events, or a boolean value (see chapter 5)
 
-WARNING: in the lua namespace some objects (tables) already exist. For example “table”, “io”, “string”... Be careful when creating objects. In the example above “tabl” is used instead of “table”.
+WARNING: in the lua namespace some objects (tables) already exist. For example “table”, “io”, “string”... Be careful when creating objects. In the example above “tabl” is used instead of “table”. (But in fact, in modern versions of INSTEAD this problem is almost solved).
 
 
 ===== 3. Adding objects to the scene =====
@@ -99,6 +127,7 @@ main = room {
 </code>
 This way when the scene is shown we'll see the table object in the dynamic part.
 
+Attention!!! You can use references to objects without quotes, if the object was defined before reference, but using quotes is always safe.
 
 ===== 4. Objects referencing objects =====
 
@@ -131,69 +160,89 @@ end,
 </code>
 This is synonymous to: nam = 'apple';
 
+Handler must return string. You can also use more user-friendly functions:
+
+  * p ("text") -- output text with space;
+  * pn ("text") -- output text with newline;
+  * pr ("text") -- output text as-is;
+
+If you call p/pn/pr with only one text parameter, the parentheses could be omitted. Use .. or , for string concatenation. For example:
+
+<code>
+pn "No parentheses";
+pn ("This is string 1".." This is string 2");
+pn ("This is string 1", "This is string 2");
+</code>
+
+
 Functions greatly enhance STEAD capabilities, for example:
 <code>
 aple = obj {
 	nam = 'apple',
 	dsc = function(s)
 		if not s._seen then
-			return 'There is {something} on the table.';
+			p 'There is {something} on the table.';
 		else
-			return 'There is an {apple} on the table.';
+			p 'There is an {apple} on the table.';
 		end
 	end,
 	act = function(s)
 		if s._seen then
-			return 'It\'s an apple!';
+			p 'It\'s an apple!';
 		else
 			s._seen = true;
-			return 'Hm... But it\'s an apple!';
+			p 'Hm... But it\'s an apple!';
 		end
 	end,
 };
 </code>
 If the attribute or handler is laid out as a function, then the first argument of the function (s) is the object itself. In the example scene the dynamic part will have the text: 'There is something on the table.' When you try to use this “something”, '_seen' variable of the object “aple” will be set to “true” and we will see it was an apple.
 
-If you know lua, you can simplify:
-<code>
-function sw(v, a, b)
-	if v then
-		return a;
-	end
-	return b
-end
+`s._seen` means that the `_seen` variable is placed in the “s” object (in our case “aple”). Underscore means that this variable is saved in a savegame file. 
 
-aple = obj {
-	nam = function(s)
-		return sw(not s._seen, 'unknown','apple');
-	end,
-	dsc = function(s)
-		return sw(not s._seen,'There is {something} on the table.', 'There is an {apple} on the table.');
-	end,
-	act = function(s)
-		if s._seen then
-			return 'It\'s an apple!';
+From version 1.2.0 you can define variables as shown in the example:
+
+<code>
+global {
+    global_var = 1;    
+}
+main = room {
+    var {
+        i = "a";
+        z = "b";
+    };
+    nam = 'My first room';
+    var {
+        new_var = 3;
+    };
+    dsc = function(s)
+        p ("i == ", s.i);
+        p ("new_var == ", s.new_var);
+        p ("global_var == ", global_var);
+    end;
+</code>
+
+From version 1.2.0 you may define function like this:
+<code>
+	dsc = code [[
+		if not self._seen then
+			p 'There is {something} on the table.';
 		else
-			s._seen = true;
-			return 'Hm... But it\'s an apple!';
+			p 'There is an {apple} on the table.';
 		end
-	end,
-};
-</code>
-And then always use “sw” or some other auxiliary function.
-
-`s._seen` means that the `_seen` variable is placed in the “s” object (in our case “aple”). Underscore means that this variable is saved in a savegame file. Starting from version 0.7.7 variables starting with a capital letter also get saved.
-
-Warning!!! The variables outside any of the following object types: room, object, game, player — never get saved.
-
-From version 0.8.9 you can define a function “isForSave(k)”, which is called to determine whether to save a variable to a savegame file. By default it is defined this way:
-<code>
-function isForSave(k)
-	return string.find(k, '_') ==  1 or string.match(k,'^%u')
-end
+	]],
 </code>
 
-There are two extra parameters for isForSave() (for instead versions > 1.0.0). v -- value, s -- parent table.
+While running code, the object itself is written into "self" variable. arg1 .. arg9 and args[] array holds all arguments.
+
+Warning! Variable will be saved to savegame file if it was defined in: room, game, obj, player, global space and it's name begins from _ symbol or if it was defined using var/global.
+
+These types of variables can be saved:
+  * strings;
+  * boolean values;
+  * numeric values;
+  * links to objects;
+  * code constructions;
 
 Sometimes we need a handler that would do something without showing any description, e.g.:
 <code>
@@ -216,9 +265,31 @@ r12 = room {
 </code>
 In this case ''act'' handler is used to change room description but it is not supposed to add any description of its own. To achieve this we need to return true from the handler. It means the action is done successfully but does not require to diplay any additional description.
 
-If you need to show some action is impossible, you can return false or nil from its ''act'' handler. In this case default description will be shown for this action. Default actions can be set via ''game.act'' handler and are generally used for description of impossible actions.
+If you need to show some action is impossible, just don't return anything from handler. In this case default description will be shown for this action. Default actions can be set via ''game.act'' handler and are generally used for description of impossible actions.
 
 Please note the new variable ''_dynamic_dsc'' is used to make a dynamic description in the above example. This is done to ensure new description is saved during the game save. Since the name 'dsc' does not start with underscore or capital letter it will not be saved by default.
+
+So, example above can be looks like this:
+<code>
+button = obj {
+	nam = "button";
+	dsc = "There is a big red {button} on the room wall.";
+	act = function (s)
+		here().dsc = "The room looks strange now...";
+		p [[The room transformed after I pressed the button. 
+			The book-case disappeared along with the table and the chest, and a strange 
+			looking device took its place.]];
+	end
+}
+r12 = room {
+        forcedsc = true;
+	nam = 'room';
+        var {
+	    dsc = 'I am in the room.';
+        };
+	obj = {'button'}
+}
+</code>
 
 ===== 6. Inventory =====
 
@@ -229,8 +300,8 @@ For example:
 aple = obj {
 	nam = 'apple',
 	dsc = 'There is an {apple} on the table.',
-	inv = function()
-		inv():del('aple');
+	inv = function(s)
+		inv():del(s);
 		return 'I ate the apple.';
 	end,
 	tak = 'You take the apple.',
@@ -271,11 +342,11 @@ room2 = room {
 };
 </code>
 
-“exit” and “enter” may be functions. Then the first parameter is the object itself (as usual) and the second parameter is a reference to the room where the player is heading (for “exit”) or which he is leaving (for “enter”). For example:
+“exit” and “enter” may be functions. Then the first parameter is the object itself (as usual) and the second parameter is the room where the player is heading (for “exit”) or which he is leaving (for “enter”). For example:
 <code>
 room2 = room {
 	enter = function(s, f)
-		if f == 'main' then
+		if f == main then
 			return 'You came from the room.';
 		end
 	end,
@@ -283,13 +354,33 @@ room2 = room {
 	dsc = 'You are in a huge hall.',
 	way = { 'main' },
 	exit = function(s, t)
-		if t == 'main' then
+		if t == main then
 			return 'I don\'t wanna go back!', false
 		end
 	end,
 };
 </code>
 As we see, the handlers can return two values: the string and the status. In our example the “exit” function returns “false” if the player tries to go to the “main” room from the hall. “false” means that the player will not pass. Same logic works for “enter” and “tak”.
+
+If you like p/pn/pr instead, just return status itself:
+<code>
+room2 = room {
+	enter = function(s, f)
+		if f == main then
+			p 'You came from the room.';
+		end
+	end,
+	nam = 'hall',
+	dsc = 'You are in a huge hall.',
+	way = { 'main' },
+	exit = function(s, t)
+		if t == main then
+			p 'I don\'t wanna go back!'
+                        return false
+		end
+	end,
+};
+</code>
 
 Keep in mind that the current scene may not be changed by the moment of an enter action handler invocation. Since the version 1.2.0 available two new action handlers: 'left' and 'entered'. They are invoked immediately after the transition and recommended to use in case when transition prohibition is not required.
 
@@ -327,10 +418,11 @@ knife = obj {
 	inv = 'Sharp!',
 	tak = 'I took the knife!',
 	use = function(s, w)
-		if w ~= 'tabl' then
-			return 'I don\'t want to cut this.', false
+		if w ~= tabl then
+			p 'I don\'t want to cut this.'
+                        return false
 		else
-			return 'You incise your initials on the table.';
+			p 'You incise your initials on the table.';
 		end
 };
 </code>
@@ -399,8 +491,8 @@ knife = obj {
 	dsc = 'There is a {knife} on the table,
 	inv = 'Sharp!',
 	act = function(s)
-		objs():del('knife');
-		inv():add('knife');
+		objs():del(s);
+		inv():add(s);
 	end,
 };
 </code>
@@ -411,6 +503,8 @@ Apart from adding and deleting objects from lists you may switch them on and off
 
 From version 0.9.1 methods “zap” and “cat” can be used. zap() -- delete all elements. cat(b, [pos]) -- add all elements of list b to current list at position [pos].
 
+Attention!!! Currently, it is recommended to use higher lever functions like: put/get/take/drop/remove/seen/have and so on, to work with objects and inventory.
+
 ===== 12. Functions, that return objects =====
 
 In STEAD several functions are defined, that return some frequently used objects. For example:
@@ -420,6 +514,9 @@ In STEAD several functions are defined, that return some frequently used objects
  * me() returns the player object;
  * here() returns the current scene; (from 0.8.5 another function where(obj) returns the scene where is object placed. Works only if it was placed with put/drop/move).
  * from() returns an object from a previous scene;
+ * seen(obj, [scene]) returns an object, if it exists in scene and not disabled;
+ * have(obj, [scene]) returns an object, if it exists in the inventory;
+ * exist(obj, [scene]) returns an object, if it is exists in scene;
 
 Combining those functions with “add” and “del” methods one can dynamically alter the scene, for example:
 <code>
@@ -451,14 +548,17 @@ and finally:
 <code>
 put('chair', 'home');
 </code>
-
+or even:
+<code>
+put(chair, home);
+</code>
 From 0.8.5 deref(o), returns the reference-string for an object;
 
 ===== 13. Some auxiliary functions. =====
 
 STEAD has a number of high-level functions, that may come useful when writing games. 
 
-have() — checks if the object is in the inventory by object name or by object “nam” attribute. For example:
+have() — checks if the object is in the inventory by object, it's reference or by object “nam” attribute. For example:
 <code>
 ...
 act = function(s)
@@ -468,6 +568,15 @@ act = function(s)
 end
 ...
 </code>
+Next code examples must work to.
+<code>
+...
+	if have 'knife' then
+...
+	if have (knife) then
+...
+</code>
+In the next examples you may use all above address modes.
 
 move(o, w) — moves an object from the current scene to another:
 
@@ -505,7 +614,18 @@ taken(o) — returns true if the object has already been taken (with “tak” o
 
 rnd(m) — random number from 1 to m.
 
-goto(w) — go to scene w, the handler has to return the “goto” return value, since “goto” returns the description of the new scene or message that the passage is impossible. E.g.:
+goto(w) — go to scene w. If you are not using p/pn/pr output method, the handler has to return the “goto” return value. E.g:
+<code>
+act = code [[
+        pn "I am going to next room..."
+        goto (nextroom);
+]]
+...
+act = code [[
+        return cat('I am going to next room...', goto (nextroom));
+]]
+</code>
+Attention!!!  After goto call, handler execution will continue until handler end or return.
 
 change_pl(p) — switch to another player (with one's own inventory and position). The function returns the scene description of the new player and the returned value has to be transferred from the handler (see “goto()”).
 
@@ -526,6 +646,8 @@ time() — returns the current game time in player's moves.
 cat(...) — returns the string, concatenating argument strings. If the first argument is nil returns nil.
 
 par(...) — returns the string, concatenating argument strings split by the first argument string.
+
+disable/enable/disable_all/enable_all -- disable/enable/disable_all/enable_all object
 
 ===== 14. Dialogs =====
 
@@ -556,17 +678,17 @@ food = obj {
 gotfood = function(w)
 	inv():add('food');
 	food._num = w;
-	return back();
+	back();
 end
 
 povardlg = dlg {
 	nam = 'in the kitchen',
 	dsc = 'I see a fat face of a lady cook wearing a white hat with a tired look...',
 	obj = {
-	[1] = phr('“Those green, please... Yeah, and beans too!”', '“Enjoy!”', [[pon(1); return gotfood(1);]]),
-	[2] = phr('“Fried potato with lard, please!”', '“Bon appetit!”', [[pon(2); return gotfood(2);]]),
-	[3] = phr('“Two helpings of garlic sooup!!!”', '“Good choice!”', [[pon(3);return gotfood(3);]]),
-	[4] = phr('“Something light, please, I've got an ulcer...”', '“Oatmeal!”', [[pon(4); return gotfood(4);]]),
+	[1] = phr('“Those green, please... Yeah, and beans too!”', '“Enjoy!”', [[pon(); gotfood(1);]]),
+	[2] = phr('“Fried potato with lard, please!”', '“Bon appetit!”', [[pon(); gotfood(2);]]),
+	[3] = phr('“Two helpings of garlic sooup!!!”', '“Good choice!”', [[pon(); gotfood(3);]]),
+	[4] = phr('“Something light, please, I've got an ulcer...”', '“Oatmeal!”', [[pon(); gotfood(4);]]),
 	},
 };
 </code>
@@ -577,6 +699,8 @@ The reaction may have any lua code, but STEAD has some frequently used functions
 pon(n..) — enable the phrases with numbers n... (in the example it allows to take the same food again).
 poff(n...) — disable the phrases with numbers n... 
 prem(n...) — remove (block) phrases with numbers n... (blocked phrases won't be re-enabled with subsequent “pon”).
+
+If argument n is not present, current phrase will be affected.
 
 Player enters a dialog the way he enters a scene:
 <code>
@@ -625,21 +749,20 @@ sside = room {
 	nam = 'southern side',
 	dsc = [[I am near the southern wall of an institute building. ]],
 	act = function(s, w)
-		if w == 1 then
+		if w == "porch" then
 			ways():add('stolcorridor');
-			return "I walked to the porch. The sign on the door read 'Canteen'. Hm... should I get in?";
-		end
-		if w == 2 then
-			return 'The ones going out look happier...';
+			p "I walked to the porch. The sign on the door read 'Canteen'. Hm... should I get in?";
+		elseif w == "people" then
+			p 'The ones going out look happier...';
 		end
 	end,
-	obj = { vobj(1, "porch", "There is a small {porch} by the eastern corner."),
-		vobj(2, "people", "From time to time the porch door slams letting {people} in and out..")},
+	obj = { vobj("porch", "There is a small {porch} by the eastern corner."),
+		vobj("people", "From time to time the porch door slams letting {people} in and out..")},
 };
 </code>
-As you see, “vobj” allows to create a lightweight version of a static object, with which it will still be possible to interact (defining an “act” handler in the scene an analyzing the object key). “vobj” also calls the “used” method with the third parameter being the object which acts on the virtual object.
+As you see, “vobj” allows to create a lightweight version of a static object, with which it will still be possible to interact (defining an “act” handler in the scene an analyzing the object name). “vobj” also calls the “used” method with the third parameter being the object which acts on the virtual object.
 
-“vobj” syntax: vobj(key, name, descriptor); where key is a number to be transferred to the “act”/“used” handlers of the scene as a second parameter.
+“vobj” syntax: vobj(name, descriptor); where key is a number to be transferred to the “act”/“used” handlers of the scene as a second parameter.
 
 There is a modification of “vobj” object — “vway”. It creates a reference.
 “vway” syntax: vway(name, descriptor, destination scene); for example:
@@ -651,16 +774,16 @@ There is a modification of “vobj” object — “vway”. It creates a refere
 You can dynamically fill the scene with “vobj” and “vway” objects. Use methods “add” and “del”. For example:
 
 <code>
-	home.objs:add(vway("next", "{Next}.", 'next_room'));
+	objs(home):add(vway("next", "{Next}.", 'next_room'));
 -- some code here
-	home.objs:del("next");
+	home.obj:del("next");
 </code>
 
 Also a simplified scene “vroom” is defined. 
 Syntax: vroom(passage name, destination scene). For example:
 
 <code>
-	home.objs:add(vroom("go west", 'mountains');
+	home.obj:add(vroom("go west", 'mountains');
 </code>
 
 ===== 16. Dynamic events =====
@@ -703,6 +826,11 @@ life may return string, that will be printed after all text of scene.
 From 0.9.1 you can return second retval -- importance. (true or false). For example:
 <code>
 return 'Guard entered the room.', true -- The event will be printed before objects description.
+</code>
+Or:
+<code>
+p 'Guard entered the room.'
+return true -- The event will be printed before objects description.
 </code>
 
 ===== 17. Graphics and music =====
@@ -835,41 +963,34 @@ knife = obj {
 	inv = 'This is knife',
 };
 
-inv():add(pocket);
-put(knife, pocket);
-pocket:gen();
+function init()
+    inv():add(pocket);
+    put(knife, pocket);
+    pocket:gen();
+end
 
 main = room {
 	nam = 'test',
 };
 </code>
+
 ==== Player status ====
-The engine code is in the stead.lua file. In your game you can redefine any lua function or object, getting whatever your creative concept needs. It is useful to know the peculiarities of the engine work. For example below is an implementation of player status as a text in the inventory, which cannot be picked.
+Below is an implementation of player status as a text in the inventory, which cannot be picked.
 
 <code>
-pl.Life = 10;
-pl.Power = 10;
-
-status = obj {
-	nam = function(s)
-		return 'Life: '..pl.Life..',Power: '..pl.Power
-	end
-};
-inv():add('status');
-status.object_type = false
-</code>
-
-From version 0.9.1 you can use stat constructor for status.
-<code>
-pl.Life = 10;
-pl.Power = 10;
+global {
+    life = 10;
+    power = 10;
+}
 
 status = stat {
 	nam = function(s)
-		return 'Life: '..pl.Life..',Power: '..pl.Power
+		p ('Life: ', life, 'Power: ', power)
 	end
 };
-inv():add('status');
+function init()
+    inv():add('status');
+end
 </code>
 
 ==== “goto” from the “exit” handler ====
@@ -889,16 +1010,16 @@ You can also do “goto” from the “enter” handlers.
 ==== Dynamically created references. ====
 Dynamically created references can be implemented in various ways. The example below uses “vway” objects. To add a reference one can write:
 <code>
-home.obj:add(vway('Road', 'I noticed a {road} going into the forest...', 'forest'));
+objs(home):add(vway('Road', 'I noticed a {road} going into the forest...', 'forest'));
 </code>
 To delete a reference one can use “del” method.
 <code>
-home.obj:del('Road');
+objs(home):del('Road');
 </code>
 The “srch” method can check if the reference is present in the scene.
 <code>
-if not home.obj:srch('Road') then
-	home.obj:add(vway('Road', 'I noticed a {road} going into the forest...', 'forest'));
+if not objs(home):srch('Road') then
+	objs(home):add(vway('Road', 'I noticed a {road} going into the forest...', 'forest'));
 end
 </code>
 It's convenient to create dynamic references either in the “enter” handler, or in the arbitrary place in the game code, where they are required. If the reference is created in the current scene, the example can be simplified:
@@ -909,14 +1030,15 @@ end
 </code>
 Or you can just enable and disable references with “enable()” and “disable()”, for example:
 <code>
-	objs()[1]:disable();
+	seen('Road', home):disable();
+        exist('Road', home):enable();
 </code>
 
 Creating disabled “vobj” and “vway”:
 <code>
 	obj = {vway('Road', 'I noticed a {road} going into the forest...', 'forest'):disable()},
 </code>
-And then enabling them by their index in the “obj” array:
+And then enabling them by their index in the “obj” array or by looking them with srch or seen/exist:
 <code>
 	objs()[1]:enable();
 </code>
@@ -987,12 +1109,12 @@ You can use “get_music_loop” and “get_music” functions to remember the l
 
 <code>
 function save_music(s)
-	s.OldMusic = get_music();
-	s.OldMusicLoop = get_music_loop();
+	s._oldMusic = get_music();
+	s._oldMusicLoop = get_music_loop();
 end
 
 function restore_music(s)
-	set_music(s.OldMusic, s.OldMusicLoop);
+	set_music(s._oldMusic, s._oldMusicLoop);
 end
 
 -- ....
@@ -1021,8 +1143,11 @@ horse = obj {
 		end
 	end,
 };
-lifeon('horse');
+function init()
+    lifeon('horse');
+end
 </code>
+
 ==== Timer ====
 Since the version 1.1. 'instead' has a ''timer'' object. (Only for sdl version.)
 
@@ -1139,6 +1264,7 @@ main = room {
 	end
 };
 </code>
+Attention!!! From version 1.2.0 it is recommended to use module click.
 
 ==== Dynamic object creation ====
 You can use ''new'' and ''delete'' functions to create and remove dynamic objects. An example follows.
@@ -1180,7 +1306,7 @@ end
 
 There is a function ''pr()'' in versions 1.1.6 and later, that does not add anything at end of output. 
 
-To clear the buffer you can use ''pclr()''. To return the status of the action along with the text, use ''pget()''.
+To clear the buffer you can use ''pclr()''. To return the status of the action along with the text, use ''pget()'' or just return.
 <code>
 use = function(s, w)
 	if w == 'apple' then
@@ -1189,7 +1315,7 @@ use = function(s, w)
 		return
 	end
 	p 'You cannot use it this way!'
-	return pget(), false
+	return false; -- or return pget(), false
 end
 </code>
 
@@ -1205,6 +1331,12 @@ iface:shell();
 </code>
 And launch the game in lua: lua game.lua.
 This way the game will work in a primitive shell environment. Useful commands: ls, go, act, use....
+
+For ingame simple debugger insert this: 
+<code>
+require "dbg"
+</code>
+just after version line in main.lua. Then use F7 to call debugger.
 
 ===== 19. Themes for sdl-instead =====
 
