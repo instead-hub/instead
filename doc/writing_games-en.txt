@@ -891,6 +891,96 @@ Use is_music() to check if music is playing. (from version 1.0.0)
 
 ===== 18. Advices =====
 
+==== Modules ====
+Starting from version 1.2.0 you can use modules via “require” function call. At the moment the following modules are available:
+
+    * dbg — debug module (use ''require "dbg"'' to enable debugger);
+    * goto — improved implementation of passages;
+    * xact — multiple references to objects;
+    * input — keyboard input;
+    * click — capturing mouse clicks on the scene picture;
+    * vars — definition of variables;
+    * prefs — preferences;
+    * snapshot — snapshots;
+    * para — paragraph formatting;
+    * object — improved objects;
+
+Modules can be used like this:
+<code>
+--$Name: My game!$
+version "1.2.0"
+require "para"
+require "dbg"
+...
+</code>
+If version is >= 1.2.0 then the following modules are used automatically: vars, object, goto.
+
+“prefs” object (included into “prefs” module) can store game preferences, e.g. player progress or attempt count…
+<code>
+  require "prefs"
+...
+    prefs.counter = 0
+...
+    exit = function(s)
+        prefs.counter = prefs.counter + 1
+        prefs:store()
+    end
+...
+    enter = function(s)
+        return 'You passed the game '..prefs.counter..' times';
+    end
+...
+    act = function(s)
+        prefs:purge()
+        return "Preferences has been cleared"
+    end
+</code>
+
+“xact” module allows to make references to objects from other objects, reactions and life methods. These references have the form {object:string}, e.g.:
+<code>
+...
+    act = [[ I noticed a {myknife:knife} under the table.]]
+...
+</code>
+"object" part of the reference can be object variable or object name.
+
+This module also defines “xact” and “xdsc” objects.
+
+“xact” is the simple reaction object. For example:
+
+<code>
+main = room {
+    forcedsc = true;
+    dsc = [[Author's comment: I was writing this game for a very {note1:long} time.]];
+    obj = {
+        xact('note1', [[More than 10 years.]]);
+    }
+}
+</code>
+A reaction can contain a code:
+<code>
+        xact('note1', code [[p "More than 10 years."]]);
+</code>
+
+“xdsc” allows to insert multiple description to the object list:
+<code>
+main = room {
+    forcedsc = true;
+    dsc = [[ I'm in the room. ]];
+    xdsc = [[ I see an {anapple:apple} and a {aknife:knife}. ]];
+    other = [[ There are also {achain:chain} and {atool:handsaw} here.]];
+    obj = {
+        xdsc(), -- 'xdsc method by default'
+        xdsc('other'),
+        'apple', 'knife', 'chain', 'tool',
+    }
+}
+</code>
+
+“input” module allows to implement simple text entry fields. “click” module helps to handle mouse clicks on scene pictures.
+
+“para” module adds indentation to paragraphs.
+
 ==== Formatting  ====
 You can do simple text formatting with functions:
 
