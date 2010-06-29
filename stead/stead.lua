@@ -488,7 +488,7 @@ function deref(n)
 	return n
 end
 
-function list_check(self)
+function list_check(self, name)
 	local i, v, ii;
 	for i,v,ii in opairs(self) do
 		local o = ref(v);
@@ -496,7 +496,10 @@ function list_check(self)
 			error ("No object: "..tostring(v))
 			return false
 		end
-		if deref(v) then
+		if not true --[[isObject(deref(v))]] then-- no named object!
+			allocator:auto(v, stead.string.format("%s[%d]", name, ii));
+			-- self[ii] = allocator:auto(v, stead.string.format("%s[%d]", name, ii));
+		else
 			self[ii] = deref(v);
 		end
 	end
@@ -948,11 +951,12 @@ end
 
 function phrase_save(self, name, h, need)
 	if need then
-		local m = " = phr('"
+		local m = " = phr("
 		if isDisabled(self) then
-			m = " = _phr('"
+			m = " = _phr("
 		end
-		h:write(name..m..tostring(self.dsc).."','"..tostring(self.ans).."','"..tostring(self.do_act).."');\n");
+		h:write(stead.string.format("%s%s%q,%q,%q);\n", 
+			name, m, tostring(self.dsc), tostring(self.ans), tostring(self.do_act)));
 	end
 	savemembers(h, self, name, false);
 end
@@ -1280,8 +1284,8 @@ function game_life(self)
 	return v, av;
 end
 
-function check_list(k, v)
-	if v.check == nil or not v:check() then
+function check_list(k, v, p)
+	if v.check == nil or not v:check(stead.string.format("%s[%q]", p, k)) then
 		error ("error in list: "..stead.object..'.'..k);
 	end
 end
@@ -1309,7 +1313,7 @@ function check_object(k, v)
 	if isPlayer(v) then
 		check_player(k, v);
 	end
-	for_each(v, k, check_list, isList)
+	for_each(v, k, check_list, isList, deref(v))
 end
 
 function for_everything(f, ...)
@@ -1337,11 +1341,12 @@ function do_ini(self)
 	for_each_object(call_key);
 	for_each_codeblock(call_codekey);
 	for_each_object(check_object);
+	call_key("game", game);
 
 	game.pl = deref(game.pl);
 	game.where = deref(game.where);
 
-	for_each(game, "game", check_list, isList)
+	for_each(game, "game", check_list, isList, deref(game))
 
 	for_each_object(call_ini);
 
@@ -1924,6 +1929,11 @@ end
 
 allocator = obj {
 	nam = 'allocator',
+	auto = function(s, v, n)
+		v.key_name = n;
+		stead.table.insert(s.objects, v);
+		return 'allocator["objects"]['..stead.table.maxn(s.objects)..']';
+	end,
 	get = function(s, n, c)
 		local v = ref(c);
 		v.key_name = n;
