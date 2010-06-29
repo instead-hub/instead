@@ -1182,22 +1182,6 @@ function go(self, where, back)
 
 	ret();
 
-	if not stead.in_goto_call then
-		local to = self.where
-		self.where = was
-
-		stead.in_onexit_call = true
-		v = call(ref(was), 'left', deref(to));
-		stead.in_onexit_call = false
-		res = stead.par('^^',res,v);
-
-		self.where = deref(to)
-
-		stead.in_entered_call = true
-		v = call(ref(to), 'entered', deref(was));
-		stead.in_entered_call = false
-		res = stead.par('^^',res,v);
-	end
 	PLAYER_MOVED = true
 	if need_scene then -- or isForcedsc(ref(where)) then -- i'am not sure...
 		return stead.par('^^',res,ref(where):scene());
