@@ -107,3 +107,18 @@ function xdsc(n)
 	end
 	return obj(v)
 end
+
+default_xdsc_obj = xdsc();
+
+xroom = stead.hook(room, function(f, v, ...)
+	if type(v) == 'table' then
+		if v.obj == nil then
+			v.obj = {} 
+		elseif type(v.obj) ~= 'table' then
+			error("Wrong parameter to xroom.", 2);
+		end
+		-- we not use put here, to force saver do not save all list
+		stead.table.insert(v.obj, 1, 'default_xdsc_obj');
+	end
+	return f(v, unpack(arg))
+end)
