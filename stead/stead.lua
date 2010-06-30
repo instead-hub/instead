@@ -1,5 +1,6 @@
 stead = {
 	version = "1.2.0",
+	api_version = "1.1.6", -- last version before 1.2.0
 	table = table,
 	string = string,
 	math = math,
@@ -38,6 +39,8 @@ stead = {
 		f();
 	end
 }
+
+instead = stead;
 
 module_init = stead.module_init;
 
@@ -1622,7 +1625,6 @@ Commands:^
     back, inv, way, obj, quit, save <fname>, load <fname>.]],
 	pl ='pl',
 	showlast = true, 
-	version = "1.1.6", -- last version before 1.2.0
 };
 function strip(s)
 	local s = tostring(s);
@@ -2428,20 +2430,22 @@ function nameof(v)
 	end
 end
 
-function version(v)
+function stead_version(v)
 	if not tostring(v) then
 		return
 	end
 	if stead.version < v then
 		error ([[The game requires instead engine of version ]] ..v.. [[ or higher. http://instead.googlecode.com]], 2)
 	end
-	game.version = v
+	stead.api_version = v
 	if v >= "1.2.0" then
 		require ("goto")
 		require ("vars")
 		require ("object")
 	end
 end
+instead_version = stead_version
+
 function code(v)
 	local f = loadstring(v)
 	if not f then
