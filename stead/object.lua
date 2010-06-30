@@ -44,8 +44,6 @@ function player_use(self, what, onwhat, ...)
 	return stead.par(' ', v, vv);
 end
 
-pl.use = player_use;
-
 function vobj_save(self, name, h, need)
 	local w = deref(self.where)
 	local dsc = self.dsc
@@ -113,3 +111,67 @@ end
 function isVobject(v)
 	return (type(v) == 'table') and (v.vobject_type)
 end
+
+function list_check(self, name) -- force using of objects, instead refs
+	local i, v, ii;
+	for i,v,ii in opairs(self) do
+		local o = ref(v);
+		if not o then -- isObject(o) then -- compat
+			error ("No object: "..tostring(v))
+			return false
+		end
+		if isObject(deref(v)) then-- no named object!
+			local n = stead.string.format("%s[%d]", name, ii);
+			v = allocator:new(n);
+			self[ii] = v;
+			for_each(v, n, check_list, isList, deref(v));
+		else
+			self[ii] = o;
+		end
+	end
+	return true; 
+end
+
+function list_add(self, name, pos)
+	local nam
+	nam = ref(name);
+	if self:look(nam) then
+		return nil
+	end
+	self.__modified__ = true;
+	if tonumber(pos) then
+		stead.table.insert(self, tonumber(pos), nam);
+		self[tonumber(pos)] = nam; -- for spare lists
+	else
+		stead.table.insert(self, nam);
+	end
+	return true
+end
+
+function list_set(self, name, pos)
+	local nam
+	local i = tonumber(pos);
+	if not i then
+		return nil
+	end
+	nam = ref(name);
+	self.__modified__ = true;
+	self[i] = nam; -- for spare lists
+	return true
+end
+
+function list_concat(self, other, pos)
+	local n,o,ii
+	for n,o,ii in opairs(other) do
+		o = ref(o);
+		if pos == nil then
+			self:add(o);
+		else 
+			self:add(o, pos);
+			pos = pos + 1;
+		end
+	end
+end
+
+game.lifes = list(game.lifes)
+stead:init(); -- reinit

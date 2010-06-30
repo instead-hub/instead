@@ -496,12 +496,7 @@ function list_check(self, name)
 			error ("No object: "..tostring(v))
 			return false
 		end
-		if isObject(deref(v)) then-- no named object!
-			local n = stead.string.format("%s[%d]", name, ii);
-			v = allocator:new(n);
-			self[ii] = v; -- deref(v) 
-			for_each(v, n, check_list, isList, deref(v));
-		else
+		if deref(v) then
 			self[ii] = deref(v);
 		end
 	end
