@@ -170,7 +170,7 @@ drop_object = dlg {
 }
 function dbg_exit()
 	local r
-	if game.version < "1.2.0" then
+	if stead.api_version < "1.2.0" then
 		r = call(dbg_here(), 'dsc');
 	end
 	return par ('^^', back(), r);
