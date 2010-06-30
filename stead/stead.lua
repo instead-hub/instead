@@ -496,9 +496,11 @@ function list_check(self, name)
 			error ("No object: "..tostring(v))
 			return false
 		end
-		if not true --[[isObject(deref(v))]] then-- no named object!
-			allocator:auto(v, stead.string.format("%s[%d]", name, ii));
-			-- self[ii] = allocator:auto(v, stead.string.format("%s[%d]", name, ii));
+		if isObject(deref(v)) then-- no named object!
+			local n = stead.string.format("%s[%d]", name, ii);
+			v = allocator:new(n);
+			self[ii] = v; -- deref(v) 
+			for_each(v, n, check_list, isList, deref(v));
 		else
 			self[ii] = deref(v);
 		end
@@ -1929,11 +1931,6 @@ end
 
 allocator = obj {
 	nam = 'allocator',
-	auto = function(s, v, n)
-		v.key_name = n;
-		stead.table.insert(s.objects, v);
-		return 'allocator["objects"]['..stead.table.maxn(s.objects)..']';
-	end,
 	get = function(s, n, c)
 		local v = ref(c);
 		v.key_name = n;
@@ -2022,22 +2019,25 @@ input = obj { -- input object
 };
 
 function vobj_save(self, name, h, need)
-	local dsc;
-	local w
-	if type(self.dsc) ~= 'string' then
+	local dsc = self.dsc;
+	local w = deref(self.where);
+	
+	if dsc == nil then
 		dsc = 'nil';
 	else
-		dsc = "[["..self.dsc.."]]";
+		dsc = stead.string.format("%q", tostring(dsc))
 	end
-	
-	if type(deref(self.where)) ~= 'string' then
+
+	if w == nil then
 		w = 'nil';
 	else
-		w = "'"..deref(self.where).."'";
+		w = stead.string.format("%q", w)
 	end
 	
 	if need then
-		h:write(name.." = vobj("..tostring(self.key)..",[["..self.nam.."]],"..dsc..","..w..");\n");
+		h:write(stead.string.format("%s  = vobj(%s, %q, %s, %s);\n",
+			name, tostring(self.key), tostring(self.nam), dsc, w));
+
 	end
 	savemembers(h, self, name,false);
 end
