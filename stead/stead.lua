@@ -1320,7 +1320,7 @@ function for_everything(f, ...)
 	for_each(_G, '_G', f, is_ok, unpack(arg))
 end
 
-function do_ini(self)
+function do_ini(self, load)
 	local v='',vv
 	local function call_key(k, o)
 		o.key_name = k;
@@ -1335,18 +1335,17 @@ function do_ini(self)
 	math.randomseed(tonumber(os.date("%m%d%H%M%S")))
 	rnd(1); rnd(1); rnd(1); -- Lua bug?
 
-	for_each_object(call_key);
-	for_each_codeblock(call_codekey);
-	for_each_object(check_object);
-	call_key("game", game);
-
 	game.pl = deref(game.pl);
 	game.where = deref(game.where);
 
-	for_each(game, "game", check_list, isList, deref(game))
-
+	if not load then
+		for_each_object(call_key);
+		for_each_codeblock(call_codekey);
+		for_each_object(check_object);
+		call_key("game", game);
+		for_each(game, "game", check_list, isList, deref(game))
+	end
 	for_each_object(call_ini);
-
 	me():tag();
 	if not self.showlast then
 		self._lastdisp = nil;
@@ -1603,7 +1602,7 @@ function game_load(self, name)
 		if r then
 			return nil, false
 		end
-		return do_ini(self);
+		return do_ini(self, true);
 	end
 	return nil, false
 end
@@ -1928,6 +1927,9 @@ allocator = obj {
 	nam = 'allocator',
 	get = function(s, n, c)
 		local v = ref(c);
+		if not v then
+			error ("Null object in allocator: "..tostring(c));
+		end
 		v.key_name = n;
 		v.save = allocator_save;
 		v.constructor = c;
