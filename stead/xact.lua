@@ -108,8 +108,6 @@ function xdsc(n)
 	return obj(v)
 end
 
-default_xdsc_obj = xdsc();
-
 xroom = stead.inherit(room, function(v)
 	v.look = stead.hook(v.look, function(f, s,...)
 		local xdsc = call(s, 'xdsc');
