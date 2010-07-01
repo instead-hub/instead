@@ -173,5 +173,19 @@ function list_concat(self, other, pos)
 	end
 end
 
+function path(w, wh)
+	if not wh then
+		wh = here();
+	else
+		wh = ref(wh);
+	end
+	local o = ways(wh):srch(w);
+	o = ref(o);
+	if isRoom(o) then
+		return o
+	end
+	return nil
+end
+
 game.lifes = list(game.lifes)
 stead:init(); -- reinit
