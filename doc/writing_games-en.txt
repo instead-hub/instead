@@ -32,7 +32,7 @@ At the beginning of “main.lua” file a header may be defined. It consists of 
 
 From version 1.2.0 after headers you must define required STEAD API version. It is "1.2.0" currently.
 <code>
-version "1.2.0"
+instead_version "1.2.0"
 </code>
 
 Game initialization should be defined as init function. For example:
@@ -908,7 +908,7 @@ Starting from version 1.2.0 you can use modules via “require” function call.
 Modules can be used like this:
 <code>
 --$Name: My game!$
-version "1.2.0"
+instead_version "1.2.0"
 require "para"
 require "dbg"
 ...
@@ -972,6 +972,17 @@ main = room {
     obj = {
         xdsc(), -- 'xdsc method by default'
         xdsc('other'),
+        'apple', 'knife', 'chain', 'tool',
+    }
+}
+</code>
+You may use xroom:
+<code>
+main = xroom {
+    forcedsc = true;
+    dsc = [[ I'm in the room. ]];
+    xdsc = [[ I see an {anapple:apple} and a {aknife:knife}. ]];
+    obj = {
         'apple', 'knife', 'chain', 'tool',
     }
 }

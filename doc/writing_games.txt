@@ -32,7 +32,7 @@
 
 Начиная с версии 1.2.0 сразу после заголовков вам необходимо указать версию STEAD API, которая требуется игре. На данный момент последняя версия 1.2.0.
 <code>
-version "1.2.0"
+instead_version "1.2.0"
 </code>
 
 Если version отсутствует, то STEAD API будет работать в режиме совместимости  (устаревшее API).
@@ -905,7 +905,7 @@ is_music() позволяет узнать, проигрывается ли му
 Использование модуля выглядит так:
 <code>
 --$Name: Моя игра!$
-version "1.2.0"
+instead_version "1.2.0"
 require "para"
 require "dbg"
 ...
@@ -969,6 +969,17 @@ main = room {
     obj = {
         xdsc(), -- 'xdsc method by default'
         xdsc('other'),
+        'apple', 'knife', 'chain', 'tool',
+    }
+}
+</code>
+Вы можете также использовать комнату xroom:
+<code>
+main = xroom {
+    forcedsc = true;
+    dsc = [[Я в комнате.]];
+    xdsc = [[ Я вижу {apple:яблоко} и {knife:нож}. ]];
+    obj = {
         'apple', 'knife', 'chain', 'tool',
     }
 }
