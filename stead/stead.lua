@@ -420,6 +420,12 @@ end
 
 function obj(v)
 	if v.nam == nil then
+		if isRoom(v) then
+			if isDialog(v) then
+				error ("No dialog name in constructor.", 3);
+			end
+			error ("No room name in constructor.", 3);
+		end
 		error ("No object name in constructor.", 2);
 	end
 	v.object_type = true;
@@ -772,9 +778,9 @@ function room_save(self, name, h, need)
 end
 
 function room(v) --constructor
-	if v.nam == nil then
-		error ("No room name in constructor.", 2);
-	end
+--	if v.nam == nil then
+--		error ("No room name in constructor.", 2);
+--	end
 	if v.scene == nil then
 		v.scene = room_scene;
 	end
