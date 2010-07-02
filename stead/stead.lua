@@ -1331,8 +1331,8 @@ function do_ini(self, load)
 	local function call_codekey(k, o)
 		stead.functions[o].key_name = k;
 	end
-	local function call_ini(k, o)
-		v = stead.par('', v, call(o, 'ini'));
+	local function call_ini(k, o, ...)
+		v = stead.par('', v, call(o, 'ini'), unpack(arg));
 	end
 
 	math.randomseed(tonumber(os.date("%m%d%H%M%S")))
@@ -1348,7 +1348,7 @@ function do_ini(self, load)
 		call_key("game", game);
 		for_each(game, "game", check_list, isList, deref(game))
 	end
-	for_each_object(call_ini);
+	for_each_object(call_ini, load);
 	me():tag();
 	if not self.showlast then
 		self._lastdisp = nil;
