@@ -4,6 +4,12 @@ end
 
 xact = function(n, f) -- just simple action!
 	local v = {};
+
+	if f == nil and type(n) == 'table' then
+		f = n[2];
+		n = n[1];
+	end
+
 	if type(n) ~= 'string' or (type(f) ~= 'string' and not isCode(f)) then
 		error ("Wrong parameter to xact.", 2)
 	end
