@@ -85,6 +85,11 @@ go = function (self, where, back)
 		v = call(ref(to), 'entered', ref(was));
 		stead.in_entered_call = false
 		res = par('^^',res,v);
+		if tonumber(ref(to).__visited) then
+			ref(to).__visited = ref(to).__visited + 1;
+		elseif here().__visited == nil then
+			ref(to).__visited = 1
+		end
 	end
 	PLAYER_MOVED = true
 	if need_scene then -- or isForcedsc(ref(where)) then -- i'am not sure...
@@ -92,6 +97,15 @@ go = function (self, where, back)
 --		return par('^^',res,ref(where):scene());
 	end
 	return res;
+end
+
+function visited(w)
+	if not w then w = here() end
+	w = ref(w)
+	if not isRoom(w) then
+		error ("Wrong parameter to visited.", 2);
+	end
+	return w.__visited
 end
 
 iface.fmt = function(self, cmd, st, moved, r, av, objs, pv) -- st -- changed state (main win), move -- loc changed
