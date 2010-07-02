@@ -12,17 +12,20 @@ instead (1.2.0) unstable; urgency=low
   * hook and inherit;
   * entered/left human friendly actions;
   * stead.cmd, stead.args added;
-  * require added (modules: goto, xact, input, click, vars, dbg, snapshot, prefs);
+  * require added (modules: goto, xact, input, click, vars, dbg, snapshot, prefs, format);
   * time of save slots;
-  * check_version added;
+  * instead_version added;
   * taketo/takef added;
   * disable/enable/disable_all/enable_all added;
   * exist() added (seen over disabled objects);
+  * path() added
+  * visited() added
   * improved debugger;
   * save vars in _G;
   * no duplicated games while looking gamespaths;
   * code function!!!;
   * args in call;
+  * var and global;
   * self() is now self;
   * nameof();
   * no return goto needed;
