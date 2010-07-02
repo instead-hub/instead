@@ -4,7 +4,7 @@ stead.fmt = stead.hook(stead.fmt, function(f, ...)
 		error("You can not use dash module with non UTF-8 encoding.");
 	end
 	if type(r) == 'string' then
-		r = r:gsub('%-%-', '—');
+		r = r:gsub('([^-])%-%-([^-])', '%1—%2');
 	end
 	return r;
 end)
