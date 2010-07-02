@@ -18,6 +18,7 @@ stead.fmt = stead.hook(stead.fmt, function(f, ...)
 			r = r:gsub('^%-%-([^-])', '—%1');
 		end
 		if format.quotes and utf8 then
+			r = r:gsub('_"','«'):gsub('"_',"»");
 			r = r:gsub('"([^"]*)"','«%1»');
 		end
         	if format.para and stead.state then
