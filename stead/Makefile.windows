@@ -15,3 +15,7 @@ install:
 	copy snapshot.lua ..\bin\stead
 	copy object.lua ..\bin\stead
 	copy format.lua ..\bin\stead
+	copy para.lua   ..\bin\stead
+	copy quotes.lua ..\bin\stead
+	copy dash.lua ..\bin\stead
+
