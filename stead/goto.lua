@@ -99,6 +99,13 @@ go = function (self, where, back)
 	return res;
 end
 
+game.ini = stead.hook(game.ini,function(f, ...)
+	if isRoom(here()) then
+		here().__visited = 1
+	end
+	return f(unpack(arg))
+end)
+
 function visited(w)
 	if not w then w = here() end
 	w = ref(w)
