@@ -18,6 +18,7 @@ install:
 	$(INSTALL) snapshot.lua $(STEADPATH)/snapshot.lua
 	$(INSTALL) object.lua $(STEADPATH)/object.lua
 	$(INSTALL) para.lua $(STEADPATH)/para.lua
+	$(INSTALL) dash.lua $(STEADPATH)/dash.lua
 
 uninstall:
 	$(RM) $(STEADPATH)/stead.lua
