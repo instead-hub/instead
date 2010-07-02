@@ -1624,6 +1624,7 @@ end
 
 
 game = game {
+	codepage = "UTF-8",
 	nam = "INSTEAD -- Simple Text Adventure interpreter v"..stead.version.." '2009-2010 by Peter Kosyh",
 	dsc = [[
 Commands:^
