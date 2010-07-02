@@ -1,8 +1,8 @@
 format = {
-	para = true;
+	para = false;
 	para_space = '    ';
-	quotes = true;
-	dash = true;
+	quotes = false;
+	dash = false;
 	filter = nil
 }
 

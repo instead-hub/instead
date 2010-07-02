@@ -18,6 +18,10 @@ install:
 	$(INSTALL) snapshot.lua $(STEADPATH)/snapshot.lua
 	$(INSTALL) object.lua $(STEADPATH)/object.lua
 	$(INSTALL) format.lua $(STEADPATH)/format.lua
+	$(INSTALL) dash.lua $(STEADPATH)/dash.lua
+	$(INSTALL) para.lua $(STEADPATH)/para.lua
+	$(INSTALL) quotes.lua $(STEADPATH)/quotes.lua
+
 
 uninstall:
 	$(RM) $(STEADPATH)/stead.lua
