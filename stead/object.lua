@@ -173,13 +173,13 @@ function list_concat(self, other, pos)
 	end
 end
 
-function path(w, wh)
+function path(w, wh) -- search in way, disabled too
 	if not wh then
 		wh = here();
 	else
 		wh = ref(wh);
 	end
-	local o = ways(wh):srch(w);
+	local o = ways(wh):srch(w, true);
 	o = ref(o);
 	if isRoom(o) then
 		return o
