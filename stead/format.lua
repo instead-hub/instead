@@ -16,15 +16,15 @@ stead.fmt = stead.hook(stead.fmt, function(f, ...)
 		if type(format.filter) == 'function' and stead.state then
 			r = format.filter(r);
 		end
-		if format.dash and utf8 then
+		if call_bool(format, 'dash') and utf8 then
 			r = r:gsub('([^-])%-%-([^-])', '%1—%2');
 			r = r:gsub('^%-%-([^-])', '—%1');
 		end
-		if format.quotes and utf8 then
+		if call_bool(format, 'quotes') and utf8 then
 			r = r:gsub('_"','«'):gsub('"_',"»");
 			r = r:gsub('"([^"]*)"','«%1»');
 		end
-        	if format.para and stead.state then
+		if call_bool(format, 'para') and stead.state then
 			r = r:gsub('\n([^\n])', '<&para;>%1'):gsub('<&para;>[ \t]*', '\n'..txtnb(format.para_space));
 			r = r:gsub('^[ \t]*',txtnb(format.para_space))
 		end
