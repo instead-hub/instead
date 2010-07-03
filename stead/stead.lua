@@ -393,7 +393,7 @@ end
 function obj_save(self, name, h, need)
 	local dsc;
 	if need then
-		error ("Object "..name.." can not be saved!");
+		print ("Warning: object "..name.." can not be saved!");
 		return
 	end
 	savemembers(h, self, name, need);
@@ -771,7 +771,7 @@ end
 function room_save(self, name, h, need)
 	local dsc;
 	if need then
-		error ("Room "..name.." can not be saved!");
+		print ("Warning: room "..name.." can not be saved!");
 		return
 	end
 	savemembers(h, self, name, need);
