@@ -117,7 +117,8 @@ end
 function menu_save(self, name, h, need)
 	local dsc;
 	if need then
-		error ("Menu "..name.." can not be saved!");
+		print ("Warning: menu "..name.." can not be saved!");
+		return
 	end
 	savemembers(h, self, name, need);
 end
