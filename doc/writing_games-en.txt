@@ -649,6 +649,10 @@ par(...) — returns the string, concatenating argument strings split by the fir
 
 disable/enable/disable_all/enable_all -- disable/enable/disable_all/enable_all object
 
+visited([where]) -- room visit counter (may be nil);
+
+path(obj,[where]) -- lookup in way, even for disabled items;
+
 ===== 14. Dialogs =====
 
 Dialogs are scenes with phrase objects. The simplest dialog may look like this:
@@ -902,7 +906,7 @@ Starting from version 1.2.0 you can use modules via “require” function call.
     * vars — definition of variables;
     * prefs — preferences;
     * snapshot — snapshots;
-    * para — paragraph formatting;
+    * format — formats the output;
     * object — improved objects;
 
 Modules can be used like this:
@@ -991,6 +995,15 @@ main = xroom {
 “input” module allows to implement simple text entry fields. “click” module helps to handle mouse clicks on scene pictures.
 
 “para” module adds indentation to paragraphs.
+
+"format: module formats the output. By default all settings are disabled:
+<code>
+format.para = false -- adds indentation to paragraphs;
+format.dash = false -- changes double - on dash;
+format.quotes = false -- changes quotes on << >>;
+format.filter = nil -- user formatting function;
+</code>
+You may use modules para/dash/quotes to enable specific feature.
 
 ==== Formatting  ====
 You can do simple text formatting with functions:

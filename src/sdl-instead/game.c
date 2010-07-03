@@ -671,8 +671,10 @@ int game_init(const char *name)
 		game_theme_load(curtheme_dir);
 	}
 
-	if (game_apply_theme())
+	if (game_apply_theme()) {
+		game_theme_select(DEFAULT_THEME);
 		return -1;
+	}
 	timer_han =  gfx_add_timer(HZ, counter_fn, NULL); 
 
 	if (!curgame_dir) {
