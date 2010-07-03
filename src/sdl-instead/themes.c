@@ -20,12 +20,20 @@ static int parse_gfx_mode(const char *v, void *data)
 static int parse_inv_mode(const char *v, void *data)
 {
 	int *i = (int *)data;
-	if (!strcmp(v, "vertical") || !strcmp(v, "0"))
-		*i = INV_MODE_VERT;	
-	else if (!strcmp(v, "horizontal") || !strcmp(v, "1"))
-		*i = INV_MODE_HORIZ;
+	if (!strcmp(v, "vertical") || !strcmp(v, "0") || !strcmp(v, "vertical-left"))
+		*i = INV_MODE_VERT | INV_ALIGN_SET(ALIGN_LEFT);
+	else if (!strcmp(v, "horizontal") || !strcmp(v, "1") || !strcmp(v, "horizontal-center"))
+		*i = INV_MODE_HORIZ | INV_ALIGN_SET(ALIGN_CENTER);
+	else if (!strcmp(v, "horizontal-left") || !strcmp(v, "1"))
+		*i = INV_MODE_HORIZ | INV_ALIGN_SET(ALIGN_LEFT);
+	else if (!strcmp(v, "horizontal-right") || !strcmp(v, "1"))
+		*i = INV_MODE_HORIZ | INV_ALIGN_SET(ALIGN_RIGHT);
 	else if (!strcmp(v, "disabled") || !strcmp(v, "-1"))
 		*i = INV_MODE_DISABLED;
+	else if (!strcmp(v, "vertical-right"))
+		*i = INV_MODE_VERT | INV_ALIGN_SET(ALIGN_RIGHT);
+	else if (!strcmp(v, "vertical-center"))
+		*i = INV_MODE_VERT | INV_ALIGN_SET(ALIGN_CENTER);
 	else
 		return -1;
 	return 0;	
@@ -149,7 +157,7 @@ struct game_theme game_theme = {
 	.menu_button_name = NULL,
 	.menu_button = NULL,
 	.gfx_mode = GFX_MODE_EMBEDDED,
-	.inv_mode = INV_MODE_VERT,
+	.inv_mode = INV_MODE_VERT | INV_ALIGN_SET(ALIGN_LEFT),
 	.click_name = NULL,
 	.click = NULL,
 	.xoff = 0,
