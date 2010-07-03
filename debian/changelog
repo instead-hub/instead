@@ -1,6 +1,7 @@
 instead (1.2.0) unstable; urgency=low
 
   * clearlooks theme;
+  * inv align modes;
   * unpack/install feature;
   * browse feature (win32 and gtk);
   * clever game/themes sorting;

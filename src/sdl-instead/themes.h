@@ -121,5 +121,8 @@ extern int 	theme_img_scale(img_t *p);
 #define INV_MODE_DISABLED -1
 #define INV_MODE_VERT 0
 #define INV_MODE_HORIZ 1
+#define INV_MODE(v) ((v)&0xff)
+#define INV_ALIGN(v) ((v)>>8)
+#define INV_ALIGN_SET(v) ((v)<<8)
 
 #endif

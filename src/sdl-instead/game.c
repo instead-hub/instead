@@ -458,8 +458,8 @@ int game_apply_theme(void)
 
 
 	if (inv_enabled()) {
-		lay = txt_layout(game_theme.inv_font, (game_theme.inv_mode == INV_MODE_HORIZ)?
-			ALIGN_CENTER:ALIGN_LEFT, game_theme.inv_w, game_theme.inv_h);
+		lay = txt_layout(game_theme.inv_font, INV_ALIGN(game_theme.inv_mode), 
+			game_theme.inv_w, game_theme.inv_h);
 		if (!lay)
 			return -1;
 		txt_layout_color(lay, game_theme.icol);
@@ -1534,7 +1534,7 @@ inv:
 
 		invstr = instead_cmd("inv"); instead_clear();
 
-		if (invstr && game_theme.inv_mode == INV_MODE_HORIZ)
+		if (invstr && INV_MODE(game_theme.inv_mode) == INV_MODE_HORIZ)
 			invstr = horiz_inv(invstr);
 
 		off = txt_box_off(el_box(el_inv));
