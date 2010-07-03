@@ -1,4 +1,7 @@
 -- $Name:Обучение$
+require "dash" -- '--' replace :)
+require "para" -- be more "Russian"
+
 game.codepage="UTF-8";
 game.act = 'Не получается.';
 game.inv = "Гм.. Не то..";
