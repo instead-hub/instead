@@ -96,7 +96,7 @@ r2 = room {
 
 tabl = obj {
 	nam = 'стол',
-	dsc = 'На этом уроке вы видите деревянный стол.',
+	dsc = 'На этом уроке вы видите деревянный {стол}.',
 	act = function(s)
 		if s._knife then
 			s._seen = true;
