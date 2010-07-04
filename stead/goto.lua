@@ -141,6 +141,13 @@ go = stead.hook(go, function(f, ...)
 	if stead.in_life_call then
 		ACTION_TEXT = nil
 	end
+	if r == nil and PLAYER_MOVED and v == nil then
+		if cctx() then
+			cctx().txt = true --hack to cancel game.act
+		else
+			r = true
+		end
+	end
 	return r,v
 end)
 
