@@ -143,7 +143,7 @@ go = stead.hook(go, function(f, ...)
 	end
 	if r == nil and PLAYER_MOVED and v == nil then
 		if cctx() then
-			cctx().txt = true --hack to cancel game.act
+			cctx().action = true
 		else
 			r = true
 		end

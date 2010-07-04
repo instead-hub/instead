@@ -79,7 +79,7 @@ end
 
 function callpush(v, ...)
 	stead.call_top = stead.call_top + 1;
-	stead.cctx[stead.call_top] = { txt = nil, self = v };
+	stead.cctx[stead.call_top] = { txt = nil, self = v, action = false };
 	args = arg
 	arg1 = arg[1]
 	arg2 = arg[2]
@@ -696,6 +696,9 @@ function call(v, n, ...)
 		elseif a == nil and b == nil then
 			a = stead.pget()
 			b = nil
+		end
+		if a == nil and b == nil and cctx().action then
+			a = true
 		end
 		callpop()
 		return a,b
