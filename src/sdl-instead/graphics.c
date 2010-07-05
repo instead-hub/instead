@@ -1,4 +1,4 @@
-#include "externals.h"
+#include "externals.h"                            
 #include "internals.h"
 
 #include <SDL.h>
@@ -1402,6 +1402,7 @@ struct layout {
 	int align;
 	int saved_align;
 	int style;
+	int cnt[4];
 	int lstyle;
 	cache_t img_cache;
 };
@@ -1563,6 +1564,7 @@ struct layout *layout_new(fnt_t fn, int w, int h)
 	l->acol = gfx_col(255, 0, 0);
 	l->box = NULL;
 	l->img_cache = cache_init(GFX_CACHE_SIZE, gfx_free_image);
+	memset(l->cnt, 0, sizeof(l->cnt));
 	return l;
 }
 void txt_layout_size(layout_t lay, int *w, int *h)
@@ -1624,6 +1626,7 @@ void _txt_layout_free(layout_t lay)
 	layout->images = NULL;
 	layout->xrefs = NULL;
 	layout->lines = NULL;
+	memset(layout->cnt, 0, sizeof(layout->cnt));
 }
 
 word_t txt_layout_words(layout_t lay, word_t v)
@@ -2490,25 +2493,36 @@ char *process_token(char *ptr, struct layout *layout, struct line *line, struct 
 	char *val = NULL;
 	int bit = 0;
 	int al = 0;
+	int *cnt = NULL;
 	char *eptr;
 
 	token = get_token(ptr, &eptr, &val, sp);
 	if (!token)
 		return NULL;
-	if (TOKEN(token) == TOKEN_B)
+	if (TOKEN(token) == TOKEN_B) {
+		cnt = &layout->cnt[0];
 		bit = TTF_STYLE_BOLD;
-	else if (TOKEN(token) == TOKEN_I)
+	} else if (TOKEN(token) == TOKEN_I) {
+		cnt = &layout->cnt[1];
 		bit = TTF_STYLE_ITALIC;
-	else if (TOKEN(token) == TOKEN_U)
+	} else if (TOKEN(token) == TOKEN_U) {
+		cnt = &layout->cnt[2];
 		bit = TTF_STYLE_UNDERLINE;
+	}
 
 	if (bit) {
-		if (token & TOKEN_CLOSE)
-			layout->style &= ~bit;
-		else
+		if (token & TOKEN_CLOSE) {
+			-- (*cnt);
+			if (*cnt < 0) /* fuzzy */
+				*cnt = 0;
+			if (!*cnt)
+				layout->style &= ~bit;
+		} else {
+			++ (*cnt);
 			layout->style |= bit;
+		}
 		goto out;
-	}	
+	}
 
 	if (TOKEN(token) == TOKEN_L)
 		al = ALIGN_LEFT;
