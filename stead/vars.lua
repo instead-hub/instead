@@ -16,7 +16,7 @@ function isForSave(k, v, s) -- k - key, v - value, s -- parent table
 	return stead.string.find(k, '_') ==  1
 end
 
-function __vars_add(s, v)
+function __vars_add(s, v, set)
 	local k, o
 	for k,o in pairs(v) do
 		if tonumber(k) then
@@ -24,7 +24,15 @@ function __vars_add(s, v)
 		elseif s.variables[k] then
 			error ("Variable overwrites variables object: "..tostring(k))
 		elseif k ~= 'variable_type' then
-			s.variables[k] = o 
+			if set then 
+				if s[k] then
+					error ("Global variable conflict: "..tostring(k));
+				end
+				stead.table.insert(s.variables, k);
+				s[k] = o
+			else
+				s.variables[k] = o
+			end
 		end
 	end
 end
@@ -62,7 +70,7 @@ end
 vars_object = obj {
 	nam = 'vars',
 	ini = function(s)
-		__vars_fill(_G)
+--		__vars_fill(_G)
 		__vars_fill(pl)
 		__vars_fill(game)
 	end
@@ -87,5 +95,6 @@ function global(v)
 	if type(v) ~= 'table' then
 		error("Wrong parameter to global.", 2);
 	end
-	__vars_add(_G, v);
+	__vars_add(_G, v, true);
 end
+-- vim:ts=4
