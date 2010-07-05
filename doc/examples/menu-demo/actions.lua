@@ -110,7 +110,7 @@ end
 
 Use = function(s, w)
 	local r,v;
-	if givem.State then
+	if givem._state then
 		if w == nil then
 			return 'Гм... Абсурд...'
 		end
