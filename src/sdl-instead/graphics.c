@@ -1388,6 +1388,9 @@ void image_free(struct image *image)
 }
 
 struct textbox;
+
+#define ALIGN_NEST 16
+
 struct layout {
 	fnt_t	fn;
 	color_t	col;
@@ -1400,9 +1403,10 @@ struct layout {
 	int w;
 	int h;
 	int align;
-	int saved_align;
+	int saved_align[ALIGN_NEST];
+	int acnt;
 	int style;
-	int cnt[4];
+	int scnt[4];
 	int lstyle;
 	cache_t img_cache;
 };
@@ -1564,7 +1568,9 @@ struct layout *layout_new(fnt_t fn, int w, int h)
 	l->acol = gfx_col(255, 0, 0);
 	l->box = NULL;
 	l->img_cache = cache_init(GFX_CACHE_SIZE, gfx_free_image);
-	memset(l->cnt, 0, sizeof(l->cnt));
+	memset(l->scnt, 0, sizeof(l->scnt));
+	memset(l->saved_align, 0, sizeof(l->saved_align));
+	l->acnt = 0;
 	return l;
 }
 void txt_layout_size(layout_t lay, int *w, int *h)
@@ -1626,7 +1632,9 @@ void _txt_layout_free(layout_t lay)
 	layout->images = NULL;
 	layout->xrefs = NULL;
 	layout->lines = NULL;
-	memset(layout->cnt, 0, sizeof(layout->cnt));
+	memset(layout->scnt, 0, sizeof(layout->scnt));
+	memset(layout->saved_align, 0, sizeof(layout->saved_align));
+	layout->acnt = 0;
 }
 
 word_t txt_layout_words(layout_t lay, word_t v)
@@ -2500,13 +2508,13 @@ char *process_token(char *ptr, struct layout *layout, struct line *line, struct 
 	if (!token)
 		return NULL;
 	if (TOKEN(token) == TOKEN_B) {
-		cnt = &layout->cnt[0];
+		cnt = &layout->scnt[0];
 		bit = TTF_STYLE_BOLD;
 	} else if (TOKEN(token) == TOKEN_I) {
-		cnt = &layout->cnt[1];
+		cnt = &layout->scnt[1];
 		bit = TTF_STYLE_ITALIC;
 	} else if (TOKEN(token) == TOKEN_U) {
-		cnt = &layout->cnt[2];
+		cnt = &layout->scnt[2];
 		bit = TTF_STYLE_UNDERLINE;
 	}
 
@@ -2535,9 +2543,15 @@ char *process_token(char *ptr, struct layout *layout, struct line *line, struct 
 	
 	if (al) {
 		if (token & TOKEN_CLOSE)  {
-			layout->align = layout->saved_align;
+			layout->acnt --;
+			if (layout->acnt <0)
+				layout->acnt = 0;
+			layout->align = layout->saved_align[layout->acnt];
 		} else {
-			layout->saved_align = layout->align;
+			layout->saved_align[layout->acnt] = layout->align;
+			layout->acnt ++;
+			if (layout->acnt >= ALIGN_NEST)
+				layout->acnt = ALIGN_NEST - 1;
 			layout->align = al;
 			line->align = al;
 		}
