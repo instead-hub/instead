@@ -1412,7 +1412,7 @@ function game(v)
 end
 
 function live(v)
-	return game.lifes:srch(v);
+	return ref(game.lifes:srch(v));
 end
 
 function isEnableSave()
