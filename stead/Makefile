@@ -21,6 +21,7 @@ install:
 	$(INSTALL) dash.lua $(STEADPATH)/dash.lua
 	$(INSTALL) para.lua $(STEADPATH)/para.lua
 	$(INSTALL) quotes.lua $(STEADPATH)/quotes.lua
+	$(INSTALL) timer.lua $(STEADPATH)/timer.lua
 
 
 uninstall:

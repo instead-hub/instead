@@ -16,7 +16,7 @@ use_proxy = function(o)
 	if ref(o).use ~= nil then
 		v.use = function(s, w)
 			if ref(w).proxy_type then
-				local v,r = call(ref(s.pobj), 'use', w.pobj);
+				local v,r = call(ref(s.pobj), 'use', ref(w.pobj));
 --				where(s):gen();
 				return v,r;
 			end
@@ -31,7 +31,7 @@ use_proxy = function(o)
 	if ref(o).used ~= nil then
 		v.used = function(s, w)
 			if ref(w).proxy_type then
-				local v,r = call(ref(s.pobj), 'used', w.pobj);
+				local v,r = call(ref(s.pobj), 'used', ref(w.pobj));
 --				where(s):gen();
 				return v,r;
 			end
@@ -114,7 +114,7 @@ select_only = function(s)
 	local k, o, i
 	for k,o in opairs(me().obj) do
 		o = ref(o)
-		if o.action_type and o.State and o ~= s then
+		if o.action_type and o._state and o ~= s then
 			o:inv();
 		end
 	end
@@ -124,10 +124,10 @@ end
 actmenu = function(nam, act, _scene, _inv, _ifinvonly)
 	local v = { };
 	v.action_type = true;
-	v.State = false;
+	v._state = false;
 	v._nam = nam;
 	v.nam = function(s)
-		if s.State then
+		if s._state then
 			return txtu(s._nam);
 		end
 		return s._nam;
@@ -151,11 +151,11 @@ actmenu = function(nam, act, _scene, _inv, _ifinvonly)
 	v.inv = function(s)
 		local i,o
 		local k,v
-		if not s.State then
+		if not s._state then
 			s:gen();
-			s.State = true;
+			s._state = true;
 		else
-			s.State = false;
+			s._state = false;
 			s.obj:zap();
 		end
 		return nil, true -- to say instead, do not redraw scene, only inv ;)
@@ -167,7 +167,7 @@ function gen_actions(s)
 	local k, o
 	for k,o in opairs(me().obj) do
 		o = ref(o)
-		if o.action_type and o.State then
+		if o.action_type and o._state then
 			o:gen();
 		end
 	end
@@ -176,10 +176,10 @@ end
 pocket = function(nam) 
 	local v = {}
 	v.action_type = true;
-	v.State = false;
+	v._state = false;
 	v._nam = nam;
 	v.nam = function(s)
-		if s.State then
+		if s._state then
 			return txtu(s._nam);
 		end
 		return s._nam;
@@ -192,12 +192,12 @@ pocket = function(nam)
 		select_only(s);
 	end;
 	v.inv = function(s)
-		if not s.State then
+		if not s._state then
 			s:gen();
-			s.State = true;
+			s._state = true;
 		else
 			s.obj:zap();
-			s.State = false;
+			s._state = false;
 		end
 		return nil,true
 	end;

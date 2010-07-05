@@ -18,4 +18,5 @@ install:
 	copy para.lua   ..\bin\stead
 	copy quotes.lua ..\bin\stead
 	copy dash.lua ..\bin\stead
+	copy timer.lua ..\bin\stead
 
