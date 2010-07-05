@@ -1411,6 +1411,10 @@ function game(v)
 	return v;
 end
 
+function live(v)
+	return game.lifes:srch(v);
+end
+
 function isEnableSave()
 	if game.enable_save == nil or get_autosave() then
 		return true
