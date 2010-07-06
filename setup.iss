@@ -28,6 +28,7 @@ Source: themes\original\*; DestDir: {app}\themes\original
 Source: themes\fantasy\*; DestDir: {app}\themes\fantasy
 Source: themes\arctic\*; DestDir: {app}\themes\arctic
 Source: themes\bluesteel\*; DestDir: {app}\themes\bluesteel
+Source: themes\clearlooks\*; DestDir: {app}\themes\clearlooks
 Source: *.dll; DestDir: {app}
 
 [CustomMessages]

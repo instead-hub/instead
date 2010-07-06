@@ -8,3 +8,5 @@ end)
 timer.callback = function(s)
 	return 'user_timer'
 end
+
+-- vim:ts=4

@@ -64,4 +64,3 @@ function delete_snapshot(nr)
 	game._snapshots[nr] = nil
 end
 -- vim:ts=4
-

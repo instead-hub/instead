@@ -19,4 +19,4 @@ function(f, s, cmd, x, y, ...)
 	end
 	return f(s, cmd, x, y, unpack(arg))
 end)
-
+-- vim:ts=4

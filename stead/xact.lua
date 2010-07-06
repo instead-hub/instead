@@ -121,3 +121,4 @@ xroom = stead.inherit(room, function(v)
 	end)
 	return v
 end)
+-- vim:ts=4

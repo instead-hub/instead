@@ -167,3 +167,5 @@ player  = stead.inherit(player, function(v)
 end)
 
 pl = player(pl) -- reinit
+
+-- vim:ts=4
