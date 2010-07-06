@@ -21,6 +21,13 @@ input.key = stead.hook(input.key, function(f, s, down, key, ...)
 	return f(s, down, key, unpack(arg))
 end)
 
+function hook_keys(...)
+	local i
+	for i = 1, stead.table.maxn(arg) do
+		stead.table.insert(input.key_hooks, tostring(arg[i]));
+	end
+end
+
 stead.module_init(function()
 	input.key_hooks = {}
 end)
