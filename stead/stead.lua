@@ -2101,6 +2101,10 @@ function taketo(obj, wh, pos)
 	end
 	inv():add(obj, pos);
 	o._taken = true
+	wh = deref(me())
+	if type(wh) == 'string' then
+		o.__where__ = wh;
+	end
 	return o
 end
 
