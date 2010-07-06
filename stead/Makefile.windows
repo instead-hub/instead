@@ -12,7 +12,7 @@ install:
 	copy dbg.lua ..\bin\stead
 	copy vars.lua ..\bin\stead
 	copy prefs.lua ..\bin\stead
-	copy snapshot.lua ..\bin\stead
+	copy snapshots.lua ..\bin\stead
 	copy object.lua ..\bin\stead
 	copy format.lua ..\bin\stead
 	copy para.lua   ..\bin\stead
