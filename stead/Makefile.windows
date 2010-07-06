@@ -19,4 +19,5 @@ install:
 	copy quotes.lua ..\bin\stead
 	copy dash.lua ..\bin\stead
 	copy timer.lua ..\bin\stead
+	copy kbd.lua ..\bin\stead
 
