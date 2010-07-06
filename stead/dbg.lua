@@ -223,3 +223,5 @@ function(f, s, down, key, ...)
 end)
 
 putf('debug_tool', me());
+
+-- vim:ts=4

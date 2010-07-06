@@ -16,3 +16,5 @@ game.kbd = stead.hook(game.kbd, function(f, s, down, key, ...)
 	end
 	return f(s, down, key, unpack(arg));
 end)
+
+-- vim:ts=4

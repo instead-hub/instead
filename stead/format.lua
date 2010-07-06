@@ -32,3 +32,5 @@ stead.fmt = stead.hook(stead.fmt, function(f, ...)
 	end
 	return r;
 end)
+
+-- vim:ts=4

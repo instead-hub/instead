@@ -189,3 +189,5 @@ end
 
 game.lifes = list(game.lifes)
 stead:init(); -- reinit ob
+
+-- vim:ts=4

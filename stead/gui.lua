@@ -180,3 +180,5 @@ fmt = function(...)
 end
 
 stead.fmt = fmt
+
+-- vim:ts=4

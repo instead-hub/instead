@@ -19,3 +19,5 @@ prefs = obj {
 		return stead.os.remove(name);
 	end
 };
+
+-- vim:ts=4

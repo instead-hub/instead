@@ -311,3 +311,5 @@ function inp(n, info, txt)
 	end
 	return obj(v)
 end
+
+-- vim:ts=4
