@@ -1,27 +1,29 @@
 instead (1.2.0) unstable; urgency=low
 
-  * clearlooks theme;
-  * inv align modes;
   * unpack/install feature;
   * browse feature (win32 and gtk);
   * clever game/themes sorting;
+  * time of save slots;
   * remove games;
   * aligned width for themes/games dialog;
   * local appdata mode (portable app);
+  * clearlooks theme;
+  * inv align modes;
   * prefs object;
   * init() function;
   * snapshots (not documented?);
   * hook and inherit;
   * entered/left human friendly actions;
   * stead.cmd, stead.args added;
-  * require added (modules: goto, xact, input, click, vars, dbg, snapshot, prefs, format);
-  * time of save slots;
+  * require added (modules: goto, xact, input, click, vars, dbg, snapshot, prefs, format, kbd, hotkeys);
   * instead_version added;
   * taketo/takef added;
   * disable/enable/disable_all/enable_all added;
   * exist() added (seen over disabled objects);
-  * path() added
-  * visited() added
+  * path() added;
+  * visited() added;
+  * live() added;
+  * nameof() added;
   * improved debugger;
   * save vars in _G;
   * no duplicated games while looking gamespaths;
@@ -29,11 +31,10 @@ instead (1.2.0) unstable; urgency=low
   * args in call;
   * var and global;
   * self() is now self;
-  * nameof();
   * no return goto needed;
-  * many small bugfixes...
+  * many bugfixes...
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 01 Jun 2010 17:40:00 +0300  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 06 Jul 2010 14:09:00 +0300  
 
 instead (1.1.6) unstable; urgency=low
 
