@@ -27,6 +27,11 @@ function make_snapshot(nr)
 	game._snapshots[nr] = h.txt;
 end
 
+function isSnapshot(nr)
+	if not tonumber(nr) then nr = 0 end
+	return (game._snapshots[nr] ~= nil)
+end
+
 function restore_snapshot(nr)
 	if not tonumber(nr) then nr = 0 end
 	local ss = game._snapshots
