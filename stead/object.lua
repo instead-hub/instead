@@ -188,4 +188,4 @@ function path(w, wh) -- search in way, disabled too
 end
 
 game.lifes = list(game.lifes)
-stead:init(); -- reinit
+stead:init(); -- reinit ob

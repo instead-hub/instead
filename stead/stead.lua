@@ -1800,7 +1800,6 @@ iface = {
 		if stead.state and r == nil and v == true then -- we do nothing
 			return nil;
 		end
-
 		if RAW_TEXT then
 			v = false
 		end
@@ -1938,46 +1937,6 @@ function allocator_save(s, name, h, need)
 	end
 	savemembers(h, s, name, false);
 end
-
-allocator = obj {
-	nam = 'allocator',
-	get = function(s, n, c)
-		local v = ref(c);
-		if not v then
-			error ("Null object in allocator: "..tostring(c));
-		end
-		v.key_name = n;
-		v.save = allocator_save;
-		v.constructor = c;
-		return v
-	end,
-	delete = function(s, w)
-		w = ref(w);
-		if type(w.key_name) ~= 'string' then
-			return
-		end
-		local f = loadstring(w.key_name..'= nil;');
-		if f then
-			f();
-		end
-	end,
-	new = function(s, n)
-		local v = ref(n);
-		if type(v) ~= 'table' or type(n) ~= 'string' then
-			error ("Error in new.", 2);
-		end
-		v.save = allocator_save;
-		v.constructor = n;
-		stead.table.insert(s.objects, v);
-		v.key_name = 'allocator["objects"]['..stead.table.maxn(s.objects)..']';
-		return v
-	end,
-	objects = {
-		save = function(self, name, h, need)
-			savemembers(h, self, name, true);
-		end,
-	},
-};
 
 function new(str)
 	if type(str) ~= 'string' then
@@ -2470,7 +2429,47 @@ function code(v)
 end
 stead.code = code
 --- here the game begins
-stead.init = function(s)
+stead.objects = function(s)
+	allocator = obj {
+		nam = 'allocator',
+		get = function(s, n, c)
+			local v = ref(c);
+			if not v then
+				error ("Null object in allocator: "..tostring(c));
+			end
+			v.key_name = n;
+			v.save = allocator_save;
+			v.constructor = c;
+			return v
+		end,
+		delete = function(s, w)
+			w = ref(w);
+			if type(w.key_name) ~= 'string' then
+				return
+			end
+			local f = loadstring(w.key_name..'= nil;');
+			if f then
+				f();
+			end
+		end,
+		new = function(s, n)
+			local v = ref(n);
+			if type(v) ~= 'table' or type(n) ~= 'string' then
+				error ("Error in new.", 2);
+			end
+			v.save = allocator_save;
+			v.constructor = n;
+			stead.table.insert(s.objects, v);
+			v.key_name = 'allocator["objects"]['..stead.table.maxn(s.objects)..']';
+			return v
+		end,
+		objects = {
+			save = function(self, name, h, need)
+				savemembers(h, self, name, true);
+			end,
+		},
+	};
+
 	pl = player {
 		nam = "Incognito",
 		where = 'main',
@@ -2480,7 +2479,11 @@ stead.init = function(s)
 	main = room {
 		nam = 'main',
 		dsc = 'No main room defined.',
-	}
+	};
+end
+
+stead.init = function(s)
+	stead:objects();
 	s.functions = {} -- code blocks
 	local k,v
 	for k,v in ipairs(s.modules_ini) do
@@ -2488,3 +2491,4 @@ stead.init = function(s)
 	end
 end
 stead:init();
+-- vim:ts=4

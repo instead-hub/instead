@@ -83,6 +83,17 @@ function(f, v, ...)
 end)
 
 stead.module_init(function()
+	local k,v
+	if type(variables) == 'nil' then
+		variables = {}
+		return
+	end 
+	if type(variables) ~= 'table' then
+		return
+	end
+	for k,v in ipairs(variables) do
+		_G[v] = nil
+	end
 	variables = {}
 end)
 

@@ -22,6 +22,7 @@ install:
 	$(INSTALL) para.lua $(STEADPATH)/para.lua
 	$(INSTALL) quotes.lua $(STEADPATH)/quotes.lua
 	$(INSTALL) timer.lua $(STEADPATH)/timer.lua
+	$(INSTALL) kbd.lua $(STEADPATH)/kbd.lua
 
 
 uninstall:
