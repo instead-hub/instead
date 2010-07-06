@@ -23,7 +23,7 @@ install:
 	$(INSTALL) quotes.lua $(STEADPATH)/quotes.lua
 	$(INSTALL) timer.lua $(STEADPATH)/timer.lua
 	$(INSTALL) kbd.lua $(STEADPATH)/kbd.lua
-
+	$(INSTALL) hotkeys.lua $(STEADPATH)/hotkeys.lua
 
 uninstall:
 	$(RM) $(STEADPATH)/stead.lua
