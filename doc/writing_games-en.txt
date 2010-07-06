@@ -508,15 +508,17 @@ Attention!!! Currently, it is recommended to use higher lever functions like: pu
 ===== 12. Functions, that return objects =====
 
 In STEAD several functions are defined, that return some frequently used objects. For example:
- * inv() returns the inventory list;
- * objs() returns the list of objects of the current scene; (from 0.8.5 it has an optional paremeter — the scene for which to return objects;
- * ways() returns the list of passages from the current scene; (from 0.8.5 has an optional paremeter — the scene for which to return the list);
- * me() returns the player object;
- * here() returns the current scene; (from 0.8.5 another function where(obj) returns the scene where is object placed. Works only if it was placed with put/drop/move).
- * from() returns an object from a previous scene;
- * seen(obj, [scene]) returns an object, if it exists in scene and not disabled;
- * have(obj, [scene]) returns an object, if it exists in the inventory;
- * exist(obj, [scene]) returns an object, if it is exists in scene;
+  * inv() returns the inventory list;
+  * objs() returns the list of objects of the current scene; (from 0.8.5 it has an optional paremeter — the scene for which to return objects;
+  * ways() returns the list of passages from the current scene; (from 0.8.5 has an optional paremeter — the scene for which to return the list);
+  * me() returns the player object;
+  * here() returns the current scene; (from 0.8.5 another function where(obj) returns the scene where is object placed. Works only if it was placed with put/drop/move).
+  * from() returns an object from a previous scene;
+  * seen(obj, [scene]) returns an object, if it exists in scene and not disabled;
+  * have(obj, [scene]) returns an object, if it exists in the inventory;
+  * exist(obj, [scene]) returns an object, if it is exists in scene;
+  * live(obj) returns an object, if it is exists in lifes;
+  * path(obj,[where]) – lookup in way, even for disabled items; 
 
 Combining those functions with “add” and “del” methods one can dynamically alter the scene, for example:
 <code>
@@ -905,7 +907,7 @@ Starting from version 1.2.0 you can use modules via “require” function call.
     * click — capturing mouse clicks on the scene picture;
     * vars — definition of variables;
     * prefs — preferences;
-    * snapshot — snapshots;
+    * snapshots — snapshots;
     * format — formats the output;
     * object — improved objects;
 
