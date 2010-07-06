@@ -2976,13 +2976,15 @@ void gfx_warp_cursor(int x, int y)
 {
 	SDL_WarpMouse(x, y);
 }
-#define ALPHA_STEPS 5
+#define ALPHA_STEPS 4
 static int   fade_step_nr = -1;
 
 int gfx_fading(void)
 {
 	return (fade_step_nr != -1);
 }
+
+img_t	*fade_bg = NULL;
 
 static void update_gfx(void *aux)
 {
@@ -2991,6 +2993,7 @@ static void update_gfx(void *aux)
 		return;
 	game_cursor(CURSOR_CLEAR);
 	gfx_set_alpha(img, (255 * (fade_step_nr + 1)) / ALPHA_STEPS);
+	gfx_draw(fade_bg, 0, 0);
 	gfx_draw(img, 0, 0);
 	game_cursor(CURSOR_DRAW);
 	gfx_flip();
@@ -3014,10 +3017,14 @@ void gfx_change_screen(img_t src)
 	memset(&ev, 0, sizeof(ev));
 	SDL_TimerID han;
 	fade_step_nr = 0;
+	fade_bg = gfx_grab_screen(0, 0, gfx_width, gfx_height);
+	if (!fade_bg) /* ok, i like kernel logic. No memory, but we must work! */
+		return;
 	han = SDL_AddTimer(60, update, src);
 	while (input(&ev, 1) >=0 && gfx_fading()) /* just wait for change */
 		game_cursor(CURSOR_ON);
 	SDL_RemoveTimer(han);
+	gfx_free_image(fade_bg);
 }
 
 int gfx_init(void)
