@@ -10,7 +10,7 @@ xact = function(n, f) -- just simple action!
 		n = n[1];
 	end
 
-	if type(n) ~= 'string' or (type(f) ~= 'string' and not isCode(f)) then
+	if type(n) ~= 'string' or (type(f) ~= 'string' and not isCode(f) and type(f) ~= 'boolean') then
 		error ("Wrong parameter to xact.", 2)
 	end
 	v.xaction_type = true
