@@ -15,7 +15,7 @@ install:
 	$(INSTALL) dbg.lua $(STEADPATH)/dbg.lua
 	$(INSTALL) vars.lua $(STEADPATH)/vars.lua
 	$(INSTALL) prefs.lua $(STEADPATH)/prefs.lua
-	$(INSTALL) snapshot.lua $(STEADPATH)/snapshot.lua
+	$(INSTALL) snapshots.lua $(STEADPATH)/snapshots.lua
 	$(INSTALL) object.lua $(STEADPATH)/object.lua
 	$(INSTALL) format.lua $(STEADPATH)/format.lua
 	$(INSTALL) dash.lua $(STEADPATH)/dash.lua
