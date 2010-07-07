@@ -21,4 +21,4 @@ install:
 	copy timer.lua ..\bin\stead
 	copy kbd.lua ..\bin\stead
 	copy hotkeys.lua ..\bin\stead
-
+	copy hideinv.lua ..\bin\stead

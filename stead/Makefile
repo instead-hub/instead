@@ -24,6 +24,7 @@ install:
 	$(INSTALL) timer.lua $(STEADPATH)/timer.lua
 	$(INSTALL) kbd.lua $(STEADPATH)/kbd.lua
 	$(INSTALL) hotkeys.lua $(STEADPATH)/hotkeys.lua
+	$(INSTALL) hideinv.lua $(STEADPATH)/hideinv.lua
 
 uninstall:
 	$(RM) $(STEADPATH)/stead.lua
