@@ -660,6 +660,21 @@ function list_del(self, name)
 	return v
 end
 
+function list_purge(self, name)
+	local v,n
+	v, n = self:srch(name, true);
+	if n == nil then
+		return nil;
+	end
+	self.__modified__ = true
+	v = stead.table.remove(self, n);
+	if not v then
+		v = self[n];
+		self[n] = nil -- for spare lists
+	end
+	return v
+end
+
 function list(v)
 	v.list_type = true;
 	v.add = list_add;
@@ -667,6 +682,7 @@ function list(v)
 	v.cat = list_concat;
 	v.zap = list_zap;
 	v.del = list_del;
+	v.purge = list_purge;
 	v.look = list_find;
 	v.name = list_name;
 	v.byid = list_id;
@@ -2096,6 +2112,23 @@ function remove(obj, from)
 	end
 	if w then
 		ref(w).obj:del(obj);
+	end
+	o = ref(o);
+	if not isObject(o) then
+		o = ref(obj);
+	end
+	return o
+end
+
+function purge(obj, from)
+	local o,w
+	if from then
+		o,w = ref(from):srch(obj, true);
+	else
+		o,w = here():srch(obj, true);
+	end
+	if w then
+		ref(w).obj:purge(obj);
 	end
 	o = ref(o);
 	if not isObject(o) then

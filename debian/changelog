@@ -33,6 +33,7 @@ instead (1.2.0) unstable; urgency=low
   * self() is now self;
   * no return goto needed;
   * disable_all/enable_all for lists;
+  * purge and list_purge
   * many bugfixes...
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 06 Jul 2010 14:09:00 +0300  
