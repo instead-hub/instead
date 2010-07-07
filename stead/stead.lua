@@ -364,29 +364,17 @@ function obj_enable(self)
 end
 
 function obj_enable_all(s)
-	local k,v
 	if not isObject(s) then
 		return
 	end
-	for k,v in opairs(objs(s)) do
-		local o = ref(v);
-		if isObject(o) then
-			o:enable()
-		end
-	end
+	objs(s):enable_all();
 end
 
 function obj_disable_all(s)
-	local k,v
 	if not isObject(s) then
 		return
 	end
-	for k,v in opairs(objs(s)) do
-		local o = ref(v);
-		if isObject(o) then
-			o:disable()
-		end
-	end
+	objs(s):disable_all();
 end
 
 
@@ -564,6 +552,26 @@ function list_find(self, name)
 	return nil
 end
 
+function list_disable_all(s)
+	local k,v
+	for k,v in opairs(s) do
+		local o = ref(v);
+		if isObject(o) then
+			o:disable()
+		end
+	end
+end
+
+function list_enable_all(s)
+	local k,v
+	for k,v in opairs(s) do
+		local o = ref(v);
+		if isObject(o) then
+			o:enable()
+		end
+	end
+end
+
 function list_save(self, name, h, need)
 	if self.__modifyed__ or self.__modified__ then -- compat
 		h:write(name.." = list({});\n");
@@ -666,6 +674,8 @@ function list(v)
 	v.str = list_str;
 	v.check = list_check;
 	v.save = list_save;
+	v.enable_all = list_enable_all;
+	v.disable_all = list_disable_all;
 	return v;
 end
 
@@ -2354,7 +2364,7 @@ end
 
 function disable_all(o)
 	o = ref(o)
-	if isObject(o) then
+	if isObject(o) or isList(o) then
 		o:disable_all()
 	end
 	return o
@@ -2362,7 +2372,7 @@ end
 
 function enable_all(o)
 	o = ref(o)
-	if isObject(o) then
+	if isObject(o) or isList(o) then
 		o:enable_all()
 	end
 	return o
