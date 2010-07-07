@@ -90,6 +90,9 @@ go = function (self, where, back)
 		elseif here().__visited == nil then
 			ref(to).__visited = 1
 		end
+		if isDialog(ref(to)) then
+			dialog_rescan(ref(to));
+		end
 	end
 	PLAYER_MOVED = true
 	if need_scene then -- or isForcedsc(ref(where)) then -- i'am not sure...
@@ -160,16 +163,6 @@ player  = stead.inherit(player, function(v)
 	v.look = function(s)
 		NEED_SCENE = true
 	end
-	return v
-end)
-
-room = stead.inherit(room, function(v)
-	v.look = hook(v.look, function(f, s, ...)
-		if isDialog(s) then
-			dialog_rescan(s);
-		end
-		return f(s, unpack(arg));
-	end)
 	return v
 end)
 
