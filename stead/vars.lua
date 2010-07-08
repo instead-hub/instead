@@ -24,7 +24,7 @@ function __vars_add(s, v, set)
 		elseif s.variables[k] then
 			error ("Variable overwrites variables object: "..tostring(k))
 		elseif k ~= 'variable_type' then
-			if set then 
+			if set and type(o) == 'string' or type(o) == 'boolean' or type(o) == 'number' then 
 				if s[k] then
 					error ("Global variable conflict: "..tostring(k));
 				end
@@ -70,7 +70,7 @@ end
 vars_object = obj {
 	nam = 'vars',
 	ini = function(s)
---		__vars_fill(_G)
+		__vars_fill(_G)
 		__vars_fill(pl)
 		__vars_fill(game)
 	end
