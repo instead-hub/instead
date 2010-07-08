@@ -95,7 +95,10 @@ end;
 
 function get_title()
 	local s = call(here(), 'nam');
-	return stead.string.gsub(s, '\\,',',');
+	if type(s) == 'string' then
+		s = stead.string.gsub(s, '\\,',',');
+	end
+	return s
 end
 
 -- here is gui staff only

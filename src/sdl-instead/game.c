@@ -1393,10 +1393,11 @@ int game_cmd(char *cmd)
 		txt_layout_set(el_layout(el_title), NULL);
 
 	new_place = check_new_place(title);
-	
-	if (title && *title)
+
+	if (title && *title) {
 		txt_layout_size(el_layout(el_title), NULL, &title_h);
-	title_h += game_theme.font_size / 2; // todo?	
+		title_h += game_theme.font_size / 2; // todo?	
+	}
 
 	instead_eval("return get_picture();");
 	pict = instead_retval(0);
