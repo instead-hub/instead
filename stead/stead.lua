@@ -2129,7 +2129,9 @@ function remove(obj, from)
 	if not isObject(o) then
 		o = ref(obj);
 	end
-	o.__where__ = nil;
+	if isObject(o) then
+		o.__where__ = nil;
+	end
 	return o
 end
 
@@ -2147,7 +2149,9 @@ function purge(obj, from)
 	if not isObject(o) then
 		o = ref(obj);
 	end
-	o.__where__ = nil;
+	if isObject(o) then
+		o.__where__ = nil;
+	end
 	return o
 end
 
@@ -2208,6 +2212,9 @@ placeto = putto
 
 function replace(obj, obj2, from)
 	local o,w,i
+	if not isObject(ref(obj2)) then
+		error ("Wrong parameter to replace.", 2);
+	end
 	if from then
 		o,w = ref(from):srch(obj);
 	else
@@ -2223,7 +2230,9 @@ function replace(obj, obj2, from)
 	if not isObject(o) then
 		o = ref(obj);
 	end
-	o.__where__ = nil;
+	if isObject(o) then
+		o.__where__ = nil;
+	end
 	return o;
 end
 
