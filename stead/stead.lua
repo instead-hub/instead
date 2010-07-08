@@ -675,6 +675,17 @@ function list_purge(self, name)
 	return v
 end
 
+function list_replace(self, name, name2)
+	local ii
+	ii = self:look(name);
+	if ii then
+		self:set(name2, ii);
+	else
+		self:add(name2);
+	end
+	return ii;
+end
+
 function list(v)
 	v.list_type = true;
 	v.add = list_add;
@@ -683,6 +694,7 @@ function list(v)
 	v.zap = list_zap;
 	v.del = list_del;
 	v.purge = list_purge;
+	v.replace = list_replace;
 	v.look = list_find;
 	v.name = list_name;
 	v.byid = list_id;
@@ -2117,6 +2129,7 @@ function remove(obj, from)
 	if not isObject(o) then
 		o = ref(obj);
 	end
+	o.__where__ = nil;
 	return o
 end
 
@@ -2134,6 +2147,7 @@ function purge(obj, from)
 	if not isObject(o) then
 		o = ref(obj);
 	end
+	o.__where__ = nil;
 	return o
 end
 
@@ -2186,6 +2200,31 @@ end
 
 function putf(obj, w)
 	return putto(obj, w, 1);
+end
+
+place = put
+placef = putf
+placeto = putto
+
+function replace(obj, obj2, from)
+	local o,w,i
+	if from then
+		o,w = ref(from):srch(obj);
+	else
+		o,w = here():srch(obj);
+	end
+	if w then
+		ref(w).obj:replace(o, obj2);
+		ref(obj2).__where__ = deref(w);
+	else
+		place(obj2, from);
+	end
+	o = ref(o);
+	if not isObject(o) then
+		o = ref(obj);
+	end
+	o.__where__ = nil;
+	return o;
 end
 
 function drop(obj, w)
