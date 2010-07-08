@@ -1,12 +1,15 @@
-dlg = stead.inherit(dlg, function(v)
-	v.entered = stead.hook(v.entered, function(f, ...)
-		local r,v = f(unpack(arg))
-		me():disable_all();
-		return r,v
+room = stead.inherit(room, function(v)
+	v.entered = stead.hook(v.entered, function(f, s, ...)
+		if call_bool(s, 'hideinv') then
+			me():disable_all();
+		end
+		return f(s, unpack(arg))
 	end)
-	v.left = stead.hook(v.left, function(f, ...)
-		me():enable_all();
-		return f(unpack(arg))
+	v.left = stead.hook(v.left, function(f, s, ...)
+		if call_bool(s, 'hideinv') then
+			me():enable_all();
+		end
+		return f(s, unpack(arg))
 	end)
 	return v
 end)
