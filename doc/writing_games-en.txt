@@ -471,9 +471,9 @@ game.use = 'Won\'t work...';
 
 Attribute lists (such as “way” or “obj”) allow to work with themselves thus allowing to implement dynamically defined passages between scenes, live objects, etc.
 
-List methods are: “add”, “del”, “look”, “srch”. The most used are “add” and “del”.
+List methods are: “add”, “del”, “look”, “srch”, “purge”. The most used are “add” and “del”.
 
-“add” adds to the list, “del” removes from the list, “srch” performs a search. Note that “del” and “srch” may use as a parameter not only the object itself or its identifier, but also the object name.
+“add” adds to the list, “del” removes from the list, “purge” removes even disabled object, “srch” performs a search. Note that “del” and “srch” may use as a parameter not only the object itself or its identifier, but also the object name.
 
 Starting from version 0.8 the object itself may be a parameter of “add”. Also from this version an optional second parameter is added — position in list. From 0.8 you also can modify the list by the index with the “set” method. For example:
 <code>
@@ -654,6 +654,10 @@ disable/enable/disable_all/enable_all -- disable/enable/disable_all/enable_all o
 visited([where]) -- room visit counter (may be nil);
 
 path(obj,[where]) -- lookup in way, even for disabled items;
+
+nameof(obj) -- get object's name (nam attribute);
+
+purge (obj, [where]) -- see remove, deletes even disabled object'
 
 ===== 14. Dialogs =====
 
