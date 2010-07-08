@@ -676,8 +676,8 @@ function list_purge(self, name)
 end
 
 function list_replace(self, name, name2)
-	local ii
-	ii = self:look(name);
+	local o, ii
+	o, ii = self:srch(name);
 	if ii then
 		self:set(name2, ii);
 	else
