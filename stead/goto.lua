@@ -144,7 +144,7 @@ go = stead.hook(go, function(f, ...)
 	if stead.in_life_call then
 		ACTION_TEXT = nil
 	end
-	if r == nil and PLAYER_MOVED and v == nil then
+	if r == nil and v == nil then
 		if cctx() then
 			cctx().action = true
 		else
