@@ -727,7 +727,7 @@ function call(v, n, ...)
 		-- boolean, nil
 		if type(a) == 'boolean' and b == nil then
 			b, a = a, stead.pget()
-			if a == nil then
+			if a == nil and not cctx().action then
 				a = b
 				b = nil
 			end 
