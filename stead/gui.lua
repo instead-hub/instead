@@ -1,5 +1,6 @@
 game.hinting = true;
 game.showlast = true;
+game.gui = { fading = 4; }
 
 iface.xref = function(self, str, obj, ...)
 	local o = ref(obj);
@@ -184,4 +185,43 @@ end
 
 stead.fmt = fmt
 
+game.fading = function(s)
+	local rc = false
+	if stead.cmd == 'load' then
+		return true
+	end
+	if not stead.state then --only for states!!!
+		return false
+	end
+	if game._time == 1 then -- first cmd
+		return true
+	end
+	local p = call(here(), 'pic');
+	if PLAYER_MOVED or game.lastpic ~= p then
+		rc = true
+	end
+	game.lastpic = p
+	return rc
+end
+
+function isFading() --to check fading from sdl gui
+	local r,g,v
+	local h = here()
+	if not isRoom(h) then
+		return false
+	end
+	r,v = call_bool(h, 'fading');
+	if r then
+		return true, v
+	end
+	g,v = call_bool(game, 'fading', h);
+	return g and r ~= false, v
+end
+
+function get_fading()
+	local r, v
+	r, v = isFading()
+	if v == nil then v = game.gui.fading end
+	return r,v
+end
 -- vim:ts=4

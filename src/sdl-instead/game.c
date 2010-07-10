@@ -237,9 +237,8 @@ static int motion_mode = 0;
 static int motion_id = 0;
 static int motion_y = 0;
 
-static		char *last_pict = NULL;
-static 		char *last_title = NULL;
 static		char *last_music = NULL;
+static 		char *last_pict = NULL;
 static 		char *last_cmd = NULL;
 static int mx, my;
 static img_t 	menubg = NULL;
@@ -705,11 +704,9 @@ void free_last(void)
 {
 	if (last_pict)
 		free(last_pict);
-	if (last_title)
-		free(last_title);
 	if (last_cmd)
 		free(last_cmd);
-	last_pict = last_title = last_cmd = NULL;
+	last_pict = last_cmd = NULL;
 	game_stop_mus(500);
 	sounds_free();
 }
@@ -1076,24 +1073,6 @@ void game_menu_box(int show, const char *txt)
 	return game_menu_box_width(show, txt, w);
 }
 
-int check_new_place(char *title)
-{
-	int rc = 0;
-	if (!title && !last_title)
-		return 0;
-
-	if (!title && last_title) {
-		rc = 1;
-	} else if (!last_title || strcmp(title, last_title)) {
-		rc = 1;
-	}
-	if (last_title) {
-		free(last_title);
-	}
-	last_title = title;
-	return rc;
-}
-
 int check_new_pict(char *pict)
 {
 	int rc = 0;
@@ -1110,6 +1089,17 @@ int check_new_pict(char *pict)
 	}
 	last_pict = pict;
 	return rc;
+}
+
+static int check_fading(void)
+{
+	int rc;
+	int st;
+	instead_eval("return get_fading()");
+	rc = instead_bretval(0);
+	st = instead_iretval(1);
+	instead_clear();
+	return rc?st:0;
 }
 
 void scene_scrollbar(void)
@@ -1362,7 +1352,8 @@ int game_highlight(int x, int y, int on);
 int game_cmd(char *cmd)
 {
 	int		old_off;
-	int		new_pict = 0, new_place = 0;
+	int		fading = 0;
+	int		new_pict = 0;
 	int		title_h = 0, ways_h = 0, pict_h = 0;
 	char 		buf[1024];
 	char 		*cmdstr = NULL;
@@ -1392,7 +1383,7 @@ int game_cmd(char *cmd)
 	} else
 		txt_layout_set(el_layout(el_title), NULL);
 
-	new_place = check_new_place(title);
+	fading = check_fading();
 
 	if (title && *title) {
 		txt_layout_size(el_layout(el_title), NULL, &title_h);
@@ -1484,7 +1475,7 @@ int game_cmd(char *cmd)
 		txt_layout_set(txt_box_layout(el_box(el_scene)), cmdstr);
 		txt_box_set(el_box(el_scene), txt_box_layout(el_box(el_scene)));
 	}
-	if (!new_pict && !new_place)
+	if (!fading)
 		scroll_to_diff(cmdstr, old_off);
 	FREE(last_cmd);
 	last_cmd = cmdstr;
@@ -1496,13 +1487,13 @@ int game_cmd(char *cmd)
 	el(el_scene)->y = el(el_ways)->y + ways_h;
 	
 	/* draw title and ways */
-	if (new_pict || new_place) {
+	if (fading) {
 		game_cursor(CURSOR_CLEAR);
 		img_t offscreen = gfx_new(game_theme.w, game_theme.h);
 		oldscreen = gfx_screen(offscreen);
 		gfx_draw(oldscreen, 0, 0);
 	}
-	if (new_pict || new_place) {
+	if (fading) {
 		game_clear(game_theme.win_x, game_theme.win_y, game_theme.win_w, game_theme.win_h);
 		if (game_theme.gfx_mode == GFX_MODE_FLOAT) {
 			game_clear(game_theme.gfx_x, game_theme.gfx_y, game_theme.max_scene_w, game_theme.max_scene_h);
@@ -1518,7 +1509,7 @@ int game_cmd(char *cmd)
 
 	if (game_theme.gfx_mode != GFX_MODE_EMBEDDED) {
 		el_draw(el_ways);
-		if ((new_pict || new_place)) {
+		if (fading) {
 			gfx_dispose_gif(el_img(el_spic));
 			el_draw(el_spic);
 		}
@@ -1551,12 +1542,12 @@ inv:
 	}
 //	scene_scrollbar();
 
-	if (new_pict || new_place) {
+	if (fading) {
 		img_t offscreen;
 		game_cursor(CURSOR_CLEAR);
 		gfx_stop_gif(el_img(el_spic));
 		offscreen = gfx_screen(oldscreen);
-		gfx_change_screen(offscreen);
+		gfx_change_screen(offscreen, fading);
 		gfx_start_gif(el_img(el_spic));
 		gfx_free_image(offscreen);
 //		input_clear();
