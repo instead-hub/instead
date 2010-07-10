@@ -74,7 +74,7 @@ extern void	gfx_draw_bg(img_t p, int x, int y, int width, int height);
 extern void	gfx_draw_from(img_t p, int x, int y, int xx, int yy, int width, int height);
 extern void	gfx_cursor(int *xp, int *yp, int *w, int *h);
 extern void	gfx_warp_cursor(int x, int y);
-extern void	gfx_change_screen(img_t src);
+extern void	gfx_change_screen(img_t src, int steps);
 extern int	gfx_fading(void);
 extern void	gfx_img_fill(img_t img, int x, int y, int w, int h, color_t col);
 extern void	gfx_fill(int x, int y, int w, int h, color_t col);

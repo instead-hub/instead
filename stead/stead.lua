@@ -766,9 +766,9 @@ function call_bool(v, n, ...)
 	
 	if type(v[n]) == 'function' then
 		callpush(v, unpack(arg))
-		local r = v[n](v, unpack(arg));
+		local r,v = v[n](v, unpack(arg));
 		callpop();
-		return r;
+		return r,v;
 	end
 	return true; -- not nil
 end

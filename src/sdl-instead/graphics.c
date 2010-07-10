@@ -2976,7 +2976,8 @@ void gfx_warp_cursor(int x, int y)
 {
 	SDL_WarpMouse(x, y);
 }
-#define ALPHA_STEPS 4
+
+int ALPHA_STEPS = 4;
 static int   fade_step_nr = -1;
 
 int gfx_fading(void)
@@ -3011,10 +3012,11 @@ static Uint32 update(Uint32 interval, void *aux)
 
 extern void nsleep(int delay);
 
-void gfx_change_screen(img_t src)
+void gfx_change_screen(img_t src, int steps)
 {
 	struct inp_event ev;
 	memset(&ev, 0, sizeof(ev));
+	ALPHA_STEPS = steps;
 	SDL_TimerID han;
 	fade_step_nr = 0;
 	fade_bg = gfx_grab_screen(0, 0, gfx_width, gfx_height);
