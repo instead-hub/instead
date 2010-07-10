@@ -22,6 +22,7 @@ char *encode_sw = NULL;
 char *encode_output = NULL;
 char *mode_sw = NULL;
 
+#ifdef _USE_UNPACK
 extern int unpack(const char *zipfilename, const char *where);
 extern char zip_game_dirname[];
 
@@ -43,6 +44,7 @@ static int setup_zip(const char *file, char *p)
 	games_sw = p;
 	return 0;
 }
+#endif
 
 int main(int argc, char **argv)
 {

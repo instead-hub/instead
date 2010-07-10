@@ -246,7 +246,7 @@ void debug_done()
 {
 	FreeConsole();
 }
-
+#ifdef _USE_BROWSE
 char *open_file_dialog(void)
 {
 	OPENFILENAME ofn;
@@ -276,3 +276,4 @@ char *open_file_dialog(void)
 	unix_path(ofn.lpstrFile);
 	return ofn.lpstrFile;
 }
+#endif
