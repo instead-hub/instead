@@ -1,3 +1,4 @@
+#ifdef _USE_UNPACK
 /* iowin32.c -- IO base function header for compress/uncompress .zip
      Version 1.1, February 14h, 2010
      part of the MiniZip project - ( http://www.winimage.com/zLibDll/minizip.html )
@@ -387,3 +388,4 @@ void fill_win32_filefunc64W(zlib_filefunc64_def* pzlib_filefunc_def)
     pzlib_filefunc_def->zerror_file = win32_error_file_func;
     pzlib_filefunc_def->opaque = NULL;
 }
+#endif

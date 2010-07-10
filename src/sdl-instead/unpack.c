@@ -1,3 +1,4 @@
+#ifdef _USE_UNPACK
 /*
    miniunz.c
    Version 1.1, February 14h, 2010
@@ -390,3 +391,4 @@ int unpack(const char *zipfilename, const char *dirname)
 #endif
 	return ret_value;
 }
+#endif
