@@ -1275,6 +1275,7 @@ function player_goto(self, where)
 	local v, r = go(self, where, false);
 	return v, r;
 end
+
 function player_go(self, where)
 	local w = ref(self.where).way:srch(where);
 	if not w then
@@ -2108,7 +2109,7 @@ function vroom_save(self, name, h, need)
 end
 
 function vroom_enter(self, ...)
-	return go(me(), self.where, false);
+	return me():goto(self.where);
 end
 
 function isVroom(v)
@@ -2124,9 +2125,11 @@ function goto(what)
 	me():tag();
 	return v,r;
 end
+
 function back()
 	return me():back();
 end
+
 function rnd(m)
 	return math.random(m);
 end
