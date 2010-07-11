@@ -1012,7 +1012,7 @@ function phrase_action(self)
 		r = true;
 	end
 	if isDialog(here()) and not dialog_rescan(here()) then
-		ret = stead.par(' ', ret, me():back());
+		ret = stead.par(' ', ret, me():goto(from(), true));
 	end
 	
 	ret = stead.par("^^", last, ret);
@@ -1271,8 +1271,8 @@ function go(self, where, back)
 	return res;
 end
 
-function player_goto(self, where)
-	local v, r = go(self, where, false);
+function player_goto(self, where, ...)
+	local v, r = go(self, where, unpack(arg));
 	return v, r;
 end
 

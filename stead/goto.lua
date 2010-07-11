@@ -49,8 +49,7 @@ go = function (self, where, back, forceenter)
 		self.where = deref(where);
 	end
 
-	if not jump and (not back or forceenter or 
-		not isDialog(ref(was)) or isDialog(ref(where))) then
+	if not jump and (not back or forceenter) then
 		v, r = call(ref(where), 'enter', ref(was));
 		if r == false then
 			self.where = was;
@@ -102,6 +101,7 @@ go = function (self, where, back, forceenter)
 	end
 	return res;
 end
+stead.go = go
 
 function player_go(self, where) -- cmd iface
 	local w = ref(self.where).way:srch(where);
@@ -112,7 +112,7 @@ function player_go(self, where) -- cmd iface
 end
 
 function player_goto(self, where, ...) -- real work
-	local v, r = go(self, where, unpack(arg));
+	local v, r = stead.go(self, where, unpack(arg));
 	return v, r;
 end
 
@@ -122,12 +122,11 @@ end
 
 function back()
 	local where = here();
-	return me():goto(where.__from__, true);
+	return me():goto(from(), true);
 end
 
 function goback()
-	local where = here();
-	return me():goto(where.__from__, true, true);
+	return me():goto(from(), true, true);
 end
 
 game.ini = stead.hook(game.ini,function(f, ...)
@@ -164,7 +163,7 @@ iface.fmt = function(self, cmd, st, moved, r, av, objs, pv) -- st -- changed sta
 	return vv
 end
 
-go = stead.hook(go, function(f, ...)
+stead.go = stead.hook(stead.go, function(f, ...)
 	local r,v = f(unpack(arg))
 	if type(r) == 'string' and cctx() then 
 		pr (r)
