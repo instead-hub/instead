@@ -965,8 +965,8 @@ end
 
 function phrase_action(self)
 	local ph = self;
-	local r = nil;
-	local ret = nil;
+	local r, ret;
+
 	if isDisabled(ph) then
 		return nil, false
 	end
@@ -981,7 +981,7 @@ function phrase_action(self)
 			error ("Error while eval phrase action.");
 		end
 	elseif type(ph.do_act) == 'function' then
-		ret = ph.do_act(self, nam);
+		ret = ph.do_act(self);
 	end
 	local last = call(ph, 'ans');
 	if last == true or ret == true then
