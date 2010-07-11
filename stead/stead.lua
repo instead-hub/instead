@@ -973,6 +973,8 @@ function phrase_action(self)
 -- here it is
 	ph:disable(); -- /* disable it!!! */
 
+	local last = call(ph, 'ans');
+
 	if type(ph.do_act) == 'string' then
 		local f = loadstring(ph.do_act);
 		if f ~= nil then
@@ -983,7 +985,9 @@ function phrase_action(self)
 	elseif type(ph.do_act) == 'function' then
 		ret = ph.do_act(self);
 	end
-	local last = call(ph, 'ans');
+
+	if ret == nil then ret = stead.pget(); end
+
 	if last == true or ret == true then
 		r = true;
 	end
