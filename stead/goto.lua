@@ -121,7 +121,6 @@ function player_back(self) -- deprecated
 end
 
 function back()
-	local where = here();
 	return me():goto(from(), true);
 end
 
