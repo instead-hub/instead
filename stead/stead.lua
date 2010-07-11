@@ -363,6 +363,10 @@ function obj_enable(self)
 	return self
 end
 
+function obj_disabled(self)
+	return (self._disabled == true);
+end
+
 function obj_enable_all(s)
 	if not isObject(s) then
 		return
@@ -430,6 +434,9 @@ function obj(v)
 	end
 	if v.disable == nil then
 		v.disable = obj_disable;
+	end
+	if v.disabled == nil then
+		v.disabled = obj_disabled;
 	end
 	if v.enable_all == nil then
 		v.enable_all = obj_enable_all;
