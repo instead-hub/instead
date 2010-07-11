@@ -1,4 +1,4 @@
-go = function (self, where, back)
+go = function (self, where, back, forceenter)
 	local was = self.where;
 	local need_scene = false;
 	local ret
@@ -49,7 +49,8 @@ go = function (self, where, back)
 		self.where = deref(where);
 	end
 
-	if not jump and (not back or not isDialog(ref(was)) or isDialog(ref(where))) then
+	if not jump and (not back or forceenter or 
+		not isDialog(ref(was)) or isDialog(ref(where))) then
 		v, r = call(ref(where), 'enter', ref(was));
 		if r == false then
 			self.where = was;
@@ -100,6 +101,33 @@ go = function (self, where, back)
 --		return par('^^',res,ref(where):scene());
 	end
 	return res;
+end
+
+function player_go(self, where) -- cmd iface
+	local w = ref(self.where).way:srch(where);
+	if not w then
+		return nil,false
+	end
+	return self:goto(w);
+end
+
+function player_goto(self, where, ...) -- real work
+	local v, r = go(self, where, unpack(arg));
+	return v, r;
+end
+
+function player_back(self) -- deprecated
+	error ("Do not use me():back(). It's deprecated.", 2)
+end
+
+function back()
+	local where = here();
+	return me():goto(where.__from__, true);
+end
+
+function goback()
+	local where = here();
+	return me():goto(where.__from__, true, true);
 end
 
 game.ini = stead.hook(game.ini,function(f, ...)
