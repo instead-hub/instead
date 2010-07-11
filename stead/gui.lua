@@ -187,7 +187,9 @@ stead.fmt = fmt
 
 game.fading = function(s)
 	local rc = false
+	local p = call(here(), 'pic');
 	if stead.cmd == 'load' then
+		game.lastpic = p;
 		return true
 	end
 	if not stead.state then --only for states!!!
@@ -196,7 +198,6 @@ game.fading = function(s)
 	if game._time == 1 then -- first cmd
 		return true
 	end
-	local p = call(here(), 'pic');
 	if PLAYER_MOVED or game.lastpic ~= p then
 		rc = true
 	end
