@@ -48,21 +48,12 @@ function vobj_save(self, name, h, need)
 	local w = deref(self.where)
 	local dsc = self.dsc
 	
-	if dsc == nil then
-		dsc = 'nil';
-	else
-		dsc = stead.string.format("%q", tostring(dsc))
-	end
-
-	if w == nil then
-		w = "nil"
-	else
-		w = stead.string.format("%q", w)
-	end
-
 	if need then
-		h:write(stead.string.format("%s  = vobj(%q,%s,%s);\n",
-			name, tostring(self.nam), dsc, w));
+		h:write(stead.string.format("%s  = vobj(%s,%s,%s);\n",
+			name, 
+			stead.tostring(self.nam), 
+			stead.tostring(dsc), 
+			stead.tostring(w)));
 	end
 	savemembers(h, self, name, false);
 end
