@@ -73,6 +73,19 @@ function stead.getcmd(str)
 	return cmd, a
 end
 
+stead.tostring = function(v)
+	if isCode(v) then
+		v = stead.string.format("code %q", stead.functions[v].code);
+	elseif type(v) == 'string' then
+		v = stead.string.format("%q", v);
+	elseif v == nil or type(v) == 'boolean' or type(v) == 'number' then
+		v = tostring(v);
+	else
+		v = nil
+	end
+	return v
+end
+
 function cctx()
 	return stead.cctx[stead.call_top];
 end
@@ -1017,8 +1030,11 @@ function phrase_save(self, name, h, need)
 		if isDisabled(self) then
 			m = " = _phr("
 		end
-		h:write(stead.string.format("%s%s%q,%q,%q);\n", 
-			name, m, tostring(self.dsc), tostring(self.ans), tostring(self.do_act)));
+		h:write(stead.string.format("%s%s%s,%s,%s);\n", 
+			name, m, 
+			stead.tostring(self.dsc), 
+			stead.tostring(self.ans), 
+			stead.tostring(self.do_act)));
 	end
 	savemembers(h, self, name, false);
 end

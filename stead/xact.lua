@@ -10,7 +10,7 @@ xact = function(n, f) -- just simple action!
 		n = n[1];
 	end
 
-	if type(n) ~= 'string' or (type(f) ~= 'string' and not isCode(f) and type(f) ~= 'boolean') then
+	if type(n) ~= 'string' then
 		error ("Wrong parameter to xact.", 2)
 	end
 	v.xaction_type = true
@@ -20,10 +20,9 @@ xact = function(n, f) -- just simple action!
 	v.save = function(self, name, h, need)
 		if need then
 			local f = self.act;
-			if isCode(f) then
-				f = stead.string.format("code %q", stead.functions[f].code);
-			else
-				f = stead.string.format("%q", f);
+			f = stead.tostring(f);
+			if f == nil then
+				error("Can not save xact: "..name);
 			end
 			h:write(stead.string.format("%s = xact(%q, %s);\n", name, self.nam, f))
 		end
