@@ -80,6 +80,8 @@ stead.tostring = function(v)
 		v = stead.string.format("%q", v);
 	elseif v == nil or type(v) == 'boolean' or type(v) == 'number' then
 		v = tostring(v);
+	elseif type(v) == 'table' and type(deref(v)) == 'string' then
+		v = deref(v);
 	else
 		v = nil
 	end
