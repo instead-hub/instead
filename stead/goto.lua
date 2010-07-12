@@ -1,4 +1,4 @@
-go = function (self, where, back, forceenter)
+go = function (self, where, back, noenter, noexit)
 	local was = self.where;
 	local need_scene = false;
 	local ret
@@ -29,7 +29,7 @@ go = function (self, where, back, forceenter)
 
 	local v, r, jump;
 
-	if not isVroom(ref(where)) and not stead.in_exit_call then
+	if not isVroom(ref(where)) and not stead.in_exit_call and not noexit then
 		stead.in_exit_call = true -- to break recurse
 		v,r = call(ref(self.where), 'exit', ref(where));
 		stead.in_exit_call = nil
@@ -49,18 +49,17 @@ go = function (self, where, back, forceenter)
 		self.where = deref(where);
 	end
 
-	if not jump and (not back or forceenter or 
-		not isDialog(ref(was)) or isDialog(ref(where))) then
+	if not jump and not noenter then
 		v, r = call(ref(where), 'enter', ref(was));
 		if r == false then
 			self.where = was;
 			return par('^^', res, v), ret(r)
 		end
-
-		need_scene = true;
-		if ref(where) ~= ref(self.where) then -- jump !!!
-			need_scene = false;
-		end
+	end
+	
+	need_scene = true;
+	if ref(where) ~= ref(self.where) then -- jump !!!
+		need_scene = false;
 	end
 
 	res = par('^^',res,v);
@@ -73,24 +72,29 @@ go = function (self, where, back, forceenter)
 
 	if not stead.in_goto_call  then
 		local to = self.where
-		self.where = was
-
-		stead.in_onexit_call = true
-		v = call(ref(was), 'left', ref(to));
-		stead.in_onexit_call = false
-		res = par('^^',res,v);
+		if not noexit then
+			self.where = was
+			stead.in_onexit_call = true
+			v = call(ref(was), 'left', ref(to));
+			stead.in_onexit_call = false
+			res = par('^^',res,v);
+		end
 
 		self.where = deref(to)
 
-		stead.in_entered_call = true
-		v = call(ref(to), 'entered', ref(was));
-		stead.in_entered_call = false
-		res = par('^^',res,v);
+		if not noenter then
+			stead.in_entered_call = true
+			v = call(ref(to), 'entered', ref(was));
+			stead.in_entered_call = false
+			res = par('^^',res,v);
+		end
+
 		if tonumber(ref(to).__visited) then
 			ref(to).__visited = ref(to).__visited + 1;
 		elseif here().__visited == nil then
 			ref(to).__visited = 1
 		end
+
 		if isDialog(ref(to)) then
 			dialog_rescan(ref(to));
 		end
@@ -122,12 +126,24 @@ function player_back(self) -- deprecated
 end
 
 function back()
+	if isDialog(here()) and not isDialog(from()) then
+		local r, v = me():goto(from(), true, true);
+		NEED_SCENE = false
+		return r,v;
+	end
 	return me():goto(from(), true);
 end
+stead.back = back
 
 function goback()
-	return me():goto(from(), true, true);
+	return me():goto(from(), true);
 end
+stead.goback = goback
+
+function goto(what, back, noenter, noexit, ...)
+	return me():goto(what, back, noenter, noexit, unpack(arg));
+end
+stead.goto = goto
 
 game.ini = stead.hook(game.ini,function(f, ...)
 	if isRoom(here()) then
