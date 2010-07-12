@@ -1098,6 +1098,12 @@ static int check_fading(void)
 	instead_eval("return get_fading()");
 	rc = instead_bretval(0);
 	st = instead_iretval(1);
+
+	if (st <= 0)
+		st = 1;
+	else if (st > 255)
+		st = 255;
+
 	instead_clear();
 	return rc?st:0;
 }
