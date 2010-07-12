@@ -1,4 +1,4 @@
-go = function (self, where, back, noenter, noexit)
+go = function (self, where, back, noenter, noexit, nodsc)
 	local was = self.where;
 	local need_scene = false;
 	local ret
@@ -100,9 +100,8 @@ go = function (self, where, back, noenter, noexit)
 		end
 	end
 	PLAYER_MOVED = true
-	if need_scene then -- or isForcedsc(ref(where)) then -- i'am not sure...
+	if need_scene and not nodsc then
 		NEED_SCENE = true
---		return par('^^',res,ref(where):scene());
 	end
 	return res;
 end
@@ -127,8 +126,7 @@ end
 
 function back()
 	if isDialog(here()) and not isDialog(from()) then
-		local r, v = me():goto(from(), true, true);
-		NEED_SCENE = false
+		local r, v = me():goto(from(), true, true, false, true);
 		return r,v;
 	end
 	return me():goto(from(), true);
@@ -140,8 +138,8 @@ function goback()
 end
 stead.goback = goback
 
-function goto(what, back, noenter, noexit, ...)
-	return me():goto(what, back, noenter, noexit, unpack(arg));
+function goto(what, back, noenter, noexit, nodsc, ...)
+	return me():goto(what, back, noenter, noexit, nodsc, unpack(arg));
 end
 stead.goto = goto
 
