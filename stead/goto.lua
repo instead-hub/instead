@@ -204,6 +204,9 @@ end)
 
 player  = stead.inherit(player, function(v)
 	v.look = function(s)
+		if game._time == 0 then
+			return stead.goto(here(), false, false, true);
+		end
 		NEED_SCENE = true
 	end
 	return v

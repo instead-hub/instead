@@ -24,6 +24,8 @@ instead (1.2.0) unstable; urgency=low
   * visited() added;
   * live() added;
   * nameof() added;
+  * goback() added;
+  * disp attribute added;
   * improved debugger;
   * save vars in _G;
   * no duplicated games while looking gamespaths;
