@@ -169,7 +169,10 @@ function list_str(self)
 	for i,o in opairs(self) do
 		o = ref(o);
 		if isObject(o) and not isDisabled(o) then
-			vv = call(o, 'disp');
+			vv = nil
+			if game.gui then
+				vv = call(o, 'disp');
+			end
 			if type(vv) ~= 'string' then
 				vv = call(o, 'nam');
 			end
@@ -191,7 +194,10 @@ function obj_str(self)
 	for i,o in opairs(self.obj) do
 		o = ref(o);
 		if isObject(o) and not isDisabled(o) then
-			vv = call(o, 'disp');
+			vv = nil
+			if game.gui then
+				vv = call(o, 'disp');
+			end
 			if type(vv) ~= 'string' then
 				vv = call(o, 'nam');
 			end
