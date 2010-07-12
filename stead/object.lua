@@ -164,6 +164,44 @@ function list_concat(self, other, pos)
 	end
 end
 
+function list_str(self)
+	local i, v, vv, o;
+	for i,o in opairs(self) do
+		o = ref(o);
+		if isObject(o) and not isDisabled(o) then
+			vv = call(o, 'disp');
+			if type(vv) ~= 'string' then
+				vv = call(o, 'nam');
+			end
+			vv = xref(vv, o);
+			v = stead.par(',', v, vv);
+		end
+	end
+	return v;
+end
+
+function obj_str(self)
+	local i, v, vv, o;
+	if not isObject(self) then
+		return
+	end
+	if isDisabled(self) then
+		return 
+	end
+	for i,o in opairs(self.obj) do
+		o = ref(o);
+		if isObject(o) and not isDisabled(o) then
+			vv = call(o, 'disp');
+			if type(vv) ~= 'string' then
+				vv = call(o, 'nam');
+			end
+			vv = xref(vv, o);
+			v = stead.par(',', v, vv, obj_str(o));
+		end
+	end
+	return v;
+end
+
 function path(w, wh) -- search in way, disabled too
 	if not wh then
 		wh = here();
