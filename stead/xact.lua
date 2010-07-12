@@ -40,6 +40,7 @@ __do_xact = function(str, self)
 	local xrefrep = function(str)
 		local s = stead.string.gsub(str,'[{}]','');
 		local o,d,a, oo;
+		s = s:gsub("\\:","<&colon;>");
 		local i = s:find(":", 1, true);
 		aarg = {}
 		if i then
@@ -69,6 +70,7 @@ __do_xact = function(str, self)
 		else
 			error("Wrong link: "..s, 3);
 		end
+		d = d:gsub("<&colon;>", ":");
 		return xref(d, ref(oo), unpack(aarg));
 	end
 	if type(str) ~= 'string' then return end
