@@ -126,7 +126,7 @@ choose_location = dlg {
 		for k,v in pairs(_G) do
 			if isRoom(v) and not v.debug then
 				local n = call(v, 'nam');
-				put(phr(n, true, [[return goto("]]..k..[[")]]), s);
+				put(phr(n:gsub(":","\\:"), true, [[return goto("]]..k..[[")]]), s);
 			end
 		end
 		put (phr('Back',true, 'return back()'), s)
@@ -144,7 +144,7 @@ choose_object = dlg {
 		for k,v in pairs(_G) do
 			if isObject(v) and not isRoom(v) and not isPlayer(v) and not v.debug and not have(v) and not isStatus(v) then
 				local n = call(v, 'nam');
-				put(phr(n, true, k..':enable(); return take("'..k..'")'), s);
+				put(phr(n:gsub(":","\\:"), true, k..':enable(); return take("'..k..'")'), s);
 			end
 		end
 		put (phr('Back',true, 'return back()'), s)
@@ -161,7 +161,6 @@ drop_object = dlg {
 		objs(s):zap();
 		for k,v in pairs(_G) do
 			if isObject(v) and not isRoom(v) and not isPlayer(v) and not v.debug and have(v) then
-				local n = call(v, 'nam');
 				put (phr(k, true, 'drop("'..k..'","'..deref(dbg_here())..'")'), s)
 			end
 		end
