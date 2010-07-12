@@ -3,6 +3,50 @@
 -- for debug tools
 require "input"
 
+function ordered_n(t)
+	local ordered = {};
+	local i,v, max;
+	max = 0;
+	for i,v in pairs(t) do
+		stead.table.insert(ordered, v);
+		max = max + 1;
+	end
+	stead.table.sort(ordered, function(a, b)
+		if isObject(a) and not isObject(b) then
+			return true
+		end
+		if not isObject(a) and isObject(b) then
+			return false
+		end
+		if isObject(a) and isObject(b) then
+			local n = call(a, 'nam');
+			local m = call(b, 'nam');
+			return n < m;
+		end
+		return false
+	end)
+	ordered.i = 1;
+	ordered.max = max;
+	return ordered;
+end
+
+function snext(t, k)
+	local v
+	if not k then
+		k = ordered_n(t);
+	end
+	if k.i > k.max then
+		return nil
+	end
+	v = k[k.i]
+	k.i = k.i + 1
+	return k, v;
+end
+
+function spairs(s, var)
+	return snext, s, nil;
+end
+
 function disp_obj()
 	local v = obj{
 		nam = 'disp',
@@ -25,10 +69,37 @@ dump_obj = function(w)
 	local i,o
 	local rc=''
 	for i,o in pairs(w) do
-		if rc ~='' then rc = rc..'^' end
-		if isCode(o) then o = stead.string.format("code [[%s]]", stead.functions[o].code); end
-		rc = stead.cat(rc, stead.par(' ', 'Key:'..tostring(i),
-			'Val:'..tostring(deref(o))));
+		local t = stead.tostring(o);
+		if t == i then
+			t = tostring(o);
+		end
+		if t then
+			if rc ~='' then rc = rc..'^' end
+			local n = '';
+			if isObject(ref(o)) then
+				n = call(ref(o), 'nam');
+				if not n then n = '' else n = ' : '..n; end
+			end
+			rc = stead.cat(rc, stead.par(' ', tostring(i)..' : '..t..n));
+		end
+	end
+	seen('disp')._txt = stead.cat('^^', rc)
+	return true;
+end
+
+dump_globals = function()
+	local i,o
+	local rc=''
+	if type(variables) ~= 'table' then
+		return
+	end
+	for i,o in ipairs(variables) do
+		local v = _G[o];
+		local t = stead.tostring(v);
+		if t then
+			if rc ~='' then rc = rc..'^' end
+			rc = stead.cat(rc, stead.par(' ', tostring(o)..' : '..t));
+		end
 	end
 	seen('disp')._txt = stead.cat('^^', rc)
 	return true;
@@ -111,6 +182,7 @@ dump_object = room {
 		obj{nam = 'Player',dsc =  '^{Dump player}', act = code[[ return dump_obj(me())]]},
 		obj{nam = 'Lifes', dsc = '^{Dump lifes}', act = code[[ return dump_obj(game.lifes)]]},
 		obj{nam = 'Ways', dsc = '^{Dump ways}', act = code[[ return dump_obj(ways(dbg_here()))]]},
+		obj{nam = 'Globals', dsc = '^{Dump globals}', act = code [[return dump_globals()]] },
 		obj{nam = 'Back', dsc = '^{Back}', act = code [[ return back() ]] },
 		new[[ disp_obj() ]]}
 }
@@ -123,10 +195,17 @@ choose_location = dlg {
 	gen = function(s)
 		local k,v
 		objs(s):zap();
-		for k,v in pairs(_G) do
+		for k,v in spairs(_G) do
 			if isRoom(v) and not v.debug then
-				local n = call(v, 'nam');
-				put(phr(n:gsub(":","\\:"), true, [[return goto("]]..k..[[")]]), s);
+				local n = tostring(call(v, 'nam'));
+				local o = deref(v);
+				if type(o) == 'string' then
+					n = n..' : '..o;
+					if xact then
+						n = n:gsub(":","\\:")
+					end
+					put(phr(n, true, [[return goto(]]..o..[[)]]), s);
+				end
 			end
 		end
 		put (phr('Back',true, 'return back()'), s)
@@ -141,10 +220,17 @@ choose_object = dlg {
 	gen = function(s)
 		local k,v
 		objs(s):zap();
-		for k,v in pairs(_G) do
-			if isObject(v) and not isRoom(v) and not isPlayer(v) and not v.debug and not have(v) and not isStatus(v) then
-				local n = call(v, 'nam');
-				put(phr(n:gsub(":","\\:"), true, k..':enable(); return take("'..k..'")'), s);
+		for k,v in spairs(_G) do
+			if isObject(v) and not isPhrase(v) and not isRoom(v) and not isPlayer(v) and not v.debug and not have(v) and not isStatus(v) then
+				local n = tostring(call(v, 'nam'));
+				local o = deref(v);
+				if type(o) == 'string' then
+					n = n..' : '..o;
+					if xact then
+						n = n:gsub(":","\\:")
+					end
+					put(phr(n, true, o..':enable(); return take("'..o..'")'), s);
+				end
 			end
 		end
 		put (phr('Back',true, 'return back()'), s)
@@ -159,9 +245,18 @@ drop_object = dlg {
 	gen = function(s)
 		local k,v
 		objs(s):zap();
-		for k,v in pairs(_G) do
-			if isObject(v) and not isRoom(v) and not isPlayer(v) and not v.debug and have(v) then
-				put (phr(k, true, 'drop("'..k..'","'..deref(dbg_here())..'")'), s)
+		for k,v in ipairs(inv()) do
+			v = ref(v);
+			if not v.debug then
+				local n = tostring(call(v, 'nam'));
+				local o = deref(v);
+				if type(o) == 'string' then
+					n = n..' : '..o;
+					if xact then
+						n = n:gsub(":","\\:")
+					end
+					put (phr(n, true, o..':enable(); drop("'..o..'","'..deref(dbg_here())..'")'), s)
+				end
 			end
 		end
 		put (phr('Back', true, 'return back()'), s)
