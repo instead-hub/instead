@@ -1012,7 +1012,7 @@ function phrase_action(self)
 		r = true;
 	end
 	if isDialog(here()) and not dialog_rescan(here()) then
-		ret = stead.par(' ', ret, me():goto(from(), true));
+		ret = stead.par(' ', ret, stead.back());
 	end
 	
 	ret = stead.par("^^", last, ret);
@@ -2109,7 +2109,7 @@ function vroom_save(self, name, h, need)
 end
 
 function vroom_enter(self, ...)
-	return me():goto(self.where);
+	return stead.goto(self.where);
 end
 
 function isVroom(v)
@@ -2125,10 +2125,12 @@ function goto(what)
 	me():tag();
 	return v,r;
 end
+stead.goto = goto;
 
 function back()
 	return me():back();
 end
+stead.back = back;
 
 function rnd(m)
 	return math.random(m);
