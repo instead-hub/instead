@@ -471,9 +471,9 @@ game.use = 'Won\'t work...';
 
 Attribute lists (such as “way” or “obj”) allow to work with themselves thus allowing to implement dynamically defined passages between scenes, live objects, etc.
 
-List methods are: “add”, “del”, “look”, “srch”, “purge”. The most used are “add” and “del”.
+List methods are: “add”, “del”, “look”, “srch”, “purge”, “replace”. The most used are “add” and “del”.
 
-“add” adds to the list, “del” removes from the list, “purge” removes even disabled object, “srch” performs a search. Note that “del” and “srch” may use as a parameter not only the object itself or its identifier, but also the object name.
+“add” adds to the list, “del” removes from the list, “purge” removes even disabled object, “srch” performs a search. “replace” replaces object. Note that “del”, “purge”, “replace” and “srch” may use as a parameter not only the object itself or its identifier, but also the object name.
 
 Starting from version 0.8 the object itself may be a parameter of “add”. Also from this version an optional second parameter is added — position in list. From 0.8 you also can modify the list by the index with the “set” method. For example:
 <code>
@@ -640,8 +640,9 @@ mycar = obj {
 	end
 };
 </code>
+goback() -- go to the previous scene.
 
-back() — “goto” to the previous scene.
+back() -- go to the previous scene. In case of returning from dialog to room, dsc/enter/entered methods of room will not be called. Use in dialogs.
 
 time() — returns the current game time in player's moves.
 
@@ -657,7 +658,11 @@ path(obj,[where]) -- lookup in way, even for disabled items;
 
 nameof(obj) -- get object's name (nam attribute);
 
-purge (obj, [where]) -- see remove, deletes even disabled object'
+purge (obj, [where]) -- see remove, deletes even disabled object;
+
+replace (obj, onobj, [where]) -- replaces object;
+
+disabled(obj) -- returns true for disabled objects;
 
 ===== 14. Dialogs =====
 
@@ -867,6 +872,15 @@ knife = obj {
 	nam = 'Knife'..img('img/knife.png'),
 }
 </code>
+
+In current version you can use disp attribute:
+<code>
+knife = obj {
+	nam = 'Knife';
+        disp = 'Knife'..img('img/knife.png'),
+}
+</code>
+
 
 The interpreter cycles the current music defined by the function ”set_music(music file name)”.
 
