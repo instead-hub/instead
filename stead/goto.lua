@@ -49,7 +49,8 @@ go = function (self, where, back, forceenter)
 		self.where = deref(where);
 	end
 
-	if not jump and (not back or forceenter) then
+	if not jump and (not back or forceenter or 
+		not isDialog(ref(was)) or isDialog(ref(where))) then
 		v, r = call(ref(where), 'enter', ref(was));
 		if r == false then
 			self.where = was;
@@ -149,7 +150,9 @@ iface.fmt = function(self, cmd, st, moved, r, av, objs, pv) -- st -- changed sta
 	if st then
 		av = txtem(av);
 		pv = txtem(pv);
-		r = txtem(r)
+		if not PLAYER_MOVED then
+			r = txtem(r)
+		end
 		if isForcedsc(here()) or NEED_SCENE then
 			l = here():scene();
 		end
