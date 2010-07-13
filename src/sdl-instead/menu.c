@@ -74,7 +74,7 @@ static char *slot_name(const char *path)
 			time(&t);
 			tm = localtime(&t);
 			y = tm->tm_year;
-			tm = localtime(&st.st_ctime);
+			tm = localtime(&st.st_mtime);
 			l = malloc(strlen(s) + 64);
 			if (!l)
 				return s;
@@ -94,7 +94,7 @@ static char *slot_name(const char *path)
 		}
 		free(l);
 	}
-	l = ctime(&st.st_ctime);
+	l = ctime(&st.st_mtime);
 	if (!l)
 		return NULL;
 	l[strcspn(l,"\n")] = 0;
