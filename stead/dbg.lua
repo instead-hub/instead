@@ -229,7 +229,7 @@ choose_object = dlg {
 					if xact then
 						n = n:gsub(":","\\:")
 					end
-					put(phr(n, true, o..':enable(); return take("'..o..'")'), s);
+					put(phr(n, true, o..':enable(); return take('..o..')'), s);
 				end
 			end
 		end
@@ -255,7 +255,7 @@ drop_object = dlg {
 					if xact then
 						n = n:gsub(":","\\:")
 					end
-					put (phr(n, true, o..':enable(); drop("'..o..'","'..deref(dbg_here())..'")'), s)
+					put (phr(n, true, o..':enable(); drop('..o..','..deref(dbg_here())..')'), s)
 				end
 			end
 		end
