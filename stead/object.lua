@@ -115,6 +115,7 @@ function list_check(self, name) -- force using of objects, instead refs
 			local n = stead.string.format("%s[%d]", name, ii);
 			v = allocator:new(n);
 			self[ii] = v;
+			v.auto_allocated = true;
 			for_each(v, n, check_list, isList, deref(v));
 		else
 			self[ii] = o;
@@ -181,6 +182,20 @@ function list_str(self)
 		end
 	end
 	return v;
+end
+
+function list_save(self, name, h, need)
+	if self.__modified__ then
+		local i,v
+		for i,v in ipairs(self) do -- dump auto objs
+			if isObject(v) and v.auto_allocated then
+				v:save(v.key_name, h, true, true);
+			end
+		end
+		h:write(name.." = list({});\n");
+		need = true;
+	end
+	savemembers(h, self, name, need);
 end
 
 function obj_str(self)
