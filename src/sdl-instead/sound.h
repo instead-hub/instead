@@ -2,7 +2,7 @@
 #define __SOUND_H__
 
 typedef void*  wav_t;
-typedef void*  mus_t;
+typedef struct _mus_t *mus_t;
 
 //extern mus_t	snd_load_mus(const char *path);
 extern void	snd_free_mus(mus_t mus);
