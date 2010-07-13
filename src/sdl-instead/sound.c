@@ -4,20 +4,23 @@
 #include <SDL.h>
 #include <SDL_mixer.h>
 
-Mix_Music *music = NULL;
-
 int audio_rate = 22050;
 Uint16 audio_format = MIX_DEFAULT_FORMAT; 
 int audio_channels = 2;
 int audio_buffers = 8192;
 
-static Mix_Music *mus;
+static mus_t mus;
 static char *next_mus = NULL;
 static int   next_fadein = 0;
 static int   next_loop = -1;
 static SDL_TimerID timer_id = NULL;
 
 static int sound_on = 0;
+
+struct _mus_t {
+	Mix_Music *mus;
+	SDL_RWops *rw;
+};
 
 static void mus_callback(void *aux)
 {
@@ -135,13 +138,26 @@ void snd_halt_chan(int han, int ms)
 		Mix_HaltChannel(han);
 }
 
-Mix_Music *snd_load_mus(const char *fname)
+mus_t snd_load_mus(const char *fname)
 {
-	Mix_Music *mus;
+	mus_t	mus = NULL;
 	if (!sound_on)
 		return NULL;
-	mus = Mix_LoadMUS(fname);
+	mus = malloc(sizeof(struct _mus_t));
+	if (!mus)
+		return NULL;
+	mus->rw = SDL_RWFromFile(fname, "rb");
+	if (!mus->rw) 
+		goto err;
+	mus->mus = Mix_LoadMUS_RW(mus->rw);
+	if (!mus->mus)
+		goto err1;
 	return mus;
+err1:
+	SDL_RWclose(mus->rw);
+err:
+	free(mus);
+	return NULL;
 }
 
 extern void game_music_finished(void);
@@ -174,9 +190,9 @@ int snd_play_mus(char *fname, int ms, int loop)
 	else
 		Mix_HookMusicFinished(NULL);
 	if (ms)
-		Mix_FadeInMusic((Mix_Music*)mus, loop, ms);
+		Mix_FadeInMusic(mus->mus, loop, ms);
 	else
-		Mix_PlayMusic((Mix_Music*)mus, loop);
+		Mix_PlayMusic(mus->mus, loop);
 	snd_volume_mus(snd_volume_mus(-1)); // SDL hack?
 	return 0;
 }
@@ -216,8 +232,17 @@ void snd_free_mus(mus_t mus)
 {
 	if (!sound_on)
 		return;
+	if (!mus)
+		return;
 	Mix_HaltMusic();
-	Mix_FreeMusic((Mix_Music*) mus);
+	if (mus->mus) {
+#ifdef _SDL_MOD_BUG
+		if (Mix_GetMusicType(mus->mus) == MUS_MOD)
+			SDL_RWclose(mus->rw);
+#endif
+		Mix_FreeMusic((Mix_Music*) mus->mus);
+	}
+	free(mus);
 }
 
 int snd_play(void *chunk, int channel, int loop)
@@ -246,7 +271,7 @@ void snd_done(void)
 	Mix_HaltMusic();
 	timer_id = NULL;
 	if (mus)
-		Mix_FreeMusic((Mix_Music*) mus);
+		snd_free_mus(mus);
 	mus = NULL;
 	if (next_mus)
 		free(next_mus);

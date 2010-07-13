@@ -21,7 +21,7 @@ LUA_LFLAGS=-llua5.1 -L../windows/
 SDL_CFLAGS=-I../windows/SDL
 SDL_LFLAGS=-lSDL -lSDLmain -lSDL_ttf -lSDL_mixer -lSDL_image -L../windows/SDL
 
-CFLAGS	+= -Wall -mwindows -D_HAVE_ICONV -D_USE_UNPACK -D_USE_BROWSE -D_LOCAL_APPDATA
+CFLAGS	+= -Wall -mwindows -D_HAVE_ICONV -D_USE_UNPACK -D_USE_BROWSE -D_LOCAL_APPDATA -D_SDL_MOD_BUG
 LDFLAGS += -liconv
 
 CC=i486-mingw32-gcc
