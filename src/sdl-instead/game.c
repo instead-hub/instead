@@ -1396,6 +1396,8 @@ int game_cmd(char *cmd)
 		title_h += game_theme.font_size / 2; // todo?	
 	}
 
+	free(title);
+
 	instead_eval("return get_picture();");
 	pict = instead_retval(0);
 	instead_clear();
