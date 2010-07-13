@@ -2002,7 +2002,10 @@ function lifeoff(what)
 	game.lifes:del(what);
 end
 
-function allocator_save(s, name, h, need)
+function allocator_save(s, name, h, need, auto)
+	if s.auto_allocated and not auto then
+		return
+	end
 	if need then
 		local m = ' = allocator:get("'..name:gsub('"','\\"')..'","'..tostring(s.constructor):gsub('"','\\"')..'");';
 		h:write(name..m..'\n');
