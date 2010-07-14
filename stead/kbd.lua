@@ -7,7 +7,7 @@ game.action = stead.hook(game.action, function(f, s, cmd, ...)
 		end
 		return r,v
 	end
-	return f(cmd, unpack(arg));
+	return f(s, cmd, unpack(arg));
 end)
 
 input.key = stead.hook(input.key, function(f, s, down, key, ...)
