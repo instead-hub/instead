@@ -21,10 +21,10 @@ function ordered_n(t)
 		if isObject(a) and isObject(b) then
 			local n = call(a, 'nam');
 			local m = call(b, 'nam');
-			if n == nil then
+			if type(n) ~= 'string' then
 				return true
 			end
-			if m == nil then
+			if type(m) ~= 'string' then
 				return false
 			end
 			return n < m;
