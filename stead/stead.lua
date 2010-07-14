@@ -1639,10 +1639,11 @@ function gamefile(file)
 	game.lifes:zap();
 	dofile(file);
 	game:ini();
-	if file == 'main.lua' then -- legacy??? 
-		file = nil
+	if #game._scripts == 0 or file ~= game._scripts[#game._scripts] then
+		if #game._scripts ~= 0 or file ~= 'main.lua' then
+			stead.table.insert(game._scripts, file);
+		end
 	end
-	game._script = file;
 	return goto(here())
 end
 
@@ -1654,9 +1655,10 @@ function do_savegame(s, h)
 	local function save_var(key, value, h)
 		savevar(h, value, key, isForSave(key, value, _G))
 	end
-	if s._script then 
+	local i,v
+	for i,v in ipairs(s._scripts) do
 		h:write(stead.string.format("gamefile(%q)\n", 
-			s._script)) 
+			v)) 
 	end
 	save_object('allocator', allocator, h); -- always first!
 	for_each_object(save_object, h);
@@ -1728,6 +1730,7 @@ Commands:^
     back, inv, way, obj, quit, save <fname>, load <fname>.]],
 	pl ='pl',
 	showlast = true, 
+	_scripts = {};
 };
 function strip(s)
 	local s = tostring(s);
