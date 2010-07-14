@@ -11,12 +11,9 @@ game.action = stead.hook(game.action, function(f, s, cmd, ...)
 end)
 
 input.key = stead.hook(input.key, function(f, s, down, key, ...)
-	local k,v
-	for k,v in ipairs(input.key_hooks) do
-		if v == key then
-			input.key_event = { key = key, down = down };
-			return 'user_kbd'
-		end
+	if input.key_hooks[key] then
+		input.key_event = { key = key, down = down };
+		return 'user_kbd'
 	end
 	return f(s, down, key, unpack(arg))
 end)
@@ -24,7 +21,7 @@ end)
 function hook_keys(...)
 	local i
 	for i = 1, stead.table.maxn(arg) do
-		stead.table.insert(input.key_hooks, tostring(arg[i]));
+		input.key_hooks[tostring(arg[i])] = true;
 	end
 end
 
