@@ -6,12 +6,14 @@ CFLAGS += $(SDL_CFLAGS) $(LUA_CFLAGS) $(ZLIB_CFLAGS) $(EXTRA_CFLAGS) -DLANG_PATH
 LDFLAGS += $(SDL_LFLAGS) $(LUA_LFLAGS) $(ZLIB_LFLAGS) $(EXTRA_LDFLAGS)
  
 SRC     := graphics.c input.c game.c main.c instead.c sound.c SDL_rotozoom.c SDL_anigif.c SDL_gfxBlitFunc.c config.c themes.c menu.c util.c cache.c unzip.c ioapi.c unpack.c $(PLATFORM)
+H	:= cache.h config.h externals.h game.h graphics.h input.h instead.h internals.h ioapi.h iowin32.h list.h \
+	menu.h SDL_anigif.h SDL_gfxBlitFunc.h SDL_rotozoom.h sound.h themes.h unzip.h util.h
 
 OBJ     := $(patsubst %.c, %.o, $(SRC))
 
 all: sdl-instead$(EXE)
 
-$(OBJ): %.o : %.c menu.h config.h game.h themes.h externals.h internals.h util.h
+$(OBJ): %.o : %.c $(H)
 	$(CC) -c $(<) $(I) $(CFLAGS)
 
 sdl-instead$(EXE):  $(OBJ) $(RESOURCES)
