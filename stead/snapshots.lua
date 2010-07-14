@@ -25,7 +25,13 @@ function restore_snapshot(nr)
 	if not tonumber(nr) then nr = 0 end
 	local ss = game._snapshots
 	if not ss[nr] then return nil, true end -- nothing todo
-	gamefile("main.lua"); stead.pclr();
+	local i,v
+
+	gamefile("main.lua"); -- legacy?
+	local scripts = game._scripts
+	for i,v in ipairs(scripts) do gamefile(v); end
+	game._scripts = scripts
+	stead.pclr();
 --	if type(init) == 'function' then -- no hooks here!!!
 --		init();
 --	end
