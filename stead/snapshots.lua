@@ -3,14 +3,6 @@ game._snapshots = {}
 function make_snapshot(nr)
 	if not tonumber(nr) then nr = 0 end
 	local h = { };
-	local function save_object(key, value, h)
-		savevar(h, value, key, false);
-		return true;
-	end
-	local function save_var(key, value, h)
-		savevar(h, value, key, isForSave(key, value, _G))
-	end
-
 	h.txt = ''
 	h.write = function(s, ...)
 		local i
@@ -19,10 +11,7 @@ function make_snapshot(nr)
 		end
 	end
 	local old = game._snapshots; game._snapshots = nil
-	for_each_object(save_object, h);
-	save_object('game', game, h);
-	for_everything(save_var, h);
-	clearvar(_G);
+	do_savegame(game, h);
 	game._snapshots = old
 	game._snapshots[nr] = h.txt;
 end
@@ -36,10 +25,7 @@ function restore_snapshot(nr)
 	if not tonumber(nr) then nr = 0 end
 	local ss = game._snapshots
 	if not ss[nr] then return nil, true end -- nothing todo
-	stead:init();
-	game.lifes:zap();
-	dofile('main.lua');
-	game:ini()
+	gamefile("main.lua"); stead.pclr();
 --	if type(init) == 'function' then -- no hooks here!!!
 --		init();
 --	end

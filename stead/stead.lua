@@ -1634,18 +1634,40 @@ function savevar (h, v, n, need)
 	h:write("\n") 
 end
 
+function gamefile(file)
+	stead:init();
+	game.lifes:zap();
+	dofile(file);
+	game:ini();
+	if file == 'main.lua' then -- legacy??? 
+		file = nil
+	end
+	game._script = file;
+	return goto(here())
+end
 
-
-function game_save(self, name, file) 
-	local h;
+function do_savegame(s, h)
 	local function save_object(key, value, h)
 		savevar(h, value, key, false);
 		return true;
 	end
-
 	local function save_var(key, value, h)
 		savevar(h, value, key, isForSave(key, value, _G))
 	end
+	if s._script then 
+		h:write(stead.string.format("gamefile(%q)\n", 
+			s._script)) 
+	end
+	save_object('allocator', allocator, h); -- always first!
+	for_each_object(save_object, h);
+	save_object('game', self, h);
+	for_everything(save_var, h);
+--	save_object('_G', _G, h);
+	clearvar(_G);
+end
+
+function game_save(self, name, file) 
+	local h;
 
 	if file ~= nil then
 		file:write(name..".pl = '"..deref(self.pl).."'\n");
@@ -1668,12 +1690,7 @@ function game_save(self, name, file)
 	if type(n) == 'string' and n ~= "" then
 		h:write("-- $Name: "..n:gsub("\n","\\n").."$\n");
 	end
-	save_object('allocator', allocator, h); -- always first!
-	for_each_object(save_object, h);
-	save_object('game', self, h);
-	for_everything(save_var, h);
---	save_object('_G', _G, h);
-	clearvar(_G);
+	do_savegame(self, h);
 	h:flush();
 	h:close();
 	game.autosave = false; -- we have only one try for autosave
