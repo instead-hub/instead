@@ -259,7 +259,7 @@ char *open_file_dialog(void)
 	ofn.lpstrFile = szFile ;
 	ofn.lpstrFile[0] = '\0';
 	ofn.nMaxFile = sizeof( szFile );
-	ofn.lpstrFilter = "*.*\0*.*\0*.zip\0*.zip\0main.lua\0main.lua";
+	ofn.lpstrFilter = "*.*\0*.*\0main.lua;*.zip\0main.lua;*.zip\0\0";
 	ofn.nFilterIndex = 2;
 	ofn.lpstrFileTitle = NULL;
 	ofn.nMaxFileTitle = 0;

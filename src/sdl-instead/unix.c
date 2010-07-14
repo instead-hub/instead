@@ -103,7 +103,7 @@ char *open_file_dialog(void)
 
 	GtkFileFilter *file_filter_all;
 	GtkFileFilter *file_filter_zip;
-	GtkFileFilter *file_filter_lua;
+/*	GtkFileFilter *file_filter_lua; */
 
 	file_filter_all = gtk_file_filter_new();
 	gtk_file_filter_add_pattern(file_filter_all, "*");
@@ -112,13 +112,15 @@ char *open_file_dialog(void)
 
 	file_filter_zip = gtk_file_filter_new();
 	gtk_file_filter_add_pattern(file_filter_zip, "*.zip");
-	gtk_file_filter_set_name(file_filter_zip, "*.zip");
+	gtk_file_filter_add_pattern(file_filter_zip, "main.lua");
+	gtk_file_filter_set_name(file_filter_zip, "main.lua; *.zip");
 
+/*
 	file_filter_lua = gtk_file_filter_new();
 	gtk_file_filter_add_pattern(file_filter_lua, "main.lua");
 	gtk_file_filter_set_name(file_filter_lua, "main.lua");
+*/
 
-	
 	file[0] = 0;
 	file_dialog = gtk_file_chooser_dialog_new (BROWSE_MENU, 
 			NULL, GTK_FILE_CHOOSER_ACTION_OPEN,
@@ -137,8 +139,8 @@ char *open_file_dialog(void)
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_dialog),
 		file_filter_zip);
 
-	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_dialog),
-		file_filter_lua);
+/*	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_dialog),
+		file_filter_lua);*/
 
 	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(file_dialog), file_filter_zip);
 
