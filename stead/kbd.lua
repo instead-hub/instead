@@ -11,7 +11,7 @@ game.action = stead.hook(game.action, function(f, s, cmd, ...)
 end)
 
 input.key = stead.hook(input.key, function(f, s, down, key, ...)
-	if input.key_hooks[key] then
+	if input._key_hooks[key] then
 		input.key_event = { key = key, down = down };
 		return 'user_kbd'
 	end
@@ -21,12 +21,19 @@ end)
 function hook_keys(...)
 	local i
 	for i = 1, stead.table.maxn(arg) do
-		input.key_hooks[tostring(arg[i])] = true;
+		input._key_hooks[tostring(arg[i])] = true;
+	end
+end
+
+function unhook_keys(...)
+	local i
+	for i = 1, stead.table.maxn(arg) do
+		input._key_hooks[tostring(arg[i])] = nil;
 	end
 end
 
 stead.module_init(function()
-	input.key_hooks = {}
+	input._key_hooks = {}
 end)
 
 -- vim:ts=4
