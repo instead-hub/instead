@@ -1638,8 +1638,6 @@ function gamefile(file, forget)
 	if forget then
 		game._scripts = { }
 	end
-	stead:init();
-	game.lifes:zap();
 	dofile(file);
 	game:ini();
 	if #game._scripts == 0 or file ~= game._scripts[#game._scripts] then
@@ -1647,7 +1645,6 @@ function gamefile(file, forget)
 			stead.table.insert(game._scripts, file);
 		end
 	end
-	return goto(here())
 end
 
 function do_savegame(s, h)
