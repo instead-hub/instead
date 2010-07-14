@@ -27,10 +27,7 @@ function restore_snapshot(nr)
 	if not ss[nr] then return nil, true end -- nothing todo
 	local i,v
 
-	gamefile("main.lua"); -- legacy?
-	local scripts = game._scripts
-	for i,v in ipairs(scripts) do gamefile(v); end
-	game._scripts = scripts
+	gamefile("main.lua", true);
 	stead.pclr();
 --	if type(init) == 'function' then -- no hooks here!!!
 --		init();

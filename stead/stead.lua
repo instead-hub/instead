@@ -1634,7 +1634,10 @@ function savevar (h, v, n, need)
 	h:write("\n") 
 end
 
-function gamefile(file)
+function gamefile(file, forget)
+	if forget then
+		game._scripts = { }
+	end
 	stead:init();
 	game.lifes:zap();
 	dofile(file);

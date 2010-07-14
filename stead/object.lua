@@ -111,7 +111,7 @@ function list_check(self, name) -- force using of objects, instead refs
 			error ("No object: "..tostring(v))
 			return false
 		end
-		if isObject(deref(v)) and not v.dynamic_type then -- no named object!
+		if isObject(deref(v)) and not v._dynamic_type then -- no named object!
 			local n = stead.string.format("%s[%d]", name, ii);
 			v = allocator:new(n);
 			self[ii] = v;
@@ -131,7 +131,7 @@ function list_add(self, name, pos)
 		return nil
 	end
 	self.__modified__ = true;
-	nam.dynamic_type = true
+	nam._dynamic_type = true
 	if tonumber(pos) then
 		stead.table.insert(self, tonumber(pos), nam);
 		self[tonumber(pos)] = nam; -- for spare lists
@@ -148,7 +148,7 @@ function list_set(self, name, pos)
 		return nil
 	end
 	nam = ref(name);
-	nam.dynamic_type = true
+	nam._dynamic_type = true
 	self.__modified__ = true;
 	self[i] = nam; -- for spare lists
 	return true
