@@ -131,7 +131,9 @@ function list_add(self, name, pos)
 		return nil
 	end
 	self.__modified__ = true;
-	nam._dynamic_type = true
+	if isObject(deref(nam)) then
+		nam._dynamic_type = true
+	end
 	if tonumber(pos) then
 		stead.table.insert(self, tonumber(pos), nam);
 		self[tonumber(pos)] = nam; -- for spare lists
@@ -148,7 +150,9 @@ function list_set(self, name, pos)
 		return nil
 	end
 	nam = ref(name);
-	nam._dynamic_type = true
+	if isObject(deref(nam)) then
+		nam._dynamic_type = true
+	end
 	self.__modified__ = true;
 	self[i] = nam; -- for spare lists
 	return true
