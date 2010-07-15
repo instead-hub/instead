@@ -1341,7 +1341,7 @@ function game_life(self)
 	local av,v
 	stead.in_life_call = true;
 	stead.lifes_off = list {}; -- lifes to off 
-	local m = PLAYER_MOVED
+	stead.PLAYER_MOVED = PLAYER_MOVED
 	for i,o in opairs(self.lifes) do
 		local vv
 		local pre
@@ -1356,13 +1356,18 @@ function game_life(self)
 			end
 		end
 	end
-	if not PLAYER_MOVED then PLAYER_MOVED = m end
+	if not PLAYER_MOVED then PLAYER_MOVED = stead.PLAYER_MOVED end
+	stead.PLAYER_MOVED = nil
 	stead.in_life_call = false;
 	for i,o in ipairs(stead.lifes_off) do
 		lifeoff(o);
 	end
 	stead.lifes_off = nil;
 	return v, av;
+end
+
+function player_moved()
+	return PLAYER_MOVED or stead.PLAYER_MOVED
 end
 
 function check_list(k, v, p)
