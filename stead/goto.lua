@@ -164,9 +164,9 @@ iface.fmt = function(self, cmd, st, moved, r, av, objs, pv) -- st -- changed sta
 	if st then
 		av = txtem(av);
 		pv = txtem(pv);
-		if not PLAYER_MOVED then
+--		if not PLAYER_MOVED then
 			r = txtem(r)
-		end
+--		end
 		if isForcedsc(here()) or NEED_SCENE then
 			l = here():scene();
 		end
