@@ -25,7 +25,7 @@ function player_use(self, what, onwhat, ...)
 	if not obj2 then
 		obj2 = self:srch(onwhat); -- in inv?
 	end
-	if not obj2 or obj2 == obj then
+	if not obj2 then
 		return game.err, false;
 	end
 	
