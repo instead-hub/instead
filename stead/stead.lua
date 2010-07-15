@@ -1158,6 +1158,7 @@ end
 function player_use(self, what, onwhat, ...)
 	local obj, obj2, v, vv, r;
 	local scene_use_mode = false
+
 	obj = self:srch(what); -- in inv?
 	if not obj then -- no
 		obj = ref(self.where):srch(what); -- in scene?
