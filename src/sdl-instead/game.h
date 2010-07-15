@@ -43,6 +43,7 @@ extern int 	game_change_hz(int hz);
 extern int 	games_lookup(const char *path);
 extern int	games_remove(int nr);
 extern int	games_replace(const char *path, const char *dir);
+extern int 	games_rename(void);
 
 extern void 	game_err_msg(const char *s);
 extern int 	game_error(const char *name);

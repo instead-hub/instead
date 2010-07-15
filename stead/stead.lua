@@ -1434,6 +1434,7 @@ function do_ini(self, load)
 	if not self.showlast then
 		self._lastdisp = nil;
 	end
+	stead.initialized = true
 	return stead.par('',v, self._lastdisp); --stead.par('^^',v);
 end
 
@@ -1637,6 +1638,10 @@ end
 function gamefile(file, forget)
 	if forget then
 		game._scripts = { }
+		game.lifes:zap()
+		game.scriptsforget = true
+		-- anything else?
+		stead:init();
 	end
 	dofile(file);
 	game:ini();
@@ -1645,7 +1650,12 @@ function gamefile(file, forget)
 			stead.table.insert(game._scripts, file);
 		end
 	end
+	if forget then
+		return goto(here());
+	end
 end
+
+stead.gamefile = gamefile
 
 function do_savegame(s, h)
 	local function save_object(key, value, h)
@@ -1655,10 +1665,12 @@ function do_savegame(s, h)
 	local function save_var(key, value, h)
 		savevar(h, value, key, isForSave(key, value, _G))
 	end
+	local forget = game.scriptsforget
 	local i,v
 	for i,v in ipairs(s._scripts) do
-		h:write(stead.string.format("gamefile(%q)\n", 
-			v)) 
+		h:write(stead.string.format("stead.gamefile(%q,%s)\n", 
+			v, tostring(forget)))
+		forget = nil
 	end
 	save_object('allocator', allocator, h); -- always first!
 	for_each_object(save_object, h);
@@ -2631,6 +2643,7 @@ stead.objects = function(s)
 end
 
 stead.init = function(s)
+	stead.initialized = false
 	stead:objects();
 	s.functions = {} -- code blocks
 	local k,v

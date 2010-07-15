@@ -588,7 +588,10 @@ int game_menu_act(const char *a)
 			if (cur_lang >= langs_nr)
 				cur_lang = 0;
 		} while (menu_lang_select(langs[cur_lang].file));
+		if (curgame_dir)
+			instead_lang();
 		themes_rename();
+		games_rename();
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/lang--")) {
 		do {

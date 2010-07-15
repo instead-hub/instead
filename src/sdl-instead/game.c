@@ -104,20 +104,34 @@ int game_select(const char *name)
 	return 0;
 }
 
-
 static char *game_name(const char *path, const char *d_name)
 {
 	char *l;
 	char *p = getfilepath(path, MAIN_FILE);
 	if (!p)
 		goto err;
-	l = lookup_tag(p, "Name", "--");
+	l = lookup_lang_tag(p, "Name", "--");
 	free(p);
 	if (l)
 		return l;
 err:
 	return strdup(d_name);
 }
+
+int games_rename(void)
+{
+	int i;
+	char cwd[PATH_MAX];
+	getcwd(cwd, sizeof(cwd));
+	chdir(game_cwd);
+	for (i = 0; i < games_nr; i++) {
+		FREE(games[i].name);
+		games[i].name = game_name(games[i].path, games[i].dir);
+	}
+	chdir(cwd);
+	return 0;
+}
+
 
 static int cmp_game(const void *p1, const void *p2)
 {

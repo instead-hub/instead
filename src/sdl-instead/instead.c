@@ -411,6 +411,19 @@ static const luaL_Reg base_funcs[] = {
 	{NULL, NULL}
 };
 
+int instead_lang(void)
+{
+	char lang[64];
+	if (!L)
+		return 0;
+	if (opt_lang && *opt_lang)
+		snprintf(lang, sizeof(lang) - 1, "LANG='%s'", opt_lang);
+	else
+		snprintf(lang, sizeof(lang) - 1, "LANG='en'");
+	instead_eval(lang); instead_clear();
+	return 0;
+}
+
 static int instead_package(void)
 {
 	char *p;
@@ -452,6 +465,7 @@ int instead_init(void)
 	luaL_register(L, "_G", base_funcs);
 
 	instead_package();
+	instead_lang();
 
 	if (dofile(L,STEAD_PATH"/stead.lua")) {
 		return -1;
