@@ -70,6 +70,11 @@ go = function (self, where, back, noenter, noexit, nodsc)
 
 	ret()
 
+	PLAYER_MOVED = true
+	if need_scene and not nodsc then
+		NEED_SCENE = true
+	end
+
 	if not stead.in_goto_call  then
 		local to = self.where
 		if not noexit then
@@ -98,10 +103,6 @@ go = function (self, where, back, noenter, noexit, nodsc)
 		if isDialog(ref(to)) then
 			dialog_rescan(ref(to));
 		end
-	end
-	PLAYER_MOVED = true
-	if need_scene and not nodsc then
-		NEED_SCENE = true
 	end
 	return res;
 end
