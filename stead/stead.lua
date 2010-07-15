@@ -1552,6 +1552,7 @@ function clearvar (v)
 	for k,o in pairs(v) do
 		if type(o) == 'table' and o.__visited__ ~= nil then
 			o.__visited__ = nil
+			o.auto_saved = nil
 			clearvar(o)
 		end
 	end
