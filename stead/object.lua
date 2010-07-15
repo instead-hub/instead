@@ -125,8 +125,13 @@ function list_check(self, name) -- force using of objects, instead refs
 end
 
 function list_add(self, name, pos)
-	local nam
-	nam = ref(name);
+	local nam = name
+	if stead.initialized then
+		nam = ref(name);
+	end
+	if not nam then
+		error ("Add wrong object to list: "..tostring(name), 2);
+	end
 	if self:look(nam) then
 		return nil
 	end
@@ -144,12 +149,17 @@ function list_add(self, name, pos)
 end
 
 function list_set(self, name, pos)
-	local nam
+	local nam = name
 	local i = tonumber(pos);
 	if not i then
 		return nil
 	end
-	nam = ref(name);
+	if stead.initialized then
+		nam = ref(name);
+	end
+	if not nam then
+		error ("Set wrong object in list: "..tostring(name), 2);
+	end
 	if isObject(deref(nam)) then
 		nam._dynamic_type = true
 	end

@@ -26,9 +26,7 @@ stead.restore_snapshot = function (nr)
 	if not ss[nr] then return nil, true end -- nothing todo
 	local i,v
 
-	stead:init();
---	game.lifes:zap();
-	gamefile("main.lua", true);
+	stead.gamefile("main.lua", true);
 
 	local f, err = loadstring(ss[nr]);
 	if not f then return end
