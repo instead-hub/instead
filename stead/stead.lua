@@ -1561,7 +1561,7 @@ function savemembers(h, self, name, need)
 			if isForSave(k, v, self) then
 				need2 = true;
 			end
-			
+
 			if type(k) == 'string' then
 				savevar(h, v, name..'['..stead.string.format("%q",k)..']', need or need2);
 			elseif type(k) ~= 'function' then
@@ -1573,6 +1573,7 @@ end
 
 function savevar (h, v, n, need)
 	local r,f
+
 	if v == nil or type(v) == "userdata" or
 			 type(v) == "function" then
 		if isCode(v) and need then
@@ -1604,6 +1605,9 @@ function savevar (h, v, n, need)
 	if type(v) == "table" then
 		if v == _G then return end
 		if type(v.key_name) == 'string' and v.key_name ~= n then -- just xref
+			if v.auto_allocated and not v.auto_saved then
+				v:save(v.key_name, h, true, true);
+			end
 			if need then
 				h:write(stead.string.format("%s = %s\n", n, v.key_name));
 			end
@@ -2044,6 +2048,7 @@ function allocator_save(s, name, h, need, auto)
 		h:write(name..m..'\n');
 	end
 	savemembers(h, s, name, false);
+	s.auto_saved = true
 end
 
 function new(str)
