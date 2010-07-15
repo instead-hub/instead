@@ -8,19 +8,20 @@ function ordered_n(t)
 	local i,v, max;
 	max = 0;
 	for i,v in pairs(t) do
-		stead.table.insert(ordered, v);
+		local o = { k = i; v = v };
+		stead.table.insert(ordered, o);
 		max = max + 1;
 	end
 	stead.table.sort(ordered, function(a, b)
-		if isObject(a) and not isObject(b) then
+		if isObject(a.v) and not isObject(b.v) then
 			return true
 		end
-		if not isObject(a) and isObject(b) then
+		if not isObject(a.v) and isObject(b.v) then
 			return false
 		end
-		if isObject(a) and isObject(b) then
-			local n = call(a, 'nam');
-			local m = call(b, 'nam');
+		if isObject(a.v) and isObject(b.v) then
+			local n = call(a.v, 'nam');
+			local m = call(b.v, 'nam');
 			if type(n) ~= 'string' then
 				return true
 			end
@@ -46,7 +47,7 @@ function snext(t, k)
 	end
 	v = k[k.i]
 	k.i = k.i + 1
-	return k, v;
+	return k, v.v, v.k;
 end
 
 function spairs(s, var)
@@ -199,12 +200,12 @@ choose_location = dlg {
 	nam = 'Go to',
 	dsc = 'Select location.',
 	gen = function(s)
-		local k,v
+		local k,v,kk
 		objs(s):zap();
-		for k,v in spairs(_G) do
+		for k,v,kk in spairs(_G) do
 			if isRoom(v) and not v.debug then
 				local n = tostring(call(v, 'nam'));
-				local o = deref(v);
+				local o = kk;
 				if type(o) == 'string' then
 					n = n..' : '..o;
 					if xact then
@@ -224,12 +225,12 @@ choose_object = dlg {
 	nam = 'Get object',
 	dsc = 'Select object to get.',
 	gen = function(s)
-		local k,v
+		local k,v,kk
 		objs(s):zap();
-		for k,v in spairs(_G) do
+		for k,v,kk in spairs(_G) do
 			if isObject(v) and not isPhrase(v) and not isRoom(v) and not isPlayer(v) and not v.debug and not have(v) and not isStatus(v) then
 				local n = tostring(call(v, 'nam'));
-				local o = deref(v);
+				local o = kk;
 				if type(o) == 'string' then
 					n = n..' : '..o;
 					if xact then
