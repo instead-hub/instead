@@ -2155,6 +2155,9 @@ function isVroom(v)
 end
 
 function vroom(name, w)
+	if w == nil then
+		error("Wrong parameter to vroom.", 2);
+	end
 	return room { vroom_type = true, nam = name, where = deref(w), enter = vroom_enter, save = vroom_save, };
 end
 
