@@ -1,6 +1,6 @@
 game.action = stead.hook(game.action, function(f, s, cmd, ...)
 	if cmd == 'user_kbd' then
-		local r,v = call(game, 'kbd', 
+		local r,v = call(s, 'kbd', 
 			input.key_event.down, input.key_event.key);
 		if r == nil and v == nil then
 			return nil, true-- nothing to do
