@@ -1,8 +1,8 @@
 game.action = stead.hook(game.action, function(f, s, cmd, ...)
 	if cmd == 'user_timer' then
-		return call(game, 'timer');
+		return call(s, 'timer');
 	end
-	return f(cmd, unpack(arg));
+	return f(s, cmd, unpack(arg));
 end)
 
 timer.callback = function(s)

@@ -12,8 +12,8 @@ function(f, s, cmd, x, y, ...)
 		if here().click then
 			return call(here(), 'click', x, y, unpack(arg));
 		end
-		if game.click then
-			return call(game, 'click', x, y, unpack(arg));
+		if s.click then
+			return call(s, 'click', x, y, unpack(arg));
 		end
 		return nil,true
 	end
