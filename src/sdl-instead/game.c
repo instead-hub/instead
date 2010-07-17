@@ -1367,8 +1367,6 @@ static void scroll_to_diff(const char *cmdstr, int cur_off)
 
 int game_highlight(int x, int y, int on);
 
-
-
 int game_cmd(char *cmd)
 {
 	int		old_off;
@@ -1685,7 +1683,6 @@ void menu_update(struct el *elem)
 	gfx_update(mx, my, gfx_img_w(menu), gfx_img_h(menu));
 //	gfx_fill(x, y, w, h, game_theme.menu_bg);
 }
-
 
 int game_highlight(int x, int y, int on)
 {
@@ -2491,6 +2488,7 @@ int game_loop(void)
 	static int x = 0, y = 0;
 	struct inp_event ev;
 	memset(&ev, 0, sizeof(struct inp_event));
+
 	while (game_running) {
 		int rc;
 		ev.x = -1;
