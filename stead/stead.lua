@@ -109,12 +109,7 @@ function callpush(v, ...)
 	self = v
 end
 
-function callpop()
-	stead.cctx[stead.call_top] = nil;
-	stead.call_top = stead.call_top - 1;
-	if stead.call_top < 0 then
-		error ("callpush/callpop mismatch")
-	end 
+function clearargs()
 	arg1 = nil
 	arg2 = nil
 	arg3 = nil
@@ -125,6 +120,17 @@ function callpop()
 	arg8 = nil
 	arg9 = nil
 	self = nil
+end
+
+stead.clearargs = clearargs
+
+function callpop()
+	stead.cctx[stead.call_top] = nil;
+	stead.call_top = stead.call_top - 1;
+	if stead.call_top < 0 then
+		error ("callpush/callpop mismatch")
+	end 
+	clearargs()
 end
 
 function pclr()
@@ -1646,6 +1652,7 @@ function savevar (h, v, n, need)
 end
 
 function gamefile(file, forget)
+	stead.clearargs()
 	if forget then
 		game._scripts = { }
 		game.lifes:zap()
