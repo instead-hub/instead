@@ -127,10 +127,9 @@ end
 
 function back()
 	if isDialog(here()) and not isDialog(from()) then
-		local r, v = me():goto(from(), true, true, false, true);
-		return r,v;
+		return stead.out();
 	end
-	return me():goto(from(), true);
+	return stead.goback();
 end
 stead.back = back
 
@@ -143,6 +142,16 @@ function goto(what, back, noenter, noexit, nodsc, ...)
 	return me():goto(what, back, noenter, noexit, nodsc, unpack(arg));
 end
 stead.goto = goto
+
+function goin(what)
+	return me():goto(what, false, false, true);
+end
+stead.goin = goin
+
+function out()
+	return me():goto(from(), true, true, false, true);
+end
+stead.out = out
 
 game.ini = stead.hook(game.ini,function(f, ...)
 	if isRoom(here()) then
