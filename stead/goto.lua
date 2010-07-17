@@ -148,7 +148,10 @@ function goin(what)
 end
 stead.goin = goin
 
-function out()
+function out(what)
+	if isRoom(ref(what)) then
+		return me():goto(what, true, true, false, true);
+	end
 	return me():goto(from(), true, true, false, true);
 end
 stead.out = out
