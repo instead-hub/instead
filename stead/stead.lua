@@ -2612,6 +2612,10 @@ end
 stead.code = code
 --- here the game begins
 stead.objects = function(s)
+	null = obj {
+		nam = 'null';
+	}
+	
 	allocator = obj {
 		nam = 'allocator',
 		get = function(s, n, c)

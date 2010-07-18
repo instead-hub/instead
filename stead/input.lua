@@ -172,7 +172,8 @@ function kbdxlat(s)
 		return
 	end
 
-	if input.kbd_alt then
+	if input.kbd_alt and 
+		(game.codepage == 'UTF-8' or game.codepage == 'utf-8') then
 		kbd = kbdru;
 	else
 		kbd = kbden
