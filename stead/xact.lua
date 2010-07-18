@@ -115,22 +115,6 @@ function xdsc(n)
 	return obj(v)
 end
 
-function xobj(v)
-	if type(v) ~= 'table' then
-		error ("Wrong parameter to xobj.", 2);
-	end
-	if v.nam == nil then
-		v.nam = true
-	end
-	v.look = function(s)
-		if isDisabled(s) then
-			return
-		end
-		return call(s,'dsc');
-	end
-	return obj(v)
-end
-
 xroom = stead.inherit(room, function(v)
 	v.look = stead.hook(v.look, function(f, s,...)
 		local xdsc = call(s, 'xdsc');
