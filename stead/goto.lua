@@ -127,7 +127,7 @@ end
 
 function back()
 	if isDialog(here()) and not isDialog(from()) then
-		return stead.out();
+		return stead.goout();
 	end
 	return stead.goback();
 end
@@ -148,13 +148,13 @@ function goin(what)
 end
 stead.goin = goin
 
-function out(what)
+function goout(what)
 	if isRoom(ref(what)) then
 		return me():goto(what, true, true, false, true);
 	end
 	return me():goto(from(), true, true, false, true);
 end
-stead.out = out
+stead.goout = goout
 
 game.ini = stead.hook(game.ini,function(f, ...)
 	if isRoom(here()) then
