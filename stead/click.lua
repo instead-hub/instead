@@ -9,13 +9,16 @@ end)
 game.action = stead.hook(game.action, 
 function(f, s, cmd, x, y, ...)
 	if cmd == 'click' then
+		local r,v
 		if here().click then
-			return call(here(), 'click', x, y, unpack(arg));
+			r,v = call(here(), 'click', x, y, unpack(arg));
+		elseif s.click then
+			r,v = call(s, 'click', x, y, unpack(arg));
 		end
-		if s.click then
-			return call(s, 'click', x, y, unpack(arg));
+		if r == nil and v == nil then
+			return nil, true
 		end
-		return nil,true
+		return r,v
 	end
 	return f(s, cmd, x, y, unpack(arg))
 end)
