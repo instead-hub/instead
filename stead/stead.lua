@@ -2057,11 +2057,15 @@ function allocator_save(s, name, h, need, auto)
 		return
 	end
 	if need then
-		local m = ' = allocator:get("'..name:gsub('"','\\"')..'","'..tostring(s.constructor):gsub('"','\\"')..'");';
-		h:write(name..m..'\n');
+		local m = stead.string.format(" = allocator:get(%s, %s)\n", 
+			stead.tostring(name),
+			stead.tostring(s.constructor));
+		h:write(name..m);
 	end
 	savemembers(h, s, name, false);
-	s.auto_saved = true
+	if s.auto_allocated then
+		s.auto_saved = true
+	end
 end
 
 function new(str)
