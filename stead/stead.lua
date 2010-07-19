@@ -1617,8 +1617,8 @@ function savevar (h, v, n, need)
 	if type(v) == "table" then
 		if v == _G then return end
 		if type(v.key_name) == 'string' and v.key_name ~= n then -- just xref
-			if v.auto_allocated and not v.auto_saved and need then
-				v:save(v.key_name, h, true, true);
+			if v.auto_allocated and not v.auto_saved then
+				v:save(v.key_name, h, true, true); -- here todo
 			end
 			if need then
 				h:write(stead.string.format("%s = %s\n", n, v.key_name));
