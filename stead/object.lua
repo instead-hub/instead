@@ -113,7 +113,7 @@ function list_check(self, name) -- force using of objects, instead refs
 		end
 		if isObject(deref(v)) and not v._dynamic_type then -- no named object!
 			local n = stead.string.format("%s[%d]", name, ii);
-			v = allocator:new(n);
+			v = allocator:new(n, n);
 			self[ii] = v;
 			v.auto_allocated = true;
 			for_each(v, n, check_list, isList, deref(v));
