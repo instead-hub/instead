@@ -644,6 +644,11 @@ goback() -- go to the previous scene.
 
 back() -- go to the previous scene. In case of returning from dialog to room, dsc/enter/entered methods of room will not be called. Use in dialogs.
 
+goin(room) -- go to scene, do not call exit/left of current scene;
+
+goout() -- go to previous scene, do not call enter/entered of previous scene;
+
+
 time() — returns the current game time in player's moves.
 
 cat(...) — returns the string, concatenating argument strings. If the first argument is nil returns nil.
