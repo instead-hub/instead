@@ -25,7 +25,7 @@ instead (1.2.0) unstable; urgency=low
   * live() added;
   * nameof() added;
   * goback() added;
-  * goin()/out() added;
+  * goin()/goout() added;
   * disp attribute added;
   * improved debugger;
   * save vars in _G;
