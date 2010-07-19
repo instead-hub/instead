@@ -1617,7 +1617,7 @@ function savevar (h, v, n, need)
 	if type(v) == "table" then
 		if v == _G then return end
 		if type(v.key_name) == 'string' and v.key_name ~= n then -- just xref
-			if v.auto_allocated and not v.auto_saved then
+			if v.auto_allocated and not v.auto_saved and need then
 				v:save(v.key_name, h, true, true);
 			end
 			if need then
@@ -2057,10 +2057,17 @@ function allocator_save(s, name, h, need, auto)
 		return
 	end
 	if need then
-		local m = stead.string.format(" = allocator:get(%s, %s)\n", 
-			stead.tostring(name),
-			stead.tostring(s.constructor));
-		h:write(name..m);
+		if s.auto_allocated then
+			local m = stead.string.format("allocator:new(%s, %s)\n", 
+				stead.tostring(s.constructor),
+				stead.tostring(s.constructor));
+			h:write(m);
+		else
+			local m = stead.string.format(" = allocator:get(%s, %s)\n", 
+				stead.tostring(name),
+				stead.tostring(s.constructor));
+			h:write(name..m);
+		end
 	end
 	savemembers(h, s, name, false);
 	if s.auto_allocated then
@@ -2642,15 +2649,20 @@ stead.objects = function(s)
 				f();
 			end
 		end,
-		new = function(s, n)
+		new = function(s, n, key)
 			local v = ref(n);
 			if type(v) ~= 'table' or type(n) ~= 'string' then
 				error ("Error in new.", 2);
 			end
 			v.save = allocator_save;
 			v.constructor = n;
-			stead.table.insert(s.objects, v);
-			v.key_name = 'allocator["objects"]['..stead.table.maxn(s.objects)..']';
+			if key then
+				s.objects[key] = v
+				v.key_name = stead.string.format('allocator["objects"][%s]', stead.tostring(key));
+			else
+				stead.table.insert(s.objects, v);
+				v.key_name = 'allocator["objects"]['..stead.table.maxn(s.objects)..']';
+			end
 			return v
 		end,
 		objects = {
