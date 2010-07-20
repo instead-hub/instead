@@ -83,7 +83,7 @@ dump_obj = function(w)
 		if t then
 			if rc ~='' then rc = rc..'^' end
 			local n = '';
-			if isObject(ref(o)) then
+			if type(o) ~= 'function' and isObject(ref(o)) then
 				n = call(ref(o), 'nam');
 				if not n then n = '' else n = ' : '..n; end
 			end
