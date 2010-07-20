@@ -55,13 +55,19 @@ function spairs(s, var)
 end
 
 function disp_obj()
-	local v = obj{
+	local v = obj {
 		nam = 'disp',
 		act = true,
 		dsc = function(s)
 			local r = s._txt
 			s._txt = nil;
 			return r
+		end;
+		save = function(self, name, h, need)
+			if need then
+				h:write(stead.string.format("%s  = disp_obj();\n", name));
+			end
+			savemembers(h, self, name, false);
 		end
 	}
 	return v;
@@ -166,8 +172,8 @@ execute_cmd = room {
 		return back();
 	end,
 	obj = { inp('inp', '{Enter cmd}: ', 'return "Hello World!"'), 
-		obj { nam = 'Back', dsc = '^{Back}', act = code [[ back() ]]},
-		new [[ disp_obj() ]],
+		obj { nam = 'Back', dsc = '^{Back}', act = code [[ back() ]] },
+		disp_obj(),
 	}
 }
 
@@ -191,7 +197,7 @@ dump_object = room {
 		obj{nam = 'Ways', dsc = '^{Dump ways}', act = code[[ return dump_obj(ways(dbg_here()))]]},
 		obj{nam = 'Globals', dsc = '^{Dump globals}', act = code [[return dump_globals()]] },
 		obj{nam = 'Back', dsc = '^{Back}', act = code [[ return back() ]] },
-		new[[ disp_obj() ]]}
+		disp_obj() }
 }
 
 choose_location = dlg {
@@ -269,13 +275,16 @@ drop_object = dlg {
 		put (phr('Back', true, 'return back()'), s)
 	end
 }
+
 function dbg_exit()
 	local r
 	if stead.api_version < "1.2.0" then
 		r = call(dbg_here(), 'dsc');
 	end
+	game.lifes:cat(debug_tool.lifes);
 	return par ('^^', back(), r);
 end
+
 debug_dlg = dlg {
 	debug = true,
 	forcedsc = true,
@@ -290,7 +299,6 @@ debug_dlg = dlg {
 		phr('Dump object...', true, [[pon(); return goto(dump_object);]]),
 		phr('Exec Lua string...', true, [[pon(); return goto('execute_cmd')]]),
 		phr('Exit',true , [[pon(); return dbg_exit()]]),
---		new [[ disp_obj ]]
 	},
 };
 
@@ -298,11 +306,15 @@ debug_tool = menu {
 	debug = true,
 	forcedsc = true,
 	nam = txtb('debug'),
+	lifes = list {},
 	inv = function(s)
 		if here().debug then
 			return nil, true --nothing todo
 		end
 		debug_dlg.__from__ = here();
+		s.lifes:zap();
+		s.lifes:cat(game.lifes);
+		game.lifes:zap();
 		s._here = here();
 		me().where = 'debug_dlg'; -- force to go
 		return goto(self.where);
