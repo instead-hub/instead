@@ -217,7 +217,7 @@ choose_location = dlg {
 					if xact then
 						n = n:gsub(":","\\:")
 					end
-					put(phr(n, true, [[return goto(]]..o..[[)]]), s);
+					put(phr(n, true, [[game.lifes:cat(debug_tool.lifes); return goto(]]..o..[[)]]), s);
 				end
 			end
 		end
