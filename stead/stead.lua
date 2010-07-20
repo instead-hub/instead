@@ -1621,6 +1621,9 @@ function savevar (h, v, n, need)
 				v:save(v.key_name, h, false, true); -- here todo
 			end
 			if need then
+				if ref(v.key_name) == nil then
+					v.key_name = 'null'
+				end
 				h:write(stead.string.format("%s = %s\n", n, v.key_name));
 			end
 			return
