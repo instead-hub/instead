@@ -111,7 +111,8 @@ function list_check(self, name) -- force using of objects, instead refs
 			error ("No object: "..tostring(v))
 			return false
 		end
-		if isObject(deref(v)) and not v._dynamic_type then -- no named object!
+		if (v.auto_allocated and not ref(v.key_name)) -- renew
+			or (isObject(deref(v)) and not v._dynamic_type) then -- no named object!
 			local n = stead.string.format("%s[%d]", name, ii);
 			v = allocator:new(n, n);
 			self[ii] = v;
@@ -198,20 +199,6 @@ function list_str(self)
 		end
 	end
 	return v;
-end
-
-function list_save(self, name, h, need)
-	if self.__modified__ then
-		local i,v
-		for i,v in ipairs(self) do -- dump auto objs
-			if isObject(v) and v.auto_allocated then
-				v:save(v.key_name, h, true, true);
-			end
-		end
-		h:write(name.." = list({});\n");
-		need = true;
-	end
-	savemembers(h, self, name, need);
 end
 
 function obj_str(self)
