@@ -253,7 +253,9 @@ static int motion_y = 0;
 
 static		char *last_music = NULL;
 static 		char *last_pict = NULL;
+static 		char *last_title = NULL;
 static 		char *last_cmd = NULL;
+
 static int mx, my;
 static img_t 	menubg = NULL;
 static img_t	menu = NULL;
@@ -718,9 +720,11 @@ void free_last(void)
 {
 	if (last_pict)
 		free(last_pict);
+	if (last_title)
+		free(last_title);
 	if (last_cmd)
 		free(last_cmd);
-	last_pict = last_cmd = NULL;
+	last_pict = last_title = last_cmd = NULL;
 	game_stop_mus(500);
 	sounds_free();
 }
@@ -812,7 +816,9 @@ int el_clear(int n)
 	} else if (o->type == elt_layout) {
 		for (v = NULL; (img = txt_layout_images(el_layout(n), &v)); )
 			gfx_dispose_gif(img);
-	}
+	} else if (o->type == elt_image) 
+		gfx_dispose_gif(el_img(n));
+
 	return 1;
 }
 
@@ -1085,6 +1091,24 @@ void game_menu_box(int show, const char *txt)
 		game_menu_gen();
 	}
 	return game_menu_box_width(show, txt, w);
+}
+
+int check_new_place(char *title)
+{
+	int rc = 0;
+	if (!title && !last_title)
+		return 0;
+
+	if (!title && last_title) {
+		rc = 1;
+	} else if (!last_title || strcmp(title, last_title)) {
+		rc = 1;
+	}
+	if (last_title) {
+		free(last_title);
+	}
+	last_title = title;
+	return rc;
 }
 
 int check_new_pict(char *pict)
@@ -1372,6 +1396,8 @@ int game_cmd(char *cmd)
 	int		old_off;
 	int		fading = 0;
 	int		new_pict = 0;
+	int		new_place = 0;
+	int		redraw_pict = 0;
 	int		title_h = 0, ways_h = 0, pict_h = 0;
 	char 		buf[1024];
 	char 		*cmdstr = NULL;
@@ -1401,14 +1427,12 @@ int game_cmd(char *cmd)
 	} else
 		txt_layout_set(el_layout(el_title), NULL);
 
-	fading = check_fading();
+	new_place = check_new_place(title);
 
 	if (title && *title) {
 		txt_layout_size(el_layout(el_title), NULL, &title_h);
 		title_h += game_theme.font_size / 2; // todo?	
 	}
-
-	free(title);
 
 	instead_eval("return get_picture();");
 	pict = instead_retval(0);
@@ -1417,6 +1441,33 @@ int game_cmd(char *cmd)
 	unix_path(pict);
 	
 	new_pict = check_new_pict(pict);
+
+	fading = check_fading();
+
+	if (fading) { /* take old screen */
+		game_cursor(CURSOR_CLEAR);
+		img_t offscreen = gfx_new(game_theme.w, game_theme.h);
+		oldscreen = gfx_screen(offscreen);
+		gfx_draw(oldscreen, 0, 0);
+	}
+
+	if (new_place)
+		el_clear(el_title);
+		
+	if (new_pict || fading ||
+		(new_place && (game_theme.gfx_mode == GFX_MODE_FIXED))) {
+		redraw_pict = 1;
+	}
+
+	if (redraw_pict) {
+		if (el_img(el_spic)) {
+			el_clear(el_spic);
+			if (new_pict) {
+				gfx_free_image(el_img(el_spic));
+				el(el_spic)->p.p = NULL;
+			}
+		}
+	}
 
 	if (pict) {
 		int w, h, x;
@@ -1439,20 +1490,19 @@ int game_cmd(char *cmd)
 			h = gfx_img_h(img);
 			if (game_theme.gfx_mode != GFX_MODE_FLOAT) {
 				x = (game_theme.win_w - w)/2 + game_theme.win_x;
-				el_set(el_spic, elt_image, x, game_theme.win_y + title_h, img);
+				if (redraw_pict)
+					el_set(el_spic, elt_image, x, game_theme.win_y + title_h, img);
 			} else {
 				x = (game_theme.max_scene_w - w)/2 + game_theme.gfx_x;
-				el_set(el_spic, elt_image, x, game_theme.gfx_y/* + (game_theme.max_scene_h - h)/2*/, img);
+				if (redraw_pict)
+					el_set(el_spic, elt_image, x, game_theme.gfx_y/* + (game_theme.max_scene_h - h)/2*/, img);
 			}
-//			if (!game_theme.emb_gfx)
 			pict_h = h;
 		}
-	} else if (el_img(el_spic)) {
-		if (game_theme.gfx_mode != GFX_MODE_EMBEDDED)
-			el_clear(el_spic);
-		gfx_free_image(el_img(el_spic));
-		el(el_spic)->p.p = NULL;
 	}
+	/* clear area */
+	el_clear(el_ways);
+	el_clear(el_scene);
 
 	waystr = instead_cmd("way"); instead_clear();
 
@@ -1506,37 +1556,20 @@ int game_cmd(char *cmd)
 
 	el(el_scene)->y = el(el_ways)->y + ways_h;
 	
+/*
+	game_clear(game_theme.win_x, game_theme.win_y + pict_h + title_h, 
+		game_theme.win_w, game_theme.win_h - pict_h - title_h); */
+
 	/* draw title and ways */
-	if (fading) {
-		game_cursor(CURSOR_CLEAR);
-		img_t offscreen = gfx_new(game_theme.w, game_theme.h);
-		oldscreen = gfx_screen(offscreen);
-		gfx_draw(oldscreen, 0, 0);
-	}
-	if (fading) {
-		game_clear(game_theme.win_x, game_theme.win_y, game_theme.win_w, game_theme.win_h);
-		if (game_theme.gfx_mode == GFX_MODE_FLOAT) {
-			game_clear(game_theme.gfx_x, game_theme.gfx_y, game_theme.max_scene_w, game_theme.max_scene_h);
-		}
-//		el_draw(el_title);
-	} else {
-		game_clear(game_theme.win_x, game_theme.win_y + pict_h + title_h, 
-			game_theme.win_w, game_theme.win_h - pict_h - title_h);
-	}
-	
-	el_clear(el_title);
-	el_draw(el_title);
+	if (new_place)
+		el_draw(el_title);
 
 	if (game_theme.gfx_mode != GFX_MODE_EMBEDDED) {
 		el_draw(el_ways);
-		if (fading) {
-			gfx_dispose_gif(el_img(el_spic));
+		if (redraw_pict)
 			el_draw(el_spic);
-		}
 	}
 
-//	gfx_start_gif(el_img(el_spic));
-	
 	txt_box_resize(el_box(el_scene), game_theme.win_w, game_theme.win_h - title_h - ways_h - pict_h);
 	el_draw(el_scene);
 	
