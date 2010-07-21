@@ -1974,7 +1974,7 @@ function me()
 end
 
 function where(s)
-	if not isObject(s) then error("Wrong parameter to where.", 2); end
+	if not isObject(ref(s)) then error("Wrong parameter to where.", 2); end
 	if isPlayer(ref(s)) then
 		return ref(ref(s).where);
 	end
