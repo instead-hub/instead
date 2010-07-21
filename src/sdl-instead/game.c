@@ -1399,12 +1399,12 @@ int game_cmd(char *cmd)
 	int		new_place = 0;
 	int		redraw_pict = 0;
 	int		title_h = 0, ways_h = 0, pict_h = 0;
-	char 		buf[1024];
-	char 		*cmdstr = NULL;
-	char 		*invstr = NULL;
-	char 		*waystr = NULL;
+	char		buf[1024];
+	char		*cmdstr = NULL;
+	char		*invstr = NULL;
+	char		*waystr = NULL;
 	char		*title = NULL;
-	char 		*pict = NULL;
+	char		*pict = NULL;
 	img_t		oldscreen = NULL;
 	if (menu_shown)
 		return -1;
@@ -1416,30 +1416,19 @@ int game_cmd(char *cmd)
 
 	if (!cmdstr) 
 		goto inv; /* hackish? ok, yes  it is... */
-	
+
 	instead_eval("return get_title();"); 
 	title = instead_retval(0); 
 	instead_clear();
 
-	if (title && *title) {
-		snprintf(buf, sizeof(buf), "<b><c><a:look>%s</a></c></b>", title);
-		txt_layout_set(el_layout(el_title), buf);
-	} else
-		txt_layout_set(el_layout(el_title), NULL);
-
 	new_place = check_new_place(title);
-
-	if (title && *title) {
-		txt_layout_size(el_layout(el_title), NULL, &title_h);
-		title_h += game_theme.font_size / 2; // todo?	
-	}
 
 	instead_eval("return get_picture();");
 	pict = instead_retval(0);
 	instead_clear();
 
 	unix_path(pict);
-	
+
 	new_pict = check_new_pict(pict);
 
 	fading = check_fading();
@@ -1453,7 +1442,15 @@ int game_cmd(char *cmd)
 
 	if (new_place)
 		el_clear(el_title);
-		
+
+	if (title && *title) {
+		snprintf(buf, sizeof(buf), "<b><c><a:look>%s</a></c></b>", title);
+		txt_layout_set(el_layout(el_title), buf);
+		txt_layout_size(el_layout(el_title), NULL, &title_h);
+		title_h += game_theme.font_size / 2; // todo?	
+	} else
+		txt_layout_set(el_layout(el_title), NULL);
+
 	if (new_pict || fading ||
 		(new_place && (game_theme.gfx_mode == GFX_MODE_FIXED))) {
 		redraw_pict = 1;
