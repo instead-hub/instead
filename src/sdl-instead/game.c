@@ -14,6 +14,11 @@ int game_own_theme = 0;
 static int game_pic_w = 0;
 static int game_pic_h = 0;
 
+static	char *last_music = NULL;
+static	char *last_pict = NULL;
+static	char *last_title = NULL;
+static	char *last_cmd = NULL;
+
 void game_cursor(int on);
 void mouse_reset(int hl);
 static void menu_toggle(void);
@@ -76,6 +81,7 @@ static struct game *game_lookup(const char *name)
 int game_select(const char *name)
 {
 	struct game *g;
+	FREE(last_cmd);
 	game_stop_mus(500);
 	g = game_lookup(name);
 	if ((!name || !*name) && !g)
@@ -250,11 +256,6 @@ int games_remove(int gtr)
 static int motion_mode = 0;
 static int motion_id = 0;
 static int motion_y = 0;
-
-static		char *last_music = NULL;
-static 		char *last_pict = NULL;
-static 		char *last_title = NULL;
-static 		char *last_cmd = NULL;
 
 static int mx, my;
 static img_t 	menubg = NULL;
