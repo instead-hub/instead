@@ -76,7 +76,7 @@ static struct game *game_lookup(const char *name)
 int game_select(const char *name)
 {
 	struct game *g;
-	free_last();
+	game_stop_mus(500);
 	g = game_lookup(name);
 	if ((!name || !*name) && !g)
 		return 0;
@@ -1408,8 +1408,8 @@ int game_cmd(char *cmd)
 	img_t		oldscreen = NULL;
 	if (menu_shown)
 		return -1;
+
 	cmdstr = instead_cmd(cmd); instead_clear();
-//		goto err;
 
 	game_music_player();	
 	game_sound_player();
