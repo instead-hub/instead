@@ -157,6 +157,7 @@ end
 execute_cmd = room {
 	nam = "Execute Lua code",
 	debug = true,
+	system_type = true, 
 	forcedsc = true,
 	dsc = "Enter Lua code here to exec.",
 	inp_enter = function(s)
@@ -180,6 +181,7 @@ execute_cmd = room {
 dump_object = room {
 	nam = "Dump object",
 	debug = true,
+	system_type = true, 
 	forcedsc = true,
 	dsc = "Enter object name here to dump.",
 	inp_enter = function(s)
