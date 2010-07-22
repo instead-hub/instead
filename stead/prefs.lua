@@ -1,5 +1,6 @@
 prefs = obj {
 	nam = 'preferences',
+	system_type = true,
 	ini = function(s)
 		local name = get_savepath() .. '/prefs';
 		local f, err = loadfile(name);

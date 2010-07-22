@@ -69,6 +69,7 @@ end
 
 vars_object = obj {
 	nam = 'vars',
+	system_type = true,
 	ini = function(s)
 		__vars_fill(_G)
 		__vars_fill(pl)
