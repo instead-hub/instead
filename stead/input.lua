@@ -142,8 +142,6 @@ kbdlower = {
 	['Я'] = 'я',
 }
 
-input.cursor = '_'
-
 function tolow(s)
 	if not s then
 		return
@@ -253,6 +251,7 @@ input_kbd = function(s, down, key)
 end
 
 stead.module_init(function()
+	input.cursor = '_'
 	input.key = stead.hook(input.key,
 	function(f, ...)
 		local r = input_kbd(unpack(arg))
