@@ -1,9 +1,11 @@
-input.click = stead.hook(input.click, 
-function(f, s, press, mb, x, y, px, py, ...)
-	if press and px then
-		return "click "..px..','..py;
-	end
-	return f(s, press, mb, x, y, px, py, unpack(arg))
+stead.module_init(function()
+	input.click = stead.hook(input.click, 
+	function(f, s, press, mb, x, y, px, py, ...)
+		if press and px then
+			return "click "..px..','..py;
+		end
+		return f(s, press, mb, x, y, px, py, unpack(arg))
+	end)
 end)
 
 game.action = stead.hook(game.action, 

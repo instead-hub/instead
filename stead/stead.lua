@@ -1657,6 +1657,15 @@ end
 function gamefile(file, forget)
 	stead.clearargs()
 	if forget then
+		timer:stop();
+		init = function() -- null init function
+		end
+		for_each_object(function(k, o) -- destroy all objects
+			if o.system_type then
+				return
+			end
+			_G[k] = nil
+		end);
 		game._scripts = { }
 		game.lifes:zap()
 		game.scriptsforget = true
@@ -2088,47 +2097,6 @@ end
 function delete(v)
 	allocator:delete(v);
 end
-
-timer = obj { -- timer calls stead.timer callback 
-	nam = 'timer',
-	ini = function(s)
-		if tonumber(s._timer) ~= nil and type(set_timer) == 'function' then
-			set_timer(s._timer);
-		end
-	end,
-	get = function(s)
-		if tonumber(s._timer) == nil then
-			return 0
-		end
-		return tonumber(s._timer);
-	end,
-	stop = function(s)
-		return s:set(0);
-	end,
-	del = function(s)
-		return s:set(0);
-	end,
-	set = function(s, v)
-		s._timer = tonumber(v);
-		if type(set_timer) ~= 'function' then
-			return false
-		end
-		set_timer(v)
-		return true
-	end,
---[[ 	callback = function(s)
-	end, ]]
-};
-
-input = obj { -- input object
-	nam = 'input',
---[[	key = function(s, down, key)
-		return
-	end, ]]
---[[	click = function(s, down, mb, x, y, [ px, py ] )
-		return
-	end ]]
-};
 
 function vobj_save(self, name, h, need)
 	local dsc = self.dsc;
@@ -2624,12 +2592,55 @@ function code(v)
 	return f;
 end
 stead.code = code
+
 --- here the game begins
 stead.objects = function(s)
 	null = obj {
 		nam = 'null';
 	}
-	
+
+	input = obj { -- input object
+		system_type = true,
+		nam = 'input',
+	--[[	key = function(s, down, key)
+			return
+		end, ]]
+	--[[	click = function(s, down, mb, x, y, [ px, py ] )
+			return
+		end ]]
+	};
+
+	timer = obj { -- timer calls stead.timer callback 
+		nam = 'timer',
+		ini = function(s)
+			if tonumber(s._timer) ~= nil and type(set_timer) == 'function' then
+				set_timer(s._timer);
+			end
+		end,
+		get = function(s)
+			if tonumber(s._timer) == nil then
+				return 0
+			end
+			return tonumber(s._timer);
+		end,
+		stop = function(s)
+			return s:set(0);
+		end,
+		del = function(s)
+			return s:set(0);
+		end,
+		set = function(s, v)
+			s._timer = tonumber(v);
+			if type(set_timer) ~= 'function' then
+				return false
+			end
+			set_timer(v)
+			return true
+		end,
+		--[[ 	callback = function(s)
+			end, ]]
+	};
+
 	allocator = obj {
 		nam = 'allocator',
 		get = function(s, n, c)

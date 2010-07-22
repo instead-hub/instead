@@ -252,11 +252,13 @@ input_kbd = function(s, down, key)
 	end
 end
 
-input.key = stead.hook(input.key,
-function(f, ...)
-	local r = input_kbd(unpack(arg))
-	if r then return r end
-	return f(unpack(arg))
+stead.module_init(function()
+	input.key = stead.hook(input.key,
+	function(f, ...)
+		local r = input_kbd(unpack(arg))
+		if r then return r end
+		return f(unpack(arg))
+	end)
 end)
 
 function input_esc(s)

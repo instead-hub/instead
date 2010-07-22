@@ -202,6 +202,7 @@ dump_object = room {
 
 choose_location = dlg {
 	debug = true,
+	system_type = true, 
 	forcedsc = true,
 	nam = 'Go to',
 	dsc = 'Select location.',
@@ -227,6 +228,7 @@ choose_location = dlg {
 
 choose_object = dlg {
 	debug = true,
+	system_type = true, 
 	forcedsc = true,
 	nam = 'Get object',
 	dsc = 'Select object to get.',
@@ -253,6 +255,7 @@ choose_object = dlg {
 drop_object = dlg {
 	debug = true,
 	forcedsc = true,
+	system_type = true, 
 	nam = 'Drop object',
 	dsc = 'Select object to drop.',
 	gen = function(s)
@@ -287,6 +290,7 @@ end
 
 debug_dlg = dlg {
 	debug = true,
+	system_type = true, 
 	forcedsc = true,
 	nam = 'Debug Tool',
 	dsc = 'Select tool.',
@@ -304,6 +308,7 @@ debug_dlg = dlg {
 
 debug_tool = menu {
 	debug = true,
+	system_type = true,
 	forcedsc = true,
 	nam = txtb('debug'),
 	lifes = list {},
@@ -329,10 +334,12 @@ function (f, s, cmd, ...)
 	return f(s, cmd, unpack(arg))
 end)
 
-input.key = stead.hook(input.key,
-function(f, s, down, key, ...)
-	if not here().debug and down and key == 'f7' then return 'use_debug' end
-	return f(s, down, key, unpack(arg))
+stead.module_init(function()
+	input.key = stead.hook(input.key,
+	function(f, s, down, key, ...)
+		if not here().debug and down and key == 'f7' then return 'use_debug' end
+		return f(s, down, key, unpack(arg))
+	end)
 end)
 
 putf('debug_tool', me());
