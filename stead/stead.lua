@@ -1657,6 +1657,8 @@ end
 function gamefile(file, forget)
 	stead.clearargs()
 	if forget then
+		set_music();
+		set_sound();
 		timer:stop();
 		init = function() -- null init function
 		end
