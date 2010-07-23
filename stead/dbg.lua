@@ -220,7 +220,7 @@ choose_location = dlg {
 					if xact then
 						n = n:gsub(":","\\:")
 					end
-					put(phr(n, true, [[game.lifes:cat(debug_tool.lifes); return goto(]]..o..[[)]]), s);
+					put(phr(n, true, [[timer:set(debug_tool._timer); game.lifes:cat(debug_tool.lifes); return goto(]]..o..[[)]]), s);
 				end
 			end
 		end
@@ -287,6 +287,7 @@ function dbg_exit()
 		r = call(dbg_here(), 'dsc');
 	end
 	game.lifes:cat(debug_tool.lifes);
+	timer:set(debug_tool._timer);
 	return par ('^^', back(), r);
 end
 
@@ -319,6 +320,8 @@ debug_tool = menu {
 			return nil, true --nothing todo
 		end
 		debug_dlg.__from__ = here();
+		s._timer = timer:get();
+		timer:stop();
 		s.lifes:zap();
 		s.lifes:cat(game.lifes);
 		game.lifes:zap();
