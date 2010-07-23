@@ -926,6 +926,29 @@ function dialog_phrase(self, num)
 	return ref(self.obj[tonumber(num)]);
 end
 
+function phrase_seen(s, enb, ...)
+	local i, ph
+	if stead.table.maxn(arg) == 0 then
+		return false
+	end
+	for i=1,stead.table.maxn(arg) do
+		ph = dialog_phrase(s, arg[i]);
+		local r = not isPhrase(ph) or isRemoved(ph) or ph:disabled();
+		if not enb then r = not r end
+		if r then return false end
+	end
+	return true
+end
+
+
+function dialog_pseen(s, ...)
+	return phrase_seen(s, true, unpack(arg));
+end
+
+function dialog_punseen(s, ...)
+	return phrase_seen(s, false, unpack(arg));
+end
+
 function ponoff(s, on, ...)
 	local i, ph
 	if stead.table.maxn(arg) == 0 then
@@ -986,6 +1009,12 @@ function dlg(v) --constructor
 	end
 	if v.prem == nil then
 		v.prem = dialog_prem;
+	end
+	if v.pseen == nil then
+		v.pseen = dialog_pseen;
+	end
+	if v.punseen == nil then
+		v.punseen = dialog_punseen;
 	end
 	v = room(v);
 	return v;
@@ -2035,23 +2064,37 @@ function xref(str, obj, ...)
 	return iface:xref(str, obj, unpack(arg));
 end
 
+function pseen(...)
+	if not isDialog(here()) then
+		return
+	end
+	return here():pseen(unpack(arg));
+end
+
+function punseen(...)
+	if not isDialog(here()) then
+		return
+	end
+	return here():punseen(unpack(arg));
+end
+
 function pon(...)
 	if not isDialog(here()) then
 		return
 	end
-	dialog_pon(here(), unpack(arg));
+	here():pon(unpack(arg));
 end
 function poff(...)
 	if not isDialog(here()) then
 		return
 	end
-	dialog_poff(here(), unpack(arg));
+	here():poff(unpack(arg));
 end
 function prem(...)
 	if not isDialog(here()) then
 		return
 	end
-	dialog_prem(here(), unpack(arg));
+	here():prem(unpack(arg));
 end
 
 function lifeon(what)

@@ -34,6 +34,7 @@ instead (1.2.0) unstable; urgency=low
   * args in call;
   * var and global;
   * self() is now self;
+  * psen/punseen for dlg;
   * no return goto needed;
   * disable_all/enable_all for lists;
   * purge and list_purge;
