@@ -929,7 +929,7 @@ end
 function phrase_seen(s, enb, ...)
 	local i, ph
 	if stead.table.maxn(arg) == 0 then
-		return false
+		stead.table.insert(arg, self);
 	end
 	for i=1,stead.table.maxn(arg) do
 		ph = dialog_phrase(s, arg[i]);
