@@ -342,8 +342,8 @@ stead.module_init(function()
 		if not here().debug and down and key == 'f7' then return 'use_debug' end
 		return f(s, down, key, unpack(arg))
 	end)
+	putf('debug_tool', me());
 end)
 
-putf('debug_tool', me());
 
 -- vim:ts=4
