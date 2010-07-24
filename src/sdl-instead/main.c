@@ -1,4 +1,3 @@
-#include <SDL.h>
 #include "externals.h"
 #include "internals.h"
 
