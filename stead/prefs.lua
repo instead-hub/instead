@@ -1,11 +1,14 @@
 prefs = obj {
 	nam = 'preferences',
 	system_type = true,
-	ini = function(s)
+	load = function(s)
 		local name = get_savepath() .. '/prefs';
 		local f, err = loadfile(name);
 		if not f then return nil end
 		f();
+	end,
+	ini = function(s)
+		return s:load()
 	end,
 	store = function(s)
 		local name = get_savepath() .. '/prefs';
