@@ -1,4 +1,4 @@
-#if defined(__MACOS__)
+#if defined(__MACOSX__)
 #include <SDL.h>
 #endif
 
