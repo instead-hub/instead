@@ -497,7 +497,11 @@ function ref(n) -- ref object by name
 		return n;
 	end
 	if type(n) == 'function' then
-		return ref(n());
+		local r,v = pcall(n);
+		if not r then
+			return nil
+		end
+		return ref(v);
 	end
 	return nil
 end
