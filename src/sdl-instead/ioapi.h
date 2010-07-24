@@ -21,6 +21,10 @@
 #ifndef _ZLIBIOAPI64_H
 #define _ZLIBIOAPI64_H
 
+/* we need no > 2Gb games  */
+
+#define USE_FILE32API 
+
 #if (!defined(_WIN32)) && (!defined(WIN32))
 
   // Linux needs this to support file operation on files larger then 4+GB
