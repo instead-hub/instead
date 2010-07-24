@@ -28,7 +28,7 @@ LUA_LFLAGS=$(shell pkg-config --libs lua5.1)
 SDL_CFLAGS=$(shell sdl-config --cflags)
 SDL_LFLAGS=$(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer -lSDL_image
 
-CFLAGS	+= -Wall -Dunix -D_HAVE_ICONV -D_USE_UNPACK # -D_SDL_MOD_BUG
+CFLAGS	+= -Wall -Dunix -D_USE_UNPACK # -D_SDL_MOD_BUG
 
 INSTALLD=install -d -m 0755
 INSTALLB=install -m 0755
