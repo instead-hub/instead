@@ -18,6 +18,8 @@ prefs = obj {
 		h:flush();
 		h:close();
 	end,
+	save = function(s)
+	end,
 	purge = function(s)
 		local name = get_savepath() .. '/prefs';
 		return stead.os.remove(name);
