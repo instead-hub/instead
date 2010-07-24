@@ -1,3 +1,4 @@
+#include <SDL.h>
 #include "externals.h"
 #include "internals.h"
 
@@ -46,7 +47,7 @@ static int setup_zip(const char *file, char *p)
 }
 #endif
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
 	int clean_tmp = 0;
 	int err = 0;
