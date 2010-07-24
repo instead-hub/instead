@@ -1,3 +1,7 @@
+#if defined(__MACOS__)
+#include <SDL.h>
+#endif
+
 #include "externals.h"
 #include "internals.h"
 
