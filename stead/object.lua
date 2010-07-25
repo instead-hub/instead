@@ -182,6 +182,9 @@ function list_concat(self, other, pos)
 	end
 end
 
+iface.delim = '~'
+iface.delim_sym = '<&tilda;>'
+
 function list_str(self)
 	local i, v, vv, o;
 	for i,o in opairs(self) do
@@ -195,7 +198,7 @@ function list_str(self)
 				vv = call(o, 'nam');
 			end
 			vv = xref(vv, o);
-			v = stead.par(',', v, vv);
+			v = stead.par('~', v, vv);
 		end
 	end
 	return v;
@@ -220,7 +223,7 @@ function obj_str(self)
 				vv = call(o, 'nam');
 			end
 			vv = xref(vv, o);
-			v = stead.par(',', v, vv, obj_str(o));
+			v = stead.par('~', v, vv, obj_str(o));
 		end
 	end
 	return v;
