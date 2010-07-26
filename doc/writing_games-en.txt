@@ -716,9 +716,11 @@ In the example the player chooses his dinner. After getting the food (recording 
 
 The reaction may have any lua code, but STEAD has some frequently used functions predefined:
 
-pon(n..) — enable the phrases with numbers n... (in the example it allows to take the same food again).
-poff(n...) — disable the phrases with numbers n... 
-prem(n...) — remove (block) phrases with numbers n... (blocked phrases won't be re-enabled with subsequent “pon”).
+  * pon(n..) — enable the phrases with numbers n... (in the example it allows to take the same food again).
+  * poff(n...) — disable the phrases with numbers n... 
+  * prem(n...) — remove (block) phrases with numbers n... (blocked phrases won't be re-enabled with subsequent “pon”).
+  * pseen(n...) — returns true, if phrases n.. are visible;
+  * punseen(n..) — returns true, if phrases n... are not visible;
 
 If argument n is not present, current phrase will be affected.
 
@@ -759,7 +761,7 @@ facectrl = dlg {
 
 `_phr` — creates a disabled phrase, which can be enabled. The example also shows the use of “pon”, “poff”, “prem” methods for a dialog (see “exit”).
 
-You can enable/disable phrases not only of the current put of any arbitrary dialog with the “pon”/“poff” methods of a dialog object. For example: shopman:pon(5);
+You can enable/disable/remove/check phrases not only of the current put of any arbitrary dialog with the “pon”/“poff”/“prem”/“pseen”/“pusneen” methods of a dialog object. For example: shopman:pon(5);
 
 ===== 15. Lightweight objects =====
 
