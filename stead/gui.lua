@@ -75,23 +75,20 @@ iface.bold = function(self, str)
 	return stead.cat('<b>',str,'</b>');
 end;
 
-iface.delim = ','
-iface.delim_sym = '<&comma;>'
-
 iface.inv = function(self, str)
 	if str then
-		str = stead.string.gsub(str, '\\'..iface.delim, iface.delim_sym);
-		str = stead.string.gsub(str, iface.delim, '^');
-		str = stead.string.gsub(str, iface.delim_sym, iface.delim);
+		str = stead.string.gsub(str, '\\'..stead.delim, '<&delim;>');
+		str = stead.string.gsub(str, stead.delim, '^');
+		str = stead.string.gsub(str, '<&delim;>', stead.delim);
 	end
 	return str
 end;
 
 iface.ways = function(self, str)
 	if str then
-		str = stead.string.gsub(str, '\\'..iface.delim, iface.delim_sym);
-		str = stead.string.gsub(str, iface.delim, ' | ');
-		str = stead.string.gsub(str, iface.delim_sym, iface.delim);
+		str = stead.string.gsub(str, '\\'..stead.delim,  '<&delim;>');
+		str = stead.string.gsub(str, stead.delim, ' | ');
+		str = stead.string.gsub(str, '<&delim;>', stead.delim);
 		return '<c>'..str..'</c>';
 	end
 	return str
@@ -100,7 +97,7 @@ end;
 function get_title()
 	local s = call(here(), 'nam');
 	if type(s) == 'string' then
-		s = stead.string.gsub(s, '\\'..iface.delim, iface.delim);
+		s = stead.string.gsub(s, '\\'..stead.delim, stead.delim);
 	end
 	return s
 end

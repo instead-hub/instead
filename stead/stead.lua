@@ -2,6 +2,7 @@ stead = {
 	version = "1.2.0",
 	api_version = "1.1.6", -- last version before 1.2.0
 	table = table,
+	delim = ',',
 	string = string,
 	math = math,
 	io = io,
