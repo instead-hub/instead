@@ -195,7 +195,7 @@ dump_object = room {
 	obj = { inp('inp', '{Enter object}: ', 'main'), 
 		obj{nam = 'Here', dsc = '^{Dump here}', act = code[[ return dump_obj(dbg_here())]]},
 		obj{nam = 'Player',dsc =  '^{Dump player}', act = code[[ return dump_obj(me())]]},
-		obj{nam = 'Lifes', dsc = '^{Dump lifes}', act = code[[ return dump_obj(game.lifes)]]},
+		obj{nam = 'Lifes', dsc = '^{Dump lifes}', act = code[[ return dump_obj(debug_tool.lifes)]]},
 		obj{nam = 'Ways', dsc = '^{Dump ways}', act = code[[ return dump_obj(ways(dbg_here()))]]},
 		obj{nam = 'Globals', dsc = '^{Dump globals}', act = code [[return dump_globals()]] },
 		obj{nam = 'Back', dsc = '^{Back}', act = code [[ return back() ]] },
