@@ -233,7 +233,7 @@ sside = room {
         nam = 'южная сторона',
         dsc = [[Я нахожусь у южной стены здания института. ]],
         act = function(s, w)
-                if w == 1 then
+                if w == "подъезд" then
                         ways():add('stolcorridor');
                         return "Я подошёл к подъезду. Хм --- зайти внутрь?";
                 end
@@ -1020,20 +1020,7 @@ main = room {
 \subsection{Статус}
 Ниже представлена реализация статуса игрока в виде текста, который появляется в инвентаре, но не может быть выбран.
 
-\begin{verbatim}
-pl.Life = 10;
-pl.Power = 10;
-
-status = obj {
-        nam = 'Жизнь: '..pl.Life..',Сила: '..pl.Power,
-};
-inv():add('status');
-status.object_type = false
-\end{verbatim}
-
 \index{Статус}
-Вы можете использовать конструктор \verb/stat/ для создания статуса:
-
 \begin{verbatim}
 status = stat {
        nam = function(s)
