@@ -486,18 +486,18 @@ function obj(v)
 end
 
 
-function ref(n) -- ref object by name
+function ref(n, nofunc) -- ref object by name
 	if type(n) == 'string' then
 		local f = loadstring('return '..n);
 		if f then
-			return ref(f());
+			return ref(f(), nofunc);
 		end
 		return nil;
 	end
 	if type(n) == 'table' then
 		return n;
 	end
-	if type(n) == 'function' then
+	if type(n) == 'function' and not nofunc then
 		local r,v = pcall(n);
 		if not r then
 			return nil
@@ -578,7 +578,7 @@ end
 function list_find(self, name)
 	local n, v, ii
 	for n,v,ii in opairs(self) do 
-		if ref(v) == ref(name) then
+		if ref(v) == ref(name, true) then -- do not call func while search
 			return ii; 
 		end	
 	end
