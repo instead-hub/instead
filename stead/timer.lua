@@ -1,7 +1,11 @@
 game.action = stead.hook(game.action, function(f, s, cmd, ...)
 	if cmd == 'user_timer' then
 		local r,v
-		r,v = call(s, 'timer');
+		if here().timer then
+			r,v = call(here(), 'timer');
+		elseif s.timer then
+			r,v = call(s, 'timer');
+		end
 		if r == nil and v == nil then
 			return nil, true
 		end
