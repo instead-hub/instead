@@ -1,6 +1,6 @@
 # Contributor: Peter Kosyh <p.kosyhgmail.com>
 pkgname=instead
-pkgver=1.1.911
+pkgver=1.1.912
 pkgrel=1
 pkgdesc="instead quest interpreter"
 arch=('i686' 'x86_64')
