@@ -61,7 +61,7 @@ __do_xact = function(str, self)
 			else
 				oo = objs():srch(o)
 				if not oo then
-					oo = ref(o)
+					oo = ref(o, true)
 				end
 			end
 		elseif isObject(self) then
@@ -71,7 +71,7 @@ __do_xact = function(str, self)
 			error("Wrong link: "..s, 3);
 		end
 		d = d:gsub("<&colon;>", ":");
-		return xref(d, ref(oo), unpack(aarg));
+		return xref(d, ref(oo, true), unpack(aarg));
 	end
 	if type(str) ~= 'string' then return end
 	local s = stead.string.gsub(str,'{[^}]+}', xrefrep);
