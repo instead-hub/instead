@@ -159,6 +159,9 @@ stead.goout = goout
 function visited(w)
 	if not w then w = here() end
 	w = ref(w)
+	if w == nil then
+		return 0;
+	end
 	if not isRoom(w) then
 		error ("Wrong parameter to visited.", 2);
 	end
