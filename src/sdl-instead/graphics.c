@@ -910,7 +910,11 @@ int gfx_modes(void)
 {
 	int i = 0;
 	SDL_Rect** modes;
+#ifdef __APPLE__
+	modes = SDL_ListModes(NULL, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_ANYFORMAT);
+#else
 	modes = SDL_ListModes(NULL, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_ANYFORMAT);
+#endif
 	if (modes == (SDL_Rect**)0)/* no modes */
 		return 0;
 	if (modes == (SDL_Rect**)-1) {
@@ -991,10 +995,16 @@ int gfx_set_mode(int w, int h, int fs)
 	gfx_width = w;
 	gfx_height = h;
 	SDL_ShowCursor(SDL_DISABLE);
-#ifndef MAEMO	
+#ifndef MAEMO
+	#ifdef __APPLE__	
+	screen = SDL_SetVideoMode(gfx_width, gfx_height, 32, SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
+	if (screen == NULL) /* ok, fallback to anyformat */
+		screen = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
+	#else
 	screen = SDL_SetVideoMode(gfx_width, gfx_height, 32, SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 	if (screen == NULL) /* ok, fallback to anyformat */
 		screen = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
+	#endif
 #else
 	screen = SDL_SetVideoMode(gfx_width, gfx_height, 16, SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 #endif
