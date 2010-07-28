@@ -119,8 +119,8 @@ EOF
 echo $cc
 echo -n "Checking iconv...("
 echo -n "$cc /tmp/iconv-test.c -o iconv-test)..."
-if ! $cc /tmp/iconv-test.c -o iconv-test; then
-	if ! $cc /tmp/iconv-test.c -liconv -o iconv-test; then
+if ! $cc /tmp/iconv-test.c -o /tmp/iconv-test; then
+	if ! $cc /tmp/iconv-test.c -liconv -o /tmp/iconv-test; then
 		echo -n "failed. Build without iconv.".
 	else
 		CFLAGS="$CFLAGS -D_HAVE_ICONV"
