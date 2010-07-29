@@ -192,13 +192,16 @@ end
 
 game.action = stead.hook(game.action, function (f, s, cmd, ...)
 	if cmd == 'kbd_enter' then
+		local r,v
 		if here().inp_enter then
-			return call(here(), 'inp_enter');
+			r,v = call(here(), 'inp_enter');
+		elseif s.inp_enter then
+			r,v = call(s, 'inp_enter');
 		end
-		if game.inp_enter then
-			return call(here(), 'inp_enter');
+		if r == nil and v == nil then
+			return nil, true
 		end
-		return nil -- nothing todo
+		return r,v -- nothing todo
 	end
 	return f(s, cmd, unpack(arg))
 end)
