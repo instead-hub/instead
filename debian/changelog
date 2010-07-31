@@ -41,8 +41,9 @@ instead (1.2.0) unstable; urgency=low
   * undocumented gamefile;
   * undocumented LANG;
   * many bugfixes...
+  * macos x port...
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 06 Jul 2010 14:09:00 +0300  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 31 Jul 2010 15:54:00 +0300  
 
 instead (1.1.6) unstable; urgency=low
 
