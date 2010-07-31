@@ -50,11 +50,33 @@ static int setup_zip(const char *file, char *p)
 }
 #endif
 
+#ifdef __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+void macosx_init(void) {
+	char resourcePath[PATH_MAX];
+	CFBundleRef mainBundle;
+	CFURLRef resourcesDirectoryURL;
+	mainBundle = CFBundleGetMainBundle();
+	if (!mainBundle)
+		return;
+	resourcesDirectoryURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
+	if (!resourcesDirectoryURL)
+		return;
+	CFURLGetFileSystemRepresentation(resourcesDirectoryURL, true, (UInt8 *) resourcePath, PATH_MAX);
+	CFRelease(resourcesDirectoryURL);
+	chdir(resourcePath);
+	return;
+}
+#endif
+
 int main(int argc, char *argv[])
 {
 	int clean_tmp = 0;
 	int err = 0;
 	int i;
+#ifdef __APPLE__
+	macosx_init();
+#endif
 #ifdef _USE_GTK
 	gtk_init(&argc, &argv);
 #endif
