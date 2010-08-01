@@ -1,3 +1,5 @@
+#include <AppKit/NSOpenPanel.h>
+#include <Foundation/NSString.h>
 #include <limits.h>
 #include <pwd.h>
 #include <unistd.h>
@@ -171,9 +173,25 @@ char *sdl_path(char *p)
 	return p;
 }
 
-extern char *macosx_open_file_dialog(void);
 
-char *open_file_dialog(void)
+char *open_file_dialog(void) 
 {
-	return macosx_open_file_dialog();
+	const char *filename;
+	static char *file_name[PATH_MAX];
+
+	NSOpenPanel * panel = [NSOpenPanel openPanel];
+	[panel setCanChooseDirectories:NO];
+	[panel setCanChooseFiles:YES];
+	[panel setAllowsMultipleSelection:NO];
+
+	if ([panel runModalForTypes:nil] == NSOKButton) {
+#ifdef __POWERPC__
+		filename = [[panel filename] cString];
+#else
+		filename = [[panel filename] cStringUsingEncoding:NSUTF8StringEncoding];
+#endif
+		strcpy(file_name, filename);
+		return file_name;
+	}
+	return NULL;
 }
