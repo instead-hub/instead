@@ -1,4 +1,3 @@
-#include <Carbon/Carbon.h>
 #include <limits.h>
 #include <pwd.h>
 #include <unistd.h>
@@ -172,69 +171,9 @@ char *sdl_path(char *p)
 	return p;
 }
 
-static char file_path[PATH_MAX];
-//NavEventUPP gNavEventHandlerPtr;
-
-static void dlg_callback(
-	NavEventCallbackMessage callBackSelector,
-        NavCBRecPtr callBackParms, 
-	void* callBackUD)
-{
-	OSStatus err = noErr;
-	FSRef fsRef;
-	switch (callBackSelector) {
-		case kNavCBUserAction:  {
-			NavReplyRecord reply;
-			NavUserAction userAction = 0;
-			err = NavDialogGetReply (callBackParams->context,
-				&reply);
-			if (err != noErr)
-				break;
-			userAction = NavDialogGetUserAction (callBackParams->context);
-			switch (userAction) {
-				case kNavUserActionOpen: {
-					err = GetFSRefFromAEDesc ( &fsRef, &reply.selection );
-					if (err != noErr)
-						break;
-					err = FSRefMakePath ( &fsRef, file_path, PATH_MAX );
-					if (err != noErr)
-						break;
-				}
-			}
-			err = NavDisposeReply (&reply);
-			break;
-		}
-		case kNavCBTerminate: {
-			NavDialogDispose (callBackParms->context);
-//			DisposeNavEventUPP (gNavEventHandlerPtr);
-			break;
-		}
-	}
-}
+extern "C" char *macosx_open_file_dialog(void);
 
 char *open_file_dialog(void)
 {
-	OSStatus   err;
-	NavDialogRef  openDialog;
-	NavDialogCreationOptions dialogAttributes;
-	file_path[0] = 0;
-	
-	err = NavGetDefaultDialogCreationOptions( &dialogAttributes );
-	if (err != noErr)
-		return NULL;
-	dialogAttributes.modality = kWindowModalityAppModal;	
-//	gNavEventHandlerPtr = NewNavEventUPP( dlg_callback );	
-	err = NavCreateGetFileDialog( &dialogAttributes, NULL, 
-		dlg_callback/*gNavEventHandlerPtr*/, NULL, NULL, 
-		NULL, &openDialog );
-	if (err != noErr)
-		return NULL;
-	err = NavDialogRun( openDialog );
-	if ( err != noErr ) {
-		NavDialogDispose( openDialog );
-//		DisposeNavEventUPP( gNavEventHandlerPtr );
-	}
-	if (!file_path[0])
-		return NULL;
-	return file_path;
+	return macosx_open_file_dialog();
 }
