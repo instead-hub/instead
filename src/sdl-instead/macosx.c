@@ -1,4 +1,4 @@
-#include <Carbon.h>
+#include <Carbon/Carbon.h>
 #include <limits.h>
 #include <pwd.h>
 #include <unistd.h>
@@ -173,7 +173,7 @@ char *sdl_path(char *p)
 }
 
 static char file_path[PATH_MAX];
-NavEventUPP gNavEventHandlerPtr;
+//NavEventUPP gNavEventHandlerPtr;
 
 static void dlg_callback(
 	NavEventCallbackMessage callBackSelector,
@@ -206,7 +206,7 @@ static void dlg_callback(
 		}
 		case kNavCBTerminate: {
 			NavDialogDispose (callBackParms->context);
-			DisposeNavEventUPP (gNavEventHandlerPtr);
+//			DisposeNavEventUPP (gNavEventHandlerPtr);
 			break;
 		}
 	}
@@ -223,16 +223,16 @@ char *open_file_dialog(void)
 	if (err != noErr)
 		return NULL;
 	dialogAttributes.modality = kWindowModalityAppModal;	
-	gNavEventHandlerPtr = NewNavEventUPP( dlg_callback );	
+//	gNavEventHandlerPtr = NewNavEventUPP( dlg_callback );	
 	err = NavCreateGetFileDialog( &dialogAttributes, NULL, 
-		gNavEventHandlerPtr, NULL, NULL, 
+		dlg_callback/*gNavEventHandlerPtr*/, NULL, NULL, 
 		NULL, &openDialog );
 	if (err != noErr)
 		return NULL;
 	err = NavDialogRun( openDialog );
 	if ( err != noErr ) {
 		NavDialogDispose( openDialog );
-		DisposeNavEventUPP( gNavEventHandlerPtr );
+//		DisposeNavEventUPP( gNavEventHandlerPtr );
 	}
 	if (!file_path[0])
 		return NULL;
