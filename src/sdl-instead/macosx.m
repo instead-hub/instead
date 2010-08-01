@@ -178,13 +178,14 @@ char *open_file_dialog(void)
 {
 	const char *filename;
 	static char *file_name[PATH_MAX];
+	NSArray* fileTypes = [NSArray  arrayWithObjects: @"zip", @"lua", nil];
 
 	NSOpenPanel * panel = [NSOpenPanel openPanel];
 	[panel setCanChooseDirectories:NO];
 	[panel setCanChooseFiles:YES];
 	[panel setAllowsMultipleSelection:NO];
 
-	if ([panel runModalForTypes:nil] == NSOKButton) {
+	if ([panel runModalForTypes:fileTypes] == NSOKButton) {
 #ifdef __POWERPC__
 		filename = [[panel filename] cString];
 #else
