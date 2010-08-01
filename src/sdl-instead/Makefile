@@ -9,7 +9,7 @@ SRC     := graphics.c input.c game.c main.c instead.c sound.c SDL_rotozoom.c SDL
 H	:= cache.h config.h externals.h game.h graphics.h input.h instead.h internals.h ioapi.h iowin32.h list.h \
 	menu.h SDL_anigif.h SDL_gfxBlitFunc.h SDL_rotozoom.h sound.h themes.h unzip.h util.h
 
-OBJ     := $(patsubst %.c, %.o, $(SRC))
+OBJ     := $(patsubst %.c, %.o, $(SRC)) $(ADDOBJ)
 
 all: sdl-instead$(EXE)
 
