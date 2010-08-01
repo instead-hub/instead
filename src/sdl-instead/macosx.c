@@ -171,7 +171,7 @@ char *sdl_path(char *p)
 	return p;
 }
 
-//extern "C" char *macosx_open_file_dialog(void);
+extern char *macosx_open_file_dialog(void);
 
 char *open_file_dialog(void)
 {
