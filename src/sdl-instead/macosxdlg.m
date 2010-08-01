@@ -2,8 +2,6 @@
 #include <Foundation/NSString.h>
 static char *file_name[4096];
 
-extern "C" char *macosx_open_file_dialog(void);
-
 char *macosx_open_file_dialog(void) 
 {
 	const char *filename;
