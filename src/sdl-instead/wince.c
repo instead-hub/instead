@@ -267,6 +267,7 @@ static char curdir[PATH_MAX];
 int chdir(const char *path)
 {
 	strncpy(curdir, path, sizeof(curdir) - 1);
+	return 0;
 }
 
 char *sdl_path(char *p)
