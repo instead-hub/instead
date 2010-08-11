@@ -80,6 +80,14 @@ char *mbs2utf8(const char *s)
 
 extern void unix_path(char *);
 
+char *sdl_path(char *p)
+{
+	char *r = mbs2utf8(p);
+	if (p)
+		free(p);
+	unix_path(r);
+	return r;
+}
 
 char *app_dir( void );
 
@@ -264,31 +272,24 @@ char *open_file_dialog(void)
 
 static char curdir[PATH_MAX];
 
-int chdir(const char *path)
+int setdir(const char *path)
 {
 	strncpy(curdir, path, sizeof(curdir) - 1);
 	return 0;
 }
 
-char *sdl_path(char *p)
+char *getdir(char *path, size_t size)
 {
-	char *fp;
-	char *r;
+	strncpy(path, curdir, size - 1);
+	return path;
+}
 
-	if (!p)
-		return p;
-
-	fp = malloc(strlen(curdir) + strlen(p) + 2);
-
-	if (fp) {
-		strcpy(fp, curdir);
-		strcat(fp, "/");
-		strcat(fp, p);
-		free(p);
-		p = fp;
-	}
-	r = mbs2utf8(p);
-	free(p);
-	unix_path(r);
-	return r;
+char *dirpath(const char *path)
+{
+	static char fp[PATH_MAX];
+	strcpy(fp, curdir);
+	strcat(fp, "/");
+	strcat(fp, path);
+	unix_path(fp);
+	return fp;
 }
