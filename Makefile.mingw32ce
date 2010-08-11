@@ -1,0 +1,50 @@
+VERSION := 1.2.0
+
+PREFIX=./
+DESTDIR=
+
+BIN=$(DESTDIR)$(PREFIX)
+STEADPATH=$(DESTDIR)$(PREFIX)stead
+THEMESPATH=$(DESTDIR)$(PREFIX)themes
+GAMESPATH=$(DESTDIR)$(PREFIX)games
+ICONPATH=$(DESTDIR)$(PREFIX)icon
+DOCPATH=$(DESTDIR)$(PREFIX)doc
+LANGPATH=$(DESTDIR)$(PREFIX)languages
+MANPATH=$(DESTDIR)$(PREFIX)doc
+
+ZLIB_CFLAGS=
+ZLIB_LFLAGS=
+
+LUA_CFLAGS=
+LUA_LFLAGS=
+
+SDL_CFLAGS=
+SDL_LFLAGS=
+
+CFLAGS  += -Wall -march=armv4t -Os -static \
+	-D_HAVE_ICONV -D_USE_SDL_ICONV -D_LOCAL_APPDATA -D_SDL_MOD_BUG \
+	$(shell sdl-config --cflags) $(shell libpng-config --cflags) $(shell liblua-config --cflags)
+LDFLAGS += -Wl,-Bstatic \
+	$(shell sdl-config --libs) \
+	-lSDL_mixer -lSDL -lmad -lvorbisfile -lvorbis -logg \
+	-lSDL_ttf -lintl -lfreetype \
+	-lSDL_image -lz $(shell libpng-config --libs) -ljpeg \
+	$(shell liblua-config --libs) \
+	-lmmtimer
+
+CC=arm-mingw32ce-gcc
+AR=arm-mingw32ce-ar rc
+RANLIB=arm-mingw32ce-ranlib
+
+RM=rm
+EXE=.exe
+
+INSTALLD=install -d -m 0755
+INSTALLB=install -m 0755
+INSTALL=install -m 0644
+PLATFORM=windows.c iowin32.c
+RESOURCES=resources.o
+
+resources.o: resources.rc
+	arm-mingw32ce-windres -i resources.rc -o resources.o
+
