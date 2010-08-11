@@ -278,7 +278,7 @@ char *sdl_path(char *p)
 	if (!p)
 		return p;
 
-	fp = malloc(strlen(curdir) + strlen(p) + 1);
+	fp = malloc(strlen(curdir) + strlen(p) + 2);
 
 	if (fp) {
 		strcpy(fp, curdir);
