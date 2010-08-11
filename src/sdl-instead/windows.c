@@ -6,9 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-#ifdef _HAVE_ICONV
-#include <iconv.h>
-#endif
+#include "sdl_iconv.h"
 #include "internals.h"
 
 extern char *curgame;

@@ -109,6 +109,32 @@ fi
 echo "ok"
 rm -f /tmp/sdl-test.c /tmp/sdl-test
 
+cat << EOF >/tmp/sdl-iconv.c
+#include <SDL.h>
+int main(int argc, char **argv)
+{
+#ifdef HAVE_ICONV
+	return 0;
+#else
+	return 1;
+#endif
+}
+EOF
+
+echo $cc
+echo -n "Checking SDL iconv...("
+echo -n "$cc "`sdl-config --cflags` `sdl-config --libs`" /tmp/sdl-iconv.c -o iconv-test)..."
+if ! $cc `sdl-config --cflags` `sdl-config --libs` /tmp/sdl-iconv.c -o /tmp/iconv-test || ! /tmp/iconv-test; then
+	echo "failed. Build without SDL iconv."
+else
+	CFLAGS="$CFLAGS -D_HAVE_ICONV"
+	echo "ok"
+	sdl_iconv="1"
+fi
+
+rm -f /tmp/sdl-iconv.c /tmp/iconv-test
+
+if [[ $sdl_iconv!="1" ]]; then
 cat << EOF >/tmp/iconv-test.c
 #include <iconv.h>
 int main(int argc, char **argv)
@@ -133,6 +159,7 @@ else
 fi
 
 rm -f /tmp/iconv-test.c /tmp/iconv-test
+fi
 
 if ! make clean >/dev/null 2>&1; then
 	echo " * Warning!!! Can not do make clean..."

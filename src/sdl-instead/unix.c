@@ -11,9 +11,7 @@
 
 #include <locale.h>
 #include <langinfo.h>
-#ifdef _HAVE_ICONV
-#include <iconv.h>
-#endif
+#include "sdl_iconv.h"
 #include "internals.h"
 #ifdef _USE_GTK
 #include <gtk/gtk.h>
