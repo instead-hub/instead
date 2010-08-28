@@ -196,6 +196,7 @@ game.fading = function(s)
 		return false
 	end
 	if game._time == 1 then -- first cmd
+		game.lastpic = p;
 		return true
 	end
 	if PLAYER_MOVED or game.lastpic ~= p then
