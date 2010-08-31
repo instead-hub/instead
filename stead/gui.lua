@@ -95,7 +95,13 @@ iface.ways = function(self, str)
 end;
 
 function get_title()
-	local s = call(here(), 'nam');
+	local s
+	if stead.api_version >= "1.2.0" then
+		s = call(here(), 'disp');
+	end
+	if type(s) ~= 'string' then
+		s = call(here(), 'nam');
+	end
 	if type(s) == 'string' then
 		s = stead.string.gsub(s, '\\'..stead.delim, stead.delim);
 	end
