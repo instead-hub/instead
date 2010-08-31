@@ -1701,6 +1701,7 @@ function gamefile(file, forget)
 		set_music();
 		set_sound();
 		timer:stop();
+		variables = nil
 		init = function() -- null init function
 		end
 		for_each_object(function(k, o) -- destroy all objects
