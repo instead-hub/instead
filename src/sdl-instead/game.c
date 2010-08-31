@@ -410,6 +410,15 @@ int game_saves_enabled(void)
 	return rc;
 }
 
+int game_autosave_enabled(void)
+{
+	int rc;
+	instead_eval("return isEnableAutosave()");
+	rc = instead_bretval(0);
+	instead_clear();
+	return rc;
+}
+
 int game_save(int nr)
 {
 	char *s = game_save_path(1, nr);
@@ -417,11 +426,13 @@ int game_save(int nr)
 	char *p;
 	if (s) {
 		if (nr == -1 || nr == 0) {
-			if (nr == -1) {
+			if (nr == -1)
 				instead_eval("autosave(-1)"); /* enable saving for -1 */
-				instead_clear();
-			} else if (!game_saves_enabled())
+			else if (!game_autosave_enabled())
 				return 0; /* nothing todo */
+			else
+				instead_eval("autosave(0)"); /* enable saving for 0 */
+			instead_clear();
 		}
 		snprintf(cmd, sizeof(cmd) - 1, "save %s", s);
 		p = instead_cmd(cmd);

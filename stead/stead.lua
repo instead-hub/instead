@@ -1540,6 +1540,13 @@ function isEnableSave()
 	return call_bool(game, 'enable_save');
 end
 
+function isEnableAutosave()
+	if game.enable_autosave == nil then
+		return true
+	end
+	return call_bool(game, 'enable_autosave');
+end
+
 function for_each(o, n, f, fv, ...)
 	local k,v
 	if type(o) ~= 'table' then
