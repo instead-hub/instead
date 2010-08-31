@@ -2,6 +2,7 @@ instead (1.2.1) unstable; urgency=low
 
   * clearlooks bg;
   * fading fix;
+  * fix in disable autosave
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 28 Aug 2010 19:47:00 +0300  
 
