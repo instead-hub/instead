@@ -1,11 +1,8 @@
 function isForSave(k, v, s) -- k - key, v - value, s -- parent table
 	local i,o
-	if type(s.variables) == 'table' then
-		for i,o in ipairs(s.variables) do
-			if o == k then
-				return true
-			end
-		end
+	if type(s.variables_save) == 'table' and 
+		s.variables_save[k] then
+			return true
 	end
 	if type(k) == 'function' then
 		return false
@@ -24,7 +21,7 @@ function __vars_add(s, v, set)
 		elseif s.variables[k] then
 			error ("Variable overwrites variables object: "..tostring(k))
 		elseif k ~= 'variable_type' then
-			if set and (type(o) == 'string' or type(o) == 'boolean' or type(o) == 'number') then 
+			if set and not isObject(o) then 
 				if s[k] then
 					error ("Global variable conflict: "..tostring(k));
 				end
@@ -52,6 +49,7 @@ function __vars_fill(v)
 	if type(v.variables) == 'table' then
 		local k,o
 		local vars = {}
+		v.variables_save = {}
 		for k,o in pairs(v.variables) do
 			if tonumber(k) and type(o) == 'string' then
 				stead.table.insert(vars, o)
@@ -62,6 +60,9 @@ function __vars_fill(v)
 				v[k] = o
 				stead.table.insert(vars, k);
 			end
+		end
+		for k,o in ipairs(vars) do
+			v.variables_save[o] = true
 		end
 		v.variables = vars;
 	end
