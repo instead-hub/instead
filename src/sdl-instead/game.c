@@ -416,9 +416,12 @@ int game_save(int nr)
 	char cmd[PATH_MAX];
 	char *p;
 	if (s) {
-		if (nr == -1) {
-			instead_eval("autosave(-1)"); /* enable saving for -1 */
-			instead_clear();
+		if (nr == -1 || nr == 0) {
+			if (nr == -1) {
+				instead_eval("autosave(-1)"); /* enable saving for -1 */
+				instead_clear();
+			} else if (!game_saves_enabled())
+				return 0; /* nothing todo */
 		}
 		snprintf(cmd, sizeof(cmd) - 1, "save %s", s);
 		p = instead_cmd(cmd);
