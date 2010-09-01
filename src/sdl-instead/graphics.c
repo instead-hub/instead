@@ -610,10 +610,33 @@ img_t gfx_combine(img_t src, img_t dst)
 	return new;	
 }
 
+/* blank:WxH */
+static img_t _gfx_load_special_image(char *filename)
+{
+	img_t img, img2;
+	int wh[2] = { 0, 0 };
+	if (strncmp(filename, "blank:", 6))
+		return NULL;
+	filename += 6;
+	if (parse_mode(filename, wh))
+		return NULL;
+	if (wh[0] <= 0 || wh[1] <= 0)
+		return NULL; 
+	img = gfx_new(wh[0], wh[1]);
+	if (!img)
+		return NULL;
+	img2 = gfx_alpha_img(img, 0);
+	gfx_free_image(img);
+	return img2;
+}
+
 static img_t _gfx_load_image(char *filename)
 {
 	SDL_Surface *img;
 	int nr = 0;
+	img = _gfx_load_special_image(filename);
+	if (img)
+		return img;
 	if (strstr(filename,".gif") || strstr(filename,".GIF"))
 		nr = AG_LoadGIF(filename, NULL, 0, NULL);
 	if (nr > 1) { /* anigif logic */
@@ -1145,6 +1168,7 @@ struct word {
 	int x;
 	int w;
 	int unbrake;
+	int valign;
 	char *word;
 	img_t	img;
 	struct word *next; /* in line */
@@ -1173,6 +1197,7 @@ struct word *word_new(const char *str)
 	w->next = NULL;
 	w->x = 0;
 	w->w = 0;
+	w->valign = 0;
 	w->line = NULL;
 	w->xref = NULL;
 	w->style = 0;
@@ -1412,8 +1437,11 @@ struct layout {
 	int w;
 	int h;
 	int align;
+	int valign;
 	int saved_align[ALIGN_NEST];
+	int saved_valign[ALIGN_NEST];
 	int acnt;
+	int vcnt;
 	int style;
 	int scnt[4];
 	int lstyle;
@@ -1569,6 +1597,7 @@ struct layout *layout_new(fnt_t fn, int w, int h)
 	l->h = h;
 	l->fn = fn;
 	l->align = ALIGN_JUSTIFY;
+	l->valign = 0;
 	l->style = 0;
 	l->lstyle = 0;
 	l->xrefs = NULL;
@@ -1579,7 +1608,9 @@ struct layout *layout_new(fnt_t fn, int w, int h)
 	l->img_cache = cache_init(GFX_CACHE_SIZE, gfx_free_image);
 	memset(l->scnt, 0, sizeof(l->scnt));
 	memset(l->saved_align, 0, sizeof(l->saved_align));
+	memset(l->saved_valign, 0, sizeof(l->saved_valign));
 	l->acnt = 0;
+	l->vcnt = 0;
 	return l;
 }
 void txt_layout_size(layout_t lay, int *w, int *h)
@@ -1643,7 +1674,9 @@ void _txt_layout_free(layout_t lay)
 	layout->lines = NULL;
 	memset(layout->scnt, 0, sizeof(layout->scnt));
 	memset(layout->saved_align, 0, sizeof(layout->saved_align));
+	memset(layout->saved_valign, 0, sizeof(layout->saved_valign));
 	layout->acnt = 0;
+	layout->vcnt = 0;
 }
 
 word_t txt_layout_words(layout_t lay, word_t v)
@@ -1684,8 +1717,10 @@ void txt_layout_free(layout_t lay)
 #define	TOKEN_R		0x20
 #define	TOKEN_J		0x40
 #define	TOKEN_L		0x80
+#define	TOKEN_T		0x100
+#define TOKEN_D		0x200
 #define TOKEN_CLOSE	0x2000
-#define TOKEN(x)	(x & 0xff)
+#define TOKEN(x)	(x & 0xfff)
 
 int get_token(const char *ptr, char **eptr, char **val, int *sp)
 {
@@ -1759,6 +1794,26 @@ int get_token(const char *ptr, char **eptr, char **val, int *sp)
 		if (ptr[1] == '>') {
 			*eptr = (char*)ptr + 2;
 			return TOKEN_I;
+		}
+		break;
+	case 't':
+		if (closing) {
+			*eptr = (char*)ptr + 2;
+			return TOKEN_T | TOKEN_CLOSE;
+		}
+		if (ptr[1] == '>') {
+			*eptr = (char*)ptr + 2;
+			return TOKEN_T;
+		}
+		break;
+	case 'd':
+		if (closing) {
+			*eptr = (char*)ptr + 2;
+			return TOKEN_D | TOKEN_CLOSE;
+		}
+		if (ptr[1] == '>') {
+			*eptr = (char*)ptr + 2;
+			return TOKEN_D;
 		}
 		break;
 	case 'u':
@@ -2004,6 +2059,22 @@ static void word_render(struct layout *layout, struct word *word, int x, int y)
 	gfx_draw(s, x, y);
 }
 
+static int vertical_align(struct word *w)
+{
+	int h;
+	struct line *line = w->line;
+	struct layout *layout = line->layout;
+	if (w->img)
+		h = gfx_img_h(w->img);
+	else
+		h = fnt_height(layout->fn);
+	if (w->valign == ALIGN_TOP)
+		return 0;
+	else if (w->valign == ALIGN_BOTTOM)
+		return line->h - h;
+	return (line->h - h) / 2;
+}
+
 void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 {
 	int i;
@@ -2025,10 +2096,7 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 		word = xref->words[i];
 		line = word->line;
 
-		if (word->img)
-			yy = (line->h - gfx_img_h(word->img)) / 2;
-		else
-			yy = (line->h - fnt_height(layout->fn)) / 2; // TODO
+		yy = vertical_align(word);
 
 		if (clear) {
 			if (word->img)
@@ -2071,11 +2139,7 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 		for (word = line->words; word; word = word->next ) {
 			if (clear && !word->xref)
 				continue;
-			if (word->img)
-				yy = (line->h - gfx_img_h(word->img)) / 2;
-			else
-				yy = (line->h - fnt_height(layout->fn)) / 2; // TODO
-			
+			yy = vertical_align(word);
 			if (clear) {
 				if (word->img)
 					clear(x + word->x, y + line->y + yy, gfx_img_w(word->img), gfx_img_h(word->img));
@@ -2566,6 +2630,29 @@ char *process_token(char *ptr, struct layout *layout, struct line *line, struct 
 		}
 		goto out;
 	}
+	
+	al = 0;
+
+	if (TOKEN(token) == TOKEN_T)
+		al = ALIGN_TOP;
+	else if (TOKEN(token) == TOKEN_D)
+		al = ALIGN_BOTTOM;
+	
+	if (al) {
+		if (token & TOKEN_CLOSE)  {
+			layout->vcnt --;
+			if (layout->vcnt <0)
+				layout->vcnt = 0;
+			layout->valign = layout->saved_valign[layout->vcnt];
+		} else {
+			layout->saved_valign[layout->vcnt] = layout->valign;
+			layout->vcnt ++;
+			if (layout->vcnt >= ALIGN_NEST)
+				layout->vcnt = ALIGN_NEST - 1;
+			layout->valign = al;
+		}
+		goto out;
+	}
 
 	if (TOKEN(token) == TOKEN_A) {
 		if (token & TOKEN_CLOSE) {
@@ -2747,7 +2834,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 			line_free(line);
 			goto err;
 		}
-		
+		word->valign = layout->valign;
 		if (!sp && line->num)
 			word->unbrake = 1;
 		
