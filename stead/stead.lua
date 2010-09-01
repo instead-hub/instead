@@ -1701,7 +1701,13 @@ function gamefile(file, forget)
 		set_music();
 		set_sound();
 		timer:stop();
-		variables = nil
+		if type(variables) == 'table' then
+			local k,v
+			for k,v in ipairs(variables) do
+				_G[v] = nil
+			end
+			variables = nil
+		end
 		init = function() -- null init function
 		end
 		for_each_object(function(k, o) -- destroy all objects
