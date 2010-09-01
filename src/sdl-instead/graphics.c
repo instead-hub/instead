@@ -2059,7 +2059,7 @@ static void word_render(struct layout *layout, struct word *word, int x, int y)
 	gfx_draw(s, x, y);
 }
 
-static int vertical_align(struct word *w)
+static int vertical_align(struct word *w, int *hh)
 {
 	int h;
 	struct line *line = w->line;
@@ -2068,6 +2068,8 @@ static int vertical_align(struct word *w)
 		h = gfx_img_h(w->img);
 	else
 		h = fnt_height(layout->fn);
+	if (hh)
+		*hh = h;
 	if (w->valign == ALIGN_TOP)
 		return 0;
 	else if (w->valign == ALIGN_BOTTOM)
@@ -2096,7 +2098,7 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 		word = xref->words[i];
 		line = word->line;
 
-		yy = vertical_align(word);
+		yy = vertical_align(word, NULL);
 
 		if (clear) {
 			if (word->img)
@@ -2139,7 +2141,7 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 		for (word = line->words; word; word = word->next ) {
 			if (clear && !word->xref)
 				continue;
-			yy = vertical_align(word);
+			yy = vertical_align(word, NULL);
 			if (clear) {
 				if (word->img)
 					clear(x + word->x, y + line->y + yy, gfx_img_w(word->img), gfx_img_h(word->img));
@@ -2430,11 +2432,15 @@ xref_t txt_box_xref(textbox_t tbox, int x, int y)
 	if (x >= box->w)
 		return NULL;
 	for (line = box->line; line; line = line->next) {
+		int hh, yy;
 		if (y < line->y)
 			break;
 		if (y > line->y + line->h)
 			continue;
 		for (word = line->words; word; word = word->next) {
+			yy = vertical_align(word, &hh);
+			if (y < line->y + yy || y > line->y + yy + hh)
+				continue;
 			if (x < word->x)
 				continue;
 			xref = word->xref;
@@ -2960,9 +2966,13 @@ xref_t txt_layout_xref(layout_t lay, int x, int y)
 		return NULL;
 	for (xref = layout->xrefs; xref; xref = xref->next) {
 		for (i = 0; i < xref->num; i ++) {
+			int hh,yy;
 			word = xref->words[i];
 			line = word->line;
 			if (y < line->y || y > line->y + line->h)
+				continue;
+			yy = vertical_align(word, &hh);
+			if (y < line->y + yy || y > line->y + yy + hh)
 				continue;
 			if (x < word->x)
 				continue;
