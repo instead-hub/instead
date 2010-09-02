@@ -25,6 +25,7 @@ typedef struct {
 #define ALIGN_JUSTIFY 	8
 #define ALIGN_TOP		16
 #define ALIGN_BOTTOM	32
+#define ALIGN_MIDDLE	64
 
 #define STYLE_NORMAL	0x00
 #define STYLE_BOLD		0x01

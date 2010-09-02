@@ -240,6 +240,21 @@ function txtnm(n, v)
 	return iface:enum(n, v);
 end
 
+function txttop(v)
+	if type(v) ~= 'string' then return nil; end; 
+	return iface:top(v)
+end
+
+function txtbottom(v)
+	if type(v) ~= 'string' then return nil; end; 
+	return iface:bottom(v)
+end
+
+function txtmiddle(v)
+	if type(v) ~= 'string' then return nil; end; 
+	return iface:middle(v)
+end
+
 fmt = function(...)
 	local i, res
 	if arg == nil then
@@ -1867,6 +1882,15 @@ iface = {
 		return str;
 	end,
 	center = function(self, str)
+		return str;
+	end,
+	top = function(self, str)
+		return str;
+	end,
+	bottom = function(self, str)
+		return str;
+	end,
+	middle = function(self, str)
 		return str;
 	end,
 	bold = function(self, str)

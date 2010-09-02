@@ -75,6 +75,21 @@ iface.bold = function(self, str)
 	return stead.cat('<b>',str,'</b>');
 end;
 
+iface.top = function(self, str)
+	if str == nil then return nil; end;
+	return stead.cat('<t>',str,'</t>');
+end;
+
+iface.bottom = function(self, str)
+	if str == nil then return nil; end;
+	return stead.cat('<d>',str,'</d>');
+end;
+
+iface.middle = function(self, str)
+	if str == nil then return nil; end;
+	return stead.cat('<m>',str,'</m>');
+end;
+
 iface.inv = function(self, str)
 	if str then
 		str = stead.string.gsub(str, '\\'..stead.delim, '<&delim;>');
