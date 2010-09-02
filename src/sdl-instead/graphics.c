@@ -2459,8 +2459,12 @@ xref_t txt_box_xref(textbox_t tbox, int x, int y)
 				continue;
 			if (x < word->x + word->w)
 				break;
-			if (word->next && word->next->xref == xref && x < word->next->x + word->next->w)
+			if (word->next && word->next->xref == xref && x < word->next->x + word->next->w) {
+				yy = vertical_align(word->next, &hh);
+				if (y < line->y + yy || y > line->y + yy + hh)
+					continue;
 				break;
+			}
 		}
 	}
 	if (word && xref) {
@@ -2991,8 +2995,12 @@ xref_t txt_layout_xref(layout_t lay, int x, int y)
 				continue;
 			if (x <= word->x + word->w)
 				return xref;
-			if (word->next && word->next->xref == xref && x < word->next->x + word->next->w)
+			if (word->next && word->next->xref == xref && x < word->next->x + word->next->w) {
+				yy = vertical_align(word->next, &hh);
+				if (y < line->y + yy || y > line->y + yy + hh)
+					continue;
 				return xref;
+			}
 		}
 	}
 	return NULL;
