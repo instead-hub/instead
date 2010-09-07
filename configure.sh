@@ -134,7 +134,7 @@ fi
 
 rm -f /tmp/sdl-iconv.c /tmp/iconv-test
 
-if [[ $sdl_iconv!="1" ]]; then
+if [[ "$sdl_iconv" != "1" ]]; then
 cat << EOF >/tmp/iconv-test.c
 #include <iconv.h>
 int main(int argc, char **argv)
