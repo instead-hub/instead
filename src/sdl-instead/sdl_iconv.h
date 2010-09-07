@@ -4,7 +4,7 @@
 #ifdef _HAVE_ICONV
 #include <SDL_config.h>
 
-#ifdef HAVE_ICONV
+#if defined(HAVE_ICONV) && !defined(HAVE_ICONV_H)
 #include <SDL_stdinc.h>
 #define iconv SDL_iconv
 #define iconv_t SDL_iconv_t
