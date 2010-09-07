@@ -113,7 +113,8 @@ cat << EOF >/tmp/sdl-iconv.c
 #include <SDL.h>
 int main(int argc, char **argv)
 {
-#ifdef HAVE_ICONV
+#if defined(HAVE_ICONV) && !defined(HAVE_ICONV_H)
+	SDL_iconv_open("","");
 	return 0;
 #else
 	return 1;
