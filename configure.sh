@@ -113,7 +113,7 @@ cat << EOF >/tmp/sdl-iconv.c
 #include <SDL.h>
 int main(int argc, char **argv)
 {
-#if defined(HAVE_ICONV) && !defined(HAVE_ICONV_H)
+#if defined(HAVE_ICONV) && !defined(HAVE_ICONV_H) && !defined(SDL_iconv_open)
 	SDL_iconv_open("","");
 	return 0;
 #else
@@ -128,7 +128,7 @@ echo -n "$cc "`sdl-config --cflags` `sdl-config --libs`" /tmp/sdl-iconv.c -o ico
 if ! $cc `sdl-config --cflags` `sdl-config --libs` /tmp/sdl-iconv.c -o /tmp/iconv-test || ! /tmp/iconv-test; then
 	echo "failed. Build without SDL iconv."
 else
-	CFLAGS="$CFLAGS -D_HAVE_ICONV"
+	CFLAGS="$CFLAGS -D_HAVE_ICONV -D_SDL_ICONV"
 	echo "ok"
 	sdl_iconv="1"
 fi
