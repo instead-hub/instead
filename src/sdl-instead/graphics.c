@@ -1027,7 +1027,7 @@ int gfx_get_max_mode(int *w, int *h)
 		return -1;
 
 	while (!gfx_get_mode(i, &ww, &hh)) {
-		if ( (*w) * (*h) <= ww * hh) {
+		if (ww * hh > (*w) * (*h)) {
 			*w = ww;
 			*h = hh;
 		}

@@ -460,12 +460,12 @@ int game_apply_theme(void)
 	textbox_t box;
 	int w,h;
 
-	if (!gfx_get_max_mode(&w, &h) && (game_theme.w > w || game_theme.h > h)) {
-		opt_mode[0] = w;
-		opt_mode[1] = h;
+	if (gfx_get_max_mode(&w, &h) || (game_theme.w <= w && game_theme.h <= h)) {
+		w = opt_mode[0];
+		h = opt_mode[1];
 	}
 
-	if (game_theme_init(opt_mode[0], opt_mode[1]))
+	if (game_theme_init(w, h))
 		return -1;
 		
 	memset(objs, 0, sizeof(struct el) * el_max);
