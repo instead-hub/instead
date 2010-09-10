@@ -302,7 +302,7 @@ char *sdl_path(char *p)
 	unix_path(p);
 	return p;
 }
-
+#if 1
 int setdir(const char *path)
 {
 	return chdir(path);
@@ -317,3 +317,30 @@ char *dirpath(const char *path)
 {
 	return (char*)path;
 }
+#else
+static char curdir[PATH_MAX];
+
+int setdir(const char *path)
+{
+	strncpy(curdir, path, sizeof(curdir) - 1);
+	return 0;
+}
+
+char *getdir(char *path, size_t size)
+{
+	strncpy(path, curdir, size - 1);
+	return path;
+}
+
+char *dirpath(const char *path)
+{
+	static char fp[PATH_MAX];
+	if (path[0] == '/')
+		return (char*)path;
+	strcpy(fp, curdir);
+	strcat(fp, "/");
+	strcat(fp, path);
+	unix_path(fp);
+	return fp;
+}
+#endif

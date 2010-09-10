@@ -1486,7 +1486,7 @@ int game_cmd(char *cmd)
 		img_t img;
 
 		if (new_pict) {
-			img = gfx_load_image(dirpath(pict));
+			img = gfx_load_image(pict);
 			if (el_img(el_spic))
 				gfx_free_image(el_img(el_spic));
 			el(el_spic)->p.p = NULL;

@@ -637,6 +637,7 @@ static img_t _gfx_load_image(char *filename)
 	img = _gfx_load_special_image(filename);
 	if (img)
 		return img;
+	filename = dirpath(filename);
 	if (strstr(filename,".gif") || strstr(filename,".GIF"))
 		nr = AG_LoadGIF(filename, NULL, 0, NULL);
 	if (nr > 1) { /* anigif logic */
@@ -708,7 +709,7 @@ static img_t _gfx_load_combined_image(char *filename)
 		} else if (*ep) {
 			goto err;
 		}
-		img = _gfx_load_image(dirpath(strip(p)));
+		img = _gfx_load_image(strip(p));
 		if (img)
 			img = gfx_display_alpha(img);
 		if (img) {
@@ -2550,7 +2551,7 @@ img_t get_img(struct layout *layout, char *p)
 	img = cache_get(layout->img_cache, p);
 	if (!img) {
 		unix_path(p);
-		if (!(img = gfx_load_image(dirpath(p))))
+		if (!(img = gfx_load_image(p)))
 			goto out;
 		theme_img_scale(&img); /* bad style, no gfx layer :( */
 	}	
