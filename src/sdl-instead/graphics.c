@@ -1032,11 +1032,8 @@ int gfx_set_mode(int w, int h, int fs)
 	screen = SDL_SetVideoMode(gfx_width, gfx_height, 16, SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 #endif
 	if (screen == NULL) {
-		screen = SDL_SetVideoMode(0, 0, 0, SDL_ANYFORMAT | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
-		if (!screen) {
-			fprintf(stderr, "Unable to set %dx%d video: %s\n", w, h, SDL_GetError());
-			return -1;
-		}
+		fprintf(stderr, "Unable to set %dx%d video: %s\n", w, h, SDL_GetError());
+		return -1;
 	}
 	gfx_clear(0, 0, gfx_width, gfx_height);
 	return 0;
