@@ -503,7 +503,7 @@ end
 
 function ref(n, nofunc) -- ref object by name
 	if type(n) == 'string' then
-		local f = loadstring('return '..n);
+		local f = loadstring('return '..n..';');
 		if f then
 			return ref(f(), nofunc);
 		end
