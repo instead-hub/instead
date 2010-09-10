@@ -1014,6 +1014,28 @@ int gfx_next_mode(int *w, int *h)
 	return 0;
 }
 
+int gfx_get_max_mode(int *w, int *h)
+{
+	int ww = 0, hh = 0;
+	int i = 0;
+	*w = 0;
+	*h = 0;
+	if (!vid_modes)
+		gfx_modes();
+
+	if (!vid_modes)
+		return -1;
+
+	while (!gfx_get_mode(i, &ww, &hh)) {
+		if ( (*w) * (*h) <= ww * hh) {
+			*w = ww;
+			*h = hh;
+		}
+		i ++;
+	}
+	return 0;
+}
+
 int gfx_set_mode(int w, int h, int fs)
 {
 	gfx_width = w;
