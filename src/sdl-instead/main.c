@@ -69,6 +69,29 @@ void macosx_init(void) {
 }
 #endif
 
+#ifdef _WIN32_WCE
+char *getcurdir(char *path)
+{
+	char *p;
+	if (path == NULL || *path == '\0')
+		return ".";
+	p = path + strlen(path) - 1;
+	while (*p == '/') {
+		if (p == path)
+			return path;
+		*p-- = '\0';
+	}
+	while (p >= path && *p != '/')
+		p--;
+	return p < path ? "." : p == path ? "/" : (*p = '\0', path);
+}
+void wince_init(char *path)
+{
+	unix_path(path);
+	strcpy(game_cwd, getcurdir(path));
+}
+#endif
+
 int main(int argc, char *argv[])
 {
 	int clean_tmp = 0;
@@ -81,8 +104,13 @@ int main(int argc, char *argv[])
 	gtk_init(&argc, &argv);
 #endif
 	putenv("SDL_MOUSE_RELATIVE=0"); /* test this! */
+#ifdef _WIN32_WCE
+	wince_init(argv[0]);
+#else
 	getcwd(game_cwd, sizeof(game_cwd));
+#endif
 	unix_path(game_cwd);
+	setdir(game_cwd);
 	for (i = 1; i < argc; i++) {
 		if (!strcmp(argv[i],"-alsa")) 
 			alsa_sw = 1;
@@ -100,7 +128,7 @@ int main(int argc, char *argv[])
 		else if (!strcmp(argv[i], "-debug"))
 			debug_sw = 1;
 		else if (!strcmp(argv[i], "-noautosave"))
-			noauto_sw = 1;		
+			noauto_sw = 1;
 		else if (!strcmp(argv[i], "-game")) {
 			if ((i + 1) < argc)
 				game_sw = argv[++i];
@@ -187,7 +215,7 @@ int main(int argc, char *argv[])
 		goto out;		
 	}
 
-	menu_langs_lookup(LANG_PATH);
+	menu_langs_lookup(dirpath(LANG_PATH));
 	
 	if (!langs_nr) {
 		fprintf(stderr, "No languages found in: %s.\n", LANG_PATH);
@@ -207,14 +235,14 @@ int main(int argc, char *argv[])
 	if (games_sw)
 		games_lookup(games_sw);
 
-	if (!nostdgames_sw && games_lookup(GAMES_PATH))
+	if (!nostdgames_sw && games_lookup(dirpath(GAMES_PATH)))
 		fprintf(stderr, "No games found in: %s.\n", GAMES_PATH);
 
 	if (themes_sw)
 		themes_lookup(themes_sw);
 
 	if (!nostdthemes_sw) {
-		themes_lookup(THEMES_PATH);
+		themes_lookup(dirpath(THEMES_PATH));
 		themes_lookup(game_local_themes_path());
 	}
 	

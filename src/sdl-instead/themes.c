@@ -51,12 +51,12 @@ static int parse_include(const char *v, void *data)
 	char cwd[PATH_MAX];
 	if (!strcmp(v, DEFAULT_THEME))
 		return 0;
-	getcwd(cwd, sizeof(cwd));
-	chdir(game_cwd);
+	getdir(cwd, sizeof(cwd));
+	setdir(game_cwd);
 	rc = game_theme_load(v);
 //	if (!rc)
 //		game_theme_select(v);
-	chdir(cwd);
+	setdir(cwd);
 	return rc;
 }
 
@@ -552,13 +552,13 @@ int themes_rename(void)
 {
 	int i;
 	char cwd[PATH_MAX];
-	getcwd(cwd, sizeof(cwd));
-	chdir(game_cwd);
+	getdir(cwd, sizeof(cwd));
+	setdir(game_cwd);
 	for (i = 0; i < themes_nr; i++) {
 		FREE(themes[i].name);
-		themes[i].name = theme_name(themes[i].path, themes[i].dir);
+		themes[i].name = theme_name(dirpath(themes[i].path), themes[i].dir);
 	}
-	chdir(cwd);
+	setdir(cwd);
 	return 0;
 }
 
@@ -582,14 +582,14 @@ int game_theme_load(const char *name)
 {
 	struct theme *theme;
 	char cwd[PATH_MAX];
-	getcwd(cwd, sizeof(cwd));
-	chdir(game_cwd);
+	getdir(cwd, sizeof(cwd));
+	setdir(game_cwd);
 	theme = theme_lookup(name);
-	if (!theme || chdir(theme->path) || theme_load(THEME_FILE)) {
-		chdir(cwd);
+	if (!theme || setdir(theme->path) || theme_load(dirpath(THEME_FILE))) {
+		setdir(cwd);
 		return -1;
 	}
-	chdir(cwd);
+	setdir(cwd);
 	return 0;
 }
 

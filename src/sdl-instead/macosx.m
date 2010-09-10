@@ -194,3 +194,18 @@ char *open_file_dialog(void)
 	}
 	return NULL;
 }
+
+int setdir(const char *path)
+{
+	return chdir(path);
+}
+
+char *getdir(char *path, size_t size)
+{
+	return getcwd(path, size);
+}
+
+char *dirpath(const char *path)
+{
+	return (char*)path;
+}

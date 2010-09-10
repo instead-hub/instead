@@ -86,7 +86,7 @@ int game_select(const char *name)
 	g = game_lookup(name);
 	if ((!name || !*name) && !g)
 		return 0;
-	if (chdir(game_cwd))
+	if (setdir(game_cwd))
 		return -1;
 	if (g) {
 		char *oldgame = curgame_dir;
@@ -96,11 +96,11 @@ int game_select(const char *name)
 			curgame_dir = oldgame;
 			return -1;
 		}
-		if (chdir(g->path)) {
+		if (setdir(g->path)) {
 			curgame_dir = oldgame;
 			return -1;
 		}
-		if (instead_load(MAIN_FILE)) {
+		if (instead_load(dirpath(MAIN_FILE))) {
 			curgame_dir = oldgame;
 			return -1;
 		}
@@ -128,13 +128,13 @@ int games_rename(void)
 {
 	int i;
 	char cwd[PATH_MAX];
-	getcwd(cwd, sizeof(cwd));
-	chdir(game_cwd);
+	getdir(cwd, sizeof(cwd));
+	setdir(game_cwd);
 	for (i = 0; i < games_nr; i++) {
 		FREE(games[i].name);
-		games[i].name = game_name(games[i].path, games[i].dir);
+		games[i].name = game_name(dirpath(games[i].path), games[i].dir);
 	}
-	chdir(cwd);
+	setdir(cwd);
 	return 0;
 }
 
@@ -670,7 +670,7 @@ int counter_fn(int interval, void *p)
 
 int game_init(const char *name)
 {
-	getcwd(game_cwd, sizeof(game_cwd));
+	getdir(game_cwd, sizeof(game_cwd));
 	unix_path(game_cwd);
 
 	if (name)
@@ -690,12 +690,12 @@ int game_init(const char *name)
 	if (game_select(name))
 		return -1;
 	
-	if (curgame_dir && !access(THEME_FILE, R_OK)) {
+	if (curgame_dir && !access(dirpath(THEME_FILE), R_OK)) {
 		game_own_theme = 1;
 	}
 	
 	if (game_own_theme && opt_owntheme) {
-		if (theme_load(THEME_FILE))
+		if (theme_load(dirpath(THEME_FILE)))
 			return -1;
 	} else if (curtheme_dir && strcmp(DEFAULT_THEME, curtheme_dir)) {
 		game_theme_load(curtheme_dir);
@@ -753,7 +753,7 @@ void game_done(int err)
 
 	if (opt_autosave && curgame_dir && !err)
 		game_save(0);
-	chdir(game_cwd);
+	setdir(game_cwd);
 //	cfg_save();
 
 	if (menu_shown)
@@ -1238,11 +1238,11 @@ void game_music_player(void)
 	} else if (!last_music && mus) {
 		game_stop_mus(500);
 		last_music = mus;
-		snd_play_mus(mus, 0, loop - 1);
+		snd_play_mus(dirpath(mus), 0, loop - 1);
 	} else if (strcmp(last_music, mus)) {
 		game_stop_mus(500);
 		last_music = mus;
-		snd_play_mus(mus, 0, loop - 1);
+		snd_play_mus(dirpath(mus), 0, loop - 1);
 	} else
 		free(mus);
 }
@@ -1264,7 +1264,7 @@ static int wavs_pos = 0;
 static wav_t sound_add(const char *fname)
 {
 	wav_t w;
-	w = snd_load_wav(fname);
+	w = snd_load_wav(dirpath(fname));
 	if (!w)
 		return NULL;
 	snd_free_wav(wavs[wavs_pos].wav);
@@ -1486,7 +1486,7 @@ int game_cmd(char *cmd)
 		img_t img;
 
 		if (new_pict) {
-			img = gfx_load_image(pict);
+			img = gfx_load_image(dirpath(pict));
 			if (el_img(el_spic))
 				gfx_free_image(el_img(el_spic));
 			el(el_spic)->p.p = NULL;

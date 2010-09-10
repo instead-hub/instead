@@ -102,7 +102,7 @@ char *game_tmp_path(void)
 		return NULL;
 	}
 	strcat((char*)lpTempPathBuffer, "/instead-games");
-	if (mkdir((char*)lpTempPathBuffer) && errno != EEXIST)
+	if (mkdir((char*)lpTempPathBuffer) && access((char*)lpTempPathBuffer, W_OK))
 		return NULL;
 	unix_path((char*)lpTempPathBuffer);
 	return (char*)lpTempPathBuffer;
@@ -115,12 +115,12 @@ char *game_local_games_path(int cr)
 		return NULL;
 	snprintf(local_games_path, sizeof(local_games_path) - 1 , "%s/", app);
 	if (cr) {
-		if (mkdir(local_games_path) && errno != EEXIST)
+		if (mkdir(local_games_path) && access(local_games_path, W_OK))
 			return NULL;
 	}
 	strcat(local_games_path,"/games");
 	if (cr) {
-		if (mkdir(local_games_path) && errno != EEXIST)
+		if (mkdir(local_games_path) && access(local_games_path, W_OK))
 			return NULL;
 	}
 	return local_games_path;
@@ -182,7 +182,7 @@ char *game_cfg_path( void )
 		return cfg_path; 
 /* no at home? Try in dir */
 	snprintf(cfg_path, sizeof(cfg_path) - 1 , "%s", p);
-	if (mkdir(cfg_path) && errno != EEXIST) {
+	if (mkdir(cfg_path) && access(cfg_path, W_OK)) {
 		snprintf(cfg_path, sizeof(cfg_path) - 1 , "%src", p); /* appdir/insteadrc ;) */
 		return cfg_path;
 	}
@@ -205,21 +205,21 @@ char *game_save_path( int cr, int nr )
 			snprintf(save_path, sizeof(save_path) - 1, "saves/autosave");
 		return save_path;
 	}
-        if (!p)
+	if (!p)
 		return NULL;
 
 	strcpy( appdir, p );
 
-	if (cr && mkdir(appdir) && errno != EEXIST)
+	if (cr && mkdir(appdir) && access(appdir, W_OK))
 		return NULL;
 
 	snprintf(save_path, sizeof(save_path) - 1 , "%s/saves", appdir);
 
-	if (cr && mkdir(save_path) && errno != EEXIST)
+	if (cr && mkdir(save_path) && access(save_path, W_OK))
 		return NULL;
 	snprintf(save_path, sizeof(save_path) - 1, "%s/saves/%s", appdir, curgame_dir);
 
-	if (cr && mkdir(save_path) && errno != EEXIST)
+	if (cr && mkdir(save_path) && access(save_path, W_OK))
 		return NULL;
 
 	if (nr)
