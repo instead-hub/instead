@@ -266,7 +266,7 @@ int parse_full_path(const char *v, void *data)
 	char **p = ((char **)data);
 	if (*p)
 		free(*p);
-	getcwd(cwd, sizeof(cwd));
+	getdir(cwd, sizeof(cwd));
 	*p = malloc(strlen(v) + strlen(cwd) + 2);
 	if (!*p)
 		return -1;

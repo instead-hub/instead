@@ -257,6 +257,7 @@ typedef struct LoadF {
 	int extraline;
 	unsigned char byte;
 	FILE *f;
+	int enc;
 	unsigned char buff[4096];
 } LoadF;
 
@@ -271,11 +272,13 @@ static const char *getF (lua_State *L, void *ud, size_t *size) {
 	}
 	if (feof(lf->f)) return NULL;
 	*size = fread(lf->buff, 1, sizeof(lf->buff), lf->f);
-	for (i = 0; i < *size; i ++) {
-		unsigned char b = lf->buff[i];
-		lf->buff[i] ^= lf->byte;
-		lf->buff[i] = (lf->buff[i] >> 3) | (lf->buff[i] << 5);
-		lf->byte = b;
+	if (lf->enc) {
+		for (i = 0; i < *size; i ++) {
+			unsigned char b = lf->buff[i];
+			lf->buff[i] ^= lf->byte;
+			lf->buff[i] = (lf->buff[i] >> 3) | (lf->buff[i] << 5);
+			lf->byte = b;
+		}
 	}
 	return (*size > 0) ? (char*)lf->buff : NULL;
 }
@@ -288,7 +291,7 @@ static int errfile (lua_State *L, const char *what, int fnameindex) {
 	return LUA_ERRFILE;
 }
 
-static int loadfile (lua_State *L, const char *filename) {
+static int loadfile (lua_State *L, const char *filename, int enc) {
 	LoadF lf;
 	int status, readstatus;
 	int fnameindex = lua_gettop(L) + 1;  /* index of filename on the stack */
@@ -296,6 +299,7 @@ static int loadfile (lua_State *L, const char *filename) {
 	lua_pushfstring(L, "@%s", filename);
 	lf.f = fopen(filename, "rb");
 	lf.byte = 0xcc;
+	lf.enc = enc;
 	if (lf.f == NULL) return errfile(L, "open", fnameindex);
 	status = lua_load(L, getF, &lf, lua_tostring(L, -1));
 	readstatus = ferror(lf.f);
@@ -312,7 +316,15 @@ static int loadfile (lua_State *L, const char *filename) {
 static int luaB_doencfile (lua_State *L) {
 	const char *fname = luaL_optstring(L, 1, NULL);
 	int n = lua_gettop(L);
-	if (loadfile(L, fname) != 0) lua_error(L);
+	if (loadfile(L, dirpath(fname), 1) != 0) lua_error(L);
+	lua_call(L, 0, LUA_MULTRET);
+	return lua_gettop(L) - n;
+}
+
+static int luaB_dofile (lua_State *L) {
+	const char *fname = luaL_optstring(L, 1, NULL);
+	int n = lua_gettop(L);
+	if (loadfile(L, dirpath(fname), 0) != 0) lua_error(L);
 	lua_call(L, 0, LUA_MULTRET);
 	return lua_gettop(L) - n;
 }
@@ -404,6 +416,7 @@ static int luaB_set_timer(lua_State *L) {
 
 static const luaL_Reg base_funcs[] = {
 	{"doencfile", luaB_doencfile},
+	{"dofile", luaB_dofile},
 	{"print", luaB_print}, /* for some mystic, it is needed in win version (with -debug) */
 	{"is_sound", luaB_is_sound},
 	{"get_savepath", luaB_get_savepath},
@@ -467,11 +480,11 @@ int instead_init(void)
 	instead_package();
 	instead_lang();
 
-	if (dofile(L,STEAD_PATH"/stead.lua")) {
+	if (dofile(L, dirpath(STEAD_PATH"/stead.lua"))) {
 		return -1;
 	}
 
-	if (dofile(L,STEAD_PATH"/gui.lua")) {
+	if (dofile(L, dirpath(STEAD_PATH"/gui.lua"))) {
 		instead_clear();
 		return -1;
 	}

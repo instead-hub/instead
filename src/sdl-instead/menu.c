@@ -819,22 +819,22 @@ int menu_lang_select(const char *name)
 	char cwd[PATH_MAX];
 	if (!name)
 		return -1;
-	getcwd(cwd, sizeof(cwd));
-	chdir(game_cwd);
+	getdir(cwd, sizeof(cwd));
+	setdir(game_cwd);
 	for (i = 0; i<langs_nr; i ++) {
 		if (!strcmp(langs[i].file, name)) {
 			lang_free();
 			if (lang_parse(langs[i].path) || lang_ok()) {
 				fprintf(stderr,"Error while loading language: %s\n", langs[i].file);
-				chdir(cwd);
+				setdir(cwd);
 				return -1;
 			}
 			cur_lang = i;
 			FREE(opt_lang); opt_lang = strdup(langs[i].file);
-			chdir(cwd);
+			setdir(cwd);
 			return 0;
 		}
 	}
-	chdir(cwd);
+	setdir(cwd);
 	return -1;
 }

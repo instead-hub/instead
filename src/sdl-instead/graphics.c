@@ -708,7 +708,7 @@ static img_t _gfx_load_combined_image(char *filename)
 		} else if (*ep) {
 			goto err;
 		}
-		img = _gfx_load_image(strip(p));
+		img = _gfx_load_image(dirpath(strip(p)));
 		if (img)
 			img = gfx_display_alpha(img);
 		if (img) {
@@ -1032,8 +1032,11 @@ int gfx_set_mode(int w, int h, int fs)
 	screen = SDL_SetVideoMode(gfx_width, gfx_height, 16, SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 #endif
 	if (screen == NULL) {
-		fprintf(stderr, "Unable to set %dx%d video: %s\n", w, h, SDL_GetError());
-		return -1;
+		screen = SDL_SetVideoMode(0, 0, 0, SDL_ANYFORMAT | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
+		if (!screen) {
+			fprintf(stderr, "Unable to set %dx%d video: %s\n", w, h, SDL_GetError());
+			return -1;
+		}
 	}
 	gfx_clear(0, 0, gfx_width, gfx_height);
 	return 0;
@@ -2550,7 +2553,7 @@ img_t get_img(struct layout *layout, char *p)
 	img = cache_get(layout->img_cache, p);
 	if (!img) {
 		unix_path(p);
-		if (!(img = gfx_load_image(p)))
+		if (!(img = gfx_load_image(dirpath(p))))
 			goto out;
 		theme_img_scale(&img); /* bad style, no gfx layer :( */
 	}	

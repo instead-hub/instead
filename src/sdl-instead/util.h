@@ -31,6 +31,9 @@ extern char *decode(iconv_t hiconv, const char *s);
 
 extern void unix_path(char *path);
 extern char *sdl_path(char *path);
+extern int setdir(const char *path);
+extern char *getdir(char *path, size_t size);
+extern char *dirpath(const char *path);
 
 extern char *parse_tag(char *line, const char *tag, const char *comm, int *brk);
 extern int remove_dir(const char *path);
