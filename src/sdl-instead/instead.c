@@ -366,6 +366,13 @@ static int luaB_get_savepath(lua_State *L) {
 	return 1;
 }
 
+static int luaB_get_gamepath(lua_State *L) {
+	char path[PATH_MAX];
+	char *p = getdir(path, sizeof(path) - 1);
+	lua_pushstring(L, p);
+	return 1;
+}
+
 static gtimer_t instead_timer = NULL;
 static int instead_timer_nr = 0;
 
@@ -420,6 +427,7 @@ static const luaL_Reg base_funcs[] = {
 	{"print", luaB_print}, /* for some mystic, it is needed in win version (with -debug) */
 	{"is_sound", luaB_is_sound},
 	{"get_savepath", luaB_get_savepath},
+	{"get_gamepath", luaB_get_gamepath},
 	{"set_timer", luaB_set_timer},
 	{NULL, NULL}
 };
