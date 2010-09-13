@@ -458,7 +458,7 @@ int game_apply_theme(void)
 {
 	layout_t lay;
 	textbox_t box;
-	int w,h;
+	int w = -1 ,h = -1;
 
 	if (opt_mode[0] != -1 || 
 		gfx_get_max_mode(&w, &h) || 
