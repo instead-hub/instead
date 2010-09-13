@@ -1,3 +1,6 @@
+#ifdef _WIN32_WCE
+#include "wince.h"
+#endif
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>

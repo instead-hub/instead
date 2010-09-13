@@ -1,8 +1,8 @@
-#include "externals.h"
-#include "internals.h"
-
 #include <SDL.h>
 #include <SDL_mixer.h>
+
+#include "externals.h"
+#include "internals.h"
 
 int audio_rate = 22050;
 Uint16 audio_format = MIX_DEFAULT_FORMAT; 

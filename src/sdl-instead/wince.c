@@ -28,7 +28,7 @@ char *game_locale(void)
 {
 	char buff[64];
 	buff[0] = 0;
-	if (!GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO639LANGNAME,
+	if (!GetLocaleInfoA(LOCALE_USER_DEFAULT, LOCALE_SISO639LANGNAME,
         	buff,sizeof(buff) - 1))
 		return NULL;
 	return strdup(buff);
@@ -42,7 +42,7 @@ static char *game_cp(void)
 	char cpbuff[64];
 	char buff[64];
 	buff[0] = 0;
-	if (!GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_IDEFAULTANSICODEPAGE,
+	if (!GetLocaleInfoA(LOCALE_USER_DEFAULT, LOCALE_IDEFAULTANSICODEPAGE,
         	buff,sizeof(buff) - 1))
 		return NULL;
 	snprintf(cpbuff, sizeof(cpbuff), "WINDOWS-%s", buff);
@@ -154,21 +154,10 @@ char *home_dir( void )
 char *app_dir( void )
 {
 	static char appdir[PATH_MAX]="";
-#ifdef _LOCAL_APPDATA
 	strcpy(appdir, game_cwd);
 	strcat(appdir, "/appdata");
 	if (!access(appdir, W_OK))
 		return appdir;
-#endif
-
-	SHGetFolderPath( NULL, 
-		CSIDL_FLAG_CREATE | CSIDL_LOCAL_APPDATA,
-		NULL,
-		0, 
-		(LPTSTR)appdir );
-	unix_path(appdir);
-	strcat(appdir, "/instead");
-	return appdir;
 }
 
 char *game_cfg_path( void )
