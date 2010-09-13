@@ -1,7 +1,7 @@
-#include <SDL.h>
-
 #include "externals.h"
 #include "internals.h"
+
+#include <SDL.h>
 
 static int m_focus = 0;
 static int m_minimized = 0;

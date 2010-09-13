@@ -1,3 +1,6 @@
+#include "externals.h"
+#include "internals.h"
+
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -5,9 +8,6 @@
 #include "SDL_rotozoom.h"
 #include "SDL_gfxBlitFunc.h"
 #include "SDL_anigif.h"
-
-#include "externals.h"
-#include "internals.h"
 
 #define Surf(p) ((SDL_Surface *)p)
 
