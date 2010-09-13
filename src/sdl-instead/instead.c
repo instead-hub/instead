@@ -368,7 +368,9 @@ static int luaB_get_savepath(lua_State *L) {
 
 static int luaB_get_gamepath(lua_State *L) {
 	char path[PATH_MAX];
-	char *p = getdir(path, sizeof(path) - 1);
+	char *p = getdir(path, sizeof(path));
+	if (p)
+		unix_path(p);
 	lua_pushstring(L, p);
 	return 1;
 }
