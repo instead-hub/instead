@@ -148,7 +148,7 @@ int instead_iretval(int n)
 		return 0;
 	return lua_tonumber(L, n - N);
 }
-
+#if 0
 char *instead_cmd(char *s)
 {
 	char buf[4096];
@@ -162,6 +162,81 @@ char *instead_cmd(char *s)
 	snprintf(buf, sizeof(buf), "return iface:cmd('%s')", s); free(s);
 	p = getstring(buf);
 	return p;
+}
+#else
+char *instead_cmd(char *s)
+{
+	char *p;
+	p = s; //encode_esc_string(s);
+	if (!p)
+		return p;
+	s = togame(p); //free(p);
+	if (!s)
+		return s;
+	lua_getglobal(L, "iface");
+	lua_getfield(L, -1, "cmd");
+	lua_remove(L, -2);
+	lua_getglobal(L, "iface");
+	lua_pushstring(L, s);
+	free(s);
+	if (lua_pcall(L, 2, 1, 0) != 0) {
+		fprintf(stderr, "Error calling iface:cmd...\n");
+		game_err_msg("Error calling iface:cmd.");
+		return NULL;
+	}
+	p = (char*)lua_tostring(L, -1);
+	if (p)
+		p = fromgame(p);
+	return p;
+}
+#endif
+int instead_function(char *s, char **args, int n)
+{
+	char *p;
+	char f[64];
+	int method = 0;
+	strcpy(f, s);
+	p = strchr(f, '.');
+	if (!p)
+		p = strchr(f, ':');
+	if (p) {
+		if (*p == ':')
+			method = 1;
+		*p = 0;
+		p ++;
+		lua_getglobal(L, f);
+		lua_getfield(L, -1, p);
+		lua_remove(L, -2);
+		if (method)
+			lua_getglobal(L, f);
+	} else
+		lua_getglobal(L, s);
+	if (args) {
+		int i = 0;
+		for (i = 0; i < n; i++) {
+			if (!strcmp(args[i], "nil"))
+				lua_pushnil(L);
+			else if(args[i][0] >='0' && args[i][0] <= '9')
+				lua_pushnumber(L, atoi(args[i]));
+			else if (!strcmp(args[i], "true"))
+				lua_pushboolean(L, 1);
+			else if (!strcmp(args[i], "false"))
+				lua_pushboolean(L, 0);
+			else 
+				lua_pushstring(L, args[i]);
+		}
+		if (lua_pcall(L, method + n, LUA_MULTRET, 0) != 0) {
+			fprintf(stderr, "Error calling %s...\n", s);
+			game_err_msg("Error calling function.");
+			return -1;
+		}
+        	return 0;
+	}
+	if (lua_pcall(L, method, LUA_MULTRET, 0) != 0) {
+		fprintf(stderr, "Error calling %s...\n", s);
+		return -1;
+	}
+	return 0;
 }
 
 int luacall(char *cmd)
@@ -385,7 +460,7 @@ static void instead_timer_do(void *data)
 	char *p;
 	if (game_paused())
 		goto out;
-	if (instead_eval("return stead.timer()")) {
+	if (instead_function("stead.timer", NULL, 0)) {
 		instead_clear();
 		goto out;
 	}
