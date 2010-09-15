@@ -111,6 +111,7 @@ extern int 	themes_rename(void);
 extern int 	game_theme_load(const char *name);
 extern int 	game_theme_free(void);
 extern int 	game_theme_init(int w, int h);
+extern int	game_theme_optimize(void);
 extern int 	theme_load(const char *name);
 extern char 	*game_local_themes_path(void);
 extern int 	theme_img_scale(img_t *p);

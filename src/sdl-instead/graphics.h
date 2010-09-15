@@ -74,6 +74,7 @@ extern int	gfx_img_h(img_t pixmap);
 extern img_t	gfx_combine(img_t src, img_t dst);
 extern void	gfx_set_alpha(img_t src, int alpha);
 extern img_t	gfx_alpha_img(img_t src, int alpha);
+extern img_t	gfx_display_alpha(img_t src);
 extern img_t	gfx_scale(img_t src, float xscale, float yscale);
 extern void	gfx_draw_bg(img_t p, int x, int y, int width, int height);
 extern void	gfx_draw_from(img_t p, int x, int y, int xx, int yy, int width, int height);

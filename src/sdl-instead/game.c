@@ -104,7 +104,7 @@ int game_select(const char *name)
 			curgame_dir = oldgame;
 			return -1;
 		}
-		instead_eval("game:ini()"); instead_clear();
+		instead_function("game:ini", NULL, 0); instead_clear();
 		return 0;
 	}
 	return 0;
@@ -404,7 +404,7 @@ int game_load(int nr)
 int game_saves_enabled(void)
 {
 	int rc;
-	instead_eval("return isEnableSave()");
+	instead_function("isEnableSave", NULL, 0);
 	rc = instead_bretval(0);
 	instead_clear();
 	return rc;
@@ -413,7 +413,7 @@ int game_saves_enabled(void)
 int game_autosave_enabled(void)
 {
 	int rc;
-	instead_eval("return isEnableAutosave()");
+	instead_function("isEnableAutosave", NULL, 0);
 	rc = instead_bretval(0);
 	instead_clear();
 	return rc;
@@ -426,12 +426,14 @@ int game_save(int nr)
 	char *p;
 	if (s) {
 		if (nr == -1 || nr == 0) {
+			char *args_1[] = { "-1" };
+			char *args_0[] = { "0" };
 			if (nr == -1)
-				instead_eval("autosave(-1)"); /* enable saving for -1 */
+				instead_function("autosave", args_1, 1); /* enable saving for -1 */
 			else if (!game_autosave_enabled())
 				return 0; /* nothing todo */
 			else
-				instead_eval("autosave(0)"); /* enable saving for 0 */
+				instead_function("autosave", args_0, 1); /* enable saving for 0 */
 			instead_clear();
 		}
 		snprintf(cmd, sizeof(cmd) - 1, "save %s", s);
@@ -475,7 +477,8 @@ int game_apply_theme(void)
 		opt_mode[0] = opt_mode[1] = -1; opt_fs = 0; /* safe options */
 		return -1;
 	}
-	
+	if (game_theme_optimize())
+		return -1;
 	gfx_bg(game_theme.bgcol);
 	game_clear(0, 0, game_theme.w, game_theme.h);
 	gfx_flip();
@@ -1155,7 +1158,7 @@ static int check_fading(void)
 {
 	int rc;
 	int st;
-	instead_eval("return get_fading()");
+	instead_function("get_fading", NULL, 0);
 	rc = instead_bretval(0);
 	st = instead_iretval(1);
 
@@ -1191,7 +1194,7 @@ static void game_autosave(void)
 	int b,r;
 	if (!curgame_dir)
 		return;
-	instead_eval("return get_autosave();");
+	instead_function("get_autosave", NULL, 0);
 	b = instead_bretval(0); 
 	r = instead_iretval(1); 
 	instead_clear();
@@ -1207,7 +1210,7 @@ static void dec_music(void *data)
 	int rc;
 	if (!curgame_dir)
 		return;
-	instead_eval("return dec_music_loop()");
+	instead_function("dec_music_loop", NULL, 0);
 	rc = instead_iretval(0); 
 	instead_clear();
 	if (rc == -1)
@@ -1228,7 +1231,7 @@ void game_music_player(void)
 		return;
 	if (!opt_music)
 		return;
-	instead_eval("return get_music()");
+	instead_function("get_music", NULL, 0);
 	mus = instead_retval(0);
 	loop = instead_iretval(1);
 	unix_path(mus);
@@ -1312,10 +1315,11 @@ void game_sound_player(void)
 	char		*snd;
 	int		chan = -1;
 	int		loop = 1;
+	char *args[] = { "nil", "-1" };
 	
 	if (!snd_volume_mus(-1))
 		return;	
-	instead_eval("return get_sound()");
+	instead_function("get_sound", NULL, 0);
 
 	loop = instead_iretval(2);
 	chan = instead_iretval(1);
@@ -1325,11 +1329,11 @@ void game_sound_player(void)
 		if (chan != -1) {
 			/* halt channel */
 			snd_halt_chan(chan, 500);
-			instead_eval("set_sound(nil, -1)"); instead_clear();
+			instead_function("set_sound", args, 2); instead_clear();
 		}
 		return;
 	}	
-	instead_eval("set_sound(nil, -1)"); instead_clear();
+	instead_function("set_sound", args, 2); instead_clear();
 	
 	unix_path(snd);
 	w = sound_find(snd);
@@ -1439,13 +1443,13 @@ int game_cmd(char *cmd)
 	if (!cmdstr) 
 		goto inv; /* hackish? ok, yes  it is... */
 
-	instead_eval("return get_title();"); 
+	instead_function("get_title", NULL, 0); 
 	title = instead_retval(0); 
 	instead_clear();
 
 	new_place = check_new_place(title);
 
-	instead_eval("return get_picture();");
+	instead_function("get_picture", NULL, 0);
 	pict = instead_retval(0);
 	instead_clear();
 
@@ -2423,32 +2427,49 @@ static int game_bg_coord(int x, int y, int *ox, int *oy)
 static int game_input(int down, const char *key, int x, int y, int mb)
 {
 	char *p;
-	char buf[1024];
+	char *args[8];
+	
+	char tx[16];
+	char ty[16];
+	char tpx[16];
+	char tpy[16];
+	char tmb[16];
+	
+	int n = 0;
 	if (game_paused())
 		return -1;
-	p = encode_esc_string((key)?key:"unknown");
-	if (!p)
-		return -1;
-	
-	if (mb == -1)
-		snprintf(buf, sizeof(buf), "return stead.input(\"kbd\", %s, \"%s\")", 
-			((down)?"true":"false"), p);
-	else {
+
+	if (mb == -1) {
+		const char *k;
+		args[0] = "kbd";
+		args[1] = (down)?"true":"false";
+		k = (key)?key:"unknown";
+		args[2] = (char*)k;
+		n = 3;
+	} else {
 		int px = -1;
 		int py = -1;
 		game_pic_coord(x, y, &px, &py); /* got picture coord */
 		if (game_bg_coord(x, y, &x, &y)) /* no click on bg */
 			return -1;
-		if (px == -1) {
-			snprintf(buf, sizeof(buf), "return stead.input(\"mouse\", %s, %d, %d, %d)", 
-				((down)?"true":"false"), mb, x, y);
-		} else {
-			snprintf(buf, sizeof(buf), "return stead.input(\"mouse\", %s, %d, %d, %d, %d, %d)", 
-				((down)?"true":"false"), mb, x, y, px, py);
+		snprintf(tx, sizeof(tx), "%d", x);
+		snprintf(ty, sizeof(ty), "%d", y);
+		snprintf(tmb, sizeof(tmb), "%d", mb);
+		args[0] = "mouse";
+		args[1] = (down)?"true":"false";
+		args[2] = tmb;
+		args[3] = tx;
+		args[4] = ty;
+		n = 5;
+		if (px != -1) {
+			snprintf(tpx, sizeof(tpx), "%d", px);
+			snprintf(tpy, sizeof(tpy), "%d", py);
+			args[5] = tpx;
+			args[6] = tpy;
+			n = 7;
 		}
 	}
-	free(p);
-	if (instead_eval(buf)) {
+	if (instead_function("stead.input", args, n)) {
 		instead_clear();
 		return -1;
 	}

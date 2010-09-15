@@ -3,9 +3,15 @@
 
 int opt_fsize = 0;
 #ifndef MAEMO
-int opt_fs = 0;
-int opt_owntheme = 1;
-int opt_hl = 1;
+	#ifndef _WIN32_WCE
+	int opt_fs = 0;
+	int opt_owntheme = 1;
+	int opt_hl = 1;
+	#else
+	int opt_fs = 1;
+	int opt_owntheme = 1;
+	int opt_hl = 0;
+	#endif
 #else
 int opt_fs = 1;
 int opt_owntheme = 0;

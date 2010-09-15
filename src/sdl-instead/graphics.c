@@ -569,6 +569,8 @@ img_t gfx_display_alpha(img_t src)
 	if (!screen)
 		return src;
 	res = SDL_DisplayFormatAlpha(Surf(src));
+	if (!res)
+		return src;
 	gfx_free_image(src);
 	return res;
 }
@@ -666,6 +668,7 @@ static img_t _gfx_load_image(char *filename)
 			SDL_RWclose(rwop);
 		}
 	}
+	img = gfx_display_alpha(img);
 	return img;
 }
 
@@ -684,9 +687,6 @@ static img_t _gfx_load_combined_image(char *filename)
 	*ep = 0;
 
 	base = _gfx_load_image(strip(p));
-	if (!base)
-		goto err;
-	base = gfx_display_alpha(base);
 	if (!base)
 		goto err;
 	p = ep + 1;
@@ -710,8 +710,6 @@ static img_t _gfx_load_combined_image(char *filename)
 			goto err;
 		}
 		img = _gfx_load_image(strip(p));
-		if (img)
-			img = gfx_display_alpha(img);
 		if (img) {
 			to.x = x; to.y = y;
 			if (c) {
@@ -1043,13 +1041,15 @@ int gfx_set_mode(int w, int h, int fs)
 	SDL_ShowCursor(SDL_DISABLE);
 #ifndef MAEMO
 	#ifdef __APPLE__	
-	screen = SDL_SetVideoMode(gfx_width, gfx_height, 32, SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
+	screen = SDL_SetVideoMode(gfx_width, gfx_height, (fs)?32:0, SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 	if (screen == NULL) /* ok, fallback to anyformat */
 		screen = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 	#else
-	screen = SDL_SetVideoMode(gfx_width, gfx_height, 32, SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
+		#ifndef _WIN32_WCE
+	screen = SDL_SetVideoMode(gfx_width, gfx_height, (fs)?32:0, SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 	if (screen == NULL) /* ok, fallback to anyformat */
-		screen = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
+		#endif
+		screen = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 	#endif
 #else
 	screen = SDL_SetVideoMode(gfx_width, gfx_height, 16, SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
@@ -2076,16 +2076,22 @@ static void word_render(struct layout *layout, struct word *word, int x, int y)
 		TTF_SetFontStyle((TTF_Font *)(layout->fn), word->style);
 			
 	if (!word->xref) {
-		if (!word->prerend)
+		if (!word->prerend) {
 			word->prerend = TTF_RenderUTF8_Blended((TTF_Font *)(layout->fn), word->word, fgcol);
+			word->prerend = gfx_display_alpha(word->prerend);
+		}
 		s = word->prerend;
 	} else if (word->xref->active) {
-		if (!word->hlprerend)
+		if (!word->hlprerend) {
 			word->hlprerend = TTF_RenderUTF8_Blended((TTF_Font *)(layout->fn), word->word, acol);
+			word->hlprerend = gfx_display_alpha(word->hlprerend);
+		}
 		s = word->hlprerend;
 	} else {
-		if (!word->prerend)
+		if (!word->prerend) {
 			word->prerend = TTF_RenderUTF8_Blended((TTF_Font *)(layout->fn), word->word, lcol);
+			word->prerend = gfx_display_alpha(word->prerend);
+		}
 		s = word->prerend;
 	}
 	if (!s)
