@@ -104,7 +104,7 @@ int game_select(const char *name)
 			curgame_dir = oldgame;
 			return -1;
 		}
-		instead_function("game:ini", NULL, 0); instead_clear();
+		instead_function("game:ini", NULL); instead_clear();
 		return 0;
 	}
 	return 0;
@@ -404,7 +404,7 @@ int game_load(int nr)
 int game_saves_enabled(void)
 {
 	int rc;
-	instead_function("isEnableSave", NULL, 0);
+	instead_function("isEnableSave", NULL);
 	rc = instead_bretval(0);
 	instead_clear();
 	return rc;
@@ -413,7 +413,7 @@ int game_saves_enabled(void)
 int game_autosave_enabled(void)
 {
 	int rc;
-	instead_function("isEnableAutosave", NULL, 0);
+	instead_function("isEnableAutosave", NULL);
 	rc = instead_bretval(0);
 	instead_clear();
 	return rc;
@@ -426,14 +426,20 @@ int game_save(int nr)
 	char *p;
 	if (s) {
 		if (nr == -1 || nr == 0) {
-			char *args_1[] = { "-1" };
-			char *args_0[] = { "0" };
+			struct instead_args args_1[] = { 
+				{ .val = "-1", .type = INSTEAD_NUM }, 
+				{ .val = NULL, } 
+			};
+			struct instead_args args_0[] = { 
+				{ .val = "0", .type = INSTEAD_NUM }, 
+				{ .val = NULL, } 
+			};
 			if (nr == -1)
-				instead_function("autosave", args_1, 1); /* enable saving for -1 */
+				instead_function("autosave", args_1); /* enable saving for -1 */
 			else if (!game_autosave_enabled())
 				return 0; /* nothing todo */
 			else
-				instead_function("autosave", args_0, 1); /* enable saving for 0 */
+				instead_function("autosave", args_0); /* enable saving for 0 */
 			instead_clear();
 		}
 		snprintf(cmd, sizeof(cmd) - 1, "save %s", s);
@@ -1158,7 +1164,7 @@ static int check_fading(void)
 {
 	int rc;
 	int st;
-	instead_function("get_fading", NULL, 0);
+	instead_function("get_fading", NULL);
 	rc = instead_bretval(0);
 	st = instead_iretval(1);
 
@@ -1194,7 +1200,7 @@ static void game_autosave(void)
 	int b,r;
 	if (!curgame_dir)
 		return;
-	instead_function("get_autosave", NULL, 0);
+	instead_function("get_autosave", NULL);
 	b = instead_bretval(0); 
 	r = instead_iretval(1); 
 	instead_clear();
@@ -1210,7 +1216,7 @@ static void dec_music(void *data)
 	int rc;
 	if (!curgame_dir)
 		return;
-	instead_function("dec_music_loop", NULL, 0);
+	instead_function("dec_music_loop", NULL);
 	rc = instead_iretval(0); 
 	instead_clear();
 	if (rc == -1)
@@ -1231,7 +1237,7 @@ void game_music_player(void)
 		return;
 	if (!opt_music)
 		return;
-	instead_function("get_music", NULL, 0);
+	instead_function("get_music", NULL);
 	mus = instead_retval(0);
 	loop = instead_iretval(1);
 	unix_path(mus);
@@ -1315,11 +1321,16 @@ void game_sound_player(void)
 	char		*snd;
 	int		chan = -1;
 	int		loop = 1;
-	char *args[] = { "nil", "-1" };
-	
+
+	struct instead_args args[] = { 
+			{ .val = "nil", .type = INSTEAD_NIL }, 
+			{ .val = "-1", .type = INSTEAD_NUM },
+			{ .val = NULL } 
+	};
+
 	if (!snd_volume_mus(-1))
 		return;	
-	instead_function("get_sound", NULL, 0);
+	instead_function("get_sound", NULL);
 
 	loop = instead_iretval(2);
 	chan = instead_iretval(1);
@@ -1329,11 +1340,11 @@ void game_sound_player(void)
 		if (chan != -1) {
 			/* halt channel */
 			snd_halt_chan(chan, 500);
-			instead_function("set_sound", args, 2); instead_clear();
+			instead_function("set_sound", args); instead_clear();
 		}
 		return;
 	}	
-	instead_function("set_sound", args, 2); instead_clear();
+	instead_function("set_sound", args); instead_clear();
 	
 	unix_path(snd);
 	w = sound_find(snd);
@@ -1443,13 +1454,13 @@ int game_cmd(char *cmd)
 	if (!cmdstr) 
 		goto inv; /* hackish? ok, yes  it is... */
 
-	instead_function("get_title", NULL, 0); 
+	instead_function("get_title", NULL); 
 	title = instead_retval(0); 
 	instead_clear();
 
 	new_place = check_new_place(title);
 
-	instead_function("get_picture", NULL, 0);
+	instead_function("get_picture", NULL);
 	pict = instead_retval(0);
 	instead_clear();
 
@@ -1639,11 +1650,13 @@ inv:
 //	input_clear();
 err:
 	game_autosave();
+#if 0
 	if (err_msg) {
 		mouse_reset(1);
 		game_menu(menu_warning);
 		return -1;
 	}
+#endif
 	return 0;
 }
 
@@ -2427,7 +2440,7 @@ static int game_bg_coord(int x, int y, int *ox, int *oy)
 static int game_input(int down, const char *key, int x, int y, int mb)
 {
 	char *p;
-	char *args[8];
+	struct instead_args args[8];
 	
 	char tx[16];
 	char ty[16];
@@ -2435,17 +2448,16 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 	char tpy[16];
 	char tmb[16];
 	
-	int n = 0;
 	if (game_paused())
 		return -1;
 
 	if (mb == -1) {
 		const char *k;
-		args[0] = "kbd";
-		args[1] = (down)?"true":"false";
+		args[0].val = "kbd"; args[0].type = INSTEAD_STR;
+		args[1].val = (down)?"true":"false"; args[1].type = INSTEAD_BOOL;
 		k = (key)?key:"unknown";
-		args[2] = (char*)k;
-		n = 3;
+		args[2].val = (char*)k; args[2].type = INSTEAD_STR;
+		args[3].val = NULL;
 	} else {
 		int px = -1;
 		int py = -1;
@@ -2455,21 +2467,21 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 		snprintf(tx, sizeof(tx), "%d", x);
 		snprintf(ty, sizeof(ty), "%d", y);
 		snprintf(tmb, sizeof(tmb), "%d", mb);
-		args[0] = "mouse";
-		args[1] = (down)?"true":"false";
-		args[2] = tmb;
-		args[3] = tx;
-		args[4] = ty;
-		n = 5;
+		args[0].val = "mouse"; args[0].type = INSTEAD_STR;
+		args[1].val = (down)?"true":"false"; args[1].type = INSTEAD_BOOL;
+		args[2].val = tmb; args[2].type = INSTEAD_NUM;
+		args[3].val = tx; args[3].type = INSTEAD_NUM;
+		args[4].val = ty; args[4].type = INSTEAD_NUM;
+		args[5].val = NULL;
 		if (px != -1) {
 			snprintf(tpx, sizeof(tpx), "%d", px);
 			snprintf(tpy, sizeof(tpy), "%d", py);
-			args[5] = tpx;
-			args[6] = tpy;
-			n = 7;
+			args[5].val = tpx; args[5].type = INSTEAD_NUM;
+			args[6].val = tpy; args[6].type = INSTEAD_NUM;
+			args[7].val = NULL;
 		}
 	}
-	if (instead_function("stead.input", args, n)) {
+	if (instead_function("stead.input", &args)) {
 		instead_clear();
 		return -1;
 	}
@@ -2738,6 +2750,10 @@ int game_loop(void)
 			game_highlight(x, y, 1);
 		}
 		game_cursor(CURSOR_ON);
+		if (err_msg) {
+			mouse_reset(1);
+			game_menu(menu_warning);
+		}
 	}
 	return 0;
 }

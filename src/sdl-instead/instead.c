@@ -166,35 +166,30 @@ char *instead_cmd(char *s)
 #else
 char *instead_cmd(char *s)
 {
-	char *p;
-	p = s; //encode_esc_string(s);
-	if (!p)
-		return p;
-	s = togame(p); //free(p);
+	struct instead_args args[] = {
+		{ .val = NULL, .type = INSTEAD_STR },
+		{ .val = NULL, },
+	};
 	if (!s)
-		return s;
-	lua_getglobal(L, "iface");
-	lua_getfield(L, -1, "cmd");
-	lua_remove(L, -2);
-	lua_getglobal(L, "iface");
-	lua_pushstring(L, s);
-	free(s);
-	if (lua_pcall(L, 2, 1, 0) != 0) {
-		fprintf(stderr, "Error calling iface:cmd...\n");
-		game_err_msg("Error calling iface:cmd.");
 		return NULL;
-	}
-	p = (char*)lua_tostring(L, -1);
-	if (p)
-		p = fromgame(p);
-	return p;
+	s = togame(s);
+	if (!s)
+		return NULL;
+	args[0].val = s;
+	instead_function("iface:cmd", args);
+	free(s);
+	return instead_retval(0);
 }
 #endif
-int instead_function(char *s, char **args, int n)
+int instead_function(char *s, struct instead_args *args)
 {
+	int base = 0;
+	int status = 0;
+	int n = 0;
 	char *p;
 	char f[64];
 	int method = 0;
+
 	strcpy(f, s);
 	p = strchr(f, '.');
 	if (!p)
@@ -212,31 +207,34 @@ int instead_function(char *s, char **args, int n)
 	} else
 		lua_getglobal(L, s);
 	if (args) {
-		int i = 0;
-		for (i = 0; i < n; i++) {
-			if (!strcmp(args[i], "nil"))
+		while (args->val) {
+			switch(args->type) {
+			case INSTEAD_NIL:
 				lua_pushnil(L);
-			else if(args[i][0] >='0' && args[i][0] <= '9')
-				lua_pushnumber(L, atoi(args[i]));
-			else if (!strcmp(args[i], "true"))
-				lua_pushboolean(L, 1);
-			else if (!strcmp(args[i], "false"))
-				lua_pushboolean(L, 0);
-			else 
-				lua_pushstring(L, args[i]);
+				break;
+			case INSTEAD_NUM:
+				lua_pushnumber(L, atoi(args->val));
+				break;
+			case INSTEAD_BOOL:
+				if (!strcmp(args->val, "true"))
+					lua_pushboolean(L, 1);
+				else
+					lua_pushboolean(L, 0);
+				break;
+			default:
+			case INSTEAD_STR:
+				lua_pushstring(L, args->val);
+			}
+			args ++;
+			n ++;
 		}
-		if (lua_pcall(L, method + n, LUA_MULTRET, 0) != 0) {
-			fprintf(stderr, "Error calling %s...\n", s);
-			game_err_msg("Error calling function.");
-			return -1;
-		}
-        	return 0;
 	}
-	if (lua_pcall(L, method, LUA_MULTRET, 0) != 0) {
-		fprintf(stderr, "Error calling %s...\n", s);
-		return -1;
+	status = lua_pcall(L, method + n, LUA_MULTRET, base);
+	if (status) {
+		fprintf(stderr, "Error calling:%s\n", s);
+		lua_gc(L, LUA_GCCOLLECT, 0);
 	}
-	return 0;
+	return report(L, status);
 }
 
 int luacall(char *cmd)
@@ -470,7 +468,7 @@ static void instead_timer_do(void *data)
 	char *p;
 	if (game_paused())
 		goto out;
-	if (instead_function("stead.timer", NULL, 0)) {
+	if (instead_function("stead.timer", NULL)) {
 		instead_clear();
 		goto out;
 	}
