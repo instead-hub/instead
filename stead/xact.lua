@@ -1,7 +1,3 @@
-function isXaction(v)
-	return type(v) == 'table' and v.xaction_type
-end
-
 xact = function(n, f) -- just simple action!
 	local v = {};
 
