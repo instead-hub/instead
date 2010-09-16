@@ -348,6 +348,11 @@ function isObject(v)
 	return (type(v) == 'table') and (v.object_type)
 end
 
+function isXaction(v)
+	return (type(v) == 'table') and (v.xaction_type)
+end
+
+
 function obj_xref(self,str)
 	function xrefrep(str)
 		local s = stead.string.gsub(str,'[{}]','');
@@ -503,6 +508,9 @@ end
 
 function ref(n, nofunc) -- ref object by name
 	if type(n) == 'string' then
+		if type(_G[n]) == 'table' then -- fastest path
+			return _G[n];
+		end
 		local f = loadstring('return '..n..' ');
 		if f then
 			return ref(f(), nofunc);

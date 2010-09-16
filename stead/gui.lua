@@ -6,7 +6,7 @@ iface.xref = function(self, str, obj, ...)
 	local o = ref(obj);
 	local cmd=''
 
-	if not isObject(o) or isStatus(o) or not o.id then
+	if not isObject(o) or isStatus(o) or (not o.id and not isXaction(o)) then
 		return str;
 	end
 
@@ -15,12 +15,17 @@ iface.xref = function(self, str, obj, ...)
 	elseif isMenu(o) then
 		cmd = 'act ';
 	elseif isSceneUse(o) then
-		cmd = 'use ';	
+		cmd = 'use ';
+	elseif isXaction(o) then
+		cmd = 'act ';
 	end
 	local a = ''
 	local i
 	for i = 1, stead.table.maxn(arg) do
 		a = a..','..arg[i]
+	end
+	if isXaction(o) and not o.id then
+		return stead.cat('<a:'..cmd..deref(obj)..a..'>',str,'</a>');
 	end
 	return stead.cat('<a:'..cmd..'0'..tostring(o.id)..a..'>',str,'</a>');
 end;

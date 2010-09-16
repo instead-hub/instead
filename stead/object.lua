@@ -1,3 +1,23 @@
+function player_action(self, what, ...)
+	local v,r,obj
+	obj = _G[what];
+	if not isXaction(obj) then
+		obj = ref(self.where):srch(what);
+	end
+	if not obj then
+		return call(game, 'action', what, unpack(arg)); --player_do(self, what, unpack(arg));
+	end
+	v, r = player_take(self, obj, unpack(arg));
+	if not v then
+		v, r = call(obj, 'act', unpack(arg));
+		if not v and r ~= true then
+			v, r = call(game, 'act', obj, unpack(arg));
+		end
+	end
+	return v, r;
+end
+
+
 function player_use(self, what, onwhat, ...)
 	local obj, obj2, v, vv, r;
 	local scene_use_mode = false
