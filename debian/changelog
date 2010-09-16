@@ -1,3 +1,12 @@
+instead (1.2.2) unstable; urgency=low
+
+  * xact now can be used from everywhere;
+  * much speed improvments;
+  * get_gamepath, get_steadpath;
+  * wince port;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 16 Sep 2010 13:11:00 +0300  
+
 instead (1.2.1) unstable; urgency=low
 
   * clearlooks bg;
