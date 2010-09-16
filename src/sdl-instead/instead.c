@@ -450,6 +450,16 @@ static int luaB_get_gamepath(lua_State *L) {
 	return 1;
 }
 
+static int luaB_get_steadpath(lua_State *L) {
+	char stead_path[PATH_MAX];
+	strcpy(stead_path, game_cwd);
+	strcat(stead_path, "/");
+	strcat(stead_path, STEAD_PATH);
+	unix_path(stead_path);
+	lua_pushstring(L, stead_path);
+	return 1;
+}
+
 static gtimer_t instead_timer = NULL;
 static int instead_timer_nr = 0;
 
@@ -505,6 +515,7 @@ static const luaL_Reg base_funcs[] = {
 	{"is_sound", luaB_is_sound},
 	{"get_savepath", luaB_get_savepath},
 	{"get_gamepath", luaB_get_gamepath},
+	{"get_steadpath", luaB_get_steadpath},
 	{"set_timer", luaB_set_timer},
 	{NULL, NULL}
 };
