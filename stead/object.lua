@@ -202,7 +202,7 @@ function list_concat(self, other, pos)
 	end
 end
 
-stead.delim = '~'
+stead.delim = '|'
 
 function list_str(self)
 	local i, v, vv, o;

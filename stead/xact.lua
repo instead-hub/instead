@@ -36,8 +36,13 @@ __do_xact = function(str, self)
 	local xrefrep = function(str)
 		local s = stead.string.gsub(str,'[{}]','');
 		local o,d,a, oo;
-		s = s:gsub("\\:","<&colon;>");
-		local i = s:find(":", 1, true);
+		local delim = ':'
+
+		if stead.api_version >= "1.2.2" then
+			delim = stead.delim;
+		end
+		s = s:gsub("\\"..delim, "<&delim;>");
+		local i = s:find(delim, 1, true);
 		aarg = {}
 		if i then
 			o = s:sub(1, i - 1);
@@ -66,7 +71,7 @@ __do_xact = function(str, self)
 		else
 			error("Wrong link: "..s, 3);
 		end
-		d = d:gsub("<&colon;>", ":");
+		d = d:gsub("<&delim;>", delim);
 		return xref(d, ref(oo, true), unpack(aarg));
 	end
 	if type(str) ~= 'string' then return end
