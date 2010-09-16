@@ -2481,7 +2481,7 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 			args[7].val = NULL;
 		}
 	}
-	if (instead_function("stead.input", &args)) {
+	if (instead_function("stead.input", args)) {
 		instead_clear();
 		return -1;
 	}
