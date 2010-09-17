@@ -1094,15 +1094,16 @@ void gfx_flip(void)
 	SDL_Flip(screen);
 }
 
+
 void gfx_update(int x, int y, int w, int h) {
 //	SDL_Flip(screen);
 	if (x < 0) {
-		x = 0;
 		w += x;
+		x = 0;
 	}
 	if (y < 0) {
-		y = 0;	
 		h += y;
+		y = 0;	
 	}
 	if (w < 0 || h < 0)
 		return;
