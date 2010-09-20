@@ -7,7 +7,7 @@ function player_action(self, what, ...)
 	if not obj then
 		return call(game, 'action', what, unpack(arg)); --player_do(self, what, unpack(arg));
 	end
-	v, r = player_take(self, obj, unpack(arg));
+	v, r = player_take(self, what, unpack(arg));
 	if not v then
 		v, r = call(obj, 'act', unpack(arg));
 		if not v and r ~= true then
