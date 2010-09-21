@@ -511,7 +511,7 @@ function ref(n, nofunc) -- ref object by name
 		if type(_G[n]) == 'table' then -- fastest path
 			return _G[n];
 		end
-		local f = loadstring('return '..n..' ');
+		local f = loadstring('return '..n);
 		if f then
 			return ref(f(), nofunc);
 		end
@@ -1061,7 +1061,7 @@ function phrase_action(self)
 	local last = call(ph, 'ans');
 
 	if type(ph.do_act) == 'string' then
-		local f = loadstring(ph.do_act..' ');
+		local f = loadstring(ph.do_act);
 		if f ~= nil then
 			ret = f();
 		else
@@ -2680,7 +2680,7 @@ end
 instead_version = stead_version
 
 function code(v)
-	local f = loadstring(v..' ')
+	local f = loadstring(v)
 	if not f then
 		error ("Wrong script: "..tostring(v), 2);
 	end
