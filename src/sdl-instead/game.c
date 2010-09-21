@@ -1356,41 +1356,25 @@ void game_sound_player(void)
 	snd_play(w, chan, loop - 1);
 }
 
-char *horiz_inv(char *invstr)
+char *norm_inv(char *invstr)
 {
-	char *p = invstr;
-	char *ns;
-	char *np;
-	int item = 0;
-	if (!p || !(*p))
+	char *ni;
+	struct instead_args args[] = {
+		{ .val = NULL, .type = INSTEAD_STR },
+		{ .val = NULL, .type = INSTEAD_BOOL },
+		{ .val = NULL, },
+	};
+	if (!invstr || !(*invstr))
 		return invstr;
-
-	np = ns = malloc((strlen(p) + 2) * 3);
-
-	if (!np)
-		return invstr;
-	while (*p) {
-		if (*p == '\n') {
-			if (p[strspn(p, " \n\t")]) {
-				if (item) {
-					*(np++) = ' ';
-					*(np++) = '|';
-				}
-				*(np) = ' ';
-				item = 0;
-			} else
-				break;
-		} else {
-			item = 1;
-			*np = *p;
-		}
-		p ++;
-		np ++;
+	args[0].val = invstr;
+	args[1].val = (INV_MODE(game_theme.inv_mode) == INV_MODE_HORIZ)?"true":"false";
+	instead_function("normalize_inv", args);
+	ni = instead_retval(0);
+	instead_clear();
+	if (ni) {
+		free(invstr);
+		invstr = ni;
 	}
-	*(np++) = '\n';
-	*np = 0;
-	free(invstr);
-	invstr = ns;
 	return invstr;
 }
 
@@ -1613,8 +1597,7 @@ inv:
 
 		invstr = instead_cmd("inv"); instead_clear();
 
-		if (invstr && INV_MODE(game_theme.inv_mode) == INV_MODE_HORIZ)
-			invstr = horiz_inv(invstr);
+		invstr = norm_inv(invstr);
 
 		off = txt_box_off(el_box(el_inv));
 		txt_layout_set(txt_box_layout(el_box(el_inv)), invstr);

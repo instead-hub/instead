@@ -1,6 +1,12 @@
 game.hinting = true;
 game.showlast = true;
-game.gui = { fading = 4; }
+
+game.gui = { 
+	fading = 4; 
+	ways_delim = ' | ';
+	inv_delim = '\n';
+	hinv_delim = ' | ';
+}
 
 iface.xref = function(self, str, obj, ...)
 	local o = ref(obj);
@@ -96,23 +102,29 @@ iface.middle = function(self, str)
 end;
 
 iface.inv = function(self, str)
-	if str then
-		str = stead.string.gsub(str, '\\'..stead.delim, '<&delim;>');
-		str = stead.string.gsub(str, stead.delim, '^');
-		str = stead.string.gsub(str, '<&delim;>', stead.delim);
-	end
 	return str
 end;
 
 iface.ways = function(self, str)
 	if str then
 		str = stead.string.gsub(str, '\\'..stead.delim,  '<&delim;>');
-		str = stead.string.gsub(str, stead.delim, ' | ');
+		str = stead.string.gsub(str, stead.delim, game.gui.ways_delim);
 		str = stead.string.gsub(str, '<&delim;>', stead.delim);
 		return '<c>'..str..'</c>';
 	end
 	return str
 end;
+
+function normalize_inv(str, horiz)
+	str = stead.string.gsub(str, '\\'..stead.delim, '<&delim;>'):gsub(stead.delim..'$', '')
+	if not horiz then
+		str = stead.string.gsub(str, stead.delim, game.gui.inv_delim);
+	else
+		str = stead.string.gsub(str, stead.delim, game.gui.hinv_delim);
+	end
+	str = stead.string.gsub(str, '<&delim;>', stead.delim);
+	return str
+end
 
 function get_title()
 	local s
