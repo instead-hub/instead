@@ -229,7 +229,14 @@ int instead_function(char *s, struct instead_args *args)
 			n ++;
 		}
 	}
+	if (debug_sw) {
+		base = lua_gettop(L) - (method + n);  /* function index */
+		lua_pushcfunction(L, traceback);  /* push traceback function */
+		lua_insert(L, base);  /* put it under chunk and args */
+	}
 	status = lua_pcall(L, method + n, LUA_MULTRET, base);
+	if (debug_sw)
+		lua_remove(L, base);  /* remove traceback function */
 	if (status) {
 		fprintf(stderr, "Error calling:%s\n", s);
 		lua_gc(L, LUA_GCCOLLECT, 0);
