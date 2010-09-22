@@ -404,7 +404,7 @@ int game_load(int nr)
 int game_saves_enabled(void)
 {
 	int rc;
-	instead_function("isEnableSave", NULL);
+	instead_function("instead.isEnableSave", NULL);
 	rc = instead_bretval(0);
 	instead_clear();
 	return rc;
@@ -413,7 +413,7 @@ int game_saves_enabled(void)
 int game_autosave_enabled(void)
 {
 	int rc;
-	instead_function("isEnableAutosave", NULL);
+	instead_function("instead.isEnableAutosave", NULL);
 	rc = instead_bretval(0);
 	instead_clear();
 	return rc;
@@ -435,11 +435,11 @@ int game_save(int nr)
 				{ .val = NULL, } 
 			};
 			if (nr == -1)
-				instead_function("autosave", args_1); /* enable saving for -1 */
+				instead_function("instead.autosave", args_1); /* enable saving for -1 */
 			else if (!game_autosave_enabled())
 				return 0; /* nothing todo */
 			else
-				instead_function("autosave", args_0); /* enable saving for 0 */
+				instead_function("instead.autosave", args_0); /* enable saving for 0 */
 			instead_clear();
 		}
 		snprintf(cmd, sizeof(cmd) - 1, "save %s", s);
@@ -1164,7 +1164,7 @@ static int check_fading(void)
 {
 	int rc;
 	int st;
-	instead_function("get_fading", NULL);
+	instead_function("instead.get_fading", NULL);
 	rc = instead_bretval(0);
 	st = instead_iretval(1);
 
@@ -1200,7 +1200,7 @@ static void game_autosave(void)
 	int b,r;
 	if (!curgame_dir)
 		return;
-	instead_function("get_autosave", NULL);
+	instead_function("instead.get_autosave", NULL);
 	b = instead_bretval(0); 
 	r = instead_iretval(1); 
 	instead_clear();
@@ -1216,7 +1216,7 @@ static void dec_music(void *data)
 	int rc;
 	if (!curgame_dir)
 		return;
-	instead_function("dec_music_loop", NULL);
+	instead_function("instead.dec_music_loop", NULL);
 	rc = instead_iretval(0); 
 	instead_clear();
 	if (rc == -1)
@@ -1237,7 +1237,7 @@ void game_music_player(void)
 		return;
 	if (!opt_music)
 		return;
-	instead_function("get_music", NULL);
+	instead_function("instead.get_music", NULL);
 	mus = instead_retval(0);
 	loop = instead_iretval(1);
 	unix_path(mus);
@@ -1330,7 +1330,7 @@ void game_sound_player(void)
 
 	if (!snd_volume_mus(-1))
 		return;	
-	instead_function("get_sound", NULL);
+	instead_function("instead.get_sound", NULL);
 
 	loop = instead_iretval(2);
 	chan = instead_iretval(1);
@@ -1340,11 +1340,11 @@ void game_sound_player(void)
 		if (chan != -1) {
 			/* halt channel */
 			snd_halt_chan(chan, 500);
-			instead_function("set_sound", args); instead_clear();
+			instead_function("instead.set_sound", args); instead_clear();
 		}
 		return;
 	}	
-	instead_function("set_sound", args); instead_clear();
+	instead_function("instead.set_sound", args); instead_clear();
 	
 	unix_path(snd);
 	w = sound_find(snd);
@@ -1356,26 +1356,18 @@ void game_sound_player(void)
 	snd_play(w, chan, loop - 1);
 }
 
-char *norm_inv(char *invstr)
+static char *get_inv(void)
 {
 	char *ni;
 	struct instead_args args[] = {
-		{ .val = NULL, .type = INSTEAD_STR },
 		{ .val = NULL, .type = INSTEAD_BOOL },
 		{ .val = NULL, },
 	};
-	if (!invstr || !(*invstr))
-		return invstr;
-	args[0].val = invstr;
-	args[1].val = (INV_MODE(game_theme.inv_mode) == INV_MODE_HORIZ)?"true":"false";
-	instead_function("normalize_inv", args);
+	args[0].val = (INV_MODE(game_theme.inv_mode) == INV_MODE_HORIZ)?"true":"false";
+	instead_function("instead.get_inv", args);
 	ni = instead_retval(0);
 	instead_clear();
-	if (ni) {
-		free(invstr);
-		invstr = ni;
-	}
-	return invstr;
+	return ni;
 }
 
 static int find_diff_pos(const char *p1, const char *p2)
@@ -1438,13 +1430,13 @@ int game_cmd(char *cmd)
 	if (!cmdstr) 
 		goto inv; /* hackish? ok, yes  it is... */
 
-	instead_function("get_title", NULL); 
+	instead_function("instead.get_title", NULL); 
 	title = instead_retval(0); 
 	instead_clear();
 
 	new_place = check_new_place(title);
 
-	instead_function("get_picture", NULL);
+	instead_function("instead.get_picture", NULL);
 	pict = instead_retval(0);
 	instead_clear();
 
@@ -1522,7 +1514,9 @@ int game_cmd(char *cmd)
 	el_clear(el_ways);
 	el_clear(el_scene);
 
-	waystr = instead_cmd("way"); instead_clear();
+	instead_function("instead.get_ways", NULL); 
+	waystr = instead_retval(0);
+	instead_clear();
 
 	if (waystr) {
 		waystr[strcspn(waystr,"\n")] = 0;
@@ -1595,9 +1589,7 @@ inv:
 	if (inv_enabled()) {
 		int off;
 
-		invstr = instead_cmd("inv"); instead_clear();
-
-		invstr = norm_inv(invstr);
+		invstr = get_inv();
 
 		off = txt_box_off(el_box(el_inv));
 		txt_layout_set(txt_box_layout(el_box(el_inv)), invstr);
