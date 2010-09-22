@@ -1,14 +1,14 @@
 use_proxy = function(o)
 	local v = {};
 	v.proxy_type = true;
-	v.nam = ' '..call(ref(o), 'nam');
+	v.nam = '   '..call(ref(o), 'nam');
 	if inv():srch(ref(o)) then
 		v.nam = txtem(v.nam);
 	end
 	v.pobj = deref(o);
 	v.save = function(self, name, h, need)
 		if need then
-			h:write(name.." = use_proxy('"..tostring(self.pobj).."');\n");
+			h:write(stead.string.format(name.." = use_proxy(%q);\n", tostring(self.pobj)));
 		end
 		savemembers(h, self, name,false);
 	end
@@ -43,12 +43,12 @@ end
 act_proxy = function(o, act)
 	local v = {};
 	v.proxy_type = true;
-	v.nam = ' '..call(ref(o), 'nam');
+	v.nam = '   '..call(ref(o), 'nam');
 	v.pobj = deref(o);
 	v.pact = act;
 	v.save = function(self, name, h, need)
 		if need then
-			h:write(name.." = act_proxy('"..self.pobj.."','"..self.pact.."');\n");
+			h:write(stead.string.format(name.." = act_proxy(%q, %q);\n", self.pobj, self.pact));
 		end
 		savemembers(h, self, name,false);
 	end
