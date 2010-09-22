@@ -148,22 +148,7 @@ int instead_iretval(int n)
 		return 0;
 	return lua_tonumber(L, n - N);
 }
-#if 0
-char *instead_cmd(char *s)
-{
-	char buf[4096];
-	char *p;
-	p = encode_esc_string(s);
-	if (!p)
-		return NULL;
-	s = togame(p); free(p);
-	if (!s)
-		return NULL;	
-	snprintf(buf, sizeof(buf), "return iface:cmd('%s')", s); free(s);
-	p = getstring(buf);
-	return p;
-}
-#else
+
 char *instead_cmd(char *s)
 {
 	struct instead_args args[] = {
@@ -180,7 +165,7 @@ char *instead_cmd(char *s)
 	free(s);
 	return instead_retval(0);
 }
-#endif
+
 int instead_function(char *s, struct instead_args *args)
 {
 	int base = 0;

@@ -106,25 +106,38 @@ iface.inv = function(self, str)
 end;
 
 iface.ways = function(self, str)
-	if str then
-		str = stead.string.gsub(str, '\\'..stead.delim,  '<&delim;>');
-		str = stead.string.gsub(str, stead.delim, game.gui.ways_delim);
-		str = stead.string.gsub(str, '<&delim;>', stead.delim);
-		return '<c>'..str..'</c>';
-	end
 	return str
 end;
 
-function normalize_inv(str, horiz)
-	str = stead.string.gsub(str, '\\'..stead.delim, '<&delim;>'):gsub(stead.delim..'$', '')
-	if not horiz then
-		str = stead.string.gsub(str, stead.delim, game.gui.inv_delim);
-	else
-		str = stead.string.gsub(str, stead.delim, game.gui.hinv_delim);
+function get_inv(horiz)
+	str = iface:cmd("inv");
+	if str then
+		str = stead.string.gsub(str, '\n$','');
+		str = stead.string.gsub(str, '\\'..stead.delim, '<&delim;>')
+		str = stead.string.gsub(str, stead.delim..'$', '')
+		if not horiz then
+			str = stead.string.gsub(str, stead.delim, game.gui.inv_delim);
+		else
+			str = stead.string.gsub(str, stead.delim, game.gui.hinv_delim);
+		end
+		str = stead.string.gsub(str, '<&delim;>', stead.delim);
 	end
-	str = stead.string.gsub(str, '<&delim;>', stead.delim);
 	return str
 end
+instead.get_inv = get_inv;
+
+function get_ways()
+	str = iface:cmd("way");
+	if str then
+		str = stead.string.gsub(str, '\n$','');
+		str = stead.string.gsub(str, '\\'..stead.delim,  '<&delim;>');
+		str = stead.string.gsub(str, stead.delim, game.gui.ways_delim);
+		str = stead.string.gsub(str, '<&delim;>', stead.delim);
+		return iface:center(str);
+	end
+	return str
+end
+instead.get_ways = get_ways;
 
 function get_title()
 	local s
@@ -139,6 +152,20 @@ function get_title()
 	end
 	return s
 end
+
+instead.get_title = get_title;
+instead.get_picture = get_picture;
+instead.get_music = get_music;
+instead.get_sound = get_sound;
+instead.set_sound = set_sound;
+instead.get_autosave = get_autosave;
+instead.get_music_loop = get_music_loop;
+instead.dec_music_loop = dec_music_loop;
+
+instead.isEnableSave = isEnableSave;
+instead.isEnableAutosave = isEnableAutosave;
+instead.autosave = autosave;
+
 
 -- here is gui staff only
 function stat(v)
@@ -258,7 +285,7 @@ function isFading() --to check fading from sdl gui
 	return g and r ~= false, v
 end
 
-function get_fading()
+instead.get_fading = function()
 	local r, v
 	r, v = isFading()
 	if v == nil then v = game.gui.fading end
