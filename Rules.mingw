@@ -34,6 +34,8 @@ EXE=.exe
 INSTALLD=install -d -m 0755
 INSTALLB=install -m 0755
 INSTALL=install -m 0644
+LN=echo
+
 PLATFORM=windows.c iowin32.c
 RESOURCES=resources.o
 

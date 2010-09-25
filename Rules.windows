@@ -31,6 +31,7 @@ RANLIB=ranlib
 
 INSTALLD=echo mkdir
 INSTALL=copy
+LN=echo
 PLATFORM=windows.c iowin32.c
 RESOURCES=resources.o
 
