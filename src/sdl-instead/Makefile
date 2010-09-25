@@ -22,6 +22,7 @@ sdl-instead$(EXE):  $(OBJ) $(RESOURCES)
 install:
 	$(INSTALLD) $(BIN)
 	$(INSTALLB) sdl-instead$(EXE) $(BIN)/sdl-instead$(EXE)
+	$(LN) $(BIN)/sdl-instead$(EXE) $(BIN)/instead$(EXE)
 
 uninstall:
 	$(RM) $(BIN)/sdl-instead$(EXE)

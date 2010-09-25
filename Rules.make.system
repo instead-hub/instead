@@ -33,6 +33,7 @@ CFLAGS	+= -Wall -Dunix -D_USE_UNPACK # -D_SDL_MOD_BUG
 INSTALLD=install -d -m 0755
 INSTALLB=install -m 0755
 INSTALL=install -m 0644
+LN=ln -s
 
 EXE=
 PLATFORM=unix.c
