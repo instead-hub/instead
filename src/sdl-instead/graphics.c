@@ -1123,6 +1123,7 @@ void gfx_video_done(void)
 	if (icon)
 		SDL_FreeSurface(icon);
 	screen = NULL;
+	vid_modes = NULL;
 	TTF_Quit();
 }
 
