@@ -1041,7 +1041,7 @@ int gfx_set_mode(int w, int h, int fs)
 	SDL_ShowCursor(SDL_DISABLE);
 #ifndef MAEMO
 	#ifdef __APPLE__	
-	screen = SDL_SetVideoMode(gfx_width, gfx_height, (fs)?32:0, SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
+	screen = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 	if (screen == NULL) /* ok, fallback to anyformat */
 		screen = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 	#else
