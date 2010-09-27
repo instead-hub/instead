@@ -26,6 +26,7 @@ install:
 
 uninstall:
 	$(RM) $(BIN)/sdl-instead$(EXE)
+	$(RM) $(BIN)/instead$(EXE)
 
 clean:
 	$(RM) -f *.o sdl-instead$(EXE)
