@@ -76,6 +76,7 @@ static int fgetsesc(char *oline, size_t size, FILE *fp)
 		i = strcspn(line, "\n\r");
 		if (!i || !line[i])
 			break;
+		line[i] = 0;
 		if (line[i - 1] == '\\') {
 			line[i - 1] = 0;
 			strncat(oline, line, size);
