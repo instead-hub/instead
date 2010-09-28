@@ -123,7 +123,7 @@ int parse_ini(const char *path, struct parser *cmd_parser)
 	int line_nr = 1;
 	FILE *fp;
 	char line[4096];
-	fp = fopen(path, "r");
+	fp = fopen(path, "rb");
 	if (!fp)
 		return -1;
 	while ((nr = fgetsesc(line, sizeof(line), fp))) {
@@ -294,7 +294,7 @@ char *lookup_tag(const char *fname, const char *tag, const char *comm)
 {
 	int brk = 0;
 	char *l; char line[1024];
-	FILE *fd = fopen(fname, "r");
+	FILE *fd = fopen(fname, "rb");
 	if (!fd)
 		return NULL;
 
