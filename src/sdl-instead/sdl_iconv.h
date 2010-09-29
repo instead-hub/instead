@@ -10,7 +10,9 @@
 
 #else
 
+#ifdef _HAVE_ICONV
 #include <iconv.h>
+#endif
 
 #endif /* _SDL_ICONV */
 
