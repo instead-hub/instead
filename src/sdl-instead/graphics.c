@@ -1039,6 +1039,9 @@ int gfx_set_mode(int w, int h, int fs)
 	gfx_width = w;
 	gfx_height = h;
 	SDL_ShowCursor(SDL_DISABLE);
+#ifdef ANDROID
+	screen = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
+#else
 #ifndef MAEMO
 	#ifdef __APPLE__	
 	screen = SDL_SetVideoMode(gfx_width, gfx_height, (fs)?32:0, SDL_SWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
@@ -1053,6 +1056,7 @@ int gfx_set_mode(int w, int h, int fs)
 	#endif
 #else
 	screen = SDL_SetVideoMode(gfx_width, gfx_height, 16, SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
+#endif
 #endif
 	if (screen == NULL) {
 		fprintf(stderr, "Unable to set %dx%d video: %s\n", w, h, SDL_GetError());

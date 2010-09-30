@@ -18,7 +18,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <errno.h>
-#include <sys/fcntl.h>
+#include <fcntl.h>
 #include <ctype.h>
 #include <dirent.h>
 #include <time.h>
