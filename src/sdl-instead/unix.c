@@ -5,7 +5,7 @@
 #include <sys/types.h>
 #include <stdio.h>
 #include <errno.h>
-#include <sys/fcntl.h>
+#include <fcntl.h>
 #include <string.h>
 #include <stdlib.h>
 

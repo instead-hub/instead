@@ -2,7 +2,11 @@
 #include "internals.h"
 
 int opt_fsize = 0;
-#ifndef MAEMO
+#if defined(MAEMO) || defined(ANDROID)
+int opt_fs = 1;
+int opt_owntheme = 0;
+int opt_hl = 0;
+#else
 	#ifndef _WIN32_WCE
 	int opt_fs = 0;
 	int opt_owntheme = 1;
@@ -12,10 +16,6 @@ int opt_fsize = 0;
 	int opt_owntheme = 1;
 	int opt_hl = 0;
 	#endif
-#else
-int opt_fs = 1;
-int opt_owntheme = 0;
-int opt_hl = 0;
 #endif
 int opt_hz = 22050;
 int opt_vol = 127;
