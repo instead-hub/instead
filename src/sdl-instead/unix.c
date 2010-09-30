@@ -9,8 +9,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <locale.h>
-#include <langinfo.h>
 #include "sdl_iconv.h"
 #include "internals.h"
 #ifdef _USE_GTK
