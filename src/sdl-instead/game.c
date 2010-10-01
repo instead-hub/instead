@@ -2591,8 +2591,12 @@ int game_loop(void)
 				game_menu_act("/new");
 				shift_pressed = alt_pressed = 0;
 			} else if (!is_key(&ev, "f10")) {
+			#ifdef ANDROID
+				break;
+			#else
 				mouse_reset(1);
 				game_menu(menu_askquit);
+			#endif
 			} else if (!alt_pressed && (!is_key(&ev, "return") || !is_key(&ev, "enter"))) {
 				gfx_cursor(&x, &y, NULL, NULL);
 				game_highlight(-1, -1, 0); /* reset */
