@@ -469,12 +469,6 @@ int game_apply_theme(void)
 	int w  = opt_mode[0];
 	int h  = opt_mode[1];
 
-#ifdef ANDROID
-	if ((w == -1) && opt_fs && !gfx_get_max_mode(&w, &h)) {
-		opt_mode[0] = w;
-		opt_mode[1] = h;
-	}
-#endif
 	if ((w == -1) 
 		&& (gfx_get_max_mode(&w, &h) || (game_theme.w <= w && game_theme.h <= h))) {
 		w = opt_mode[0];
