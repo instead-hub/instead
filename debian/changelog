@@ -1,3 +1,10 @@
+instead (1.2.3) unstable; urgency=low
+
+  * android build;
+  * bug in xact;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 2 Oct 2010 16:53:00 +0300  
+
 instead (1.2.2) unstable; urgency=low
 
   * xact now can be used from everywhere;
