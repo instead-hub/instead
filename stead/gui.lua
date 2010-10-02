@@ -22,7 +22,7 @@ iface.xref = function(self, str, obj, ...)
 		cmd = 'act ';
 	elseif isSceneUse(o) then
 		cmd = 'use ';
-	elseif isXaction(o) then
+	elseif isXaction(o) and not o.id then
 		cmd = 'act ';
 	end
 	local a = ''
