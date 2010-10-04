@@ -55,11 +55,7 @@ int snd_hz(void)
 }
 
 int alsa_sw = 0;
-#ifdef ANDROID
-int nosound_sw = 1; /* TODO: help !!! */
-#else
 int nosound_sw = 0;
-#endif
 void snd_pause(int on)
 {
 	if (!sound_on) 
