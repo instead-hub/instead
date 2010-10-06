@@ -1650,9 +1650,9 @@ struct layout *layout_new(fnt_t fn, int w, int h)
 	l->lcol = gfx_col(0, 0, 255);
 	l->acol = gfx_col(255, 0, 0);
 	l->box = NULL;
-	l->img_cache = cache_init(GFX_CACHE_SIZE, gfx_free_image);
-	l->prerend_cache = cache_init(WORD_CACHE_SIZE, sdl_surface_free);
-	l->hlprerend_cache = cache_init(LINK_CACHE_SIZE, sdl_surface_free);
+	l->img_cache = cache_init(0, gfx_free_image);
+	l->prerend_cache = cache_init(0, sdl_surface_free);
+	l->hlprerend_cache = cache_init(0, sdl_surface_free);
 	memset(l->scnt, 0, sizeof(l->scnt));
 	memset(l->saved_align, 0, sizeof(l->saved_align));
 	memset(l->saved_valign, 0, sizeof(l->saved_valign));
@@ -2273,6 +2273,9 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 			word_render(layout, word, x + word->x, y + yy + line->y);
 		}
 	}
+	cache_shrink(layout->prerend_cache);
+	cache_shrink(layout->hlprerend_cache);
+	cache_shrink(layout->img_cache);
 //	gfx_noclip();
 }
 
@@ -2667,7 +2670,7 @@ img_t get_img(struct layout *layout, char *p)
 	} else {
 		layout_add_image(layout, image);
 		image->free_it = 1; /* free on layout destroy */
-		if (gfx_img_w(img) <= GFX_MAX_CACHED_W && gfx_img_h(img) <= GFX_MAX_CACHED_H)
+//		if (gfx_img_w(img) <= GFX_MAX_CACHED_W && gfx_img_h(img) <= GFX_MAX_CACHED_H)
 			cache_add(layout->img_cache, p, img);
 	}
 out:

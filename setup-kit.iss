@@ -32,6 +32,7 @@ Source: themes\original\*; DestDir: {app}\themes\original
 Source: themes\fantasy\*; DestDir: {app}\themes\fantasy
 Source: themes\arctic\*; DestDir: {app}\themes\arctic
 Source: themes\bluesteel\*; DestDir: {app}\themes\bluesteel
+Source: themes\wide\*; DestDir: {app}\themes\wide
 Source: *.dll; DestDir: {app}
 
 [CustomMessages]
