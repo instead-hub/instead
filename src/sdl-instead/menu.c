@@ -191,9 +191,9 @@ static int pages_menu(char *res, int nr, int max, const char *menu, const char *
 	strcat(res, buff);
 	for (; i < max && k-- ; i ++) {
 		if (i != nr)
-			sprintf(buff, "<a:/%s %d>%d</a> ", menu, i, i + 1);
+			sprintf(buff, "<a:/%s %d>[%d]</a> ", menu, i, i + 1);
 		else
-			sprintf(buff, "<b>%d</b> ", i + 1);
+			sprintf(buff, "<b>[%d]</b> ", i + 1);
 		strcat(res, buff);
 	}
 	if ((nr + 1) != max)
