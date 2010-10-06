@@ -93,6 +93,7 @@ void cache_zap(cache_t cache)
 	while (!list_empty(&c->list))
 		cache_e_free(cache, (__cache_e_t *)(c->list.next));
 	c->size = 0;
+	c->used = 0;
 }
 
 void cache_free(cache_t cache)
@@ -143,7 +144,8 @@ int cache_forget(cache_t cache, void *p)
 	__cache_e_t *cc = cache_data(cache, p);
 	if (cc && cc->used) {
 		cc->used --;
-		((__cache_t*)cache)->used --;
+		if (!cc->used)
+			((__cache_t*)cache)->used --;
 		return 0;
 	}
 	return -1;
@@ -159,7 +161,8 @@ void *cache_get(cache_t cache, const char *name)
 	if (!cc)
 		return NULL;
 	cc->used ++; /* need again! */
-	((__cache_t*)cache)->used ++;
+	if (cc->used == 1)
+		((__cache_t*)cache)->used ++;
 	list_move((struct list_head*)cc, &c->list); /* first place */
 //	printf("%p\n", cc->data);
 	return cc->data;
@@ -227,7 +230,6 @@ int cache_add(cache_t cache, const char *name, void *p)
 	}
 	cc->data = p;
 	cc->used = 1;
-	((__cache_t*)cache)->used ++;
 	cc->hash = (struct list_head*) hh;
 	cc->vhash = (struct list_head*) vh;
 
@@ -241,10 +243,10 @@ int cache_add(cache_t cache, const char *name, void *p)
 	list_add((struct list_head*)vh, list);
 
 	c->size ++;
+	c->used ++;
 	if (c->auto_grow && c->used > c->max_size)
 		c->max_size = c->used;
-	__cache_shrink(c);
-//	printf("size: %d:%d\n", c->size, c->max_size);
+//	__cache_shrink(c);
 	return 0;
 }
 
@@ -254,4 +256,5 @@ void cache_shrink(cache_t cache)
 	if (c->auto_grow && c->max_size > 2*c->used)
 		c->max_size = c->used + c->used / 2;
 	__cache_shrink(c);
+//	printf("size: %d:%d:%d\n", c->used, c->size, c->max_size);
 }
