@@ -162,6 +162,7 @@ static struct {
 	{"yellowgreen", 0x9acd32},
 	{NULL, 0x0},
 };
+
 int gfx_parse_color (
 	const char *spec,
 	color_t *def)
@@ -1236,22 +1237,6 @@ struct word *word_new(const char *str)
 	return w;
 }
 
-void word_free(struct word *word)
-{
-	if (!word)
-		return;
-//	if (word->img)
-//		gfx_free_image(word->img);
-	if (word->word)
-		free(word->word);
-	if (word->prerend)
-		SDL_FreeSurface(word->prerend);
-	if (word->hlprerend)
-		SDL_FreeSurface(word->hlprerend);
-	word->hlprerend = word->prerend = NULL;
-	free(word);
-}
-
 struct line {
 	int y;
 	int h;
@@ -1264,6 +1249,7 @@ struct line {
 	struct line *prev;
 	struct layout *layout;
 };
+
 
 int	word_geom(word_t v, int *x, int *y, int *w, int *h)
 {
@@ -1389,6 +1375,8 @@ void line_align(struct line *line, int width, int style, int nl)
 		return line_right(line, width);
 }
 
+void word_free(struct word *word);
+
 void line_free(struct line *line)
 {
 	struct word *w;
@@ -1474,6 +1462,8 @@ struct layout {
 	int scnt[4];
 	int lstyle;
 	cache_t img_cache;
+	cache_t prerend_cache;
+	cache_t hlprerend_cache;
 };
 
 struct word_list {
@@ -1497,6 +1487,28 @@ struct textbox {
 	int 	w;
 	int 	h;
 };
+
+void word_free(struct word *word)
+{
+	if (!word)
+		return;
+//	if (word->img)
+//		gfx_free_image(word->img);
+	if (word->word)
+		free(word->word);
+
+	if (word->prerend) {
+		cache_forget(word->line->layout->prerend_cache, word->prerend);
+//		SDL_FreeSurface(word->prerend);
+	}
+
+	if (word->hlprerend) {
+		cache_forget(word->line->layout->hlprerend_cache, word->hlprerend);
+//		SDL_FreeSurface(word->hlprerend);
+	}
+	word->hlprerend = word->prerend = NULL;
+	free(word);
+}
 
 struct xref *xref_new(char *link)
 {
@@ -1613,6 +1625,11 @@ void layout_add_xref(struct layout *layout, struct xref *xref)
 	return;
 }
 
+void sdl_surface_free(void *p)
+{
+	SDL_FreeSurface(p);
+}
+
 struct layout *layout_new(fnt_t fn, int w, int h)
 {
 	struct layout *l;
@@ -1634,6 +1651,8 @@ struct layout *layout_new(fnt_t fn, int w, int h)
 	l->acol = gfx_col(255, 0, 0);
 	l->box = NULL;
 	l->img_cache = cache_init(GFX_CACHE_SIZE, gfx_free_image);
+	l->prerend_cache = cache_init(WORD_CACHE_SIZE, sdl_surface_free);
+	l->hlprerend_cache = cache_init(LINK_CACHE_SIZE, sdl_surface_free);
 	memset(l->scnt, 0, sizeof(l->scnt));
 	memset(l->saved_align, 0, sizeof(l->saved_align));
 	memset(l->saved_valign, 0, sizeof(l->saved_valign));
@@ -1731,7 +1750,11 @@ void txt_layout_free(layout_t lay)
 	_txt_layout_free(lay);
 	if (lay) {
 		cache_free(layout->img_cache);
+		cache_free(layout->prerend_cache);
+		cache_free(layout->hlprerend_cache);
 		layout->img_cache = NULL;
+		layout->prerend_cache = NULL;
+		layout->hlprerend_cache = NULL;
 		free(lay);
 	}
 }
@@ -2068,37 +2091,86 @@ void txt_layout_link_style(layout_t lay, int style)
 	layout->lstyle = style;	
 }
 
+static char *word_cache_string(struct word *w, u_int32_t style)
+{
+	char *p;
+	int len = 0;
+	len = (w->word)?strlen(w->word):0;
+	len += 16;
+	p = malloc(len);
+	if (!p)
+		return NULL;
+	sprintf(p, "%s-%08x", (w->word)?w->word:"", style);
+	return p;
+}
+
 static void word_render(struct layout *layout, struct word *word, int x, int y)
 {
+	char *wc = NULL;
 	SDL_Surface *s;
+	SDL_Surface *prerend = NULL;
+	SDL_Surface *hlprerend = NULL;
 	SDL_Color fgcol = { .r = layout->col.r, .g = layout->col.g, .b = layout->col.b };
 	SDL_Color lcol = { .r = layout->lcol.r, .g = layout->lcol.g, .b = layout->lcol.b };
 	SDL_Color acol = { .r = layout->acol.r, .g = layout->acol.g, .b = layout->acol.b };
+	u_int32_t style;
 
-	if (word->xref && !word->style)
+	if (!word->xref) {
+		style = (fgcol.r << 24) + (fgcol.g << 16) + (fgcol.b << 8);
+	} else if (word->xref->active) {
+		style = (acol.r << 24) + (acol.g << 16) + (acol.b << 8);
+	} else {
+		style = (lcol.r << 24) + (lcol.g << 16) + (lcol.b << 8);
+	}
+
+	if (word->xref && !word->style) {
 		TTF_SetFontStyle((TTF_Font *)(layout->fn), layout->lstyle);
-	else
+		wc = word_cache_string(word, layout->lstyle | style);
+	} else {
 		TTF_SetFontStyle((TTF_Font *)(layout->fn), word->style);
-			
+		wc = word_cache_string(word, word->style | style);
+	}
+	if (!wc)
+		return;
+
 	if (!word->xref) {
 		if (!word->prerend) {
-			word->prerend = TTF_RenderUTF8_Blended((TTF_Font *)(layout->fn), word->word, fgcol);
-			word->prerend = gfx_display_alpha(word->prerend);
+			prerend = cache_get(layout->prerend_cache, wc);
+			if (!prerend) {
+				word->prerend = TTF_RenderUTF8_Blended((TTF_Font *)(layout->fn), word->word, fgcol);
+				word->prerend = gfx_display_alpha(word->prerend);
+				cache_add(layout->prerend_cache, wc, word->prerend);
+			} else {
+				word->prerend = prerend;
+			}
 		}
 		s = word->prerend;
 	} else if (word->xref->active) {
 		if (!word->hlprerend) {
-			word->hlprerend = TTF_RenderUTF8_Blended((TTF_Font *)(layout->fn), word->word, acol);
-			word->hlprerend = gfx_display_alpha(word->hlprerend);
+			hlprerend = cache_get(layout->hlprerend_cache, wc);
+			if (!hlprerend) {
+				word->hlprerend = TTF_RenderUTF8_Blended((TTF_Font *)(layout->fn), word->word, acol);
+				word->hlprerend = gfx_display_alpha(word->hlprerend);
+				cache_add(layout->hlprerend_cache, wc, word->hlprerend);
+			} else {
+				word->hlprerend = hlprerend;
+			}
 		}
 		s = word->hlprerend;
 	} else {
 		if (!word->prerend) {
-			word->prerend = TTF_RenderUTF8_Blended((TTF_Font *)(layout->fn), word->word, lcol);
-			word->prerend = gfx_display_alpha(word->prerend);
+			prerend = cache_get(layout->prerend_cache, wc);
+			if (!prerend) {
+				word->prerend = TTF_RenderUTF8_Blended((TTF_Font *)(layout->fn), word->word, lcol);
+				word->prerend = gfx_display_alpha(word->prerend);
+				cache_add(layout->prerend_cache, wc, word->prerend);
+			} else {
+				word->prerend = prerend;
+			}
 		}
 		s = word->prerend;
 	}
+	free(wc);
 	if (!s)
 		return;
 	gfx_draw(s, x, y);
@@ -3195,7 +3267,7 @@ int gfx_init(void)
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
 		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
 		return -1;
-  	}
+	}
 	return 0;
 }
 

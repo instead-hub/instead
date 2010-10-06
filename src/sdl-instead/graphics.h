@@ -1,9 +1,12 @@
 #ifndef __GRAPHICS_H__
 #define __GRAPHICS_H__
 
-#define GFX_CACHE_SIZE 32
+#define GFX_CACHE_SIZE 64
 #define GFX_MAX_CACHED_W 256
 #define GFX_MAX_CACHED_H 256
+
+#define WORD_CACHE_SIZE		1024
+#define LINK_CACHE_SIZE		64
 
 typedef void*	gtimer_t;
 typedef void*	img_t;
