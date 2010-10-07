@@ -1693,6 +1693,8 @@ struct el *look_obj(int x, int y)
 	return NULL;
 }
 
+static xref_t get_nearest_xref(int i, int mx, int my);
+
 xref_t look_xref(int x, int y, struct el **elem)
 {
 	struct el *o;
@@ -1708,6 +1710,24 @@ xref_t look_xref(int x, int y, struct el **elem)
 		xref = txt_layout_xref(o->p.lay, x - o->x, y - o->y);
 	else if (type == elt_box)
 		xref = txt_box_xref(o->p.box, x - o->x, y - o->y);
+#ifdef ANDROID
+	if (!xref) {
+		int xc, yc, r;
+		xref = get_nearest_xref(o->id, x, y);
+		if (!xref)
+			return NULL;
+		r = fnt_height(txt_layout_font(xref_layout(xref))) * 2; /* radius is here */
+		if (!xref_position(xref, &xc, &yc)) {
+				if (o->type == elt_box && yc)
+					yc -= txt_box_off(el_box(o->id));
+				xc += o->x;
+				yc += o->y;
+				if (((x - xc)*(x - xc) + (y - yc)*(y - yc)) < (r * r))
+					return xref;
+		}
+		return NULL;
+	}
+#endif
 	return xref;
 }
 
@@ -2128,7 +2148,6 @@ static int select_ref(int prev, int last);
 static xref_t get_xref(int i, int last);
 static void xref_jump(xref_t xref, struct el* elem);
 
-static xref_t get_nearest_xref(int i, int mx, int my);
 
 static void select_frame(int prev)
 {
