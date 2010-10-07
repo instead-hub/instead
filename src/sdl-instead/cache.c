@@ -36,14 +36,15 @@ static unsigned long hash_addr(void *p)
 {
 	return (long)p;
 }
-static u_int32_t hash_string(const char *str)
+static unsigned long hash_string(const char *str)
 {
-	u_int32_t hash = 0;
+	unsigned long hash = 0;
 	int i;
 	int len = strlen(str);
 	for (i = 0; i < len; i++) {
+//			hash ^= str[i]; /* GOLDEN_RATIO_PRIME_32; */
+			hash = (hash << 7) | (hash >> 25);
 			hash ^= str[i]; /* GOLDEN_RATIO_PRIME_32; */
-			hash = (hash << 11) | (hash >> 21);
 	}
 	return hash;
 }
