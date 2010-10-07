@@ -102,6 +102,8 @@ extern void 	txt_layout_draw(layout_t lay, int x, int y);
 extern void	txt_layout_free(layout_t lay);
 extern xref_t 	txt_layout_xref(layout_t lay, int x, int y);
 extern void 	txt_layout_color(layout_t lay, color_t fg);
+extern fnt_t 	txt_layout_font(layout_t lay);
+
 extern void 	txt_layout_link_color(layout_t lay, color_t link);
 extern void 	txt_layout_active_color(layout_t lay, color_t link);
 extern void	txt_layout_link_style(layout_t lay, int style);
