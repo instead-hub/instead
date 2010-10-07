@@ -2091,7 +2091,7 @@ void txt_layout_link_style(layout_t lay, int style)
 	layout->lstyle = style;	
 }
 
-static char *word_cache_string(struct word *w, u_int32_t style)
+static char *word_cache_string(struct word *w, Uint32 style)
 {
 	char *p;
 	int len = 0;
@@ -2113,7 +2113,7 @@ static void word_render(struct layout *layout, struct word *word, int x, int y)
 	SDL_Color fgcol = { .r = layout->col.r, .g = layout->col.g, .b = layout->col.b };
 	SDL_Color lcol = { .r = layout->lcol.r, .g = layout->lcol.g, .b = layout->lcol.b };
 	SDL_Color acol = { .r = layout->acol.r, .g = layout->acol.g, .b = layout->acol.b };
-	u_int32_t style;
+	Uint32 style;
 
 	if (!word->xref) {
 		style = (fgcol.r << 24) + (fgcol.g << 16) + (fgcol.b << 8);
