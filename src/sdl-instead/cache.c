@@ -3,7 +3,7 @@
 #include "list.h"
 #include "cache.h"
 
-#define HASH_SIZE 1023
+#define HASH_SIZE 511
 
 typedef struct {
 	struct list_head list;
@@ -42,10 +42,10 @@ static unsigned long hash_string(const char *str)
 	int i;
 	int len = strlen(str);
 	for (i = 0; i < len; i++) {
-//			hash ^= str[i]; /* GOLDEN_RATIO_PRIME_32; */
-			hash = (hash << 7) | (hash >> 25);
+			hash = (hash << 7) | (hash >> (sizeof(hash)*8 - 7));
 			hash ^= str[i]; /* GOLDEN_RATIO_PRIME_32; */
 	}
+//	fprintf(stderr, "%d\n", hash % HASH_SIZE);
 	return hash;
 }
 

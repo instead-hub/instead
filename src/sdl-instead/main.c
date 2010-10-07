@@ -218,7 +218,7 @@ int main(int argc, char *argv[])
 	menu_langs_lookup(dirpath(LANG_PATH));
 	
 	if (!langs_nr) {
-		fprintf(stderr, "No languages found in: %s.\n", LANG_PATH);
+		fprintf(stderr, "No languages found in: %s.\n", dirpath(LANG_PATH));
 		exit(1);
 	}
 	
