@@ -1759,18 +1759,19 @@ void txt_layout_free(layout_t lay)
 	}
 }
 
-#define TOKEN_NONE	0
-#define	TOKEN_A		1
-#define TOKEN_B		2
-#define	TOKEN_I		4
-#define	TOKEN_U		8
-#define	TOKEN_C		0x10
-#define	TOKEN_R		0x20
-#define	TOKEN_J		0x40
-#define	TOKEN_L		0x80
-#define	TOKEN_T		0x100
-#define TOKEN_D		0x200
-#define TOKEN_M		0x400
+#define TOKEN_NONE	0x000
+#define	TOKEN_A		0x001
+#define TOKEN_B		0x002
+#define	TOKEN_I		0x004
+#define	TOKEN_U		0x008
+#define	TOKEN_S		0x010
+#define	TOKEN_C		0x020
+#define	TOKEN_R		0x040
+#define	TOKEN_J		0x080
+#define	TOKEN_L		0x100
+#define	TOKEN_T		0x200
+#define TOKEN_D		0x400
+#define TOKEN_M		0x800
 #define TOKEN_CLOSE	0x2000
 #define TOKEN(x)	(x & 0xfff)
 
@@ -1846,6 +1847,16 @@ int get_token(const char *ptr, char **eptr, char **val, int *sp)
 		if (ptr[1] == '>') {
 			*eptr = (char*)ptr + 2;
 			return TOKEN_I;
+		}
+		break;
+	case 's':
+		if (closing) {
+			*eptr = (char*)ptr + 2;
+			return TOKEN_S | TOKEN_CLOSE;
+		}
+		if (ptr[1] == '>') {
+			*eptr = (char*)ptr + 2;
+			return TOKEN_S;
 		}
 		break;
 	case 't':
@@ -2725,6 +2736,9 @@ char *process_token(char *ptr, struct layout *layout, struct line *line, struct 
 	} else if (TOKEN(token) == TOKEN_U) {
 		cnt = &layout->scnt[2];
 		bit = TTF_STYLE_UNDERLINE;
+	} else if (TOKEN(token) == TOKEN_S) {
+		cnt = &layout->scnt[3];
+		bit = TTF_STYLE_STRIKETHROUGH;
 	}
 
 	if (bit) {
