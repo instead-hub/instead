@@ -2738,7 +2738,11 @@ char *process_token(char *ptr, struct layout *layout, struct line *line, struct 
 		bit = TTF_STYLE_UNDERLINE;
 	} else if (TOKEN(token) == TOKEN_S) {
 		cnt = &layout->scnt[3];
+#ifdef TTF_STYLE_STRIKETHROUGH
 		bit = TTF_STYLE_STRIKETHROUGH;
+#else
+		bit = TTF_STYLE_ITALIC;
+#endif
 	}
 
 	if (bit) {
