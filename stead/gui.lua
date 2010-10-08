@@ -66,6 +66,11 @@ iface.em = function(self, str)
 	return stead.cat('<i>',str,'</i>');
 end;
 
+iface.st = function(self, str)
+	if str == nil then return nil; end;
+	return stead.cat('<s>',str,'</s>');
+end;
+
 iface.right = function(self, str)
 	if str == nil then return nil; end; 
 	return stead.cat('<r>',str,'</r>');

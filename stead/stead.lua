@@ -210,6 +210,11 @@ function txtem(v)
 	return iface:em(v)
 end
 
+function txtst(v)
+	if type(v) ~= 'string' then return nil; end; 
+	return iface:st(v)
+end
+
 function txtr(v)
 	if type(v) ~= 'string' then return nil; end; 
 	return iface:right(v)
@@ -1905,6 +1910,9 @@ iface = {
 		return str;
 	end,
 	under = function(self, str)
+		return str;
+	end,
+	st = function(self, str)
 		return str;
 	end,
 	enum = function(self, n, str)
