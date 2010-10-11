@@ -509,10 +509,6 @@ int game_menu_act(const char *a)
 			unlink (s);
 		game_select(curgame_dir);
 		game_menu_box(0, NULL);
-		if (game_theme_changed) {
-			game_release_theme();
-			game_use_theme();
-		}
 //		instead_eval("game:ini()"); instead_clear();
 		game_cmd("look");
 		custom_theme_warn();

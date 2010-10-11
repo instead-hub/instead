@@ -498,15 +498,6 @@ static int luaB_set_timer(lua_State *L) {
 	return 0;
 }
 
-extern struct parser cmd_parser[];
-static int luaB_theme_var(lua_State *L) {
-	const char *var = luaL_optstring(L, 1, NULL);
-	const char *val = luaL_optstring(L, 2, NULL);
-	process_cmd(var, val, cmd_parser);
-	game_theme_changed = 2;
-	return 0;
-}
-
 static const luaL_Reg base_funcs[] = {
 	{"doencfile", luaB_doencfile},
 	{"dofile", luaB_dofile},
@@ -516,7 +507,6 @@ static const luaL_Reg base_funcs[] = {
 	{"get_gamepath", luaB_get_gamepath},
 	{"get_steadpath", luaB_get_steadpath},
 	{"set_timer", luaB_set_timer},
-	{"theme_var", luaB_theme_var},
 	{NULL, NULL}
 };
 
