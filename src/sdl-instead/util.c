@@ -51,7 +51,7 @@ char *strip(char *s)
 	return s;
 }
 
-int process_cmd(char *n, char *v, struct parser *cmd_parser)
+static int process_cmd(char *n, char *v, struct parser *cmd_parser)
 {
 	int i;
 	n = strip(n);
