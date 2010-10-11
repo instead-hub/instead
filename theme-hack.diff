@@ -1,3 +1,43 @@
+Index: instead.spec
+===================================================================
+--- instead.spec	(revision 1286)
++++ instead.spec	(working copy)
+@@ -1,6 +1,6 @@
+ Summary:	simply text adventures/visual novels engine and game
+ Name:		instead
+-Version:	1.2.3
++Version:	1.3.0
+ Release:	1%{?dist}
+ License:	GPLv2
+ URL:		http://instead.googlecode.com
+Index: setup-kit.iss
+===================================================================
+--- setup-kit.iss	(revision 1286)
++++ setup-kit.iss	(working copy)
+@@ -1,11 +1,11 @@
+ [Setup]
+ AppName=INSTEAD-KIT
+-AppVerName=INSTEAD 1.2.3
++AppVerName=INSTEAD 1.3.0
+ DefaultDirName={pf}\Pinebrush games\INSTEAD
+ DefaultGroupName=Pinebrush games
+ UninstallDisplayIcon={app}\sdl-instead.exe
+ OutputDir=.
+-OutputBaseFilename=instead-kit-1.2.3
++OutputBaseFilename=instead-kit-1.3.0
+ AllowNoIcons=true
+ 
+ [Languages]
+Index: Rules.windows
+===================================================================
+--- Rules.windows	(revision 1286)
++++ Rules.windows	(working copy)
+@@ -1,4 +1,4 @@
+-VERSION := 1.2.3
++VERSION := 1.3.0
+ 
+ PREFIX=
+ DESTDIR=
 Index: src/sdl-instead/util.c
 ===================================================================
 --- src/sdl-instead/util.c	(revision 1288)
@@ -516,13 +556,23 @@ Index: src/sdl-instead/menu.c
 ===================================================================
 --- src/sdl-instead/menu.c	(revision 1288)
 +++ src/sdl-instead/menu.c	(working copy)
-@@ -509,6 +509,10 @@
+@@ -507,8 +507,19 @@
+ 		s = game_save_path(0, 0);
+ 		if (s && !access(s, R_OK) && opt_autosave)
  			unlink (s);
- 		game_select(curgame_dir);
- 		game_menu_box(0, NULL);
++		
++		game_menu_box(0, NULL);
 +		if (game_theme_changed) {
 +			game_release_theme();
 +			game_use_theme();
++		}
++		
+ 		game_select(curgame_dir);
+-		game_menu_box(0, NULL);
++		
++		if (game_theme_changed) {
++			game_vidmode();
++			game_apply_theme();
 +		}
  //		instead_eval("game:ini()"); instead_clear();
  		game_cmd("look");
@@ -585,79 +635,71 @@ Index: src/sdl-instead/game.c
  	if (inv_enabled()) {
  		lay = txt_layout(game_theme.inv_font, INV_ALIGN(game_theme.inv_mode), 
  			game_theme.inv_w, game_theme.inv_h);
-@@ -684,43 +690,54 @@
+@@ -684,6 +690,28 @@
  	return interval;
  }
  
--int game_init(const char *name)
 +int game_use_theme(void)
- {
--	getdir(game_cwd, sizeof(game_cwd));
--	unix_path(game_cwd);
++{
 +	game_theme_changed = 0;
 +	game_own_theme = 0;
++
++	if (game_default_theme()) {
++		fprintf(stderr, "Can't load default theme.\n");
++		return -1;
++	}
++
++	if (curgame_dir && !access(dirpath(THEME_FILE), R_OK)) {
++		game_own_theme = 1;
++	}
++	if (game_own_theme && opt_owntheme) {
++		if (theme_load(dirpath(THEME_FILE)))
++			return -1;
++	} else if (curtheme_dir && strcmp(DEFAULT_THEME, curtheme_dir)) {
++		game_theme_load(curtheme_dir);
++	}
++	return 0;
++}
++
+ int game_init(const char *name)
+ {
+ 	getdir(game_cwd, sizeof(game_cwd));
+@@ -698,29 +726,20 @@
+ 	snd_init(opt_hz);
+ 	game_change_vol(0, opt_vol);
  
--	if (name)
--		game_err_msg(NULL);
--
--	if (gfx_video_init() || input_init())
--		return -1;	
--
--	snd_init(opt_hz);
--	game_change_vol(0, opt_vol);
--
- 	if (game_default_theme()) {
- 		fprintf(stderr, "Can't load default theme.\n");
+-	if (game_default_theme()) {
+-		fprintf(stderr, "Can't load default theme.\n");
++	if (game_use_theme())
  		return -1;
- 	}
+-	}
  
--	if (game_select(name))
--		return -1;
+ 	if (game_select(name))
+ 		return -1;
 -	
- 	if (curgame_dir && !access(dirpath(THEME_FILE), R_OK)) {
- 		game_own_theme = 1;
- 	}
+-	if (curgame_dir && !access(dirpath(THEME_FILE), R_OK)) {
+-		game_own_theme = 1;
+-	}
 -	
- 	if (game_own_theme && opt_owntheme) {
- 		if (theme_load(dirpath(THEME_FILE)))
- 			return -1;
- 	} else if (curtheme_dir && strcmp(DEFAULT_THEME, curtheme_dir)) {
- 		game_theme_load(curtheme_dir);
- 	}
--
+-	if (game_own_theme && opt_owntheme) {
+-		if (theme_load(dirpath(THEME_FILE)))
+-			return -1;
+-	} else if (curtheme_dir && strcmp(DEFAULT_THEME, curtheme_dir)) {
+-		game_theme_load(curtheme_dir);
+-	}
+ 
 +	if (game_vidmode())
 +		return -1;
++
  	if (game_apply_theme()) {
  		game_theme_select(DEFAULT_THEME);
  		return -1;
  	}
-+	return 0;
-+}
-+
-+int game_init(const char *name)
-+{
-+	getdir(game_cwd, sizeof(game_cwd));
-+	unix_path(game_cwd);
-+
-+	if (name)
-+		game_err_msg(NULL);
-+
-+	if (gfx_video_init() || input_init())
-+		return -1;	
-+
-+	snd_init(opt_hz);
-+	game_change_vol(0, opt_vol);
-+
-+	if (game_select(name))
-+		return -1;
-+
-+	if (game_use_theme())
-+		return -1;
 +
  	timer_han =  gfx_add_timer(HZ, counter_fn, NULL); 
  
  	if (!curgame_dir) {
-@@ -760,32 +777,17 @@
+@@ -760,32 +779,17 @@
  	sounds_free();
  }
  
@@ -692,7 +734,7 @@ Index: src/sdl-instead/game.c
  		if (o->type == elt_layout && o->p.p) {
  			txt_layout_free(o->p.lay);
  		} else if (o->type == elt_box && o->p.p) {
-@@ -795,12 +797,27 @@
+@@ -795,12 +799,27 @@
  		o->p.p = NULL;
  		o->drawn = 0;
  	}
@@ -721,7 +763,7 @@ Index: src/sdl-instead/game.c
  	game_theme_free();
  	input_clear();
  	snd_done();
-@@ -1446,6 +1463,9 @@
+@@ -1446,6 +1465,9 @@
  
  	fading = check_fading();
  
@@ -731,7 +773,7 @@ Index: src/sdl-instead/game.c
  	if (fading) { /* take old screen */
  		game_cursor(CURSOR_CLEAR);
  		img_t offscreen = gfx_new(game_theme.w, game_theme.h);
-@@ -1453,6 +1473,12 @@
+@@ -1453,6 +1475,12 @@
  		gfx_draw(oldscreen, 0, 0);
  	}
  
@@ -772,399 +814,900 @@ Index: src/sdl-instead/game.h
  
  extern void 	game_music_player(void);
  extern void	game_stop_mus(int ms);
+Index: Rules.make.system
+===================================================================
+--- Rules.make.system	(revision 1286)
++++ Rules.make.system	(working copy)
+@@ -1,4 +1,4 @@
+-VERSION := 1.2.3
++VERSION := 1.3.0
+ 
+ PREFIX=/usr/local
+ DESTDIR=
+Index: Rules.make.standalone
+===================================================================
+--- Rules.make.standalone	(revision 1286)
++++ Rules.make.standalone	(working copy)
+@@ -1,4 +1,4 @@
+-VERSION := 1.2.3
++VERSION := 1.3.0
+ 
+ DESTDIR=
+ BIN=
+Index: setup.iss
+===================================================================
+--- setup.iss	(revision 1286)
++++ setup.iss	(working copy)
+@@ -1,11 +1,11 @@
+ [Setup]
+ AppName=INSTEAD
+-AppVerName=INSTEAD 1.2.3
++AppVerName=INSTEAD 1.3.0
+ DefaultDirName={pf}\Pinebrush games\INSTEAD
+ DefaultGroupName=Pinebrush games
+ UninstallDisplayIcon={app}\sdl-instead.exe
+ OutputDir=.
+-OutputBaseFilename=instead-1.2.3
++OutputBaseFilename=instead-1.3.0
+ AllowNoIcons=true
+ 
+ [Languages]
+Index: Rules.make.macosx
+===================================================================
+--- Rules.make.macosx	(revision 1286)
++++ Rules.make.macosx	(working copy)
+@@ -1,4 +1,4 @@
+-VERSION := 1.2.3
++VERSION := 1.3.0
+ 
+ DESTDIR=
+ BIN=
+Index: stead/stead.lua
+===================================================================
+--- stead/stead.lua	(revision 1286)
++++ stead/stead.lua	(working copy)
+@@ -1,5 +1,5 @@
+ stead = {
+-	version = "1.2.3",
++	version = "1.3.0",
+ 	api_version = "1.1.6", -- last version before 1.2.0
+ 	table = table,
+ 	delim = ',',
+Index: doc/index.html
+===================================================================
+--- doc/index.html	(revision 1286)
++++ doc/index.html	(working copy)
+@@ -13,7 +13,7 @@
+ </style>
+ <title>INSTEAD -- interpreter of simple text adventures for Unix and Windows</title>
+ </head><body bgcolor="#f0f0f0">
+-<h2>INSTEAD 1.2.3</h2>
++<h2>INSTEAD 1.3.0</h2>
+ <p>INSTEAD -- interpreter of simple text adventures for Unix and Windows.<br>
+ INSTEAD was designed to interpret the games that are the mix of visual novels, text quests and classical 90'ss quests.</p>
+ 
+Index: doc/instead.6
+===================================================================
+--- doc/instead.6	(revision 1286)
++++ doc/instead.6	(working copy)
+@@ -1,4 +1,4 @@
+-.TH INSTEAD 6 "Version 1.2.3" Instead GAMES
++.TH INSTEAD 6 "Version 1.3.0" Instead GAMES
+ 
+ .SH NAME
+ 
+Index: PKGBUILD.in
+===================================================================
+--- PKGBUILD.in	(revision 1286)
++++ PKGBUILD.in	(working copy)
+@@ -1,6 +1,6 @@
+ # Contributor: Peter Kosyh <p.kosyhgmail.com>
+ pkgname=instead
+-pkgver=1.2.3
++pkgver=1.3.0
+ pkgrel=1
+ pkgdesc="instead quest interpreter"
+ arch=('i686' 'x86_64')
+Index: desktop/instead.desktop.in
+===================================================================
+--- desktop/instead.desktop.in	(revision 1286)
++++ desktop/instead.desktop.in	(working copy)
+@@ -1,6 +1,6 @@
+ [Desktop Entry]
+ Encoding=UTF-8
+-Version=1.2.3
++Version=1.3.0
+ Type=Application
+ Name=INSTEAD
+ Name[ru]=INSTEAD
+Index: Rules.mingw
+===================================================================
+--- Rules.mingw	(revision 1286)
++++ Rules.mingw	(working copy)
+@@ -1,4 +1,4 @@
+-VERSION := 1.2.3
++VERSION := 1.3.0
+ 
+ PREFIX=./
+ DESTDIR=
+Index: Makefile.mingw32ce
+===================================================================
+--- Makefile.mingw32ce	(revision 1286)
++++ Makefile.mingw32ce	(working copy)
+@@ -1,4 +1,4 @@
+-VERSION := 1.2.3
++VERSION := 1.3.0
+ 
+ PREFIX=./
+ DESTDIR=
+Index: readme.txt
+===================================================================
+--- readme.txt	(revision 1286)
++++ readme.txt	(working copy)
+@@ -1,4 +1,4 @@
+-INSTEAD 1.2.3
++INSTEAD 1.3.0
+ =============
+ 
+ WARNING! For successfull building you must install these development packages (names may vary in your distribution):
 Index: theme-hack.diff
 ===================================================================
---- theme-hack.diff	(revision 1287)
+--- theme-hack.diff	(revision 1289)
 +++ theme-hack.diff	(working copy)
-@@ -1,6 +1,6 @@
+@@ -1,3 +1,43 @@
++Index: instead.spec
++===================================================================
++--- instead.spec	(revision 1286)
+++++ instead.spec	(working copy)
++@@ -1,6 +1,6 @@
++ Summary:	simply text adventures/visual novels engine and game
++ Name:		instead
++-Version:	1.2.3
+++Version:	1.3.0
++ Release:	1%{?dist}
++ License:	GPLv2
++ URL:		http://instead.googlecode.com
++Index: setup-kit.iss
++===================================================================
++--- setup-kit.iss	(revision 1286)
+++++ setup-kit.iss	(working copy)
++@@ -1,11 +1,11 @@
++ [Setup]
++ AppName=INSTEAD-KIT
++-AppVerName=INSTEAD 1.2.3
+++AppVerName=INSTEAD 1.3.0
++ DefaultDirName={pf}\Pinebrush games\INSTEAD
++ DefaultGroupName=Pinebrush games
++ UninstallDisplayIcon={app}\sdl-instead.exe
++ OutputDir=.
++-OutputBaseFilename=instead-kit-1.2.3
+++OutputBaseFilename=instead-kit-1.3.0
++ AllowNoIcons=true
++ 
++ [Languages]
++Index: Rules.windows
++===================================================================
++--- Rules.windows	(revision 1286)
+++++ Rules.windows	(working copy)
++@@ -1,4 +1,4 @@
++-VERSION := 1.2.3
+++VERSION := 1.3.0
++ 
++ PREFIX=
++ DESTDIR=
  Index: src/sdl-instead/util.c
  ===================================================================
----- src/sdl-instead/util.c	(revision 1286)
-+--- src/sdl-instead/util.c	(revision 1288)
- +++ src/sdl-instead/util.c	(working copy)
- @@ -51,7 +51,7 @@
-  	return s;
-@@ -13,7 +13,7 @@
-  	n = strip(n);
- Index: src/sdl-instead/util.h
+ --- src/sdl-instead/util.c	(revision 1288)
+@@ -516,14 +556,24 @@
  ===================================================================
----- src/sdl-instead/util.h	(revision 1286)
-+--- src/sdl-instead/util.h	(revision 1288)
- +++ src/sdl-instead/util.h	(working copy)
- @@ -23,6 +23,8 @@
-  extern int parse_string(const char *v, void *data);
-@@ -26,7 +26,7 @@
-  #ifdef _HAVE_ICONV
- Index: src/sdl-instead/themes.c
- ===================================================================
----- src/sdl-instead/themes.c	(revision 1286)
-+--- src/sdl-instead/themes.c	(revision 1288)
- +++ src/sdl-instead/themes.c	(working copy)
- @@ -17,6 +17,29 @@
-  	return 0;	
-@@ -111,7 +111,15 @@
-  static int parse_include(const char *v, void *data)
-  {
-  	int rc;
--@@ -70,7 +133,7 @@
-+@@ -59,7 +122,6 @@
-+ 	setdir(cwd);
-+ 	return rc;
-+ }
-+-
-+ struct parser cmd_parser[] = {
-+ 	{ "scr.w", parse_int, &game_theme.w },
-+ 	{ "scr.h", parse_int, &game_theme.h },
-+@@ -70,7 +132,7 @@
-  	{ "scr.gfx.cursor.y", parse_int, &game_theme.cur_y },
-  	{ "scr.gfx.use", parse_full_path, &game_theme.use_name }, /* compat */
-  	{ "scr.gfx.cursor.use", parse_full_path, &game_theme.use_name },
-@@ -120,7 +128,7 @@
-  	{ "scr.gfx.x", parse_int, &game_theme.gfx_x },
-  	{ "scr.gfx.y", parse_int, &game_theme.gfx_y },
-  	{ "scr.gfx.w", parse_int, &game_theme.max_scene_w },
--@@ -79,8 +142,8 @@
-+@@ -79,8 +141,8 @@
-  
-  	{ "win.x", parse_int, &game_theme.win_x },
-  	{ "win.y", parse_int, &game_theme.win_y },
-@@ -131,7 +139,7 @@
-  	{ "win.fnt.name", parse_full_path, &game_theme.font_name },
-  	{ "win.fnt.size", parse_int, &game_theme.font_size },
-  /* compat mode directive */
--@@ -94,12 +157,12 @@
-+@@ -94,12 +156,12 @@
-  
-  	{ "inv.x", parse_int, &game_theme.inv_x },
-  	{ "inv.y", parse_int, &game_theme.inv_y },
-@@ -148,7 +156,7 @@
-  	{ "inv.col.link", parse_color, &game_theme.ilcol },
-  	{ "inv.col.alink", parse_color, &game_theme.iacol }, 
-  	{ "inv.fnt.name", parse_full_path, &game_theme.inv_font_name },
--@@ -113,7 +176,7 @@
-+@@ -113,7 +175,7 @@
-  	{ "menu.col.alink", parse_color, &game_theme.menu_alink },
-  	{ "menu.col.alpha", parse_int, &game_theme.menu_alpha },
-  	{ "menu.col.border", parse_color, &game_theme.border_col },
-@@ -157,26 +165,67 @@
-  	{ "menu.fnt.name", parse_full_path, &game_theme.menu_font_name },
-  	{ "menu.fnt.size", parse_int, &game_theme.menu_font_size },
-  	{ "menu.gfx.button", parse_full_path, &game_theme.menu_button_name },
--@@ -128,6 +191,10 @@
-+@@ -128,6 +190,38 @@
-  	{ NULL,  },
-  };
-  
--+int theme_setvar()
--+{
--+}
-++#define TF_POSX	1
-++#define TF_POSY	2
-++#define TF_NEG	4
- +
-++struct {
-++	const char *name;
-++	int *val;
-++	int flags;
-++} theme_scalables[] = {
-++	{ "scr.gfx.cursor.x", &game_theme.cur_x },
-++	{ "scr.gfx.cursor.y", &game_theme.cur_y },
-++	{ "scr.gfx.pad", &game_theme.pad }, 
-++	{ "scr.gfx.x", &game_theme.gfx_x, TF_POSX },
-++	{ "scr.gfx.y", &game_theme.gfx_y, TF_POSY },
-++	{ "scr.gfx.w", &game_theme.max_scene_w, TF_NEG },
-++	{ "scr.gfx.h", &game_theme.max_scene_h, TF_NEG },
-++	{ "win.x", &game_theme.win_x, TF_POSX },
-++	{ "win.y", &game_theme.win_y, TF_POSY },
-++	{ "win.w", &game_theme.win_w },
-++	{ "win.h", &game_theme.win_h },
-++	{ "win.fnt.size", &game_theme.font_size },
-++	{ "inv.x", &game_theme.inv_x, TF_POSX },
-++	{ "inv.y", &game_theme.inv_y, TF_POSY },
-++	{ "inv.w", &game_theme.inv_w },
-++	{ "inv.h", &game_theme.inv_h },
-++	{ "inv.fnt.size", &game_theme.inv_font_size },
-++	{ "menu.fnt.size", &game_theme.menu_font_size },
-++	{ "menu.button.x", &game_theme.menu_button_x, TF_POSX },
-++	{ "menu.button.y", &game_theme.menu_button_y, TF_POSY },
-++	{ NULL,  },
-++};
-++
-  struct game_theme game_theme = {
-  	.scale = 1.0f,
-  	.w = 800,
--@@ -163,6 +230,7 @@
-+@@ -163,8 +257,8 @@
-  	.xoff = 0,
-  	.yoff = 0,
-  };
--+struct	game_theme game_theme_unscaled;
-++struct	game_theme game_theme;
-  
-- 
-+-
-  static void free_theme_strings(void)
--@@ -251,7 +319,6 @@
-+ {
-+ 	struct game_theme *t = &game_theme;
-+@@ -238,9 +332,9 @@
-+ 	*p = pic;
-+ 	return 0;
-+ }
-+-
-+ static  int game_theme_scale(int w, int h)
-+ {
-++	int i;
-+ 	float xs, ys, v;
-+ 	int xoff, yoff;
-+ 	struct game_theme *t = &game_theme;
-+@@ -251,7 +345,6 @@
-  		t->yoff = 0;
-  		return 0;
-  	}
-@@ -184,12 +233,54 @@
-  	xs = (float)w / (float)t->w;
-  	ys = (float)h / (float)t->h;
-  	
--@@ -298,19 +365,9 @@
-+@@ -267,50 +360,50 @@
-+ 	if (yoff < 0)
-+ 		yoff = 0;
-+ 
-+-	t->pad *= v;
-+-	t->win_x *= v; t->win_x += xoff;
-+-	t->win_y *= v; t->win_y += yoff;
-+-	t->win_w *= v;
-+-	t->win_h *= v;
-+-	t->font_size *= v;
-+-	t->gfx_x *= v; t->gfx_x += xoff;
-+-	t->gfx_y *= v; t->gfx_y += yoff;
-+-
-+-	if (t->max_scene_w != -1)
-+-		t->max_scene_w *= v;
-+-
-+-	if (t->max_scene_h != -1)
-+-		t->max_scene_h *= v;
-+-		
-+-	t->inv_x *= v; t->inv_x += xoff;
-+-	t->inv_y *= v; t->inv_y += yoff;
-+-	t->inv_w *= v;
-+-	t->inv_h *= v;
-+-
-+-	t->inv_font_size *= v;
-+-	t->menu_font_size *= v;
-+-	t->menu_button_x *= v; t->menu_button_x += xoff;
-+-	t->menu_button_y *= v; t->menu_button_y += yoff;
-+-	
-+ 	t->scale = v;
-+ 	t->xoff = xoff;
-+ 	t->yoff = yoff;
-++
-++	for (i = 0; theme_scalables[i].name; i++) {
-++		int val = *(theme_scalables[i].val);
-++		if ((val != -1) || !(theme_scalables[i].flags & TF_NEG))
-++			val *= t->scale;
-++		if (theme_scalables[i].flags & TF_POSX)
-++			val += t->xoff;
-++  		if (theme_scalables[i].flags & TF_POSY)
-++			val += t->yoff;
-++		*(theme_scalables[i].val)  = val;
-++	}
-  	return 0;
+ --- src/sdl-instead/menu.c	(revision 1288)
+ +++ src/sdl-instead/menu.c	(working copy)
+-@@ -509,6 +509,10 @@
++@@ -507,8 +507,19 @@
++ 		s = game_save_path(0, 0);
++ 		if (s && !access(s, R_OK) && opt_autosave)
+  			unlink (s);
+- 		game_select(curgame_dir);
+- 		game_menu_box(0, NULL);
+++		
+++		game_menu_box(0, NULL);
+ +		if (game_theme_changed) {
+ +			game_release_theme();
+ +			game_use_theme();
+ +		}
+++		
++ 		game_select(curgame_dir);
++-		game_menu_box(0, NULL);
+++		
+++		if (game_theme_changed) {
+++			game_vidmode();
+++			game_apply_theme();
+++		}
+  //		instead_eval("game:ini()"); instead_clear();
+  		game_cmd("look");
+  		custom_theme_warn();
+@@ -585,79 +635,71 @@
+  	if (inv_enabled()) {
+  		lay = txt_layout(game_theme.inv_font, INV_ALIGN(game_theme.inv_mode), 
+  			game_theme.inv_w, game_theme.inv_h);
+-@@ -684,43 +690,54 @@
++@@ -684,6 +690,28 @@
+  	return interval;
   }
   
- -static int theme_gfx_scale(void)
--+static int theme_bg_scale(void)
-++int theme_setvar(char *name, char *val)
-  {
-  	struct game_theme *t = &game_theme;
- -	if (theme_img_scale(&t->a_up) ||
-@@ -201,11 +292,34 @@
- -		theme_img_scale(&t->menu_button) ||
- -		theme_img_scale(&t->bg))
- -		return -1;
---
-+ 
-++	if (!process_cmd(name, val, cmd_parser)) {
-++		int i;
-++		for (i = 0; theme_scalables[i].name; i++) {
-++			if (strcmp(theme_scalables[i].name, name))
-++				continue;
-++			int val = *(theme_scalables[i].val);
-++			if ((val != -1) || !(theme_scalables[i].flags & TF_NEG))
-++				val *= t->scale;
-++			if (theme_scalables[i].flags & TF_POSX)
-++				val += t->xoff;
-++	  		if (theme_scalables[i].flags & TF_POSY)
-++				val += t->yoff;
-++			*(theme_scalables[i].val)  = val;
-++			break;
-++		}
-++		return 0;
+--int game_init(const char *name)
+ +int game_use_theme(void)
+- {
+--	getdir(game_cwd, sizeof(game_cwd));
+--	unix_path(game_cwd);
+++{
+ +	game_theme_changed = 0;
+ +	game_own_theme = 0;
+++
+++	if (game_default_theme()) {
+++		fprintf(stderr, "Can't load default theme.\n");
+++		return -1;
 ++	}
-++	return -1;
+++
+++	if (curgame_dir && !access(dirpath(THEME_FILE), R_OK)) {
+++		game_own_theme = 1;
+++	}
+++	if (game_own_theme && opt_owntheme) {
+++		if (theme_load(dirpath(THEME_FILE)))
+++			return -1;
+++	} else if (curtheme_dir && strcmp(DEFAULT_THEME, curtheme_dir)) {
+++		game_theme_load(curtheme_dir);
+++	}
+++	return 0;
 ++}
 ++
-++static int theme_bg_scale(void)
-++{
-++	struct game_theme *t = &game_theme;
-  	if (t->bg) {
-  		img_t screen, pic;
-  		int xoff = (t->w - gfx_img_w(t->bg))/2;
--@@ -357,12 +414,10 @@
-+@@ -357,12 +450,10 @@
-  	return 0;
-  }
++ int game_init(const char *name)
++ {
++ 	getdir(game_cwd, sizeof(game_cwd));
++@@ -698,29 +726,20 @@
++ 	snd_init(opt_hz);
++ 	game_change_vol(0, opt_vol);
   
-@@ -220,7 +334,7 @@
-  	if (t->font_name) {
-  		fnt_free(t->font);
-  		if (!(t->font = fnt_load(t->font_name, FONT_SZ(t->font_size))))
--@@ -381,30 +436,36 @@
-+@@ -381,30 +472,36 @@
-  			goto err;
-  	}
+--	if (name)
+--		game_err_msg(NULL);
+--
+--	if (gfx_video_init() || input_init())
+--		return -1;	
+--
+--	snd_init(opt_hz);
+--	game_change_vol(0, opt_vol);
+--
+- 	if (game_default_theme()) {
+- 		fprintf(stderr, "Can't load default theme.\n");
++-	if (game_default_theme()) {
++-		fprintf(stderr, "Can't load default theme.\n");
+++	if (game_use_theme())
+  		return -1;
+- 	}
++-	}
   
-@@ -259,7 +373,7 @@
-  	}
-  
-  	if (t->bg_name) {
--@@ -412,24 +473,34 @@
-+@@ -412,24 +509,34 @@
-  		t->bg = NULL;
-  		if (t->bg_name[0] && !(t->bg = gfx_load_image(t->bg_name)))
-  			goto err;
-@@ -294,7 +408,15 @@
-  	}
-  	
-  	if (t->click_name) {
--@@ -444,19 +515,70 @@
-+@@ -437,26 +544,44 @@
-+ 		t->click = snd_load_wav(t->click_name);
-+ 	}
+--	if (game_select(name))
+--		return -1;
++ 	if (game_select(name))
++ 		return -1;
+ -	
+- 	if (curgame_dir && !access(dirpath(THEME_FILE), R_OK)) {
+- 		game_own_theme = 1;
+- 	}
++-	if (curgame_dir && !access(dirpath(THEME_FILE), R_OK)) {
++-		game_own_theme = 1;
++-	}
+ -	
+- 	if (game_own_theme && opt_owntheme) {
+- 		if (theme_load(dirpath(THEME_FILE)))
+- 			return -1;
+- 	} else if (curtheme_dir && strcmp(DEFAULT_THEME, curtheme_dir)) {
+- 		game_theme_load(curtheme_dir);
+- 	}
+--
++-	if (game_own_theme && opt_owntheme) {
++-		if (theme_load(dirpath(THEME_FILE)))
++-			return -1;
++-	} else if (curtheme_dir && strcmp(DEFAULT_THEME, curtheme_dir)) {
++-		game_theme_load(curtheme_dir);
++-	}
 + 
-+-	free_theme_strings();
-++//	free_theme_strings();
-+ 
-+ 	if (!t->cursor || !t->use || !t->inv_a_up || !t->inv_a_down || !t->a_down || !t->a_up ||
-+ 		!t->font || !t->inv_font || !t->menu_font || !t->menu_button) {
-  		fprintf(stderr,"Can't init theme. Not all required elements are defined.\n");
-  		goto err;
-  	}
-@@ -312,7 +434,6 @@
-  
- +int game_theme_init(int w, int h)
- +{
--+	memcpy(&game_theme_unscaled, &game_theme, sizeof(game_theme));
- +	game_theme_scale(w, h);
- +	if (game_theme_update_gfx()) {
- +		fprintf(stderr, "Can not init theme!\n");
-@@ -324,39 +445,7 @@
-  
- +int game_theme_update(void)
- +{
--+	int w, h;
--+
--+	w = game_theme.w;
--+	h = game_theme.h;
--+	
- +	game_release_theme();
--+
--+	game_theme.scale = game_theme_unscaled.scale;
--+	game_theme.w = game_theme_unscaled.w;
--+	game_theme.h = game_theme_unscaled.h;
--+	game_theme.pad = game_theme_unscaled.pad;
--+	game_theme.win_x = game_theme_unscaled.win_x;
--+	game_theme.win_y = game_theme_unscaled.win_y;
--+	game_theme.win_w = game_theme_unscaled.win_w;
--+	game_theme.win_h = game_theme_unscaled.win_h;
--+	game_theme.font_size = game_theme_unscaled.font_size;
--+	game_theme.gfx_x = game_theme_unscaled.gfx_x;
--+	game_theme.gfx_y = game_theme_unscaled.gfx_y;
--+	game_theme.max_scene_w = game_theme_unscaled.max_scene_w;
--+	game_theme.max_scene_h = game_theme_unscaled.max_scene_h;
--+	game_theme.inv_x = game_theme_unscaled.inv_x;
--+	game_theme.inv_y = game_theme_unscaled.inv_y;
--+	game_theme.inv_w = game_theme_unscaled.inv_w;
--+	game_theme.inv_h = game_theme_unscaled.inv_h;
--+	game_theme.inv_font_size = game_theme_unscaled.inv_font_size;
--+	game_theme.menu_font_size = game_theme_unscaled.menu_font_size;
--+	game_theme.menu_button_x = game_theme_unscaled.menu_button_x;
--+	game_theme.menu_button_y = game_theme_unscaled.menu_button_y;
--+	game_theme.xoff = game_theme_unscaled.xoff;
--+	game_theme.yoff = game_theme_unscaled.yoff;
--+
--+	game_theme_scale(w, h);
--+
- +	if (game_theme_update_gfx()) {
- +		fprintf(stderr, "Can not update theme!\n");
+ +	if (game_vidmode())
  +		return -1;
-@@ -374,25 +463,26 @@
-  	if (parse_ini(path, cmd_parser)) {
- Index: src/sdl-instead/instead.c
- ===================================================================
----- src/sdl-instead/instead.c	(revision 1286)
-+--- src/sdl-instead/instead.c	(revision 1288)
- +++ src/sdl-instead/instead.c	(working copy)
--@@ -498,6 +498,15 @@
-+@@ -498,6 +498,16 @@
-  	return 0;
+++
+  	if (game_apply_theme()) {
+  		game_theme_select(DEFAULT_THEME);
+  		return -1;
+  	}
+-+	return 0;
+-+}
+ +
+-+int game_init(const char *name)
+-+{
+-+	getdir(game_cwd, sizeof(game_cwd));
+-+	unix_path(game_cwd);
+-+
+-+	if (name)
+-+		game_err_msg(NULL);
+-+
+-+	if (gfx_video_init() || input_init())
+-+		return -1;	
+-+
+-+	snd_init(opt_hz);
+-+	game_change_vol(0, opt_vol);
+-+
+-+	if (game_select(name))
+-+		return -1;
+-+
+-+	if (game_use_theme())
+-+		return -1;
+-+
+  	timer_han =  gfx_add_timer(HZ, counter_fn, NULL); 
+  
+  	if (!curgame_dir) {
+-@@ -760,32 +777,17 @@
++@@ -760,32 +779,17 @@
+  	sounds_free();
   }
   
--+extern struct parser cmd_parser[];
-++extern int theme_setvar(char *name, char *val);
-++
- +static int luaB_theme_var(lua_State *L) {
- +	const char *var = luaL_optstring(L, 1, NULL);
- +	const char *val = luaL_optstring(L, 2, NULL);
--+	process_cmd(var, val, cmd_parser);
--+	game_theme_changed = 2;
-++	if (!theme_setvar((char*)var, (char*)val))
-++		game_theme_changed = 2;
- +	return 0;
- +}
- +
-  static const luaL_Reg base_funcs[] = {
-  	{"doencfile", luaB_doencfile},
-  	{"dofile", luaB_dofile},
--@@ -507,6 +516,7 @@
-+@@ -507,6 +517,7 @@
-  	{"get_gamepath", luaB_get_gamepath},
-  	{"get_steadpath", luaB_get_steadpath},
-  	{"set_timer", luaB_set_timer},
-@@ -402,7 +492,7 @@
+@@ -692,7 +734,7 @@
+  		if (o->type == elt_layout && o->p.p) {
+  			txt_layout_free(o->p.lay);
+  		} else if (o->type == elt_box && o->p.p) {
+-@@ -795,12 +797,27 @@
++@@ -795,12 +799,27 @@
+  		o->p.p = NULL;
+  		o->drawn = 0;
+  	}
+@@ -721,7 +763,7 @@
+  	game_theme_free();
+  	input_clear();
+  	snd_done();
+-@@ -1446,6 +1463,9 @@
++@@ -1446,6 +1465,9 @@
   
- Index: src/sdl-instead/themes.h
- ===================================================================
----- src/sdl-instead/themes.h	(revision 1286)
-+--- src/sdl-instead/themes.h	(revision 1288)
- +++ src/sdl-instead/themes.h	(working copy)
- @@ -103,6 +103,8 @@
-  extern 	char	*curtheme_dir;
-@@ -424,7 +514,7 @@
-  extern int 	theme_img_scale(img_t *p);
- Index: src/sdl-instead/menu.c
- ===================================================================
----- src/sdl-instead/menu.c	(revision 1286)
-+--- src/sdl-instead/menu.c	(revision 1288)
- +++ src/sdl-instead/menu.c	(working copy)
- @@ -509,6 +509,10 @@
-  			unlink (s);
-@@ -439,7 +529,7 @@
-  		custom_theme_warn();
- Index: src/sdl-instead/game.c
- ===================================================================
----- src/sdl-instead/game.c	(revision 1286)
-+--- src/sdl-instead/game.c	(revision 1288)
- +++ src/sdl-instead/game.c	(working copy)
- @@ -10,6 +10,7 @@
-  char	*curgame_dir = NULL;
-@@ -656,7 +746,7 @@
+  	fading = check_fading();
   
- Index: src/sdl-instead/game.h
+@@ -731,7 +773,7 @@
+  	if (fading) { /* take old screen */
+  		game_cursor(CURSOR_CLEAR);
+  		img_t offscreen = gfx_new(game_theme.w, game_theme.h);
+-@@ -1453,6 +1473,12 @@
++@@ -1453,6 +1475,12 @@
+  		gfx_draw(oldscreen, 0, 0);
+  	}
+  
+@@ -772,399 +814,139 @@
+  
+  extern void 	game_music_player(void);
+  extern void	game_stop_mus(int ms);
+-Index: theme-hack.diff
++Index: Rules.make.system
  ===================================================================
----- src/sdl-instead/game.h	(revision 1286)
-+--- src/sdl-instead/game.h	(revision 1288)
- +++ src/sdl-instead/game.h	(working copy)
- @@ -9,6 +9,7 @@
-  #define HZ 		100
+---- theme-hack.diff	(revision 1287)
+-+++ theme-hack.diff	(working copy)
+-@@ -1,6 +1,6 @@
+- Index: src/sdl-instead/util.c
+- ===================================================================
+----- src/sdl-instead/util.c	(revision 1286)
+-+--- src/sdl-instead/util.c	(revision 1288)
+- +++ src/sdl-instead/util.c	(working copy)
+- @@ -51,7 +51,7 @@
+-  	return s;
++--- Rules.make.system	(revision 1286)
+++++ Rules.make.system	(working copy)
++@@ -1,4 +1,4 @@
++-VERSION := 1.2.3
+++VERSION := 1.3.0
++ 
++ PREFIX=/usr/local
++ DESTDIR=
++Index: Rules.make.standalone
++===================================================================
++--- Rules.make.standalone	(revision 1286)
+++++ Rules.make.standalone	(working copy)
++@@ -1,4 +1,4 @@
++-VERSION := 1.2.3
+++VERSION := 1.3.0
++ 
++ DESTDIR=
++ BIN=
++Index: setup.iss
++===================================================================
++--- setup.iss	(revision 1286)
+++++ setup.iss	(working copy)
++@@ -1,11 +1,11 @@
++ [Setup]
++ AppName=INSTEAD
++-AppVerName=INSTEAD 1.2.3
+++AppVerName=INSTEAD 1.3.0
++ DefaultDirName={pf}\Pinebrush games\INSTEAD
++ DefaultGroupName=Pinebrush games
++ UninstallDisplayIcon={app}\sdl-instead.exe
++ OutputDir=.
++-OutputBaseFilename=instead-1.2.3
+++OutputBaseFilename=instead-1.3.0
++ AllowNoIcons=true
++ 
++ [Languages]
++Index: Rules.make.macosx
++===================================================================
++--- Rules.make.macosx	(revision 1286)
+++++ Rules.make.macosx	(working copy)
++@@ -1,4 +1,4 @@
++-VERSION := 1.2.3
+++VERSION := 1.3.0
++ 
++ DESTDIR=
++ BIN=
++Index: stead/stead.lua
++===================================================================
++--- stead/stead.lua	(revision 1286)
+++++ stead/stead.lua	(working copy)
++@@ -1,5 +1,5 @@
++ stead = {
++-	version = "1.2.3",
+++	version = "1.3.0",
++ 	api_version = "1.1.6", -- last version before 1.2.0
++ 	table = table,
++ 	delim = ',',
++Index: doc/index.html
++===================================================================
++--- doc/index.html	(revision 1286)
+++++ doc/index.html	(working copy)
+ @@ -13,7 +13,7 @@
+-  	n = strip(n);
+- Index: src/sdl-instead/util.h
+- ===================================================================
+----- src/sdl-instead/util.h	(revision 1286)
+-+--- src/sdl-instead/util.h	(revision 1288)
+- +++ src/sdl-instead/util.h	(working copy)
+- @@ -23,6 +23,8 @@
+-  extern int parse_string(const char *v, void *data);
+-@@ -26,7 +26,7 @@
+-  #ifdef _HAVE_ICONV
+- Index: src/sdl-instead/themes.c
+- ===================================================================
+----- src/sdl-instead/themes.c	(revision 1286)
+-+--- src/sdl-instead/themes.c	(revision 1288)
+- +++ src/sdl-instead/themes.c	(working copy)
+- @@ -17,6 +17,29 @@
+-  	return 0;	
+-@@ -111,7 +111,15 @@
+-  static int parse_include(const char *v, void *data)
+-  {
+-  	int rc;
+--@@ -70,7 +133,7 @@
+-+@@ -59,7 +122,6 @@
+-+ 	setdir(cwd);
+-+ 	return rc;
+-+ }
+-+-
+-+ struct parser cmd_parser[] = {
+-+ 	{ "scr.w", parse_int, &game_theme.w },
+-+ 	{ "scr.h", parse_int, &game_theme.h },
+-+@@ -70,7 +132,7 @@
+-  	{ "scr.gfx.cursor.y", parse_int, &game_theme.cur_y },
+-  	{ "scr.gfx.use", parse_full_path, &game_theme.use_name }, /* compat */
+-  	{ "scr.gfx.cursor.use", parse_full_path, &game_theme.use_name },
+-@@ -120,7 +128,7 @@
+-  	{ "scr.gfx.x", parse_int, &game_theme.gfx_x },
+-  	{ "scr.gfx.y", parse_int, &game_theme.gfx_y },
+-  	{ "scr.gfx.w", parse_int, &game_theme.max_scene_w },
+--@@ -79,8 +142,8 @@
+-+@@ -79,8 +141,8 @@
+-  
+-  	{ "win.x", parse_int, &game_theme.win_x },
+-  	{ "win.y", parse_int, &game_theme.win_y },
+-@@ -131,7 +139,7 @@
+-  	{ "win.fnt.name", parse_full_path, &game_theme.font_name },
+-  	{ "win.fnt.size", parse_int, &game_theme.font_size },
+-  /* compat mode directive */
+--@@ -94,12 +157,12 @@
+-+@@ -94,12 +156,12 @@
+-  
+-  	{ "inv.x", parse_int, &game_theme.inv_x },
+-  	{ "inv.y", parse_int, &game_theme.inv_y },
+-@@ -148,7 +156,7 @@
+-  	{ "inv.col.link", parse_color, &game_theme.ilcol },
+-  	{ "inv.col.alink", parse_color, &game_theme.iacol }, 
+-  	{ "inv.fnt.name", parse_full_path, &game_theme.inv_font_name },
+--@@ -113,7 +176,7 @@
+-+@@ -113,7 +175,7 @@
+-  	{ "menu.col.alink", parse_color, &game_theme.menu_alink },
+-  	{ "menu.col.alpha", parse_int, &game_theme.menu_alpha },
+-  	{ "menu.col.border", parse_color, &game_theme.border_col },
+-@@ -157,26 +165,67 @@
+-  	{ "menu.fnt.name", parse_full_path, &game_theme.menu_font_name },
+-  	{ "menu.fnt.size", parse_int, &game_theme.menu_font_size },
+-  	{ "menu.gfx.button", parse_full_path, &game_theme.menu_button_name },
+--@@ -128,6 +191,10 @@
+-+@@ -128,6 +190,38 @@
+-  	{ NULL,  },
+-  };
+-  
+--+int theme_setvar()
+--+{
+--+}
+-++#define TF_POSX	1
+-++#define TF_POSY	2
+-++#define TF_NEG	4
+- +
+-++struct {
+-++	const char *name;
+-++	int *val;
+-++	int flags;
+-++} theme_scalables[] = {
+-++	{ "scr.gfx.cursor.x", &game_theme.cur_x },
+-++	{ "scr.gfx.cursor.y", &game_theme.cur_y },
+-++	{ "scr.gfx.pad", &game_theme.pad }, 
+-++	{ "scr.gfx.x", &game_theme.gfx_x, TF_POSX },
+-++	{ "scr.gfx.y", &game_theme.gfx_y, TF_POSY },
+-++	{ "scr.gfx.w", &game_theme.max_scene_w, TF_NEG },
+-++	{ "scr.gfx.h", &game_theme.max_scene_h, TF_NEG },
+-++	{ "win.x", &game_theme.win_x, TF_POSX },
+-++	{ "win.y", &game_theme.win_y, TF_POSY },
+-++	{ "win.w", &game_theme.win_w },
+-++	{ "win.h", &game_theme.win_h },
+-++	{ "win.fnt.size", &game_theme.font_size },
+-++	{ "inv.x", &game_theme.inv_x, TF_POSX },
+-++	{ "inv.y", &game_theme.inv_y, TF_POSY },
+-++	{ "inv.w", &game_theme.inv_w },
+-++	{ "inv.h", &game_theme.inv_h },
+-++	{ "inv.fnt.size", &game_theme.inv_font_size },
+-++	{ "menu.fnt.size", &game_theme.menu_font_size },
+-++	{ "menu.button.x", &game_theme.menu_button_x, TF_POSX },
+-++	{ "menu.button.y", &game_theme.menu_button_y, TF_POSY },
+-++	{ NULL,  },
+-++};
+-++
+-  struct game_theme game_theme = {
+-  	.scale = 1.0f,
+-  	.w = 800,
+--@@ -163,6 +230,7 @@
+-+@@ -163,8 +257,8 @@
+-  	.xoff = 0,
+-  	.yoff = 0,
+-  };
+--+struct	game_theme game_theme_unscaled;
+-++struct	game_theme game_theme;
+-  
+-- 
+-+-
+-  static void free_theme_strings(void)
+--@@ -251,7 +319,6 @@
+-+ {
+-+ 	struct game_theme *t = &game_theme;
+-+@@ -238,9 +332,9 @@
+-+ 	*p = pic;
+-+ 	return 0;
+-+ }
+-+-
+-+ static  int game_theme_scale(int w, int h)
+-+ {
+-++	int i;
+-+ 	float xs, ys, v;
+-+ 	int xoff, yoff;
+-+ 	struct game_theme *t = &game_theme;
+-+@@ -251,7 +345,6 @@
+-  		t->yoff = 0;
+-  		return 0;
+-  	}
+-@@ -184,12 +233,54 @@
+-  	xs = (float)w / (float)t->w;
+-  	ys = (float)h / (float)t->h;
+-  	
+--@@ -298,19 +365,9 @@
+-+@@ -267,50 +360,50 @@
+-+ 	if (yoff < 0)
+-+ 		yoff = 0;
+-+ 
+-+-	t->pad *= v;
+-+-	t->win_x *= v; t->win_x += xoff;
+-+-	t->win_y *= v; t->win_y += yoff;
+-+-	t->win_w *= v;
+-+-	t->win_h *= v;
+-+-	t->font_size *= v;
+-+-	t->gfx_x *= v; t->gfx_x += xoff;
+-+-	t->gfx_y *= v; t->gfx_y += yoff;
+-+-
+-+-	if (t->max_scene_w != -1)
+-+-		t->max_scene_w *= v;
+-+-
+-+-	if (t->max_scene_h != -1)
+-+-		t->max_scene_h *= v;
+-+-		
+-+-	t->inv_x *= v; t->inv_x += xoff;
+-+-	t->inv_y *= v; t->inv_y += yoff;
+-+-	t->inv_w *= v;
+-+-	t->inv_h *= v;
+-+-
+-+-	t->inv_font_size *= v;
+-+-	t->menu_font_size *= v;
+-+-	t->menu_button_x *= v; t->menu_button_x += xoff;
+-+-	t->menu_button_y *= v; t->menu_button_y += yoff;
+-+-	
+-+ 	t->scale = v;
+-+ 	t->xoff = xoff;
+-+ 	t->yoff = yoff;
+-++
+-++	for (i = 0; theme_scalables[i].name; i++) {
+-++		int val = *(theme_scalables[i].val);
+-++		if ((val != -1) || !(theme_scalables[i].flags & TF_NEG))
+-++			val *= t->scale;
+-++		if (theme_scalables[i].flags & TF_POSX)
+-++			val += t->xoff;
+-++  		if (theme_scalables[i].flags & TF_POSY)
+-++			val += t->yoff;
+-++		*(theme_scalables[i].val)  = val;
+-++	}
+-  	return 0;
+-  }
+-  
+- -static int theme_gfx_scale(void)
+--+static int theme_bg_scale(void)
+-++int theme_setvar(char *name, char *val)
+-  {
+-  	struct game_theme *t = &game_theme;
+- -	if (theme_img_scale(&t->a_up) ||
+-@@ -201,11 +292,34 @@
+- -		theme_img_scale(&t->menu_button) ||
+- -		theme_img_scale(&t->bg))
+- -		return -1;
+---
+-+ 
+-++	if (!process_cmd(name, val, cmd_parser)) {
+-++		int i;
+-++		for (i = 0; theme_scalables[i].name; i++) {
+-++			if (strcmp(theme_scalables[i].name, name))
+-++				continue;
+-++			int val = *(theme_scalables[i].val);
+-++			if ((val != -1) || !(theme_scalables[i].flags & TF_NEG))
+-++				val *= t->scale;
+-++			if (theme_scalables[i].flags & TF_POSX)
+-++				val += t->xoff;
+-++	  		if (theme_scalables[i].flags & TF_POSY)
+-++				val += t->yoff;
+-++			*(theme_scalables[i].val)  = val;
+-++			break;
+-++		}
+-++		return 0;
+-++	}
+-++	return -1;
+-++}
+-++
+-++static int theme_bg_scale(void)
+-++{
+-++	struct game_theme *t = &game_theme;
+-  	if (t->bg) {
+-  		img_t screen, pic;
+-  		int xoff = (t->w - gfx_img_w(t->bg))/2;
+--@@ -357,12 +414,10 @@
+-+@@ -357,12 +450,10 @@
+-  	return 0;
+-  }
+-  
+-@@ -220,7 +334,7 @@
+-  	if (t->font_name) {
+-  		fnt_free(t->font);
+-  		if (!(t->font = fnt_load(t->font_name, FONT_SZ(t->font_size))))
+--@@ -381,30 +436,36 @@
+-+@@ -381,30 +472,36 @@
+-  			goto err;
+-  	}
+-  
+-@@ -259,7 +373,7 @@
+-  	}
+-  
+-  	if (t->bg_name) {
+--@@ -412,24 +473,34 @@
+-+@@ -412,24 +509,34 @@
+-  		t->bg = NULL;
+-  		if (t->bg_name[0] && !(t->bg = gfx_load_image(t->bg_name)))
+-  			goto err;
+-@@ -294,7 +408,15 @@
+-  	}
+-  	
+-  	if (t->click_name) {
+--@@ -444,19 +515,70 @@
+-+@@ -437,26 +544,44 @@
+-+ 		t->click = snd_load_wav(t->click_name);
+-+ 	}
+-+ 
+-+-	free_theme_strings();
+-++//	free_theme_strings();
+-+ 
+-+ 	if (!t->cursor || !t->use || !t->inv_a_up || !t->inv_a_down || !t->a_down || !t->a_up ||
+-+ 		!t->font || !t->inv_font || !t->menu_font || !t->menu_button) {
+-  		fprintf(stderr,"Can't init theme. Not all required elements are defined.\n");
+-  		goto err;
+-  	}
+-@@ -312,7 +434,6 @@
+-  
+- +int game_theme_init(int w, int h)
+- +{
+--+	memcpy(&game_theme_unscaled, &game_theme, sizeof(game_theme));
+- +	game_theme_scale(w, h);
+- +	if (game_theme_update_gfx()) {
+- +		fprintf(stderr, "Can not init theme!\n");
+-@@ -324,39 +445,7 @@
+-  
+- +int game_theme_update(void)
+- +{
+--+	int w, h;
+--+
+--+	w = game_theme.w;
+--+	h = game_theme.h;
+--+	
+- +	game_release_theme();
+--+
+--+	game_theme.scale = game_theme_unscaled.scale;
+--+	game_theme.w = game_theme_unscaled.w;
+--+	game_theme.h = game_theme_unscaled.h;
+--+	game_theme.pad = game_theme_unscaled.pad;
+--+	game_theme.win_x = game_theme_unscaled.win_x;
+--+	game_theme.win_y = game_theme_unscaled.win_y;
+--+	game_theme.win_w = game_theme_unscaled.win_w;
+--+	game_theme.win_h = game_theme_unscaled.win_h;
+--+	game_theme.font_size = game_theme_unscaled.font_size;
+--+	game_theme.gfx_x = game_theme_unscaled.gfx_x;
+--+	game_theme.gfx_y = game_theme_unscaled.gfx_y;
+--+	game_theme.max_scene_w = game_theme_unscaled.max_scene_w;
+--+	game_theme.max_scene_h = game_theme_unscaled.max_scene_h;
+--+	game_theme.inv_x = game_theme_unscaled.inv_x;
+--+	game_theme.inv_y = game_theme_unscaled.inv_y;
+--+	game_theme.inv_w = game_theme_unscaled.inv_w;
+--+	game_theme.inv_h = game_theme_unscaled.inv_h;
+--+	game_theme.inv_font_size = game_theme_unscaled.inv_font_size;
+--+	game_theme.menu_font_size = game_theme_unscaled.menu_font_size;
+--+	game_theme.menu_button_x = game_theme_unscaled.menu_button_x;
+--+	game_theme.menu_button_y = game_theme_unscaled.menu_button_y;
+--+	game_theme.xoff = game_theme_unscaled.xoff;
+--+	game_theme.yoff = game_theme_unscaled.yoff;
+--+
+--+	game_theme_scale(w, h);
+--+
+- +	if (game_theme_update_gfx()) {
+- +		fprintf(stderr, "Can not update theme!\n");
+- +		return -1;
+-@@ -374,25 +463,26 @@
+-  	if (parse_ini(path, cmd_parser)) {
+- Index: src/sdl-instead/instead.c
+- ===================================================================
+----- src/sdl-instead/instead.c	(revision 1286)
+-+--- src/sdl-instead/instead.c	(revision 1288)
+- +++ src/sdl-instead/instead.c	(working copy)
+--@@ -498,6 +498,15 @@
+-+@@ -498,6 +498,16 @@
+-  	return 0;
+-  }
+-  
+--+extern struct parser cmd_parser[];
+-++extern int theme_setvar(char *name, char *val);
+-++
+- +static int luaB_theme_var(lua_State *L) {
+- +	const char *var = luaL_optstring(L, 1, NULL);
+- +	const char *val = luaL_optstring(L, 2, NULL);
+--+	process_cmd(var, val, cmd_parser);
+--+	game_theme_changed = 2;
+-++	if (!theme_setvar((char*)var, (char*)val))
+-++		game_theme_changed = 2;
+- +	return 0;
+- +}
+- +
+-  static const luaL_Reg base_funcs[] = {
+-  	{"doencfile", luaB_doencfile},
+-  	{"dofile", luaB_dofile},
+--@@ -507,6 +516,7 @@
+-+@@ -507,6 +517,7 @@
+-  	{"get_gamepath", luaB_get_gamepath},
+-  	{"get_steadpath", luaB_get_steadpath},
+-  	{"set_timer", luaB_set_timer},
+-@@ -402,7 +492,7 @@
+-  
+- Index: src/sdl-instead/themes.h
+- ===================================================================
+----- src/sdl-instead/themes.h	(revision 1286)
+-+--- src/sdl-instead/themes.h	(revision 1288)
+- +++ src/sdl-instead/themes.h	(working copy)
+- @@ -103,6 +103,8 @@
+-  extern 	char	*curtheme_dir;
+-@@ -424,7 +514,7 @@
+-  extern int 	theme_img_scale(img_t *p);
+- Index: src/sdl-instead/menu.c
+- ===================================================================
+----- src/sdl-instead/menu.c	(revision 1286)
+-+--- src/sdl-instead/menu.c	(revision 1288)
+- +++ src/sdl-instead/menu.c	(working copy)
+- @@ -509,6 +509,10 @@
+-  			unlink (s);
+-@@ -439,7 +529,7 @@
+-  		custom_theme_warn();
+- Index: src/sdl-instead/game.c
+- ===================================================================
+----- src/sdl-instead/game.c	(revision 1286)
+-+--- src/sdl-instead/game.c	(revision 1288)
+- +++ src/sdl-instead/game.c	(working copy)
+- @@ -10,6 +10,7 @@
+-  char	*curgame_dir = NULL;
+-@@ -656,7 +746,7 @@
+-  
+- Index: src/sdl-instead/game.h
+- ===================================================================
+----- src/sdl-instead/game.h	(revision 1286)
+-+--- src/sdl-instead/game.h	(revision 1288)
+- +++ src/sdl-instead/game.h	(working copy)
+- @@ -9,6 +9,7 @@
+-  #define HZ 		100
++ </style>
++ <title>INSTEAD -- interpreter of simple text adventures for Unix and Windows</title>
++ </head><body bgcolor="#f0f0f0">
++-<h2>INSTEAD 1.2.3</h2>
+++<h2>INSTEAD 1.3.0</h2>
++ <p>INSTEAD -- interpreter of simple text adventures for Unix and Windows.<br>
++ INSTEAD was designed to interpret the games that are the mix of visual novels, text quests and classical 90'ss quests.</p>
++ 
++Index: doc/instead.6
++===================================================================
++--- doc/instead.6	(revision 1286)
+++++ doc/instead.6	(working copy)
++@@ -1,4 +1,4 @@
++-.TH INSTEAD 6 "Version 1.2.3" Instead GAMES
+++.TH INSTEAD 6 "Version 1.3.0" Instead GAMES
++ 
++ .SH NAME
++ 
++Index: PKGBUILD.in
++===================================================================
++--- PKGBUILD.in	(revision 1286)
+++++ PKGBUILD.in	(working copy)
++@@ -1,6 +1,6 @@
++ # Contributor: Peter Kosyh <p.kosyhgmail.com>
++ pkgname=instead
++-pkgver=1.2.3
+++pkgver=1.3.0
++ pkgrel=1
++ pkgdesc="instead quest interpreter"
++ arch=('i686' 'x86_64')
++Index: desktop/instead.desktop.in
++===================================================================
++--- desktop/instead.desktop.in	(revision 1286)
+++++ desktop/instead.desktop.in	(working copy)
++@@ -1,6 +1,6 @@
++ [Desktop Entry]
++ Encoding=UTF-8
++-Version=1.2.3
+++Version=1.3.0
++ Type=Application
++ Name=INSTEAD
++ Name[ru]=INSTEAD
++Index: Rules.mingw
++===================================================================
++--- Rules.mingw	(revision 1286)
+++++ Rules.mingw	(working copy)
++@@ -1,4 +1,4 @@
++-VERSION := 1.2.3
+++VERSION := 1.3.0
++ 
++ PREFIX=./
++ DESTDIR=
++Index: Makefile.mingw32ce
++===================================================================
++--- Makefile.mingw32ce	(revision 1286)
+++++ Makefile.mingw32ce	(working copy)
++@@ -1,4 +1,4 @@
++-VERSION := 1.2.3
+++VERSION := 1.3.0
++ 
++ PREFIX=./
++ DESTDIR=
++Index: readme.txt
++===================================================================
++--- readme.txt	(revision 1286)
+++++ readme.txt	(working copy)
++@@ -1,4 +1,4 @@
++-INSTEAD 1.2.3
+++INSTEAD 1.3.0
++ =============
++ 
++ WARNING! For successfull building you must install these development packages (names may vary in your distribution):
