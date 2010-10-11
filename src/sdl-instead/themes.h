@@ -103,6 +103,8 @@ extern 	int	themes_nr;
 extern 	char	*curtheme_dir;
 
 extern struct 	game_theme game_theme;
+extern struct	game_theme game_theme_unscaled;
+
 extern int 	game_default_theme(void);
 extern int 	game_theme_select(const char *name);
 
@@ -112,6 +114,8 @@ extern int 	game_theme_load(const char *name);
 extern int 	game_theme_free(void);
 extern int 	game_theme_init(int w, int h);
 extern int	game_theme_optimize(void);
+extern int	game_theme_update(void);
+
 extern int 	theme_load(const char *name);
 extern char 	*game_local_themes_path(void);
 extern int 	theme_img_scale(img_t *p);

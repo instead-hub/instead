@@ -9,6 +9,7 @@
 #define HZ 		100
 
 extern int	game_running;
+extern int	game_theme_changed;
 
 extern int 	nosound_sw;
 extern int 	alsa_sw;
@@ -29,10 +30,15 @@ extern char 	*game_tmp_path(void);
 extern int 	game_theme_select(const char *name);
 
 extern int 	game_init(const char *game);
+extern int	game_vidmode(void);
+
 extern int 	game_loop(void);
 extern void 	game_done(int err);
 
 extern int 	game_load_theme(const char *path);
+extern int 	game_apply_theme(void);
+extern int game_use_theme(void);
+extern void game_release_theme(void);
 
 extern void 	game_music_player(void);
 extern void	game_stop_mus(int ms);
