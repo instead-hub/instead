@@ -10,6 +10,7 @@ char	game_cwd[PATH_MAX];
 char	*curgame_dir = NULL;
 
 int game_own_theme = 0;
+int game_theme_changed = 0;
 
 static int game_pic_w = 0;
 static int game_pic_h = 0;
@@ -462,10 +463,8 @@ static int inv_enabled(void)
 	return (game_theme.inv_mode != INV_MODE_DISABLED);
 }
 
-int game_apply_theme(void)
+int game_vidmode(void)
 {
-	layout_t lay;
-	textbox_t box;
 	int w  = opt_mode[0];
 	int h  = opt_mode[1];
 
@@ -476,15 +475,23 @@ int game_apply_theme(void)
 	}
 	if (game_theme_init(w, h))
 		return -1;
-		
-	memset(objs, 0, sizeof(struct el) * el_max);
 
 	if (gfx_set_mode(game_theme.w, game_theme.h, opt_fs)) {
 		opt_mode[0] = opt_mode[1] = -1; opt_fs = 0; /* safe options */
 		return -1;
 	}
+
 	if (game_theme_optimize())
 		return -1;
+	return 0;
+}
+
+int game_apply_theme(void)
+{
+	layout_t lay;
+	textbox_t box;
+
+	memset(objs, 0, sizeof(struct el) * el_max);
 	gfx_bg(game_theme.bgcol);
 	game_clear(0, 0, game_theme.w, game_theme.h);
 	gfx_flip();
@@ -501,7 +508,6 @@ int game_apply_theme(void)
 
 	txt_box_set(box, lay);
 	el_set(el_scene, elt_box, game_theme.win_x, 0, box);
-
 
 	if (inv_enabled()) {
 		lay = txt_layout(game_theme.inv_font, INV_ALIGN(game_theme.inv_mode), 
@@ -684,6 +690,34 @@ int counter_fn(int interval, void *p)
 	return interval;
 }
 
+int game_use_theme(void)
+{
+	game_theme_changed = 0;
+	game_own_theme = 0;
+
+	if (game_default_theme()) {
+		fprintf(stderr, "Can't load default theme.\n");
+		return -1;
+	}
+
+	if (curgame_dir && !access(dirpath(THEME_FILE), R_OK)) {
+		game_own_theme = 1;
+	}
+	if (game_own_theme && opt_owntheme) {
+		if (theme_load(dirpath(THEME_FILE)))
+			return -1;
+	} else if (curtheme_dir && strcmp(DEFAULT_THEME, curtheme_dir)) {
+		game_theme_load(curtheme_dir);
+	}
+	if (game_vidmode())
+		return -1;
+	if (game_apply_theme()) {
+		game_theme_select(DEFAULT_THEME);
+		return -1;
+	}
+	return 0;
+}
+
 int game_init(const char *name)
 {
 	getdir(game_cwd, sizeof(game_cwd));
@@ -698,29 +732,12 @@ int game_init(const char *name)
 	snd_init(opt_hz);
 	game_change_vol(0, opt_vol);
 
-	if (game_default_theme()) {
-		fprintf(stderr, "Can't load default theme.\n");
-		return -1;
-	}
-
 	if (game_select(name))
 		return -1;
-	
-	if (curgame_dir && !access(dirpath(THEME_FILE), R_OK)) {
-		game_own_theme = 1;
-	}
-	
-	if (game_own_theme && opt_owntheme) {
-		if (theme_load(dirpath(THEME_FILE)))
-			return -1;
-	} else if (curtheme_dir && strcmp(DEFAULT_THEME, curtheme_dir)) {
-		game_theme_load(curtheme_dir);
-	}
 
-	if (game_apply_theme()) {
-		game_theme_select(DEFAULT_THEME);
+	if (game_use_theme())
 		return -1;
-	}
+
 	timer_han =  gfx_add_timer(HZ, counter_fn, NULL); 
 
 	if (!curgame_dir) {
@@ -760,10 +777,35 @@ void free_last(void)
 	sounds_free();
 }
 
-void game_done(int err)
+void game_release_theme(void)
 {
 	int i;
+	mouse_reset(1);
+	game_cursor(CURSOR_OFF);
+	if (el_img(el_spic))
+		gfx_free_image(el_img(el_spic));
 
+	for (i = 0; i < el_max; i++) {
+		struct el *o;
+		o = el(i);
+		if (o->type == elt_layout && o->p.p) {
+			txt_layout_free(o->p.lay);
+		} else if (o->type == elt_box && o->p.p) {
+			txt_layout_free(txt_box_layout(o->p.box));
+			txt_box_free(o->p.box);
+		}
+		o->p.p = NULL;
+		o->drawn = 0;
+	}
+	if (menu)
+		gfx_free_image(menu);
+	if (menubg)
+		gfx_free_image(menubg);
+	menu = menubg = NULL;
+}
+
+void game_done(int err)
+{
 	gfx_del_timer(timer_han);
 	timer_han = NULL;
 
@@ -774,33 +816,8 @@ void game_done(int err)
 
 	if (menu_shown)
 		menu_toggle();
-	mouse_reset(1);
-	game_cursor(CURSOR_OFF);	
-	if (el_img(el_spic))
-		gfx_free_image(el_img(el_spic));
-
-	for (i = 0; i < el_max; i++) {
-		struct el *o;
-		o = el(i);
-//		if (o->type == elt_image && o->p.p) {
-//			if (!o->clone)
-//				gfx_free_image(o->p.img);
-//		} else 
-		if (o->type == elt_layout && o->p.p) {
-			txt_layout_free(o->p.lay);
-		} else if (o->type == elt_box && o->p.p) {
-			txt_layout_free(txt_box_layout(o->p.box));
-			txt_box_free(o->p.box);
-		}
-		o->p.p = NULL;
-		o->drawn = 0;
-	}
+	game_release_theme();
 	free_last();
-	if (menu)
-		gfx_free_image(menu);
-	if (menubg)
-		gfx_free_image(menubg);
-	menu = menubg = NULL;
 	game_theme_free();
 	input_clear();
 	snd_done();
@@ -1446,11 +1463,20 @@ int game_cmd(char *cmd)
 
 	fading = check_fading();
 
+	if (game_theme_changed == 2 && opt_owntheme && !fading)
+		fading = 1; /* one frame at least */
+
 	if (fading) { /* take old screen */
 		game_cursor(CURSOR_CLEAR);
 		img_t offscreen = gfx_new(game_theme.w, game_theme.h);
 		oldscreen = gfx_screen(offscreen);
 		gfx_draw(oldscreen, 0, 0);
+	}
+
+	if (game_theme_changed == 2 && opt_owntheme) {
+		game_theme_update();
+		game_theme_changed = 1;
+		new_place = 1;
 	}
 
 	if (new_place)
