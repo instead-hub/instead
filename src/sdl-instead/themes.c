@@ -291,7 +291,9 @@ static  int game_theme_scale(int w, int h)
 	t->menu_font_size *= v;
 	t->menu_button_x *= v; t->menu_button_x += xoff;
 	t->menu_button_y *= v; t->menu_button_y += yoff;
-	
+	t->cur_x *= v;
+	t->cur_y *= v;
+
 	t->scale = v;
 	t->xoff = xoff;
 	t->yoff = yoff;
