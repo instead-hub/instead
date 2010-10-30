@@ -33,7 +33,7 @@ go = function (self, where, back, noenter, noexit, nodsc)
 		stead.in_exit_call = true -- to break recurse
 		v,r = call(ref(self.where), 'exit', ref(where));
 		stead.in_exit_call = nil
-		if r == false then
+		if r == false or (stead.api_version >= "1.3.0" and v == false and r == nil) then
 			return v, ret(r)
 		end
 		if self.where ~= was then
@@ -51,7 +51,7 @@ go = function (self, where, back, noenter, noexit, nodsc)
 
 	if not jump and not noenter then
 		v, r = call(ref(where), 'enter', ref(was));
-		if r == false then
+		if r == false or (stead.api_version >= "1.3.0" and v == false and r == nil) then
 			self.where = was;
 			return par('^^', res, v), ret(r)
 		end

@@ -3,7 +3,8 @@ format = {
 	para_space = '    ';
 	quotes = false;
 	dash = false;
-	filter = nil
+	filter = nil;
+	nopara = '_';
 }
 
 stead.fmt = stead.hook(stead.fmt, function(f, ...)
@@ -26,8 +27,7 @@ stead.fmt = stead.hook(stead.fmt, function(f, ...)
 			r = r:gsub(',,','„'):gsub("''",'”');
 		end
 		if call_bool(format, 'para') then
-			r = r:gsub('\n([^\n])', '<&para;>%1'):gsub('<&para;>[ \t]*', '\n'..txtnb(format.para_space));
-			r = r:gsub('^[ \t]*',txtnb(format.para_space))
+			r = r:gsub('^[ \t]*', '<&para;>'):gsub('\n([^\n])', '<&para;>%1'):gsub('<&para;>[ \t]*'..format.nopara,''):gsub('<&para;>[ \t]*', '\n'..txtnb(format.para_space));
 		end
 	end
 	return r;

@@ -7,6 +7,7 @@ struct parser {
 	const char 	*cmd;
 	parser_fn	fn; 
 	void		*p;
+	long		aux;
 };
 
 extern int is_space(int c);
@@ -22,7 +23,11 @@ extern char *lookup_lang_tag(const char *fname, const char *tag, const char *com
 extern int parse_esc_string(const char *v, void *data);
 extern int parse_string(const char *v, void *data);
 extern int parse_int(const char *v, void *data);
+extern int parse_float(const char *v, void *data);
+
 extern int parse_full_path(const char *v, void *data);
+extern int process_cmd(char *n, char *v, struct parser *cmd_parser);
+
 extern char *encode_esc_string(const char *v);
 extern char *find_in_esc(const char *l, const char *s);
 #ifdef _HAVE_ICONV

@@ -33,6 +33,7 @@ struct game_theme {
 
 	char	*font_name;
 	int	font_size;
+	float	font_height;
 	fnt_t	font;
 
 	int	gfx_x;
@@ -44,6 +45,8 @@ struct game_theme {
 	char	*a_down_name;
 	img_t	a_up;
 	img_t	a_down;
+	int	a_up_x; int	a_up_y;
+	int	a_down_x; int	a_down_y;
 
 	color_t fgcol;
 	color_t lcol;
@@ -59,12 +62,16 @@ struct game_theme {
 	color_t iacol;
 	char	*inv_font_name;
 	int	inv_font_size;
+	float	inv_font_height;
 	fnt_t	inv_font;
 	
 	char	*inv_a_up_name;
 	char	*inv_a_down_name;
 	img_t	inv_a_up;
 	img_t	inv_a_down;
+
+	int	inv_a_up_x; int	inv_a_up_y;
+	int	inv_a_down_x; int	inv_a_down_y;
 	
 //	int	lstyle;
 //	int	ilstyle;
@@ -78,6 +85,7 @@ struct game_theme {
 	int 	border_w;
 	char	*menu_font_name;
 	int	menu_font_size;
+	float	menu_font_height;
 	fnt_t	menu_font;
 	
 	char	*menu_button_name;
@@ -90,8 +98,22 @@ struct game_theme {
 	void	*click;
 	int xoff;
 	int yoff;
+	int	changed;
 };
 
+#define CHANGED_FONT	1
+#define CHANGED_IFONT	2
+#define CHANGED_MFONT	4
+#define CHANGED_BG		8
+#define CHANGED_CLICK	0x10
+#define CHANGED_CURSOR	0x20
+#define CHANGED_USE	0x40
+#define CHANGED_UP	0x80
+#define CHANGED_DOWN	0x100
+#define CHANGED_IUP	0x200
+#define CHANGED_IDOWN	0x400
+#define CHANGED_BUTTON	0x800
+#define CHANGED_ALL 0xffff
 struct theme {
 	char *path;
 	char *name;
@@ -103,18 +125,25 @@ extern 	int	themes_nr;
 extern 	char	*curtheme_dir;
 
 extern struct 	game_theme game_theme;
+extern struct	game_theme game_theme_unscaled;
+
 extern int 	game_default_theme(void);
 extern int 	game_theme_select(const char *name);
 
 extern int 	themes_lookup(const char *path);
 extern int 	themes_rename(void);
 extern int 	game_theme_load(const char *name);
+extern int	game_theme_init(void);
 extern int 	game_theme_free(void);
-extern int 	game_theme_init(int w, int h);
 extern int	game_theme_optimize(void);
+extern int	game_theme_update(void);
+
 extern int 	theme_load(const char *name);
 extern char 	*game_local_themes_path(void);
 extern int 	theme_img_scale(img_t *p);
+
+extern int theme_relative;
+
 #define GFX_MODE_FLOAT 0
 #define GFX_MODE_FIXED 1
 #define GFX_MODE_EMBEDDED 2

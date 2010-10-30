@@ -50,10 +50,19 @@ iface.img = function(self, str)
 	return "<g:"..str..">";
 end;
 
-iface.nb = function(self, str)
+iface.imgl = function(self, str)
 	if str == nil then return nil; end;
-	if str == '' then return ''; end
-	return "<w:"..str..">";
+	return "<g:"..str.."|left>";
+end;
+
+iface.imgr = function(self, str)
+	if str == nil then return nil; end;
+	return "<g:"..str.."|right>";
+end;
+
+iface.nb = function(self, str)
+	if type(str) ~= 'string' then return nil end
+	return "<w:"..str:gsub("\\","\\\\\\\\"):gsub(">","\\\\>"):gsub("%^","\\%^")..">";
 end;
 
 iface.under = function(self, str)
@@ -115,29 +124,27 @@ iface.ways = function(self, str)
 end;
 
 function get_inv(horiz)
-	str = iface:cmd("inv");
+	str = me():inv();
 	if str then
 		str = stead.string.gsub(str, '\n$','');
-		str = stead.string.gsub(str, '\\'..stead.delim, '<&delim;>')
-		str = stead.string.gsub(str, stead.delim..'$', '')
+--		str = stead.string.gsub(str, stead.delim..'$', '')
 		if not horiz then
-			str = stead.string.gsub(str, stead.delim, game.gui.inv_delim);
+			str = stead.string.gsub(str, '\\?[\\'.. stead.delim ..']', { [stead.delim] = game.gui.inv_delim });
 		else
-			str = stead.string.gsub(str, stead.delim, game.gui.hinv_delim);
+			str = stead.string.gsub(str, '\\?[\\'.. stead.delim ..']', { [stead.delim] = game.gui.hinv_delim });
 		end
-		str = stead.string.gsub(str, '<&delim;>', stead.delim);
+		str = stead.string.gsub(str, '\\(.)', '%1');
 	end
 	return str
 end
 instead.get_inv = get_inv;
 
 function get_ways()
-	str = iface:cmd("way");
-	if str then
+	str = me():ways();
+	if str and str ~= '' then
 		str = stead.string.gsub(str, '\n$','');
-		str = stead.string.gsub(str, '\\'..stead.delim,  '<&delim;>');
-		str = stead.string.gsub(str, stead.delim, game.gui.ways_delim);
-		str = stead.string.gsub(str, '<&delim;>', stead.delim);
+		str = stead.string.gsub(str, '\\?[\\'.. stead.delim ..']', { [stead.delim] = game.gui.ways_delim });
+		str = stead.string.gsub(str, '\\(.)', '%1');
 		return iface:center(str);
 	end
 	return str
@@ -152,8 +159,9 @@ function get_title()
 	if type(s) ~= 'string' then
 		s = call(here(), 'nam');
 	end
-	if type(s) == 'string' then
-		s = stead.string.gsub(s, '\\'..stead.delim, stead.delim);
+	if type(s) == 'string' and s ~= '' then
+		s = stead.string.gsub(s, '\\(.)', '%1');
+		s = "<c><b>"..s.."</b></c>";
 	end
 	return s
 end
@@ -246,7 +254,8 @@ fmt = function(...)
 	end
 	for i=1,stead.table.maxn(arg) do
 		if type(arg[i]) == 'string' then
-			local s = stead.string.gsub(arg[i],'\t', ' '):gsub('[\n]+', ' '):gsub('%^','\n');
+			local s = stead.string.gsub(arg[i],'\t', ' '):gsub('[\n]+', ' ');
+			s = stead.string.gsub(s, '\\?[\\^]', { ['^'] = '\n' }):gsub('\\(.)', '%1');
 			res = stead.par('', res, s);
 		end
 	end

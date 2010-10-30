@@ -1,5 +1,5 @@
 stead = {
-	version = "1.2.3",
+	version = "1.3.0",
 	api_version = "1.1.6", -- last version before 1.2.0
 	table = table,
 	delim = ',',
@@ -205,6 +205,16 @@ function img(v)
 	return iface:img(v);
 end
 
+function imgl(v)
+	if type(v) ~= 'string' then return nil; end; 
+	return iface:imgl(v);
+end
+
+function imgr(v)
+	if type(v) ~= 'string' then return nil; end; 
+	return iface:imgr(v);
+end
+
 function txtem(v)
 	if type(v) ~= 'string' then return nil; end; 
 	return iface:em(v)
@@ -269,8 +279,8 @@ fmt = function(...)
 		if type(arg[i]) == 'string' then
 			local s = stead.string.gsub(arg[i],'[\t ]+',' ');
 			s = stead.string.gsub(s, '[\n]+', ' ');
-			s = stead.string.gsub(s,'%^','\n');
- 			res = stead.par('',res,s);
+			s = stead.string.gsub(s, '\\?[\\^]', { ['^'] = '\n' }):gsub('\\(.)', '%1');
+			res = stead.par('', res, s);
 		end
 	end
 	return res
@@ -360,7 +370,7 @@ end
 
 function obj_xref(self,str)
 	function xrefrep(str)
-		local s = stead.string.gsub(str,'[{}]','');
+		local s = stead.string.gsub(str,'[\001\002]','');
 		return xref(s, self);
 	end
 	if not str then
@@ -369,7 +379,7 @@ function obj_xref(self,str)
 	if not isObject(self) then
 		return str;
 	end
-	local s = stead.string.gsub(str,'{[^}]+}',xrefrep);
+	local s = stead.string.gsub(str, '\\?[\\{}]', { ['{'] = '\001', ['}'] = '\002' }):gsub('\001([^\002]+)\002', xrefrep);
 	return s;
 end
 
@@ -948,6 +958,9 @@ function dialog_rescan(self)
 	return true
 end
 
+function dialog_empty(self)
+	return not dialog_rescan(self);
+end
 
 function dialog_phrase(self, num)
 	if not tonumber(num) then
@@ -1048,6 +1061,9 @@ function dlg(v) --constructor
 	end
 	if v.punseen == nil then
 		v.punseen = dialog_punseen;
+	end
+	if v.empty == nil then
+		v.empty = dialog_empty;
 	end
 	v = room(v);
 	return v;

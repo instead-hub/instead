@@ -22,6 +22,12 @@ prefs = obj {
 	end,
 	purge = function(s)
 		local name = get_savepath() .. '/prefs';
+		local k,v
+		for k,v in pairs(s) do
+			if type(v) ~= 'function' and k ~= 'nam' and k ~= 'system_type' then
+				s[k] = nil
+			end
+		end
 		return stead.os.remove(name);
 	end
 };

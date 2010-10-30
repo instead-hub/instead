@@ -582,7 +582,11 @@ img_t gfx_alpha_img(img_t src, int alpha)
 	Uint32 col;
 	int size;
 	
-	SDL_Surface *img = SDL_DisplayFormatAlpha((SDL_Surface*)src);
+	SDL_Surface *img;
+	if (screen)
+		img = SDL_DisplayFormatAlpha((SDL_Surface*)src);
+	else
+		img = gfx_new(Surf(src)->w, Surf(src)->h);
 	if (!img)
 		return NULL;	
 	ptr = (Uint32*)img->pixels;
@@ -613,30 +617,123 @@ img_t gfx_combine(img_t src, img_t dst)
 	return new;	
 }
 
-/* blank:WxH */
-static img_t _gfx_load_special_image(char *filename)
+static img_t img_pad(char *fname)
 {
+	int l,r,t,b, rc;
 	img_t img, img2;
-	int wh[2] = { 0, 0 };
-	if (strncmp(filename, "blank:", 6))
+	SDL_Rect to;	
+	char *p = fname;
+	p += strcspn(p, ",");
+	if (*p != ',')
 		return NULL;
-	filename += 6;
-	if (parse_mode(filename, wh))
+	p ++;
+	rc = sscanf(fname, "%d %d %d %d,", &t, &r, &b, &l);
+	if (rc == 1) {
+		r = b = l = t;
+	} else if (rc == 2) {
+		b = t; l = r;
+	} else if (rc == 3) {
+		l = r;
+	} else if (rc == 4) {
+		;
+	} else
 		return NULL;
-	if (wh[0] <= 0 || wh[1] <= 0)
-		return NULL; 
-	img = gfx_new(wh[0], wh[1]);
+	img = gfx_load_image(p);
 	if (!img)
 		return NULL;
-	img2 = gfx_alpha_img(img, 0);
+	img2 = gfx_new(gfx_img_w(img) + l + r, gfx_img_h(img) + t + b);
+	if (!img2) {
+		gfx_free_image(img);
+		return NULL;
+	} else {
+		img_t img = gfx_alpha_img(img2, 0);
+		if (img) {
+			gfx_free_image(img2);
+			img2 = img;
+		}
+	}
+	to.x = l;
+	to.y = t;
+	SDL_gfxBlitRGBA(img, NULL, img2, &to);
 	gfx_free_image(img);
 	return img2;
+}
+/* blank:WxH */
+static img_t _gfx_load_special_image(char *f)
+{
+	int alpha = 0;
+	int blank = 0;
+	char *filename;
+	img_t img, img2;
+	char *pc = NULL, *pt = NULL;
+	int wh[2] = { 0, 0 };
+	if (!f)
+		return NULL;
+
+
+	if (!(f = filename = strdup(f)))
+		return NULL;
+
+	if (!strncmp(filename, "blank:", 6)) {
+		filename += 6;
+		blank = 1;
+	} else if (!strncmp(filename, "box:", 4)) {
+		filename += 4;
+		alpha = 255;
+	} else if (!strncmp(filename, "pad:", 4)) {
+		filename += 4;
+		img2 = img_pad(filename);
+		goto out;
+	} else
+		goto err;
+
+	if (strchr(filename, ';'))
+		goto err; /* combined */
+
+	if (blank)
+		goto skip;
+	pc = filename + strcspn(filename, ",");
+	if (*pc == ',') {
+		*pc = 0;
+		pc ++;
+		pt = pc + strcspn(pc, ",");
+		if (*pt == ',') {
+			*pt = 0;
+			pt ++;
+		} else
+			pt = NULL;
+	} else
+		pc = NULL;
+skip:
+	if (parse_mode(filename, wh))
+		goto err;
+	if (wh[0] <= 0 || wh[1] <= 0)
+		goto err; 
+	img = gfx_new(wh[0], wh[1]);
+	if (!img)
+		goto err;
+	if (pc) {
+		color_t col = { .r = 255, .g = 255, .b = 255 };
+		gfx_parse_color(pc, &col);
+		gfx_img_fill(img, 0, 0, wh[0], wh[1], col);
+	}
+	if (pt)
+		alpha = atoi(pt);
+	img2 = gfx_alpha_img(img, alpha);
+	gfx_free_image(img);
+out:
+	free(f);
+	return img2;
+err:
+	free(f);
+	return NULL;
 }
 
 static img_t _gfx_load_image(char *filename)
 {
 	SDL_Surface *img;
 	int nr = 0;
+	filename = strip(filename);
 	img = _gfx_load_special_image(filename);
 	if (img)
 		return img;
@@ -1198,6 +1295,7 @@ struct word {
 	int w;
 	int unbrake;
 	int valign;
+	int img_align;
 	char *word;
 	img_t	img;
 	struct word *next; /* in line */
@@ -1231,6 +1329,7 @@ struct word *word_new(const char *str)
 	w->xref = NULL;
 	w->style = 0;
 	w->img = NULL;
+	w->img_align = 0;
 	w->unbrake = 0;
 	w->prerend = NULL;
 	w->hlprerend = NULL;
@@ -1238,6 +1337,7 @@ struct word *word_new(const char *str)
 }
 
 struct line {
+	int x;
 	int y;
 	int h;
 	int w;
@@ -1250,6 +1350,7 @@ struct line {
 	struct layout *layout;
 };
 
+static int vertical_align(struct word *w, int *hh);
 
 int	word_geom(word_t v, int *x, int *y, int *w, int *h)
 {
@@ -1261,14 +1362,10 @@ int	word_geom(word_t v, int *x, int *y, int *w, int *h)
 		return -1;
 	img = word->img;
 	line = word->line;
-	xx = word->x;
-	yy = line->y;
+	xx = word->x + line->x;
 	ww = word->w;
-	hh = line->h;
-	if (img) { /* todo */
-		hh = gfx_img_h(img);
-		yy += (line->h - hh) / 2;
-	}
+	yy = line->y;
+	yy += vertical_align(v, &hh);
 	if (x)
 		*x = xx;
 	if (y)
@@ -1289,6 +1386,7 @@ struct line *line_new(void)
 	l->words = NULL;
 	l->next = NULL;
 	l->prev = NULL;
+	l->x = 0;
 	l->w = 0;
 	l->y = 0;
 	l->h = 0;
@@ -1310,7 +1408,7 @@ void line_justify(struct line *line, int width)
 	w = line->words;
 	while (w) {
 		lw += w->w;
-		if (!w->unbrake)
+		if (!w->unbrake && !w->img_align)
 			lnum ++;
 		w = w->next;
 	}
@@ -1320,14 +1418,15 @@ void line_justify(struct line *line, int width)
 	sp = (width - lw) / (lnum - 1);
 	spm = (width - lw) % (lnum - 1);
 	while (w) {
-		w->x = x;
-		if (w->next && w->next->unbrake)
-			x += w->w;
-		else {
-			x += w->w + sp + ((spm)?1:0);
-
-			if (spm)
-				spm --;
+		if (!w->img_align) {
+			w->x = x;
+			if (w->next && w->next->unbrake)
+				x += w->w;
+			else {
+				x += w->w + sp + ((spm)?1:0);
+				if (spm)
+					spm --;
+			}
 		}
 		w = w->next;
 	}
@@ -1342,7 +1441,9 @@ void line_right(struct line *line, int width)
 	sp = width - line->w;
 	w = line->words;
 	while (w) {
-		w->x += sp;
+		if (!w->img_align) {
+			w->x += sp;
+		}
 		w = w->next;
 	}
 }
@@ -1355,7 +1456,9 @@ void line_center(struct line *line, int width)
 	sp = (width - line->w)/2;
 	w = line->words;
 	while (w) {
-		w->x += sp;
+		if (!w->img_align) {
+			w->x += sp;
+		}
 		w = w->next;
 	}
 }
@@ -1440,9 +1543,36 @@ void image_free(struct image *image)
 struct textbox;
 
 #define ALIGN_NEST 16
+struct margin;
+
+struct margin {
+	struct margin *next;
+	int w;
+	int h;
+	int y;
+	int align;
+	struct word *word;
+};
+
+struct margin *margin_new(void)
+{
+	struct margin *m = malloc(sizeof(struct margin));
+	if (!m)
+		return NULL;
+	m->w = m->h = m->align = 0;
+	m->next = NULL;
+	return m;
+}
+
+void margin_free(struct margin *m)
+{
+	if (m)
+		free(m);
+}
 
 struct layout {
 	fnt_t	fn;
+	float	fn_height;
 	color_t	col;
 	color_t	lcol;
 	color_t	acol;
@@ -1450,6 +1580,7 @@ struct layout {
 	struct xref *xrefs;
 	struct line *lines;
 	struct textbox *box;
+	struct margin *margin;
 	int w;
 	int h;
 	int align;
@@ -1464,11 +1595,6 @@ struct layout {
 	cache_t img_cache;
 	cache_t prerend_cache;
 	cache_t hlprerend_cache;
-};
-
-struct word_list {
-	struct word_list *next;
-	struct word 	 *word;
 };
 
 struct xref {
@@ -1563,6 +1689,43 @@ void layout_add_line(struct layout *layout, struct line *line)
 	return;
 }
 
+void layout_add_margin(struct layout *layout, struct margin *margin)
+{
+	struct margin *m = layout->margin;
+	if (!m) {
+		layout->margin = margin;
+		return;
+	}
+	while (m->next)
+		m = m->next;
+	m->next = margin;
+	return;
+}
+
+int layout_find_margin(struct layout *layout, int y, int *w)
+{
+	struct margin *m = layout->margin;
+	int xpos = 0;
+	int rpos = layout->w;
+	if (!m) {
+		if (w)
+			*w = layout->w;
+		return 0;
+	}
+	while (m) {
+		if (y >= m->y && y < m->y + m->h) {
+			if (m->align == ALIGN_LEFT)
+				xpos = (xpos < m->w)?m->w:xpos;
+			else
+				rpos = (rpos > layout->w - m->w)?layout->w - m->w:rpos;
+		}
+		m = m->next;
+	}
+	if (w)
+		*w = rpos - xpos;
+	return xpos;
+}
+
 struct image *_layout_lookup_image(struct layout *layout, const char *name)
 {
 	struct image *g = layout->images;
@@ -1641,11 +1804,13 @@ struct layout *layout_new(fnt_t fn, int w, int h)
 	l->w = w;
 	l->h = h;
 	l->fn = fn;
+	l->fn_height = 1.0f;
 	l->align = ALIGN_JUSTIFY;
 	l->valign = 0;
 	l->style = 0;
 	l->lstyle = 0;
 	l->xrefs = NULL;
+	l->margin = NULL;
 	l->col = gfx_col(0, 0, 0);
 	l->lcol = gfx_col(0, 0, 255);
 	l->acol = gfx_col(255, 0, 0);
@@ -1693,6 +1858,7 @@ void _txt_layout_free(layout_t lay)
 	struct line *l;
 	struct image *g;
 	struct xref *x;
+	struct margin *m;
 	if (!layout)
 		return;
 	l = layout->lines;
@@ -1707,6 +1873,12 @@ void _txt_layout_free(layout_t lay)
 		x = x->next;
 		xref_free(ox);
 	}
+	m = layout->margin;
+	while (m) {
+		struct margin *om = m;
+		m = m->next;
+		margin_free(om);
+	}
 	g = layout->images;
 	while (g) {
 		struct image *og = g;
@@ -1719,6 +1891,8 @@ void _txt_layout_free(layout_t lay)
 	layout->images = NULL;
 	layout->xrefs = NULL;
 	layout->lines = NULL;
+	layout->margin = NULL;
+
 	memset(layout->scnt, 0, sizeof(layout->scnt));
 	memset(layout->saved_align, 0, sizeof(layout->saved_align));
 	memset(layout->saved_valign, 0, sizeof(layout->saved_valign));
@@ -2080,6 +2254,15 @@ void txt_layout_color(layout_t lay, color_t fg)
 		return;
 	layout->col = fg;
 }
+
+void	txt_layout_font_height(layout_t lay, float height)
+{
+	struct layout *layout = (struct layout*)lay;
+	if (!lay)
+		return;
+	layout->fn_height = height;
+}
+
 void txt_layout_link_color(layout_t lay, color_t link)
 {
 	struct layout *layout = (struct layout*)lay;
@@ -2204,11 +2387,48 @@ static int vertical_align(struct word *w, int *hh)
 		h = fnt_height(layout->fn);
 	if (hh)
 		*hh = h;
+
+	if (w->img && w->img_align)
+		return 0;
+
 	if (w->valign == ALIGN_TOP)
 		return 0;
 	else if (w->valign == ALIGN_BOTTOM)
 		return line->h - h;
 	return (line->h - h) / 2;
+}
+
+static void word_image_render(struct word *word, int x, int y, clear_fn clear, update_fn update)
+{
+	struct line *line = word->line;
+	struct layout *layout = line->layout;
+	int yy;
+
+	if (clear && !word->xref)
+		return;
+	yy = vertical_align(word, NULL);
+
+	if (clear) {
+		if (word->img) {
+			if (word->img_align) 
+				clear(x + word->x, y + line->y + yy, gfx_img_w(word->img), gfx_img_h(word->img));
+			else
+				clear(x + line->x + word->x, y + line->y + yy, gfx_img_w(word->img), gfx_img_h(word->img));
+		} else
+			clear(x + line->x + word->x, y + line->y/* + yy*/, word->w, line->h);
+	}
+	if (word->img) {
+		if (word->img_align)
+			gfx_draw(word->img, x + word->x, y + line->y + yy);
+		else
+			gfx_draw(word->img, x + line->x + word->x, y + line->y + yy);
+		if (update)
+			update(x + word->x, y + line->y + yy, gfx_img_w(word->img), gfx_img_h(word->img));
+	} else {
+		word_render(layout, word, x + line->x + word->x, y + yy + line->y);
+		if (update)
+			update(x + line->x + word->x, y + line->y + yy, word->w, line->h);
+	}
 }
 
 void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
@@ -2227,36 +2447,19 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 	}
 
 	for (i = 0; i < xref->num; i ++) {
-		int yy;
-		struct line *line;
 		word = xref->words[i];
-		line = word->line;
-
-		yy = vertical_align(word, NULL);
-
-		if (clear) {
-			if (word->img)
-				clear(x + word->x, y + line->y + yy, gfx_img_w(word->img), gfx_img_h(word->img));
-			else
-				clear(x + word->x, y + line->y/* + yy*/, word->w, line->h);
-		}
-		if (word->img) {
-			gfx_draw(word->img, x + word->x, y + line->y + yy);
-			update(x + word->x, y + line->y + yy, gfx_img_w(word->img), gfx_img_h(word->img));
-			continue;
-		}
-		word_render(layout, word, x + word->x, y + yy + line->y);
-		update(x + word->x, y + line->y + yy, word->w, line->h);
+		word_image_render(word, x, y, clear, update);
 	}
 	gfx_noclip();
 }
+
 
 void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, int height, clear_fn clear)
 {
 	void *v;
 	img_t img;
 	struct layout *layout = (struct layout*)lay;
-//	struct line *line;
+	struct margin *margin;
 	struct word *word;
 //	line = layout->lines;
 //	gfx_clip(x, y, layout->w, layout->h);
@@ -2264,30 +2467,24 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 		return;
 	for (v = NULL; (img = txt_layout_images(lay, &v)); )
 		gfx_dispose_gif(img);
+	
+	for (margin = layout->margin; margin; margin = margin->next) {
+		if (margin->y + margin->h < off)
+			continue;
+		if (margin->y - off > height)
+			continue;
+		word_image_render(margin->word, x, y, clear, NULL);
+	}
 	if (!line)
 		line = layout->lines;
 	for (; line; line= line->next) {
-		int yy;
 		if ((line->y + line->h) < off)
 			continue;
 		if (line->y - off > height)
 			break;
 		for (word = line->words; word; word = word->next ) {
-			if (clear && !word->xref)
-				continue;
-			yy = vertical_align(word, NULL);
-			if (clear) {
-				if (word->img)
-					clear(x + word->x, y + line->y + yy, gfx_img_w(word->img), gfx_img_h(word->img));
-				else
-					clear(x + word->x, y + line->y/* + yy*/, word->w, line->h);
-			}
-			if (word->img) {
-				yy = (line->h - gfx_img_h(word->img)) / 2;
-				gfx_draw(word->img, x + word->x, y + line->y + yy);
-				continue;
-			}
-			word_render(layout, word, x + word->x, y + yy + line->y);
+			if (!word->img_align)
+				word_image_render(word, x, y, clear, NULL);
 		}
 	}
 	cache_shrink(layout->prerend_cache);
@@ -2578,14 +2775,14 @@ xref_t txt_box_xref(textbox_t tbox, int x, int y)
 			yy = vertical_align(word, &hh);
 			if (y < line->y + yy || y > line->y + yy + hh)
 				continue;
-			if (x < word->x)
+			if (x < line->x + word->x)
 				continue;
 			xref = word->xref;
 			if (!xref)
 				continue;
-			if (x < word->x + word->w)
+			if (x < line->x + word->x + word->w)
 				break;
-			if (word->next && word->next->xref == xref && x < word->next->x + word->next->w) {
+			if (word->next && word->next->xref == xref && x < line->x + word->next->x + word->next->w) {
 				yy = vertical_align(word->next, &hh);
 				if (y < line->y + yy || y > line->y + yy + hh)
 					continue;
@@ -2659,17 +2856,28 @@ void txt_layout_update_links(layout_t layout, int x, int y, clear_fn clear)
 //	gfx_noclip();
 }
 
-img_t get_img(struct layout *layout, char *p)
+img_t get_img(struct layout *layout, char *p, int *al)
 {
 	int len;
+	int align;
 	img_t img;
 	struct image *image;
+	*al = 0;
 	len = word_img(p, NULL);
 	if (!len)
 		return NULL;
 	p += 3;
 	p[len - 1] = 0;
-	
+	align = strcspn(p, "|");
+	if (!p[align])
+		align = 0;
+	else {
+		p[align] = 0;
+		if (!strcmp(p + align + 1, "left"))
+			*al = ALIGN_LEFT;
+		else if (!strcmp(p + align + 1, "right"))
+			*al = ALIGN_RIGHT;
+	}
 	img = layout_lookup_image(layout, p);
 	if (img)
 		goto out;
@@ -2691,6 +2899,8 @@ img_t get_img(struct layout *layout, char *p)
 			cache_add(layout->img_cache, p, img);
 	}
 out:
+	if (align)
+		p[align] = '|';
 	p[len - 1] = '>';
 	return img;
 }
@@ -2869,7 +3079,7 @@ int get_unbrakable_len(struct layout *layout, const char *ptr)
 	return w;
 }
 
-int txt_layout_pos2off(layout_t lay, int pos)
+int txt_layout_pos2off(layout_t lay, int pos, int *hh)
 {
 	int off = 0;
 	struct line *line;
@@ -2877,7 +3087,9 @@ int txt_layout_pos2off(layout_t lay, int pos)
 	if (!layout)
 		return 0;
 	for (line = layout->lines; line && (line->pos <= pos); line = line->next) {
-		off = line->y;
+		off = line->y; // + line->h;
+		if (hh)
+			*hh = line->h;
 	}
 	return off;
 }
@@ -2886,6 +3098,10 @@ void _txt_layout_add(layout_t lay, char *txt)
 {
 	int sp = 0;
 	int saved_style;
+	int width;
+	int img_align;
+	struct margin *m;
+
 	struct line *line, *lastline = NULL;
 	struct layout *layout = (struct layout*)lay;
 	char *p, *eptr;
@@ -2915,6 +3131,8 @@ void _txt_layout_add(layout_t lay, char *txt)
 		line = lastline;
 	}
 
+	line->x = layout_find_margin(layout, line->y, &width);
+	
 	while (ptr && *ptr) {
 		struct word *word;
 		int sp2, addlen;
@@ -2942,20 +3160,26 @@ void _txt_layout_add(layout_t lay, char *txt)
 		if (!p)
 			break;
 		addlen = get_unbrakable_len(layout, eptr);
-		img = get_img(layout, p);
+		img = get_img(layout, p, &img_align);
 		if (img) {
 			w = gfx_img_w(img);
 			h = gfx_img_h(img);
+			if (img_align && width - w <= 0)
+				img_align = 0;
 		} else {
 			p = get_word_token(p);
 			TTF_SizeUTF8((TTF_Font *)(layout->fn), p, &w, &h);
+			h *= layout->fn_height;
 		}
 		nl = !*p;
 
-		if (!line->h) /* first word ? */
+		if (!line->h && !img_align && !line->num) /* first word ? */
 			line->h = h;
 
-		if ((line->num && (line->w + ((sp && line->w)?spw:0) + w + addlen) > layout->w) || nl) {
+		if (img_align && !line->w)
+				line->h = 0;
+
+		if ((line->num && (line->w + ((sp && line->w)?spw:0) + w + addlen) > width) || nl) {
 			struct line *ol = line;
 			h = 0; /* reset h for new line */
 			if ((layout->h) && (line->y + line->h) >= layout->h)
@@ -2963,8 +3187,8 @@ void _txt_layout_add(layout_t lay, char *txt)
 			if (line != lastline) {
 				layout_add_line(layout, line);
 			}
-			line_align(line, layout->w, line->align, nl);
-				
+			line_align(line, width, line->align, nl);
+
 			line = line_new();
 			if (!line) {
 				free(p);
@@ -2973,6 +3197,9 @@ void _txt_layout_add(layout_t lay, char *txt)
 			line->align = layout->align;
 			line->h = 0;//h;
 			line->y = ol->y + ol->h;
+//			line->x = 0;
+			line->x = layout_find_margin(layout, line->y, &width);
+//			fprintf(stderr,"%d %d\n", line->x, width);
 			if (nl) {
 				ptr = eptr + 1;
 			}
@@ -2982,7 +3209,8 @@ void _txt_layout_add(layout_t lay, char *txt)
 			continue;
 		}
 
-		if (h > line->h)
+	
+		if (h > line->h && !img_align)
 			line->h = h;
 
 		word = word_new(p);
@@ -3003,6 +3231,35 @@ void _txt_layout_add(layout_t lay, char *txt)
 		word->x = line->w;
 
 		word->img = img;
+		word->img_align = img_align;
+
+		if (img_align && (m = margin_new())) {
+			int x2, w2;
+			
+			x2 = layout_find_margin(layout, line->y, &w2);
+
+			if (img_align == ALIGN_LEFT) {
+				line->x += w;
+				m->w = x2 + w;
+			} 
+			else
+				m->w = layout->w - x2 - w2 + w;
+
+			width -= w;
+
+			m->h = h;
+			m->y = line->y;
+			m->align = img_align; 
+			m->word = word;
+			word->w = 0;
+			if (img_align == ALIGN_LEFT)
+				word->x = x2;
+			else
+				word->x = x2 + w2 - w;
+			h = 0;
+			w = 0;
+			layout_add_margin(layout, m);
+		}
 
 //		if (line->w)
 //			w += spw;
@@ -3025,7 +3282,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 //	if (line->num) {
 		if (line != lastline) 
 			layout_add_line(layout, line);
-		line_align(line, layout->w, line->align, nl);
+		line_align(line, width, line->align, nl);
 //	} else
 //		line_free(line);
 	if (xref)
@@ -3100,7 +3357,7 @@ int xref_position(xref_t x, int *xc, int *yc)
 		return -1;
 
 	if (xc)
-		*xc = word->x + (word->w + w);
+		*xc = line->x + word->x + (word->w + w);
 	if (yc)
 		*yc = line->y + line->h / 2;
 	return 0;
@@ -3124,11 +3381,11 @@ xref_t txt_layout_xref(layout_t lay, int x, int y)
 			yy = vertical_align(word, &hh);
 			if (y < line->y + yy || y > line->y + yy + hh)
 				continue;
-			if (x < word->x)
+			if (x < line->x + word->x)
 				continue;
-			if (x <= word->x + word->w)
+			if (x <= line->x + word->x + word->w)
 				return xref;
-			if (word->next && word->next->xref == xref && x < word->next->x + word->next->w) {
+			if (word->next && word->next->xref == xref && x < line->x + word->next->x + word->next->w) {
 				yy = vertical_align(word->next, &hh);
 				if (y < line->y + yy || y > line->y + yy + hh)
 					continue;
@@ -3198,6 +3455,7 @@ void txt_layout_real_size(layout_t lay, int *pw, int *ph)
 {
 	int w = 0;
 	int h = 0;
+	struct margin *margin;
 	struct line *line;
 	struct layout *layout = (struct layout*)lay;
 	if (!layout)
@@ -3210,6 +3468,12 @@ void txt_layout_real_size(layout_t lay, int *pw, int *ph)
 		if (line->num && line->y + line->h > h)
 			h = line->y + line->h;
 	}
+
+	for (margin = layout->margin; margin; margin = margin->next) {
+		if (margin->y + margin->h > h)
+			h = margin->y + margin->h;
+	}
+
 	if (pw)
 		*pw = w;
 	if (ph)

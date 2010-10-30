@@ -192,6 +192,7 @@ static void __cache_shrink(__cache_t *c)
 		} else
 			break;
 	}
+//	fprintf(stderr,"%d/%d\n", c->size, c->used);
 }
 
 int cache_add(cache_t cache, const char *name, void *p)
