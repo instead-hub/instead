@@ -5,7 +5,7 @@ kbden = {
 	["3"] = "#",
 	["4"] = "$",
 	["5"] = "%",
-	["6"] = "6",
+	["6"] = "^",
 	["7"] = "&",
 	["8"] = "*",
 	["9"] = "(",
@@ -268,7 +268,8 @@ function input_esc(s)
 		return txtnb(s)
 	end
 	if not s then return end
-	return s:gsub("\\","\\\\"):gsub(">","\\>"):gsub("[^ ]+", rep):gsub("[ \t]", rep);
+--	return s:gsub("\\","\\\\\\\\"):gsub(">","\\\\>"):gsub("%^","\\%^"):
+	return s:gsub("[^ ]+", rep):gsub("[ \t]", rep);
 end
 
 function inp(n, info, txt)

@@ -51,7 +51,7 @@ char *strip(char *s)
 	return s;
 }
 
-static int process_cmd(char *n, char *v, struct parser *cmd_parser)
+int process_cmd(char *n, char *v, struct parser *cmd_parser)
 {
 	int i;
 	n = strip(n);
@@ -80,6 +80,7 @@ static int fgetsesc(char *oline, size_t size, FILE *fp)
 		if (line[i - 1] == '\\') {
 			line[i - 1] = 0;
 			strncat(oline, line, size);
+			line[0] = 0;
 			size -= strlen(line);
 			if (size <= 0)
 				return nr;
@@ -261,10 +262,38 @@ int parse_int(const char *v, void *data)
 	return 0;	
 }
 
+int parse_float(const char *v, void *data)
+{
+	float *f = (float *)data;
+	if (sscanf(v, "%f", f) != 1)
+		return -1;
+	return 0;	
+}
+
+static int parse_path(const char *v, void *data)
+{
+	char **p = ((char **)data);
+	if (*p)
+		free(*p);
+	if (!v[0]) {
+		*p = strdup("");
+		return (*p)?0:-1;
+	}
+	*p = strdup(v);
+	if (!*p)
+		return -1;
+	*p = sdl_path(*p);
+	return 0;
+}
+extern int theme_relative; /* hack, theme layer here :( */
 int parse_full_path(const char *v, void *data)
 {
 	char cwd[PATH_MAX];
 	char **p = ((char **)data);
+
+	if (theme_relative || !strncmp(v, "blank:", 6) || !strncmp(v, "box:", 4)) /* hack for special files*/
+		return parse_path(v, data);
+
 	if (*p)
 		free(*p);
 	if (!v[0]) {

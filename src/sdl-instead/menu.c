@@ -492,10 +492,11 @@ int game_menu_act(const char *a)
 		if (!curgame_dir)
 			return 0;
 //		free_last();
-		game_select(curgame_dir);
 		game_menu_box(0, NULL);
-		game_load(nr);
-		cur_menu = menu_main;
+		if (!game_reset()) {
+			game_load(nr);
+			cur_menu = menu_main;
+		}
 //		game_menu_box(0, NULL);
 	} else if (!strcmp(a, "/new")) {
 		char *s;
@@ -507,11 +508,11 @@ int game_menu_act(const char *a)
 		s = game_save_path(0, 0);
 		if (s && !access(s, R_OK) && opt_autosave)
 			unlink (s);
-		game_select(curgame_dir);
 		game_menu_box(0, NULL);
-//		instead_eval("game:ini()"); instead_clear();
-		game_cmd("look");
-		custom_theme_warn();
+		if (!game_reset()) {
+			game_cmd("look");
+			custom_theme_warn();
+		}
 	} else if (!strcmp(a,"/main")) {
 		if (restart_needed) {
 			game_restart();

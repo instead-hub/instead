@@ -6,6 +6,9 @@
 #include "internals.h"
 /* the Lua interpreter */
 
+static gtimer_t instead_timer = NULL;
+static int instead_timer_nr = 0;
+
 char 		*fromgame(const char *s);
 char 		*togame(const char *s);
 lua_State	*L = NULL;
@@ -24,6 +27,8 @@ static int report (lua_State *L, int status)
 			free(p);
 		lua_pop(L, 1);	
 		status = -1;
+		gfx_del_timer(instead_timer); /* to avoid error loops */
+		instead_timer = NULL;
 	}
 	return status;
 }
@@ -90,7 +95,6 @@ char *getstring(char *cmd)
 		s = fromgame(s);
 	return s;
 }
-
 
 int instead_eval(char *s)
 {
@@ -450,8 +454,6 @@ static int luaB_get_steadpath(lua_State *L) {
 	return 1;
 }
 
-static gtimer_t instead_timer = NULL;
-static int instead_timer_nr = 0;
 
 extern void mouse_reset(int hl); /* too bad */
 
@@ -487,6 +489,7 @@ static int luaB_set_timer(lua_State *L) {
 	const char *delay = luaL_optstring(L, 1, NULL);
 	int d;
 	gfx_del_timer(instead_timer);
+	instead_timer = NULL;
 	if (!delay)
 		d = 0;
 	else	
@@ -495,6 +498,31 @@ static int luaB_set_timer(lua_State *L) {
 		return 0;
 	instead_timer_nr = 0;
 	instead_timer = gfx_add_timer(d, instead_fn, NULL);
+	return 0;
+}
+
+extern int theme_setvar(char *name, char *val);
+extern char *theme_getvar(const char *name);
+
+static int luaB_theme_var(lua_State *L) {
+	const char *var = luaL_optstring(L, 1, NULL);
+	const char *val = luaL_optstring(L, 2, NULL);
+	if (var && !val) { /* get */
+		char *p = theme_getvar(var);
+		if (p) {
+			lua_pushstring(L, p);
+			free(p);
+			return 1;
+		}
+		return 0;
+	}
+	if (!val || !var)
+		return 0;
+	game_own_theme = 1;
+	if (!opt_owntheme)
+		return 0;
+	if (!theme_setvar((char*)var, (char*)val))
+		game_theme_changed = 2;
 	return 0;
 }
 
@@ -507,6 +535,7 @@ static const luaL_Reg base_funcs[] = {
 	{"get_gamepath", luaB_get_gamepath},
 	{"get_steadpath", luaB_get_steadpath},
 	{"set_timer", luaB_set_timer},
+	{"theme_var", luaB_theme_var},
 	{NULL, NULL}
 };
 
@@ -582,6 +611,7 @@ int instead_init(void)
 void instead_done(void)
 {
 	gfx_del_timer(instead_timer);
+	instead_timer = NULL;
 #ifdef _HAVE_ICONV
 	if (fromcp)
 		free(fromcp);

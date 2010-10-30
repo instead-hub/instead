@@ -103,6 +103,7 @@ extern void	txt_layout_free(layout_t lay);
 extern xref_t 	txt_layout_xref(layout_t lay, int x, int y);
 extern void 	txt_layout_color(layout_t lay, color_t fg);
 extern fnt_t 	txt_layout_font(layout_t lay);
+extern void 	txt_layout_font_height(layout_t lay, float height);
 
 extern void 	txt_layout_link_color(layout_t lay, color_t link);
 extern void 	txt_layout_active_color(layout_t lay, color_t link);
@@ -135,7 +136,7 @@ typedef void 	(*clear_fn)(int x, int y, int w, int h);
 extern void 	txt_box_update_links(textbox_t tbox, int x, int y, clear_fn);
 extern void 	txt_layout_update_links(layout_t layout, int x, int y, clear_fn clear);
 extern void 	txt_layout_real_size(layout_t lay, int *w, int *h);
-extern int 	txt_layout_pos2off(layout_t lay, int pos);
+extern int 	txt_layout_pos2off(layout_t lay, int pos, int *hh);
 
 extern img_t 	txt_box_render(textbox_t tbox);
 

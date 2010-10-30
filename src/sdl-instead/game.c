@@ -10,6 +10,7 @@ char	game_cwd[PATH_MAX];
 char	*curgame_dir = NULL;
 
 int game_own_theme = 0;
+int game_theme_changed = 0;
 
 static int game_pic_w = 0;
 static int game_pic_h = 0;
@@ -78,14 +79,34 @@ static struct game *game_lookup(const char *name)
 	return NULL;
 }
 
+int game_reset(void)
+{
+	game_release_theme();
+	free_last();
+	if (game_select(curgame_dir))
+		goto out;
+	if (game_apply_theme())
+		goto out;
+	return 0;
+out:
+	game_done(0);
+	if (game_init(NULL)) {
+		game_error("");
+		return -1;
+	}
+	return -1;
+}
+
 int game_select(const char *name)
 {
 	struct game *g;
 	FREE(last_cmd);
 	game_stop_mus(500);
 	g = game_lookup(name);
-	if ((!name || !*name) && !g)
-		return 0;
+	if ((!name || !*name) && !g) {
+		game_use_theme();
+		return game_theme_init();
+	}
 	if (setdir(game_cwd))
 		return -1;
 	if (g) {
@@ -100,12 +121,24 @@ int game_select(const char *name)
 			curgame_dir = oldgame;
 			return -1;
 		}
+
+		game_use_theme();
+
 		if (instead_load(dirpath(MAIN_FILE))) {
 			curgame_dir = oldgame;
 			return -1;
 		}
+
 		instead_function("game:ini", NULL); instead_clear();
+
+		if (game_theme_init()) {
+			curgame_dir = oldgame;
+			return -1;
+		}
 		return 0;
+	} else {
+		game_use_theme();
+		game_theme_init();
 	}
 	return 0;
 }
@@ -462,29 +495,13 @@ static int inv_enabled(void)
 	return (game_theme.inv_mode != INV_MODE_DISABLED);
 }
 
+
 int game_apply_theme(void)
 {
 	layout_t lay;
 	textbox_t box;
-	int w  = opt_mode[0];
-	int h  = opt_mode[1];
 
-	if ((w == -1) 
-		&& (gfx_get_max_mode(&w, &h) || (game_theme.w <= w && game_theme.h <= h))) {
-		w = opt_mode[0];
-		h = opt_mode[1];
-	}
-	if (game_theme_init(w, h))
-		return -1;
-		
 	memset(objs, 0, sizeof(struct el) * el_max);
-
-	if (gfx_set_mode(game_theme.w, game_theme.h, opt_fs)) {
-		opt_mode[0] = opt_mode[1] = -1; opt_fs = 0; /* safe options */
-		return -1;
-	}
-	if (game_theme_optimize())
-		return -1;
 	gfx_bg(game_theme.bgcol);
 	game_clear(0, 0, game_theme.w, game_theme.h);
 	gfx_flip();
@@ -498,10 +515,10 @@ int game_apply_theme(void)
 	txt_layout_link_color(lay, game_theme.lcol);
 //	txt_layout_link_style(lay, 4);
 	txt_layout_active_color(lay, game_theme.acol);
-
+	txt_layout_font_height(lay, game_theme.font_height);
+	
 	txt_box_set(box, lay);
 	el_set(el_scene, elt_box, game_theme.win_x, 0, box);
-
 
 	if (inv_enabled()) {
 		lay = txt_layout(game_theme.inv_font, INV_ALIGN(game_theme.inv_mode), 
@@ -511,6 +528,7 @@ int game_apply_theme(void)
 		txt_layout_color(lay, game_theme.icol);
 		txt_layout_link_color(lay, game_theme.ilcol);
 		txt_layout_active_color(lay, game_theme.iacol);
+		txt_layout_font_height(lay, game_theme.inv_font_height);
 
 		box = txt_box(game_theme.inv_w, game_theme.inv_h);
 		if (!box)
@@ -527,7 +545,8 @@ int game_apply_theme(void)
 	txt_layout_color(lay, game_theme.fgcol);
 	txt_layout_link_color(lay, game_theme.lcol);
 	txt_layout_active_color(lay, game_theme.acol);
-
+	txt_layout_font_height(lay, game_theme.font_height);
+	
 	el_set(el_title, elt_layout, game_theme.win_x, game_theme.win_y, lay);
 
 	lay = txt_layout(game_theme.font, ALIGN_CENTER, game_theme.win_w, 0);
@@ -537,7 +556,8 @@ int game_apply_theme(void)
 	txt_layout_color(lay, game_theme.fgcol);
 	txt_layout_link_color(lay, game_theme.lcol);
 	txt_layout_active_color(lay, game_theme.acol);
-	
+	txt_layout_font_height(lay, game_theme.font_height);
+
 	el_set(el_ways, elt_layout, game_theme.win_x, 0, lay);
 
 	el_set(el_sdown, elt_image, 0, 0, game_theme.a_down);
@@ -604,6 +624,8 @@ int game_change_vol(int d, int val)
 	return 0;
 }
 
+static void sounds_reload(void);
+
 int game_change_hz(int hz)
 {
 	if (!hz)
@@ -614,6 +636,7 @@ int game_change_hz(int hz)
 	snd_volume_mus(cur_vol);
 	snd_free_wav(game_theme.click);
 	game_theme.click = snd_load_wav(game_theme.click_name);
+	sounds_reload();
 	game_music_player();
 	opt_hz = snd_hz();
 	return 0;
@@ -684,6 +707,32 @@ int counter_fn(int interval, void *p)
 	return interval;
 }
 
+int game_use_theme(void)
+{
+	int rc = 0;
+	game_theme_changed = 0;
+	game_own_theme = 0;
+
+	game_theme.changed = CHANGED_ALL;
+	
+	if (game_default_theme()) {
+		fprintf(stderr, "Can't load default theme.\n");
+		return -1;
+	}
+
+	if (curgame_dir && !access(dirpath(THEME_FILE), R_OK)) {
+		game_own_theme = 1;
+	}
+	if (game_own_theme && opt_owntheme) {
+		theme_relative = 1;
+		rc = theme_load(dirpath(THEME_FILE));
+		theme_relative = 0;
+	} else if (curtheme_dir && strcmp(DEFAULT_THEME, curtheme_dir)) {
+		rc = game_theme_load(curtheme_dir);
+	}
+	return rc;
+}
+
 int game_init(const char *name)
 {
 	getdir(game_cwd, sizeof(game_cwd));
@@ -698,43 +747,35 @@ int game_init(const char *name)
 	snd_init(opt_hz);
 	game_change_vol(0, opt_vol);
 
-	if (game_default_theme()) {
-		fprintf(stderr, "Can't load default theme.\n");
+	if (game_select(name))
+		return -1;
+
+	if (gfx_set_mode(game_theme.w, game_theme.h, opt_fs)) {
+		opt_mode[0] = opt_mode[1] = -1; opt_fs = 0; /* safe options */
 		return -1;
 	}
 
-	if (game_select(name))
+	if (game_theme_optimize())
 		return -1;
-	
-	if (curgame_dir && !access(dirpath(THEME_FILE), R_OK)) {
-		game_own_theme = 1;
-	}
-	
-	if (game_own_theme && opt_owntheme) {
-		if (theme_load(dirpath(THEME_FILE)))
-			return -1;
-	} else if (curtheme_dir && strcmp(DEFAULT_THEME, curtheme_dir)) {
-		game_theme_load(curtheme_dir);
-	}
 
 	if (game_apply_theme()) {
 		game_theme_select(DEFAULT_THEME);
 		return -1;
 	}
 	timer_han =  gfx_add_timer(HZ, counter_fn, NULL); 
-
 	if (!curgame_dir) {
 		game_menu(menu_games);
 	} else {
 		if (!game_load(-1)) /* tmp save */
-			return 0;
+			goto out;
 		if (opt_autosave && !game_load(0))  /* autosave */
-			return 0;
+			goto out;
 		game_cmd("look");
 		custom_theme_warn();
 		if (opt_autosave)
 			game_save(0);
 	}
+out:
 	return 0;
 }
 
@@ -760,10 +801,35 @@ void free_last(void)
 	sounds_free();
 }
 
-void game_done(int err)
+void game_release_theme(void)
 {
 	int i;
+	mouse_reset(1);
+	game_cursor(CURSOR_OFF);
+	if (el_img(el_spic))
+		gfx_free_image(el_img(el_spic));
 
+	for (i = 0; i < el_max; i++) {
+		struct el *o;
+		o = el(i);
+		if (o->type == elt_layout && o->p.p) {
+			txt_layout_free(o->p.lay);
+		} else if (o->type == elt_box && o->p.p) {
+			txt_layout_free(txt_box_layout(o->p.box));
+			txt_box_free(o->p.box);
+		}
+		o->p.p = NULL;
+		o->drawn = 0;
+	}
+	if (menu)
+		gfx_free_image(menu);
+	if (menubg)
+		gfx_free_image(menubg);
+	menu = menubg = NULL;
+}
+
+void game_done(int err)
+{
 	gfx_del_timer(timer_han);
 	timer_han = NULL;
 
@@ -774,33 +840,8 @@ void game_done(int err)
 
 	if (menu_shown)
 		menu_toggle();
-	mouse_reset(1);
-	game_cursor(CURSOR_OFF);	
-	if (el_img(el_spic))
-		gfx_free_image(el_img(el_spic));
-
-	for (i = 0; i < el_max; i++) {
-		struct el *o;
-		o = el(i);
-//		if (o->type == elt_image && o->p.p) {
-//			if (!o->clone)
-//				gfx_free_image(o->p.img);
-//		} else 
-		if (o->type == elt_layout && o->p.p) {
-			txt_layout_free(o->p.lay);
-		} else if (o->type == elt_box && o->p.p) {
-			txt_layout_free(txt_box_layout(o->p.box));
-			txt_box_free(o->p.box);
-		}
-		o->p.p = NULL;
-		o->drawn = 0;
-	}
+	game_release_theme();
 	free_last();
-	if (menu)
-		gfx_free_image(menu);
-	if (menubg)
-		gfx_free_image(menubg);
-	menu = menubg = NULL;
 	game_theme_free();
 	input_clear();
 	snd_done();
@@ -907,28 +948,44 @@ void box_update_scrollbar(int n)
 	int off;
 	int w, h, hh;
 
-	el_size(n, &w, &h);
-
-	x1 = el(n)->x + w + game_theme.pad;
-	y1 = el(n)->y;
-
-	x2 = x1;
-	y2 = y1 + h - gfx_img_h(game_theme.a_down);
-
-	l = txt_box_layout(el_box(n));
-	txt_layout_real_size(l, NULL, &hh);
-	off = txt_box_off(el_box(n));
 	if (n == el_scene) {
 		elup = el(el_sup);
 		eldown = el(el_sdown);
+		x1 = game_theme.a_up_x;
+		y1 = game_theme.a_up_y;
+		x2 = game_theme.a_down_x;
+		y2 = game_theme.a_down_y;
 //		elslide = el(el_sslide);
 	} else if (n == el_inv) {
 		elup = el(el_iup);
 		eldown = el(el_idown);
+		x1 = game_theme.inv_a_up_x;
+		y1 = game_theme.inv_a_up_y;
+		x2 = game_theme.inv_a_down_x;
+		y2 = game_theme.inv_a_down_y;
 //		elslide = el(el_islide);
 	}
 	if (!elup || !eldown)
 		return;	
+
+	if (x1 == -1 || y1 == -1 || x2 == -1 || y2 == -1)
+		el_size(n, &w, &h);
+
+	if (x1 == -1)
+		x1 = el(n)->x + w + game_theme.pad;
+
+	if (y1 == -1)
+		y1 = el(n)->y;
+
+	if (x2 == -1)
+		x2 = x1;
+
+	if (y2 == -1)
+		y2 = y1 + h - gfx_img_h(game_theme.a_down);
+
+	l = txt_box_layout(el_box(n));
+	txt_layout_real_size(l, NULL, &hh);
+	off = txt_box_off(el_box(n));
 
 	if (el_clear(elup->id)) {
 		if (elup->x != x1 || elup->y != y1)
@@ -1026,7 +1083,7 @@ int game_menu_box_wh(const char *txt, int *w, int *h)
 	int b = game_theme.border_w;
 	int pad = game_theme.pad;
 
-	lay = txt_layout(game_theme.menu_font, ALIGN_CENTER, game_theme.win_w - 2 * (b + pad), 0);
+	lay = txt_layout(game_theme.menu_font, ALIGN_CENTER, game_theme.w - 2 * (b + pad), 0);
 	txt_layout_set(lay, (char*)txt);
 	txt_layout_real_size(lay, w, h);
 	txt_layout_free(lay);
@@ -1084,6 +1141,8 @@ void game_menu_box_width(int show, const char *txt, int width)
 	txt_layout_color(lay, game_theme.menu_fg);
 	txt_layout_link_color(lay, game_theme.menu_link);
 	txt_layout_active_color(lay, game_theme.menu_alink);
+	txt_layout_font_height(lay, game_theme.menu_font_height);
+
 	txt_layout_set(lay, (char*)txt);
 	txt_layout_real_size(lay, &w, &h);	
 	if (width)
@@ -1096,8 +1155,8 @@ void game_menu_box_width(int show, const char *txt, int width)
 	gfx_img_fill(menu, 0, 0, w + (b + pad)*2, h + (b + pad)*2, game_theme.border_col);
 	gfx_img_fill(menu, b, b, w + pad*2, h + pad*2, game_theme.menu_bg);
 	gfx_set_alpha(menu, game_theme.menu_alpha);
-	x = (game_theme.win_w - w)/2 + game_theme.win_x; //(game_theme.w - w)/2;
-	y = (game_theme.win_h - h)/2 + game_theme.win_y; //(game_theme.h - h)/2;
+	x = (game_theme.w - w)/2;
+	y = (game_theme.h - h)/2;
 	mx = x - b - pad;
 	my = y - b - pad;
 	mw = w + (b + pad) * 2;
@@ -1175,24 +1234,6 @@ static int check_fading(void)
 
 	instead_clear();
 	return rc?st:0;
-}
-
-void scene_scrollbar(void)
-{
-	layout_t l;
-	int h, off;
-	int hh;
-	el_clear(el_sdown);
-	el_clear(el_sup);
-	el_size(el_scene, NULL, &hh);
-	el(el_sup)->y = el(el_scene)->y;
-	l = txt_box_layout(el_box(el_scene));
-	txt_layout_size(l, NULL, &h);
-	off = txt_box_off(el_box(el_scene));
-	if (h - off >= hh)
-		el_draw(el_sdown);
-	if (off)
-		el_draw(el_sup);
 }
 
 static void game_autosave(void)
@@ -1315,6 +1356,15 @@ static void sounds_free(void)
 	}
 }
 
+static void sounds_reload(void)
+{
+	int i;
+	for (i = 0; i < MAX_WAVS; i++) {
+		snd_free_wav(wavs[i].wav);
+		wavs[i].wav = snd_load_wav(wavs[i].fname);
+	}
+}
+
 void game_sound_player(void)
 {
 	wav_t		w;
@@ -1391,15 +1441,19 @@ static void scroll_to_diff(const char *cmdstr, int cur_off)
 	int off = 0;
 	int pos = 0;
 	int h = 0;
+	int hh = 0;
 	pos = find_diff_pos(cmdstr, last_cmd);
 	if (pos == -1)
 		off = cur_off;
 	else
-		off = txt_layout_pos2off(txt_box_layout(el_box(el_scene)), pos);
+		off = txt_layout_pos2off(txt_box_layout(el_box(el_scene)), pos, &hh);
 	el_size(el_scene, NULL, &h);
-	if (cur_off <= off && (cur_off + h) > off)
+	if (cur_off <= off && (cur_off + h) > off + hh) {
 		off = cur_off;
-	txt_box_scroll(el_box(el_scene), off);
+		hh = 0;
+	} else if (off < cur_off || off + hh <= cur_off + h)
+		hh = 0;
+	txt_box_scroll(el_box(el_scene), off + hh);
 }
 
 int game_highlight(int x, int y, int on);
@@ -1446,6 +1500,9 @@ int game_cmd(char *cmd)
 
 	fading = check_fading();
 
+	if (game_theme_changed == 2 && opt_owntheme && !fading)
+		fading = 1; /* one frame at least */
+
 	if (fading) { /* take old screen */
 		game_cursor(CURSOR_CLEAR);
 		img_t offscreen = gfx_new(game_theme.w, game_theme.h);
@@ -1453,14 +1510,22 @@ int game_cmd(char *cmd)
 		gfx_draw(oldscreen, 0, 0);
 	}
 
+	if (game_theme_changed == 2 && opt_owntheme) {
+		game_theme_update();
+		game_theme_changed = 1;
+		new_place = 1;
+		if (pict)
+			new_pict = 1;
+	}
+
 	if (new_place)
 		el_clear(el_title);
 
 	if (title && *title) {
-		snprintf(buf, sizeof(buf), "<b><c><a:look>%s</a></c></b>", title);
+		snprintf(buf, sizeof(buf), "<a:look>%s</a>", title);
 		txt_layout_set(el_layout(el_title), buf);
 		txt_layout_size(el_layout(el_title), NULL, &title_h);
-		title_h += game_theme.font_size / 2; // todo?	
+		title_h += game_theme.font_size * game_theme.font_height / 2; // todo?	
 	} else
 		txt_layout_set(el_layout(el_title), NULL);
 
@@ -1538,8 +1603,9 @@ int game_cmd(char *cmd)
 		p = malloc(strlen(cmdstr) + ((waystr)?strlen(waystr):0) + 16);
 		if (p) {
 			*p = 0;
-			if (waystr) {
-				strcpy(p, waystr);
+			if ((waystr && *waystr) || el_img(el_spic)) { /* is this hack needed? */
+				if (waystr)
+					strcpy(p, waystr);
 				strcat(p, "\n"); /* small hack */
 			}
 			strcat(p, cmdstr);
@@ -1563,6 +1629,7 @@ int game_cmd(char *cmd)
 	last_cmd = cmdstr;
 	
 	el(el_ways)->y = el(el_title)->y + title_h + pict_h;
+
 	if (waystr)
 		free(waystr);
 
@@ -1602,7 +1669,6 @@ inv:
 		el_clear(el_inv);
 		el_draw(el_inv);
 	}
-//	scene_scrollbar();
 
 	if (fading) {
 		img_t offscreen;
@@ -2598,9 +2664,8 @@ int game_loop(void)
 				game_save(9);
 			} else if (!is_key(&ev, "f9") && curgame_dir && !menu_shown) {
 				if (!access(game_save_path(0, 9), R_OK)) {
-					mouse_reset(1);
-					game_select(curgame_dir);
-					game_load(9);
+					if (!game_reset())
+						game_load(9);
 				}	
 			} else if (!is_key(&ev, "f5") && curgame_dir && !menu_shown) {
 				mouse_reset(1);

@@ -34,15 +34,15 @@ __do_xact = function(str, self)
 		return ''
 	end
 	local xrefrep = function(str)
-		local s = stead.string.gsub(str,'[{}]','');
+		local s = stead.string.gsub(str,'[\001\002]','');
 		local o,d,a, oo;
 		local delim = ':'
 
 		if stead.api_version >= "1.2.2" then
 			delim = stead.delim;
 		end
-		s = s:gsub("\\"..delim, "<&delim;>");
-		local i = s:find(delim, 1, true);
+		s = s:gsub('\\?[\\'..delim..']', { [delim] = '\001' });
+		local i = s:find('\001', 1, true);
 		aarg = {}
 		if i then
 			o = s:sub(1, i - 1);
@@ -71,20 +71,23 @@ __do_xact = function(str, self)
 		else
 			error("Wrong link: "..s, 3);
 		end
-		d = d:gsub("<&delim;>", delim);
+		d = d:gsub("\001", delim);
 		return xref(d, ref(oo, true), unpack(aarg));
 	end
 	if type(str) ~= 'string' then return end
-	local s = stead.string.gsub(str,'{[^}]+}', xrefrep);
+	local s = stead.string.gsub(str, '\\?[\\{}]', { ['{'] = '\001', ['}'] = '\002' }):gsub('\001([^\002]+)\002',xrefrep);	
 	return s;
 end
 
 stead.fmt = stead.hook(stead.fmt, function(f, ...)
-	local r = f(unpack(arg))
-	if type(r) == 'string' and stead.state then
-		r = __do_xact(r);
+	local i, res, s
+	for i=1,stead.table.maxn(arg) do
+		if type(arg[i]) == 'string' then
+			s = __do_xact(arg[i]);
+			res = stead.par('', res, s);
+		end
 	end
-	return r;
+	return f(res);
 end)
 
 obj = stead.inherit(obj, function(v)
