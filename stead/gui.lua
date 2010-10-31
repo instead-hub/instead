@@ -4,7 +4,7 @@ game.showlast = true;
 game.gui = { 
 	fading = 4; 
 	ways_delim = ' | ';
-	inv_delim = '\n';
+	inv_delim = '^';
 	hinv_delim = ' | ';
 }
 
@@ -95,6 +95,11 @@ iface.center = function(self, str)
 	return stead.cat('<c>',str,'</c>');
 end;
 
+iface.just = function(self, str)
+	if str == nil then return nil; end;
+	return stead.cat('<j>',str,'</j>');
+end;
+
 iface.bold = function(self, str)
 	if str == nil then return nil; end;
 	return stead.cat('<b>',str,'</b>');
@@ -132,7 +137,8 @@ function get_inv(horiz)
 		else
 			str = stead.string.gsub(str, '\\?[\\'.. stead.delim ..']', { [stead.delim] = game.gui.hinv_delim });
 		end
-		str = stead.string.gsub(str, '\\?[\\^]', { ['^'] = '\n' }):gsub('\\(.)', '%1');
+		stead.state = false
+		str = stead.fmt(str);
 	end
 	return str
 end
@@ -143,7 +149,8 @@ function get_ways()
 	if str and str ~= '' then
 		str = stead.string.gsub(str, '\n$','');
 		str = stead.string.gsub(str, '\\?[\\'.. stead.delim ..']', { [stead.delim] = game.gui.ways_delim });
-		str = stead.string.gsub(str, '\\?[\\^]', { ['^'] = '\n' }):gsub('\\(.)', '%1');
+		stead.state = false
+		str = stead.fmt(str);
 		return iface:center(str);
 	end
 	return str
@@ -159,7 +166,9 @@ function get_title()
 		s = call(here(), 'nam');
 	end
 	if type(s) == 'string' and s ~= '' then
-		s = stead.string.gsub(s, '\\?[\\^]', { ['^'] = '\n' }):gsub('\\(.)', '%1');
+--		s = stead.string.gsub(s, '\\?[\\^]', { ['^'] = '\n' }):gsub('\\(.)', '%1');
+		stead.state = false
+		s = stead.fmt(s);
 		s = "<c><b>"..s.."</b></c>";
 	end
 	return s

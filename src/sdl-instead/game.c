@@ -1484,6 +1484,8 @@ int game_cmd(char *cmd)
 	if (!cmdstr) 
 		goto inv; /* hackish? ok, yes  it is... */
 
+	fading = check_fading();
+
 	instead_function("instead.get_title", NULL); 
 	title = instead_retval(0); 
 	instead_clear();
@@ -1497,8 +1499,6 @@ int game_cmd(char *cmd)
 	unix_path(pict);
 
 	new_pict = check_new_pict(pict);
-
-	fading = check_fading();
 
 	if (game_theme_changed == 2 && opt_owntheme && !fading)
 		fading = 1; /* one frame at least */
