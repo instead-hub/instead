@@ -1,10 +1,23 @@
 format = {
+	nam = 'format';
+	object_type = true;
+	system_type = true;
 	para = false;
 	para_space = '    ';
 	quotes = false;
 	dash = false;
 	filter = nil;
 	nopara = '_';
+	save = function(self, name, h, need)
+		local k,v
+		for k,v in pairs(self) do
+			if k == 'para' or k == 'para_space' or k == 'quotes' or
+			    k == 'dash' or k == 'nopara' then
+				local s = stead.tostring(v)
+				h:write(stead.string.format("format[%q] = %s;\n", k, s))
+			end
+		end
+	end;
 }
 
 stead.fmt = stead.hook(stead.fmt, function(f, ...)
