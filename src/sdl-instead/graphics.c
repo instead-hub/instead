@@ -2373,6 +2373,8 @@ static void word_render(struct layout *layout, struct word *word, int x, int y)
 fnt_t txt_layout_font(layout_t lay)
 {
 	struct layout *layout = lay;
+	if (!lay)
+		return NULL;
 	return layout->fn;
 }
 
