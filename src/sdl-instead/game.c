@@ -968,8 +968,8 @@ void box_update_scrollbar(int n)
 	if (!elup || !eldown)
 		return;	
 
-	if (x1 == -1 || y1 == -1 || x2 == -1 || y2 == -1)
-		el_size(n, &w, &h);
+//	if (x1 == -1 || y1 == -1 || x2 == -1 || y2 == -1)
+	el_size(n, &w, &h);
 
 	if (x1 == -1)
 		x1 = el(n)->x + w + game_theme.pad;
@@ -1001,7 +1001,7 @@ void box_update_scrollbar(int n)
 	elup->y = y1;
 	eldown->x = x2;
 	eldown->y = y2;
-	
+
 	el_clear(elup->id);
 	el_clear(eldown->id);
 
