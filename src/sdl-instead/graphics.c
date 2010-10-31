@@ -2448,7 +2448,8 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 
 	for (i = 0; i < xref->num; i ++) {
 		word = xref->words[i];
-		word_image_render(word, x, y, clear, update);
+		if (!word->img_align)
+			word_image_render(word, x, y, clear, update);
 	}
 	gfx_noclip();
 }
@@ -2742,9 +2743,9 @@ xref_t txt_box_xrefs(textbox_t tbox)
 			break; /* bottom */
 		for (word = line->words; word; word = word->next) {
 			xref = word->xref;
-			if (!xref)
+			if (!xref || word->img_align)
 				continue;
-			return xref;	
+			return xref;
 		}
 	}
 	return xref;
@@ -3340,13 +3341,16 @@ int xref_position(xref_t x, int *xc, int *yc)
 		
 	for (i = 0; i < xref->num; i ++) {
 		word = xref->words[i];
-		w += word->w;
+		if (!word->img_align)
+			w += word->w;
 	}
 	
 	w = w/2;
 	
 	for (i = 0; i < xref->num; i ++) {
 		word = xref->words[i];
+		if (word->img_align)
+			continue;
 		line = word->line;
 		w -= word->w;
 		if (w < 0)
@@ -3376,6 +3380,8 @@ xref_t txt_layout_xref(layout_t lay, int x, int y)
 			int hh,yy;
 			word = xref->words[i];
 			line = word->line;
+			if (word->img_align)
+				continue;
 			if (y < line->y || y > line->y + line->h)
 				continue;
 			yy = vertical_align(word, &hh);
