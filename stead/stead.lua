@@ -240,6 +240,11 @@ function txtc(v)
 	return iface:center(v)
 end
 
+function txtj(v)
+	if type(v) ~= 'string' then return nil; end; 
+	return iface:just(v)
+end
+
 function txtb(v)
 	if type(v) ~= 'string' then return nil; end; 
 	return iface:bold(v)
@@ -1911,6 +1916,9 @@ iface = {
 		return str;
 	end,
 	center = function(self, str)
+		return str;
+	end,
+	just = function(self, str)
 		return str;
 	end,
 	top = function(self, str)
