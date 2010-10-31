@@ -127,13 +127,12 @@ function get_inv(horiz)
 	local str = me():inv();
 	if str then
 		str = stead.string.gsub(str, '\n$','');
---		str = stead.string.gsub(str, stead.delim..'$', '')
 		if not horiz then
 			str = stead.string.gsub(str, '\\?[\\'.. stead.delim ..']', { [stead.delim] = game.gui.inv_delim });
 		else
 			str = stead.string.gsub(str, '\\?[\\'.. stead.delim ..']', { [stead.delim] = game.gui.hinv_delim });
 		end
-		str = stead.string.gsub(str, '\\(.)', '%1');
+		str = stead.string.gsub(str, '\\?[\\^]', { ['^'] = '\n' }):gsub('\\(.)', '%1');
 	end
 	return str
 end
@@ -144,7 +143,7 @@ function get_ways()
 	if str and str ~= '' then
 		str = stead.string.gsub(str, '\n$','');
 		str = stead.string.gsub(str, '\\?[\\'.. stead.delim ..']', { [stead.delim] = game.gui.ways_delim });
-		str = stead.string.gsub(str, '\\(.)', '%1');
+		str = stead.string.gsub(str, '\\?[\\^]', { ['^'] = '\n' }):gsub('\\(.)', '%1');
 		return iface:center(str);
 	end
 	return str
@@ -160,7 +159,7 @@ function get_title()
 		s = call(here(), 'nam');
 	end
 	if type(s) == 'string' and s ~= '' then
-		s = stead.string.gsub(s, '\\(.)', '%1');
+		s = stead.string.gsub(s, '\\?[\\^]', { ['^'] = '\n' }):gsub('\\(.)', '%1');
 		s = "<c><b>"..s.."</b></c>";
 	end
 	return s
