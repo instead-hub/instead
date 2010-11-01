@@ -3,6 +3,7 @@ stead = {
 	api_version = "1.1.6", -- last version before 1.2.0
 	table = table,
 	delim = ',',
+	scene_delim = "^^",
 	string = string,
 	math = math,
 	io = io,
@@ -1984,7 +1985,7 @@ iface = {
 				end
 			end
 		end
-		vv = stead.fmt(stead.cat(stead.par("^^", l, r, av, objs, pv), '^'));
+		vv = stead.fmt(stead.cat(stead.par(stead.scene_delim, l, r, av, objs, pv), '^'));
 		return vv
 	end,
 	cmd = function(self, inp)
