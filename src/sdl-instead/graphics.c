@@ -3044,10 +3044,12 @@ char *process_token(char *ptr, struct layout *layout, struct line *line, struct 
 	}
 	if (TOKEN(token) == TOKEN_X) {
 		int xpos;
-		if (sscanf(val, "%d%%", &xpos) == 1) {
+		if (strchr(val, '%') && sscanf(val, "%d%%", &xpos) == 1) {
 			xpos = layout->w * xpos / 100;
-		} else 
+		} else  {
 			xpos = atoi(val);
+			xpos = xpos * game_theme.scale;
+		}
 		line->tabx = xpos;
 		goto out;
 	}
@@ -3208,7 +3210,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 			line->h = h;
 
 		if (img_align && !line->w)
-				line->h = 0;
+			line->h = 0;
 
 		if ((line->num && (line->w + ((sp && line->w)?spw:0) + w + addlen) > width) || nl) {
 			struct line *ol = line;
