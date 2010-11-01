@@ -1344,6 +1344,7 @@ struct line {
 	int num;
 	int align;
 	int pos;
+	int	tabx;
 	struct word *words;
 	struct line *next;
 	struct line *prev;
@@ -1391,6 +1392,7 @@ struct line *line_new(void)
 	l->y = 0;
 	l->h = 0;
 	l->num = 0;
+	l->tabx = -1;
 	l->layout = NULL;
 	l->align = 0;
 	l->pos = 0;
@@ -1946,8 +1948,9 @@ void txt_layout_free(layout_t lay)
 #define	TOKEN_T		0x200
 #define TOKEN_D		0x400
 #define TOKEN_M		0x800
+#define TOKEN_X		0x1000
 #define TOKEN_CLOSE	0x2000
-#define TOKEN(x)	(x & 0xfff)
+#define TOKEN(x)	(x & 0x1fff)
 
 int get_token(const char *ptr, char **eptr, char **val, int *sp)
 {
@@ -1975,6 +1978,23 @@ int get_token(const char *ptr, char **eptr, char **val, int *sp)
 		ptr ++;
 	}
 	switch (*ptr) {
+	case 'x':
+		if (ptr[1] != ':')
+			return 0;
+		ptr += 2;
+		ep = find_in_esc(ptr, "\\>");
+		if (*ep != '>')
+			return 0;
+		if (val) {
+			p = malloc(ep - ptr + 1);
+			if (!p)
+				return 0;
+			memcpy(p, ptr, ep - ptr);
+			p[ep - ptr] = 0;
+			*val = p;
+		}
+		*eptr = ep + 1;
+		return TOKEN_X;
 	case 'a':
 		if (closing) {
 			*eptr = (char*)ptr + 2;
@@ -3022,7 +3042,15 @@ char *process_token(char *ptr, struct layout *layout, struct line *line, struct 
 		}
 		goto out;
 	}
-
+	if (TOKEN(token) == TOKEN_X) {
+		int xpos;
+		if (sscanf(val, "%d%%", &xpos) == 1) {
+			xpos = layout->w * xpos / 100;
+		} else 
+			xpos = atoi(val);
+		line->tabx = xpos;
+		goto out;
+	}
 	if (TOKEN(token) == TOKEN_A) {
 		if (token & TOKEN_CLOSE) {
 			if (*xref)
@@ -3232,7 +3260,17 @@ void _txt_layout_add(layout_t lay, char *txt)
 
 		word->w = w;
 		word->x = line->w;
-
+		if (line->tabx > 0) {
+			word->x = line->tabx - line->x;
+			if (word->x + word->w > width)
+				word->x = width - word->w;
+			if (word->x < line->w)
+				word->x = line->w;
+			else
+				line->w = word->x;
+			line->tabx = -1;
+			line->align = ALIGN_LEFT;
+		}
 		word->img = img;
 		word->img_align = img_align;
 

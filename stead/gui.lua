@@ -100,6 +100,13 @@ iface.just = function(self, str)
 	return stead.cat('<j>',str,'</j>');
 end;
 
+iface.tab = function(self, str)
+	if tonumber(str) then
+		str = tostring(str)
+	end
+	return '<x:'..str..'>'
+end;
+
 iface.bold = function(self, str)
 	if str == nil then return nil; end;
 	return stead.cat('<b>',str,'</b>');
