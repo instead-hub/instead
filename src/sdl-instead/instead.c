@@ -178,7 +178,8 @@ int instead_function(char *s, struct instead_args *args)
 	char *p;
 	char f[64];
 	int method = 0;
-
+	if (!L)
+		return -1;
 	strcpy(f, s);
 	p = strchr(f, '.');
 	if (!p)
