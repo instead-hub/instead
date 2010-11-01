@@ -1276,7 +1276,7 @@ void game_music_player(void)
 	char		*mus;
 	if (!snd_volume_mus(-1))
 		return;
-	if (!opt_music)
+	if (!opt_music || !curgame_dir)
 		return;
 	instead_function("instead.get_music", NULL);
 	mus = instead_retval(0);
