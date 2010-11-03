@@ -658,6 +658,9 @@ static img_t img_pad(char *fname)
 	gfx_free_image(img);
 	return img2;
 }
+
+static img_t _gfx_load_combined_image(char *filename);
+
 /* blank:WxH */
 static img_t _gfx_load_special_image(char *f)
 {
@@ -683,6 +686,10 @@ static img_t _gfx_load_special_image(char *f)
 	} else if (!strncmp(filename, "pad:", 4)) {
 		filename += 4;
 		img2 = img_pad(filename);
+		goto out;
+	} else if (!strncmp(filename, "comb:", 5)) {
+		filename += 5;
+		img2 = _gfx_load_combined_image(filename);
 		goto out;
 	} else
 		goto err;
