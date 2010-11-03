@@ -854,6 +854,24 @@ function call_bool(v, n, ...)
 	return true; -- not nil
 end
 
+function call_value(v, n, ...)
+	if type(v) ~= 'table' then
+		error ("Call value on non table object:"..n, 2);
+	end
+	
+	if v[n] == nil then
+		return nil
+	end	
+	
+	if type(v[n]) ~= 'function' then
+		return v[n];
+	end
+	callpush(v, unpack(arg))
+	local r,v = v[n](v, unpack(arg));
+	callpop();
+	return r,v;
+end
+
 function room_scene(self)
 	local v;
 	v = iface:title(call(self,'nam'));
