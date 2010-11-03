@@ -306,11 +306,18 @@ function isFading() --to check fading from sdl gui
 	if not isRoom(h) then
 		return false
 	end
-	r,v = call_bool(h, 'fading');
+	r,v = call_value(h, 'fading');
 	if r then
+		if tonumber(r) and v == nil then
+			return true, tonumber(r)
+		end
 		return true, v
 	end
-	g,v = call_bool(game, 'fading', h);
+	g,v = call_value(game, 'fading', h);
+	if tonumber(g) and v == nil then
+		v = tonumber(g)	
+		g = true
+	end
 	return g and r ~= false, v
 end
 

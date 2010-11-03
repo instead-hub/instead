@@ -1345,6 +1345,7 @@ struct line {
 	int align;
 	int pos;
 	int	tabx;
+	int	al_tabx;
 	struct word *words;
 	struct line *next;
 	struct line *prev;
@@ -1393,6 +1394,7 @@ struct line *line_new(void)
 	l->h = 0;
 	l->num = 0;
 	l->tabx = -1;
+	l->al_tabx = ALIGN_LEFT;
 	l->layout = NULL;
 	l->align = 0;
 	l->pos = 0;
@@ -3051,6 +3053,11 @@ char *process_token(char *ptr, struct layout *layout, struct line *line, struct 
 			xpos = xpos * game_theme.scale;
 		}
 		line->tabx = xpos;
+		line->al_tabx = ALIGN_LEFT;
+		if (strstr(val, "right"))
+			line->al_tabx = ALIGN_RIGHT;
+		else if (strstr(val, "center"))
+			line->al_tabx = ALIGN_CENTER;
 		goto out;
 	}
 	if (TOKEN(token) == TOKEN_A) {
@@ -3264,6 +3271,11 @@ void _txt_layout_add(layout_t lay, char *txt)
 		word->x = line->w;
 		if (line->tabx > 0) {
 			word->x = line->tabx - line->x;
+			if (line->al_tabx == ALIGN_RIGHT)
+				word->x -= word->w;
+			else if (line->al_tabx == ALIGN_CENTER)
+				word->x -= word->w/2;
+
 			if (word->x + word->w > width)
 				word->x = width - word->w;
 			if (word->x < line->w)
