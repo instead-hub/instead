@@ -136,7 +136,8 @@ iface.ways = function(self, str)
 end;
 
 function get_inv(horiz)
-	local str = me():inv();
+	RAW_TEXT = true
+	local str = iface:cmd("inv");
 	if str then
 		str = stead.string.gsub(str, '\n$','');
 		if not horiz then
@@ -152,7 +153,8 @@ end
 instead.get_inv = get_inv;
 
 function get_ways()
-	local str = me():ways();
+	RAW_TEXT = true
+	local str = iface:cmd("way");
 	if str and str ~= '' then
 		str = stead.string.gsub(str, '\n$','');
 		str = stead.string.gsub(str, '\\?[\\'.. stead.delim ..']', { [stead.delim] = game.gui.ways_delim });
