@@ -289,7 +289,7 @@ fmt = function(...)
 		if type(arg[i]) == 'string' then
 			local s = stead.string.gsub(arg[i],'[\t ]+',' ');
 			s = stead.string.gsub(s, '[\n]+', ' ');
-			s = stead.string.gsub(s, '\\?[%^]', { ['^'] = '\n', ['\\^'] = '^' });
+			s = stead.string.gsub(s, '\\?[\\^]', { ['^'] = '\n', ['\\^'] = '^', ['\\\\'] = '\\'} );
 			res = stead.par('', res, s);
 		end
 	end
@@ -389,7 +389,7 @@ function obj_xref(self,str)
 	if not isObject(self) then
 		return str;
 	end
-	local s = stead.string.gsub(str, '\\?[{}]', 
+	local s = stead.string.gsub(str, '\\?[\\{}]', 
 		{ ['{'] = '\001', ['}'] = '\002', [ '\\{' ] = '{', [ '\\}' ] = '}' }):gsub('\001([^\002]+)\002', xrefrep);
 	return s;
 end
