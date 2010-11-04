@@ -2019,7 +2019,6 @@ iface = {
 		stead.state = false; -- changed state (main screen)
 		local a = { };
 		local cmd;
-		RAW_TEXT = nil
 		PLAYER_MOVED = nil
 		cmd,a = stead.getcmd(inp);
 		if cmd == '' then cmd = 'look' end
@@ -2078,6 +2077,7 @@ iface = {
 		end
 
 		if v == false then
+			RAW_TEXT = nil
 			return stead.cat(r, '\n'), false;
 		end
 
@@ -2098,7 +2098,7 @@ iface = {
 		if stead.state then
 			game._lastdisp = vv
 		end
-
+		RAW_TEXT = nil
 		if vv == nil then -- nil is error
 			return ''
 		end
