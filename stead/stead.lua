@@ -2098,7 +2098,6 @@ iface = {
 		if stead.state then
 			game._lastdisp = vv
 		end
-		RAW_TEXT = nil
 		if vv == nil then -- nil is error
 			return ''
 		end
