@@ -9,6 +9,10 @@
 #include <gtk/gtk.h>
 #endif
 
+#ifdef ANDROID
+#include "android.h"
+#endif
+
 extern int debug_init(void);
 extern void debug_done(void);
 
@@ -283,7 +287,9 @@ int main(int argc, char *argv[])
 	game_loop();
 	cfg_save();
 	game_done(0);
+#ifndef ANDROID
 	gfx_done();
+#endif
 out:
 	if (debug_sw)
 		debug_done();
