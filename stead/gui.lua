@@ -172,11 +172,10 @@ function get_title()
 		s = call(here(), 'nam');
 	end
 	if type(s) == 'string' and s ~= '' then
+		stead.state = false
+		s = "<c><b>"..stead.fmt(s).."</b></c>";
 		s = stead.string.gsub(s, '\\?['..stead.delim ..']', 
 			{ [stead.delim] = game.gui.ways_delim, [ '\\'..stead.delim ] = stead.delim });
-		stead.state = false
-		s = stead.fmt(s);
-		s = "<c><b>"..s.."</b></c>";
 	end
 	return s
 end
@@ -270,7 +269,8 @@ fmt = function(...)
 	for i=1,stead.table.maxn(arg) do
 		if type(arg[i]) == 'string' then
 			local s = stead.string.gsub(arg[i],'\t', ' '):gsub('[\n]+', ' ');
-			s = stead.string.gsub(s, '\\?[%^]', { ['^'] = '\n', ['\\^'] = '^' });
+			s = stead.string.gsub(s, '\\?[\\^]', { ['^'] = '\n', ['\\^'] = '^',
+				['\\\\'] = '\\' });
 			res = stead.par('', res, s);
 		end
 	end

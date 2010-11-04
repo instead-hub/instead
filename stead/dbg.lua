@@ -9,7 +9,7 @@ function _xref_escape(n)
 		delim = stead.delim;
 	end
 	if xact then
-		n = n:gsub("\\?"..delim, { [delim] = "\\"..delim } )
+		n = n:gsub("\\?[\\"..delim.."]", { [delim] = "\\"..delim } )
 	end
 	return n
 end
