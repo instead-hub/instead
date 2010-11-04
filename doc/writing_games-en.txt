@@ -933,8 +933,35 @@ From version 0.9.2 the set_sound() function lets to play sound file. get_sound()
 To stop music use stop_music() function (from version 1.0.0).
 
 Use is_music() to check if music is playing. (from version 1.0.0)
-
 ===== 18. Advices =====
+
+==== Split game into files ====
+
+You can use "dofile" to include source code fragments. You must use "dofile" in global context, to load all game fragments while parsing main.lua.
+
+<code>
+-- main.lua
+dofile "episode1.lua"
+dofile "npc.lau"
+dofile "start.lua"
+</code>
+
+For dynamic including (with possibility to redefine current objects or/and rooms) you can use "gamefile":
+
+<code>
+...
+act = code [[ gamefile ("episode2.lua"); ]]
+...
+</code>
+
+You can also load new file and forget stack of previous loaded fragments, runnig new file like new game.
+
+<code>
+...
+act = code [[ gamefile ("episode3.lua", true); ]]
+...
+</code>
+
 ==== Modules ====
 Starting from version 1.2.0 you can use modules via “require” function call. At the moment the following modules are available:
 
