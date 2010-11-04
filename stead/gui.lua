@@ -174,8 +174,7 @@ function get_title()
 	if type(s) == 'string' and s ~= '' then
 		stead.state = false
 		s = "<c><b>"..stead.fmt(s).."</b></c>";
-		s = stead.string.gsub(s, '\\?['..stead.delim ..']', 
-			{ [stead.delim] = game.gui.ways_delim, [ '\\'..stead.delim ] = stead.delim });
+		s = stead.string.gsub(s, '\\'..stead.delim, stead.delim);
 	end
 	return s
 end
