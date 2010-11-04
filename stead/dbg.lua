@@ -3,6 +3,17 @@
 -- for debug tools
 require "input"
 
+function _xref_escape(n)
+	local delim = ':'
+	if stead.api_version >= "1.2.2" then
+		delim = stead.delim;
+	end
+	if xact then
+		n = n:gsub("\\?"..delim, { [delim] = "\\"..delim } )
+	end
+	return n
+end
+
 function ordered_n(t)
 	local ordered = {};
 	local i,v, max;
@@ -217,9 +228,7 @@ choose_location = dlg {
 				local o = kk;
 				if type(o) == 'string' then
 					n = n..' : '..o;
-					if xact then
-						n = n:gsub(":","\\:")
-					end
+					n = _xref_escape(n);
 					put(phr(n, true, [[timer:set(debug_tool._timer); game.lifes:cat(debug_tool.lifes); return goto(]]..o..[[)]]), s);
 				end
 			end
@@ -243,9 +252,7 @@ choose_object = dlg {
 				local o = kk;
 				if type(o) == 'string' then
 					n = n..' : '..o;
-					if xact then
-						n = n:gsub(":","\\:")
-					end
+					n = _xref_escape(n);
 					put(phr(n, true, o..':enable(); return take('..o..')'), s);
 				end
 			end
@@ -270,9 +277,7 @@ drop_object = dlg {
 				local o = deref(v);
 				if type(o) == 'string' then
 					n = n..' : '..o;
-					if xact then
-						n = n:gsub(":","\\:")
-					end
+					n = _xref_escape(n);
 					put (phr(n, true, o..':enable(); drop('..o..','..deref(dbg_here())..')'), s)
 				end
 			end
