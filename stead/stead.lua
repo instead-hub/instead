@@ -289,7 +289,7 @@ fmt = function(...)
 		if type(arg[i]) == 'string' then
 			local s = stead.string.gsub(arg[i],'[\t ]+',' ');
 			s = stead.string.gsub(s, '[\n]+', ' ');
-			s = stead.string.gsub(s, '\\?[\\^]', { ['^'] = '\n' }):gsub('\\(.)', '%1');
+			s = stead.string.gsub(s, '\\?[%^]', { ['^'] = '\n', ['\\^'] = '^' });
 			res = stead.par('', res, s);
 		end
 	end
@@ -389,7 +389,8 @@ function obj_xref(self,str)
 	if not isObject(self) then
 		return str;
 	end
-	local s = stead.string.gsub(str, '\\?[\\{}]', { ['{'] = '\001', ['}'] = '\002' }):gsub('\001([^\002]+)\002', xrefrep);
+	local s = stead.string.gsub(str, '\\?[{}]', 
+		{ ['{'] = '\001', ['}'] = '\002', [ '\\{' ] = '{', [ '\\}' ] = '}' }):gsub('\001([^\002]+)\002', xrefrep);
 	return s;
 end
 
@@ -2019,6 +2020,7 @@ iface = {
 		stead.state = false; -- changed state (main screen)
 		local a = { };
 		local cmd;
+		RAW_TEXT = nil
 		PLAYER_MOVED = nil
 		cmd,a = stead.getcmd(inp);
 		if cmd == '' then cmd = 'look' end
@@ -2077,7 +2079,6 @@ iface = {
 		end
 
 		if v == false then
-			RAW_TEXT = nil
 			return stead.cat(r, '\n'), false;
 		end
 

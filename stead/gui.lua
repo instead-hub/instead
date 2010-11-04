@@ -4,7 +4,7 @@ game.showlast = true;
 game.gui = { 
 	fading = 4; 
 	ways_delim = ' | ';
-	inv_delim = '^';
+	inv_delim = '\n';
 	hinv_delim = ' | ';
 }
 
@@ -62,7 +62,7 @@ end;
 
 iface.nb = function(self, str)
 	if type(str) ~= 'string' then return nil end
-	return "<w:"..str:gsub("\\","\\\\\\\\"):gsub(">","\\\\>"):gsub("%^","\\%^")..">";
+	return "<w:"..str:gsub(">","\\>"):gsub("%^","\\%^")..">";
 end;
 
 iface.under = function(self, str)
@@ -136,30 +136,27 @@ iface.ways = function(self, str)
 end;
 
 function get_inv(horiz)
-	RAW_TEXT = true
 	local str = iface:cmd("inv");
 	if str then
 		str = stead.string.gsub(str, '\n$','');
 		if not horiz then
-			str = stead.string.gsub(str, '\\?[\\'.. stead.delim ..']', { [stead.delim] = game.gui.inv_delim });
+			str = stead.string.gsub(str, '\\?['.. stead.delim ..']', 
+				{ [stead.delim] = game.gui.inv_delim, ['\\'..stead.delim] = stead.delim });
 		else
-			str = stead.string.gsub(str, '\\?[\\'.. stead.delim ..']', { [stead.delim] = game.gui.hinv_delim });
+			str = stead.string.gsub(str, '\\?['.. stead.delim ..']', 
+				{ [stead.delim] = game.gui.hinv_delim, ['\\'..stead.delim] = stead.delim });
 		end
-		stead.state = false
-		str = stead.fmt(str);
 	end
 	return str
 end
 instead.get_inv = get_inv;
 
 function get_ways()
-	RAW_TEXT = true
 	local str = iface:cmd("way");
 	if str and str ~= '' then
 		str = stead.string.gsub(str, '\n$','');
-		str = stead.string.gsub(str, '\\?[\\'.. stead.delim ..']', { [stead.delim] = game.gui.ways_delim });
-		stead.state = false
-		str = stead.fmt(str);
+		str = stead.string.gsub(str, '\\?['..stead.delim ..']', 
+			{ [stead.delim] = game.gui.ways_delim, [ '\\'..stead.delim ] = stead.delim });
 		return iface:center(str);
 	end
 	return str
@@ -175,7 +172,8 @@ function get_title()
 		s = call(here(), 'nam');
 	end
 	if type(s) == 'string' and s ~= '' then
---		s = stead.string.gsub(s, '\\?[\\^]', { ['^'] = '\n' }):gsub('\\(.)', '%1');
+		s = stead.string.gsub(s, '\\?['..stead.delim ..']', 
+			{ [stead.delim] = game.gui.ways_delim, [ '\\'..stead.delim ] = stead.delim });
 		stead.state = false
 		s = stead.fmt(s);
 		s = "<c><b>"..s.."</b></c>";
@@ -272,7 +270,7 @@ fmt = function(...)
 	for i=1,stead.table.maxn(arg) do
 		if type(arg[i]) == 'string' then
 			local s = stead.string.gsub(arg[i],'\t', ' '):gsub('[\n]+', ' ');
-			s = stead.string.gsub(s, '\\?[\\^]', { ['^'] = '\n' }):gsub('\\(.)', '%1');
+			s = stead.string.gsub(s, '\\?[%^]', { ['^'] = '\n', ['\\^'] = '^' });
 			res = stead.par('', res, s);
 		end
 	end

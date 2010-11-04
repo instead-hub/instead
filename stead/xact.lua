@@ -41,7 +41,7 @@ __do_xact = function(str, self)
 		if stead.api_version >= "1.2.2" then
 			delim = stead.delim;
 		end
-		s = s:gsub('\\?[\\'..delim..']', { [delim] = '\001' });
+		s = s:gsub('\\?['..delim..']', { [ delim ] = '\001', [ '\\'..delim ] = delim });
 		local i = s:find('\001', 1, true);
 		aarg = {}
 		if i then
@@ -75,7 +75,8 @@ __do_xact = function(str, self)
 		return xref(d, ref(oo, true), unpack(aarg));
 	end
 	if type(str) ~= 'string' then return end
-	local s = stead.string.gsub(str, '\\?[\\{}]', { ['{'] = '\001', ['}'] = '\002' }):gsub('\001([^\002]+)\002',xrefrep);	
+	local s = stead.string.gsub(str, '\\?[{}]', 
+		{ ['{'] = '\001', ['}'] = '\002' }):gsub('\001([^\002]+)\002', xrefrep);	
 	return s;
 end
 
@@ -84,7 +85,7 @@ stead.fmt = stead.hook(stead.fmt, function(f, ...)
 	for i=1,stead.table.maxn(arg) do
 		if type(arg[i]) == 'string' then
 			s = __do_xact(arg[i]);
-			res = stead.par('', res, s);
+			res = stead.par('', res, s):gsub('\\?[{}]', { [ '\\{' ] = '{', [ '\\}' ] = '}' });
 		end
 	end
 	return f(res);
