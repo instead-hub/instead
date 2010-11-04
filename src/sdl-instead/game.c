@@ -1584,7 +1584,9 @@ int game_cmd(char *cmd)
 	instead_clear();
 
 	if (waystr) {
-		waystr[strcspn(waystr,"\n")] = 0;
+		int l = strlen(waystr);
+		if (l && waystr[l - 1] == '\n')
+			waystr[l - 1] = 0;
 	}
 
 	if (game_theme.gfx_mode != GFX_MODE_EMBEDDED) {
