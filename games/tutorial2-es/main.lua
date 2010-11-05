@@ -1,11 +1,10 @@
 -- $Name:Tutorial Español$
-game.codepage="UTF-8";
+instead_version "1.3.0"
+
 game.act = 'No puedes hacer eso.';
 game.inv = "Hmm... Nop...";
 game.use = 'No pasa nada...';
-game.dsc = [[Comandos:^
-	look(or just Enter), act <on what> (or just on what), use <what> [on what], go <where>,
-	back, inv, way, obj, quit, save <fname>, load <fname>. Tab to autocomplete.^^]];
+
 game.pic = '../tutorial2/instead.png';
 
 set_music('../tutorial2/ramparts.mod');
@@ -13,13 +12,13 @@ set_music('../tutorial2/ramparts.mod');
 main = room {
 	nam = 'Tutorial',
 	act = function()
-		return goto('r1');
+		goto('r1');
 	end,
 	dsc = txtc("Bienvenido al tutorial de INSTEAD.")..[[^^
 	En INSTEAD un juego se divide en "escenas". Cada escena tiene una descripción, conformada por secciones estáticas y dinámicas. Las secciones estáticas pueden incluir objetos, personajes, etc. Como jugador puedes interactuar con las partes dinámicas al hacer click en los links resaltados.^^
 	La escena actual se llama "Tutorial" y tu estás leyendo la sección estática de su descripción. El único objeto en esta escena es el objeto "Siguiente", que puedes ver más abajo. Esto es: para seguir aprendiendo haz click en "Siguiente".]],
 	obj = { 
-		vobj(1, 'continue', '{Siguiente}'),
+		vobj('continue', '{Siguiente}'),
 	},
 };
 
@@ -27,19 +26,20 @@ paper = obj {
 	nam = 'papel',
 	dsc = 'Lo primero que ves en la habitación es un {pedazo de papel}.',
 	tak = 'Coges el papel.',
+	var { seen = false, haswriting = false },
 	inv = function(s)
 		if here() == r2 then
-			s._seen = true;
+			s.seen = true;
 		end
-		if not s._haswriting then
+		if not s.haswriting then
 			return 'Una hoja blanca y cuadrada. Probablemente arrancada de un libro.';
 		end
-		return 'Una hoja cuadrada de papel con tu nombre escrito en ella.';
+		p 'Una hoja cuadrada de papel con tu nombre escrito en ella.';
 	end,
 	used = function(s, w)
-		if w == 'pencil' and here() == r4 then
-			s._haswriting = true;
-				return 'Escribes tu nombre en el papel.';
+		if w == pencil and here() == r4 then
+			s.haswriting = true;
+			p 'Escribes tu nombre en el papel.';
 		end
 	end,
 };
@@ -48,11 +48,12 @@ pencil = obj {
 	nam = 'lápiz',
 	dsc = 'Hay un {lápiz} en el piso.',
 	tak = 'Coges el lápiz.',
+	var { seen = false },
 	inv = function(s)
 		if here() == r2 then
-			s._seen = true;
+			s.seen = true;
 		end
-		return 'Un lápiz común de madera.';
+		p 'Un lápiz común de madera.';
 	end,
 };
 
@@ -81,7 +82,7 @@ r2 = room {
 		lifeon('r2');
 	end,
 	life = function(s)
-		if not paper._seen or not pencil._seen then
+		if not paper.seen or not pencil.seen then
 			return
 		end
 		put(vway("continue", "Bien!^^{Siguiente}", 'r3'));
@@ -97,29 +98,31 @@ apple = obj {
 	nam = 'manzana',
 	dsc = 'Hay una {manzana} sobre la mesa.',
 	tak = 'Coges la manzana de la mesa.',
+	var { knife = false },
 	inv = function(s)
 		if here() == r4 then
 			remove(s, me());
 			return 'Te comes la manzana.';
 		end
-		return 'Luce apetecible.';
+		p 'Luce apetecible.';
 	end,
 };
 
 desk = obj {
 	nam = 'escritorio',
 	dsc = 'Aquí ves un {escritorio} de madera.',
+	var { seen = false, haswriting = false },
 	act = function(s)
-		if s._haswriting then
-			s._seen = true;
+		if s.haswriting then
+			s.seen = true;
 			return 'Un gran escritorio de roble. Hay algo escrito en él: "Lorem Ipsum".';
 		end
-		return 'Un gran escritorio de roble.';
+		p 'Un gran escritorio de roble.';
 	end,
 	used = function(s, w)
-		if w == 'pencil' and not s._haswriting then
-			s._haswriting = true;
-			return 'Garabateas unas palabras sobre el escritorio.';
+		if w == pencil and not s.haswriting then
+			s.haswriting = true;
+			p 'Garabateas unas palabras sobre el escritorio.';
 		end
 	end,
 	obj = { 'apple' },
@@ -131,7 +134,7 @@ r3 = room {
 		lifeon('r3');
 	end,
 	life = function(s)
-		if not desk._seen or not have('apple') then
+		if not desk.seen or not have 'apple' then
 			return
 		end
 		put(vway("continue", "^^{Siguiente}", 'r4'));
@@ -149,11 +152,11 @@ r3 = room {
 r4 = room {
 	nam = 'Lección 4',  
 	enter = function()
-		apple._knife = false;
+		apple.knife = false;
 		lifeon('r4');
 	end,
 	life = function(s)
-		if not paper._haswriting or have('apple') then
+		if not paper.haswriting or have 'apple' then
 			return
 		end
 		put(vway("continue", "Bien!^^{Siguiente}", 'r5'));
@@ -172,8 +175,9 @@ r4 = room {
 r5 = room {
 	nam = 'Lección 5',
 	exit = function(s, t)
-		if t ~= 'r6' then
-			return 'Ya hemos terminado esta lección.^ Ve a la lección 6, por favor.', false;
+		if t ~= r6 then
+			p 'Ya hemos terminado esta lección.^ Ve a la lección 6, por favor.'
+			return false;
 		end
 	end,
 	dsc = [[Lección 5. Moviéndose — Parte I^^
@@ -186,7 +190,7 @@ r5 = room {
 r6 = room {
 	nam = 'Lección 6',
 	exit = function(s, t)
-		if t ~= 'theend' then
+		if t ~= theend then
 			return 'Ya hemos terminado esta lección.^ Ve a la última lección, por favor.', false;
 		end
 	end,
