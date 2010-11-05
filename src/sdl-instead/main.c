@@ -301,7 +301,7 @@ out:
 		remove_dir(game_tmp_path());
 #endif
 #ifdef ANDROID
-	exit(0)
+	exit(err)
 #endif
 	return err;
 }
