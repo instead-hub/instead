@@ -1,23 +1,24 @@
 -- $Name:Обучение$
+instead_version "1.3.0"
+
 require "dash" -- '--' replace :)
 require "para" -- be more "Russian"
 require "quotes"
 
 game.codepage="UTF-8";
+
 game.act = 'Не получается.';
 game.inv = "Гм.. Не то..";
 game.use = 'Не сработает...';
-game.dsc = [[Команды:^
-	look(или просто ввод), act <на что> (или просто на что), use <что> [на что], go <куда>,^
-	back, inv, way, obj, quit, save <fname>, load <fname>. Работает автодополнение по табуляции.^^]];
+
 game.pic = 'instead.png';
 
 set_music('ramparts.mod');
 
 main = room {
 	nam = 'Обучение',
-	act = function()
-		return goto('r1');
+	act = function() -- only one vobj, no check, just goto
+		goto('r1');
 	end,
 	dsc = txtc("Добро пожаловать в режим обучения INSTEAD.")..[[^^
 	Игра состоит из сцен. Каждая сцена игры имеет описание,
@@ -29,7 +30,7 @@ main = room {
 	Единственным объектом сцены является объект "Дальше", который Вы видите внизу текста.
 	Итак, для продолжения обучения Вы можете нажать на "Дальше".]],
 	obj = { 
-		vobj(1, 'continue', '{Дальше}'),
+		vobj('continue', '{Дальше}'),
 	},
 };
 
@@ -37,19 +38,20 @@ paper = obj {
 	nam = 'бумага',
 	dsc = 'Первое, что Вы замечаете в комнате -- {листок бумаги}.',
 	tak = 'Вы взяли бумагу.',
+	var { seen = false, haswriting = false },
 	inv = function(s)
 		if here() == r2 then
-			s._seen = true;
+			s.seen = true;
 		end
-		if not s._haswriting then
+		if not s.haswriting then
 			return 'Чистый лист клетчатой бумаги. Похоже, его вырвали из тетради.';
 		end
-		return 'Лист клетчатой бумаги, на котором написано Ваше имя.';
+		p 'Лист клетчатой бумаги, на котором написано Ваше имя.';
 	end,
 	used = function(s, w)
-		if w == 'pencil' and here() == r4 then
-			s._haswriting = true;
-				return 'Вы пишете на листке своё имя.';
+		if w == pencil and here() == r4 then
+			s.haswriting = true;
+			p 'Вы пишете на листке своё имя.';
 		end
 	end,
 };
@@ -58,21 +60,20 @@ pencil = obj {
 	nam = 'карандаш',
 	dsc = 'На полу лежит {карандаш}.',
 	tak = 'Вы подобрали карандаш.',
+	var { seen = false },
 	inv = function(s)
 		if here() == r2 then
-			s._seen = true;
+			s.seen = true;
 		end
-		return 'Обычный деревянный карандаш.';
+		p 'Обычный деревянный карандаш.';
 	end,
 };
 
 r1 = room {
 	nam = 'Урок 1',
-	enter = function()
-		lifeon('r1');
-	end,
+	enter = code [[ lifeon('r1') ]],
 	life = function(s)
-		if not have('paper') or not have('pencil') then
+		if not have 'paper' or not have 'pencil' then
 			return
 		end
 		put(vway('continue',
@@ -95,11 +96,9 @@ r1 = room {
 
 r2 = room {
 	nam = 'Урок 2',
-	enter = function()
-		lifeon('r2');
-	end,
+	enter = code [[ lifeon('r2') ]],
 	life = function(s)
-		if not paper._seen or not pencil._seen then
+		if not paper.seen or not pencil.seen then
 			return
 		end
 		put(vway("continue", "Хорошо!^^{Дальше}", 'r3'));
@@ -120,29 +119,31 @@ apple = obj {
 	nam = 'яблоко',
 	dsc = 'На столе лежит {яблоко}.',
 	tak = 'Вы взяли яблоко со стола.',
+	var { knife = false },
 	inv = function(s)
 		if here() == r4 then
 			remove(s, me());
 			return 'Вы съедаете яблоко.';
 		end
-		return 'Выглядит аппетитно.';
+		p 'Выглядит аппетитно.';
 	end,
 };
 
 desk = obj {
 	nam = 'стол',
 	dsc = 'На этом уроке вы видите деревянный {письменный стол}.',
+	var { haswriting = false, seen = false },
 	act = function(s)
-		if s._haswriting then
-			s._seen = true;
+		if s.haswriting then
+			s.seen = true;
 			return 'Большой дубовый письменный стол. На столешнице видна мелкая надпись карандашом: "Lorem Ipsum".';
 		end
-		return 'Большой дубовый письменный стол.';
+		p 'Большой дубовый письменный стол.';
 	end,
 	used = function(s, w)
-		if w == 'pencil' and not s._haswriting then
-			s._haswriting = true;
-			return 'Вы пишете на столешнице несколько букв.';
+		if w == pencil and not s.haswriting then
+			s.haswriting = true;
+			p 'Вы пишете на столешнице несколько букв.';
 		end
 	end,
 	obj = { 'apple' },
@@ -150,11 +151,9 @@ desk = obj {
 
 r3 = room {
 	nam = 'Урок 3',
-	enter = function()
-		lifeon('r3');
-	end,
+	enter = code [[ lifeon('r3') ]],
 	life = function(s)
-		if not desk._seen or not have('apple') then
+		if not desk.seen or not have('apple') then
 			return
 		end
 		put(vway("continue", "^^{Дальше}", 'r4'));
@@ -174,11 +173,11 @@ r3 = room {
 r4 = room {
 	nam = 'Урок 4',  
 	enter = function()
-		apple._knife = false;
+		apple.knife = false;
 		lifeon('r4');
 	end,
 	life = function(s)
-		if not paper._haswriting or have('apple') then
+		if not paper.haswriting or have('apple') then
 			return
 		end
 		put(vway("continue", "Хорошо.^^{Дальше}", 'r5'));
@@ -201,7 +200,7 @@ r4 = room {
 r5 = room {
 	nam = 'Урок 5',
 	exit = function(s, t)
-		if t ~= 'r6' then
+		if t ~= r6 then
 			return 'Этот урок мы уже прошли.^ Пожалуйста, перейдите на урок 6.', false;
 		end
 	end,
@@ -218,8 +217,9 @@ r5 = room {
 r6 = room {
 	nam = 'Урок 6',
 	exit = function(s, t)
-		if t ~= 'theend' then
-			return 'Этот урок мы уже прошли.^ Пожалуйста, перейдите на последний урок.', false;
+		if t ~= theend then
+			p 'Этот урок мы уже прошли.^ Пожалуйста, перейдите на последний урок.'
+			return false; -- same as return "text", false
 		end
 	end,
 	dsc = [[Урок 6. Перемещение - Часть II^^
@@ -233,7 +233,7 @@ theend = room {
 		другие действия с помощью меню. Для вызова меню нажмите клавишу "Esc" или 
 		нажмите мышью на символ меню (справа снизу).^^
 		Теперь Вы готовы к игре. Удачи!!!^^
-		Игры для INSTEAD можно скачать здесь: ]]..txtu("http://instead.googlecode.com")..[[^^
+		Игры для INSTEAD можно скачать здесь: ]]..txtu("http://instead.syscall.ru")..[[^^
 		В обучении использован трек Ramparts от Scorpion.]],
 	obj = { vway('keys', 'Посмотреть {список клавиш}.', 'help')},
 };
