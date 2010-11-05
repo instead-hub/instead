@@ -50,7 +50,7 @@ function stead.getcmd(str)
 	local a = {}
 	local n = 1
 	local cmd;
-	local i,k = stead.string.find(str,'[a-zA-Z0-9_]+', k);
+	local i,k = stead.string.find(str, '[a-zA-Z0-9_]+');
 	if not i or not k then
 		cmd = str;
 	else
