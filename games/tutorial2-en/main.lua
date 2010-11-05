@@ -1,11 +1,10 @@
--- $Name:English Tutorial$
-game.codepage="UTF-8";
+-- $Name:English Tutorial$                                         
+instead_version "1.3.0"
+
 game.act = 'You can\'t.';
 game.inv = "Hmm... Wrong...";
 game.use = 'Won\'t work...';
-game.dsc = [[Commands:^
-	look(or just Enter), act <on what> (or just on what), use <what> [on what], go <where>,
-	back, inv, way, obj, quit, save <fname>, load <fname>. Tab to autocomplete.^^]];
+
 game.pic = '../tutorial2/instead.png';
 
 set_music('../tutorial2/ramparts.mod');
@@ -13,14 +12,14 @@ set_music('../tutorial2/ramparts.mod');
 main = room {
 	nam = 'Tutorial',
 	act = function()
-		return goto('r1');
+		goto('r1');
 	end,
 	dsc = txtc("Welcome to INSTEAD tutorial mode.")..[[^^
 	The game consists of scenes. Each game scene has a description, consisting of static and dynamic parts. Dynamic part includes objects, characters, etc.  A player can interact with the dynamic part by clicking mouse on the highlighted links.^^
 
 	The current scene is called "Tutorial" an you are reading the static part of its description. The only object in this scene is the "Next" object, which you can see below the text. Thus, to continue learning you can click "Next".]],
 	obj = { 
-		vobj(1, 'continue', '{Next}'),
+		vobj('continue', '{Next}'),
 	},
 };
 
@@ -28,19 +27,20 @@ paper = obj {
 	nam = 'paper',
 	dsc = 'The first thing you notice in the room is a {sheet of paper}.',
 	tak = 'You take the paper.',
+	var { seen = false, haswriting = false },
 	inv = function(s)
 		if here() == r2 then
-			s._seen = true;
+			s.seen = true;
 		end
-		if not s._haswriting then
+		if not s.haswriting then
 			return 'A blank sheet of squared paper. Probably torn out of the copy-book.';
 		end
-		return 'A sheet of squared paper with your name on it.';
+		p 'A sheet of squared paper with your name on it.';
 	end,
 	used = function(s, w)
-		if w == 'pencil' and here() == r4 then
-			s._haswriting = true;
-				return 'You write your name on the paper.';
+		if w == pencil and here() == r4 then
+			s.haswriting = true;
+			p 'You write your name on the paper.';
 		end
 	end,
 };
@@ -49,11 +49,12 @@ pencil = obj {
 	nam = 'pencil',
 	dsc = 'There is a {pencil} on the floor.',
 	tak = 'You pick the pencil.',
+	var { seen = false },
 	inv = function(s)
 		if here() == r2 then
-			s._seen = true;
+			s.seen = true;
 		end
-		return 'An ordinary wooden pencil.';
+		p 'An ordinary wooden pencil.';
 	end,
 };
 
@@ -82,7 +83,7 @@ r2 = room {
 		lifeon('r2');
 	end,
 	life = function(s)
-		if not paper._seen or not pencil._seen then
+		if not paper.seen or not pencil.seen then
 			return
 		end
 		put(vway("continue", "Good!^^{Next}", 'r3'));
@@ -98,28 +99,30 @@ apple = obj {
 	nam = 'apple',
 	dsc = 'There\'s an {apple} on the table.',
 	tak = 'You take an apple from the table.',
+	var { knife = false },
 	inv = function(s)
 		if here() == r4 then
 			remove(s, me());
 			return 'You eat the apple.';
 		end
-		return 'Looks appetizing.';
+		p 'Looks appetizing.';
 	end,
 };
 
 desk = obj {
 	nam = 'desk',
 	dsc = 'In this lesson you see a wooden {desk}.',
+	var { seen = false, haswriting = false },
 	act = function(s)
-		if s._haswriting then
-			s._seen = true;
+		if s.haswriting then
+			s.seen = true;
 			return 'Large oaken desk. There\'s a pencil inscription on its top: "Lorem Ipsum".';
 		end
-		return 'Large oaken desk.';
+		p 'Large oaken desk.';
 	end,
 	used = function(s, w)
-		if w == 'pencil' and not s._haswriting then
-			s._haswriting = true;
+		if w == pencil and not s.haswriting then
+			s.haswriting = true;
 			return 'You write several letters on the desk.';
 		end
 	end,
@@ -132,7 +135,7 @@ r3 = room {
 		lifeon('r3');
 	end,
 	life = function(s)
-		if not desk._seen or not have('apple') then
+		if not desk.seen or not have 'apple' then
 			return
 		end
 		put(vway("continue", "^^{Next}", 'r4'));
@@ -150,11 +153,11 @@ r3 = room {
 r4 = room {
 	nam = 'Lesson 4',  
 	enter = function()
-		apple._knife = false;
+		apple.knife = false;
 		lifeon('r4');
 	end,
 	life = function(s)
-		if not paper._haswriting or have('apple') then
+		if not paper.haswriting or have('apple') then
 			return
 		end
 		put(vway("continue", "Good.^^{Next}", 'r5'));
@@ -173,8 +176,9 @@ r4 = room {
 r5 = room {
 	nam = 'Lesson 5',
 	exit = function(s, t)
-		if t ~= 'r6' then
-			return 'We\'ve already finished this lesson.^ Go to lesson 6, please.', false;
+		if t ~= r6 then
+			p 'We\'ve already finished this lesson.^ Go to lesson 6, please.'
+			return false;
 		end
 	end,
 	dsc = [[Lesson 5. Moving — Part I^^
@@ -187,7 +191,7 @@ r5 = room {
 r6 = room {
 	nam = 'Lesson 6',
 	exit = function(s, t)
-		if t ~= 'theend' then
+		if t ~= theend then
 			return 'We\'ve already finished this lesson..^ Go to the last lesson, please.', false;
 		end
 	end,

@@ -5,8 +5,6 @@ require "dash" -- '--' replace :)
 require "para" -- be more "Russian"
 require "quotes"
 
-game.codepage="UTF-8";
-
 game.act = 'Не получается.';
 game.inv = "Гм.. Не то..";
 game.use = 'Не сработает...';
