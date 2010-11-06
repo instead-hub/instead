@@ -181,9 +181,9 @@ iface.fmt = function(self, cmd, st, moved, r, av, objs, pv) -- st -- changed sta
 		end
 	end
 	if moved then
-		vv = stead.fmt(stead.cat(stead.par("^^", r, av, l, objs, pv), '^'));
+		vv = stead.fmt(stead.cat(stead.par(stead.scene_delim, r, av, l, objs, pv), '^'));
 	else
-		vv = stead.fmt(stead.cat(stead.par("^^", l, r, av, objs, pv), '^'));
+		vv = stead.fmt(stead.cat(stead.par(stead.scene_delim, l, r, av, objs, pv), '^'));
 	end
 	return vv
 end
