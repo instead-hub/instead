@@ -2245,7 +2245,9 @@ function new(str)
 	if type(str) ~= 'string' then
 		error("Non string constructor in new.", 2);
 	end
-	return allocator:new(str);
+	local v = allocator:new(str);
+	check_object(deref(v), v);
+	return v
 end
 
 function delete(v)
