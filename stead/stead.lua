@@ -2223,16 +2223,22 @@ function allocator_save(s, name, h, need, auto)
 		return
 	end
 	if need then
-		if s.auto_allocated then
+		if s.auto_allocated then -- in current realization always false
 			local m = stead.string.format("allocator:new(%s, %s)\n", 
 				stead.tostring(s.constructor),
 				stead.tostring(s.constructor));
 			h:write(m);
 		else
-			local m = stead.string.format(" = allocator:get(%s, %s)\n", 
+			local m = stead.string.format(" = allocator:get(%s, %s)\n",
 				stead.tostring(name),
 				stead.tostring(s.constructor));
 			h:write(name..m);
+			if stead.api_version >= "1.3.0" then
+				m = stead.string.format("check_object(%s, %s)\n",
+					stead.tostring(name),
+					name);
+				h:write(m);
+			end
 		end
 	end
 	savemembers(h, s, name, false);
@@ -2245,9 +2251,7 @@ function new(str)
 	if type(str) ~= 'string' then
 		error("Non string constructor in new.", 2);
 	end
-	local v = allocator:new(str);
-	check_object(deref(v), v);
-	return v
+	return allocator:new(str);
 end
 
 function delete(v)
@@ -2801,6 +2805,9 @@ stead.objects = function(s)
 	allocator = obj {
 		nam = 'allocator',
 		get = function(s, n, c)
+			if isObject(ref(n)) and stead.api_version >= "1.3.0" then -- static?
+				return ref(n);
+			end
 			local v = ref(c);
 			if not v then
 				error ("Null object in allocator: "..tostring(c));
@@ -2833,6 +2840,9 @@ stead.objects = function(s)
 			else
 				stead.table.insert(s.objects, v);
 				v.key_name = 'allocator["objects"]['..stead.table.maxn(s.objects)..']';
+			end
+			if stead.api_version >= "1.3.0" then
+				check_object(v.key_name, v)
 			end
 			return v
 		end,
