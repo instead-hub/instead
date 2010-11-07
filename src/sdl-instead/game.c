@@ -124,6 +124,11 @@ int game_select(const char *name)
 
 		game_use_theme();
 
+		if (game_theme_init()) {
+			curgame_dir = oldgame;
+			return -1;
+		}
+
 		if (instead_load(dirpath(MAIN_FILE))) {
 			curgame_dir = oldgame;
 			return -1;
@@ -131,10 +136,6 @@ int game_select(const char *name)
 
 		instead_function("game:ini", NULL); instead_clear();
 
-		if (game_theme_init()) {
-			curgame_dir = oldgame;
-			return -1;
-		}
 		return 0;
 	} else {
 		game_use_theme();
