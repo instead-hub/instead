@@ -100,9 +100,17 @@ iface.just = function(self, str)
 	return stead.cat('<j>',str,'</j>');
 end;
 
-iface.tab = function(self, str)
+iface.tab = function(self, str, al)
 	if tonumber(str) then
 		str = tostring(str)
+	end
+	if type(str) ~= 'string' then
+		return nil;
+	end
+	if al == 'right' then
+		str = str .. ",right"
+	elseif al == 'center' then
+		str = str .. ",center"
 	end
 	return '<x:'..str..'>'
 end;
