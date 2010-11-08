@@ -241,8 +241,8 @@ function txtc(v)
 	return iface:center(v)
 end
 
-function txttab(v)
-	return iface:tab(v)
+function txttab(v,a)
+	return iface:tab(v, a)
 end
 
 function txtj(v)
@@ -1954,7 +1954,7 @@ iface = {
 	middle = function(self, str)
 		return str;
 	end,
-	tab = function(self, str)
+	tab = function(self, str, al)
 		return '';
 	end;
 	bold = function(self, str)
