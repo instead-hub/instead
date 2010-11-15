@@ -1,18 +1,39 @@
-\documentclass[a4paper,12pt]{article}
-\usepackage[utf8]{inputenc}
-\usepackage[russian]{babel}
-\usepackage[a4paper]{geometry}
-\usepackage[pdftex,colorlinks,linkcolor = blue,urlcolor = blue,unicode]{hyperref}
+\documentclass[12pt]{article}
+\usepackage{ifxetex}
+\ifxetex
+ \usepackage[xetex,colorlinks,linkcolor = blue,urlcolor = blue]{hyperref}
+ \usepackage{fontspec}
+ \usepackage{xunicode}
+ \usepackage{xltxtra}
+ \usepackage{polyglossia}%вместо babel
+ \setdefaultlanguage{russian}
+ \defaultfontfeatures{Mapping=tex-text, Scale=MatchLowercase}
+ \setmainfont{Liberation Serif}
+ \setmonofont{Nimbus Mono L}
+ \newfontfamily{\cyrillicfont}{Liberation Serif}
+ \frenchspacing
+\else
+ \usepackage[utf8]{inputenc}
+ \usepackage[T2A]{fontenc}
+ \usepackage[pdftex,unicode,colorlinks,linkcolor = blue,urlcolor = blue]{hyperref}
+ \usepackage[russian,english]{babel}
+\fi
 
+\usepackage{geometry}
+\geometry{verbose,tmargin=1cm,bmargin=1cm,lmargin=1cm,rmargin=1cm,headheight=1cm,headsep=1cm,footskip=0.7cm}
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{wrapfig}%обтекание текстом
-\geometry{verbose,tmargin=1cm,bmargin=1cm,lmargin=1cm,rmargin=1cm,headheight=1cm,headsep=1cm,footskip=0.7cm}
 \usepackage{indentfirst}
 \usepackage{makeidx}
 
 \makeindex
+
 \begin{document}
+%Поддержка LaTeX оставлена в качестве костыля. Справочник _намного_ лучше выглядит в XeTeX.
+%Совершенно Недокументированные Модули: goto, input, kbd
+%Добавить в документацию: theme, click, format (dash-para-quotes), hideinv, prefs, timer,xact,dbg,hotkeys,snapshots
+
 \title{Справочное пособие по INSTEAD}
 \author{Александр Яковлев\\oreolek@jabber.ru \and \textit{при участии Петра Косых}\\\textit{gl00my@jabber.ru}}
 \maketitle
@@ -1008,7 +1029,7 @@ var {
 
 Переменные, объявленные таким образом, попадают в файл сохранения независимо от того, с какого символа начинаются их имена.
 
-Для того, чтобы задавать переменные таким образом, необходимо указать \verb/instead_version/ не менее \verb/"1.2.0"/.
+Для того, чтобы задавать переменные таким образом, необходимо указать \verb/instead_version/ не менее 1.2.0.
 
 Переменная в vars может содержать участок кода (\verb/code [[...]]/), который также будет сохранён. Таким образом, вы можете создавать сложные сохраняемые обработчики.
 
