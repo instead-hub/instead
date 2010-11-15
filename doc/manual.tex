@@ -1,29 +1,15 @@
-﻿%Совершенно Недокументированные Модули: goto, input, kbd
-%Добавить в документацию: theme, click, format (dash-para-quotes), hideinv, prefs, timer,xact,dbg,hotkeys,snapshots
-
 \documentclass[a4paper,12pt]{article}
-\usepackage[xetex,colorlinks,linkcolor = blue,urlcolor = blue]{hyperref}
-
-\usepackage{geometry}
-\geometry{verbose,tmargin=1cm,bmargin=1cm,lmargin=1cm,rmargin=1cm,headheight=1cm,headsep=1cm,footskip=0.7cm}
-
-\usepackage{fontspec}
-\usepackage{xunicode}
-\usepackage{xltxtra}
-\usepackage{polyglossia}%вместо babel
-\setdefaultlanguage{russian}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage[a4paper]{geometry}
+\usepackage[pdftex,colorlinks,linkcolor = blue,urlcolor = blue,unicode]{hyperref}
 
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{wrapfig}%обтекание текстом
+\geometry{verbose,tmargin=1cm,bmargin=1cm,lmargin=1cm,rmargin=1cm,headheight=1cm,headsep=1cm,footskip=0.7cm}
 \usepackage{indentfirst}
 \usepackage{makeidx}
-
-\defaultfontfeatures{Mapping=tex-text, Scale=MatchLowercase}
-\setmainfont{Liberation Serif}
-\setmonofont{Nimbus Mono L}
-\newfontfamily{\cyrillicfont}{Liberation Serif}
-\frenchspacing
 
 \makeindex
 \begin{document}
