@@ -2,9 +2,9 @@ include ../Rules.make
 include ../config.make
 
 pdf:
-	xelatex manual.tex
+	pdflatex manual.tex
 	makeindex manual.idx
-	xelatex manual.tex
+	pdflatex manual.tex
 	$(RM) -f manual.aux manual.log manual.toc manual.out manual.idx manual.ind manual.ilg
 
 wiki:
