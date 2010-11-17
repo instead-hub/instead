@@ -2,10 +2,11 @@ include ../Rules.make
 include ../config.make
 
 pdf:
-	pdflatex manual.tex
+	if xelatex manual.tex; then test; else pdflatex manual.tex; fi
 	makeindex manual.idx
-	pdflatex manual.tex
+	if xelatex manual.tex; then test; else pdflatex manual.tex; fi
 	$(RM) -f manual.aux manual.log manual.toc manual.out manual.idx manual.ind manual.ilg
+#to-do: interpret $PATH
 
 wiki:
 	wget "http://instead.pinebrush.com/wiki/doku.php?id=ru:gamedev:documentation&do=export_xhtml" -O writing_games.html
