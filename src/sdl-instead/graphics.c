@@ -1408,6 +1408,20 @@ struct line *line_new(void)
 	return l;
 }
 
+int line_empty(struct line *line)
+{
+	struct word *w;
+	w = line->words;
+	while (w) {
+		if (w->img_align) {
+			w = w->next;
+			continue;
+		}
+		return 0;
+	}
+	return 1;
+}
+
 void line_justify(struct line *line, int width)
 {
 	int x = 0;
@@ -3220,7 +3234,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 		}
 		nl = !*p;
 
-		if (!line->h && !img_align && !line->num) /* first word ? */
+		if (!line->h && !img_align && line_empty(line)) /* first word ? */
 			line->h = h;
 
 		if (img_align && !line->w)
@@ -3266,7 +3280,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 			goto err;
 		}
 		word->valign = layout->valign;
-		if (!sp && line->num)
+		if (!sp && !line_empty(line))
 			word->unbrake = 1;
 		
 		word->style = layout->style;
