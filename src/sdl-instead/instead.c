@@ -432,7 +432,7 @@ static int luaB_is_sound(lua_State *L) {
 }
 
 static int luaB_get_savepath(lua_State *L) {
-	lua_pushstring(L, dirname(game_save_path(0, 0)));
+	lua_pushstring(L, dirname(game_save_path(1, 0)));
 	return 1;
 }
 
