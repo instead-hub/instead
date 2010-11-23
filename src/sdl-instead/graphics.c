@@ -1422,9 +1422,17 @@ int line_empty(struct line *line)
 	return 1;
 }
 
+static struct word *next_word(struct word *w)
+{
+	while (w->next && w->next->img_align) /* skip margins */
+		w = w->next;
+	return w->next;
+}
+
 void line_justify(struct line *line, int width)
 {
 	int x = 0;
+	int last_margin = 0;
 	struct word *w;
 	int sp, spm, lw = 0;
 	int lnum = 0;
@@ -1433,8 +1441,11 @@ void line_justify(struct line *line, int width)
 	w = line->words;
 	while (w) {
 		lw += w->w;
+		if (last_margin)
+			w->unbrake = 0;
 		if (!w->unbrake && !w->img_align)
 			lnum ++;
+		last_margin = w->img_align;
 		w = w->next;
 	}
 	if (lnum <=1 )
@@ -1445,7 +1456,7 @@ void line_justify(struct line *line, int width)
 	while (w) {
 		if (!w->img_align) {
 			w->x = x;
-			if (w->next && w->next->unbrake)
+			if (next_word(w) && next_word(w)->unbrake)
 				x += w->w;
 			else {
 				x += w->w + sp + ((spm)?1:0);
@@ -3320,9 +3331,8 @@ void _txt_layout_add(layout_t lay, char *txt)
 			} 
 			else
 				m->w = layout->w - x2 - w2 + w;
-
+//			fprintf(stderr,"w: %d %d %d\n", width, w, width - w);
 			width -= w;
-
 			m->h = h;
 			m->y = line->y;
 			m->align = img_align; 
