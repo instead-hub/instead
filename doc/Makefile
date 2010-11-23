@@ -2,9 +2,10 @@ include ../Rules.make
 include ../config.make
 
 pdf:
-	if xelatex manual.tex; then test; else pdflatex manual.tex; fi
+	# try xetex here, and hope it works ;)
+	pdflatex manual.tex
 	makeindex manual.idx
-	if xelatex manual.tex; then test; else pdflatex manual.tex; fi
+	pdflatex manual.tex
 	$(RM) -f manual.aux manual.log manual.toc manual.out manual.idx manual.ind manual.ilg
 #to-do: interpret $PATH
 
