@@ -747,9 +747,9 @@ static int is_lang(const char *path, const char *n)
 		return 0;
 	free(p);
 		
-	if (!(p = strstr(n, ".ini")))
+	if (!(p = strstr(n, ".ini")) && !(p = strstr(n, ".INI")))
 		return 0;
-	if (strcmp(p, ".ini"))	
+	if (strcmp(p, ".ini") && strcmp(p, ".INI"))
 		return 0;
 	return 1;
 }
