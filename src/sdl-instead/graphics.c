@@ -3231,8 +3231,9 @@ void _txt_layout_add(layout_t lay, char *txt)
 
 		if (!p)
 			break;
-		addlen = get_unbrakable_len(layout, eptr);
 		img = get_img(layout, p, &img_align);
+		if (!img_align) /* margins reset */
+			addlen = get_unbrakable_len(layout, eptr);
 		if (img) {
 			w = gfx_img_w(img);
 			h = gfx_img_h(img);
