@@ -2677,7 +2677,7 @@ int game_loop(void)
 				mouse_reset(1);
 				game_menu_act("/new");
 				shift_pressed = alt_pressed = 0;
-			} else if (!is_key(&ev, "f10") || (alt_pressed && !is_key(&ev, "f4"))) {
+			} else if (!is_key(&ev, "f10")) {
 				mouse_reset(1);
 				game_menu(menu_askquit);
 			} else if (!alt_pressed && (!is_key(&ev, "return") || !is_key(&ev, "enter"))) {
@@ -2767,7 +2767,7 @@ int game_loop(void)
 				scroll_pup(el_scene);
 			} else if (!is_key(&ev, "space") && !menu_shown) {
 				scroll_pdown(el_scene);
-			} else if (alt_pressed && !is_key(&ev, "q")) {
+			} else if (alt_pressed && (!is_key(&ev, "q") || !is_key(&ev, "f4"))) {
 				break;
 			} else if (alt_pressed &&
 				(!is_key(&ev, "enter") || !is_key(&ev, "return"))) {
