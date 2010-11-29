@@ -602,7 +602,7 @@ drop(o) — drop an object from the inventory to the scene:
 
 	drop('knife');
 
-From 0.8 there's a function “dropf” similar to “drop”, but adding the object to the list start. From 0.8.5 there's an optional second parameter — a room where to place the object. Also from >=0.8.5 there's a “put” function that does not remove the object from the inventory.
+From 0.8 there's a function “dropf” similar to “drop”, but adding the object to the list start. From 0.8.5 there's an optional second parameter — a room where to place the object. Also from >=0.8.5 there are “put/putf” functions which are not remove the object from the inventory.
 
 From version 0.8.9 there's a function remove(o, [from]), which deletes an object from the current scene or from the “from” scene.
 
