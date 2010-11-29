@@ -1,5 +1,5 @@
 -- $Name:Обучение$
-instead_version "1.3.0"
+instead_version "1.3.1"
 
 require "dash" -- '--' replace :)
 require "para" -- be more "Russian"
