@@ -2962,14 +2962,18 @@ out:
 	return img;
 }
 
-char *get_word_token(char *p)
+static char *get_word_token(char *p, int *token)
 {
 	int len;
 	char *r;
 	char *val = NULL;
 	len = word_token(p, NULL);
+	if (token)
+		*token = 0;
 	if (!len)
 		return p;
+	if (token)
+		*token = 1;
 	p[len - 1 + 3] = 0;
 	r = strdup((p + 3));
 	parse_esc_string(r, &val);
@@ -3208,7 +3212,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 	while (ptr && *ptr) {
 		struct word *word;
 		int sp2, addlen;
-		
+		int wtok;
 		eptr = process_token(ptr, layout, line, &xref, &sp2);
 		if (eptr) {
 			ptr = eptr;
@@ -3234,17 +3238,19 @@ void _txt_layout_add(layout_t lay, char *txt)
 		img = get_img(layout, p, &img_align);
 		if (!img_align) /* margins reset */
 			addlen = get_unbrakable_len(layout, eptr);
+
+		wtok = 0;
 		if (img) {
 			w = gfx_img_w(img);
 			h = gfx_img_h(img);
 			if (img_align && width - w <= 0)
 				img_align = 0;
 		} else {
-			p = get_word_token(p);
+			p = get_word_token(p, &wtok);
 			TTF_SizeUTF8((TTF_Font *)(layout->fn), p, &w, &h);
 			h *= layout->fn_height;
 		}
-		nl = !*p;
+		nl = (wtok)?0:!*p;
 
 		if (!line->h && !img_align && line_empty(line)) /* first word ? */
 			line->h = h;
