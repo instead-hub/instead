@@ -5,6 +5,7 @@ instead (1.3.1) unstable; urgency=low
   * bug fix (prefs do not create save dir);
   * bug fix (alt+f4 != f4);
   * bug fix (<w:> tag parsing)
+  * visual.lua moved to doc/;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 29 Nov 2010 15:44:00 +0300  
 
