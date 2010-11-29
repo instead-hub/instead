@@ -23,4 +23,3 @@ install:
 	copy hotkeys.lua ..\bin\stead
 	copy hideinv.lua ..\bin\stead
 	copy theme.lua ..\bin\stead
-	copy visual.lua ..\bin\stead

@@ -26,7 +26,6 @@ install:
 	$(INSTALL) hotkeys.lua $(STEADPATH)/hotkeys.lua
 	$(INSTALL) hideinv.lua $(STEADPATH)/hideinv.lua
 	$(INSTALL) theme.lua $(STEADPATH)/theme.lua
-	$(INSTALL) visual.lua $(STEADPATH)/visual.lua
 
 uninstall:
 	$(RM) $(STEADPATH)/stead.lua
