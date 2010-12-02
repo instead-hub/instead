@@ -78,3 +78,15 @@ diff -Nur instead-1.3.1/Rules.make.system instead-1.3.1.maemo/Rules.make.system
  
  INSTALLD=install -d -m 0755
  INSTALLB=install -m 0755
+diff -Nur instead-1.3.1/src/sdl-instead/themes.h instead-1.3.1.maemo/src/sdl-instead/themes.h
+--- instead-1.3.1/src/sdl-instead/themes.h	2010-11-01 15:01:32.000000000 +0300
++++ instead-1.3.1.maemo/src/sdl-instead/themes.h	2010-12-02 16:42:49.657149119 +0300
+@@ -4,7 +4,7 @@
+ #include "graphics.h"
+ #include "sound.h"
+ 
+-#define DEFAULT_THEME "default"
++#define DEFAULT_THEME "wide"
+ #ifndef THEMES_PATH
+ #define THEMES_PATH "./themes"
+ #endif
