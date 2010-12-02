@@ -2568,6 +2568,7 @@ int game_from_disk(void)
 	char *g, *p, *b, *d;
 	char dir[PATH_MAX];
 	char base[PATH_MAX];
+#ifndef MAEMO
 	if (opt_fs) {
 		int old_menu = (menu_shown) ? cur_menu: -1;
 		opt_fs ^= 1;
@@ -2575,6 +2576,7 @@ int game_from_disk(void)
 		if (old_menu != -1)
 			game_menu(old_menu);
 	}
+#endif
 	mouse_cursor(1);
 	game_cursor(CURSOR_OFF);
 	browse_dialog = 1;

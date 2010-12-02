@@ -1119,6 +1119,10 @@ int gfx_next_mode(int *w, int *h)
 
 int gfx_get_max_mode(int *w, int *h)
 {
+#ifdef MAEMO
+	*w = 800;
+	*h = 480;
+#else
 	int ww = 0, hh = 0;
 	int i = 0;
 	*w = 0;
@@ -1136,6 +1140,7 @@ int gfx_get_max_mode(int *w, int *h)
 		}
 		i ++;
 	}
+#endif
 	return 0;
 }
 
