@@ -11,12 +11,12 @@ Open = function(s)
 	if not s.open then
 		return 'Это нельзя открыть...';
 	end
-	if s.Opened then
+	if s._opened then
 		return 'Уже открыто...';
 	end
 	local r,v = call(s,'open');
 	if v ~= false then
-		s.Opened = true;
+		s._opened = true;
 	end
 	return r
 end
@@ -25,12 +25,12 @@ Close = function(s)
 	if not s.close then
 		return 'Это нельзя закрыть...';
 	end
-	if not s.Opened then
+	if not s._opened then
 		return 'Уже закрыто...';
 	end
 	local r,v = call(s,'close');
 	if v ~= false then
-		s.Opened = false;
+		s._opened = false;
 	end
 	return r;
 end
