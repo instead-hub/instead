@@ -33,6 +33,9 @@ function ordered_n(t)
 		if isObject(a.v) and isObject(b.v) then
 			local n = call(a.v, 'nam');
 			local m = call(b.v, 'nam');
+			if type(n) ~= 'string' and type(m) ~= 'string' then
+				return false
+			end
 			if type(n) ~= 'string' then
 				return true
 			end
@@ -90,7 +93,7 @@ dump_obj = function(w)
 		seen('disp')._txt = '^^No such object.';
 		return true
 	end
-	local i,o
+	local i,o,n
 	local rc=''
 	for i,o in pairs(w) do
 		local t = stead.tostring(o);
@@ -102,7 +105,7 @@ dump_obj = function(w)
 			local n = '';
 			if type(o) ~= 'function' and isObject(ref(o)) then
 				n = call(ref(o), 'nam');
-				if not n then n = '' else n = ' : '..n; end
+				if type(n) ~= 'string' then n = '' else n = ' : '..n; end
 			end
 			rc = stead.cat(rc, stead.par(' ', tostring(i)..' : '..t..n));
 		end
