@@ -10,10 +10,10 @@ pdf:
 #to-do: interpret $PATH
 
 wiki:
-	wget "http://instead.pinebrush.com/wiki/doku.php?id=ru:gamedev:documentation&do=export_xhtml" -O writing_games.html
-	wget "http://instead.pinebrush.com/wiki/doku.php?id=en:gamedev:documentation&do=export_xhtml" -O writing_games-en.html
-	wget "http://instead.pinebrush.com/wiki/doku.php?id=ru:gamedev:documentation&do=export_raw" -O writing_games.txt
-	wget "http://instead.pinebrush.com/wiki/doku.php?id=en:gamedev:documentation&do=export_raw" -O writing_games-en.txt
+	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:documentation&do=export_xhtml" -O writing_games.html
+	wget "http://instead.syscall.ru/wiki/doku.php?id=en:gamedev:documentation&do=export_xhtml" -O writing_games-en.html
+	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:documentation&do=export_raw" -O writing_games.txt
+	wget "http://instead.syscall.ru/wiki/doku.php?id=en:gamedev:documentation&do=export_raw" -O writing_games-en.txt
 
 
 clean:
