@@ -2,6 +2,13 @@
 #include "config.h"
 #include "util.h"
 
+void tolow(char *p)
+{
+	while (*p) {
+		*p |= 0x20;
+		p ++;
+	}
+}
 char *getfilepath(const char *d, const char *n)
 {
 	int i = strlen(d) + strlen(n) + 3;

@@ -746,10 +746,7 @@ static int is_lang(const char *path, const char *n)
 	if (access(p, F_OK))
 		return 0;
 	free(p);
-		
 	if (!(p = strstr(n, ".ini")) && !(p = strstr(n, ".INI")))
-		return 0;
-	if (strcmp(p, ".ini") && strcmp(p, ".INI"))
 		return 0;
 	return 1;
 }
@@ -760,6 +757,7 @@ static char *lang_code(const char *str)
 	if (!p)
 		return NULL;
 	p[strcspn(p, ".")] = 0;
+	tolow(p);
 	return p;
 }
 
