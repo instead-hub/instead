@@ -42,6 +42,9 @@ extern char *dirpath(const char *path);
 
 extern char *parse_tag(char *line, const char *tag, const char *comm, int *brk);
 extern int remove_dir(const char *path);
+
+extern void tolow(char *p);
+
 #ifndef PATH_MAX
 #define PATH_MAX 	4096
 #endif
