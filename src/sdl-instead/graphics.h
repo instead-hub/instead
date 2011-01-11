@@ -100,6 +100,7 @@ extern void	txt_layout_add(layout_t lay, char *txt);
 extern void	txt_layout_set(layout_t lay, char *txt);
 extern void 	txt_layout_draw(layout_t lay, int x, int y);
 extern void	txt_layout_free(layout_t lay);
+extern void	_txt_layout_free(layout_t lay); /* do not free lay obj */
 extern xref_t 	txt_layout_xref(layout_t lay, int x, int y);
 extern void 	txt_layout_color(layout_t lay, color_t fg);
 extern fnt_t 	txt_layout_font(layout_t lay);
@@ -136,6 +137,8 @@ typedef void 	(*clear_fn)(int x, int y, int w, int h);
 extern void 	txt_box_update_links(textbox_t tbox, int x, int y, clear_fn);
 extern void 	txt_layout_update_links(layout_t layout, int x, int y, clear_fn clear);
 extern void 	txt_layout_real_size(layout_t lay, int *w, int *h);
+extern void	txt_layout_set_size(layout_t lay, int w, int h); /* without text only */
+
 extern int 	txt_layout_pos2off(layout_t lay, int pos, int *hh);
 
 extern img_t 	txt_box_render(textbox_t tbox);

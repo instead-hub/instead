@@ -22,4 +22,6 @@
 #include <ctype.h>
 #include <dirent.h>
 #include <time.h>
+#ifndef S60
 #include <libgen.h>
+#endif

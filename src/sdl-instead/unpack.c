@@ -32,7 +32,9 @@
 
 #ifdef unix
 # include <unistd.h>
+#ifndef S60
 # include <utime.h>
+#endif
 #else
 # include <direct.h>
 # include <io.h>
@@ -74,6 +76,7 @@ tm_unz tmu_date;
 	CloseHandle(hFile);
 #else
 #ifdef unix
+#ifndef S60
 	struct utimbuf ut;
 	struct tm newdate;
 	newdate.tm_sec = tmu_date.tm_sec;
@@ -89,6 +92,7 @@ tm_unz tmu_date;
 
 	ut.actime = ut.modtime = mktime(&newdate);
 	utime(filename, &ut);
+#endif
 #endif
 #endif
 }

@@ -1,3 +1,7 @@
+#ifdef S60
+#include "s60.h"
+#endif
+
 #include "cache.h"
 #include "graphics.h"
 #include "sound.h"

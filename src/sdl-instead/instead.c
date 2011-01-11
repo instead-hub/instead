@@ -1,9 +1,10 @@
+#include "externals.h"
+#include "internals.h"
+
 #ifndef STEAD_PATH
 #define STEAD_PATH 	"./stead"
 #endif
 
-#include "externals.h"
-#include "internals.h"
 /* the Lua interpreter */
 
 static gtimer_t instead_timer = NULL;

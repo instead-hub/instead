@@ -1149,24 +1149,28 @@ int gfx_set_mode(int w, int h, int fs)
 	gfx_width = w;
 	gfx_height = h;
 	SDL_ShowCursor(SDL_DISABLE);
-#ifdef ANDROID
-	screen = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
+#ifdef S60
+	screen = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 #else
-#ifndef MAEMO
-	#ifdef __APPLE__	
+ #ifdef ANDROID
+	screen = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
+ #else
+  #ifdef MAEMO
+	screen = SDL_SetVideoMode(gfx_width, gfx_height, 16, SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
+  #else
+   #ifdef __APPLE__	
 	screen = SDL_SetVideoMode(gfx_width, gfx_height, (fs)?32:0, SDL_SWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 	if (screen == NULL) /* ok, fallback to anyformat */
 		screen = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | SDL_SWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
-	#else
-		#ifndef _WIN32_WCE
+   #else
+    #ifndef _WIN32_WCE
 	screen = SDL_SetVideoMode(gfx_width, gfx_height, (fs)?32:0, SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 	if (screen == NULL) /* ok, fallback to anyformat */
-		#endif
+    #endif
 		screen = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
-	#endif
-#else
-	screen = SDL_SetVideoMode(gfx_width, gfx_height, 16, SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
-#endif
+   #endif
+  #endif
+ #endif
 #endif
 	if (screen == NULL) {
 		fprintf(stderr, "Unable to set %dx%d video: %s\n", w, h, SDL_GetError());
@@ -1875,6 +1879,15 @@ void txt_layout_size(layout_t lay, int *w, int *h)
 		*w = layout->w;
 	if (h)
 		*h = layout->h;
+}
+
+void txt_layout_set_size(layout_t lay, int w, int h)
+{
+	struct layout *layout = (struct layout *)lay;
+	if (!lay)
+		return;
+	layout->w = w;
+	layout->h = h;
 }
 
 int txt_layout_add_img(layout_t lay, const char *name, img_t img)
