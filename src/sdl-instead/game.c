@@ -1098,14 +1098,14 @@ void game_menu_box_width(int show, const char *txt, int width)
 	int x, y;
 	int b = game_theme.border_w;
 	int pad = game_theme.pad;
-	layout_t lay;
+	layout_t lay = NULL;
 
 	menu_shown = show;
 	el(el_menu)->drawn = 0;
 
 	if (el_layout(el_menu)) {
-		txt_layout_free(el_layout(el_menu));
-		el(el_menu)->p.p = NULL;
+		_txt_layout_free(el_layout(el_menu));
+		lay = el_layout(el_menu);
 	}
 	if (menubg) {
 		game_cursor(CURSOR_CLEAR);
@@ -1118,40 +1118,35 @@ void game_menu_box_width(int show, const char *txt, int width)
 	if (!show)
 		el_draw(el_menu_button);
 
-//	el_update(el_menu_button);
-
 	if (!show) {
 		game_cursor(CURSOR_DRAW);
 		gfx_flip();
 		return;
 	}
 
-
-	game_menu_box_wh(txt, &w, &h);
-
-	if (width)
-		w = width;
-
-	lay = txt_layout(game_theme.menu_font, ALIGN_CENTER, w, 0);
+	if (!lay) {
+		lay = txt_layout(game_theme.menu_font, ALIGN_CENTER, game_theme.w - 2 * (b + pad), 0);
+		txt_layout_color(lay, game_theme.menu_fg);
+		txt_layout_link_color(lay, game_theme.menu_link);
+		txt_layout_active_color(lay, game_theme.menu_alink);
+		txt_layout_font_height(lay, game_theme.menu_font_height);
+	}
+	else
+		txt_layout_set_size(lay, game_theme.w - 2 * (b + pad), 0);
 
 	txt_layout_set(lay, (char*)txt);
 	txt_layout_real_size(lay, &w, &h);
 	if (width)
 		w = width;
 
-	txt_layout_color(lay, game_theme.menu_fg);
-	txt_layout_link_color(lay, game_theme.menu_link);
-	txt_layout_active_color(lay, game_theme.menu_alink);
-	txt_layout_font_height(lay, game_theme.menu_font_height);
-
+	txt_layout_set_size(lay, w, h);
 	txt_layout_set(lay, (char*)txt);
-	txt_layout_real_size(lay, &w, &h);	
-	if (width)
-		w = width;
+
 	if (menu) {
 		gfx_free_image(menu);
 		menu = NULL;
 	}
+
 	menu = gfx_new(w + (b + pad)*2, h + (b + pad)*2);
 	gfx_img_fill(menu, 0, 0, w + (b + pad)*2, h + (b + pad)*2, game_theme.border_col);
 	gfx_img_fill(menu, b, b, w + pad*2, h + pad*2, game_theme.menu_bg);
@@ -2569,6 +2564,7 @@ int game_from_disk(void)
 	char dir[PATH_MAX];
 	char base[PATH_MAX];
 #ifndef MAEMO
+#ifndef S60
 	if (opt_fs) {
 		int old_menu = (menu_shown) ? cur_menu: -1;
 		opt_fs ^= 1;
@@ -2576,6 +2572,7 @@ int game_from_disk(void)
 		if (old_menu != -1)
 			game_menu(old_menu);
 	}
+#endif
 #endif
 	mouse_cursor(1);
 	game_cursor(CURSOR_OFF);
@@ -2597,7 +2594,6 @@ int game_from_disk(void)
 	}
 	d = dirname(d);
 	b = basename(b);
-/*	fprintf(stderr,"%s:%s\n", d, b); */
 #ifdef _USE_UNPACK
 	p = games_sw ? games_sw:game_local_games_path(1);
 	fprintf(stderr,"Trying to install: %s\n", g);
@@ -2682,7 +2678,11 @@ int game_loop(void)
 			} else if (!is_key(&ev, "f10")) {
 				mouse_reset(1);
 				game_menu(menu_askquit);
-			} else if (!alt_pressed && (!is_key(&ev, "return") || !is_key(&ev, "enter"))) {
+			} else if (!alt_pressed && (!is_key(&ev, "return") || !is_key(&ev, "enter") 
+			#ifdef S60
+				|| !is_key(&ev, ".")
+			#endif
+				)) {
 				gfx_cursor(&x, &y, NULL, NULL);
 				game_highlight(-1, -1, 0); /* reset */
 
@@ -2709,7 +2709,11 @@ int game_loop(void)
 				}
 #endif
 #endif
-			} else if (!is_key(&ev, "escape")) {
+			} else if (!is_key(&ev, "escape")
+#ifdef S60
+			|| !is_key(&ev, "space")
+#endif
+			) {
 				if (use_xref)
 					disable_use();
 				else	
@@ -2761,6 +2765,7 @@ int game_loop(void)
 					else
 						game_scroll_pdown();
 				}
+#ifndef S60
 			} else if (!is_key(&ev, "left") || !is_key(&ev, "[4]")) {
 				select_ref(1, 0);
 			} else if (!is_key(&ev, "right") || !is_key(&ev, "[6]")) {
@@ -2769,6 +2774,18 @@ int game_loop(void)
 				scroll_pup(el_scene);
 			} else if (!is_key(&ev, "space") && !menu_shown) {
 				scroll_pdown(el_scene);
+#else
+			} else if (!is_key(&ev, "left") || !is_key(&ev, "[4]")) {
+				if (menu_shown)
+					select_ref(1, 0);
+				else
+					select_frame(1);
+			} else if (!is_key(&ev, "right") || !is_key(&ev, "[6]")) {
+				if (menu_shown)
+					select_ref(0, 0);
+				else
+					select_frame(0);
+#endif
 			} else if (alt_pressed && (!is_key(&ev, "q") || !is_key(&ev, "f4"))) {
 				break;
 			} else if (alt_pressed &&
@@ -2804,7 +2821,7 @@ int game_loop(void)
 				motion_y = ev.y;
 			}
 		//	game_highlight(ev.x, ev.y, 1);
-		} 
+		}
 
 		if (old_xref)
 			game_highlight(x, y, 1);

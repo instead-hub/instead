@@ -4,7 +4,12 @@
 #include <SDL.h>
 #include <SDL_mixer.h>
 
+#ifdef S60
+int audio_rate = 11025;
+#else
 int audio_rate = 22050;
+#endif
+
 Uint16 audio_format = MIX_DEFAULT_FORMAT; 
 int audio_channels = 2;
 int audio_buffers = 8192;

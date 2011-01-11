@@ -1,6 +1,4 @@
-#ifdef __APPLE__
 #include <SDL.h>
-#endif
 
 #include "externals.h"
 #include "internals.h"
@@ -111,7 +109,12 @@ int main(int argc, char *argv[])
 #ifdef _WIN32_WCE
 	wince_init(argv[0]);
 #else
+#ifdef S60
+	extern char s60_data[];
+	strcpy(game_cwd, s60_data);
+#else
 	getcwd(game_cwd, sizeof(game_cwd));
+#endif
 #endif
 	unix_path(game_cwd);
 	setdir(game_cwd);
