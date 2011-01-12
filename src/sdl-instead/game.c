@@ -2581,6 +2581,7 @@ int game_from_disk(void)
 	browse_dialog = 0;
 	game_cursor(CURSOR_ON);
 	mouse_cursor(0);
+	gfx_flip();
 	if (!p)
 		return -1;
 	strcpy(dir, p);
@@ -2710,7 +2711,7 @@ int game_loop(void)
 #endif
 #endif
 			} else if (!is_key(&ev, "escape")
-#ifdef S60
+#if defined(S60) || defined(_WIN32_WCE)
 			|| !is_key(&ev, "space")
 #endif
 			) {
@@ -2765,7 +2766,7 @@ int game_loop(void)
 					else
 						game_scroll_pdown();
 				}
-#ifndef S60
+#if !defined(S60) && !defined(_WIN32_WCE)
 			} else if (!is_key(&ev, "left") || !is_key(&ev, "[4]")) {
 				select_ref(1, 0);
 			} else if (!is_key(&ev, "right") || !is_key(&ev, "[6]")) {
