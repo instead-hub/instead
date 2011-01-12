@@ -60,11 +60,7 @@ __do_xact = function(str, self)
 					error("Empty link: "..s, 3);
 				end
 			else
-				if stead.api_version >= "1.3.2" then
-					oo = here():srch(o)
-				else
-					oo = objs():srch(o)
-				end
+				oo = objs():srch(o)
 				if not oo then
 					oo = ref(o, true)
 				end
