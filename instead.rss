@@ -43,11 +43,6 @@ RESOURCE FILESELECTIONDIALOG r_file_selection_dialog {
 	root_path = "C:\\";
 	filters = {
 		FILTER {
-			filter_type = EAttributeFilter;
-			filter_style = EExclusiveFilter;
-			filter_data = { "SH" }; // Excludes system, hidden and read-only attributes
-		},
-		FILTER {
 			filter_type = EFilenameFilter;
 			filter_style = EInclusiveFilter;
 			filter_data = { "*.lua", "*.zip" };
