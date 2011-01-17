@@ -53,8 +53,15 @@ char *mbs2utf8(const char *s)
 {
 	iconv_t han;
 	char *str;
-	if (!game_codepage)
+	if (!game_codepage) {
 		game_codepage = game_cp();
+		if (game_codepage)
+			fprintf(stderr, "Game codepage: %s\n", game_codepage);
+		else {
+			fprintf(stderr, "Falling to windows-1251\n");
+			game_codepage = strdup("WINDOWS-1251");
+		}
+	}
 	if (!s)
 		return NULL;	
 	if (!game_codepage)
