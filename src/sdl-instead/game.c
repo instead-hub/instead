@@ -2695,7 +2695,7 @@ int game_loop(void)
 					break;
 			} else if (!is_key(&ev, "f1")
 #if defined(_WIN32_WCE)
-				|| (ev.keysym.sym >= 0xc0 && ev.keysym.sym <= 0xcf) || 
+				|| (ev.code >= 0xc0 && ev.code <= 0xcf) || 
 					!is_key(&ev, "f2") || 
 					!is_key(&ev, "f3") || 
 					!is_key(&ev, "f4") || 
