@@ -2656,7 +2656,32 @@ int game_loop(void)
 			(!is_key(&ev,"left shift") || !is_key(&ev, "right shift"))) {
 			shift_pressed = (ev.type == KEY_DOWN) ? 1:0;
 		} else if (ev.type == KEY_DOWN) {
-			if (!is_key(&ev, "f2") && curgame_dir) {
+			if (!is_key(&ev, "escape")
+#if defined(S60) || defined(_WIN32_WCE)
+			|| !is_key(&ev, "space")
+#endif
+#if defined(_WIN32_WCE)
+			|| (ev.code >= 0xc0 && ev.code <= 0xcf) || 
+			!is_key(&ev, "f1") || 
+			!is_key(&ev, "f2") || 
+			!is_key(&ev, "f3") || 
+			!is_key(&ev, "f4") || 
+			!is_key(&ev, "f5")
+#endif
+			) {
+				if (use_xref)
+					disable_use();
+				else	
+					menu_toggle();
+			} else if (!is_key(&ev, "f1")) {
+				if (!menu_shown)
+					menu_toggle();
+/*
+			} else if (!is_key(&ev, "f6")) {
+				mouse_reset(1);
+				game_menu(menu_games);
+*/
+			} else if (!is_key(&ev, "f2") && curgame_dir) {
 				mouse_reset(1);
 				game_menu(menu_save);
 			} else if (!is_key(&ev, "f3") && curgame_dir) {
@@ -2693,22 +2718,6 @@ int game_loop(void)
 
 				if (game_click(x, y, 1, 0) == -1) 
 					break;
-			} else if (!is_key(&ev, "f1")
-#if defined(_WIN32_WCE)
-				|| (ev.code >= 0xc0 && ev.code <= 0xcf) || 
-					!is_key(&ev, "f2") || 
-					!is_key(&ev, "f3") || 
-					!is_key(&ev, "f4") || 
-					!is_key(&ev, "f5")
-#endif
-				) {
-				if (!menu_shown)
-					menu_toggle();
-/*
-			} else if (!is_key(&ev, "f6")) {
-				mouse_reset(1);
-				game_menu(menu_games);
-*/
 			} else if (!is_key(&ev, "f4") && !alt_pressed) {
 #ifdef _USE_UNPACK
 #ifdef _USE_BROWSE
@@ -2718,15 +2727,6 @@ int game_loop(void)
 				}
 #endif
 #endif
-			} else if (!is_key(&ev, "escape")
-#if defined(S60) || defined(_WIN32_WCE)
-			|| !is_key(&ev, "space")
-#endif
-			) {
-				if (use_xref)
-					disable_use();
-				else	
-					menu_toggle();
 			} else if (!is_key(&ev, "tab")) {
 				select_frame(shift_pressed);
 			} else if (!is_key(&ev, "up") || !is_key(&ev, "down") ||
