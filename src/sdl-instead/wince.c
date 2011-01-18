@@ -35,7 +35,7 @@ char *game_locale(void)
 }
 
 static char *game_codepage = NULL;
-
+#if 0
 #ifdef _HAVE_ICONV
 static char *game_cp(void)
 {
@@ -53,17 +53,10 @@ char *mbs2utf8(const char *s)
 {
 	iconv_t han;
 	char *str;
-	if (!game_codepage) {
+	if (!game_codepage)
 		game_codepage = game_cp();
-		if (game_codepage)
-			fprintf(stderr, "Game codepage: %s\n", game_codepage);
-		else {
-			fprintf(stderr, "Falling to windows-1251\n");
-			game_codepage = strdup("WINDOWS-1251");
-		}
-	}
 	if (!s)
-		return NULL;	
+		return NULL;
 	if (!game_codepage)
 		goto out0;
 	han = iconv_open("UTF-8", game_codepage);
@@ -84,16 +77,22 @@ char *mbs2utf8(const char *s)
 	return strdup(s);
 }
 #endif
+#endif
 
 extern void unix_path(char *);
 
 char *sdl_path(char *p)
 {
+#if 0
 	char *r = mbs2utf8(p);
 	if (p)
 		free(p);
 	unix_path(r);
 	return r;
+#else
+	unix_path(p);
+	return p;
+#endif
 }
 
 char *app_dir( void );
