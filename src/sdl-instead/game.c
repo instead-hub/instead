@@ -2693,7 +2693,15 @@ int game_loop(void)
 
 				if (game_click(x, y, 1, 0) == -1) 
 					break;
-			} else if (!is_key(&ev, "f1")) {
+			} else if (!is_key(&ev, "f1")
+#if defined(_WIN32_WCE)
+				|| (ev.keysym.sym >= 0xc0 && ev.keysym.sym <= 0xcf) || 
+					!is_key(&ev, "f2") || 
+					!is_key(&ev, "f3") || 
+					!is_key(&ev, "f4") || 
+					!is_key(&ev, "f5")
+#endif
+				) {
 				if (!menu_shown)
 					menu_toggle();
 /*
