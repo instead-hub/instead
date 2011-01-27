@@ -75,14 +75,13 @@ public:
 		*stderr = *mystderr;
 
 		char drives[26];
-		char testpath[] = "C:/data/instead/appdata/stead";
+		char testpath[] = "C:/data/instead/stead";
 		get_drives(drives);
 
 		for (int drive = 0; drive < 26; drive++) {
 			if (!drives[drive])
 				continue;
 			testpath[0] = drive + 'A';
-			fprintf(stderr,"Checking path: %s\n", testpath);
 			if (isFolder(testpath)) {
 				s60_data[0] = 'A' + drive;
 				fprintf(stderr,"Using path: %s\n", s60_data);
