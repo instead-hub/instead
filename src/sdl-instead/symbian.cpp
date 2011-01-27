@@ -12,7 +12,6 @@
 #include <stdio.h>
 FILE* mystdout = NULL;
 FILE* mystderr = NULL;
-#ifdef _USE_BROWSE
 char* desc2str(const TDesC& aDescriptor)
 {
 	static char fname[256];
@@ -25,10 +24,12 @@ char* desc2str(const TDesC& aDescriptor)
 	CleanupStack::PopAndDestroy(buffer);
 	return str;
 }
+
 extern "C" {
 
 char s60_data[] = "E:\\data\\instead";
 
+#ifdef _USE_BROWSE
 char *get_file_name(void)
 {
 	TFileName FileName;
@@ -36,6 +37,7 @@ char *get_file_name(void)
 		return NULL;
 	return desc2str(FileName);
 }
+#endif
 void get_drives(char* drivelist) 
 {
 	RFs& fs = CEikonEnv::Static()->FsSession();
@@ -46,7 +48,6 @@ void get_drives(char* drivelist)
 }
 
 }
-#endif
 #if 1
 int	 isFolder(const char * filename)
 {
@@ -81,8 +82,10 @@ public:
 			if (!drives[drive])
 				continue;
 			testpath[0] = drive + 'A';
+			fprintf(stderr,"Checking path: %s\n", testpath);
 			if (isFolder(testpath)) {
 				s60_data[0] = 'A' + drive;
+				fprintf(stderr,"Using path: %s\n", s60_data);
 				break;
 			}
 		}
