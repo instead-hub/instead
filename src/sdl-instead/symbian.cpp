@@ -27,6 +27,13 @@ char* desc2str(const TDesC& aDescriptor)
 
 extern "C" {
 
+void s60delay(int u)
+{
+	if (u > 0) {
+		User::AfterHighRes(u);
+	}
+}
+
 char s60_data[] = "E:\\data\\instead";
 
 #ifdef _USE_BROWSE
@@ -38,31 +45,7 @@ char *get_file_name(void)
 	return desc2str(FileName);
 }
 #endif
-void get_drives(char* drivelist) 
-{
-	RFs& fs = CEikonEnv::Static()->FsSession();
-	TPtr8 ptr((unsigned char*) drivelist,26);
-	TDriveList list;
-	fs.DriveList(list);
-	ptr.Copy(list);
 }
-
-}
-#if 1
-int	 isFolder(const char * filename)
-{
-	TBool folder = EFalse;
-	TPtrC8 ptr((unsigned char*) filename);
-	TFileName fname;
-	fname.Copy(ptr);
-	for(TInt loop = 0; loop<fname.Length(); loop++) {
-		if(fname[loop] == '/')
-			fname[loop] = '\\';
-	}
-	TInt res = BaflUtils::IsFolder(CEikonEnv::Static()->FsSession(), fname, folder);
-	return folder;
-}
-#endif
 class CSymbianApp : public CSDLApp {
 public:
 	CSymbianApp();
@@ -74,20 +57,8 @@ public:
 		*stdout = *mystdout;
 		*stderr = *mystderr;
 
-		char drives[26];
-		char testpath[] = "C:/data/instead/stead";
-		get_drives(drives);
-
-		for (int drive = 0; drive < 26; drive++) {
-			if (!drives[drive])
-				continue;
-			testpath[0] = drive + 'A';
-			if (isFolder(testpath)) {
-				s60_data[0] = 'A' + drive;
-				fprintf(stderr,"Using path: %s\n", s60_data);
-				break;
-			}
-		}
+		s60_data[0] = BitmapStoreName()[0];
+		fprintf(stderr,"Using data from: %s\n", s60_data);
 	}
 	TUid AppDllUid() const;
 };

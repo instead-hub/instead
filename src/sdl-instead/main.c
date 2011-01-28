@@ -105,7 +105,9 @@ int main(int argc, char *argv[])
 #ifdef _USE_GTK
 	gtk_init(&argc, &argv);
 #endif
+#ifndef S60
 	putenv("SDL_MOUSE_RELATIVE=0"); /* test this! */
+#endif
 #ifdef _WIN32_WCE
 	wince_init(argv[0]);
 #else
