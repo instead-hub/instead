@@ -8,7 +8,7 @@
 &EN
 
 ; standard SIS file header
-#{"INSTEAD"},(0xA0020410),1,3,1
+#{"INSTEAD"},(0xA0020410),1,3,2
 
 ;Localised Vendor name
 %{"Peter Kosyh"}
@@ -27,11 +27,14 @@
 ;Files to install
 ;You should change the source paths to match that of your environment
 ;<source> <destination>
+""-"c:\data\instead\stdout.txt",FILENULL
+""-"c:\data\instead\stderr.txt",FILENULL
+""-"c:\data\instead\sdl.ini",FILENULL
 
-"e:\epoc32\release\gcce\urel\instead.exe"    -"!:\sys\bin\instead.exe"
-"e:\epoc32\data\z\resource\apps\instead.rsc"             -"!:\resource\apps\instead.rsc"
-"e:\epoc32\data\z\private\10003a3f\apps\instead_reg.rsc" -"!:\private\10003a3f\import\apps\instead_reg.rsc"
-"e:\epoc32\data\z\resource\apps\instead.mif"             -"!:\resource\apps\instead.mif"
+"\home\peter\Devel\gnupoc\symbian-sdks\s60_26\epoc32\release\gcce\urel\instead.exe"    -"!:\sys\bin\instead.exe"
+"\home\peter\Devel\gnupoc\symbian-sdks\s60_26\epoc32\data\z\resource\apps\instead.rsc"             -"!:\resource\apps\instead.rsc"
+"\home\peter\Devel\gnupoc\symbian-sdks\s60_26\epoc32\data\z\private\10003a3f\apps\instead_reg.rsc" -"!:\private\10003a3f\import\apps\instead_reg.rsc"
+"\home\peter\Devel\gnupoc\symbian-sdks\s60_26\epoc32\data\z\resource\apps\instead.mif"             -"!:\resource\apps\instead.mif"
 ".\symbian_gamedata\appdata\games\tutorial2-en\main.lua" -"!:\data\instead\appdata\games\tutorial2-en\main.lua"
 ".\symbian_gamedata\appdata\games\tutorial2\instead.png" -"!:\data\instead\appdata\games\tutorial2\instead.png"
 ".\symbian_gamedata\appdata\games\tutorial2\ramparts.mod" -"!:\data\instead\appdata\games\tutorial2\ramparts.mod"

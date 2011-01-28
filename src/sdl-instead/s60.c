@@ -9,6 +9,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <sys/unistd.h>
+
+#include "snprintf.h"
 #include "sdl_iconv.h"
 #include "internals.h"
 
@@ -22,10 +25,11 @@ static char local_games_path[PATH_MAX];
 static char local_themes_path[PATH_MAX];
 static char local_stead_path[PATH_MAX];
 
+extern void s60delay(int u);
 
 void	nsleep(int u)
 {
-	usleep(u);
+	s60delay(u);
 }
 
 char *game_locale(void)
@@ -162,6 +166,7 @@ char *sdl_path(char *p)
 	unix_path(p);
 	return p;
 }
+
 int setdir(const char *path)
 {
 	return chdir(path);

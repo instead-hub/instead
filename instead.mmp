@@ -9,17 +9,19 @@ MACRO _HAVE_ICONV
 MACRO _LOCAL_APPDATA
 MACRO _SDL_MOD_BUG
 
-SYSTEMINCLUDE  /epoc32/include/libc /epoc32/include/esdl /epoc32/include/mmf/plugin /epoc32/include /epoc32/include/stdapis 
+SYSTEMINCLUDE  /epoc32/include/libc /epoc32/include/esdl /epoc32/include/mmf/plugin /epoc32/include
+// /epoc32/include/stdapis 
 
 sourcepath ./src/sdl-instead
 SOURCE symbian.cpp
 SOURCE graphics.c input.c game.c main.c instead.c sound.c SDL_rotozoom.c SDL_anigif.c SDL_gfxBlitFunc.c config.c themes.c menu.c util.c cache.c unzip.c ioapi.c unpack.c s60.c
-	 
+SOURCE snprintf.c
+
 USERINCLUDE ./src/sdl-instead
 
 MACRO S60V3
 
-staticlibrary lua.lib sdl_image.lib sdl_ttf.lib SDL_Mixer_ogg.lib libpng.lib libjpeg.lib esdl.lib  libiconv.lib libtremor.lib 
+staticlibrary lua.lib sdl_image.lib sdl_ttf.lib SDL_Mixer_ogg.lib libpng.lib libjpeg.lib esdl.lib  libiconv.lib libtremor.lib
 
 LIBRARY cone.lib  eikcore.lib
 LIBRARY euser.lib apparc.lib fbscli.lib
@@ -28,10 +30,10 @@ LIBRARY gdi.lib hal.lib bitgdi.lib
 LIBRARY mediaclientaudiostream.lib efsrv.lib ws32.lib
 LIBRARY avkon.lib
 LIBRARY ezlib.lib
-LIBRARY libc.lib
+//library libc.lib
 library	commondialogs.lib
 
-ALWAYS_BUILD_AS_ARM
+//ALWAYS_BUILD_AS_ARM
 
 EPOCSTACKSIZE   81000
 EPOCHEAPSIZE    7192000 32384000
@@ -52,4 +54,4 @@ START RESOURCE  instead_reg.rss
 TARGETPATH              /private/10003a3f/apps
 END
 
-ALWAYS_BUILD_AS_ARM
+//ALWAYS_BUILD_AS_ARM
