@@ -85,9 +85,12 @@ static char *slot_name(const char *path)
 			if (tm->tm_year == y)
 				snprintf(l, 64, "%02d %s %02d:%02d - ", 
 					tm->tm_mday, m, tm->tm_hour, tm->tm_min);
-			else
+			else {
+				if (tm->tm_year < 1900)
+					tm->tm_year += 1900;
 				snprintf(l, 64, "%02d %s %02d:%02d %04d - ", 
-					tm->tm_mday, m, tm->tm_hour, tm->tm_min, tm->tm_year + 1900);
+					tm->tm_mday, m, tm->tm_hour, tm->tm_min, tm->tm_year);
+			}
 			strcat(l, s);
 			free(s);
 			return l;
