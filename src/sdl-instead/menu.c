@@ -87,7 +87,7 @@ static char *slot_name(const char *path)
 					tm->tm_mday, m, tm->tm_hour, tm->tm_min);
 			else
 				snprintf(l, 64, "%02d %s %02d:%02d %04d - ", 
-					tm->tm_mday, m, tm->tm_hour, tm->tm_min, tm->tm_year);
+					tm->tm_mday, m, tm->tm_hour, tm->tm_min, tm->tm_year + 1900);
 			strcat(l, s);
 			free(s);
 			return l;
