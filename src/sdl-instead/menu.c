@@ -644,9 +644,11 @@ int game_menu_act(const char *a)
 
 void custom_theme_warn(void)
 {
+#ifndef ANDROID
 	if (game_own_theme && !opt_owntheme && cur_menu != menu_warning) {
 		game_menu(menu_custom_theme);
 	}
+#endif
 }
 
 
