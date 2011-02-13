@@ -1,4 +1,6 @@
+#if defined(__APPLE__) || defined(S60)
 #include <SDL.h>
+#endif
 
 #include "externals.h"
 #include "internals.h"
