@@ -1,4 +1,5 @@
 -- $Name:Обучение$
+
 instead_version "1.3.1"
 
 require "dash" -- '--' replace :)

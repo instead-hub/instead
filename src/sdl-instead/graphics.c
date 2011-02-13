@@ -3229,7 +3229,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 	
 	while (ptr && *ptr) {
 		struct word *word;
-		int sp2, addlen;
+		int sp2, addlen = 0;
 		int wtok;
 		eptr = process_token(ptr, layout, line, &xref, &sp2);
 		if (eptr) {
