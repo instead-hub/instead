@@ -1,4 +1,4 @@
-instead (1.3.1.1) unstable; urgency=low
+instead (1.3.2) unstable; urgency=low
 
   * bug fix (dates in save slots);
   * bug fix (dbg fixes);
