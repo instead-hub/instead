@@ -644,8 +644,7 @@ int game_change_hz(int hz)
 }
 
 unsigned int	timer_counter = 0;
-
-gtimer_t timer_han = NULL;
+gtimer_t timer_han = NULL_TIMER;
 
 static void anigif_do(void *data)
 {
@@ -832,7 +831,7 @@ void game_release_theme(void)
 void game_done(int err)
 {
 	gfx_del_timer(timer_han);
-	timer_han = NULL;
+	timer_han = NULL_TIMER;
 
 	if (opt_autosave && curgame_dir && !err)
 		game_save(0);
@@ -1681,7 +1680,7 @@ inv:
 	}
 	{ /* highlight new scene, to avoid flickering */
 		int x, y;
-		gfx_cursor(&x, &y, NULL, NULL);
+		gfx_cursor(&x, &y);
 		game_highlight(x, y, 1);
 	}
 	game_cursor(CURSOR_DRAW);
@@ -2085,7 +2084,7 @@ void game_cursor(int on)
 		int oh = h;
 
 		if (on != CURSOR_DRAW) { 
-			gfx_cursor(&xc, &yc, NULL, NULL);
+			gfx_cursor(&xc, &yc);
 			xc -= game_theme.cur_x;
 			yc -= game_theme.cur_y;
 		}
@@ -2096,7 +2095,7 @@ void game_cursor(int on)
 		grab = gfx_grab_screen(xc, yc, w, h);
 		if (mouse_focus())
 			gfx_draw(cur, xc, yc);
-	
+
 		if (on != CURSOR_DRAW) {
 			gfx_update(xc, yc, w, h);
 			gfx_update(ox, oy, ow, oh);
@@ -2218,7 +2217,7 @@ static void select_frame(int prev)
 	struct el *elem = NULL;
 	int x, y, w, h;
 	
-	gfx_cursor(&x, &y, NULL, NULL);
+	gfx_cursor(&x, &y);
 	
 	elem = look_obj(x, y);
 	
@@ -2338,7 +2337,7 @@ static int select_ref(int prev, int last)
 	int x, y;
 	struct el 	 *elem = NULL;
 	xref_t		xref = NULL;
-	gfx_cursor(&x, &y, NULL, NULL);
+	gfx_cursor(&x, &y);
 	
 	xref = look_xref(x, y, &elem);
 	
@@ -2379,7 +2378,7 @@ static void game_scroll_up(int count)
 {
 	int xm, ym;
 	struct el *o;
-	gfx_cursor(&xm, &ym, NULL, NULL);
+	gfx_cursor(&xm, &ym);
 	o = look_obj(xm, ym);
 	if (o && (o->id == el_scene || o->id == el_inv)) {
 		scroll_up(o->id, count);
@@ -2390,7 +2389,7 @@ static void game_scroll_down(int count)
 {
 	int xm, ym;
 	struct el *o;
-	gfx_cursor(&xm, &ym, NULL, NULL);
+	gfx_cursor(&xm, &ym);
 	o = look_obj(xm, ym);
 	if (o && (o->id == el_scene || o->id == el_inv)) {
 		scroll_down(o->id, count);
@@ -2401,7 +2400,7 @@ static int game_scroll_pup(void)
 {
 	int xm, ym;
 	struct el *o;
-	gfx_cursor(&xm, &ym, NULL, NULL);
+	gfx_cursor(&xm, &ym);
 	o = look_obj(xm, ym);
 	if (o && (o->id == el_scene || o->id == el_inv)) {
 		return scroll_pup(o->id);
@@ -2413,7 +2412,7 @@ static int game_scroll_pdown(void)
 {
 	int xm, ym;
 	struct el *o;
-	gfx_cursor(&xm, &ym, NULL, NULL);
+	gfx_cursor(&xm, &ym);
 	o = look_obj(xm, ym);
 	if (o && (o->id == el_scene || o->id == el_inv)) {
 		return scroll_pdown(o->id);
@@ -2423,8 +2422,6 @@ static int game_scroll_pdown(void)
 
 static int is_key(struct inp_event *ev, const char *name)
 {
-	if (!ev->sym)
-		return -1;
 	return strcmp(ev->sym, name);
 }
 
@@ -2713,7 +2710,7 @@ int game_loop(void)
 				|| !is_key(&ev, ".")
 			#endif
 				)) {
-				gfx_cursor(&x, &y, NULL, NULL);
+				gfx_cursor(&x, &y);
 				game_highlight(-1, -1, 0); /* reset */
 
 				game_click(x, y, 0, 0); 
@@ -2840,7 +2837,7 @@ int game_loop(void)
 			game_highlight(x, y, 1);
 		else {
 			int x, y;
-			gfx_cursor(&x, &y, NULL, NULL);
+			gfx_cursor(&x, &y);
 			game_highlight(x, y, 1);
 		}
 		game_cursor(CURSOR_ON);

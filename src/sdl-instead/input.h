@@ -14,7 +14,7 @@
 struct inp_event {
 	int 	type;
 	int 	code;
-	char 	*sym;
+	char 	sym[64];
 	int 	x;
 	int 	y;
 	int 	count;
