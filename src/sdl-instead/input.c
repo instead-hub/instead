@@ -67,10 +67,9 @@ int input(struct inp_event *inp, int wait)
 		rc = SDL_PollEvent(&event);
 	if (!rc)
 		return 0;
-	inp->sym = NULL;	
+	inp->sym[0] = 0;
 	inp->type = 0;
 	inp->count = 1;
-
 	switch(event.type){
 	case SDL_ACTIVEEVENT:
 		if (event.active.state & SDL_APPACTIVE) {
@@ -88,7 +87,11 @@ int input(struct inp_event *inp, int wait)
 					mouse_cursor(1); /* is it hack?*/
 			}
 		}
+#if SDL_VERSION_ATLEAST(1,3,0)
+		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_ACTIVEEVENT, SDL_ACTIVEEVENT) > 0)
+#else
 		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_EVENTMASK(SDL_ACTIVEEVENT)) > 0)
+#endif
 			return AGAIN; /* to avoid flickering */
 		return 0;
 	case SDL_USEREVENT: {
@@ -102,19 +105,27 @@ int input(struct inp_event *inp, int wait)
 	case SDL_KEYDOWN:	//A key has been pressed
 		inp->type = KEY_DOWN; 
 		inp->code = event.key.keysym.scancode;
-		inp->sym = SDL_GetKeyName(event.key.keysym.sym);
+		strncpy(inp->sym, SDL_GetKeyName(event.key.keysym.sym), sizeof(inp->sym));
+		inp->sym[sizeof(inp->sym) - 1] = 0;
+		tolow(inp->sym);
 		break;
 	case SDL_KEYUP:
 		inp->type = KEY_UP; 
 		inp->code = event.key.keysym.scancode;
-		inp->sym = SDL_GetKeyName(event.key.keysym.sym);
+		strncpy(inp->sym, SDL_GetKeyName(event.key.keysym.sym), sizeof(inp->sym));
+		inp->sym[sizeof(inp->sym) - 1] = 0;
+		tolow(inp->sym);
 		break;
 	case SDL_MOUSEMOTION:
 		m_focus = 1; /* ahhh */
 		inp->type = MOUSE_MOTION;
 		inp->x = event.button.x;
 		inp->y = event.button.y;
+#if SDL_VERSION_ATLEAST(1,3,0)
+		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEMOTION) > 0) {
+#else
 		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_EVENTMASK (SDL_MOUSEMOTION)) > 0) {
+#endif
 			inp->x = peek.button.x;
 			inp->y = peek.button.y;
 		}
@@ -139,7 +150,11 @@ int input(struct inp_event *inp, int wait)
 			inp->type = MOUSE_WHEEL_UP;
 		else if (event.button.button == 5)
 			inp->type = MOUSE_WHEEL_DOWN;
+#if SDL_VERSION_ATLEAST(1,3,0)
+		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONDOWN) > 0) {
+#else
 		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_EVENTMASK (SDL_MOUSEBUTTONDOWN)) > 0) {
+#endif
 			if (!((event.button.button == 4 &&
 				inp->type == MOUSE_WHEEL_UP) ||
 			    (event.button.button == 5 &&

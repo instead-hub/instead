@@ -588,7 +588,10 @@ img_t gfx_alpha_img(img_t src, int alpha)
 	else
 		img = gfx_new(Surf(src)->w, Surf(src)->h);
 	if (!img)
-		return NULL;	
+		return NULL;
+#if SDL_VERSION_ATLEAST(1,3,0)
+	SDL_SetAlpha(img, SDL_SRCALPHA, 255);
+#endif
 	ptr = (Uint32*)img->pixels;
 	size = img->w * img->h;
 	while (size --) {
@@ -604,7 +607,11 @@ img_t gfx_alpha_img(img_t src, int alpha)
 
 void	gfx_set_alpha(img_t src, int alpha)
 {
+#if SDL_VERSION_ATLEAST(1,3,0)
+	SDL_SetAlpha((SDL_Surface *)src, SDL_SRCALPHA, alpha);
+#else
 	SDL_SetAlpha((SDL_Surface *)src, SDL_SRCALPHA | SDL_RLEACCEL, alpha);
+#endif
 }
 
 img_t gfx_combine(img_t src, img_t dst)
@@ -769,7 +776,11 @@ static img_t _gfx_load_image(char *filename)
 		rwop = SDL_RWFromFile(filename, "rb");
 		if (rwop) {
 			if (IMG_isBMP(rwop))
+#if SDL_VERSION_ATLEAST(1,3,0)
+				SDL_SetAlpha(img, 0, SDL_ALPHA_OPAQUE);
+#else
 				SDL_SetAlpha(img, SDL_RLEACCEL, SDL_ALPHA_OPAQUE);
+#endif
 			SDL_RWclose(rwop);
 		}
 	}
@@ -3596,22 +3607,16 @@ void txt_layout_real_size(layout_t lay, int *pw, int *ph)
 		*ph = h;
 }
 
-void gfx_cursor(int *xp, int *yp, int *w, int *h)
+void gfx_cursor(int *xp, int *yp)
 {
 	int x, y;
-	SDL_Cursor *c = SDL_GetCursor();
-	if (!c)
-		return;
 	SDL_GetMouseState(&x, &y);
-	if (w) 
-		*w = c->area.w - c->hot_x;
-	if (h)
-		*h = c->area.h - c->hot_y;
 	if (xp)
 		*xp = x;
 	if (yp)
 		*yp = y;
 }
+
 void gfx_warp_cursor(int x, int y)
 {
 	SDL_WarpMouse(x, y);
@@ -3685,7 +3690,11 @@ void gfx_done(void)
 
 gtimer_t gfx_add_timer(int delay, int (*fn)(int, void*), void *aux)
 {
+#if SDL_VERSION_ATLEAST(1,3,0)
+	return (gtimer_t)SDL_AddTimer(delay, (SDL_TimerCallback)fn, aux);
+#else
 	return (gtimer_t)SDL_AddTimer(delay, (SDL_NewTimerCallback)fn, aux);
+#endif
 }
 
 void gfx_del_timer(gtimer_t han)

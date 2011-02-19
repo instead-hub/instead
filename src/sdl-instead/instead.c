@@ -7,7 +7,7 @@
 
 /* the Lua interpreter */
 
-static gtimer_t instead_timer = NULL;
+static gtimer_t instead_timer = NULL_TIMER;
 static int instead_timer_nr = 0;
 
 char 		*fromgame(const char *s);
@@ -29,7 +29,7 @@ static int report (lua_State *L, int status)
 		lua_pop(L, 1);	
 		status = -1;
 		gfx_del_timer(instead_timer); /* to avoid error loops */
-		instead_timer = NULL;
+		instead_timer = NULL_TIMER;
 	}
 	return status;
 }
@@ -491,7 +491,7 @@ static int luaB_set_timer(lua_State *L) {
 	const char *delay = luaL_optstring(L, 1, NULL);
 	int d;
 	gfx_del_timer(instead_timer);
-	instead_timer = NULL;
+	instead_timer = NULL_TIMER;
 	if (!delay)
 		d = 0;
 	else	
@@ -613,7 +613,7 @@ int instead_init(void)
 void instead_done(void)
 {
 	gfx_del_timer(instead_timer);
-	instead_timer = NULL;
+	instead_timer = NULL_TIMER;
 #ifdef _HAVE_ICONV
 	if (fromcp)
 		free(fromcp);

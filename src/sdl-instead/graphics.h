@@ -1,6 +1,6 @@
 #ifndef __GRAPHICS_H__
 #define __GRAPHICS_H__
-
+#include <SDL.h>
 /* #define GFX_CACHE_SIZE 64
 #define GFX_MAX_CACHED_W 256
 #define GFX_MAX_CACHED_H 256
@@ -8,7 +8,13 @@
 #define LINK_CACHE_SIZE		64
 */
 
+#if SDL_VERSION_ATLEAST(1,3,0)
+typedef int		gtimer_t;
+#define	NULL_TIMER	0
+#else
 typedef void*	gtimer_t;
+#define	NULL_TIMER	NULL
+#endif
 typedef void*	img_t;
 typedef void*	fnt_t;
 typedef void*	layout_t;
@@ -81,7 +87,7 @@ extern img_t	gfx_display_alpha(img_t src);
 extern img_t	gfx_scale(img_t src, float xscale, float yscale);
 extern void	gfx_draw_bg(img_t p, int x, int y, int width, int height);
 extern void	gfx_draw_from(img_t p, int x, int y, int xx, int yy, int width, int height);
-extern void	gfx_cursor(int *xp, int *yp, int *w, int *h);
+extern void	gfx_cursor(int *xp, int *yp);
 extern void	gfx_warp_cursor(int x, int y);
 extern void	gfx_change_screen(img_t src, int steps);
 extern int	gfx_fading(void);
