@@ -2665,6 +2665,10 @@ int game_loop(void)
 			!is_key(&ev, "f4") || 
 			!is_key(&ev, "f5")
 #endif
+#ifdef ANDROID
+			|| ev.code == 118
+#endif
+
 			) {
 				if (use_xref)
 					disable_use();
@@ -2698,7 +2702,11 @@ int game_loop(void)
 				mouse_reset(1);
 				game_menu_act("/new");
 				shift_pressed = alt_pressed = 0;
-			} else if (!is_key(&ev, "f10")) {
+			} else if (!is_key(&ev, "f10")
+#ifdef ANDROID
+					|| ev.code == 270
+#endif
+			) {
 #ifdef ANDROID
 				break;
 #else
