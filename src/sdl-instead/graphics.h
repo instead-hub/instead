@@ -1,6 +1,6 @@
 #ifndef __GRAPHICS_H__
 #define __GRAPHICS_H__
-#include <SDL.h>
+#include <SDL_version.h>
 /* #define GFX_CACHE_SIZE 64
 #define GFX_MAX_CACHED_W 256
 #define GFX_MAX_CACHED_H 256
