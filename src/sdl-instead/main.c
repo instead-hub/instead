@@ -1,4 +1,4 @@
-#if defined(__APPLE__) || defined(S60)
+#if defined(__APPLE__) || defined(S60) || defined(ANDROID)
 #include <SDL.h>
 #endif
 
