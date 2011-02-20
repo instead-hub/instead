@@ -3647,7 +3647,7 @@ static void update_gfx(void *aux)
 			gfx_draw(img2, 0, 0);
 			gfx_free_image(img2);
 		}
-	}
+	} while(0);
 #else
 	gfx_set_alpha(img, (255 * (fade_step_nr + 1)) / ALPHA_STEPS);
 	gfx_draw(fade_bg, 0, 0);
