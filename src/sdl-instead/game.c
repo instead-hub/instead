@@ -1158,7 +1158,7 @@ void game_menu_box_width(int show, const char *txt, int width)
 			menu = img2;
 		}
 	} while(0);
-#esle
+#else
 	gfx_set_alpha(menu, game_theme.menu_alpha);
 #endif
 	x = (game_theme.w - w)/2;
