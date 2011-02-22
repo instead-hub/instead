@@ -1033,8 +1033,9 @@ void gfx_clear(int x, int y, int w, int h)
 	SDL_FillRect(screen, &dest, SDL_MapRGB(screen->format, bgcol.r, bgcol.g, bgcol.b));
 }
 
-int gfx_width;
-int gfx_height;
+int gfx_width = -1;
+int gfx_height = -1;
+int gfx_fs = -1;
 
 static SDL_Rect** vid_modes = NULL;
 static SDL_Rect m640x480 = { .w = 640, .h = 480 };
@@ -1157,6 +1158,9 @@ int gfx_get_max_mode(int *w, int *h)
 
 int gfx_set_mode(int w, int h, int fs)
 {
+	if (gfx_width == w && gfx_height == h && gfx_fs == fs)
+		return 0; /* already done */
+	gfx_fs = fs;
 	gfx_width = w;
 	gfx_height = h;
 	SDL_ShowCursor(SDL_DISABLE);
