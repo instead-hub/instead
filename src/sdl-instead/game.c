@@ -2700,12 +2700,15 @@ int game_loop(void)
 				mouse_reset(1);
 				game_menu(menu_load);
 			} else if (!is_key(&ev, "f8") && curgame_dir && !menu_shown) {
-				game_save(9);
+				if (game_saves_enabled())
+					game_save(9);
 			} else if (!is_key(&ev, "f9") && curgame_dir && !menu_shown) {
-				if (!access(game_save_path(0, 9), R_OK)) {
-					if (!game_reset())
-						game_load(9);
-				}	
+				if (game_saves_enabled()) {
+					if (!access(game_save_path(0, 9), R_OK)) {
+						if (!game_reset())
+							game_load(9);
+					}
+				}
 			} else if (!is_key(&ev, "f5") && curgame_dir && !menu_shown) {
 				mouse_reset(1);
 				game_cmd("look");
