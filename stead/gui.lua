@@ -273,10 +273,6 @@ fmt = function(...)
 	local i, res
 	local a={...}
 
-	if stead.table.maxn(a) == 0 then
-		return false
-	end
-
 	for i=1,stead.table.maxn(a) do
 		if type(a[i]) == 'string' then
 			local s = stead.string.gsub(a[i],'\t', ' '):gsub('[\n]+', ' ');
