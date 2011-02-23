@@ -13,7 +13,7 @@ game.action = stead.hook(game.action, function(f, s, cmd, ...)
 		end
 		return r,v
 	end
-	return f(s, cmd, unpack(arg));
+	return f(s, cmd, ...);
 end)
 
 stead.module_init(function()
@@ -22,22 +22,24 @@ stead.module_init(function()
 			input.key_event = { key = key, down = down };
 			return 'user_kbd'
 		end
-		return f(s, down, key, unpack(arg))
+		return f(s, down, key, ...)
 	end)
 	input._key_hooks = {}
 end)
 
 function hook_keys(...)
 	local i
-	for i = 1, stead.table.maxn(arg) do
-		input._key_hooks[tostring(arg[i])] = true;
+	local a = {...};
+	for i = 1, stead.table.maxn(a) do
+		input._key_hooks[tostring(a[i])] = true;
 	end
 end
 
 function unhook_keys(...)
 	local i
-	for i = 1, stead.table.maxn(arg) do
-		input._key_hooks[tostring(arg[i])] = nil;
+	local a = {...};
+	for i = 1, stead.table.maxn(a) do
+		input._key_hooks[tostring(a[i])] = nil;
 	end
 end
 

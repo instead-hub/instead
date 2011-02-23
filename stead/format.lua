@@ -22,7 +22,7 @@ format = {
 
 stead.fmt = stead.hook(stead.fmt, function(f, ...)
 	local utf8
-	local r = f(unpack(arg))
+	local r = f(...)
 	if game.codepage == 'UTF-8' or game.codepage == 'utf-8' then
 		utf8 = true
 	end

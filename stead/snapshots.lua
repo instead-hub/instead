@@ -5,8 +5,9 @@ stead.make_snapshot = function(nr)
 	h.txt = ''
 	h.write = function(s, ...)
 		local i
-		for i = 1, stead.table.maxn(arg) do
-			s.txt = s.txt .. tostring(arg[i]);
+		local a = {...};
+		for i = 1, stead.table.maxn(a) do
+			s.txt = s.txt .. tostring(a[i]);
 		end
 	end
 	local old = game._snapshots; game._snapshots = nil
@@ -65,7 +66,7 @@ function delete_snapshot(nr)
 end
 
 iface.cmd = stead.hook(iface.cmd, function(f, ...)
-	local r,v = f(unpack(arg));
+	local r,v = f(...);
 	if MAKE_SNAPSHOT ~= nil then
 		stead.make_snapshot(MAKE_SNAPSHOT);
 		MAKE_SNAPSHOT = nil

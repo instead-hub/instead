@@ -117,7 +117,7 @@ function player_go(self, where) -- cmd iface
 end
 
 function player_goto(self, where, ...) -- real work
-	local v, r = stead.go(self, where, unpack(arg));
+	local v, r = stead.go(self, where, ...);
 	return v, r;
 end
 
@@ -139,7 +139,7 @@ end
 stead.goback = goback
 
 function goto(what, back, noenter, noexit, nodsc, ...)
-	return me():goto(what, back, noenter, noexit, nodsc, unpack(arg));
+	return me():goto(what, back, noenter, noexit, nodsc, ...);
 end
 stead.goto = goto
 
@@ -189,7 +189,7 @@ iface.fmt = function(self, cmd, st, moved, r, av, objs, pv) -- st -- changed sta
 end
 
 stead.go = stead.hook(stead.go, function(f, ...)
-	local r,v = f(unpack(arg))
+	local r,v = f(...)
 	if type(r) == 'string' and cctx() then 
 		pr (r)
 	end
@@ -208,7 +208,7 @@ end)
 
 iface.cmd = stead.hook(iface.cmd, function(f, ...)
 	NEED_SCENE = nil
-	return f(unpack(arg))
+	return f(...)
 end)
 
 player  = stead.inherit(player, function(v)

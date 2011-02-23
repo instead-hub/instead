@@ -5,13 +5,13 @@ function player_action(self, what, ...)
 		obj = ref(self.where):srch(what);
 	end
 	if not obj then
-		return call(game, 'action', what, unpack(arg)); --player_do(self, what, unpack(arg));
+		return call(game, 'action', what, ...); --player_do(self, what, ...);
 	end
-	v, r = player_take(self, what, unpack(arg));
+	v, r = player_take(self, what, ...);
 	if not v then
-		v, r = call(obj, 'act', unpack(arg));
+		v, r = call(obj, 'act', ...);
 		if not v and r ~= true then
-			v, r = call(game, 'act', obj, unpack(arg));
+			v, r = call(game, 'act', obj, ...);
 		end
 	end
 	return v, r;
@@ -32,12 +32,12 @@ function player_use(self, what, onwhat, ...)
 	end
 	if onwhat == nil then -- only one?
 		if scene_use_mode then
-			return self:action(what, unpack(arg)); -- call act
+			return self:action(what, ...); -- call act
 		else
-			v, r = call(ref(obj),'inv', unpack(arg)); -- call inv
+			v, r = call(ref(obj),'inv', ...); -- call inv
 		end
 		if not v and r ~= true then
-			v, r = call(game, 'inv', obj, unpack(arg));
+			v, r = call(game, 'inv', obj, ...);
 		end
 		return v, r;
 	end
@@ -53,13 +53,13 @@ function player_use(self, what, onwhat, ...)
 	obj2 = ref(obj2)
 
 	if not scene_use_mode or isSceneUse(obj) then
-		v, r = call(obj, 'use', obj2, unpack(arg));
+		v, r = call(obj, 'use', obj2, ...);
 		if r ~= false then
-			vv = call(obj2, 'used', obj, unpack(arg));
+			vv = call(obj2, 'used', obj, ...);
 		end
 	end
 	if not v and not vv then
-		v, r = call(game, 'use', obj, obj2, unpack(arg));
+		v, r = call(game, 'use', obj, obj2, ...);
 	end
 	return stead.par(' ', v, vv);
 end
@@ -83,17 +83,17 @@ function vobj_act(self, ...)
 	if ref(o) and ref(o).where then
 		return goto(ref(o).where);
 	end
-	return call(ref(r),'act', self.nam, unpack(arg));
+	return call(ref(r),'act', self.nam, ...);
 end
 
 function vobj_used(self, ...)
 	local o, r = here():srch(self.nam);
-	return call(ref(r),'used', self.nam, unpack(arg));
+	return call(ref(r),'used', self.nam, ...);
 end
 
 function vobj_use(self, ...)
 	local o, r = here():srch(self.nam);
-	return call(ref(r),'use', self.nam, unpack(arg));
+	return call(ref(r),'use', self.nam, ...);
 end
 
 function vobj(name, dsc, w)
