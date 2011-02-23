@@ -27,7 +27,7 @@ stead.module_init(function()
 				return cmd
 			end
 		end
-		return f(s, press, mb, x, y, px, py, unpack(arg))
+		return f(s, press, mb, x, y, px, py, ...)
 	end)
 end)
 
@@ -36,15 +36,15 @@ function(f, s, cmd, x, y, ...)
 	if cmd == 'click' then
 		local r,v
 		if here().click then
-			r,v = call(here(), 'click', x, y, unpack(arg));
+			r,v = call(here(), 'click', x, y, ...);
 		elseif s.click then
-			r,v = call(s, 'click', x, y, unpack(arg));
+			r,v = call(s, 'click', x, y, ...);
 		end
 		if r == nil and v == nil then
 			return nil, true
 		end
 		return r,v
 	end
-	return f(s, cmd, x, y, unpack(arg))
+	return f(s, cmd, x, y, ...)
 end)
 -- vim:ts=4

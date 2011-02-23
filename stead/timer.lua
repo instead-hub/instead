@@ -11,7 +11,7 @@ game.action = stead.hook(game.action, function(f, s, cmd, ...)
 		end
 		return r,v
 	end
-	return f(s, cmd, unpack(arg));
+	return f(s, cmd, ...);
 end)
 
 stead.module_init(function()

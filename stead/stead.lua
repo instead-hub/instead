@@ -23,11 +23,11 @@ stead = {
 		end
 		if event == 'kbd' then
 			if type(input.key) == 'function' then
-				return input:key(unpack(arg)); -- pressed, event
+				return input:key(...); -- pressed, event
 			end
 		elseif event == 'mouse' then
 			if type(input.click) == 'function' then
-				return input:click(unpack(arg)); -- pressed, x, y, mb
+				return input:click(...); -- pressed, x, y, mb
 			end
 		end
 		return
@@ -97,16 +97,16 @@ end
 function callpush(v, ...)
 	stead.call_top = stead.call_top + 1;
 	stead.cctx[stead.call_top] = { txt = nil, self = v, action = false };
-	args = arg
-	arg1 = arg[1]
-	arg2 = arg[2]
-	arg3 = arg[3]
-	arg4 = arg[4]
-	arg5 = arg[5]
-	arg6 = arg[6]
-	arg7 = arg[7]
-	arg8 = arg[8]
-	arg9 = arg[9]
+	args = {...};
+	arg1 = args[1]
+	arg2 = args[2]
+	arg3 = args[3]
+	arg4 = args[4]
+	arg5 = args[5]
+	arg6 = args[6]
+	arg7 = args[7]
+	arg8 = args[8]
+	arg9 = args[9]
 	-- dirty but clean and fast :)
 	self = v
 end
@@ -146,35 +146,38 @@ end
 stead.pget = pget
 function p(...)
 	local i
-	for i = 1, stead.table.maxn(arg) do
-		cctx().txt = stead.par('',cctx().txt, tostring(arg[i]));
+	local a = {...}
+	for i = 1, stead.table.maxn(a) do
+		cctx().txt = stead.par('',cctx().txt, tostring(a[i]));
 	end
 	cctx().txt = stead.cat(cctx().txt, ' ');
 end
 stead.p = p
 function pr(...)
 	local i
-	for i = 1, stead.table.maxn(arg) do
-		cctx().txt = stead.par('',cctx().txt, tostring(arg[i]));
+	local a = {...}
+	for i = 1, stead.table.maxn(a) do
+		cctx().txt = stead.par('',cctx().txt, tostring(a[i]));
 	end
 end
 stead.pr = pr
 function pn(...)
-	p(unpack(arg));
+	p(...);
 	cctx().txt = stead.par('',cctx().txt,'^');
 end
 stead.pn = pn
 -- merge strings with "space" as separator
 function par(space,...)
 	local i, res
-	for i = 1, stead.table.maxn(arg) do
-		if type(arg[i]) == 'string' then
+	local a = {...};
+	for i = 1, stead.table.maxn(a) do
+		if type(a[i]) == 'string' then
 			if res == nil then
 				res = ""
 			else
 				res = res..space;
 			end
-			res = res..arg[i];
+			res = res..a[i];
 		end 
 	end
 	return res;
@@ -187,9 +190,10 @@ function cat(v,...)
 		return nil
 	end
 	res = v;
-	for i = 1, stead.table.maxn(arg) do
-		if type(arg[i]) == 'string' then
-			res = res..arg[i];
+	local a = {...}
+	for i = 1, stead.table.maxn(a) do
+		if type(a[i]) == 'string' then
+			res = res..a[i];
 		end 
 	end
 	return res;
@@ -282,12 +286,13 @@ end
 
 fmt = function(...)
 	local i, res
-	if arg == nil then
+	local a = {...};
+	if stead.table.maxn(a) == 0 then
 		return false
 	end
-	for i=1,stead.table.maxn(arg) do
-		if type(arg[i]) == 'string' then
-			local s = stead.string.gsub(arg[i],'[\t ]+',' ');
+	for i=1,stead.table.maxn(a) do
+		if type(a[i]) == 'string' then
+			local s = stead.string.gsub(a[i],'[\t ]+',' ');
 			s = stead.string.gsub(s, '[\n]+', ' ');
 			s = stead.string.gsub(s, '\\?[\\^]', { ['^'] = '\n', ['\\^'] = '^', ['\\\\'] = '\\'} );
 			res = stead.par('', res, s);
@@ -804,8 +809,8 @@ function call(v, n, ...)
 		return v[n];
 	end
 	if type(v[n]) == 'function' then
-		callpush(v, unpack(arg))
-		local a,b = v[n](v, unpack(arg));
+		callpush(v, ...)
+		local a,b = v[n](v, ...);
 		-- boolean, nil
 		if type(a) == 'boolean' and b == nil then
 			b, a = a, stead.pget()
@@ -847,8 +852,8 @@ function call_bool(v, n, ...)
 	end
 	
 	if type(v[n]) == 'function' then
-		callpush(v, unpack(arg))
-		local r,v = v[n](v, unpack(arg));
+		callpush(v, ...)
+		local r,v = v[n](v, ...);
 		callpop();
 		return r,v;
 	end
@@ -867,8 +872,8 @@ function call_value(v, n, ...)
 	if type(v[n]) ~= 'function' then
 		return v[n];
 	end
-	callpush(v, unpack(arg))
-	local r,v = v[n](v, unpack(arg));
+	callpush(v, ...)
+	local r,v = v[n](v, ...);
 	callpop();
 	return r,v;
 end
@@ -1003,11 +1008,12 @@ end
 
 function phrase_seen(s, enb, ...)
 	local i, ph
-	if stead.table.maxn(arg) == 0 then
-		stead.table.insert(arg, self);
+	local a = {...}
+	if stead.table.maxn(a) == 0 then
+		stead.table.insert(a, self);
 	end
-	for i=1,stead.table.maxn(arg) do
-		ph = dialog_phrase(s, arg[i]);
+	for i=1,stead.table.maxn(a) do
+		ph = dialog_phrase(s, a[i]);
 		local r = not isPhrase(ph) or isRemoved(ph) or ph:disabled();
 		if not enb then r = not r end
 		if r then return false end
@@ -1017,20 +1023,21 @@ end
 
 
 function dialog_pseen(s, ...)
-	return phrase_seen(s, true, unpack(arg));
+	return phrase_seen(s, true, ...);
 end
 
 function dialog_punseen(s, ...)
-	return phrase_seen(s, false, unpack(arg));
+	return phrase_seen(s, false, ...);
 end
 
 function ponoff(s, on, ...)
 	local i, ph
-	if stead.table.maxn(arg) == 0 then
-		stead.table.insert(arg, self);
+	local a = {...}
+	if stead.table.maxn(a) == 0 then
+		stead.table.insert(a, self);
 	end
-	for i=1,stead.table.maxn(arg) do
-		ph = dialog_phrase(s, arg[i]);
+	for i=1,stead.table.maxn(a) do
+		ph = dialog_phrase(s, a[i]);
 		if isPhrase(ph) and not isRemoved(ph) then
 			if on then
 				ph:enable();
@@ -1043,11 +1050,12 @@ end
 
 function dialog_prem(s, ...)
 	local i, ph
-	if stead.table.maxn(arg) == 0 then
-		stead.table.insert(arg, self);
+	local a = {...}
+	if stead.table.maxn(a) == 0 then
+		stead.table.insert(a, self);
 	end
-	for i=1,stead.table.maxn(arg) do
-		ph = dialog_phrase(s, arg[i]);
+	for i=1,stead.table.maxn(a) do
+		ph = dialog_phrase(s, a[i]);
 		if isPhrase(ph) then
 			ph:remove();
 		end
@@ -1055,11 +1063,11 @@ function dialog_prem(s, ...)
 end
 
 function dialog_pon(self,...)
-	return ponoff(self, true, unpack(arg));
+	return ponoff(self, true, ...);
 end
 
 function dialog_poff(self,...)
-	return ponoff(self, false, unpack(arg));
+	return ponoff(self, false, ...);
 end
 
 function dlg(v) --constructor
@@ -1243,13 +1251,13 @@ function player_action(self, what, ...)
 	local v,r,obj
 	obj = ref(self.where):srch(what);
 	if not obj then
-		return call(ref(game), 'action', what, unpack(arg)); --player_do(self, what, unpack(arg));
+		return call(ref(game), 'action', what, ...); --player_do(self, what, ...);
 	end
-	v, r = player_take(self, what, unpack(arg));
+	v, r = player_take(self, what, ...);
 	if not v then
-		v, r = call(ref(obj), 'act', unpack(arg));
+		v, r = call(ref(obj), 'act', ...);
 		if not v and r ~= true then
-			v, r = call(ref(game), 'act', obj, unpack(arg));
+			v, r = call(ref(game), 'act', obj, ...);
 		end
 	end
 	return v, r;
@@ -1261,7 +1269,7 @@ function player_take(self, what, ...)
 	if not obj then
 		return nil, false;
 	end
-	v,r = call(ref(obj), 'tak', unpack(arg));
+	v,r = call(ref(obj), 'tak', ...);
 	if v and r ~= false then
 		take(obj, w);
 	end
@@ -1282,12 +1290,12 @@ function player_use(self, what, onwhat, ...)
 	end
 	if onwhat == nil then -- only one?
 		if scene_use_mode then
-			return self:action(what, unpack(arg)); -- call act
+			return self:action(what, ...); -- call act
 		else
-			v, r = call(ref(obj),'inv', unpack(arg)); -- call inv
+			v, r = call(ref(obj),'inv', ...); -- call inv
 		end
 		if not v and r ~= true then
-			v, r = call(game, 'inv', obj, unpack(arg));
+			v, r = call(game, 'inv', obj, ...);
 		end
 		return v, r;
 	end
@@ -1299,13 +1307,13 @@ function player_use(self, what, onwhat, ...)
 		return game.err, false;
 	end
 	if not scene_use_mode or isSceneUse(ref(obj)) then
-		v, r = call(ref(obj), 'use', obj2, unpack(arg));
+		v, r = call(ref(obj), 'use', obj2, ...);
 		if r ~= false then
-			vv = call(ref(obj2), 'used', obj, unpack(arg));
+			vv = call(ref(obj2), 'used', obj, ...);
 		end
 	end
 	if not v and not vv then
-		v, r = call(game, 'use', obj, obj2, unpack(arg));
+		v, r = call(game, 'use', obj, obj2, ...);
 	end
 	return stead.par(' ', v, vv);
 end
@@ -1387,7 +1395,7 @@ function go(self, where, back)
 end
 
 function player_goto(self, where, ...)
-	local v, r = go(self, where, unpack(arg));
+	local v, r = go(self, where, ...);
 	return v, r;
 end
 
@@ -1519,7 +1527,7 @@ function for_everything(f, ...)
 	local is_ok = function(s)
 		return true
 	end
-	for_each(_G, '_G', f, is_ok, unpack(arg))
+	for_each(_G, '_G', f, is_ok, ...)
 end
 
 function do_ini(self, load)
@@ -1531,7 +1539,7 @@ function do_ini(self, load)
 		stead.functions[o].key_name = k;
 	end
 	local function call_ini(k, o, ...)
-		v = stead.par('', v, call(o, 'ini'), unpack(arg));
+		v = stead.par('', v, call(o, 'ini'), ...);
 	end
 
 	math.randomseed(tonumber(os.date("%m%d%H%M%S")))
@@ -1639,7 +1647,7 @@ function for_each(o, n, f, fv, ...)
 					nn = n.."."..k;
 				end
 			end
-			f(k, v, unpack(arg));
+			f(k, v, ...);
 		end
 	end
 end
@@ -1648,23 +1656,23 @@ function isCode(s)
 	return type(s) == 'function' and type(stead.functions[s]) == 'table'
 end
 function for_each_codeblock(f,...)
-	for_each(_G, '_G', f, isCode, unpack(arg))
+	for_each(_G, '_G', f, isCode, ...)
 end
 
 function for_each_object(f,...)
-	for_each(_G, '_G', f, isObject, unpack(arg))
+	for_each(_G, '_G', f, isObject, ...)
 end
 
 function for_each_player(f,...)
-	for_each(_G, '_G', f, isPlayer, unpack(arg))
+	for_each(_G, '_G', f, isPlayer, ...)
 end
 
 function for_each_room(f,...)
-	for_each(_G, '_G', f, isRoom, unpack(arg))
+	for_each(_G, '_G', f, isRoom, ...)
 end
 
 function for_each_list(f,...)
-	for_each(_G, '_G', f, isList, unpack(arg))
+	for_each(_G, '_G', f, isList, ...)
 end
 
 function clearvar (v)
@@ -2170,40 +2178,40 @@ end
 
 function xref(str, obj, ...)
 	if type(str) ~= 'string' then return nil; end; 
-	return iface:xref(str, obj, unpack(arg));
+	return iface:xref(str, obj, ...);
 end
 
 function pseen(...)
 	if not isDialog(here()) then
 		return
 	end
-	return here():pseen(unpack(arg));
+	return here():pseen(...);
 end
 
 function punseen(...)
 	if not isDialog(here()) then
 		return
 	end
-	return here():punseen(unpack(arg));
+	return here():punseen(...);
 end
 
 function pon(...)
 	if not isDialog(here()) then
 		return
 	end
-	here():pon(unpack(arg));
+	here():pon(...);
 end
 function poff(...)
 	if not isDialog(here()) then
 		return
 	end
-	here():poff(unpack(arg));
+	here():poff(...);
 end
 function prem(...)
 	if not isDialog(here()) then
 		return
 	end
-	here():prem(unpack(arg));
+	here():prem(...);
 end
 
 function lifeon(what)
@@ -2279,12 +2287,12 @@ function vobj_act(self, ...)
 	if ref(o) and ref(o).where then
 		return goto(ref(o).where);
 	end
-	return call(ref(r),'act', self.key, unpack(arg));
+	return call(ref(r),'act', self.key, ...);
 end
 
 function vobj_used(self, ...)
 	local o, r = here():srch(self.nam);
-	return call(ref(r),'used', self.key, unpack(arg));
+	return call(ref(r),'used', self.key, ...);
 end
 
 function vobj(key, name, dsc, w)
@@ -2700,7 +2708,7 @@ end
 
 function inherit(o, f)
 	return function(...)
-		return f(o(unpack(arg)))
+		return f(o(...))
 	end
 end
 stead.inherit = inherit
@@ -2715,7 +2723,7 @@ function hook(o, f)
 		else
 			ff = o
 		end
-		return f(ff, unpack(arg))
+		return f(ff, ...)
 	end
 end
 stead.hook = hook

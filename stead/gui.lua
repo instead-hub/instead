@@ -27,8 +27,9 @@ iface.xref = function(self, str, obj, ...)
 	end
 	local a = ''
 	local i
-	for i = 1, stead.table.maxn(arg) do
-		a = a..','..arg[i]
+	local varg = {...}
+	for i = 1, stead.table.maxn(varg) do
+		a = a..','..varg[i]
 	end
 	if isXaction(o) and not o.id then
 		return stead.cat('<a:'..cmd..deref(obj)..a..'>',str,'</a>');
@@ -270,12 +271,15 @@ end
 
 fmt = function(...)
 	local i, res
-	if arg == nil then
+	local a={...}
+
+	if stead.table.maxn(a) == 0 then
 		return false
 	end
-	for i=1,stead.table.maxn(arg) do
-		if type(arg[i]) == 'string' then
-			local s = stead.string.gsub(arg[i],'\t', ' '):gsub('[\n]+', ' ');
+
+	for i=1,stead.table.maxn(a) do
+		if type(a[i]) == 'string' then
+			local s = stead.string.gsub(a[i],'\t', ' '):gsub('[\n]+', ' ');
 			s = stead.string.gsub(s, '\\?[\\^]', { ['^'] = '\n', ['\\^'] = '^',
 				['\\\\'] = '\\' });
 			res = stead.par('', res, s);

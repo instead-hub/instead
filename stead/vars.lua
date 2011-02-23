@@ -81,7 +81,7 @@ vars_object = obj {
 obj = stead.hook(obj, 
 function(f, v, ...)
 	__vars_fill(v)
-	return f(v, unpack(arg))
+	return f(v, ...)
 end)
 
 stead.module_init(function()

@@ -203,7 +203,7 @@ game.action = stead.hook(game.action, function (f, s, cmd, ...)
 --		end
 		return r,v -- nothing todo
 	end
-	return f(s, cmd, unpack(arg))
+	return f(s, cmd, ...)
 end)
 
 lookup_inp = function()
@@ -257,9 +257,9 @@ stead.module_init(function()
 	input.cursor = '_'
 	input.key = stead.hook(input.key,
 	function(f, ...)
-		local r = input_kbd(unpack(arg))
+		local r = input_kbd(...)
 		if r then return r end
-		return f(unpack(arg))
+		return f(...)
 	end)
 end)
 

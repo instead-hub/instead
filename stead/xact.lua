@@ -82,9 +82,10 @@ end
 
 stead.fmt = stead.hook(stead.fmt, function(f, ...)
 	local i, res, s
-	for i=1,stead.table.maxn(arg) do
-		if type(arg[i]) == 'string' then
-			s = __do_xact(arg[i]);
+	local a = {...}
+	for i=1,stead.table.maxn(a) do
+		if type(a[i]) == 'string' then
+			s = __do_xact(a[i]);
 			res = stead.par('', res, s):gsub('\\?[\\{}]', { [ '\\{' ] = '{', [ '\\}' ] = '}' });
 		end
 	end
@@ -123,7 +124,7 @@ end
 xroom = stead.inherit(room, function(v)
 	v.look = stead.hook(v.look, function(f, s,...)
 		local xdsc = call(s, 'xdsc');
-		return par(' ', xdsc, f(s, unpack(arg)));
+		return par(' ', xdsc, f(s, ...));
 	end)
 	return v
 end)

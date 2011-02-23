@@ -344,14 +344,14 @@ function (f, s, cmd, ...)
 	if cmd == 'use_debug' then
 		return debug_tool:inv()
 	end
-	return f(s, cmd, unpack(arg))
+	return f(s, cmd, ...)
 end)
 
 stead.module_init(function()
 	input.key = stead.hook(input.key,
 	function(f, s, down, key, ...)
 		if not here().debug and down and key == 'f7' then return 'use_debug' end
-		return f(s, down, key, unpack(arg))
+		return f(s, down, key, ...)
 	end)
 	putf('debug_tool', me());
 end)
