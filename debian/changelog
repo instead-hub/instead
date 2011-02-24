@@ -6,6 +6,7 @@ instead (1.3.2) unstable; urgency=low
   * small bug fixes;
   * s60 build;
   * SDL 1.3 ready;
+  * it lang and tutorial;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 14 Feb 2011 16:24:00 +0300  
 
