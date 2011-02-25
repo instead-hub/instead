@@ -4,7 +4,7 @@ Version:	1.3.2
 Release:	1%{?dist}
 License:	GPLv2
 URL:		http://instead.googlecode.com
-Source0:	%{name}-%{version}.tar.gz
+Source0:	%{name}_%{version}.tar.gz
 Group:		Amusements/Games
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n) 
 
