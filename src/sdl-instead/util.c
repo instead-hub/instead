@@ -5,7 +5,8 @@
 void tolow(char *p)
 {
 	while (*p) {
-		*p |= 0x20;
+		if (*p >=  'A' && *p <= 'Z')
+			*p |= 0x20;
 		p ++;
 	}
 }
