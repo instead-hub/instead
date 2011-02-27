@@ -1,3 +1,9 @@
+instead (1.3.3) unstable; urgency=low
+
+  * bug fix (kbd input);
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 27 Feb 2011 20:27:00 +0300  
+
 instead (1.3.2) unstable; urgency=low
 
   * bug fix (dates in save slots);
