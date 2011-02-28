@@ -2,6 +2,8 @@ clean:
 all:
 install:
 	if not exist ..\bin\doc mkdir ..\bin\doc
+	if not exist ..\bin\doc\modules mkdir ..\bin\doc\modules
 	copy /Y *.txt ..\bin\doc
 	copy /Y *.html ..\bin\doc
 	copy /Y *.pdf ..\bin\doc
+	copy /Y modules\*.txt ..\bin\doc\modules
