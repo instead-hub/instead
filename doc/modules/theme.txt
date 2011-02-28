@@ -1,0 +1,60 @@
+====== Модуль Theme ======
+
+^ Подключение          | require "theme"        |
+^ Тип                  | игровой |
+^ Зависимости          | нет                     |
+
+===== Описание =====
+Начиная с версии 1.3.0, модуль theme позволяет модифицировать параметры темы на лету.
+Для этого, используются следующие функции:
+<code lua>
+-- настройка окна вывода
+win.geom(x, y, w, h)
+win.color(fg, link, alink)
+win.font(name, size, height)
+win.gfx.up(pic, x, y)
+win.gfx.down(pic, x, y)
+
+-- настройка инвентаря
+inv.geom(x, y, w, h)
+inv.color(fg, link, alink)
+inv.font(name, size, height)
+inv.gfx.up(pic, x, y)
+inv.gfx.down(pic, x, y)
+inv.mode(mode)
+
+-- настройка меню
+menu.bw(w)
+menu.color(fg, link, alink)
+menu.font(name, size, height)
+menu.gfx.button(pic, x, y)
+	
+-- настройка графики
+gfx.cursor(norm, use, x, y)
+gfx.mode(mode)
+gfx.pad(pad)
+gfx.bg(bg)
+
+-- настройка звука
+snd.click(name);
+</code>
+
+Если необходимо изменить только часть параметров, в качестве неизменяемых параметров можно указывать значение nil. Например:
+<code lua>
+win.font(nil, 64);
+</code>
+
+Существует возможность чтения текущих параметров тем:
+<code lua>
+theme.get 'имя переменной темы';
+</code>
+===== Примеры использования =====
+
+<code lua>
+gfx.bg "dramatic_bg.png";
+win.geom (0,0, theme.get 'scr.w', theme.get 'scr.h');
+inv.mode 'disabled'
+</code>
+
+
+
