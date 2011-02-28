@@ -436,9 +436,11 @@ int game_menu_act(const char *a)
 		opt_hl ^= 1;
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/fs")) {
+#ifndef ANDROID
 		restart_needed = 1;
 		opt_fs ^= 1;
 		game_menu_box(1, game_menu_gen());
+#endif
 	} else if (!strncmp(a, "/games ", 7)) {
 		if (!strcmp(a + 7, "prev")) {
 			games_menu_from -= MENU_GAMES_MAX;
