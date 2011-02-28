@@ -21,6 +21,7 @@ Source: games\tutorial2-es\*; DestDir: {app}\games\tutorial2-es
 Source: games\tutorial2-it\*; DestDir: {app}\games\tutorial2-it
 Source: icon\*; DestDir: {app}\icon
 Source: doc\*; DestDir: {app}\doc
+Source: doc\modules\*; DestDir: {app}\doc\modules
 Source: stead\*; DestDir: {app}\stead
 Source: languages\*; DestDir: {app}\languages
 Source: themes\default\*; DestDir: {app}\themes\default
