@@ -704,6 +704,12 @@ int game_theme_init(void)
 	}
 
 	game_theme_scale(w, h);
+
+	if (gfx_set_mode(game_theme.w, game_theme.h, opt_fs)) {
+		opt_mode[0] = opt_mode[1] = -1; opt_fs = 0; /* safe options */
+		return -1;
+	}
+
 	if (game_theme_update_data()) {
 		fprintf(stderr, "Can not init theme!\n");
 		game_theme_free();
