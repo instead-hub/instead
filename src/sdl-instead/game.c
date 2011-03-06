@@ -740,20 +740,12 @@ int game_init(const char *name)
 
 	if (name)
 		game_err_msg(NULL);
-#ifndef ANDROID
-	if (gfx_video_init() || input_init())
-		return -1;	
-#endif
+
 	snd_init(opt_hz);
 	game_change_vol(0, opt_vol);
 
 	if (game_select(name))
 		return -1;
-
-	if (gfx_set_mode(game_theme.w, game_theme.h, opt_fs)) {
-		opt_mode[0] = opt_mode[1] = -1; opt_fs = 0; /* safe options */
-		return -1;
-	}
 
 	if (game_theme_optimize())
 		return -1;
@@ -846,9 +838,9 @@ void game_done(int err)
 	input_clear();
 	snd_done();
 	instead_done();
-#ifndef ANDROID
-	gfx_video_done();
-#endif
+//#ifndef ANDROID
+//	gfx_video_done();
+//#endif
 	curgame_dir = NULL;
 	game_own_theme = 0;
 //	SDL_Quit();
