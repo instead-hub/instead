@@ -99,6 +99,7 @@ out:
 
 int game_select(const char *name)
 {
+	int rc;
 	struct game *g;
 	FREE(last_cmd);
 	game_stop_mus(500);
@@ -134,9 +135,9 @@ int game_select(const char *name)
 			return -1;
 		}
 
-		instead_function("game:ini", NULL); instead_clear();
+		rc = instead_function("game:ini", NULL); instead_clear();
 
-		return 0;
+		return rc;
 	} else {
 		game_use_theme();
 		game_theme_init();
