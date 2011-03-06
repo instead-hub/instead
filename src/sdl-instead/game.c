@@ -740,10 +740,10 @@ int game_init(const char *name)
 
 	if (name)
 		game_err_msg(NULL);
-
-//	if (gfx_video_init() || input_init())
-//		return -1;	
-
+#ifndef ANDROID
+	if (gfx_video_init() || input_init())
+		return -1;	
+#endif
 	snd_init(opt_hz);
 	game_change_vol(0, opt_vol);
 
@@ -846,7 +846,9 @@ void game_done(int err)
 	input_clear();
 	snd_done();
 	instead_done();
-//	gfx_video_done();
+#ifndef ANDROID
+	gfx_video_done();
+#endif
 	curgame_dir = NULL;
 	game_own_theme = 0;
 //	SDL_Quit();
