@@ -26,7 +26,7 @@ Source: icon\*; DestDir: {app}\icon
 Source: doc\*; DestDir: {app}\doc
 Source: doc\modules\*; DestDir: {app}\doc\modules
 Source: stead\*; DestDir: {app}\stead
-Source: languages\*; DestDir: {app}\languages
+Source: lang\*; DestDir: {app}\lang
 Source: themes\default\*; DestDir: {app}\themes\default
 Source: themes\book\*; DestDir: {app}\themes\book
 Source: themes\original\*; DestDir: {app}\themes\original

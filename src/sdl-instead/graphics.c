@@ -2962,11 +2962,15 @@ img_t get_img(struct layout *layout, char *p, int *al)
 	if (!p[align])
 		align = 0;
 	else {
-		p[align] = 0;
 		if (!strcmp(p + align + 1, "left"))
 			*al = ALIGN_LEFT;
 		else if (!strcmp(p + align + 1, "right"))
 			*al = ALIGN_RIGHT;
+		if (*al) {
+			p[align] = 0;
+			if (align && p[align - 1] == '\\')
+				p[align - 1] = 0;
+		}
 	}
 	img = layout_lookup_image(layout, p);
 	if (img)
