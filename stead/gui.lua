@@ -53,12 +53,12 @@ end;
 
 iface.imgl = function(self, str)
 	if str == nil then return nil; end;
-	return "<g:"..str.."|left>";
+	return "<g:"..str.."\\|left>";
 end;
 
 iface.imgr = function(self, str)
 	if str == nil then return nil; end;
-	return "<g:"..str.."|right>";
+	return "<g:"..str.."\\|right>";
 end;
 
 iface.nb = function(self, str)

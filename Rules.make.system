@@ -9,7 +9,7 @@ THEMESPATH=$(DATAPATH)/themes
 GAMESPATH=$(DATAPATH)/games
 ICONPATH=$(DESTDIR)$(PREFIX)/share/pixmaps
 DOCPATH=$(DESTDIR)$(PREFIX)/share/doc/instead
-LANGPATH=$(DATAPATH)/languages
+LANGPATH=$(DATAPATH)/lang
 MANPATH=$(DESTDIR)$(PREFIX)/share/man/man6
 SYSTEMSETUP=yes
 

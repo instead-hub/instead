@@ -7,5 +7,5 @@
 #define THEMES_PATH DATAPATH"themes/"
 #define GAMES_PATH DATAPATH"games/"
 #define ICON_PATH DATAPATH"icon/"
-#define LANG_PATH DATAPATH"languages/"
+#define LANG_PATH DATAPATH"lang/"
 #endif

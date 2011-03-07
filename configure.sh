@@ -203,7 +203,7 @@ elif [ "x$ans" = "x2" ]; then
 	echo "GAMESPATH=\$(DATAPATH)/games" >> config.make
 	echo "ICONPATH=\$(DESTDIR)\$(PREFIX)/share/pixmaps" >> config.make
 	echo "DOCPATH=\$(DESTDIR)\$(PREFIX)/share/doc/instead" >> config.make
-	echo "LANGPATH=\$(DATAPATH)/languages" >> config.make
+	echo "LANGPATH=\$(DATAPATH)/lang" >> config.make
 	echo "MANPATH=\$(DESTDIR)\$(PREFIX)/share/man/man6" >> config.make
 
 	echo "Ok. We are ready to build and install. Use these commands:"

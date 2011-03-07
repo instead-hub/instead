@@ -28,7 +28,7 @@ install: all
 	$(MAKE) DESTDIR=../bin/ -C games install
 	$(MAKE) DESTDIR=../bin/ -C stead install
 	$(MAKE) DESTDIR=../bin/ -C icon install
-	$(MAKE) DESTDIR=../bin/ -C languages install
+	$(MAKE) DESTDIR=../bin/ -C lang install
 	$(MAKE) DESTDIR=../bin/ -C doc install
 
 setup:  install docs
