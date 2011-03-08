@@ -3,6 +3,7 @@ instead (1.3.4) unstable; urgency=low
   * bug fix in text renderer with italic text;
   * bug fix with imgl/imgr in inv;
   * bug fix in video init;
+  * font faces { } syntax;
   * modules doc fix;
   * languages dir renamed to lang;
 
