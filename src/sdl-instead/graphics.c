@@ -3254,9 +3254,9 @@ void _txt_layout_add(layout_t lay, char *txt)
 		if (eptr) {
 			ptr = eptr;
 			if (xref && layout->style == saved_style)
-				TTF_SetFontStyle((TTF_Font *)(layout->fn), layout->lstyle);
+				TTF_SetFontStyle((TTF_Font *)(layout->fn), layout->lstyle & ~TTF_STYLE_ITALIC);
 			else
-				TTF_SetFontStyle((TTF_Font *)(layout->fn), layout->style);
+				TTF_SetFontStyle((TTF_Font *)(layout->fn), layout->style & ~TTF_STYLE_ITALIC);
 
 			if (!ptr || !*ptr)
 				break;
