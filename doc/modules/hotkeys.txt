@@ -15,13 +15,13 @@
 <link rel="alternate" type="application/rss+xml" title="Current Namespace" href="/wiki/feed.php?mode=list&amp;ns=ru:gamedev:modules" />
 <link rel="alternate" type="text/html" title="Plain HTML" href="/wiki/_export/xhtml/ru/gamedev/modules/hoykeys" />
 <link rel="alternate" type="text/plain" title="Wiki Markup" href="/wiki/_export/raw/ru/gamedev/modules/hoykeys" />
-<link rel="stylesheet" media="screen" type="text/css" href="/wiki/lib/exe/css.php?t=vector&amp;tseed=1292527528" />
-<link rel="stylesheet" media="all" type="text/css" href="/wiki/lib/exe/css.php?s=all&amp;t=vector&amp;tseed=1292527528" />
-<link rel="stylesheet" media="print" type="text/css" href="/wiki/lib/exe/css.php?s=print&amp;t=vector&amp;tseed=1292527528" />
+<link rel="stylesheet" media="screen" type="text/css" href="/wiki/lib/exe/css.php?t=vector&amp;tseed=1299359084" />
+<link rel="stylesheet" media="all" type="text/css" href="/wiki/lib/exe/css.php?s=all&amp;t=vector&amp;tseed=1299359084" />
+<link rel="stylesheet" media="print" type="text/css" href="/wiki/lib/exe/css.php?s=print&amp;t=vector&amp;tseed=1299359084" />
 <script type="text/javascript" ><!--//--><![CDATA[//><!--
 var NS='ru:gamedev:modules';var JSINFO = {"id":"ru:gamedev:modules:hoykeys","namespace":"ru:gamedev:modules"};
 //--><!]]></script>
-<script type="text/javascript" charset="utf-8" src="/wiki/lib/exe/js.php?tseed=1292527528" ></script>
+<script type="text/javascript" charset="utf-8" src="/wiki/lib/exe/js.php?tseed=1299359084" ></script>
 
 <link rel="shortcut icon" href="/wiki/lib/tpl/vector/static/3rd/dokuwiki/favicon.ico" />
 <!--[if lt IE 7]><style type="text/css">body{behavior:url("/wiki/lib/tpl/vector/static/3rd/vector/csshover.htc")}</style><![endif]-->
@@ -50,8 +50,6 @@ var NS='ru:gamedev:modules';var JSINFO = {"id":"ru:gamedev:modules:hoykeys","nam
 </p>
 
 </div>
-
-<!-- cachefile /home/users2/g/gl00my/domains/instead.syscall.ru/wiki/data/cache/2/2fa954054b6a204dc9178ba2b5d62b4d.xhtml used -->
 
     <!-- end rendered wiki content -->
     <div class="clearer"></div>
@@ -147,8 +145,6 @@ var NS='ru:gamedev:modules';var JSINFO = {"id":"ru:gamedev:modules:hoykeys","nam
 <a href="/wiki/ru/help" class="wikilink1" title="ru:help">Помощь</a>
 </p>
 
-<!-- cachefile /home/users2/g/gl00my/domains/instead.syscall.ru/wiki/data/cache/e/eb675e6ee08628bc0128cf47d3efee8d.xhtml used -->
-
       </div>
     </div>
   </div>
@@ -166,7 +162,7 @@ var NS='ru:gamedev:modules';var JSINFO = {"id":"ru:gamedev:modules:hoykeys","nam
     <h5>Язык</h5>
     <div class="body">
       <div class="dokuwiki">
-<div class="plugin_translation"><span>Перевод этой страницы:</span> <ul>  <li><div class="li"><a href="/wiki/en/gamedev/modules/hoykeys" class="wikilink2" title="English">en</a></div></li>  <li><div class="li"><a href="/wiki/es/gamedev/modules/hoykeys" class="wikilink2" title="español">es</a></div></li>  <li><div class="li"><a href="/wiki/ru/gamedev/modules/hoykeys" class="wikilink2" title="Русский">ru</a></div></li></ul></div>
+<div class="plugin_translation"><span>Перевод этой страницы:</span> <ul>  <li><div class="li"><a href="/wiki/en/gamedev/modules/hoykeys" class="wikilink2" title="English">en</a></div></li>  <li><div class="li"><a href="/wiki/es/gamedev/modules/hoykeys" class="wikilink2" title="español">es</a></div></li>  <li><div class="li"><a href="/wiki/it/gamedev/modules/hoykeys" class="wikilink2" title="Italiano">it</a></div></li>  <li><div class="li"><a href="/wiki/ru/gamedev/modules/hoykeys" class="wikilink2" title="Русский">ru</a></div></li></ul></div>
       </div>
     </div>
   </div>
