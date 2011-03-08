@@ -1276,40 +1276,171 @@ img_t gfx_scale(img_t src, float xscale, float yscale)
 	}
 	return (img_t)zoomSurface((SDL_Surface *)src, xscale, yscale, 1);
 }
+#define FN_REG  0
+#define FN_BOLD  1
+#define FN_ITALIC  2
+#define FN_ITALICBOLD 3
+#define FN_MAX  4
+struct fnt {
+	TTF_Font *fn;
+	TTF_Font *fonts[FN_MAX];
+	int style;
+};
+
+/* prefix{regular,italic, bold, bolditalic}.ttf */
+static int parse_fn(const char *f, char *files[])
+{
+	int e;
+	int nr = 0;
+	int elen;
+	const char *ep = f;
+	const char *s = f;
+
+	int pref = strcspn(f, "{");
+	if (!f[pref])
+		goto no;
+	f += pref + 1;
+	ep = f;
+	ep += strcspn(f, "}");
+	if (!*ep)
+		goto no;
+	ep ++;
+	elen = strlen(ep);
+	while (1) {
+		f += strspn(f, " \t");
+		e = strcspn(f, ",}");
+		files[nr] = malloc(e + pref + elen + 1);
+		if (!files[nr])
+			break;
+		memcpy(files[nr], s, pref);
+		memcpy(files[nr] + pref, f, e);
+		memcpy(files[nr] + pref + e, ep, elen);
+		*(files[nr] + pref + e + elen) = 0;
+		nr ++;
+		if (!f[e] || f[e] == '}')
+			break;
+		f += e + 1;
+		if (nr >=4)
+			break;
+	}
+	return nr;
+no:
+	files[0] = strdup(s);
+	return (files[0])?1:0;
+}
 
 fnt_t fnt_load(const char *fname, int size)
 {
 	TTF_Font *fn;
-	fn = TTF_OpenFont(fname, size);
-	return (fnt_t) fn;
+	struct fnt *h;
+	int i, n = 0;
+	char *files[4] = { NULL, NULL, NULL, NULL };
+	h = malloc(sizeof(struct fnt));
+	if (!h)
+		return NULL;
+	h->fonts[0] = h->fonts[1] = h->fonts[2] = h->fonts[3] = NULL;
+	n = parse_fn(fname, files);
+	if (!n)
+		goto err;
+	for (i = 0; i < n; i++) {
+		fn = TTF_OpenFont(files[i], size);
+		if (!fn && i == 0) /* no regular */
+			goto err;
+		h->fonts[i] = fn;
+	}
+	h->fn = h->fonts[FN_REG];
+	for (i = 0; i < n; i++)
+		free(files[i]);
+	return (fnt_t) h;
+err:
+	for (i = 0; i < n; i++)
+		free(files[i]);
+	fnt_free(h);
+	return NULL;
+}
+
+void fnt_style(fnt_t fn, int style)
+{
+	struct fnt *h = (struct fnt*)fn;
+	if (!h)
+		return;
+	h->style = style;
+	if ((style & TTF_STYLE_BOLD) && (style & TTF_STYLE_ITALIC)) {
+		if (h->fonts[FN_ITALICBOLD]) {
+			h->fn = h->fonts[FN_ITALICBOLD];
+			style &= ~TTF_STYLE_BOLD;
+			style &= ~TTF_STYLE_ITALIC;
+		} else
+			h->fn = h->fonts[FN_REG];
+	} else if ((style & TTF_STYLE_BOLD)) {
+		if (h->fonts[FN_BOLD]) {
+			h->fn = h->fonts[FN_BOLD];
+			style &= ~TTF_STYLE_BOLD;
+		} else
+			h->fn = h->fonts[FN_REG];
+	} else if ((style & TTF_STYLE_ITALIC)) {
+		if (h->fonts[FN_ITALIC]) {
+			h->fn = h->fonts[FN_ITALIC];
+			style &= ~TTF_STYLE_ITALIC;
+		} else
+			h->fn = h->fonts[FN_REG];
+	} else {
+		h->fn = h->fonts[FN_REG];
+	}
+	TTF_SetFontStyle((TTF_Font *)h->fn, style);
+}
+
+img_t fnt_render(fnt_t fn, const char *p, color_t col)
+{
+	SDL_Color scol = { .r = col.r, .g = col.g, .b = col.b };
+	struct fnt *h = (struct fnt*)fn;
+	if (!h)
+		return NULL;
+	return TTF_RenderUTF8_Blended((TTF_Font *)h->fn, p, scol);
 }
 
 int fnt_height(fnt_t fn)
 {
+	struct fnt *h = (struct fnt*)fn;
 	if (!fn)
 		return 0;
-	return TTF_FontHeight((TTF_Font *)(fn));
+	return TTF_FontHeight((TTF_Font *)(h->fonts[FN_REG]));
 }
 
 void fnt_free(fnt_t fnt)
 {
+	int i;
+	struct fnt *h = (struct fnt*)fnt;
 	if (!fnt)
 		return;
-	TTF_CloseFont((TTF_Font *)fnt);
+	for (i = 0; i < FN_MAX; i++) {
+		if (h->fonts[i]) 
+			TTF_CloseFont((TTF_Font *)h->fonts[i]);
+	}
+	free(h);
 }
 
 void txt_draw(fnt_t fnt, const char *txt, int x, int y, color_t col)
 {
-	SDL_Color fgcol = { .r = col.r, .g = col.g, .b = col.b };
-	SDL_Surface *s = TTF_RenderUTF8_Blended((TTF_Font *)fnt,
-				txt, fgcol);
+	img_t s = fnt_render(fnt, txt, col);
 	gfx_draw(s, x, y);
 }
 
 void txt_size(fnt_t fnt, const char *txt, int *w, int *h)
 {
 	int ww, hh;
-	TTF_SizeUTF8((TTF_Font *)fnt, txt, &ww, &hh);
+	int reset = 0;
+	struct fnt *f = (struct fnt*)fnt;
+	if (f->style & TTF_STYLE_ITALIC) {
+		if (f->fn != f->fonts[FN_ITALIC] &&
+			f->fn != f->fonts[FN_ITALICBOLD]) {
+			TTF_SetFontStyle((TTF_Font *)f->fn, f->style & ~TTF_STYLE_ITALIC);
+			reset = 1;
+		}
+	}
+	TTF_SizeUTF8((TTF_Font *)f->fn, txt, &ww, &hh);
+	if (reset)
+		TTF_SetFontStyle((TTF_Font *)f->fn, f->style);
 	if (w)
 		*w = ww;
 	if (h)
@@ -1332,8 +1463,8 @@ struct word {
 	struct word *next; /* in line */
 	struct line *line;
 	struct xref *xref;
-	SDL_Surface  *prerend;
-	SDL_Surface  *hlprerend;
+	img_t prerend;
+	img_t hlprerend;
 };
 
 
@@ -2388,12 +2519,12 @@ static char *word_cache_string(struct word *w, Uint32 style)
 static void word_render(struct layout *layout, struct word *word, int x, int y)
 {
 	char *wc = NULL;
-	SDL_Surface *s;
-	SDL_Surface *prerend = NULL;
-	SDL_Surface *hlprerend = NULL;
-	SDL_Color fgcol = { .r = layout->col.r, .g = layout->col.g, .b = layout->col.b };
-	SDL_Color lcol = { .r = layout->lcol.r, .g = layout->lcol.g, .b = layout->lcol.b };
-	SDL_Color acol = { .r = layout->acol.r, .g = layout->acol.g, .b = layout->acol.b };
+	img_t s;
+	img_t prerend = NULL;
+	img_t hlprerend = NULL;
+	color_t fgcol = { .r = layout->col.r, .g = layout->col.g, .b = layout->col.b };
+	color_t lcol = { .r = layout->lcol.r, .g = layout->lcol.g, .b = layout->lcol.b };
+	color_t acol = { .r = layout->acol.r, .g = layout->acol.g, .b = layout->acol.b };
 	Uint32 style;
 
 	if (!word->xref) {
@@ -2405,10 +2536,10 @@ static void word_render(struct layout *layout, struct word *word, int x, int y)
 	}
 
 	if (word->xref && !word->style) {
-		TTF_SetFontStyle((TTF_Font *)(layout->fn), layout->lstyle);
+		fnt_style(layout->fn, layout->lstyle);
 		wc = word_cache_string(word, layout->lstyle | style);
 	} else {
-		TTF_SetFontStyle((TTF_Font *)(layout->fn), word->style);
+		fnt_style(layout->fn, word->style);
 		wc = word_cache_string(word, word->style | style);
 	}
 	if (!wc)
@@ -2418,7 +2549,7 @@ static void word_render(struct layout *layout, struct word *word, int x, int y)
 		if (!word->prerend) {
 			prerend = cache_get(layout->prerend_cache, wc);
 			if (!prerend) {
-				word->prerend = TTF_RenderUTF8_Blended((TTF_Font *)(layout->fn), word->word, fgcol);
+				word->prerend = fnt_render(layout->fn, word->word, fgcol);
 				word->prerend = gfx_display_alpha(word->prerend);
 				cache_add(layout->prerend_cache, wc, word->prerend);
 			} else {
@@ -2430,7 +2561,7 @@ static void word_render(struct layout *layout, struct word *word, int x, int y)
 		if (!word->hlprerend) {
 			hlprerend = cache_get(layout->hlprerend_cache, wc);
 			if (!hlprerend) {
-				word->hlprerend = TTF_RenderUTF8_Blended((TTF_Font *)(layout->fn), word->word, acol);
+				word->hlprerend = fnt_render(layout->fn, word->word, acol);
 				word->hlprerend = gfx_display_alpha(word->hlprerend);
 				cache_add(layout->hlprerend_cache, wc, word->hlprerend);
 			} else {
@@ -2442,7 +2573,7 @@ static void word_render(struct layout *layout, struct word *word, int x, int y)
 		if (!word->prerend) {
 			prerend = cache_get(layout->prerend_cache, wc);
 			if (!prerend) {
-				word->prerend = TTF_RenderUTF8_Blended((TTF_Font *)(layout->fn), word->word, lcol);
+				word->prerend = fnt_render(layout->fn, word->word, lcol);
 				word->prerend = gfx_display_alpha(word->prerend);
 				cache_add(layout->prerend_cache, wc, word->prerend);
 			} else {
@@ -3151,7 +3282,6 @@ out:
 		free(val);
 
 	return eptr;
-//	TTF_SetFontStyle((TTF_Font *)(layout->fn), style);
 }
 
 int get_unbrakable_len(struct layout *layout, const char *ptr)
@@ -3177,7 +3307,7 @@ int get_unbrakable_len(struct layout *layout, const char *ptr)
 			return w;
 		}
 
-		TTF_SizeUTF8((TTF_Font *)(layout->fn), p, &ww, NULL);
+		txt_size(layout->fn, p, &ww, NULL);
 			
 		ptr = eptr;
 		w += ww;
@@ -3206,7 +3336,40 @@ int txt_layout_pos2off(layout_t lay, int pos, int *hh)
 	}
 	return off;
 }
+#if 0
+static const char *word_hyphen(struct layout *layout, const char *w, int width, char **eptr, int *curw)
+{
+	char *p;
+	int i;
+	int cur_hyp = -1;
+	int l = strlen(w);
+	int ww;
+	p = malloc(l + 2);
+	if (!p)
+		return w;
 
+	for (i = 0; i < l; i++) {
+		memcpy(p, w, i + 1);
+		p[i + 1] = '-';
+		p[i + 2] = 0;
+		txt_size(layout->fn, p, &ww, NULL);
+		if (ww > width)
+			break;
+		cur_hyp = i;
+		*curw = ww;
+	}
+	if (cur_hyp == -1) {
+		free(p);
+		return w;
+	}
+	memcpy(p, w, cur_hyp + 1);
+	p[cur_hyp + 1] = '-';
+	p[cur_hyp + 2] = 0;
+	free(w);
+	*eptr = *eptr - l + cur_hyp + 1;
+	return p;
+}
+#endif
 void _txt_layout_add(layout_t lay, char *txt)
 {
 	int sp = 0;
@@ -3226,8 +3389,8 @@ void _txt_layout_add(layout_t lay, char *txt)
 	if (!layout || !layout->fn)
 		return;
 	saved_style = layout->style; 
-	TTF_SetFontStyle((TTF_Font *)(layout->fn), 0);
-	TTF_SizeUTF8((TTF_Font *)(layout->fn), " ", &spw, NULL);
+	fnt_style(layout->fn, 0);
+	txt_size(layout->fn, " ", &spw, NULL);
 
 	for (line = layout->lines; line; line = line->next) {
 		lastline = line;
@@ -3254,9 +3417,9 @@ void _txt_layout_add(layout_t lay, char *txt)
 		if (eptr) {
 			ptr = eptr;
 			if (xref && layout->style == saved_style)
-				TTF_SetFontStyle((TTF_Font *)(layout->fn), layout->lstyle & ~TTF_STYLE_ITALIC);
+				fnt_style(layout->fn, layout->lstyle); // & ~TTF_STYLE_ITALIC);
 			else
-				TTF_SetFontStyle((TTF_Font *)(layout->fn), layout->style & ~TTF_STYLE_ITALIC);
+				fnt_style(layout->fn, layout->style);// & ~TTF_STYLE_ITALIC);
 
 			if (!ptr || !*ptr)
 				break;
@@ -3284,7 +3447,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 				img_align = 0;
 		} else {
 			p = get_word_token(p, &wtok);
-			TTF_SizeUTF8((TTF_Font *)(layout->fn), p, &w, &h);
+			txt_size(layout->fn, p, &w, &h);
 			h *= layout->fn_height;
 		}
 		nl = (wtok)?0:!*p;
@@ -3294,7 +3457,14 @@ void _txt_layout_add(layout_t lay, char *txt)
 
 		if (img_align && !line->w)
 			line->h = 0;
-
+#if 0
+		if (!nl) {
+			int ww = width - (line->w + ((sp && line->w)?spw:0) + addlen);
+			if (w > ww) {
+				p = word_hyphen(layout, p, ww, &eptr, &w);
+			}
+		}
+#endif		
 		if ((line->num && (line->w + ((sp && line->w)?spw:0) + w + addlen) > width) || nl) {
 			struct line *ol = line;
 			h = 0; /* reset h for new line */
@@ -3417,9 +3587,6 @@ void _txt_layout_add(layout_t lay, char *txt)
 //		line_free(line);
 	if (xref)
 		layout_add_xref(layout, xref);
-//	layout->align = align;
-//	layout_debug(layout);
-//	TTF_SetFontStyle((TTF_Font *)(layout->fn), saved_style);
 	layout->style = saved_style;
 	return;
 err:
