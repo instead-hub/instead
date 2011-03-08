@@ -23,7 +23,7 @@ wiki:
 	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:modules:xact&do=export_raw" -O modules/xact.txt
 	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:modules:dash&do=export_raw" -O modules/dash.txt
 	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:modules:dbg&do=export_raw" -O modules/dbg.txt
-	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:modules:hoykeys&do=export_raw" -O modules/hotkeys.txt
+	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:modules:hotkeys&do=export_raw" -O modules/hotkeys.txt
 	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:modules:para&do=export_raw" -O modules/para.txt
 	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:modules:quotes&do=export_raw" -O modules/quotes.txt
 	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:modules:theme&do=export_raw" -O modules/theme.txt
