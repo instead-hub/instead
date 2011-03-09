@@ -1432,6 +1432,7 @@ void txt_draw(fnt_t fnt, const char *txt, int x, int y, color_t col)
 	gfx_draw(s, x, y);
 }
 
+#if 0
 int txt_width(fnt_t fnt, const char *txt)
 {
 	const char *p = txt;
@@ -1480,21 +1481,12 @@ int txt_width(fnt_t fnt, const char *txt)
 	}
 	return w;
 }
+#endif
 void txt_size(fnt_t fnt, const char *txt, int *w, int *h)
 {
 	int ww, hh;
-//	int reset = 0;
 	struct fnt *f = (struct fnt*)fnt;
-/*	if (f->style & TTF_STYLE_ITALIC) {
-		if (f->fn != f->fonts[FN_ITALIC] &&
-			f->fn != f->fonts[FN_ITALICBOLD]) {
-			TTF_SetFontStyle((TTF_Font *)f->fn, f->style & ~TTF_STYLE_ITALIC);
-			reset = 1;
-		}
-	}*/
 	TTF_SizeUTF8((TTF_Font *)f->fn, txt, &ww, &hh);
-/*	if (reset)
-		TTF_SetFontStyle((TTF_Font *)f->fn, f->style); */
 	if (w)
 		*w = ww;
 	if (h)
