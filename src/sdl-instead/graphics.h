@@ -101,6 +101,8 @@ extern void 	fnt_style(fnt_t fn, int style);
 
 extern void 	txt_draw(fnt_t fnt, const char *txt, int x, int y, color_t col);
 extern void 	txt_size(fnt_t fnt, const char *txt, int *w, int *h);
+extern int 		txt_width(fnt_t fnt, const char *txt);
+
 //extern layout_t txt_layout(fnt_t fn, char *txt, int width, int height);
 extern layout_t txt_layout(fnt_t fn, int align, int width, int height);
 extern void	txt_layout_add(layout_t lay, char *txt);
