@@ -1312,9 +1312,12 @@ static int parse_fn(const char *f, char *files[])
 		files[nr] = malloc(e + pref + elen + 1);
 		if (!files[nr])
 			break;
-		memcpy(files[nr], s, pref);
-		memcpy(files[nr] + pref, f, e);
-		memcpy(files[nr] + pref + e, ep, elen);
+		if (pref)
+			memcpy(files[nr], s, pref);
+		if (e)
+			memcpy(files[nr] + pref, f, e);
+		if (elen)
+			memcpy(files[nr] + pref + e, ep, elen);
 		*(files[nr] + pref + e + elen) = 0;
 		nr ++;
 		if (!f[e] || f[e] == '}')
@@ -1343,7 +1346,10 @@ fnt_t fnt_load(const char *fname, int size)
 	if (!n)
 		goto err;
 	for (i = 0; i < n; i++) {
-		fn = TTF_OpenFont(files[i], size);
+		if (!is_empty(files[i]))
+			fn = TTF_OpenFont(files[i], size);
+		else
+			fn = NULL;
 		if (!fn && i == 0) /* no regular */
 			goto err;
 		h->fonts[i] = fn;
@@ -1426,21 +1432,69 @@ void txt_draw(fnt_t fnt, const char *txt, int x, int y, color_t col)
 	gfx_draw(s, x, y);
 }
 
+int txt_width(fnt_t fnt, const char *txt)
+{
+	const char *p = txt;
+	int c = 0;
+	int w = 0;
+	Uint16 u = 0;
+	struct fnt *f = (struct fnt*)fnt;
+	if (!f)
+		return 0;
+	while (*p) {
+		if (!c) {
+			if (! (*p & 0x80)) { // ascii
+				c = 1;
+				u = *p & 0x7f;
+			} else {
+				if ((*p & 0xe0) == 0xc0) {
+					c = 2;
+					u = *p & 0x1f;
+				} else if ((*p & 0xf0) == 0xe0) {
+					c = 3;
+					u = *p & 0xf;
+				} else if ((*p & 0xf8) == 0xf0) {
+					c = 4;
+					u = *p & 0x3;
+				} else {
+					c = 1;
+					u = *p & 0x7f; /* fallback */
+				}
+			}
+		} else {
+			if ((*p & 0xc0) != 0x80) {
+				c = 1;
+				u = *p & 0x7f; /* fallback */
+			} else {
+				u <<= 6;
+				u |= *p & 0x3f;
+			}
+		}
+		c --;
+		if (!c) {
+			int adv = 0;
+			TTF_GlyphMetrics(f->fn, u, NULL, NULL, NULL, NULL, &adv);
+			w += adv;
+		}
+		p ++;
+	}
+	return w;
+}
 void txt_size(fnt_t fnt, const char *txt, int *w, int *h)
 {
 	int ww, hh;
-	int reset = 0;
+//	int reset = 0;
 	struct fnt *f = (struct fnt*)fnt;
-	if (f->style & TTF_STYLE_ITALIC) {
+/*	if (f->style & TTF_STYLE_ITALIC) {
 		if (f->fn != f->fonts[FN_ITALIC] &&
 			f->fn != f->fonts[FN_ITALICBOLD]) {
 			TTF_SetFontStyle((TTF_Font *)f->fn, f->style & ~TTF_STYLE_ITALIC);
 			reset = 1;
 		}
-	}
+	}*/
 	TTF_SizeUTF8((TTF_Font *)f->fn, txt, &ww, &hh);
-	if (reset)
-		TTF_SetFontStyle((TTF_Font *)f->fn, f->style);
+/*	if (reset)
+		TTF_SetFontStyle((TTF_Font *)f->fn, f->style); */
 	if (w)
 		*w = ww;
 	if (h)
