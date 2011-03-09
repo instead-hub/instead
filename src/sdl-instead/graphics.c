@@ -1352,6 +1352,8 @@ fnt_t fnt_load(const char *fname, int size)
 			fn = NULL;
 		if (!fn && i == 0) /* no regular */
 			goto err;
+		if (fn) /* todo? */
+			TTF_SetFontHinting(fn, TTF_HINTING_LIGHT);
 		h->fonts[i] = fn;
 	}
 	h->fn = h->fonts[FN_REG];
