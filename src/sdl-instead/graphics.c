@@ -3382,40 +3382,7 @@ int txt_layout_pos2off(layout_t lay, int pos, int *hh)
 	}
 	return off;
 }
-#if 0
-static const char *word_hyphen(struct layout *layout, const char *w, int width, char **eptr, int *curw)
-{
-	char *p;
-	int i;
-	int cur_hyp = -1;
-	int l = strlen(w);
-	int ww;
-	p = malloc(l + 2);
-	if (!p)
-		return w;
 
-	for (i = 0; i < l; i++) {
-		memcpy(p, w, i + 1);
-		p[i + 1] = '-';
-		p[i + 2] = 0;
-		txt_size(layout->fn, p, &ww, NULL);
-		if (ww > width)
-			break;
-		cur_hyp = i;
-		*curw = ww;
-	}
-	if (cur_hyp == -1) {
-		free(p);
-		return w;
-	}
-	memcpy(p, w, cur_hyp + 1);
-	p[cur_hyp + 1] = '-';
-	p[cur_hyp + 2] = 0;
-	free(w);
-	*eptr = *eptr - l + cur_hyp + 1;
-	return p;
-}
-#endif
 void _txt_layout_add(layout_t lay, char *txt)
 {
 	int sp = 0;
@@ -3506,9 +3473,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 #if 0
 		if (!nl) {
 			int ww = width - (line->w + ((sp && line->w)?spw:0) + addlen);
-			if (w > ww) {
-				p = word_hyphen(layout, p, ww, &eptr, &w);
-			}
+			p = word_hyphen(layout, p, ww, &eptr, &w);
 		}
 #endif		
 		if ((line->num && (line->w + ((sp && line->w)?spw:0) + w + addlen) > width) || nl) {
