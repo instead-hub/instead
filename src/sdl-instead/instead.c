@@ -528,6 +528,9 @@ static int luaB_theme_var(lua_State *L) {
 	return 0;
 }
 
+extern int dir_iter_factory (lua_State *L);
+extern int luaopen_lfs (lua_State *L);
+
 static const luaL_Reg base_funcs[] = {
 	{"doencfile", luaB_doencfile},
 	{"dofile", luaB_dofile},
@@ -538,6 +541,7 @@ static const luaL_Reg base_funcs[] = {
 	{"get_steadpath", luaB_get_steadpath},
 	{"set_timer", luaB_set_timer},
 	{"theme_var", luaB_theme_var},
+	{"dir", dir_iter_factory},
 	{NULL, NULL}
 };
 
@@ -593,6 +597,7 @@ int instead_init(void)
 
 	luaL_openlibs(L);
 	luaL_register(L, "_G", base_funcs);
+	luaopen_lfs (L);
 
 	instead_package();
 	instead_lang();
