@@ -26,8 +26,12 @@ There are several ways to build package.
 
 2) On gentoo or arch linux 
 ==========================
-Please copy-paste EBUILD (gentoo) or PKGBUILD (arch) from here: 
-http://code.google.com/p/instead/wiki/
+Install stable version from AUR:
+	$ yaourt -S instead
+
+Or build from svn:
+	$ make PKGBUILD
+	$ makepkg -s
 
 And, I think, you have enough skills to build package yourself. ;)
 
