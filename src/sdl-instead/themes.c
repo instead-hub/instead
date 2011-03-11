@@ -78,11 +78,11 @@ static int out_inv_mode(const void *v, char **out)
 		return 0;
 	}
 
-	if (m & INV_MODE_VERT) {
+	if ((INV_MODE(m) == INV_MODE_HORIZ))
+		sprintf(o, "horizontal");
+	else
 		sprintf(o, "vertical");
-	} else if (m & INV_MODE_HORIZ) {
-		sprintf(o, "vertical");
-	}
+
 	if ((m & INV_ALIGN_SET(ALIGN_CENTER)) == INV_ALIGN_SET(ALIGN_CENTER)) {
 		strcat(o, "-center");
 	} else if ((m & INV_ALIGN_SET(ALIGN_LEFT)) == INV_ALIGN_SET(ALIGN_LEFT)) {
