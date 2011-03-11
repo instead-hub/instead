@@ -27,6 +27,7 @@ wiki:
 	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:modules:para&do=export_raw" -O modules/para.txt
 	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:modules:quotes&do=export_raw" -O modules/quotes.txt
 	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:modules:theme&do=export_raw" -O modules/theme.txt
+	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:modules:kbd&do=export_raw" -O modules/kbd.txt
 
 
 clean:
