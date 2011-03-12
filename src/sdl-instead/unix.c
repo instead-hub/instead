@@ -66,7 +66,7 @@ GdkPixbuf *create_pixbuf(const gchar * filename)
 	GdkPixbuf *pixbuf;
 	GError *error = NULL;
 	path[0] = 0;
-	if (filename[0] == '.') {
+	if (filename[0] != '/') {
 		strcpy(path, game_cwd);
 		strcat(path, "/");
 	}
