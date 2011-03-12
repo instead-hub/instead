@@ -570,7 +570,7 @@ static int instead_package(void)
 		strcat(stead_path, ";");
 	}
 
-	if (STEAD_PATH[0] == '.') {
+	if (STEAD_PATH[0] != '/') {
 		strcat(stead_path, game_cwd);
 		strcat(stead_path, "/");
 		strcat(stead_path, STEAD_PATH);
