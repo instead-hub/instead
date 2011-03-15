@@ -331,6 +331,8 @@ static char *opt_get_mode(void)
 	return buff;
 }
 
+static int gtr = 0;
+
 char *game_menu_gen(void)
 {
 	if (cur_menu == menu_main) {
@@ -371,7 +373,7 @@ char *game_menu_gen(void)
 		WARNING_MENU, err_msg?err_msg:UNKNOWN_ERROR);
 		game_err_msg(NULL);
 	} else if (cur_menu == menu_remove) {
-		snprintf(menu_buff, sizeof(menu_buff), "%s", REMOVE_MENU);
+		snprintf(menu_buff, sizeof(menu_buff), REMOVE_MENU, games[gtr].path);
 	}
 	return menu_buff;
 }
@@ -379,7 +381,6 @@ char *game_menu_gen(void)
 
 int game_menu_act(const char *a)
 {
-	static int gtr = 0;
 	static int old_vol = 0;
 
 	if (!strcmp(a, "/autosave")) {
