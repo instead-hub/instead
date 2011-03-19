@@ -8,7 +8,7 @@ stead = {
 	math = math,
 	io = io,
 	os = os,
-	dir = dir,
+	dir = readdir,
 	call_top = 0,
 	cctx = { txt = nil, self = nil },
 --	functions = {}, -- code blocks

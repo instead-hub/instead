@@ -541,7 +541,7 @@ static const luaL_Reg base_funcs[] = {
 	{"get_steadpath", luaB_get_steadpath},
 	{"set_timer", luaB_set_timer},
 	{"theme_var", luaB_theme_var},
-	{"dir", dir_iter_factory},
+	{"readdir", dir_iter_factory},
 	{NULL, NULL}
 };
 
