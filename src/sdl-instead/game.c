@@ -1449,12 +1449,12 @@ static void scroll_to_diff(const char *cmdstr, int cur_off)
 	else
 		off = txt_layout_pos2off(txt_box_layout(el_box(el_scene)), pos, &hh);
 	el_size(el_scene, NULL, &h);
-	if (cur_off <= off && (cur_off + h) > off + hh) {
+
+	if (cur_off <= off && cur_off + h >= off + hh) { /* do not scroll */
 		off = cur_off;
-		hh = 0;
-	} else if (off < cur_off || off + hh <= cur_off + h)
-		hh = 0;
-	txt_box_scroll(el_box(el_scene), off + hh);
+	}
+
+	txt_box_scroll(el_box(el_scene), off);
 }
 
 int game_highlight(int x, int y, int on);
