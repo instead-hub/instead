@@ -76,7 +76,7 @@ __do_xact = function(str, self)
 	end
 	if type(str) ~= 'string' then return end
 	local s = stead.string.gsub(str, '\\?[\\{}]', 
-		{ ['{'] = '\001', ['}'] = '\002' }):gsub('\001([^\002]+)\002', xrefrep);	
+		{ ['{'] = '\001', ['}'] = '\002' }):gsub('\001([^\002]+)\002', xrefrep):gsub('[\001\002]', { ['\001'] = '{', ['\002'] = '}' });	
 	return s;
 end
 
