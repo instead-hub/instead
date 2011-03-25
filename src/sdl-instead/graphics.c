@@ -3133,6 +3133,7 @@ img_t get_img(struct layout *layout, char *p, int *al)
 	int align;
 	img_t img;
 	struct image *image;
+	int escaped = 0;
 	*al = 0;
 	len = word_img(p, NULL);
 	if (!len)
@@ -3149,8 +3150,10 @@ img_t get_img(struct layout *layout, char *p, int *al)
 			*al = ALIGN_RIGHT;
 		if (*al) {
 			p[align] = 0;
-			if (align && p[align - 1] == '\\')
+			if (align && p[align - 1] == '\\') {
 				p[align - 1] = 0;
+				escaped = 1;
+			}
 		}
 	}
 	img = layout_lookup_image(layout, p);
@@ -3174,9 +3177,14 @@ img_t get_img(struct layout *layout, char *p, int *al)
 			cache_add(layout->img_cache, p, img);
 	}
 out:
-	if (align)
+	if (align) {
 		p[align] = '|';
+		if (escaped)
+			p[align - 1] = '\\';
+	}
 	p[len - 1] = '>';
+	if (!img)
+		*al = 0;
 	return img;
 }
 
