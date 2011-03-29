@@ -71,8 +71,12 @@ char *open_file_dialog(void)
 char *appdir(void)
 {
 	static char dir[PATH_MAX];
-	strcpy(dir, game_cwd);
-	strcat(dir, "/appdata");
+	if (appdata_sw)
+		strcpy(dir, appdata_sw);
+	else {
+		strcpy(dir, game_cwd);
+		strcat(dir, "/appdata");
+	}
 	return dir;
 }
 

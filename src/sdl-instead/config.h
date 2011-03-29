@@ -10,6 +10,8 @@
 #define KBD_INVERSE	2
 #define KBD_MAX		3
 
+extern char *appdata_sw;
+
 extern int opt_fsize;
 extern int opt_fs;
 extern int opt_owntheme;
