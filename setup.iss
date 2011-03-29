@@ -7,6 +7,7 @@ UninstallDisplayIcon={app}\sdl-instead.exe
 OutputDir=.
 OutputBaseFilename=instead-1.3.5
 AllowNoIcons=true
+SetupIconFile=icon\sdl_instead.ico
 
 [Languages]
 Name: en; MessagesFile: compiler:Default.isl
