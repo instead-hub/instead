@@ -1322,6 +1322,8 @@ static int wavs_pos = 0;
 static wav_t sound_add(const char *fname)
 {
 	wav_t w;
+	if (!fname || !*fname)
+		return NULL;
 	w = snd_load_wav(dirpath(fname));
 	if (!w)
 		return NULL;
@@ -1366,9 +1368,51 @@ static void sounds_reload(void)
 	}
 }
 
+static int _play_combined_snd(char *filename, int chan, int loop)
+{
+	char *str;
+	char *p, *ep;
+	wav_t		w;
+
+	p = str = strdup(filename);
+	if (!str)
+		return -1;
+
+	p = strip(p);
+	while (*p) {
+		int c = chan, l = loop;
+		ep = p + strcspn(p, ";@");
+	
+		if (*ep == '@') {
+			*ep = 0; ep ++;
+			sscanf(ep, "%d,%d", &c, &l);
+			ep += strcspn(ep, ";");
+			if (*ep)
+				ep ++;
+		} else if (*ep == ';') {
+			*ep = 0; ep ++;
+		} else if (*ep) {
+			goto err;
+		}
+		p = strip(p);
+		w = sound_find(p);
+		if (!w)
+			w = sound_add(p);
+		if (w)
+			snd_play(w, c, l - 1);
+		else
+			snd_halt_chan(c, 500);
+		p = ep;
+	}
+	free(str);
+	return 0;
+err:
+	free(str);
+	return -1;
+}
+
 void game_sound_player(void)
 {
-	wav_t		w;
 	char		*snd;
 	int		chan = -1;
 	int		loop = 1;
@@ -1398,13 +1442,8 @@ void game_sound_player(void)
 	instead_function("instead.set_sound", args); instead_clear();
 	
 	unix_path(snd);
-	w = sound_find(snd);
-	if (!w)
-		w = sound_add(snd);
+	_play_combined_snd(snd, chan, loop);
 	free(snd);
-	if (!w)
-		return;
-	snd_play(w, chan, loop - 1);
 }
 
 static char *get_inv(void)

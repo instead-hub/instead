@@ -1,5 +1,5 @@
 stead = {
-	version = "1.3.4",
+	version = "1.3.5",
 	api_version = "1.1.6", -- last version before 1.2.0
 	table = table,
 	delim = ',',
@@ -2633,6 +2633,31 @@ end
 
 function get_sound_loop()
 	return game._sound_loop
+end
+
+function stop_sound(chan)
+	if not tonumber(chan) then
+		set_sound('@');
+		return
+	end
+	set_sound('@'..tostring(chan));
+end
+
+function add_sound(s, chan, loop)
+	if type(s) ~= 'string' then
+		return
+	end
+	if type(game._sound) == 'string' then
+		if tonumber(chan) then
+			s = s..'@'..tostring(chan);
+		end
+		if tonumber(loop) then
+			s = s..','..tostring(loop)
+		end
+		set_sound(game._sound..';'..s, get_sound_chan(), get_sound_loop());
+	else
+		set_sound(s, chan, loop);
+	end
 end
 
 function set_sound(s, chan, loop)
