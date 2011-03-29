@@ -29,6 +29,7 @@ char *themes_sw = NULL;
 char *encode_sw = NULL;
 char *encode_output = NULL;
 char *mode_sw = NULL;
+char *appdata_sw = NULL;
 
 #ifdef _USE_UNPACK
 extern int unpack(const char *zipfilename, const char *where);
@@ -152,8 +153,11 @@ int main(int argc, char *argv[])
 				theme_sw = "";
 		} else if (!strcmp(argv[i], "-nostdgames")) {
 			nostdgames_sw = 1;
-		} else if (!strcmp(argv[i], "-nostdthemes")) {
-			nostdthemes_sw = 1;
+		} else if (!strcmp(argv[i], "-appdata")) {
+			if ((i + 1) < argc)
+				appdata_sw = argv[++i];
+			else
+				appdata_sw = "";
 		} else if (!strcmp(argv[i], "-gamespath")) {
 			if ((i + 1) < argc)
 				games_sw = argv[++i];

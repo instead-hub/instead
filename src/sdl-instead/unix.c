@@ -187,8 +187,12 @@ char *appdir(void)
 	static char dir[PATH_MAX];
 	struct passwd *pw;
 #ifdef _LOCAL_APPDATA
-	strcpy(dir, game_cwd);
-	strcat(dir, "/appdata");
+	if (appdata_sw)
+		strcpy(dir, appdata_sw);
+	else {
+		strcpy(dir, game_cwd);
+		strcat(dir, "/appdata");
+	}
 	if (!access(dir, W_OK))
 		return dir;
 #endif

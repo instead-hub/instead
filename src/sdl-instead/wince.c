@@ -160,8 +160,12 @@ char *home_dir( void )
 char *app_dir( void )
 {
 	static char appdir[PATH_MAX]="";
-	strcpy(appdir, game_cwd);
-	strcat(appdir, "/appdata");
+	if (appdata_sw)
+		strcpy(appdir, appdata_sw);
+	else {
+		strcpy(appdir, game_cwd);
+		strcat(appdir, "/appdata");
+	}
 	if (!access(appdir, W_OK))
 		return appdir;
 }
