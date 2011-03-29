@@ -1,3 +1,14 @@
+instead (1.3.5) unstable; urgency=low
+
+  * bug fix in imgl/imgr;
+  * bug fix in xact;
+  * bug fix in jump to pos logic;
+  * global dir is now readdir;
+  * multichannal sound system (add_sound);
+  * show dir to be deleted while remove game;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 29 Mar 2011 14:08:00 +0300  
+
 instead (1.3.4) unstable; urgency=low
 
   * bug fix in text renderer with italic text;
