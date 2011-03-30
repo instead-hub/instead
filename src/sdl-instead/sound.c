@@ -77,6 +77,7 @@ void snd_pause(int on)
 
 int snd_init(int hz) 
 {
+	int chunk;
 	if (nosound_sw)
 		return -1;
 	if (!hz)
@@ -84,10 +85,10 @@ int snd_init(int hz)
 	else
 		audio_rate = hz;
 
-	audio_buffers = (audio_rate / 11025) * 4096;
-	if (!audio_buffers) /* wrong parameter? */
-		audio_buffers = 8192;
-
+	chunk = (chunksize_sw>0)?chunksize_sw:DEFAULT_CHUNKSIZE;
+	audio_buffers = (audio_rate / 11025) * chunk;
+	if (audio_buffers <=0) /* wrong parameter? */
+		audio_buffers = DEFAULT_CHUNKSIZE;
 	if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0) {
 		fprintf(stderr, "Unable to init audio!\n");
 		return -1;
