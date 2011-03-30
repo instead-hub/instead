@@ -1381,9 +1381,11 @@ static int _play_combined_snd(char *filename, int chan, int loop)
 	p = strip(p);
 	while (*p) {
 		int c = chan, l = loop;
+		int at = 0;
 		ep = p + strcspn(p, ";@");
 	
 		if (*ep == '@') {
+			at = 1;
 			*ep = 0; ep ++;
 			sscanf(ep, "%d,%d", &c, &l);
 			ep += strcspn(ep, ";");
@@ -1400,7 +1402,7 @@ static int _play_combined_snd(char *filename, int chan, int loop)
 			w = sound_add(p);
 		if (w)
 			snd_play(w, c, l - 1);
-		else
+		else if (at || c != -1) /* if @ or specific channel */
 			snd_halt_chan(c, 500);
 		p = ep;
 	}

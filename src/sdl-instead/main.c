@@ -22,6 +22,7 @@ int nostdgames_sw = 0;
 int nostdthemes_sw = 0;
 int version_sw = 0;
 int nopause_sw = 0;
+int chunksize_sw = 0;
 char *game_sw = NULL;
 char *games_sw = NULL;
 char *theme_sw = NULL;
@@ -153,11 +154,18 @@ int main(int argc, char *argv[])
 				theme_sw = "";
 		} else if (!strcmp(argv[i], "-nostdgames")) {
 			nostdgames_sw = 1;
+#ifdef _LOCAL_APPDATA
 		} else if (!strcmp(argv[i], "-appdata")) {
 			if ((i + 1) < argc)
 				appdata_sw = argv[++i];
 			else
 				appdata_sw = "";
+#endif
+		} else if (!strcmp(argv[i], "-chunksize")) {
+			if ((i + 1) < argc)
+				chunksize_sw = atoi(argv[++i]);
+			else
+				chunksize_sw = DEFAULT_CHUNKSIZE;
 		} else if (!strcmp(argv[i], "-gamespath")) {
 			if ((i + 1) < argc)
 				games_sw = argv[++i];

@@ -11,6 +11,7 @@
 #define KBD_MAX		3
 
 extern char *appdata_sw;
+extern int chunksize_sw;
 
 extern int opt_fsize;
 extern int opt_fs;

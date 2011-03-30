@@ -1778,8 +1778,8 @@ end
 function gamefile(file, forget)
 	stead.clearargs()
 	if forget then
-		set_music();
-		set_sound();
+		stead.stop_music();
+		stead.stop_sound();
 		timer:stop();
 		if type(variables) == 'table' then
 			local k,v
@@ -2029,6 +2029,7 @@ iface = {
 		local cmd;
 		RAW_TEXT = nil
 		PLAYER_MOVED = nil
+		stead.set_sound(); -- empty sound
 		cmd,a = stead.getcmd(inp);
 		if cmd == '' then cmd = 'look' end
 --		me():tag();
@@ -2573,7 +2574,6 @@ end
 function restore_music(s)
 	set_music(s.__old_music__, s.__old_loop__);
 end
-
 function dec_music_loop()
 	if game._music_loop == 0 then
 		return 0
@@ -2593,10 +2593,12 @@ function set_music(s, count)
 		game._music_loop = tonumber(count);
 	end
 end
+stead.set_music = set_music
 
 function stop_music()
 	set_music(nil, -1);
 end
+stead.stop_music = stop_music
 
 function is_music()
 	return game._music ~= nil and game._music_loop ~= -1
@@ -2626,14 +2628,17 @@ end
 function get_sound()
 	return game._sound, game._sound_channel, game._sound_loop;
 end
+stead.get_sound = get_sound
 
 function get_sound_chan()
 	return game._sound_channel
 end
+stead.get_sound_chan = get_sound_chan
 
 function get_sound_loop()
 	return game._sound_loop
 end
+stead.get_sound_loop = get_sound_loop
 
 function stop_sound(chan)
 	if not tonumber(chan) then
@@ -2642,6 +2647,7 @@ function stop_sound(chan)
 	end
 	set_sound('@'..tostring(chan));
 end
+stead.stop_sound = stop_sound
 
 function add_sound(s, chan, loop)
 	if type(s) ~= 'string' then
@@ -2659,6 +2665,7 @@ function add_sound(s, chan, loop)
 		set_sound(s, chan, loop);
 	end
 end
+stead.add_sound = add_sound
 
 function set_sound(s, chan, loop)
 	game._sound = s;	
@@ -2674,6 +2681,7 @@ function set_sound(s, chan, loop)
 		game._sound_channel = tonumber(chan);
 	end
 end
+stead.set_sound = set_sound
 
 function change_pl(p)
 	local o = ref(p);

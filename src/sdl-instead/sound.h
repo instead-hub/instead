@@ -4,6 +4,12 @@
 typedef void*  wav_t;
 typedef struct _mus_t *mus_t;
 
+#ifdef _WIN32
+#define DEFAULT_CHUNKSIZE 1024
+#else
+#define DEFAULT_CHUNKSIZE 2048
+#endif
+
 //extern mus_t	snd_load_mus(const char *path);
 extern void	snd_free_mus(mus_t mus);
 extern int	snd_init(int hz);
