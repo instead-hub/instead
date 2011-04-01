@@ -3833,7 +3833,7 @@ img_t	*fade_bg = NULL;
 static void update_gfx(void *aux)
 {
 	img_t img = (img_t) aux;
-	if (fade_step_nr == -1)
+	if (fade_step_nr == -1 || !img || !fade_bg)
 		return;
 	game_cursor(CURSOR_CLEAR);
 #if SDL_VERSION_ATLEAST(1,3,0)
@@ -3882,6 +3882,7 @@ void gfx_change_screen(img_t src, int steps)
 		game_cursor(CURSOR_ON);
 	SDL_RemoveTimer(han);
 	gfx_free_image(fade_bg);
+	fade_bg = NULL;
 }
 
 int gfx_init(void)
