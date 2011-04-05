@@ -72,7 +72,7 @@ static struct game *game_lookup(const char *name)
 		return NULL;
 	}
 	for (i = 0; i<games_nr; i ++) {
-		if (!strcmp(games[i].dir, name)) {
+		if (!strlowcmp(games[i].dir, name)) {
 			return &games[i];
 		}
 	}
@@ -728,7 +728,7 @@ int game_use_theme(void)
 		theme_relative = 1;
 		rc = theme_load(dirpath(THEME_FILE));
 		theme_relative = 0;
-	} else if (curtheme_dir && strcmp(DEFAULT_THEME, curtheme_dir)) {
+	} else if (curtheme_dir && strlowcmp(DEFAULT_THEME, curtheme_dir)) {
 		rc = game_theme_load(curtheme_dir);
 	}
 	return rc;

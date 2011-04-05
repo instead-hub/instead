@@ -10,6 +10,29 @@ void tolow(char *p)
 		p ++;
 	}
 }
+
+int strlowcmp(const char *s, const char *d)
+{
+	int rc;
+	char *ss = NULL;
+	char *dd = NULL;
+	ss = strdup(s);
+	dd = strdup(d);
+	if (!ss || !dd) {
+		rc = strcmp(s, d);
+		goto err;
+	}
+	tolow(ss);
+	tolow(dd);
+	rc = strcmp(ss, dd);
+err:
+	if (ss)
+		free(ss);
+	if (dd)
+		free(dd);
+	return rc; 
+}
+
 char *getfilepath(const char *d, const char *n)
 {
 	int i = strlen(d) + strlen(n) + 3;

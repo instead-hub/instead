@@ -116,7 +116,7 @@ static int parse_include(const char *v, void *data)
 {
 	int rc;
 	char cwd[PATH_MAX];
-	if (!strcmp(v, DEFAULT_THEME))
+	if (!strlowcmp(v, DEFAULT_THEME))
 		return 0;
 	getdir(cwd, sizeof(cwd));
 	setdir(game_cwd);
@@ -854,7 +854,7 @@ static struct theme *theme_lookup(const char *name)
 		return NULL;
 	}
 	for (i = 0; i<themes_nr; i ++) {
-		if (!strcmp(themes[i].dir, name)) {
+		if (!strlowcmp(themes[i].dir, name)) {
 			return &themes[i];
 		}
 	}

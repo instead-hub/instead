@@ -4,6 +4,7 @@ instead (1.3.5) unstable; urgency=low
   * bug fix in xact;
   * bug fix in jump to pos logic;
   * bug fix lags in sound;
+  * bug fix with wince/windows with themes load;
   * global dir is now readdir;
   * multichannal sound system (add_sound, stop_sound);
   * -appdata parameter;
