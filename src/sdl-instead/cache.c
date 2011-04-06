@@ -32,9 +32,35 @@ typedef struct {
 
 /* #define GOLDEN_RATIO_PRIME_32 0x9e370001UL */
 #include <stdio.h>
+
+static unsigned long hash_long32(unsigned long a)
+{
+	a = (a+0x7ed55d16) + (a<<12);
+	a = (a^0xc761c23c) ^ (a>>19);
+	a = (a+0x165667b1) + (a<<5);
+	a = (a+0xd3a2646c) ^ (a<<9);
+	a = (a+0xfd7046c5) + (a<<3);
+	a = (a^0xb55a4f09) ^ (a>>16);
+	return a;
+}
+
+static unsigned long hash_long64(unsigned long key)
+{
+	key = (~key) + (key << 21); // key = (key << 21) - key - 1;
+	key = key ^ (key >> 24);
+	key = (key + (key << 3)) + (key << 8); // key * 265
+	key = key ^ (key >> 14);
+	key = (key + (key << 2)) + (key << 4); // key * 21
+	key = key ^ (key >> 28);
+	key = key + (key << 31);
+	return key;
+}
+
 static unsigned long hash_addr(void *p)
 {
-	return (long)p;
+	if (sizeof(long) == 8)
+		return hash_long64((unsigned long)p);
+	return hash_long32((unsigned long)p);
 }
 
 static unsigned long hash_string(const char *str)
