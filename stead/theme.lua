@@ -8,8 +8,27 @@ theme = {
 			h:write(stead.string.format("theme.set(%q, %q);\n", k, v))
 		end
 	end;
+	reset = function(...)
+		local i
+		local a = {...};
+		for i = 1, stead.table.maxn(a) do
+			local name = a[i]
+			local v
+			if name then
+				v = theme.reset_vars[name]
+				if v then
+					theme_var(name, v);
+					theme.vars[name] = nil
+					theme.reset_vars[name] = nil
+				end
+			end
+		end
+	end;
 	set = function(name, val)
 		if val and name then
+			if not theme.reset_vars[name] then
+				theme.reset_vars[name] = theme_var(name)
+			end
 			theme_var(name, tostring(val));
 			theme.vars[name] = tostring(val);
 		end
@@ -18,6 +37,11 @@ theme = {
 		return theme_var(name);
 	end;
 	win = {
+		reset = function()
+			theme.reset("win.x", "win.y", "win.w", "win.h",
+				"win.col.fg", "win.col.link", "win.col.alink",
+				"win.fnt.name", "win.fnt.size", "win.fnt.height");
+		end;
 		geom = function(x, y, w, h)
 			theme.set("win.x", x);
 			theme.set("win.y", y);
@@ -48,6 +72,12 @@ theme = {
 		};
 	};
 	inv = {
+		reset = function()
+			theme.reset("inv.x", "inv.y", "inv.w", "inv.h",
+				"inv.col.fg", "inv.col.link", "inv.col.alink",
+				"inv.fnt.name", "inv.fnt.size", "inv.fnt.height",
+				"inv.mode");
+		end;
 		geom = function(x, y, w, h)
 			theme.set("inv.x", x);
 			theme.set("inv.y", y);
@@ -81,6 +111,12 @@ theme = {
 		};
 	};
 	menu = {
+		reset = function()
+			theme.reset("menu.bw",
+				"menu.col.fg", "menu.col.bg", "menu.col.alpha",
+				"menu.col.link", "menu.col.alink",
+				"menu.fnt.name", "menu.fnt.size", "menu.fnt.height");
+		end;
 		bw = function(w)
 			theme.set("menu.bw", w);
 		end;
@@ -129,3 +165,4 @@ theme = {
 }
 
 theme.vars = {}
+theme.reset_vars = {}
