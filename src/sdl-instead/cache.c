@@ -36,16 +36,13 @@ static unsigned long hash_addr(void *p)
 {
 	return (long)p;
 }
+
 static unsigned long hash_string(const char *str)
 {
 	unsigned long hash = 0;
-	int i;
-	int len = strlen(str);
-	for (i = 0; i < len; i++) {
-			hash = (hash << 7) | (hash >> (sizeof(hash)*8 - 7));
-			hash ^= str[i]; /* GOLDEN_RATIO_PRIME_32; */
-	}
-//	fprintf(stderr, "%d\n", hash % HASH_SIZE);
+	int c;
+	while ((c = *str++))
+		hash = c + (hash << 6) + (hash << 16) - hash;
 	return hash;
 }
 
