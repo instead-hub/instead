@@ -59,6 +59,10 @@ theme = {
 			theme.set("win.fnt.height", height);
 		end;
 		gfx = {
+			reset = function()
+				theme.reset("win.gfx.up", "win.up.x", "win.up.y");
+				theme.reset("win.gfx.down", "win.down.x", "win.down.y");
+			end;
 			up = function(pic, x, y)
 				theme.set("win.gfx.up", pic);
 				theme.set("win.up.x", x);
@@ -98,6 +102,10 @@ theme = {
 			theme.set("inv.mode", mode);
 		end;
 		gfx = {
+			reset = function()
+				theme.reset("inv.gfx.up", "inv.up.x", "inv.up.y");
+				theme.reset("inv.gfx.down", "inv.down.x", "inv.down.y");
+			end;
 			up = function(pic, x, y)
 				theme.set("inv.gfx.up", pic);
 				theme.set("inv.up.x", x);
@@ -133,6 +141,9 @@ theme = {
 			theme.set("menu.fnt.height", height);
 		end;
 		gfx = {
+			reset = function()
+				theme.reset("menu.gfx.button", "menu.button.x", "menu.button.y");
+			end;
 			button = function(b, x, y)
 				theme.set("menu.gfx.button", b);
 				theme.set("menu.button.x", x);
@@ -141,6 +152,12 @@ theme = {
 		};
 	};
 	gfx = {
+		reset = function()
+			theme.reset("scr.gfx.cursor.normal", "scr.gfx.cursor.use",
+				"scr.gfx.cursor.x", "scr.gfx.cursor.y",
+				"scr.gfx.mode", "scr.gfx.pad",
+				"scr.gfx.bg");
+		end;
 		cursor = function(norm, use, x, y)
 			theme.set("scr.gfx.cursor.normal", norm);
 			theme.set("scr.gfx.cursor.use", use);
@@ -158,6 +175,9 @@ theme = {
 		end;
 	};
 	snd = {
+		reset = function()
+			theme.reset("snd.click");
+		end;
 		click = function(w)
 			theme.set("snd.click", w);
 		end
