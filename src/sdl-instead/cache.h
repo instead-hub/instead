@@ -10,7 +10,10 @@ extern int  cache_forget(cache_t cache, void *p);
 extern void cache_zap(cache_t cache);
 extern void cache_shrink(cache_t cache);
 extern void *cache_get(cache_t cache, const char *name);
+extern void *cache_lookup(cache_t cache, const char *name);
 extern int cache_add(cache_t cache, const char *name, void *p);
 extern int cache_have(cache_t cache, void *p);
+extern unsigned long hash_addr(void *p);
+extern unsigned long hash_string(const char *str);
 
 #endif

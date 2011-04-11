@@ -78,6 +78,9 @@ extern char	*open_file_dialog(void);
 
 extern int	game_from_disk(void);
 
+extern int	game_pict_modify(img_t p);
+extern int game_pict_coord(int *x, int *y, int *w, int *h);
+
 #define CURSOR_CLEAR -1
 #define CURSOR_OFF    0
 #define CURSOR_ON     1

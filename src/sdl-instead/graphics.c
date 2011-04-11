@@ -12,6 +12,7 @@
 #define Surf(p) ((SDL_Surface *)p)
 
 static SDL_Surface *screen = NULL;
+static cache_t images = NULL;
 
 static struct {
 	const char *name;
@@ -249,6 +250,7 @@ struct _anigif_t {
 };
 
 typedef struct _anigif_t *anigif_t;
+extern int timer_counter;
 
 static int anigif_spawn(anigif_t ag, int x, int y, int w, int h)
 {
@@ -287,7 +289,6 @@ static anigif_t anigif_find(anigif_t g)
 	}
 	return NULL;
 }
-extern int timer_counter;
 
 static void anigif_disposal(anigif_t g)
 {
@@ -429,6 +430,8 @@ void gfx_free_image(img_t p)
 	anigif_t ag;
 	if (!p)
 		return;
+	if (!cache_forget(images, p))
+		return; /* cached sprite */
 	if ((ag = is_anigif(p))) {
 		if (ag->drawn)
 			anigif_drawn_nr --;
@@ -669,7 +672,7 @@ static img_t img_pad(char *fname)
 static img_t _gfx_load_combined_image(char *filename);
 
 /* blank:WxH */
-static img_t _gfx_load_special_image(char *f)
+static img_t _gfx_load_special_image(char *f, int combined)
 {
 	int alpha = 0;
 	int blank = 0;
@@ -680,13 +683,17 @@ static img_t _gfx_load_special_image(char *f)
 	if (!f)
 		return NULL;
 
-
 	if (!(f = filename = strdup(f)))
 		return NULL;
 
 	if (!strncmp(filename, "blank:", 6)) {
 		filename += 6;
 		blank = 1;
+	} else if (!strncmp(filename, "spr:", 4) && !combined) {
+//		filename += 4;
+		img2 = cache_get(images, filename);
+//		fprintf(stderr, "get:%s %p\n", filename, img2);
+		goto out;
 	} else if (!strncmp(filename, "box:", 4)) {
 		filename += 4;
 		alpha = 255;
@@ -726,6 +733,7 @@ skip:
 	img = gfx_new(wh[0], wh[1]);
 	if (!img)
 		goto err;
+
 	if (pc) {
 		color_t col = { .r = 255, .g = 255, .b = 255 };
 		gfx_parse_color(pc, &col);
@@ -733,6 +741,7 @@ skip:
 	}
 	if (pt)
 		alpha = atoi(pt);
+
 	img2 = gfx_alpha_img(img, alpha);
 	gfx_free_image(img);
 out:
@@ -743,12 +752,17 @@ err:
 	return NULL;
 }
 
-static img_t _gfx_load_image(char *filename)
+cache_t gfx_image_cache(void)
+{
+	return images;
+}
+
+static img_t _gfx_load_image(char *filename, int combined)
 {
 	SDL_Surface *img;
 	int nr = 0;
 	filename = strip(filename);
-	img = _gfx_load_special_image(filename);
+	img = _gfx_load_special_image(filename, combined);
 	if (img)
 		return img;
 	filename = dirpath(filename);
@@ -802,7 +816,7 @@ static img_t _gfx_load_combined_image(char *filename)
 		goto err; /* first image is a base image */
 	*ep = 0;
 
-	base = _gfx_load_image(strip(p));
+	base = _gfx_load_image(strip(p), 1);
 	if (!base)
 		goto err;
 	p = ep + 1;
@@ -825,7 +839,7 @@ static img_t _gfx_load_combined_image(char *filename)
 		} else if (*ep) {
 			goto err;
 		}
-		img = _gfx_load_image(strip(p));
+		img = _gfx_load_image(strip(p), 1);
 		if (img) {
 			to.x = x; to.y = y;
 			if (c) {
@@ -852,7 +866,7 @@ img_t gfx_load_image(char *filename)
 	if (!filename)
 		return NULL;
 /*	if (!access(filename, R_OK)) */
-		img = _gfx_load_image(filename);
+		img = _gfx_load_image(filename, 0);
 	if (!img)
 		img = _gfx_load_combined_image(filename);
 	if (!img)
@@ -875,10 +889,13 @@ void gfx_draw_bg(img_t p, int x, int y, int width, int height)
 	SDL_BlitSurface(pixbuf, &src, screen, &dest);
 }
 
-void gfx_draw_from(img_t p, int x, int y, int xx, int yy, int width, int height)
+void gfx_draw_from(img_t p, int x, int y, int width, int height, img_t to, int xx, int yy)
 {
 	SDL_Surface *pixbuf = (SDL_Surface *)p;
+	SDL_Surface *scr = (SDL_Surface *)to;
 	SDL_Rect dest, src;
+	if (!scr)
+		scr = screen;
 	src.x = x;
 	src.y = y;
 	src.w = width;
@@ -887,7 +904,7 @@ void gfx_draw_from(img_t p, int x, int y, int xx, int yy, int width, int height)
 	dest.y = yy; 
 	dest.w = width; 
 	dest.h = height;
-	SDL_BlitSurface(pixbuf, &src, screen, &dest);
+	SDL_BlitSurface(pixbuf, &src, scr, &dest);
 }
 
 void gfx_draw(img_t p, int x, int y)
@@ -945,19 +962,18 @@ int gfx_frame_gif(img_t img)
 {
 	anigif_t ag;
 	ag = is_anigif(img);
-	
+
 	if (!ag)
 		return 0;
-		
+
 	if (!ag->drawn || !ag->active)
 		return 0;
-		
 	if (ag->loop == -1)
 		return 0;
-		
+
 	if ((timer_counter - ag->delay) < (ag->frames[ag->cur_frame].delay / HZ))
 		return 0;
-	
+
 	if (ag->cur_frame != ag->nr_frames - 1 || ag->loop > 1 || !ag->loop)
 		anigif_disposal(ag);
 		
@@ -977,6 +993,7 @@ int gfx_frame_gif(img_t img)
 	}
 	if (ag->loop != -1)
 		anigif_frame(ag);
+
 	return 1;
 }
 
@@ -2150,24 +2167,38 @@ void _txt_layout_free(layout_t lay)
 	layout->vcnt = 0;
 }
 
-word_t txt_layout_words(layout_t lay, word_t v)
+word_t txt_layout_words_ex(layout_t lay, struct line *line, word_t v, int off, int height)
 {
+	struct layout *layout = (struct layout*)lay;
 	struct word *w = (struct word*)v;
-	struct layout *layout = (struct layout *)lay;
-	struct line *line;
-	if (!layout)
+
+	if (!lay)
 		return NULL;
+
 	if (!w) {
-		if (!(line = layout->lines))
+		if (!line)
+			line = layout->lines;
+		if (!line)
 			return NULL;
 		w = line->words;
 	} else {
 		line = w->line;
 		w = w->next;
 	}
-	for (; !w && line->next; line = line->next, w = line->words);
-	return w;	
+
+	for (; (!w || (line->y + line->h) < off) && line->next; line = line->next, w = line->words);
+	if ((line->y + line->h) < off)
+		w = NULL;
+	else if (height >= 0 && line->y - off > height)
+		w = NULL;
+	return w;
 }
+
+word_t txt_layout_words(layout_t lay, word_t v)
+{
+	return txt_layout_words_ex(lay, NULL, v, 0, -1);
+}
+
 void txt_layout_free(layout_t lay)
 {
 	struct layout *layout = (struct layout *)lay;
@@ -2723,7 +2754,6 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 	}
 	gfx_noclip();
 }
-
 
 void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, int height, clear_fn clear)
 {
@@ -3891,11 +3921,18 @@ int gfx_init(void)
 		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
 		return -1;
 	}
+	if (!(images = cache_init(-1, gfx_free_image))) {
+		fprintf(stderr, "Can't init cache subsystem.\n");
+		gfx_done();
+		return -1;
+	}
 	return 0;
 }
 
 void gfx_done(void)
 {
+	cache_free(images);
+	images = NULL;
 	SDL_Quit();
 }
 
