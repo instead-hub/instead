@@ -2,11 +2,13 @@
 #include <string.h>
 #include "list.h"
 #include "cache.h"
+extern unsigned long hash_string(const char *str);
 
 #define HASH_SIZE 511
 
 typedef struct {
 	struct list_head list;
+	struct list_head unused;
 	int auto_grow;
 	int size;
 	int max_size;
@@ -56,14 +58,14 @@ static unsigned long hash_long64(unsigned long key)
 	return key;
 }
 
-static unsigned long hash_addr(void *p)
+unsigned long hash_addr(void *p)
 {
 	if (sizeof(long) == 8)
 		return hash_long64((unsigned long)p);
 	return hash_long32((unsigned long)p);
 }
 
-static unsigned long hash_string(const char *str)
+unsigned long hash_string(const char *str)
 {
 	unsigned long hash = 0;
 	int c;
@@ -79,6 +81,7 @@ cache_t cache_init(int size, cache_free_fn free_fn)
 	if (!c)
 		return NULL;
 	INIT_LIST_HEAD(&c->list);
+	INIT_LIST_HEAD(&c->unused);
 	c->auto_grow = 0;
 	c->size = 0;
 	c->used = 0;
@@ -98,14 +101,17 @@ static void cache_e_free(cache_t cache, __cache_e_t *cc)
 	__cache_t *c = cache;
 	if (!c)
 		return;
-	free(cc->name);
-	if (c->free_fn && !cc->used)
-		c->free_fn(cc->data);
+
 	list_del(cc->hash);
-	free(cc->hash);
 	list_del(cc->vhash);
+	list_del(&cc->list);
+
+	if (c->free_fn && !cc->used) {
+		c->free_fn(cc->data);
+	}
+	free(cc->name);
+	free(cc->hash);
 	free(cc->vhash);
-	list_del((struct list_head*)cc);
 	free(cc);
 }
 
@@ -116,6 +122,8 @@ void cache_zap(cache_t cache)
 		return;
 	while (!list_empty(&c->list))
 		cache_e_free(cache, (__cache_e_t *)(c->list.next));
+	while (!list_empty(&c->unused))
+		cache_e_free(cache, (__cache_e_t *)(c->unused.next));
 	c->size = 0;
 	c->used = 0;
 }
@@ -128,7 +136,7 @@ void cache_free(cache_t cache)
 	free(cache);
 }
 
-static __cache_e_t *cache_lookup(cache_t cache, const char *name)
+static __cache_e_t *_cache_lookup(cache_t cache, const char *name)
 {
 	struct list_head *pos;
 	struct list_head *list;
@@ -165,11 +173,16 @@ static __cache_e_t *cache_data(cache_t cache, void *p)
 
 int cache_forget(cache_t cache, void *p)
 {
+	__cache_t *c = cache;
 	__cache_e_t *cc = cache_data(cache, p);
+//	if (cc)
+//		fprintf(stderr, "Forget %p at %d\n", p, cc->used);
 	if (cc && cc->used) {
 		cc->used --;
-		if (!cc->used)
+		if (!cc->used) {
 			((__cache_t*)cache)->used --;
+			list_move_tail(&cc->list, &c->unused);
+		}
 		return 0;
 	}
 	return -1;
@@ -181,14 +194,26 @@ void *cache_get(cache_t cache, const char *name)
 	__cache_t *c = cache;
 	if (!c || !name)
 		return NULL;
-	cc = cache_lookup(cache, name);
+	cc = _cache_lookup(cache, name);
 	if (!cc)
 		return NULL;
 	cc->used ++; /* need again! */
 	if (cc->used == 1)
 		((__cache_t*)cache)->used ++;
-	list_move((struct list_head*)cc, &c->list); /* first place */
-//	printf("%p\n", cc->data);
+	list_move(&cc->list, &c->list); /* first place */
+//	printf("cache_get %s:%p %d\n", name, cc->data, cc->used);
+	return cc->data;
+}
+
+void *cache_lookup(cache_t cache, const char *name)
+{
+	__cache_e_t *cc;
+	__cache_t *c = cache;
+	if (!c || !name)
+		return NULL;
+	cc = _cache_lookup(cache, name);
+	if (!cc)
+		return NULL;
 	return cc->data;
 }
 
@@ -206,14 +231,10 @@ int cache_have(cache_t cache, void *p)
 
 static void __cache_shrink(__cache_t *c)
 {
-	while (c->size > c->max_size) {
-		__cache_e_t *cc;
-		cc = (__cache_e_t *)c->list.prev;
-		if (!cc->used) {
-			c->size --;
-			cache_e_free(c, (__cache_e_t *)c->list.prev);
-		} else
-			break;
+	while (c->size && c->size > c->max_size && !list_empty(&c->unused)) {
+		__cache_e_t *cc = (__cache_e_t *)(c->unused.next);
+		c->size --;
+		cache_e_free(c, cc);
 	}
 //	fprintf(stderr,"%d/%d\n", c->size, c->used);
 }
@@ -227,7 +248,7 @@ int cache_add(cache_t cache, const char *name, void *p)
 	struct list_head *list;
 	if (!c || !name)
 		return -1;
-	cc = cache_lookup(cache, name);
+	cc = _cache_lookup(cache, name);
 	if (cc)
 		return 0;
 	cc = malloc(sizeof(__cache_e_t));
@@ -271,6 +292,7 @@ int cache_add(cache_t cache, const char *name, void *p)
 	c->used ++;
 	if (c->auto_grow && c->used > c->max_size)
 		c->max_size = c->used;
+//	printf("cache_add %s:%p %d\n", name, cc->data, cc->used);
 //	__cache_shrink(c);
 	return 0;
 }

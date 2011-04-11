@@ -1540,9 +1540,8 @@ function do_ini(self, load)
 	local function call_ini(k, o, ...)
 		v = stead.par('', v, call(o, 'ini'), ...);
 	end
-
-	math.randomseed(tonumber(os.date("%m%d%H%M%S")))
-	rnd(1); rnd(1); rnd(1); -- Lua bug?
+	math.randomseed(os.time(os.date("*t")))
+	rnd(1); rnd(2); rnd(3); -- Lua bug?
 
 	game.pl = deref(game.pl);
 	game.where = deref(game.where);

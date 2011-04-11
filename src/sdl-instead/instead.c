@@ -1,5 +1,6 @@
 #include "externals.h"
 #include "internals.h"
+#include "list.h"
 
 #ifndef STEAD_PATH
 #define STEAD_PATH 	"./stead"
@@ -458,6 +459,7 @@ static int luaB_get_steadpath(lua_State *L) {
 
 
 extern void mouse_reset(int hl); /* too bad */
+extern void mouse_restore(void);
 
 static void instead_timer_do(void *data)
 {
@@ -472,7 +474,9 @@ static void instead_timer_do(void *data)
 	if (!p)
 		goto out;
 	mouse_reset(0);
+//	fprintf(stderr, "cmd =%s\n", p);
 	game_cmd(p); free(p);
+	mouse_restore();
 	game_cursor(CURSOR_ON);
 out:
 	instead_timer_nr = 0;
@@ -531,6 +535,489 @@ static int luaB_theme_var(lua_State *L) {
 extern int dir_iter_factory (lua_State *L);
 extern int luaopen_lfs (lua_State *L);
 
+static LIST_HEAD(sprites);
+
+static LIST_HEAD(fonts);
+
+typedef struct {
+	struct list_head list;
+	char	*name;
+	fnt_t	fnt;
+} _fnt_t;
+
+typedef struct {
+	struct list_head list;
+	char	*name;
+	img_t	img;
+} _spr_t;
+
+static void sprites_free(void)
+{
+//	fprintf(stderr, "sprites free \n");
+	while (!list_empty(&sprites)) {
+		_spr_t *sp = (_spr_t*)(sprites.next);
+		free(sp->name);
+		cache_forget(gfx_image_cache(), sp->img);
+		list_del(&sp->list);
+		free(sp);
+	}
+	while (!list_empty(&fonts)) {
+		_fnt_t *fn = (_fnt_t*)(fonts.next);
+		fnt_free(fn->fnt);
+		free(fn->name);
+		list_del(&fn->list);
+		free(fn);
+	}
+	game_pict_modify(NULL);
+	cache_shrink(gfx_image_cache());
+}
+
+static _spr_t *sprite_lookup(const char *name)
+{
+	struct list_head *pos;
+	_spr_t *sp;
+	list_for_each(pos, &sprites) {
+		sp = (_spr_t*)pos;
+		if (!strcmp(name, sp->name)) {
+			list_move(&sp->list, &sprites); // move it on head
+			return sp;
+		}
+	}
+	return NULL;
+}
+
+static _fnt_t *font_lookup(const char *name)
+{
+	struct list_head *pos;
+	_fnt_t *fn;
+	list_for_each(pos, &fonts) {
+		fn = (_fnt_t*)pos;
+		if (!strcmp(name, fn->name)) {
+			list_move(&fn->list, &fonts); // move it on head
+			return fn;
+		}
+	}
+	return NULL;
+}
+
+static _spr_t *sprite_new(const char *name, img_t img)
+{
+	_spr_t *sp;
+	sp = malloc(sizeof(_spr_t));
+	if (!sp)
+		return NULL;
+	INIT_LIST_HEAD(&sp->list);
+	sp->name = strdup(name);
+	if (!sp->name) {
+		free(sp);
+		return NULL;
+	}
+	sp->img = img;
+	if (cache_add(gfx_image_cache(), name, img)) {
+		free(sp->name);
+		free(sp);
+		return NULL;
+	}
+//	fprintf(stderr, "added: %s\n", name);
+	list_add(&sp->list, &sprites);
+	return sp;
+}
+
+static _fnt_t *font_new(const char *name, fnt_t fnt)
+{
+	_fnt_t *fn;
+	fn = malloc(sizeof(_fnt_t));
+	if (!fn)
+		return NULL;
+	INIT_LIST_HEAD(&fn->list);
+	fn->name = strdup(name);
+	if (!fn->name) {
+		free(fn);
+		return NULL;
+	}
+	fn->fnt = fnt;
+	list_add(&fn->list, &fonts);
+	return fn;
+}
+
+static void sprite_name(const char *name, char *sname, int size)
+{
+	unsigned long h = 0;
+	if (!sname || !size)
+		return;
+	h = hash_string(name);
+	do { /* new uniq name */
+		snprintf(sname, size, "spr:%lx", h);
+		h ++;
+	} while (sprite_lookup(sname) || cache_lookup(gfx_image_cache(), sname));
+	sname[size - 1] = 0;
+}
+
+static void font_name(const char *name, char *sname, int size)
+{
+	unsigned long h = 0;
+	if (!sname || !size)
+		return;
+	h = hash_string(name);
+	do { /* new uniq name */
+		snprintf(sname, size, "fnt:%lx", h);
+		h ++;
+	} while (font_lookup(sname));
+	sname[size - 1] = 0;
+}
+
+static int luaB_free_sprites(lua_State *L) {
+	sprites_free();
+	return 0;
+}
+
+static int luaB_load_sprite(lua_State *L) {
+	img_t img = NULL;
+	_spr_t *sp;
+	const char *key;
+	char sname[sizeof(unsigned long) * 2 + 16];
+
+	const char *fname = luaL_optstring(L, 1, NULL);
+	const char *desc = luaL_optstring(L, 2, NULL);
+
+	if (!fname)
+		return 0;
+
+	img = gfx_load_image((char*)fname);
+
+	if (img)
+		theme_img_scale(&img);
+
+	if (!img)
+		goto err;
+
+	if (!desc || sprite_lookup(desc)) {
+		key = sname;
+		sprite_name(fname, sname, sizeof(sname));
+	} else
+		key = desc;
+	sp = sprite_new(key, img);
+	if (!sp)
+		goto err;
+
+	lua_pushstring(L, key);
+	return 1;
+err:
+	gfx_free_image(img);
+	return 0;
+}
+
+static int luaB_load_font(lua_State *L) {
+	fnt_t fnt = NULL;
+	_fnt_t *fn;
+	const char *key;
+	char sname[sizeof(unsigned long) * 2 + 16];
+	struct game_theme *t = &game_theme;
+
+	const char *fname = luaL_optstring(L, 1, NULL);
+	int sz = luaL_optnumber(L, 2, t->font_size) * game_theme.scale;
+	const char *desc = luaL_optstring(L, 3, NULL);
+	if (!fname)
+		return 0;
+
+	fnt = fnt_load((char*)fname, sz);
+
+	if (!fnt)
+		return 0;
+
+	if (!desc || font_lookup(desc)) {
+		key = sname;
+		font_name(fname, sname, sizeof(sname));
+	} else
+		key = desc;
+
+	fn = font_new(key, fnt);
+	if (!fn)
+		goto err;
+
+	lua_pushstring(L, key);
+	return 1;
+err:
+	fnt_free(fnt);
+	return 0;
+}
+
+static int luaB_text_size(lua_State *L) {
+	_fnt_t *fn;
+	int w = 0, h = 0;
+
+	const char *font = luaL_optstring(L, 1, NULL);
+	const char *text = luaL_optstring(L, 2, NULL);
+
+	if (!font)
+		return 0;
+
+	fn = font_lookup(font);
+	
+	if (!fn)
+		return 0;
+	if (!text) {
+		w = 0;
+		h = fnt_height(fn->fnt);
+	} else
+		txt_size(fn->fnt, text, &w, &h);
+	lua_pushnumber(L, w);
+	lua_pushnumber(L, h);
+	return 2;
+}
+
+static int luaB_text_sprite(lua_State *L) {
+	img_t img = NULL;
+	_spr_t *sp;
+	_fnt_t *fn;
+	const char *key;
+	char sname[sizeof(unsigned long) * 2 + 16];
+
+	const char *font = luaL_optstring(L, 1, NULL);
+	const char *text = luaL_optstring(L, 2, NULL);
+	char txtkey[8];
+	const char *color = luaL_optstring(L, 3, NULL);
+	int style = luaL_optnumber(L, 4, 0);
+	color_t col = { .r = game_theme.fgcol.r, .g = game_theme.fgcol.g, .b = game_theme.fgcol.b };
+
+	if (!font)
+		return 0;
+	if (color)
+		gfx_parse_color (color, &col);
+	if (!text)
+		text = "";
+
+	fn = font_lookup(font);
+
+	if (!fn)
+		return 0;
+
+	fnt_style(fn->fnt, style);
+
+	img = fnt_render(fn->fnt, text, col);
+	if (!img)
+		return 0;
+	key = sname;
+
+	strncpy(txtkey, text, sizeof(txtkey));
+	txtkey[sizeof(txtkey) - 1] = 0;
+	
+	sprite_name(text, sname, sizeof(sname));
+
+	sp = sprite_new(key, img);
+
+	if (!sp)
+		goto err;
+
+	lua_pushstring(L, key);
+	return 1;
+err:
+	gfx_free_image(img);
+	return 0;
+}
+
+static int luaB_sprite_size(lua_State *L) {
+	img_t s = NULL;
+	float v;
+	int w, h;
+	const char *src = luaL_optstring(L, 1, NULL);
+	if (!src)
+		return 0;
+	s = cache_lookup(gfx_image_cache(), src);
+	if (!s)
+		return 0;
+	
+	v = game_theme.scale;
+	
+	w = gfx_img_w(s) / v;
+	h = gfx_img_h(s) / v;
+	lua_pushnumber(L, w);
+	lua_pushnumber(L, h);
+	return 2;
+}
+
+static img_t grab_sprite(const char *dst, int *xoff, int *yoff)
+{
+	img_t d;
+	if (game_theme.gfx_mode == GFX_MODE_DIRECT && !strcmp(dst, "screen")) {
+		d = gfx_screen(NULL);
+		*xoff = game_theme.xoff;
+		*yoff = game_theme.yoff;
+	} else
+		d = cache_lookup(gfx_image_cache(), dst);
+	return d;
+}
+
+static int luaB_draw_sprite(lua_State *L) {
+	img_t s, d;
+	img_t img2 = NULL;
+	float v;
+	const char *src = luaL_optstring(L, 1, NULL);
+	int x = luaL_optnumber(L, 2, 0);
+	int y = luaL_optnumber(L, 3, 0);
+	int w = luaL_optnumber(L, 4, 0);
+	int h = luaL_optnumber(L, 5, 0);
+	const char *dst = luaL_optstring(L, 6, NULL);
+	int xx = luaL_optnumber(L, 7, 0);
+	int yy = luaL_optnumber(L, 8, 0);
+	int alpha = luaL_optnumber(L, 9, 255);
+	int xoff = 0, yoff = 0;
+	int xoff0 = 0, yoff0 = 0;
+	if (!src || !dst)
+		return 0;
+
+	s = grab_sprite(src, &xoff0, &yoff0);
+
+	d = grab_sprite(dst, &xoff, &yoff);	
+
+	if (!s || !d)
+		return 0;
+
+	v = game_theme.scale;
+
+	if (v != 1.0f) {
+		x *= v;
+		y *= v;
+		w *= v;
+		h *= v;
+		xx *= v;
+		yy *= v;
+	}
+
+	if (!w)
+		w = gfx_img_w(s) - 2 * xoff0;
+	if (!h)
+		h = gfx_img_h(s) - 2 * yoff0;
+
+	game_pict_modify(d);
+
+	if (alpha != 255) {
+		img2 = gfx_alpha_img(s, alpha);
+		if (img2)
+			s = img2;
+	}
+	gfx_draw_from(s, x + xoff0, y + yoff0, w, h, d, xx + xoff, yy + yoff);
+	gfx_free_image(img2);
+	lua_pushboolean(L, 1);
+	return 1;
+}
+
+
+static int luaB_alpha_sprite(lua_State *L) {
+	_spr_t *sp;
+	img_t s;
+	img_t img2 = NULL;
+	const char *key;
+	char sname[sizeof(unsigned long) * 2 + 16];
+
+	const char *src = luaL_optstring(L, 1, NULL);
+	int alpha = luaL_optnumber(L, 2, 255);
+	const char *desc = luaL_optstring(L, 3, NULL);
+
+	if (!src)
+		return 0;
+
+	s = cache_lookup(gfx_image_cache(), src);
+	if (!s)
+		return 0;
+	
+	img2 = gfx_alpha_img(s, alpha);
+	if (!img2)
+		return 0;
+
+	if (!desc || sprite_lookup(desc)) {
+		key = sname;
+		sprite_name(src, sname, sizeof(sname));
+	} else
+		key = desc;
+
+	sp = sprite_new(key, img2);
+	if (!sp)
+		goto err;
+	lua_pushstring(L, sname);
+	return 1;
+err:
+	gfx_free_image(img2);
+	return 0;
+}
+
+
+static int luaB_fill_sprite(lua_State *L) {
+	img_t d;
+	float v;
+	const char *dst = luaL_optstring(L, 1, NULL);
+	int x = luaL_optnumber(L, 2, 0);
+	int y = luaL_optnumber(L, 3, 0);
+	int w = luaL_optnumber(L, 4, 0);
+	int h = luaL_optnumber(L, 5, 0);
+	const char *color = luaL_optstring(L, 6, 0);
+	int xoff = 0, yoff = 0;
+	color_t  col = { .r = game_theme.bgcol.r, .g = game_theme.bgcol.g, .b = game_theme.bgcol.b };
+	if (!dst)
+		return 0;
+
+	d = grab_sprite(dst, &xoff, &yoff);
+
+	if (color)
+		gfx_parse_color(color, &col);
+
+	if (!d)
+		return 0;
+
+	v = game_theme.scale;
+
+	if (v != 1.0f) {
+		x *= v;
+		y *= v;
+		w *= v;
+		h *= v;
+	}
+	if (!w)
+		w = gfx_img_w(d) - 2 * xoff;
+	if (!h)
+		h = gfx_img_h(d) - 2 * yoff;
+	game_pict_modify(d);
+	gfx_img_fill(d, x + xoff, y + yoff, w, h, col);
+	lua_pushboolean(L, 1);
+	return 1;
+}
+
+static int luaB_free_sprite(lua_State *L) {
+	const char *key = luaL_optstring(L, 1, NULL);
+	_spr_t *sp;
+	if (!key)
+		return 0;
+
+	sp = sprite_lookup(key);
+	if (!sp)
+		return 0;
+	
+	cache_forget(gfx_image_cache(), sp->img);
+	cache_shrink(gfx_image_cache());
+
+	list_del(&sp->list);
+	free(sp->name); free(sp);
+
+	lua_pushboolean(L, 1);
+	return 1;
+}
+
+static int luaB_free_font(lua_State *L) {
+	const char *key = luaL_optstring(L, 1, NULL);
+	_fnt_t *fn;
+	if (!key)
+		return 0;
+
+	fn = font_lookup(key);
+	if (!fn)
+		return 0;
+
+	list_del(&fn->list);
+	free(fn->name); free(fn);
+	lua_pushboolean(L, 1);
+	return 1;
+}
+
 static const luaL_Reg base_funcs[] = {
 	{"doencfile", luaB_doencfile},
 	{"dofile", luaB_dofile},
@@ -542,6 +1029,19 @@ static const luaL_Reg base_funcs[] = {
 	{"set_timer", luaB_set_timer},
 	{"theme_var", luaB_theme_var},
 	{"readdir", dir_iter_factory},
+
+	{"font_load", luaB_load_font},
+	{"font_free", luaB_free_font},
+
+	{"sprite_load", luaB_load_sprite},
+	{"sprite_text", luaB_text_sprite},
+	{"sprite_free", luaB_free_sprite},
+	{"sprites_free", luaB_free_sprites},
+	{"sprite_draw", luaB_draw_sprite},
+	{"sprite_fill", luaB_fill_sprite},
+	{"sprite_alpha", luaB_alpha_sprite},
+	{"sprite_size", luaB_sprite_size},
+	{"sprite_text_size", luaB_text_size},
 	{NULL, NULL}
 };
 
@@ -612,6 +1112,7 @@ int instead_init(void)
 	}
 	/* cleanup Lua */
 	instead_clear();
+	srand(time(NULL));
 	return 0;
 }
 
@@ -629,6 +1130,7 @@ void instead_done(void)
 #ifdef _HAVE_ICONV
 	fromcp = NULL;
 #endif
+	sprites_free();
 }
 
 int  instead_encode(const char *s, const char *d)
@@ -665,4 +1167,3 @@ int  instead_encode(const char *s, const char *d)
 	fclose(dst);
 	return 0;
 }
-

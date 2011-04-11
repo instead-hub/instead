@@ -147,6 +147,7 @@ extern int theme_relative;
 #define GFX_MODE_FLOAT 0
 #define GFX_MODE_FIXED 1
 #define GFX_MODE_EMBEDDED 2
+#define GFX_MODE_DIRECT 3
 
 #define INV_MODE_DISABLED -1
 #define INV_MODE_VERT 0

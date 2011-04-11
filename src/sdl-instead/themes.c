@@ -15,6 +15,8 @@ static int parse_gfx_mode(const char *v, void *data)
 		*i = GFX_MODE_EMBEDDED;
 	else if (!strcmp(v, "float"))
 		*i = GFX_MODE_FLOAT;	
+	else if (!strcmp(v, "direct"))
+		*i = GFX_MODE_DIRECT;	
 	else
 		return -1;
 	return 0;	
@@ -32,6 +34,9 @@ static int out_gfx_mode(const void *v, char **out)
 		break;
 	case GFX_MODE_FLOAT:
 		o = strdup("float");
+		break;
+	case GFX_MODE_DIRECT:
+		o = strdup("direct");
 		break;
 	default:
 		o = strdup("");
@@ -364,6 +369,10 @@ int theme_img_scale(img_t *p)
 	float v = game_theme.scale;
 	if (!p || !*p || v == 1.0f)
 		return 0;
+
+	if (!cache_have(gfx_image_cache(), p))
+		return 0; /* do not scale sprites! */
+
 	pic = gfx_scale(*p, v, v); 
 	if (!pic)
 		return -1;
