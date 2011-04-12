@@ -1146,6 +1146,11 @@ static int luaB_free_sprite(lua_State *L) {
 	return 1;
 }
 
+static int luaB_show_menu(lua_State *L) {
+	menu_toggle();
+	return 0;
+}
+
 static int luaB_free_font(lua_State *L) {
 	const char *key = luaL_optstring(L, 1, NULL);
 	_fnt_t *fn;
@@ -1173,6 +1178,7 @@ static const luaL_Reg base_funcs[] = {
 	{"set_timer", luaB_set_timer},
 	{"theme_var", luaB_theme_var},
 	{"readdir", dir_iter_factory},
+	{"menu_toggle", luaB_show_menu},
 
 	{"font_load", luaB_load_font},
 	{"font_free", luaB_free_font},
