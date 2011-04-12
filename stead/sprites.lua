@@ -26,6 +26,9 @@ sprite = {
 	alpha = function(name, alpha)
 		return sprite_alpha(name, alpha);
 	end;
+	dup = function(name)
+		return sprite_dup(name);
+	end;
 	scale = function(name, xs, ys)
 		return sprite_scale(name, xs, ys);
 	end;
