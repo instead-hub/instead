@@ -22,7 +22,6 @@ static	char *last_cmd = NULL;
 
 void game_cursor(int on);
 void mouse_reset(int hl);
-static void menu_toggle(void);
 
 void game_err_msg(const char *s)
 {
@@ -2011,7 +2010,7 @@ void mouse_reset(int hl)
 }
 
 
-static void menu_toggle(void)
+void menu_toggle(void)
 {
 	mouse_reset(1);
 	menu_shown ^= 1;
