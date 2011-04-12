@@ -684,7 +684,8 @@ static int luaB_load_sprite(lua_State *L) {
 		return 0;
 
 	img = gfx_load_image((char*)fname);
-
+	if (img)
+		img = gfx_display_alpha(img); /*speed up */
 	if (img)
 		theme_img_scale(&img);
 
@@ -795,8 +796,12 @@ static int luaB_text_sprite(lua_State *L) {
 	fnt_style(fn->fnt, style);
 
 	img = fnt_render(fn->fnt, text, col);
+	if (img)
+		img = gfx_display_alpha(img); /*speed up */
+
 	if (!img)
 		return 0;
+
 	key = sname;
 
 	strncpy(txtkey, text, sizeof(txtkey));

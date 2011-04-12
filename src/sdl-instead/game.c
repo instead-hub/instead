@@ -1592,6 +1592,7 @@ int game_cmd(char *cmd)
 	char		*pict = NULL;
 	img_t		oldscreen = NULL;
 	int 	dd = (game_theme.gfx_mode == GFX_MODE_DIRECT);
+	int			rc = 0;
 	if (menu_shown)
 		return -1;
 
@@ -1599,8 +1600,7 @@ int game_cmd(char *cmd)
 		game_cursor(CURSOR_CLEAR);
 
 	cmdstr = instead_cmd(cmd); instead_clear();
-
-	game_music_player();	
+	game_music_player();
 	game_sound_player();
 
 	if (game_theme.gfx_mode == GFX_MODE_DIRECT) {
@@ -1615,6 +1615,7 @@ int game_cmd(char *cmd)
 	if (!cmdstr) {
 		if (game_pict_modify(NULL)) /* redraw pic only */
 			game_redraw_pic();
+		rc = 1; /* nothing happens */
 		goto inv; /* hackish? ok, yes  it is... */
 	}
 
@@ -1846,7 +1847,7 @@ err:
 		return -1;
 	}
 #endif
-	return 0;
+	return rc;
 }
 
 void game_update(int x, int y, int w, int h)
@@ -2685,7 +2686,8 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 {
 	char *p;
 	struct instead_args args[8];
-	
+	int rc = 0;
+
 	char tx[16];
 	char ty[16];
 	char tpx[16];
@@ -2736,9 +2738,9 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 	mouse_reset(0);
 	if (opt_click && mb != -1)
 		snd_play(game_theme.click, -1, 0);
-	game_cmd(p); free(p);
+	rc = game_cmd(p); free(p);
 	mouse_restore();
-	return 0;
+	return (rc)?-1:0;
 }
 
 extern char zip_game_dirname[];
