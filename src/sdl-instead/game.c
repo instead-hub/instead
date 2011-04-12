@@ -499,8 +499,10 @@ int game_apply_theme(void)
 	textbox_t box;
 
 	memset(objs, 0, sizeof(struct el) * el_max);
-	gfx_bg(game_theme.bgcol);
-	game_clear(0, 0, game_theme.w, game_theme.h);
+	if (game_theme.gfx_mode != GFX_MODE_DIRECT) {
+		gfx_bg(game_theme.bgcol);
+		game_clear(0, 0, game_theme.w, game_theme.h);
+	}
 	gfx_flip();
 	lay = txt_layout(game_theme.font, ALIGN_JUSTIFY, game_theme.win_w, game_theme.win_h);
 	if (!lay)
@@ -565,8 +567,10 @@ int game_apply_theme(void)
 	el_set(el_spic, elt_image, game_theme.win_x, game_theme.win_y, NULL);
 	el_set(el_menu, elt_layout, 0, 0, NULL);
 	el_set(el_menu_button, elt_image, game_theme.menu_button_x, game_theme.menu_button_y, game_theme.menu_button);
-	
-	el_draw(el_menu_button);
+
+	if (game_theme.gfx_mode != GFX_MODE_DIRECT) {
+		el_draw(el_menu_button);
+	}
 	return 0;
 }
 
