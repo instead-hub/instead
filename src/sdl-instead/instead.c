@@ -666,6 +666,8 @@ static void font_name(const char *name, char *sname, int size)
 	sname[size - 1] = 0;
 }
 
+static int _free_sprite(const char *key);
+
 static int luaB_free_sprites(lua_State *L) {
 	sprites_free();
 	return 0;
@@ -776,7 +778,7 @@ static int luaB_text_sprite(lua_State *L) {
 
 	const char *font = luaL_optstring(L, 1, NULL);
 	const char *text = luaL_optstring(L, 2, NULL);
-	char txtkey[8];
+	char txtkey[32];
 	const char *color = luaL_optstring(L, 3, NULL);
 	int style = luaL_optnumber(L, 4, 0);
 	color_t col = { .r = game_theme.fgcol.r, .g = game_theme.fgcol.g, .b = game_theme.fgcol.b };
@@ -952,6 +954,46 @@ err:
 	return 0;
 }
 
+static int luaB_dup_sprite(lua_State *L) {
+	_spr_t *sp;
+	img_t s;
+	img_t img2 = NULL;
+	const char *key;
+	char sname[sizeof(unsigned long) * 2 + 16];
+	int w, h, xoff, yoff;
+	const char *src = luaL_optstring(L, 1, NULL);
+	const char *desc = luaL_optstring(L, 2, NULL);
+
+	if (!src)
+		return 0;
+
+	s = grab_sprite(src, &xoff, &yoff);
+	if (!s)
+		return 0;
+	w = gfx_img_w(s) - xoff * 2;
+	h = gfx_img_h(s) - yoff * 2;
+	img2 = gfx_new(w, h);
+	if (!img2)
+		return 0;
+
+	gfx_draw_from(s, xoff, yoff, w, h, img2, 0, 0);
+
+	if (!desc || sprite_lookup(desc)) {
+		key = sname;
+		sprite_name(src, sname, sizeof(sname));
+	} else
+		key = desc;
+
+	sp = sprite_new(key, img2);
+	if (!sp)
+		goto err;
+	lua_pushstring(L, sname);
+	return 1;
+err:
+	gfx_free_image(img2);
+	return 0;
+}
+
 static int luaB_scale_sprite(lua_State *L) {
 	_spr_t *sp;
 	img_t s;
@@ -1072,22 +1114,28 @@ static int luaB_fill_sprite(lua_State *L) {
 	return 1;
 }
 
-static int luaB_free_sprite(lua_State *L) {
-	const char *key = luaL_optstring(L, 1, NULL);
+static int _free_sprite(const char *key)
+{
 	_spr_t *sp;
 	if (!key)
-		return 0;
-
+		return -1;
 	sp = sprite_lookup(key);
+
 	if (!sp)
-		return 0;
-	
+		return -1;
+
 	cache_forget(gfx_image_cache(), sp->img);
 	cache_shrink(gfx_image_cache());
 
 	list_del(&sp->list);
 	free(sp->name); free(sp);
+	return 0;
+}
 
+static int luaB_free_sprite(lua_State *L) {
+	const char *key = luaL_optstring(L, 1, NULL);
+	if (_free_sprite(key))
+		return 0;
 	lua_pushboolean(L, 1);
 	return 1;
 }
@@ -1129,6 +1177,7 @@ static const luaL_Reg base_funcs[] = {
 	{"sprites_free", luaB_free_sprites},
 	{"sprite_draw", luaB_draw_sprite},
 	{"sprite_fill", luaB_fill_sprite},
+	{"sprite_dup", luaB_dup_sprite},
 	{"sprite_alpha", luaB_alpha_sprite},
 	{"sprite_size", luaB_sprite_size},
 	{"sprite_scale", luaB_scale_sprite},
