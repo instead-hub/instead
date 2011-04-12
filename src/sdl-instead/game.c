@@ -2001,8 +2001,7 @@ void mouse_reset(int hl)
 
 	disable_use();
 
-	if (hl)
-		motion_mode = 0;
+	motion_mode = 0;
 	old_xref = old_el = NULL;
 }
 
@@ -2070,10 +2069,11 @@ int game_click(int x, int y, int action, int filter)
 	char 		buf[1024];
 	xref_t 		xref = NULL;
 	char		*xref_txt;
-	int was_mode = motion_mode;
+
 	if (!action) {
 		click_x = x;
 		click_y = y;
+		motion_y = y;
 	} else if (action == 1) {
 		click_x = -1;
 		click_y = -1;
@@ -2110,8 +2110,6 @@ int game_click(int x, int y, int action, int filter)
 				(!box_isscroll_up(elem->id) || !box_isscroll_down(elem->id))) {
 			motion_mode = 1;
 			motion_id = elem->id;
-			if (!action || !was_mode)
-				motion_y = y;
 			return 0;
 		}
 		old_xref = xref;
