@@ -960,23 +960,20 @@ static int luaB_dup_sprite(lua_State *L) {
 	img_t img2 = NULL;
 	const char *key;
 	char sname[sizeof(unsigned long) * 2 + 16];
-	int w, h, xoff, yoff;
 	const char *src = luaL_optstring(L, 1, NULL);
 	const char *desc = luaL_optstring(L, 2, NULL);
 
 	if (!src)
 		return 0;
 
-	s = grab_sprite(src, &xoff, &yoff);
+	s = cache_lookup(gfx_image_cache(), src);
 	if (!s)
 		return 0;
-	w = gfx_img_w(s) - xoff * 2;
-	h = gfx_img_h(s) - yoff * 2;
-	img2 = gfx_new(w, h);
+
+	img2 = gfx_alpha_img(s, 255);
+
 	if (!img2)
 		return 0;
-
-	gfx_draw_from(s, xoff, yoff, w, h, img2, 0, 0);
 
 	if (!desc || sprite_lookup(desc)) {
 		key = sname;
