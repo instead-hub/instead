@@ -26,6 +26,9 @@ sprite = {
 	alpha = function(name, alpha)
 		return sprite_alpha(name, alpha);
 	end;
+	scale = function(name, xs, ys)
+		return sprite_scale(name, xs, ys);
+	end;
 	text = function(font, text, col, style)
 		return sprite_text(font, text, col, style);
 	end;
