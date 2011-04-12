@@ -816,26 +816,6 @@ err:
 	return 0;
 }
 
-static int luaB_sprite_size(lua_State *L) {
-	img_t s = NULL;
-	float v;
-	int w, h;
-	const char *src = luaL_optstring(L, 1, NULL);
-	if (!src)
-		return 0;
-	s = cache_lookup(gfx_image_cache(), src);
-	if (!s)
-		return 0;
-	
-	v = game_theme.scale;
-	
-	w = gfx_img_w(s) / v;
-	h = gfx_img_h(s) / v;
-	lua_pushnumber(L, w);
-	lua_pushnumber(L, h);
-	return 2;
-}
-
 static img_t grab_sprite(const char *dst, int *xoff, int *yoff)
 {
 	img_t d;
@@ -843,9 +823,35 @@ static img_t grab_sprite(const char *dst, int *xoff, int *yoff)
 		d = gfx_screen(NULL);
 		*xoff = game_theme.xoff;
 		*yoff = game_theme.yoff;
-	} else
+	} else {
+		*xoff = 0;
+		*yoff = 0;
 		d = cache_lookup(gfx_image_cache(), dst);
+	}
 	return d;
+}
+
+
+static int luaB_sprite_size(lua_State *L) {
+	img_t s = NULL;
+	float v;
+	int w, h;
+	int xoff, yoff;
+	const char *src = luaL_optstring(L, 1, NULL);
+	if (!src)
+		return 0;
+	s = grab_sprite(src, &xoff, &yoff);
+	if (!s)
+		return 0;
+	
+	v = game_theme.scale;
+
+	w = (gfx_img_w(s) - xoff * 2)/ v;
+	h = (gfx_img_h(s) - yoff * 2)/ v;
+
+	lua_pushnumber(L, w);
+	lua_pushnumber(L, h);
+	return 2;
 }
 
 static int luaB_draw_sprite(lua_State *L) {
