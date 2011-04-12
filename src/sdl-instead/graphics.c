@@ -1293,6 +1293,42 @@ img_t gfx_scale(img_t src, float xscale, float yscale)
 	}
 	return (img_t)zoomSurface((SDL_Surface *)src, xscale, yscale, 1);
 }
+
+img_t gfx_rotate(img_t src, float angle)
+{
+	anigif_t ag;
+
+	float rangle = angle * (M_PI / 180.0);
+
+	if ((ag = is_anigif(Surf(src)))) {
+		int i;
+		int w,h;
+		float x, y, x1, y1;
+
+		w = gfx_img_w(src);
+		h = gfx_img_h(src);
+
+		for (i = 0; i < ag->nr_frames; i ++) {
+			SDL_Surface *s = rotozoomSurface(ag->frames[i].surface, angle, 1.0, 11);
+			if (i)
+				SDL_FreeSurface(ag->frames[i].surface);
+
+			ag->frames[i].surface = s;
+
+			x = (float)(ag->frames[i].x) - w / 2;
+			y = (float)(ag->frames[i].y) - h / 2;
+
+			x1 = x*cosf(rangle) - y*sinf(rangle);
+			y1 = y*cosf(rangle) + x*sinf(rangle);
+			
+			ag->frames[i].x = x1 + w / 2;
+			ag->frames[i].y = y1 + h / 2;
+		}
+		return ag->frames[0].surface;
+	}
+	return (img_t)rotozoomSurface(Surf(src), angle, 1.0, 1);
+}
+
 #define FN_REG  0
 #define FN_BOLD  1
 #define FN_ITALIC  2

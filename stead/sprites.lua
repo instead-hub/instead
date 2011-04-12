@@ -29,6 +29,9 @@ sprite = {
 	scale = function(name, xs, ys)
 		return sprite_scale(name, xs, ys);
 	end;
+	rotate = function(name, angle)
+		return sprite_rotate(name, angle);
+	end;
 	text = function(font, text, col, style)
 		return sprite_text(font, text, col, style);
 	end;

@@ -972,6 +972,7 @@ static int luaB_scale_sprite(lua_State *L) {
 		return 0;
 	
 	img2 = gfx_scale(s, xs, ys);
+
 	if (!img2)
 		return 0;
 
@@ -991,6 +992,45 @@ err:
 	return 0;
 }
 
+
+static int luaB_rotate_sprite(lua_State *L) {
+	_spr_t *sp;
+	img_t s;
+	img_t img2 = NULL;
+	const char *key;
+	char sname[sizeof(unsigned long) * 2 + 16];
+
+	const char *src = luaL_optstring(L, 1, NULL);
+	float angle = luaL_optnumber(L, 2, 1.0f);
+	const char *desc = luaL_optstring(L, 3, NULL);
+
+	if (!src)
+		return 0;
+
+	s = cache_lookup(gfx_image_cache(), src);
+	if (!s)
+		return 0;
+	
+	img2 = gfx_rotate(s, angle);
+
+	if (!img2)
+		return 0;
+
+	if (!desc || sprite_lookup(desc)) {
+		key = sname;
+		sprite_name(src, sname, sizeof(sname));
+	} else
+		key = desc;
+
+	sp = sprite_new(key, img2);
+	if (!sp)
+		goto err;
+	lua_pushstring(L, sname);
+	return 1;
+err:
+	gfx_free_image(img2);
+	return 0;
+}
 
 static int luaB_fill_sprite(lua_State *L) {
 	img_t d;
@@ -1092,6 +1132,7 @@ static const luaL_Reg base_funcs[] = {
 	{"sprite_alpha", luaB_alpha_sprite},
 	{"sprite_size", luaB_sprite_size},
 	{"sprite_scale", luaB_scale_sprite},
+	{"sprite_rotate", luaB_rotate_sprite},
 	{"sprite_text_size", luaB_text_size},
 	{NULL, NULL}
 };
