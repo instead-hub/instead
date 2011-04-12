@@ -32,19 +32,30 @@ stead.module_init(function()
 end)
 
 game.action = stead.hook(game.action, 
-function(f, s, cmd, x, y, ...)
+function(f, s, cmd, x, y, px, py, ...)
 	if cmd == 'click' then
 		local r,v
+		local x2 = px
+		local y2 = py
+
+		if tonumber(px) then
+			x2 = tonumber(px)
+		end
+
+		if tonumber(py) then
+			y2 = tonumber(py)
+		end
+
 		if here().click then
-			r,v = call(here(), 'click', x, y, ...);
+			r,v = call(here(), 'click', tonumber(x), tonumber(y), x2, y2, ...);
 		elseif s.click then
-			r,v = call(s, 'click', x, y, ...);
+			r,v = call(s, 'click', tonumber(x), tonumber(y), x2, y2, ...);
 		end
 		if r == nil and v == nil then
 			return nil, true
 		end
 		return r,v
 	end
-	return f(s, cmd, x, y, ...)
+	return f(s, cmd, x, y, px, py, ...)
 end)
 -- vim:ts=4
