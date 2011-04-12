@@ -5,7 +5,7 @@ sprite = {
 	system_type = true;
 
 	ini = function(s)
-		if type(s.load) == 'function' then
+		if type(s.init) == 'function' then
 			sprites_free();
 			sprite.init();
 		end

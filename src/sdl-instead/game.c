@@ -2001,11 +2001,6 @@ void mouse_reset(int hl)
 
 	disable_use();
 
-	if (motion_mode) {
-		click_x = -1;
-		click_y = -1;
-	}
-
 	if (hl)
 		motion_mode = 0;
 	old_xref = old_el = NULL;
@@ -2065,7 +2060,7 @@ int mouse_filter(int filter)
 	old_counter = timer_counter;
 	return 0;
 }
-
+/* action: 0 - first click,1 - second, -1 - restore */
 int game_click(int x, int y, int action, int filter)
 {
 	int menu_mode 	= 0;
@@ -2075,11 +2070,11 @@ int game_click(int x, int y, int action, int filter)
 	char 		buf[1024];
 	xref_t 		xref = NULL;
 	char		*xref_txt;
-
+	int was_mode = motion_mode;
 	if (!action) {
 		click_x = x;
 		click_y = y;
-	} else {
+	} else if (action == 1) {
 		click_x = -1;
 		click_y = -1;
 	}
@@ -2087,7 +2082,7 @@ int game_click(int x, int y, int action, int filter)
 	if (action)
 		motion_mode = 0;
 
-	if (filter && opt_filter && action) {
+	if (filter && opt_filter && action == 1) {
 		xref_t new_xref;
 		struct el *new_elem;
 		new_xref = look_xref(x, y, &new_elem);
@@ -2100,7 +2095,8 @@ int game_click(int x, int y, int action, int filter)
 			old_xref = NULL;
 		}
 	}
-	if (action) {
+
+	if (action == 1) {
 		xref = old_xref;
 		elem = old_el;
 		old_xref = NULL;
@@ -2114,7 +2110,8 @@ int game_click(int x, int y, int action, int filter)
 				(!box_isscroll_up(elem->id) || !box_isscroll_down(elem->id))) {
 			motion_mode = 1;
 			motion_id = elem->id;
-			motion_y =y;
+			if (!action || !was_mode)
+				motion_y = y;
 			return 0;
 		}
 		old_xref = xref;
@@ -2218,8 +2215,7 @@ int game_click(int x, int y, int action, int filter)
 
 void mouse_restore(void)
 {
-	if (click_x != -1 && click_y != -1)
-		game_click(click_x, click_y, 0, 0);
+	game_click(click_x, click_y, -1, 0);
 }
 
 void game_cursor(int on)
@@ -2922,7 +2918,7 @@ int game_loop(void)
 				game_restart();
 				if (old_menu != -1)
 					game_menu(old_menu);
-			} else if (game_theme.gfx_mode == GFX_MODE_DIRECT) {
+			} else if (game_theme.gfx_mode == GFX_MODE_DIRECT && !menu_shown) {
 				; // nothing todo
 			} else if (!alt_pressed && (!is_key(&ev, "return") || !is_key(&ev, "enter") 
 			#ifdef S60
@@ -3016,7 +3012,7 @@ int game_loop(void)
 					select_frame(0);
 #endif
 			}
-		} else if (game_theme.gfx_mode == GFX_MODE_DIRECT) {
+		} else if (game_theme.gfx_mode == GFX_MODE_DIRECT && !menu_shown) {
 			; // nothing todo 
 		} else if (ev.type == MOUSE_DOWN) {
 			if (ev.code != 1)
