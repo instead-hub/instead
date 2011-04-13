@@ -50,6 +50,12 @@ sprite = {
 		end
 		return sprite_draw(s, fx, fy, fw, fh, d, x, y, alpha);
 	end;
+	copy = function(s, fx, fy, fw, fh, d, x, y, alpha)
+		if d == nil and x == nil and y == nil then
+			return sprite_copy(s, 0, 0, 0, 0, fx, fy, fw, fh);
+		end
+		return sprite_copy(s, fx, fy, fw, fh, d, x, y, alpha);
+	end;
 	fill = function(d, x, y, w, h, col)
 		if h == nil and col == nil then
 			return sprite_fill(d, 0, 0, 0, 0, x);

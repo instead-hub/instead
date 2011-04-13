@@ -73,6 +73,7 @@ extern int	gfx_prev_mode(int *w, int *h);
 extern void	gfx_update(int x, int y, int w, int h);
 extern void	gfx_video_done(void);
 extern void	gfx_clear(int x, int y, int w, int h);
+extern void	gfx_copy_from(img_t p, int x, int y, int width, int height, img_t to, int xx, int yy);
 extern void	gfx_draw(img_t pixmap, int x, int y);
 extern void	gfx_draw_wh(img_t p, int x, int y, int w, int h);
 extern img_t	gfx_grab_screen(int x, int y, int w, int h);

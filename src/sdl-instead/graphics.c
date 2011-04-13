@@ -902,6 +902,26 @@ void gfx_draw_from(img_t p, int x, int y, int width, int height, img_t to, int x
 	SDL_BlitSurface(pixbuf, &src, scr, &dest);
 }
 
+void gfx_copy_from(img_t p, int x, int y, int width, int height, img_t to, int xx, int yy)
+{
+	SDL_Surface *pixbuf = (SDL_Surface *)p;
+	SDL_Surface *scr = (SDL_Surface *)to;
+	SDL_Rect dest, src;
+	if (!scr)
+		scr = screen;
+	src.x = x;
+	src.y = y;
+	src.w = width;
+	src.h = height;
+	dest.x = xx;
+	dest.y = yy; 
+	dest.w = width; 
+	dest.h = height;
+	gfx_unset_alpha(pixbuf);
+	SDL_BlitSurface(pixbuf, &src, scr, &dest);
+	gfx_set_alpha(pixbuf, 255);
+}
+
 void gfx_draw(img_t p, int x, int y)
 {
 	anigif_t ag;

@@ -915,6 +915,54 @@ static int luaB_draw_sprite(lua_State *L) {
 	return 1;
 }
 
+static int luaB_copy_sprite(lua_State *L) {
+	img_t s, d;
+	img_t img2 = NULL;
+	float v;
+	const char *src = luaL_optstring(L, 1, NULL);
+	int x = luaL_optnumber(L, 2, 0);
+	int y = luaL_optnumber(L, 3, 0);
+	int w = luaL_optnumber(L, 4, 0);
+	int h = luaL_optnumber(L, 5, 0);
+	const char *dst = luaL_optstring(L, 6, NULL);
+	int xx = luaL_optnumber(L, 7, 0);
+	int yy = luaL_optnumber(L, 8, 0);
+	int xoff = 0, yoff = 0;
+	int xoff0 = 0, yoff0 = 0;
+	if (!src || !dst)
+		return 0;
+
+	s = grab_sprite(src, &xoff0, &yoff0);
+
+	d = grab_sprite(dst, &xoff, &yoff);	
+
+	if (!s || !d)
+		return 0;
+
+	v = game_theme.scale;
+
+	if (v != 1.0f) {
+		x *= v;
+		y *= v;
+		w *= v;
+		h *= v;
+		xx *= v;
+		yy *= v;
+	}
+
+	if (!w)
+		w = gfx_img_w(s) - 2 * xoff0;
+	if (!h)
+		h = gfx_img_h(s) - 2 * yoff0;
+
+	game_pict_modify(d);
+
+	gfx_copy_from(s, x + xoff0, y + yoff0, w, h, d, xx + xoff, yy + yoff);
+	gfx_free_image(img2);
+	lua_pushboolean(L, 1);
+	return 1;
+}
+
 
 static int luaB_alpha_sprite(lua_State *L) {
 	_spr_t *sp;
@@ -1185,6 +1233,7 @@ static const luaL_Reg base_funcs[] = {
 	{"sprite_free", luaB_free_sprite},
 	{"sprites_free", luaB_free_sprites},
 	{"sprite_draw", luaB_draw_sprite},
+	{"sprite_copy", luaB_copy_sprite},
 	{"sprite_fill", luaB_fill_sprite},
 	{"sprite_dup", luaB_dup_sprite},
 	{"sprite_alpha", luaB_alpha_sprite},
