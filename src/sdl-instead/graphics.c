@@ -593,18 +593,19 @@ img_t gfx_alpha_img(img_t src, int alpha)
 	if (!img)
 		return NULL;
 	SDL_SetAlpha(img, SDL_SRCALPHA, SDL_ALPHA_OPAQUE);
-	SDL_LockSurface(img);
-	ptr = (Uint32*)img->pixels;
-	size = img->w * img->h;
-	while (size --) {
-		Uint8 r, g, b, a;
-		col = *ptr;
-		SDL_GetRGBA(col, img->format, &r, &g, &b, &a);
-		col = SDL_MapRGBA(img->format, r, g, b, a * alpha / 255);
-		*ptr = col;
-		ptr ++;
+	if (SDL_LockSurface(img) == 0) {
+		ptr = (Uint32*)img->pixels;
+		size = img->w * img->h;
+		while (size --) {
+			Uint8 r, g, b, a;
+			col = *ptr;
+			SDL_GetRGBA(col, img->format, &r, &g, &b, &a);
+			col = SDL_MapRGBA(img->format, r, g, b, a * alpha / 255);
+			*ptr = col;
+			ptr ++;
+		}
+		SDL_UnlockSurface(img);
 	}
-	SDL_UnlockSurface(img);
 	return img;
 }
 
