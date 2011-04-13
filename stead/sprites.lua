@@ -52,7 +52,7 @@ sprite = {
 	end;
 	fill = function(d, x, y, w, h, col)
 		if h == nil and col == nil then
-			return sprite_fill(d, 0, 0, 0, 0, x, y, w);
+			return sprite_fill(d, 0, 0, 0, 0, x);
 		end 
 		return sprite_fill(d, x, y, w, h, col);
 	end;
