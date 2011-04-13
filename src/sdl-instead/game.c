@@ -1524,7 +1524,7 @@ int game_pict_modify(img_t p)
 {
 	static int modify = 0;
 	int last = modify;
-	if (p && (el_img(el_spic) == p))
+	if (p && ((el_img(el_spic) == p) || p == gfx_screen(NULL)))
 		modify = 1;
 	else
 		modify = 0;
@@ -1609,7 +1609,9 @@ int game_cmd(char *cmd)
 	if (game_theme.gfx_mode == GFX_MODE_DIRECT) {
 		if (cmdstr)
 			free(cmdstr);
-		goto out;
+		if (game_pict_modify(NULL))
+			goto out;
+		return 0;
 	} else if (dd) { /* disable direct mode on the fly */
 		game_theme_changed = 2;  /* force redraw */
 		game_cursor(CURSOR_DRAW);
