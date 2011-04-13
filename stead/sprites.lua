@@ -41,8 +41,8 @@ sprite = {
 	size = function(spr)
 		return sprite_size(spr);
 	end;
-	text_size = function(spr)
-		return sprite_text_size(spr);
+	text_size = function(fnt, spr)
+		return sprite_text_size(fnt, spr);
 	end;
 	draw = function(s, fx, fy, fw, fh, d, x, y, alpha)
 		if d == nil and x == nil and y == nil then
