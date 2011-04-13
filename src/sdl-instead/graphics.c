@@ -593,6 +593,7 @@ img_t gfx_alpha_img(img_t src, int alpha)
 	if (!img)
 		return NULL;
 	SDL_SetAlpha(img, SDL_SRCALPHA, SDL_ALPHA_OPAQUE);
+	SDL_LockSurface(img);
 	ptr = (Uint32*)img->pixels;
 	size = img->w * img->h;
 	while (size --) {
@@ -603,6 +604,7 @@ img_t gfx_alpha_img(img_t src, int alpha)
 		*ptr = col;
 		ptr ++;
 	}
+	SDL_UnlockSurface(img);
 	return img;
 }
 
