@@ -503,14 +503,14 @@ img_t 	gfx_new(int w, int h)
 		bmask = 0x00ff0000;
 		amask = 0xff000000;
 #endif
-		dst = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 
+		dst = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, w, h, 
 			32,
 			rmask, 
 			gmask, 
 			bmask, 
 			amask);	
 	} else {
-		dst = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 
+		dst = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, w, h, 
 			screen->format->BitsPerPixel, 
 			screen->format->Rmask, 
 			screen->format->Gmask, 
@@ -592,9 +592,7 @@ img_t gfx_alpha_img(img_t src, int alpha)
 		img = gfx_new(Surf(src)->w, Surf(src)->h);
 	if (!img)
 		return NULL;
-#if SDL_VERSION_ATLEAST(1,3,0)
-	SDL_SetAlpha(img, SDL_SRCALPHA, 255);
-#endif
+	SDL_SetAlpha(img, SDL_SRCALPHA, SDL_ALPHA_OPAQUE);
 	ptr = (Uint32*)img->pixels;
 	size = img->w * img->h;
 	while (size --) {
@@ -610,11 +608,12 @@ img_t gfx_alpha_img(img_t src, int alpha)
 
 void	gfx_set_alpha(img_t src, int alpha)
 {
-#if SDL_VERSION_ATLEAST(1,3,0)
 	SDL_SetAlpha((SDL_Surface *)src, SDL_SRCALPHA, alpha);
-#else
-	SDL_SetAlpha((SDL_Surface *)src, SDL_SRCALPHA | SDL_RLEACCEL, alpha);
-#endif
+}
+
+void	gfx_unset_alpha(img_t src)
+{
+	SDL_SetAlpha((SDL_Surface *)src, 0, SDL_ALPHA_OPAQUE);
 }
 
 img_t gfx_combine(img_t src, img_t dst)
@@ -790,11 +789,7 @@ static img_t _gfx_load_image(char *filename, int combined)
 		rwop = SDL_RWFromFile(filename, "rb");
 		if (rwop) {
 			if (IMG_isBMP(rwop))
-#if SDL_VERSION_ATLEAST(1,3,0)
 				SDL_SetAlpha(img, 0, SDL_ALPHA_OPAQUE);
-#else
-				SDL_SetAlpha(img, SDL_RLEACCEL, SDL_ALPHA_OPAQUE);
-#endif
 			SDL_RWclose(rwop);
 		}
 	}
