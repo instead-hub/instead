@@ -1326,7 +1326,7 @@ void game_music_player(void)
 		free(mus);
 }
 
-#define MAX_WAVS 16
+#define MAX_WAVS SND_CHANNELS * 2
 
 static LIST_HEAD(sounds);
 static int sounds_nr = 0;
@@ -1337,8 +1337,51 @@ typedef struct {
 	wav_t	wav;
 } _snd_t;
 
+static _snd_t *channels[SND_CHANNELS] = {};
+
+void game_channel_finished(int channel)
+{
+//	fprintf(stderr, "finished: %d\n", channel);
+	channels[channel % SND_CHANNELS] = NULL;
+}
+
+int  sound_playing(_snd_t *snd)
+{
+	int i;
+	for (i = 0; i < SND_CHANNELS; i++) {
+		if (channels[i] == snd)
+			return i;
+	}
+	return -1;
+}
+
+void sounds_shrink(void)
+{
+	struct list_head *pos, *pos2;
+	_snd_t *sn;
+	pos = sounds.next;
+//	fprintf(stderr,"shrink try\n");
+	while (pos != &sounds && sounds_nr > MAX_WAVS) {
+		sn = (_snd_t*)pos;
+		if (sound_playing(sn) != -1) {
+			pos = pos->next;
+			continue;
+		}
+		pos2 = pos->next;
+//		fprintf(stderr,"to %p\n", pos2);
+		free(sn->fname);
+		snd_free_wav(sn->wav);
+		list_del(pos);
+		free(sn);
+		pos = pos2;
+		sounds_nr --;
+//		fprintf(stderr,"shrink by 1\n");
+	}
+}
+
 static void sounds_free(void)
 {
+	int i = 0;
 	while (!list_empty(&sounds)) {
 		_snd_t *sn = (_snd_t*)(sounds.next);
 		free(sn->fname);
@@ -1346,10 +1389,13 @@ static void sounds_free(void)
 		list_del(&sn->list);
 		free(sn);
 	}
+	for (i = 0; i < SND_CHANNELS; i++)
+		channels[i] = NULL;
+
 	sounds_nr = 0;
 }
 
-static wav_t sound_find(const char *fname)
+static _snd_t *sound_find(const char *fname)
 {
 	struct list_head *pos;
 	_snd_t *sn;
@@ -1357,13 +1403,22 @@ static wav_t sound_find(const char *fname)
 		sn = (_snd_t*)pos;
 		if (!strcmp(fname, sn->fname)) {
 			list_move(&sn->list, &sounds); // move it on head
-			return sn->wav;
+			return sn;
 		}
 	}
 	return NULL;
 }
 
-static wav_t sound_add(const char *fname)
+static void sound_play(_snd_t *sn, int chan, int loop)
+{
+	int c = snd_play(sn->wav, chan, loop - 1);
+//	fprintf(stderr, "added: %d\n", c);
+	if (c == -1)
+		return;
+	channels[c] = sn;
+}
+
+static _snd_t *sound_add(const char *fname)
 {
 	wav_t w;
 	_snd_t *sn;
@@ -1381,18 +1436,13 @@ static wav_t sound_add(const char *fname)
 	w = snd_load_wav(dirpath(fname));
 	if (!w)
 		goto err;
+	sn->wav = w;
+
+	sounds_shrink();
+
 	list_add(&sn->list, &sounds);
-
-	if (sounds_nr >= MAX_WAVS) {
-		sn = (_snd_t*)(sounds.prev);
-		list_del(&sn->list);
-		free(sn->fname);
-		snd_free_wav(sn->wav);
-		free(sn);
-	} else
-		sounds_nr ++;
-
-	return w;
+	sounds_nr ++;
+	return sn;
 err:
 	free(sn->fname);
 	free(sn);
@@ -1414,7 +1464,7 @@ static int _play_combined_snd(char *filename, int chan, int loop)
 {
 	char *str;
 	char *p, *ep;
-	wav_t		w;
+	_snd_t *sn;
 
 	p = str = strdup(filename);
 	if (!str)
@@ -1439,11 +1489,11 @@ static int _play_combined_snd(char *filename, int chan, int loop)
 			goto err;
 		}
 		p = strip(p);
-		w = sound_find(p);
-		if (!w)
-			w = sound_add(p);
-		if (w)
-			snd_play(w, c, l - 1);
+		sn = sound_find(p);
+		if (!sn)
+			sn = sound_add(p);
+		if (sn)
+			sound_play(sn, c, l);
 		else if (at || c != -1) /* if @ or specific channel */
 			snd_halt_chan(c, 500);
 		p = ep;

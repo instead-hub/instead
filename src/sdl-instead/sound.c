@@ -103,6 +103,7 @@ int snd_init(int hz)
 		return -1;
 	}
 	sound_on = 1;
+	Mix_ChannelFinished(game_channel_finished);
 	return 0;
 }
 
@@ -270,11 +271,13 @@ void snd_done(void)
 {
 	if (!sound_on)
 		return;
-	if (timer_id)
-		
+	Mix_ChannelFinished(game_channel_finished);
+	if (timer_id) {
+		SDL_RemoveTimer(timer_id);
+		timer_id = NULL_TIMER;
+	}
 	Mix_HaltChannel(-1);
 	Mix_HaltMusic();
-	timer_id = NULL_TIMER;
 	if (mus)
 		snd_free_mus(mus);
 	mus = NULL;
