@@ -3116,13 +3116,16 @@ int game_loop(void)
 		//	game_highlight(ev.x, ev.y, 1);
 		}
 
-		if (old_xref)
-			game_highlight(x, y, 1);
-		else {
-			int x, y;
-			gfx_cursor(&x, &y);
-			game_highlight(x, y, 1);
+		if (game_theme.gfx_mode != GFX_MODE_DIRECT) {
+			if (old_xref)
+				game_highlight(x, y, 1);
+			else {
+				int x, y;
+				gfx_cursor(&x, &y);
+				game_highlight(x, y, 1);
+			}
 		}
+
 		game_cursor(CURSOR_ON);
 		if (err_msg) {
 			mouse_reset(1);
