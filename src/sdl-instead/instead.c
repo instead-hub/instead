@@ -853,8 +853,8 @@ static int luaB_sprite_size(lua_State *L) {
 	
 	v = game_theme.scale;
 
-	w = (gfx_img_w(s) - xoff * 2)/ v;
-	h = (gfx_img_h(s) - yoff * 2)/ v;
+	w = (gfx_img_w(s) - xoff * 2) / v;
+	h = (gfx_img_h(s) - yoff * 2) / v;
 
 	lua_pushnumber(L, w);
 	lua_pushnumber(L, h);
