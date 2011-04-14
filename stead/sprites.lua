@@ -22,19 +22,13 @@ sprite = {
 	object_type = true;
 	system_type = true;
 
-	ini = function(s)
-		if type(s.init) == 'function' then
-			stead.sprites_free();
-			sprite.init();
-		end
-	end;
-
 	screen = function(s)
 		if theme.get 'scr.gfx.mode' ~= 'direct' then
 			return
 		end
 		return 'screen'
 	end;
+
 	font_scaled_size = function(size)
 		return stead.font_scaled_size(size);
 	end;
