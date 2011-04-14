@@ -1538,7 +1538,7 @@ function do_ini(self, load)
 		stead.functions[o].key_name = k;
 	end
 	local function call_ini(k, o, ...)
-		v = stead.par('', v, call(o, 'ini'), ...);
+		v = stead.par('', v, call(o, 'ini', ...));
 	end
 	math.randomseed(os.time(os.date("*t")))
 	rnd(1); rnd(2); rnd(3); -- Lua bug?
