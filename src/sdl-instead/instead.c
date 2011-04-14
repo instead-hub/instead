@@ -761,7 +761,7 @@ static int luaB_text_size(lua_State *L) {
 		return 0;
 	if (!text) {
 		w = 0;
-		h = fnt_height(fn->fnt);
+		h = fnt_height(fn->fnt) / game_theme.scale;
 	} else
 		txt_size(fn->fnt, text, &w, &h);
 	lua_pushnumber(L, w);
