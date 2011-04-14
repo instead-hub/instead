@@ -38,6 +38,10 @@ sprite = {
 	free_font = function(font)
 		return stead.font_free(key);
 	end;
+	font_height = function(font)
+		local w,h = stead.sprite_text_size(font)
+		return h
+	end;
 	alpha = function(name, alpha)
 		return stead.sprite_alpha(name, alpha);
 	end;
