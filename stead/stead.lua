@@ -1821,6 +1821,7 @@ function gamefile(file, forget)
 		end
 	end
 	if forget then
+		game:start()
 		return goto(here());
 	end
 end
