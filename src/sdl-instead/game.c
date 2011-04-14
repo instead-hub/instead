@@ -1344,7 +1344,7 @@ void game_channel_finished(int channel)
 	channels[channel % SND_CHANNELS] = NULL;
 }
 
-int  sound_playing(_snd_t *snd)
+static int  sound_playing(_snd_t *snd)
 {
 	int i;
 	for (i = 0; i < SND_CHANNELS; i++) {
@@ -1354,7 +1354,7 @@ int  sound_playing(_snd_t *snd)
 	return -1;
 }
 
-void sounds_shrink(void)
+static void sounds_shrink(void)
 {
 	struct list_head *pos, *pos2;
 	_snd_t *sn;
