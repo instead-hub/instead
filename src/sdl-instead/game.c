@@ -499,10 +499,9 @@ int game_apply_theme(void)
 	textbox_t box;
 
 	memset(objs, 0, sizeof(struct el) * el_max);
-	if (game_theme.gfx_mode != GFX_MODE_DIRECT) {
-		gfx_bg(game_theme.bgcol);
+	gfx_bg(game_theme.bgcol);
+	if (game_theme.gfx_mode != GFX_MODE_DIRECT)
 		game_clear(0, 0, game_theme.w, game_theme.h);
-	}
 	gfx_flip();
 	lay = txt_layout(game_theme.font, ALIGN_JUSTIFY, game_theme.win_w, game_theme.win_h);
 	if (!lay)
