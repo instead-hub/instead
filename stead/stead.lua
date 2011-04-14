@@ -1564,18 +1564,11 @@ end
 
 function game_ini(self)
 	local v,vv
-	if stead.api_version >= "1.3.5" then
-		if type(init) == 'function' then
-			init();
-		end
-	end
 	v = do_ini(self);
 	vv = iface:title(call(self,'nam'));
 	vv = stead.par('^^', vv, call(self,'dsc'));
-	if stead.api_version < "1.3.5" then
-		if type(init) == 'function' then
-			init();
-		end
+	if type(init) == 'function' then
+		init();
 	end
 --	if type(hooks) == 'function' then
 --		hooks();
