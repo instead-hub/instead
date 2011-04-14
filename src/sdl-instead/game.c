@@ -3116,7 +3116,7 @@ int game_loop(void)
 		//	game_highlight(ev.x, ev.y, 1);
 		}
 
-		if (game_theme.gfx_mode != GFX_MODE_DIRECT) {
+		if (game_theme.gfx_mode != GFX_MODE_DIRECT || menu_shown) {
 			if (old_xref)
 				game_highlight(x, y, 1);
 			else {
