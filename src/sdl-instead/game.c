@@ -1670,7 +1670,7 @@ int game_cmd(char *cmd)
 	if (menu_shown)
 		return -1;
 
-	if (dd)
+//	if (dd)
 		game_cursor(CURSOR_CLEAR);
 
 	cmdstr = instead_cmd(cmd); instead_clear();
