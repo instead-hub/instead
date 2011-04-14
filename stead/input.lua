@@ -198,9 +198,6 @@ game.action = stead.hook(game.action, function (f, s, cmd, ...)
 		elseif s.inp_enter then
 			r,v = call(s, 'inp_enter');
 		end
---		if r == nil and v == nil then
---			return nil, true
---		end
 		return r,v -- nothing todo
 	end
 	return f(s, cmd, ...)

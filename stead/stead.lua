@@ -2083,11 +2083,11 @@ iface = {
 			if v ~= false and game.showlast then
 				return r;
 			end
-		elseif cmd == 'wait' then
+		elseif cmd == 'wait' then -- nothing todo in game, skip tick
 			v = nil;
-			r = nil;
+			r = true;
 			stead.state = true
-		elseif cmd == 'nop' then
+		elseif cmd == 'nop' then -- inv only
 			v = true;
 			r = nil;
 			stead.state = true
@@ -2098,8 +2098,13 @@ iface = {
 		-- here r is action result, v - ret code value	
 		-- state -- game state changed
 		if stead.state and r == nil and v == true then -- we do nothing
-			return nil;
+			return nil, true; -- menu
 		end
+
+		if stead.state and r == nil and v == nil then
+			return nil, nil -- really nothing
+		end
+
 		if RAW_TEXT then
 			v = false
 		end
@@ -2128,7 +2133,7 @@ iface = {
 		if vv == nil then -- nil is error
 			return ''
 		end
-		return vv;
+		return vv, true; -- action is here
 	end, 
 	shell = function(self)
 		local inp, i, k, cmd, a, n;

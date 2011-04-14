@@ -6,9 +6,6 @@ game.action = stead.hook(game.action, function(f, s, cmd, ...)
 		elseif s.timer then
 			r,v = call(s, 'timer');
 		end
-		if r == nil and v == nil then
-			return nil, true
-		end
 		return r,v
 	end
 	return f(s, cmd, ...);

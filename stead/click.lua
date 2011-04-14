@@ -51,9 +51,6 @@ function(f, s, cmd, x, y, px, py, ...)
 		elseif s.click then
 			r,v = call(s, 'click', tonumber(x), tonumber(y), x2, y2, ...);
 		end
-		if r == nil and v == nil then
-			return nil, true
-		end
 		return r,v
 	end
 	return f(s, cmd, x, y, px, py, ...)
