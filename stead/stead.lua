@@ -1561,10 +1561,11 @@ function do_ini(self, load)
 	stead.initialized = true
 	return stead.par('',v, self._lastdisp); --stead.par('^^',v);
 end
+stead.do_ini = do_ini
 
 function game_ini(self)
 	local v,vv
-	v = do_ini(self);
+	v = stead.do_ini(self);
 	vv = iface:title(call(self,'nam'));
 	vv = stead.par('^^', vv, call(self,'dsc'));
 	if type(init) == 'function' then
@@ -1576,6 +1577,12 @@ function game_ini(self)
 	return stead.par("^^", vv, v);
 end
 
+function game_start(s)
+	if type(start) == 'function' then
+		start() -- start function
+	end
+end
+
 function game(v)
 	if v.nam == nil then
 		error ("No game name in constructor.", 2);
@@ -1585,6 +1592,9 @@ function game(v)
 	end
 	if v.ini == nil then
 		v.ini = game_ini;
+	end
+	if v.start == nil then
+		v.start = game_start
 	end
 	if v.save == nil then
 		v.save = game_save;
@@ -1789,6 +1799,8 @@ function gamefile(file, forget)
 		end
 		init = function() -- null init function
 		end
+		start = function() -- null start function
+		end
 		for_each_object(function(k, o) -- destroy all objects
 			if o.system_type then
 				return
@@ -1879,7 +1891,12 @@ function game_load(self, name)
 		if r then
 			return nil, false
 		end
-		return do_ini(self, true);
+		i, r = stead.do_ini(self, true);
+		if not stead.started then
+			game:start()
+			stead.started = true
+		end
+		return i, r
 	end
 	return nil, false
 end
@@ -2906,6 +2923,7 @@ end
 
 stead.init = function(s)
 	stead.initialized = false
+	stead.started = false
 	stead:objects();
 	s.functions = {} -- code blocks
 	local k,v
