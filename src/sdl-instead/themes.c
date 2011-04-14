@@ -370,7 +370,7 @@ int theme_img_scale(img_t *p)
 	if (!p || !*p || v == 1.0f)
 		return 0;
 
-	if (!cache_have(gfx_image_cache(), p))
+	if (!cache_have(gfx_image_cache(), *p))
 		return 0; /* do not scale sprites! */
 
 	pic = gfx_scale(*p, v, v); 
