@@ -1,5 +1,6 @@
 #include "externals.h"
 #include "internals.h"
+#include "list.h"
 
 int game_running = 1;
 
@@ -1325,66 +1326,87 @@ void game_music_player(void)
 		free(mus);
 }
 
-#define MAX_WAVS 4
+#define MAX_WAVS 16
 
-static struct {
-	char *fname;
-	wav_t wav;
-} wavs[MAX_WAVS] = {
-	{ NULL, NULL },
-	{ NULL, NULL },
-	{ NULL, NULL },
-	{ NULL, NULL },
-};
+static LIST_HEAD(sounds);
+static int sounds_nr = 0;
 
-static int wavs_pos = 0;
+typedef struct {
+	struct list_head list;
+	char	*fname;
+	wav_t	wav;
+} _snd_t;
 
-static wav_t sound_add(const char *fname)
+static void sounds_free(void)
 {
-	wav_t w;
-	if (!fname || !*fname)
-		return NULL;
-	w = snd_load_wav(dirpath(fname));
-	if (!w)
-		return NULL;
-	snd_free_wav(wavs[wavs_pos].wav);
-	if (wavs[wavs_pos].fname)
-		free(wavs[wavs_pos].fname);
-	wavs[wavs_pos].wav = w;
-	wavs[wavs_pos].fname = strdup(fname);
-	wavs_pos ++;
-	if (wavs_pos >= MAX_WAVS)
-		wavs_pos = 0;
-	return w;
+	while (!list_empty(&sounds)) {
+		_snd_t *sn = (_snd_t*)(sounds.next);
+		free(sn->fname);
+		snd_free_wav(sn->wav);
+		list_del(&sn->list);
+		free(sn);
+	}
+	sounds_nr = 0;
 }
 
 static wav_t sound_find(const char *fname)
 {
-	int i;
-	for (i = 0; i < MAX_WAVS; i++) {
-		if (wavs[i].fname && !strcmp(wavs[i].fname, fname))
-			return wavs[i].wav;
+	struct list_head *pos;
+	_snd_t *sn;
+	list_for_each(pos, &sounds) {
+		sn = (_snd_t*)pos;
+		if (!strcmp(fname, sn->fname)) {
+			list_move(&sn->list, &sounds); // move it on head
+			return sn->wav;
+		}
 	}
 	return NULL;
 }
 
-static void sounds_free(void)
+static wav_t sound_add(const char *fname)
 {
-	int i;
-	for (i = 0; i < MAX_WAVS; i++) {
-		if (wavs[i].fname)
-			free(wavs[i].fname);
-		snd_free_wav(wavs[i].wav);
-		wavs[i].wav = wavs[i].fname = NULL;
+	wav_t w;
+	_snd_t *sn;
+	if (!fname || !*fname)
+		return NULL;
+	sn = malloc(sizeof(_snd_t));
+	if (!sn)
+		return NULL;
+	INIT_LIST_HEAD(&sn->list);
+	sn->fname = strdup(fname);
+	if (!sn->fname) {
+		free(sn);
+		return NULL;
 	}
+	w = snd_load_wav(dirpath(fname));
+	if (!w)
+		goto err;
+	list_add(&sn->list, &sounds);
+
+	if (sounds_nr >= MAX_WAVS) {
+		sn = (_snd_t*)(sounds.prev);
+		list_del(&sn->list);
+		free(sn->fname);
+		snd_free_wav(sn->wav);
+		free(sn);
+	} else
+		sounds_nr ++;
+
+	return w;
+err:
+	free(sn->fname);
+	free(sn);
+	return NULL;
 }
 
 static void sounds_reload(void)
 {
-	int i;
-	for (i = 0; i < MAX_WAVS; i++) {
-		snd_free_wav(wavs[i].wav);
-		wavs[i].wav = snd_load_wav(wavs[i].fname);
+	struct list_head *pos;
+	_snd_t *sn;
+	list_for_each(pos, &sounds) {
+		sn = (_snd_t*)pos;
+		snd_free_wav(sn->wav);
+		sn->wav = snd_load_wav(sn->fname);
 	}
 }
 
