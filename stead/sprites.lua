@@ -2,6 +2,7 @@ require "theme"
 
 stead.font_load = font_load
 stead.font_free = font_free
+stead.font_scaled_size = font_scaled_size
 stead.sprite_alpha = sprite_alpha
 stead.sprite_dup = sprite_dup
 stead.sprite_scale = sprite_scale
@@ -33,6 +34,9 @@ sprite = {
 			return
 		end
 		return 'screen'
+	end;
+	font_scaled_size = function(size)
+		return stead.font_scaled_size(size);
 	end;
 	font = function(font, size)
 		return stead.font_load(font, size);

@@ -769,6 +769,12 @@ static int luaB_text_size(lua_State *L) {
 	return 2;
 }
 
+static int luaB_font_size_scaled(lua_State *L) {
+	int sz = luaL_optnumber(L, 1, game_theme.font_size);
+	lua_pushnumber(L, FONT_SZ(sz));
+	return 1;
+}
+
 static int luaB_text_sprite(lua_State *L) {
 	img_t img = NULL;
 	_spr_t *sp;
@@ -1227,6 +1233,7 @@ static const luaL_Reg base_funcs[] = {
 
 	{"font_load", luaB_load_font},
 	{"font_free", luaB_free_font},
+	{"font_scaled_size", luaB_font_size_scaled},
 
 	{"sprite_load", luaB_load_sprite},
 	{"sprite_text", luaB_text_sprite},
