@@ -1822,6 +1822,7 @@ function gamefile(file, forget)
 	end
 	if forget then
 		game:start()
+		stead.started = true
 		return goto(here());
 	end
 end

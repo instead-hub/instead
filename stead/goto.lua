@@ -214,8 +214,8 @@ end)
 player  = stead.inherit(player, function(v)
 	v.look = function(s)
 		if not stead.started then
-			stead.started = true
 			game:start()
+			stead.started = true
 		end
 		if game._time == 0 then
 			return stead.goto(here(), false, false, true);
