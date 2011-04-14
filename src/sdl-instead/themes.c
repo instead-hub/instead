@@ -560,21 +560,22 @@ int game_theme_optimize(void)
 {
 /* todo: check errors */
 	struct game_theme *t = &game_theme;
-	if (t->bg)
+
+	if (t->bg && cache_have(gfx_image_cache(), t->bg))
 		t->bg = gfx_display_alpha(t->bg);
-	if (t->a_up)
+	if (t->a_up && cache_have(gfx_image_cache(), t->a_up))
 		t->a_up = gfx_display_alpha(t->a_up);
-	if (t->a_down)
+	if (t->a_down && cache_have(gfx_image_cache(), t->a_down))
 		t->a_down = gfx_display_alpha(t->a_down);
-	if (t->inv_a_up)
+	if (t->inv_a_up && cache_have(gfx_image_cache(), t->inv_a_up))
 		t->inv_a_up = gfx_display_alpha(t->inv_a_up);
-	if (t->inv_a_down)
+	if (t->inv_a_down && cache_have(gfx_image_cache(), t->inv_a_down))
 		t->inv_a_down = gfx_display_alpha(t->inv_a_down);
-	if (t->use)
+	if (t->use && cache_have(gfx_image_cache(), t->use))
 		t->use = gfx_display_alpha(t->use);
-	if (t->cursor)
+	if (t->cursor && cache_have(gfx_image_cache(), t->cursor))
 		t->cursor = gfx_display_alpha(t->cursor);
-	if (t->menu_button)
+	if (t->menu_button && cache_have(gfx_image_cache(), t->menu_button))
 		t->menu_button = gfx_display_alpha(t->menu_button);
 	return 0;
 }
