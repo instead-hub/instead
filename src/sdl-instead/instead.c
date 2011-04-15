@@ -1248,6 +1248,23 @@ static int luaB_free_sounds(lua_State *L) {
 	return 0;
 }
 
+static int luaB_panning_sound(lua_State *L) {
+	int chan = luaL_optnumber(L, 1, -1);
+	int left = luaL_optnumber(L, 2, 255);
+	int right = luaL_optnumber(L, 3, 255);
+	snd_panning(chan, left, right);
+	return 0;
+}
+
+static int luaB_volume_sound(lua_State *L) {
+	int vol = luaL_optnumber(L, 1, -1);
+	if (vol != -1)	
+		game_change_vol(0, vol);
+	vol = snd_volume_mus(-1);
+	lua_pushnumber(L, vol);
+	return 1;
+}
+
 static int luaB_channel_sound(lua_State *L) {
 	const char *s;
 	int ch = luaL_optnumber(L, 1, 0);
@@ -1289,6 +1306,8 @@ static const luaL_Reg base_funcs[] = {
 	{"sound_load", luaB_load_sound},
 	{"sound_free", luaB_free_sound},
 	{"sound_channel", luaB_channel_sound},
+	{"sound_panning", luaB_panning_sound},
+	{"sound_volume", luaB_volume_sound},
 	{"sounds_free", luaB_free_sounds},
 	
 	{"mouse_pos", luaB_mouse_pos},
