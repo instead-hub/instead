@@ -832,7 +832,7 @@ err:
 static img_t grab_sprite(const char *dst, int *xoff, int *yoff)
 {
 	img_t d;
-	if (game_theme.gfx_mode == GFX_MODE_DIRECT && !strcmp(dst, "screen")) {
+	if (DIRECT_MODE && !strcmp(dst, "screen")) {
 		d = gfx_screen(NULL);
 		*xoff = game_theme.xoff;
 		*yoff = game_theme.yoff;
@@ -1234,6 +1234,7 @@ static int luaB_load_sound(lua_State *L) {
 	return 1;
 }
 
+
 static int luaB_free_sound(lua_State *L) {
 	const char *fname = luaL_optstring(L, 1, NULL);
 	if (!fname)
@@ -1259,6 +1260,19 @@ static int luaB_channel_sound(lua_State *L) {
 	return 0;
 }
 
+static int luaB_mouse_pos(lua_State *L) {
+	int x = -1, y = -1;
+	float v = game_theme.scale;
+
+	gfx_cursor(&x, &y);
+	x = (x - game_theme.xoff) / v;
+	y = (y - game_theme.yoff) / v;
+	lua_pushnumber(L, x);
+	lua_pushnumber(L, y);
+	return 2;
+}
+
+
 static const luaL_Reg base_funcs[] = {
 	{"doencfile", luaB_doencfile},
 	{"dofile", luaB_dofile},
@@ -1276,6 +1290,8 @@ static const luaL_Reg base_funcs[] = {
 	{"sound_free", luaB_free_sound},
 	{"sound_channel", luaB_channel_sound},
 	{"sounds_free", luaB_free_sounds},
+	
+	{"mouse_pos", luaB_mouse_pos},
 
 	{"font_load", luaB_load_font},
 	{"font_free", luaB_free_font},

@@ -1,3 +1,5 @@
+require "theme"
+
 click = {
 	nam = 'click';
 	object_type = true;
@@ -14,7 +16,7 @@ stead.module_init(function()
 	function(f, s, press, mb, x, y, px, py, ...)
 		local cmd = 'click '
 		if press then
-			if click.bg then
+			if click.bg or theme.get 'scr.gfx.mode' == 'direct' then
 				cmd = cmd .. x .. ','.. y
 				if px then
 					cmd = cmd .. ','
