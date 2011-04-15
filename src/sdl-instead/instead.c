@@ -1280,8 +1280,8 @@ static int luaB_mouse_pos(lua_State *L) {
 	int y = luaL_optnumber(L, 2, -1);
 	float v = game_theme.scale;
 	if (x != -1 && y != -1) {
-		x = x * v;
-		y = y * v;
+		x *= v;
+		y *= v;
 		gfx_warp_cursor(x, y);
 		x = -1;
 		y = -1;
