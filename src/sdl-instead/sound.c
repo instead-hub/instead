@@ -234,6 +234,15 @@ int snd_playing(int channel)
 	return Mix_Playing(channel);
 }
 
+int snd_panning(int channel, int left, int right)
+{
+	if (channel >= MIX_CHANNELS)
+		channel %= MIX_CHANNELS;
+	if (channel < 0)
+		channel = -1;	
+	return Mix_SetPanning(channel, left, right);
+}
+
 void snd_free_mus(mus_t mus)
 {
 	if (!sound_on)

@@ -28,5 +28,6 @@ extern int 	snd_vol_from_pcn(int v);
 extern int 	snd_vol_to_pcn(int v);
 extern int 	snd_playing(int channel);
 extern void	snd_pause(int on);
+extern int	snd_panning(int channel, int left, int right);
 
 #endif
