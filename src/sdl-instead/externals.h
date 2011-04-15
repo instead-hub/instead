@@ -25,3 +25,4 @@
 #ifndef S60
 #include <libgen.h>
 #endif
+#include <math.h>

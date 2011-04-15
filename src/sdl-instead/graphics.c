@@ -1336,8 +1336,8 @@ img_t gfx_rotate(img_t src, float angle)
 			x = (float)(ag->frames[i].x) - w / 2;
 			y = (float)(ag->frames[i].y) - h / 2;
 
-			x1 = x*cosf(rangle) - y*sinf(rangle);
-			y1 = y*cosf(rangle) + x*sinf(rangle);
+			x1 = x*cos(rangle) - y*sin(rangle);
+			y1 = y*cos(rangle) + x*sin(rangle);
 			
 			ag->frames[i].x = x1 + w / 2;
 			ag->frames[i].y = y1 + h / 2;
