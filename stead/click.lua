@@ -22,7 +22,7 @@ stead.module_init(function()
 	function(f, s, press, mb, x, y, px, py, ...)
 		local cmd = 'click '
 		local act = false
-		if press or click.press then
+		if ( press or click.press ) and ( mb == 1 or click.button ) then
 			cmd = cmd..tostring(press)..','..tostring(mb);
 
 			if click.bg or theme.get 'scr.gfx.mode' == 'direct' then
