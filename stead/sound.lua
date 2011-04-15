@@ -16,6 +16,7 @@ sound = {
 		return stead.sound_free(key);
 	end;
 	play = function(key, ...)
+		print ("play:", key)
 		return stead.add_sound(key, ...)
 	end;
 	stop = function(...)
@@ -30,8 +31,8 @@ sound = {
 	pan = function(...)
 		return stead.sound_panning(...)
 	end;
-	vol = function(...)
-		return stead.sound_volume(...)
+	vol = function(v, ...)
+		return stead.sound_volume(v, ...)
 	end
 }
 
