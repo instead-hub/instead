@@ -59,6 +59,11 @@ function(f, s, cmd, press, x, y, px, py, ...)
 		if here().click then
 			s = here()
 		end
+		if press == 'true' then
+			press = true
+		else
+			press = false
+		end
 		if s.click then
 			if click.press then
 				r,v = call(s, 'click', press, tonumber(x), tonumber(y), x2, y2, ...);

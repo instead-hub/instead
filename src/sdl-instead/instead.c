@@ -1258,9 +1258,7 @@ static int luaB_panning_sound(lua_State *L) {
 
 static int luaB_volume_sound(lua_State *L) {
 	int vol = luaL_optnumber(L, 1, -1);
-	if (vol != -1)	
-		game_change_vol(0, vol);
-	vol = snd_volume_mus(-1);
+	vol = snd_volume_mus(vol);
 	lua_pushnumber(L, vol);
 	return 1;
 }
