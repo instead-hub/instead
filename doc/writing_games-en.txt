@@ -1241,7 +1241,7 @@ Do not use lua compiler luac, it produces platform-dependent code!
 But game compilation is useful to find errors in the game code.
 
 ==== Switching between players ====
-You can create a game with several characters and switch between them from time to time (see “switch_pl”). But you can also use the same trick to switch between different types of inventory. 
+You can create a game with several characters and switch between them from time to time (see “change_pl”). But you can also use the same trick to switch between different types of inventory. 
 
 ==== Using the first parameter of a handler ====
 Code example.
