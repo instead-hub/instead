@@ -2632,6 +2632,7 @@ if is_sound == nil then
 		return false -- sdl-instead export own function
 	end
 end
+stead.is_sound = is_sound
 
 if get_savepath == nil then
 	function get_savepath()

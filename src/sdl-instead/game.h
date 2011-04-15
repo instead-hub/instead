@@ -85,6 +85,11 @@ extern int game_pict_coord(int *x, int *y, int *w, int *h);
 extern void menu_toggle(void);
 extern void game_channel_finished(int channel);
 
+extern int sound_load(const char *fname);
+extern void sound_unload(const char *fname);
+extern void sounds_free(void);
+extern const char *sound_channel(int i);
+
 #define CURSOR_CLEAR -1
 #define CURSOR_OFF    0
 #define CURSOR_ON     1

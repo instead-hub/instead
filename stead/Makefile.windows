@@ -24,3 +24,4 @@ install:
 	copy hideinv.lua ..\bin\stead
 	copy theme.lua ..\bin\stead
 	copy sprites.lua ..\bin\stead
+	copy sound.lua ..\bin\stead
