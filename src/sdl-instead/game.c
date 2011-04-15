@@ -500,7 +500,7 @@ int game_apply_theme(void)
 
 	memset(objs, 0, sizeof(struct el) * el_max);
 	gfx_bg(game_theme.bgcol);
-	if (game_theme.gfx_mode != GFX_MODE_DIRECT)
+	if (!DIRECT_MODE)
 		game_clear(0, 0, game_theme.w, game_theme.h);
 	gfx_flip();
 	lay = txt_layout(game_theme.font, ALIGN_JUSTIFY, game_theme.win_w, game_theme.win_h);
@@ -567,7 +567,7 @@ int game_apply_theme(void)
 	el_set(el_menu, elt_layout, 0, 0, NULL);
 	el_set(el_menu_button, elt_image, game_theme.menu_button_x, game_theme.menu_button_y, game_theme.menu_button);
 
-	if (game_theme.gfx_mode != GFX_MODE_DIRECT) {
+	if (!DIRECT_MODE) {
 		el_draw(el_menu_button);
 	}
 	return 0;
@@ -1706,7 +1706,7 @@ int game_cmd(char *cmd)
 	char		*title = NULL;
 	char		*pict = NULL;
 	img_t		oldscreen = NULL;
-	int 	dd = (game_theme.gfx_mode == GFX_MODE_DIRECT);
+	int 	dd = (DIRECT_MODE);
 	int			rc = 0;
 	if (menu_shown)
 		return -1;
@@ -1718,7 +1718,7 @@ int game_cmd(char *cmd)
 	game_music_player();
 	game_sound_player();
 
-	if (game_theme.gfx_mode == GFX_MODE_DIRECT) {
+	if (DIRECT_MODE) {
 		if (cmdstr)
 			free(cmdstr);
 		if (game_pict_modify(NULL))
@@ -3036,7 +3036,7 @@ int game_loop(void)
 				game_restart();
 				if (old_menu != -1)
 					game_menu(old_menu);
-			} else if (game_theme.gfx_mode == GFX_MODE_DIRECT && !menu_shown) {
+			} else if (DIRECT_MODE && !menu_shown) {
 				; // nothing todo
 			} else if (!alt_pressed && (!is_key(&ev, "return") || !is_key(&ev, "enter") 
 			#ifdef S60
@@ -3130,7 +3130,7 @@ int game_loop(void)
 					select_frame(0);
 #endif
 			}
-		} else if (game_theme.gfx_mode == GFX_MODE_DIRECT && !menu_shown) {
+		} else if (DIRECT_MODE && !menu_shown) {
 			; // nothing todo 
 		} else if (ev.type == MOUSE_DOWN) {
 			if (ev.code != 1)
@@ -3158,7 +3158,7 @@ int game_loop(void)
 		//	game_highlight(ev.x, ev.y, 1);
 		}
 
-		if (game_theme.gfx_mode != GFX_MODE_DIRECT || menu_shown) {
+		if (!DIRECT_MODE || menu_shown) {
 			if (old_xref)
 				game_highlight(x, y, 1);
 			else {

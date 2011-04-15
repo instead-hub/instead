@@ -156,4 +156,6 @@ extern int theme_relative;
 #define INV_ALIGN(v) ((v)>>8)
 #define INV_ALIGN_SET(v) ((v)<<8)
 
+#define DIRECT_MODE (game_theme.gfx_mode == GFX_MODE_DIRECT)
+
 #endif
