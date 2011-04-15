@@ -6,11 +6,14 @@ click = {
 	system_type = true;
 	bg = false;
 	press = false;
+	button = false;
 	save = function(self, name, h, need)
 		local s = stead.tostring(self.bg)
 		h:write(stead.string.format("click[%q] = %s;\n", 'bg', s))
 		s = stead.tostring(self.press)
 		h:write(stead.string.format("click[%q] = %s;\n", 'press', s))
+		s = stead.tostring(self.button)
+		h:write(stead.string.format("click[%q] = %s;\n", 'button', s))
 	end;
 }
 
@@ -18,22 +21,21 @@ stead.module_init(function()
 	input.click = stead.hook(input.click, 
 	function(f, s, press, mb, x, y, px, py, ...)
 		local cmd = 'click '
+		local act = false
 		if press or click.press then
-
-			cmd = cmd..tostring(press)..',';
+			cmd = cmd..tostring(press)..','..tostring(mb);
 
 			if click.bg or theme.get 'scr.gfx.mode' == 'direct' then
-				cmd = cmd .. x .. ','.. y
-				if px then
-					cmd = cmd .. ','
-				end
+				act = true
+				cmd = cmd .. ',' .. x .. ','.. y
 			end
 
 			if px then
-				cmd = cmd .. px .. ',' .. py
+				act = true
+				cmd = cmd .. ',' .. px .. ',' .. py
 			end
 
-			if cmd ~= 'click ' then
+			if act then
 				return cmd
 			end
 		end
@@ -42,11 +44,15 @@ stead.module_init(function()
 end)
 
 game.action = stead.hook(game.action, 
-function(f, s, cmd, press, x, y, px, py, ...)
+function(f, s, cmd, press, mb, x, y, px, py, ...)
 	if cmd == 'click' then
 		local r,v
 		local x2 = px
 		local y2 = py
+
+		if tonumber(mb) then
+			mb = tonumber(mb)
+		end
 
 		if tonumber(px) then
 			x2 = tonumber(px)
@@ -59,16 +65,26 @@ function(f, s, cmd, press, x, y, px, py, ...)
 		if here().click then
 			s = here()
 		end
+
 		if press == 'true' then
 			press = true
 		else
 			press = false
 		end
+
 		if s.click then
 			if click.press then
-				r,v = call(s, 'click', press, tonumber(x), tonumber(y), x2, y2, ...);
+				if click.button then
+					r,v = call(s, 'click', press, mb, tonumber(x), tonumber(y), x2, y2, ...);
+				else
+					r,v = call(s, 'click', press, tonumber(x), tonumber(y), x2, y2, ...);
+				end
 			else
-				r,v = call(s, 'click', tonumber(x), tonumber(y), x2, y2, ...);
+				if click.button then
+					r,v = call(s, 'click', mb, tonumber(x), tonumber(y), x2, y2, ...);
+				else
+					r,v = call(s, 'click', tonumber(x), tonumber(y), x2, y2, ...);
+				end
 			end
 		end
 		return r,v
