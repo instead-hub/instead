@@ -16,7 +16,6 @@ sound = {
 		return stead.sound_free(key);
 	end;
 	play = function(key, ...)
-		print ("play:", key)
 		return stead.add_sound(key, ...)
 	end;
 	stop = function(...)
