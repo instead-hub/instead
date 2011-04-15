@@ -1222,6 +1222,43 @@ static int luaB_free_font(lua_State *L) {
 	return 1;
 }
 
+static int luaB_load_sound(lua_State *L) {
+	int rc;
+	const char *fname = luaL_optstring(L, 1, NULL);
+	if (!fname)
+		return 0;
+	rc = sound_load(fname);
+	if (rc)
+		return 0;
+	lua_pushstring(L, fname);
+	return 1;
+}
+
+static int luaB_free_sound(lua_State *L) {
+	const char *fname = luaL_optstring(L, 1, NULL);
+	if (!fname)
+		return 0;
+	sound_unload(fname);
+	return 0;
+}
+
+static int luaB_free_sounds(lua_State *L) {
+	sounds_free();
+	return 0;
+}
+
+static int luaB_channel_sound(lua_State *L) {
+	const char *s;
+	int ch = luaL_optnumber(L, 1, 0);
+	ch = ch % SND_CHANNELS;
+	s = sound_channel(ch);
+	if (s) {
+		lua_pushstring(L, s);
+		return 1;
+	}
+	return 0;
+}
+
 static const luaL_Reg base_funcs[] = {
 	{"doencfile", luaB_doencfile},
 	{"dofile", luaB_dofile},
@@ -1234,6 +1271,11 @@ static const luaL_Reg base_funcs[] = {
 	{"theme_var", luaB_theme_var},
 	{"readdir", dir_iter_factory},
 	{"menu_toggle", luaB_show_menu},
+
+	{"sound_load", luaB_load_sound},
+	{"sound_free", luaB_free_sound},
+	{"sound_channel", luaB_channel_sound},
+	{"sounds_free", luaB_free_sounds},
 
 	{"font_load", luaB_load_font},
 	{"font_free", luaB_free_font},

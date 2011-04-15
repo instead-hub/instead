@@ -778,8 +778,6 @@ void free_last_music(void)
 	last_music = NULL;
 }
 
-static void sounds_free(void);
-
 void free_last(void)
 {
 	if (last_pict)
@@ -1334,6 +1332,7 @@ typedef struct {
 	struct list_head list;
 	char	*fname;
 	wav_t	wav;
+	int	loaded;
 } _snd_t;
 
 static _snd_t *channels[SND_CHANNELS] = {};
@@ -1354,6 +1353,26 @@ static int  sound_playing(_snd_t *snd)
 	return -1;
 }
 
+const char *sound_channel(int i)
+{
+	_snd_t *sn;
+	sn = channels[i];
+	if (!sn)
+		return NULL;
+	return sn->fname;
+}
+
+static void sound_free(_snd_t *sn)
+{
+	if (!sn)
+		return;
+	free(sn->fname);
+	snd_free_wav(sn->wav);
+	list_del(&sn->list);
+	free(sn);
+	sounds_nr --;
+}
+
 static void sounds_shrink(void)
 {
 	struct list_head *pos, *pos2;
@@ -1362,36 +1381,29 @@ static void sounds_shrink(void)
 //	fprintf(stderr,"shrink try\n");
 	while (pos != &sounds && sounds_nr > MAX_WAVS) {
 		sn = (_snd_t*)pos;
-		if (sound_playing(sn) != -1) {
+		if (sound_playing(sn) != -1 || sn->loaded) {
 			pos = pos->next;
 			continue;
 		}
 		pos2 = pos->next;
-//		fprintf(stderr,"to %p\n", pos2);
-		free(sn->fname);
-		snd_free_wav(sn->wav);
-		list_del(pos);
-		free(sn);
+		sound_free(sn);
 		pos = pos2;
-		sounds_nr --;
 //		fprintf(stderr,"shrink by 1\n");
 	}
 }
 
-static void sounds_free(void)
+void sounds_free(void)
 {
-	int i = 0;
+//	int i = 0;
 	while (!list_empty(&sounds)) {
 		_snd_t *sn = (_snd_t*)(sounds.next);
-		free(sn->fname);
-		snd_free_wav(sn->wav);
-		list_del(&sn->list);
-		free(sn);
+		if (sound_playing(sn) == -1) {
+			sound_free(sn);
+		}
 	}
-	for (i = 0; i < SND_CHANNELS; i++)
-		channels[i] = NULL;
-
-	sounds_nr = 0;
+//	for (i = 0; i < SND_CHANNELS; i++)
+//		channels[i] = NULL;
+//	sounds_nr = 0;
 }
 
 static _snd_t *sound_find(const char *fname)
@@ -1428,6 +1440,7 @@ static _snd_t *sound_add(const char *fname)
 		return NULL;
 	INIT_LIST_HEAD(&sn->list);
 	sn->fname = strdup(fname);
+	sn->loaded = 0;
 	if (!sn->fname) {
 		free(sn);
 		return NULL;
@@ -1458,6 +1471,34 @@ static void sounds_reload(void)
 		sn->wav = snd_load_wav(sn->fname);
 	}
 }
+
+int sound_load(const char *fname)
+{
+	_snd_t *sn;
+	sn = sound_find(fname);
+	if (sn) {
+		sn->loaded ++; /* to pin */
+		return 0;
+	}
+	sn = sound_add(fname);
+	if (!sn)
+		return -1;
+	sn->loaded = 1;
+	return 0;
+}
+
+void sound_unload(const char *fname)
+{
+	_snd_t *sn;
+	sn = sound_find(fname);
+	if (!sn || !sn->loaded)
+		return;
+	sn->loaded --;
+	if (!sn->loaded && sound_playing(sn) == -1)
+		sound_free(sn);
+	return;
+}
+
 
 static int _play_combined_snd(char *filename, int chan, int loop)
 {

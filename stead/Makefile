@@ -27,6 +27,7 @@ install:
 	$(INSTALL) hideinv.lua $(STEADPATH)/hideinv.lua
 	$(INSTALL) theme.lua $(STEADPATH)/theme.lua
 	$(INSTALL) sprites.lua $(STEADPATH)/sprites.lua
+	$(INSTALL) sound.lua $(STEADPATH)/sound.lua
 
 uninstall:
 	$(RM) $(STEADPATH)/stead.lua
