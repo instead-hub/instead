@@ -134,6 +134,7 @@ static int parse_include(const char *v, void *data)
 struct parser cmd_parser[] = {
 	{ "scr.w", parse_int, &game_theme.w },
 	{ "scr.h", parse_int, &game_theme.h },
+	{ "scr.gfx.scalable", parse_int, &game_theme.gfx_scalable },
 	{ "scr.col.bg", parse_color, &game_theme.bgcol },
 	{ "scr.gfx.bg", parse_full_path, &game_theme.bg_name, CHANGED_BG },
 	{ "scr.gfx.cursor.normal", parse_full_path, &game_theme.cursor_name, CHANGED_CURSOR },
@@ -259,6 +260,7 @@ struct game_theme game_theme = {
 	.scale = 1.0f,
 	.w = 800,
 	.h = 480,
+	.gfx_scalable = 1,
 	.bg_name = NULL,
 	.bg = NULL,
 	.use_name = NULL,
@@ -713,7 +715,10 @@ int game_theme_init(void)
 		w = opt_mode[0];
 		h = opt_mode[1];
 	}
-
+	if (!SCALABLE_THEME) { /* no scalable? TODO: message? */
+		w = game_theme.w;
+		h = game_theme.h;
+	}
 	game_theme_scale(w, h);
 
 	if (gfx_set_mode(game_theme.w, game_theme.h, opt_fs)) {
