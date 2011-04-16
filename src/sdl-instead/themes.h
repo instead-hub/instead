@@ -15,6 +15,7 @@ struct game_theme {
 	float	scale;
 	int 	w;
 	int 	h;
+	int	gfx_scalable;
 	color_t	bgcol;
 	char	*bg_name;
 	img_t	bg;
@@ -157,5 +158,6 @@ extern int theme_relative;
 #define INV_ALIGN_SET(v) ((v)<<8)
 
 #define DIRECT_MODE (game_theme.gfx_mode == GFX_MODE_DIRECT)
+#define SCALABLE_THEME (game_theme.gfx_scalable)
 
 #endif
