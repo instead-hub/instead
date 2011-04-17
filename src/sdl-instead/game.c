@@ -1,6 +1,7 @@
 #include "externals.h"
 #include "internals.h"
 #include "list.h"
+#include "idf.h"
 
 int game_running = 1;
 
@@ -9,6 +10,10 @@ char *err_msg = NULL;
 #define ERR_MSG_MAX 512
 char	game_cwd[PATH_MAX];
 char	*curgame_dir = NULL;
+
+#define DATA_IDF "data.idf"
+
+idf_t game_idf = NULL;
 
 int game_own_theme = 0;
 int game_theme_changed = 0;
@@ -114,6 +119,7 @@ int game_select(const char *name)
 		char *oldgame = curgame_dir;
 		curgame_dir = g->dir;
 		instead_done();
+
 		if (instead_init()) {
 			curgame_dir = oldgame;
 			return -1;
@@ -122,6 +128,9 @@ int game_select(const char *name)
 			curgame_dir = oldgame;
 			return -1;
 		}
+
+		idf_done(game_idf);
+		game_idf = idf_init(DATA_IDF);
 
 		game_use_theme();
 
@@ -841,6 +850,7 @@ void game_done(int err)
 //#endif
 	curgame_dir = NULL;
 	game_own_theme = 0;
+	idf_done(game_idf); game_idf = NULL;
 //	SDL_Quit();
 }	
 
@@ -1314,11 +1324,11 @@ void game_music_player(void)
 	} else if (!last_music && mus) {
 		game_stop_mus(500);
 		last_music = mus;
-		snd_play_mus(dirpath(mus), 0, loop - 1);
+		snd_play_mus(mus, 0, loop - 1);
 	} else if (strcmp(last_music, mus)) {
 		game_stop_mus(500);
 		last_music = mus;
-		snd_play_mus(dirpath(mus), 0, loop - 1);
+		snd_play_mus(mus, 0, loop - 1);
 	} else
 		free(mus);
 }
@@ -1445,7 +1455,7 @@ static _snd_t *sound_add(const char *fname)
 		free(sn);
 		return NULL;
 	}
-	w = snd_load_wav(dirpath(fname));
+	w = snd_load_wav(fname);
 	if (!w)
 		goto err;
 	sn->wav = w;
@@ -1468,7 +1478,7 @@ static void sounds_reload(void)
 	list_for_each(pos, &sounds) {
 		sn = (_snd_t*)pos;
 		snd_free_wav(sn->wav);
-		sn->wav = snd_load_wav(dirpath(sn->fname));
+		sn->wav = snd_load_wav(sn->fname);
 	}
 }
 

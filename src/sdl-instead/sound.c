@@ -3,6 +3,7 @@
 
 #include <SDL.h>
 #include <SDL_mixer.h>
+#include "idf.h"
 
 #ifdef S60
 int audio_rate = 11025;
@@ -122,7 +123,7 @@ wav_t	snd_load_wav(const char *fname)
 		return NULL;
 	if (!fname)
 		return NULL;
-	r = (wav_t)Mix_LoadWAV(fname);
+	r = (wav_t)Mix_LoadWAV(dirpath(fname));
 	if (!r)
 		fprintf(stderr,"Can't load '%s'.\n", fname);
 	return r;
@@ -152,7 +153,7 @@ mus_t snd_load_mus(const char *fname)
 	mus = malloc(sizeof(struct _mus_t));
 	if (!mus)
 		return NULL;
-	mus->rw = SDL_RWFromFile(fname, "rb");
+	mus->rw = RWFromIdf(game_idf, fname);
 	if (!mus->rw) 
 		goto err;
 	mus->mus = Mix_LoadMUS_RW(mus->rw);

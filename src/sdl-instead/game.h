@@ -1,6 +1,8 @@
 #ifndef __GAME_H__
 #define __GAME_H__
 #include <SDL_mixer.h>
+#include "idf.h"
+
 #define SND_CHANNELS MIX_CHANNELS
 
 #ifndef GAMES_PATH
@@ -105,5 +107,5 @@ struct game {
 
 extern struct	game *games;
 extern int	games_nr;
-
+extern idf_t	game_idf;
 #endif
