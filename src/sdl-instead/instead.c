@@ -723,7 +723,7 @@ static int luaB_load_font(lua_State *L) {
 	if (!fname)
 		return 0;
 
-	fnt = fnt_load(dirpath((char*)fname), sz);
+	fnt = fnt_load((char*)fname, sz);
 
 	if (!fnt)
 		return 0;

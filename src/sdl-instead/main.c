@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
 	unix_path(game_cwd);
 	setdir(game_cwd);
 
-//	idf_create("idf.idf", "./test");
+//	idf_create("data.idf", "snd");
 //	idf_init("idf.idf");
 //	exit(0);
 

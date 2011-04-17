@@ -767,7 +767,6 @@ static img_t _gfx_load_image(char *filename, int combined)
 	img = _gfx_load_special_image(filename, combined);
 	if (img)
 		return img;
-	filename = dirpath(filename);
 	if (strstr(filename,".gif") || strstr(filename,".GIF"))
 		nr = AG_LoadGIF(filename, NULL, 0, NULL);
 	if (nr > 1) { /* anigif logic */
@@ -783,13 +782,13 @@ static img_t _gfx_load_image(char *filename, int combined)
 		anigif_add(agif);
 		return agif->frames[0].surface;
 	}
-	img = IMG_Load(filename);
+	img = IMG_Load(dirpath(filename));
 	if (!img) {
 		return NULL;
 	}
 	if (img->format->BitsPerPixel == 32) { /* hack for 32 bit BMP :( */
 		SDL_RWops *rwop;
-		rwop = SDL_RWFromFile(filename, "rb");
+		rwop = SDL_RWFromFile(dirpath(filename), "rb");
 		if (rwop) {
 			if (IMG_isBMP(rwop))
 				SDL_SetAlpha(img, 0, SDL_ALPHA_OPAQUE);
@@ -1418,7 +1417,7 @@ fnt_t fnt_load(const char *fname, int size)
 		goto err;
 	for (i = 0; i < n; i++) {
 		if (!is_empty(files[i]))
-			fn = TTF_OpenFont(files[i], size);
+			fn = TTF_OpenFont(dirpath(files[i]), size);
 		else
 			fn = NULL;
 		if (!fn && i == 0) /* no regular */
