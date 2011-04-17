@@ -118,14 +118,17 @@ int snd_volume_mus(int vol)
 
 wav_t	snd_load_wav(const char *fname)
 {
+	SDL_RWops *rw;
 	wav_t r;
 	if (!sound_on)
 		return NULL;
-	if (!fname)
+	if (!fname || !*fname)
 		return NULL;
-	r = (wav_t)Mix_LoadWAV(dirpath(fname));
-	if (!r)
+	rw = RWFromIdf(game_idf, fname);
+	if (!rw || !(r = (wav_t)Mix_LoadWAV_RW(rw, 1))) {
 		fprintf(stderr,"Can't load '%s'.\n", fname);
+		return NULL;
+	}
 	return r;
 }
 
