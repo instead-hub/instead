@@ -124,6 +124,11 @@ int main(int argc, char *argv[])
 #endif
 	unix_path(game_cwd);
 	setdir(game_cwd);
+
+	idf_create("idf.idf", "./test");
+	idf_init("idf.idf");
+	exit(0);
+
 	for (i = 1; i < argc; i++) {
 		if (!strcmp(argv[i],"-alsa")) 
 			alsa_sw = 1;
