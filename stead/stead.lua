@@ -2101,7 +2101,7 @@ iface = {
 			return nil, true; -- menu
 		end
 
-		if stead.state and r == nil and v == nil then
+		if stead.state and r == nil and v == nil and stead.api_version >= "1.3.5" then
 			return nil, nil -- really nothing
 		end
 
