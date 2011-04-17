@@ -4,6 +4,7 @@
 
 #include "externals.h"
 #include "internals.h"
+#include "idf.h"
 
 #ifdef _USE_GTK
 #include <gtk/gtk.h>
@@ -31,7 +32,7 @@ char *encode_sw = NULL;
 char *encode_output = NULL;
 char *mode_sw = NULL;
 char *appdata_sw = NULL;
-
+char *idf_sw = NULL;
 #ifdef _USE_UNPACK
 extern int unpack(const char *zipfilename, const char *where);
 extern char zip_game_dirname[];
@@ -125,10 +126,6 @@ int main(int argc, char *argv[])
 	unix_path(game_cwd);
 	setdir(game_cwd);
 
-//	idf_create("data.idf", "snd");
-//	idf_init("idf.idf");
-//	exit(0);
-
 	for (i = 1; i < argc; i++) {
 		if (!strcmp(argv[i],"-alsa")) 
 			alsa_sw = 1;
@@ -181,6 +178,13 @@ int main(int argc, char *argv[])
 				themes_sw = argv[++i];
 			else
 				themes_sw = "";
+		} else if (!strcmp(argv[i], "-idf")) {	
+			if ((i + 1) < argc)
+				idf_sw = argv[++i];
+			else {
+				fprintf(stderr,"No data directory specified.\n");
+				exit(1);
+			}
 		} else if (!strcmp(argv[i], "-encode")) {	
 			if ((i + 1) < argc)
 				encode_sw = argv[++i];
@@ -212,7 +216,7 @@ int main(int argc, char *argv[])
 		} else if (!strcmp(argv[i], "-quit")) {
 			exit(0);
 		} else if (argv[i][0] == '-') {
-			fprintf(stderr,"Unknow option: %s\n", argv[i]);
+			fprintf(stderr,"Unknown option: %s\n", argv[i]);
 			exit(1);
 		}
 #ifdef _USE_UNPACK
@@ -243,6 +247,10 @@ int main(int argc, char *argv[])
 		goto out;		
 	}
 
+	if (idf_sw) {
+		idf_create("data.idf", idf_sw);
+		goto out;
+	}
 	menu_langs_lookup(dirpath(LANG_PATH));
 	
 	if (!langs_nr) {

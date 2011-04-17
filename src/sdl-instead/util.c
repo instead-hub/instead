@@ -35,11 +35,14 @@ err:
 
 char *getfilepath(const char *d, const char *n)
 {
-	int i = strlen(d) + strlen(n) + 3;
+	int i = ((d)?strlen(d):0) + ((n)?strlen(n):0) + 3;
 	char *p = malloc(i);
 	if (p) {
-		strcpy(p, d);
-		strcat(p, "/");
+		p[0] = 0;
+		if (d) {
+			strcpy(p, d);
+			strcat(p, "/");
+		}
 		strcat(p, n);
 		unix_path(p);
 	}
