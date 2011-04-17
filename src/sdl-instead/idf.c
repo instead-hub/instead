@@ -240,12 +240,17 @@ int idf_create(const char *file, const char *path)
 		if (p) {
 			int rc = fcopy(fd, p);
 			free(p);
-			if (rc) 
+			if (rc) {
+				fprintf(stderr, "Error while copy file '%s'...\n", it->path);
 				goto err;
+			}
 		}
 	}
 	rc = 0;
 err:
+	if (rc)
+		fprintf(stderr, "Error creating idf file...\n");
+
 	while (!list_empty(&items)) {
 		idf_item_t *it = (idf_item_t *)items.next;
 		free(it->path);
