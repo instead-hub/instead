@@ -336,6 +336,7 @@ static 	int idfrw_close(struct SDL_RWops *context)
 {
 	idfd_t *dir = (idfd_t *)context->hidden.unknown.data1;
 	dir->pos = 0;
+	SDL_FreeRW(context);
 	return 0; /* nothing todo */
 }
 #if 0
