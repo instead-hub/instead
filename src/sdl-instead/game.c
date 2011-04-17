@@ -1468,7 +1468,7 @@ static void sounds_reload(void)
 	list_for_each(pos, &sounds) {
 		sn = (_snd_t*)pos;
 		snd_free_wav(sn->wav);
-		sn->wav = snd_load_wav(sn->fname);
+		sn->wav = snd_load_wav(dirpath(sn->fname));
 	}
 }
 
