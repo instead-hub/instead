@@ -199,14 +199,26 @@ static int idf_tree(const char *path, struct list_head *list, const char *fname)
 
 int idf_create(const char *file, const char *path)
 {
-	int rc = -1;
+	int rc = -1, i;
 	FILE *fd;
+	char *p;
 	unsigned long off = 0;
 	long dict_size = 0;
 	struct list_head *pos;
 
 	LIST_HEAD(items);
-	idf_tree(path, &items, NULL);
+	p = strdup(path);
+	if (!p)
+		return -1;
+	i = strlen(p) - 1;
+
+	while (i >= 0 && p[i] == '/') {
+		p[i --] = 0;
+	}
+
+	idf_tree(p, &items, NULL);
+
+	free(p);
 
 	list_for_each(pos, &items) {
 		idf_item_t *it = (idf_item_t *)pos;
