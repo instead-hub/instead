@@ -146,7 +146,7 @@ err:
 	return rc;
 }
 
-static int idf_tree(const char *path, struct list_head *list)
+static int idf_tree(const char *path, struct list_head *list, const char *fname)
 {
 	DIR *d;
 	struct dirent *de;
@@ -154,14 +154,14 @@ static int idf_tree(const char *path, struct list_head *list)
 		return 0;
 	d = opendir(dirpath(path));
 	if (!d) {
-		if (!access(dirpath(path), R_OK)) {
+		if (!access(dirpath(path), R_OK) && fname) {
 			FILE *fd; idf_item_t *i; 
 			fd = fopen(dirpath(path), "rb");
 			i = malloc(sizeof(idf_item_t));
 			if (!i)
 				return -1;
 			INIT_LIST_HEAD(&i->list);
-			if (!(i->path = strdup(path)))
+			if (!(i->path = strdup(fname)))
 				goto err;
 			if (fseek(fd, 0, SEEK_END) < 0)
 				goto err;
@@ -185,7 +185,11 @@ static int idf_tree(const char *path, struct list_head *list)
 			continue;
 		p = getfilepath(path, de->d_name);
 		if (p) {
-			idf_tree(p, list);
+			char *pp = getfilepath(fname, de->d_name);
+			if (pp) {
+				idf_tree(p, list, pp);
+				free(pp);
+			}
 			free(p);
 		}
 	}
@@ -202,7 +206,7 @@ int idf_create(const char *file, const char *path)
 	struct list_head *pos;
 
 	LIST_HEAD(items);
-	idf_tree(path, &items);
+	idf_tree(path, &items, NULL);
 
 	list_for_each(pos, &items) {
 		idf_item_t *it = (idf_item_t *)pos;
@@ -231,8 +235,14 @@ int idf_create(const char *file, const char *path)
 
 	list_for_each(pos, &items) {
 		idf_item_t *it = (idf_item_t *)pos;
-		if (fcopy(fd, it->path))
-			goto err;
+		char *p;
+		p = getfilepath(path, it->path);
+		if (p) {
+			int rc = fcopy(fd, p);
+			free(p);
+			if (rc) 
+				goto err;
+		}
 	}
 	rc = 0;
 err:

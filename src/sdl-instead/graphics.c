@@ -1418,10 +1418,13 @@ fnt_t fnt_load(const char *fname, int size)
 	if (!n)
 		goto err;
 	for (i = 0; i < n; i++) {
-		if (!is_empty(files[i]))
-			fn = TTF_OpenFont(dirpath(files[i]), size);
-		else
-			fn = NULL;
+		fn = NULL;
+		if (!is_empty(files[i])) {
+			SDL_RWops *rw = RWFromIdf(game_idf, files[i]);
+			if (!rw || !(fn = TTF_OpenFontRW(rw, 1, size))) {
+				fprintf(stderr, "Can not load font: '%s'\n", files[i]);
+			}
+		} 
 		if (!fn && i == 0) /* no regular */
 			goto err;
 #ifdef TTF_HINTING_LIGHT
