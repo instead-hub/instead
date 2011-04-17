@@ -107,7 +107,7 @@ idf_t idf_init(const char *fname)
 			goto err;
 		}
 		cache_forget(idf->dir, e); /* use like hash */
-		fprintf(stderr,"Parsed: '%s' @ %ld, %ld\n", name, off, size);
+//		fprintf(stderr,"Parsed: '%s' @ %ld, %ld\n", name, off, size);
 		dir_size -= (1 + sz + 4 + 4);
 	}
 	return idf;
