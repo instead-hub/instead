@@ -761,6 +761,7 @@ cache_t gfx_image_cache(void)
 
 static img_t _gfx_load_image(char *filename, int combined)
 {
+	SDL_RWops *rw;
 	SDL_Surface *img;
 	int nr = 0;
 	filename = strip(filename);
@@ -782,13 +783,14 @@ static img_t _gfx_load_image(char *filename, int combined)
 		anigif_add(agif);
 		return agif->frames[0].surface;
 	}
-	img = IMG_Load(dirpath(filename));
-	if (!img) {
+	rw = RWFromIdf(game_idf, filename);
+
+	if (!rw || !(img = IMG_Load_RW(rw, 1)))
 		return NULL;
-	}
+
 	if (img->format->BitsPerPixel == 32) { /* hack for 32 bit BMP :( */
 		SDL_RWops *rwop;
-		rwop = SDL_RWFromFile(dirpath(filename), "rb");
+		rwop = RWFromIdf(game_idf, filename);
 		if (rwop) {
 			if (IMG_isBMP(rwop))
 				SDL_SetAlpha(img, 0, SDL_ALPHA_OPAQUE);
