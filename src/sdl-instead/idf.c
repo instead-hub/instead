@@ -69,6 +69,22 @@ static int write_word(FILE *fd, unsigned long w)
 	return 0;
 }
 
+int	idf_magic(const char *fname)
+{
+	char sign[4];
+	FILE *fd = fopen(dirpath(fname), "rb");
+	if (!fd)
+		return 0;
+	if (fread(sign, 1, 4, fd) != 4) {
+		fclose(fd);
+		return 0;
+	}
+	fclose(fd);
+	if (!memcmp(sign, "IDF\n", 4))
+		return 1;
+	return 0;
+}
+
 idf_t idf_init(const char *fname)
 {
 	char sign[4];

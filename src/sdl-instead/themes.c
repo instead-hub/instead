@@ -737,7 +737,10 @@ int game_theme_init(void)
 
 static int theme_parse(const char *path)
 {
-	idff_t idf = idf_open(game_idf, path);
+	idff_t idf = NULL;
+
+	if (theme_relative)
+		idf = idf_open(game_idf, path);
 
 	if (idf) {
 		int rc = parse_idff(idf, path, cmd_parser);

@@ -47,10 +47,15 @@ void game_err_msg(const char *s)
 static int is_game(const char *path, const char *n)
 {
 	int rc = 0;
-	char *p = getpath(path, n);
+	char *p = getfilepath(path, n);
 	char *pp;
 	if (!p)
 		return 0;
+	if (idf_magic(p)) {
+		free(p);
+		return 1;
+	}
+	strcat(p, "/");
 	pp = malloc(strlen(p) + strlen(MAIN_FILE) + 1);
 	if (pp) {
 		strcpy(pp, p);
@@ -124,12 +129,21 @@ int game_select(const char *name)
 			curgame_dir = oldgame;
 			return -1;
 		}
-		if (setdir(g->path)) {
+
+		if (g->idf) {
+			setdir(game_cwd);
+			if (oldgame != curgame_dir) {
+				idf_done(game_idf);
+				game_idf = idf_init(g->path);
+			}
+		}
+		
+		if ((!g->idf && setdir(g->path)) || (g->idf && !game_idf)) {
 			curgame_dir = oldgame;
 			return -1;
 		}
 
-		if (oldgame != curgame_dir) {
+		if (oldgame != curgame_dir && !g->idf) {
 			idf_done(game_idf);
 			game_idf = idf_init(DATA_IDF);
 		}
@@ -200,14 +214,20 @@ static void games_sort()
 {
 	qsort(games, games_nr, sizeof(struct game), cmp_game);
 }
+
 static int games_add(const char *path, const char *dir)
 {
 	char *p;
 	if (!is_game(path, dir))
 		return -1;
-	p = getpath(path, dir);
+	p = getfilepath(path, dir);
 	if (!p)
 		return -1;
+	if (!idf_magic(p)) {
+		strcat(p, "/");
+		games[games_nr].idf = 0;
+	} else
+		games[games_nr].idf = 1;
 	games[games_nr].path = p;
 	games[games_nr].dir = strdup(dir);
 	games[games_nr].name = game_name(p, dir);
