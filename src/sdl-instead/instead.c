@@ -1,6 +1,7 @@
 #include "externals.h"
 #include "internals.h"
 #include "list.h"
+#include "idf.h"
 
 #ifndef STEAD_PATH
 #define STEAD_PATH 	"./stead"
@@ -329,6 +330,7 @@ typedef struct LoadF {
 	int extraline;
 	unsigned char byte;
 	FILE *f;
+	idff_t idff;
 	int enc;
 	unsigned char buff[4096];
 } LoadF;
@@ -342,8 +344,17 @@ static const char *getF (lua_State *L, void *ud, size_t *size) {
 		*size = 1;
 		return "\n";
 	}
-	if (feof(lf->f)) return NULL;
-	*size = fread(lf->buff, 1, sizeof(lf->buff), lf->f);
+
+	if (lf->f && feof(lf->f))
+		return NULL;
+	if (lf->idff && idf_eof(lf->idff))
+		return NULL;
+
+	if (lf->idff)
+		*size = idf_read(lf->idff, lf->buff, 1, sizeof(lf->buff));
+	else
+		*size = fread(lf->buff, 1, sizeof(lf->buff), lf->f);
+
 	if (lf->enc) {
 		for (i = 0; i < *size; i ++) {
 			unsigned char b = lf->buff[i];
@@ -369,13 +380,26 @@ static int loadfile (lua_State *L, const char *filename, int enc) {
 	int fnameindex = lua_gettop(L) + 1;  /* index of filename on the stack */
 	lf.extraline = 0;
 	lua_pushfstring(L, "@%s", filename);
-	lf.f = fopen(filename, "rb");
+	lf.idff = idf_open(game_idf, filename);
+	if (!lf.idff)
+		lf.f = fopen(filename, "rb");
+	else
+		lf.f = NULL;
 	lf.byte = 0xcc;
 	lf.enc = enc;
-	if (lf.f == NULL) return errfile(L, "open", fnameindex);
+	if (lf.f == NULL && lf.idff == NULL) return errfile(L, "open", fnameindex);
 	status = lua_load(L, getF, &lf, lua_tostring(L, -1));
-	readstatus = ferror(lf.f);
-	if (filename) fclose(lf.f);  /* close file (even in case of errors) */
+
+	if (lf.f)
+		readstatus = ferror(lf.f);
+	else
+		readstatus = idf_error(lf.idff);
+
+	if (filename) {
+		if (lf.f)
+			fclose(lf.f);  /* close file (even in case of errors) */
+		idf_close(lf.idff);
+	}
 	if (readstatus) {
 		lua_settop(L, fnameindex);  /* ignore results from `lua_load' */
 		return errfile(L, "read", fnameindex);
