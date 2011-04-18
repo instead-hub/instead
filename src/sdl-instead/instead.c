@@ -382,7 +382,7 @@ static int loadfile (lua_State *L, const char *filename, int enc) {
 	lua_pushfstring(L, "@%s", filename);
 	lf.idff = idf_open(game_idf, filename);
 	if (!lf.idff)
-		lf.f = fopen(filename, "rb");
+		lf.f = fopen(dirpath(filename), "rb");
 	else
 		lf.f = NULL;
 	lf.byte = 0xcc;
@@ -412,7 +412,7 @@ static int loadfile (lua_State *L, const char *filename, int enc) {
 static int luaB_doencfile (lua_State *L) {
 	const char *fname = luaL_optstring(L, 1, NULL);
 	int n = lua_gettop(L);
-	if (loadfile(L, dirpath(fname), 1) != 0) lua_error(L);
+	if (loadfile(L, fname, 1) != 0) lua_error(L);
 	lua_call(L, 0, LUA_MULTRET);
 	return lua_gettop(L) - n;
 }
@@ -420,7 +420,7 @@ static int luaB_doencfile (lua_State *L) {
 static int luaB_dofile (lua_State *L) {
 	const char *fname = luaL_optstring(L, 1, NULL);
 	int n = lua_gettop(L);
-	if (loadfile(L, dirpath(fname), 0) != 0) lua_error(L);
+	if (loadfile(L, fname, 0) != 0) lua_error(L);
 	lua_call(L, 0, LUA_MULTRET);
 	return lua_gettop(L) - n;
 }
