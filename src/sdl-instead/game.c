@@ -141,7 +141,7 @@ int game_select(const char *name)
 			return -1;
 		}
 
-		if (instead_load(dirpath(MAIN_FILE))) {
+		if (instead_load(MAIN_FILE)) {
 			curgame_dir = oldgame;
 			return -1;
 		}
