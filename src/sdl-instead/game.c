@@ -3068,6 +3068,15 @@ int game_loop(void)
 				game_restart();
 				if (old_menu != -1)
 					game_menu(old_menu);
+			} else if (!is_key(&ev, "f4") && !alt_pressed) {
+#ifdef _USE_UNPACK
+#ifdef _USE_BROWSE
+				mouse_reset(1);
+				if (!game_from_disk()) {
+					shift_pressed = alt_pressed = 0;
+				}
+#endif
+#endif
 			} else if (DIRECT_MODE && !menu_shown) {
 				; // nothing todo
 			} else if (!alt_pressed && (!is_key(&ev, "return") || !is_key(&ev, "enter") 
@@ -3084,15 +3093,6 @@ int game_loop(void)
 
 				if (game_click(x, y, 1, 0) == -1) 
 					break;
-			} else if (!is_key(&ev, "f4") && !alt_pressed) {
-#ifdef _USE_UNPACK
-#ifdef _USE_BROWSE
-				mouse_reset(1);
-				if (!game_from_disk()) {
-					shift_pressed = alt_pressed = 0;
-				}
-#endif
-#endif
 			} else if (!is_key(&ev, "tab")) {
 				select_frame(shift_pressed);
 			} else if (!is_key(&ev, "up") || !is_key(&ev, "down") ||
