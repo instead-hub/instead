@@ -77,6 +77,22 @@ static int dofile (lua_State *L, const char *name) {
 	return report(L, status);
 }
 
+static const char *idf_reader(lua_State *L, void *data, size_t *size)
+{
+	static char buff[4096];
+	int rc;
+	rc = idf_read((idff_t)data, buff, 1, sizeof(buff));
+	*size = rc;
+	if (!rc)
+		return NULL;
+	return buff;
+}
+
+static int dofile_idf (lua_State *L, idff_t idf, const char *name) {
+	int status = lua_load(L, idf_reader, idf, name) || docall(L);
+	return report(L, status);
+}
+
 static int dostring (lua_State *L, const char *s) {
 	int status = luaL_loadstring(L, s) || docall(L);
 	return report(L, status);
@@ -313,7 +329,13 @@ char *togame(const char *s)
 
 int instead_load(char *game)
 {
-   	if (dofile(L, game)) {
+	idff_t idf = idf_open(game_idf, game);
+	if (idf) {
+		int rc = dofile_idf(L, idf, game);
+		idf_close(idf);
+		if (rc)
+			return -1;
+	} else if (dofile(L, dirpath(game))) {
 		return -1;
 	}
 	instead_clear();
