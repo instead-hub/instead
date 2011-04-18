@@ -103,6 +103,7 @@ struct game {
 	char *path;
 	char *name;
 	char *dir;
+	int idf;
 };
 
 extern struct	game *games;
