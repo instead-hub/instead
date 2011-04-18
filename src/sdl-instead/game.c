@@ -129,8 +129,10 @@ int game_select(const char *name)
 			return -1;
 		}
 
-		idf_done(game_idf);
-		game_idf = idf_init(DATA_IDF);
+		if (oldgame != curgame_dir) {
+			idf_done(game_idf);
+			game_idf = idf_init(DATA_IDF);
+		}
 
 		game_use_theme();
 

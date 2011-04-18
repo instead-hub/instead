@@ -255,7 +255,6 @@ void snd_free_mus(mus_t mus)
 		return;
 	Mix_HaltMusic();
 	if (mus->mus) {
-		SDL_RWseek(mus->rw, 0, SEEK_SET);
 #ifdef _SDL_MOD_BUG
 		if (Mix_GetMusicType(mus->mus) == MUS_MOD)
 			SDL_RWclose(mus->rw);
