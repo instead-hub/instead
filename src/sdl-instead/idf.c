@@ -7,13 +7,19 @@
 typedef struct _idfd_t {
 	unsigned long offset;
 	unsigned long size;
-	unsigned long pos;
-	idf_t		idf;
+	idf_t			idf;
 } idfd_t;
+
+typedef struct _idff_t {
+	idfd_t		*dir;
+	unsigned long pos;
+	FILE		*fd;
+} idff_t;
 
 struct _idf_t {
 	unsigned long size;
 	FILE	*fd;
+	char 	*path;
 	cache_t	dir;
 };
 
@@ -21,11 +27,21 @@ void idf_done(idf_t idf)
 {
 	if (!idf)
 		return;
+	if (idf->path)
+		free(idf->path);
 	if (idf->dir)
 		cache_free(idf->dir);
 	if (idf->fd)
 		fclose(idf->fd);
 	free(idf);
+}
+
+void idf_shrink(idf_t idf)
+{
+	if (!idf)
+		return;
+	if (idf->dir)
+		cache_shrink(idf->dir);
 }
 
 static int read_word(FILE *fd, unsigned long *w)
@@ -61,6 +77,9 @@ idf_t idf_init(const char *fname)
 	idf_t idf = malloc(sizeof(struct _idf_t));
 	if (!idf)
 		return NULL;
+	idf->path = strdup(fname);
+	if (!idf->path)
+		goto err;
 	idf->fd = fopen(fp, "rb");
 	idf->dir = cache_init(-1, free);
 	if (!idf->fd || !idf->dir)
@@ -100,7 +119,6 @@ idf_t idf_init(const char *fname)
 			goto err;
 		e->offset = off;
 		e->size = size;
-		e->pos = 0;
 		e->idf = idf;
 		if (cache_add(idf->dir, name, e)) {
 			free(e);
@@ -210,6 +228,9 @@ int idf_create(const char *file, const char *path)
 	p = strdup(path);
 	if (!p)
 		return -1;
+
+	unix_path(p);
+
 	i = strlen(p) - 1;
 
 	while (i >= 0 && p[i] == '/') {
@@ -276,29 +297,30 @@ err:
 	
 static int idfrw_seek(struct SDL_RWops *context, int offset, int whence)
 {
-	idfd_t *dir = (idfd_t *)context->hidden.unknown.data1;
+	idff_t *fil = (idff_t *)context->hidden.unknown.data1;
+	idfd_t *dir = fil->dir;
 	switch (whence) {
 	case SEEK_SET:
 		if (offset < 0 || offset > dir->size) {
 			return -1;
 		}
-		dir->pos = offset;
+		fil->pos = offset;
 		break;
 	case SEEK_END:
 		if (dir->size + offset > dir->size || dir->size + offset < 0) {
 			return -1;
 		}
-		dir->pos = dir->size + offset;
+		fil->pos = dir->size + offset;
 		break;
 	case SEEK_CUR:
-		if (dir->pos + offset > dir->size || dir->pos + offset < 0) {
+		if (fil->pos + offset > dir->size || fil->pos + offset < 0) {
 			return -1;
 		}
-		dir->pos = dir->pos + offset;
+		fil->pos += offset;
 		break;
 	}
-	if (!fseek(dir->idf->fd, dir->pos + dir->offset, SEEK_SET))
-		return dir->pos;
+	if (!fseek(fil->fd, fil->pos + dir->offset, SEEK_SET))
+		return fil->pos;
 	return -1;
 }
 
@@ -306,37 +328,46 @@ static int idfrw_read(struct SDL_RWops *context, void *ptr, int size, int maxnum
 {
 	int rc = 0;
 	long pos;
-	idfd_t *dir = (idfd_t *)context->hidden.unknown.data1;
+	idff_t *fil = (idff_t *)context->hidden.unknown.data1;
+	idfd_t *dir = fil->dir;
 
-	if (fseek(dir->idf->fd, dir->offset + dir->pos, SEEK_SET) < 0) {
+	if (fseek(fil->fd, dir->offset + fil->pos, SEEK_SET) < 0) {
 		return 0;
 	}
 #if 0
 	while (maxnum) {
+		pos = ftell(dir->idf->fd);
+		dir->pos = pos - dir->offset;
+
 		if (dir->pos + size > dir->size) {
 			break;
 		}
-		if (fread(ptr, 1, size, dir->idf->fd) != size) {
+
+		if (fread(ptr, size, 1, dir->idf->fd) != 1) {
 			fprintf(stderr, "read 2 err\n");
 			break;
 		}
-		dir->pos += size;
+//		dir->pos += size;
 		ptr += size;
 		maxnum --;
 		rc ++;
+
 	}
+#else
+	rc = fread(ptr, size, maxnum, fil->fd);
 #endif
-	rc = fread(ptr, size, maxnum, dir->idf->fd);
-	pos = ftell(dir->idf->fd);
-	dir->pos = pos - dir->offset;
+	pos = ftell(fil->fd);
+	fil->pos = pos - dir->offset;
 	return rc;
 }
 
 static 	int idfrw_close(struct SDL_RWops *context)
 {
-	idfd_t *dir = (idfd_t *)context->hidden.unknown.data1;
-	dir->pos = 0;
-	SDL_FreeRW(context);
+	if (context) {
+		idff_t *fil = (idff_t *)context->hidden.unknown.data1;
+		fclose(fil->fd);
+		SDL_FreeRW(context);
+	}
 	return 0; /* nothing todo */
 }
 #if 0
@@ -370,18 +401,31 @@ int idf_extract(idf_t idf, const char *fname)
 SDL_RWops *RWFromIdf(idf_t idf, const char *fname)
 {
 	idfd_t *dir = NULL;
+	idff_t *fil = NULL;
 	SDL_RWops *n;
-
 	if (idf)
 		dir = cache_lookup(idf->dir, fname);
 	if (!dir)
 		return SDL_RWFromFile(dirpath(fname), "rb");
+	fil = malloc(sizeof(idff_t));
+	if (!fil)
+		return NULL;
 	n = SDL_AllocRW();
 	if (!n)
-		return NULL;
+		goto err;
+	fil->dir = dir;
+	fil->pos = 0;
+	fil->fd = fopen(dirpath(idf->path), "rb");
+	if (!fil->fd)
+		goto err;
 	n->seek = idfrw_seek;
 	n->read = idfrw_read;
 	n->close = idfrw_close;
-	n->hidden.unknown.data1 = dir;
+	n->hidden.unknown.data1 = fil;
 	return n;
+err:
+	if (n)
+		SDL_FreeRW(n);
+	free(fil);
+	return NULL;
 }

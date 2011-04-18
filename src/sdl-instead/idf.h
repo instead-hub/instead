@@ -5,6 +5,7 @@ struct _idf_t;
 typedef struct _idf_t *idf_t;
 
 extern idf_t	idf_init(const char *path);
+extern void	idf_shrink(idf_t idf);
 extern void	idf_done(idf_t idf);
 
 extern SDL_RWops *RWFromIdf(idf_t idf, const char *fname);
