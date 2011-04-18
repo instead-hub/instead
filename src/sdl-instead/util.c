@@ -1,6 +1,7 @@
 #include "externals.h"
 #include "config.h"
 #include "util.h"
+#include "idf.h"
 
 void tolow(char *p)
 {
@@ -98,13 +99,13 @@ int process_cmd(char *n, char *v, struct parser *cmd_parser)
 	return -1;
 }
 
-static int fgetsesc(char *oline, size_t size, FILE *fp)
+static int fgetsesc(char *oline, size_t size, char *(*getl)(void *p, char *s, int size), void *fp)
 {
 	int nr = 0;
 	char line[4096];
 	*oline = 0;
 	*line = 0;
-	while (fgets(line, sizeof(line), fp)) {
+	while (getl(fp, line, sizeof(line))) {
 		int i;
 		nr ++;
 		i = strcspn(line, "\n\r");
@@ -152,17 +153,17 @@ static void comments_zap(char *p)
 		*l = 0;
 }
 
-int parse_ini(const char *path, struct parser *cmd_parser)
+int parse_all(void *fp, char *(*getl)(void *p, char *s, int size), const char *path, struct parser *cmd_parser)
 {
 	int nr;
 	int rc = 0;
 	int line_nr = 1;
-	FILE *fp;
+
 	char line[4096];
-	fp = fopen(path, "rb");
 	if (!fp)
 		return -1;
-	while ((nr = fgetsesc(line, sizeof(line), fp))) {
+
+	while ((nr = fgetsesc(line, sizeof(line), getl, fp))) {
 		char *p = line;
 		char *val;
 		int len;
@@ -186,8 +187,36 @@ int parse_ini(const char *path, struct parser *cmd_parser)
 			fprintf(stderr, "Can't process cmd '%s' on line %d in '%s': %s\n", p, line_nr - nr, path, strerror(errno));
 		}
 	}
+	return rc;
+}
+
+static char *file_gets(void *fd, char *s, int size)
+{
+	return fgets(s, size, (FILE *)fd);
+}
+
+static char *idff_gets(void *fd, char *s, int size)
+{
+	return idf_gets((idff_t)fd, s, size);
+}
+
+int parse_ini(const char *path, struct parser *cmd_parser)
+{
+	int rc = 0;
+	FILE *fp;
+	fp = fopen(path, "rb");
+	if (!fp)
+		return -1;
+	rc = parse_all(fp, file_gets, path, cmd_parser);
 	fclose(fp);
 	return rc;
+}
+
+int parse_idff(idff_t idff, const char *path, struct parser *cmd_parser)
+{
+	if (!idff)
+		return -1;
+	return parse_all(idff, idff_gets, path, cmd_parser);
 }
 
 int parse_string(const char *v, void *data)

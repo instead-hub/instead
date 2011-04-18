@@ -1,5 +1,6 @@
 #ifndef __IDF_H_INCLUDED
 #define __IDF_H_INCLUDED
+#include <SDL_rwops.h>
 
 struct _idf_t;
 struct _idff_t;
@@ -20,5 +21,7 @@ extern int idf_close(idff_t fil);
 
 extern int idf_eof(idff_t idf);
 extern int idf_error(idff_t idf);
+extern int idf_access(idf_t idf, const char *fname);
+extern char *idf_gets(idff_t idf, char *b, int size);
 
 #endif

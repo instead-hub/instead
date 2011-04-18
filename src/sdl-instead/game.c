@@ -731,12 +731,12 @@ int game_use_theme(void)
 		return -1;
 	}
 
-	if (curgame_dir && !access(dirpath(THEME_FILE), R_OK)) {
+	if (curgame_dir && (!idf_access(game_idf, THEME_FILE) || !access(dirpath(THEME_FILE), R_OK))) {
 		game_own_theme = 1;
 	}
 	if (game_own_theme && opt_owntheme) {
 		theme_relative = 1;
-		rc = theme_load(dirpath(THEME_FILE));
+		rc = theme_load(THEME_FILE);
 		theme_relative = 0;
 	} else if (curtheme_dir && strlowcmp(DEFAULT_THEME, curtheme_dir)) {
 		rc = game_theme_load(curtheme_dir);

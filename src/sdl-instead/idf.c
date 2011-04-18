@@ -431,6 +431,7 @@ int idf_error(idff_t idf)
 		return -1;
 	return ferror(idf->fd);
 }
+
 idff_t idf_open(idf_t idf, const char *fname)
 {
 	idfd_t *dir = NULL;
@@ -453,6 +454,35 @@ idff_t idf_open(idf_t idf, const char *fname)
 err:
 	free(fil);
 	return NULL;
+}
+
+int idf_access(idf_t idf, const char *fname)
+{
+	idfd_t *dir = NULL;
+	if (idf)
+		dir = cache_lookup(idf->dir, fname);
+	if (!dir)
+		return -1;
+	return 0;
+}
+
+char *idf_gets(idff_t idf, char *b, int size)
+{
+	int rc, rc2;
+	if (!idf) 
+		return NULL;
+	if (!size)
+		return NULL;
+	rc = idf_read(idf, b, 1, size);
+	if (rc < 0)
+		return NULL;
+	if (!rc && idf_eof(idf))
+		return NULL;
+	b[rc - 1] = 0;
+	rc2 = strcspn(b, "\n");
+	b[rc2] = 0;
+	idf_seek(idf, - (rc - rc2 - 1), SEEK_CUR);
+	return b;
 }
 
 SDL_RWops *RWFromIdf(idf_t idf, const char *fname)

@@ -304,7 +304,7 @@ char *sdl_path(char *p)
 	unix_path(p);
 	return p;
 }
-#if 1
+#if 0
 int setdir(const char *path)
 {
 	return chdir(path);
