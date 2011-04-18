@@ -354,7 +354,10 @@ int parse_full_path(const char *v, void *data)
 	char cwd[PATH_MAX];
 	char **p = ((char **)data);
 
-	if (theme_relative || !strncmp(v, "blank:", 6) || !strncmp(v, "box:", 4)) /* hack for special files*/
+	if (theme_relative || 
+		!strncmp(v, "blank:", 6) || 
+		!strncmp(v, "box:", 4) ||
+		!strncmp(v, "spr:", 4)) /* hack for special files*/
 		return parse_path(v, data);
 
 	if (*p)
