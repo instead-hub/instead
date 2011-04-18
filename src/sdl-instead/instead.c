@@ -761,9 +761,12 @@ static int luaB_text_size(lua_State *L) {
 		return 0;
 	if (!text) {
 		w = 0;
-		h = fnt_height(fn->fnt) / game_theme.scale;
-	} else
+		h = ceil((float)fnt_height(fn->fnt) / game_theme.scale);
+	} else {
 		txt_size(fn->fnt, text, &w, &h);
+		w = ceil((float)w / game_theme.scale);
+		h = ceil((float)h / game_theme.scale);
+	}
 	lua_pushnumber(L, w);
 	lua_pushnumber(L, h);
 	return 2;
@@ -859,8 +862,8 @@ static int luaB_sprite_size(lua_State *L) {
 	
 	v = game_theme.scale;
 
-	w = (gfx_img_w(s) - xoff * 2) / v;
-	h = (gfx_img_h(s) - yoff * 2) / v;
+	w = ceil ((float)(gfx_img_w(s) - xoff * 2) / v);
+	h = ceil ((float)(gfx_img_h(s) - yoff * 2) / v);
 
 	lua_pushnumber(L, w);
 	lua_pushnumber(L, h);
