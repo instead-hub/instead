@@ -1,6 +1,8 @@
 #ifndef __UTIL_H_INCLUDED
 #define __UTIL_H_INCLUDED
 
+#include "idf.h"
+
 typedef int (*parser_fn)(const char *v, void *data);
 
 struct parser {
@@ -14,6 +16,8 @@ extern int is_space(int c);
 extern int is_empty(const char *str);
 
 extern int parse_ini(const char *path, struct parser *cmd_parser);
+extern int parse_idff(idff_t idff, const char *path, struct parser *cmd_parser);
+
 extern char *getpath(const char *d, const char *n);
 extern char *strip(char *s);
 char *getfilepath(const char *d, const char *n);

@@ -737,7 +737,17 @@ int game_theme_init(void)
 
 static int theme_parse(const char *path)
 {
-	if (parse_ini(path, cmd_parser)) {
+	idff_t idf = idf_open(game_idf, path);
+
+	if (idf) {
+		int rc = parse_idff(idf, path, cmd_parser);
+		idf_close(idf);
+		if (rc)
+			fprintf(stderr, "Theme parsed with errors!\n");
+		return rc;
+	}
+
+	if (parse_ini(dirpath(path), cmd_parser)) {
 		fprintf(stderr, "Theme parsed with errors!\n");
 //		game_theme_free();
 		return -1;
@@ -886,7 +896,7 @@ int game_theme_load(const char *name)
 	setdir(game_cwd);
 	theme = theme_lookup(name);
 	theme_relative = 0;
-	if (!theme || setdir(theme->path) || theme_load(dirpath(THEME_FILE))) {
+	if (!theme || setdir(theme->path) || theme_load(THEME_FILE)) {
 		setdir(cwd);
 		theme_relative = rel;
 		return -1;
