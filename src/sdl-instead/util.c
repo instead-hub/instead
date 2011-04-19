@@ -390,23 +390,28 @@ void unix_path(char *path)
 	return;
 }
 
-char *lookup_tag(const char *fname, const char *tag, const char *comm)
+static char *lookup_tag_all(const char *tag, const char *comm, char *(*getl)(void *p, char *s, int size), void *fp)
 {
 	int brk = 0;
 	char *l; char line[1024];
+	while ((l = getl(fp, line, sizeof(line))) && !brk) {
+		l = parse_tag(l, tag, comm, &brk);
+		if (l)
+			return l;
+	}
+	return NULL;
+
+}
+
+char *lookup_tag(const char *fname, const char *tag, const char *comm)
+{
+	char *l;
 	FILE *fd = fopen(fname, "rb");
 	if (!fd)
 		return NULL;
-
-	while ((l = fgets(line, sizeof(line), fd)) && !brk) {
-		l = parse_tag(l, tag, comm, &brk);
-		if (l) {
-			fclose(fd);
-			return l;
-		}
-	}
+	l = lookup_tag_all(tag, comm, file_gets, fd);
 	fclose(fd);
-	return NULL;
+	return l;
 }
 
 char *lookup_lang_tag(const char *fname, const char *tag, const char *comm)
@@ -417,6 +422,19 @@ char *lookup_lang_tag(const char *fname, const char *tag, const char *comm)
 	l = lookup_tag(fname, lang_tag, comm);
 	if (!l) 
 		l = lookup_tag(fname, tag, comm);
+	return l;
+}
+
+char *lookup_lang_tag_idf(idff_t idf, const char *tag, const char *comm)
+{
+	char lang_tag[1024];
+	char *l;
+	if (!idf)
+		return NULL;
+	snprintf(lang_tag, sizeof(lang_tag), "%s(%s)", tag, opt_lang);
+	l = lookup_tag_all(lang_tag, comm, idff_gets, idf);
+	if (!l) 
+		l = lookup_tag_all(tag, comm, idff_gets, idf);
 	return l;
 }
 

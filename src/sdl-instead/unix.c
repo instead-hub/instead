@@ -109,7 +109,8 @@ char *open_file_dialog(void)
 	file_filter_zip = gtk_file_filter_new();
 	gtk_file_filter_add_pattern(file_filter_zip, "*.zip");
 	gtk_file_filter_add_pattern(file_filter_zip, "main.lua");
-	gtk_file_filter_set_name(file_filter_zip, "main.lua; *.zip");
+	gtk_file_filter_add_pattern(file_filter_zip, "*.idf");
+	gtk_file_filter_set_name(file_filter_zip, "main.lua; *.zip; *.idf");
 
 /*
 	file_filter_lua = gtk_file_filter_new();

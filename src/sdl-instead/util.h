@@ -24,6 +24,8 @@ char *getfilepath(const char *d, const char *n);
 
 extern char *lookup_tag(const char *fname, const char *tag, const char *comm);
 extern char *lookup_lang_tag(const char *fname, const char *tag, const char *comm);
+extern char *lookup_lang_tag_idf(idff_t idf, const char *tag, const char *comm);
+
 extern int parse_esc_string(const char *v, void *data);
 extern int parse_string(const char *v, void *data);
 extern int parse_int(const char *v, void *data);
