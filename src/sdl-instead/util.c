@@ -433,8 +433,10 @@ char *lookup_lang_tag_idf(idff_t idf, const char *tag, const char *comm)
 		return NULL;
 	snprintf(lang_tag, sizeof(lang_tag), "%s(%s)", tag, opt_lang);
 	l = lookup_tag_all(lang_tag, comm, idff_gets, idf);
-	if (!l) 
+	if (!l) {
+		idf_seek(idf, 0, SEEK_SET);
 		l = lookup_tag_all(tag, comm, idff_gets, idf);
+	}
 	return l;
 }
 
