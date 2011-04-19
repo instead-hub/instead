@@ -8,6 +8,7 @@
 #include "SDL_rotozoom.h"
 #include "SDL_gfxBlitFunc.h"
 #include "SDL_anigif.h"
+#include "sdl_idf.h"
 
 #define Surf(p) ((SDL_Surface *)p)
 

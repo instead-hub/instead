@@ -2,7 +2,7 @@
 #include "internals.h"
 #include "idf.h"
 #include "list.h"
-#include <SDL/SDL_rwops.h>
+#include <SDL_rwops.h>
 
 typedef struct _idfd_t {
 	unsigned long offset;
