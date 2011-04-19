@@ -1,6 +1,5 @@
 #ifndef __UTIL_H_INCLUDED
 #define __UTIL_H_INCLUDED
-
 #include "idf.h"
 
 typedef int (*parser_fn)(const char *v, void *data);

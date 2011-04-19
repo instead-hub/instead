@@ -14,7 +14,7 @@ SYSTEMINCLUDE  /epoc32/include/libc /epoc32/include/esdl /epoc32/include/mmf/plu
 
 sourcepath ./src/sdl-instead
 SOURCE symbian.cpp
-SOURCE graphics.c input.c game.c main.c instead.c sound.c SDL_rotozoom.c SDL_anigif.c SDL_gfxBlitFunc.c config.c themes.c menu.c util.c cache.c unzip.c ioapi.c unpack.c s60.c lfs.c
+SOURCE graphics.c input.c game.c main.c instead.c sound.c SDL_rotozoom.c SDL_anigif.c SDL_gfxBlitFunc.c config.c themes.c menu.c util.c cache.c unzip.c ioapi.c unpack.c s60.c lfs.c idf.c
 SOURCE snprintf.c
 
 USERINCLUDE ./src/sdl-instead

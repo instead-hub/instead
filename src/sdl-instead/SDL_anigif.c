@@ -21,8 +21,8 @@
 #include <stdio.h>
 #include <string.h>
 #include "SDL_anigif.h"
-#include "util.h"
-#include "idf.h"
+#include "sdl_idf.h"
+
 extern idf_t game_idf;
 
 /* Code from here to end of file has been adapted from XPaint:           */

@@ -1,6 +1,5 @@
 #ifndef __IDF_H_INCLUDED
 #define __IDF_H_INCLUDED
-#include <SDL_rwops.h>
 
 struct _idf_t;
 struct _idff_t;
@@ -11,7 +10,6 @@ extern idf_t	idf_init(const char *path);
 extern void	idf_shrink(idf_t idf);
 extern void	idf_done(idf_t idf);
 
-extern SDL_RWops *RWFromIdf(idf_t idf, const char *fname);
 extern int idf_create(const char *file, const char *path);
 extern idff_t idf_open(idf_t idf, const char *fname);
 
