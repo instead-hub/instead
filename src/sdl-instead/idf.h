@@ -24,5 +24,6 @@ extern int idf_error(idff_t idf);
 extern int idf_access(idf_t idf, const char *fname);
 extern char *idf_gets(idff_t idf, char *b, int size);
 extern int idf_magic(const char *fname);
+extern int idf_only(idf_t idf, int fl);
 
 #endif

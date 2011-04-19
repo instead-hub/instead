@@ -135,6 +135,8 @@ int game_select(const char *name)
 			if (oldgame != curgame_dir) {
 				idf_done(game_idf);
 				game_idf = idf_init(g->path);
+				if (game_idf)
+					idf_only(game_idf, 1);
 			}
 		}
 		
@@ -244,7 +246,10 @@ int games_replace(const char *path, const char *dir)
 		return -1;
 	g = game_lookup(dir);
 	if (g) {
-		p = getpath(path, dir);
+		if (g->idf)
+			p = getfilepath(path, dir);
+		else
+			p = getpath(path, dir);
 		if (!p)
 			return -1;
 		free(g->path);
@@ -2926,11 +2931,12 @@ int game_from_disk(void)
 	strcpy(dir, p);
 	strcpy(base, p);
 	d = dir; b = base;
-	
 	i = strlen(d);
 	if (i && d[i - 1] != '/') { /* file */
-		d = dirname(d);
-		strcpy(b, d);
+		if (!idf_magic(d)) {
+			d = dirname(d);
+			strcpy(b, d);
+		}
 	}
 	d = dirname(d);
 	b = basename(b);
