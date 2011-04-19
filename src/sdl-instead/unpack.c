@@ -244,14 +244,6 @@ const char *password;
 			zip_game_dirname[strcspn(zip_game_dirname,"/\\")] = 0;
 		}
 
-		if (!*zip_game_dirname) {
-			err = -1;
-			fprintf(stderr, "No dir in zip...\n");
-			if (fout)
-				fclose(fout);
-			unzCloseCurrentFile(uf);
-			goto out;
-		}
 
 		if (fout != NULL) {
 			fprintf(stderr, " extracting: %s\n", write_filename);
@@ -291,6 +283,18 @@ const char *password;
 			}
 		} else
 			unzCloseCurrentFile(uf);	/* don't lose the error */
+
+		if (!*zip_game_dirname) {
+			err = -1;
+			fprintf(stderr, "No dir in zip...\n");
+			if (idf_magic(write_filename)) {
+				fprintf(stderr, "Idf unpacked: %s\n", write_filename);
+				strcpy(zip_game_dirname, write_filename);
+				err = 0;
+			} else
+				unlink(write_filename);
+			goto out;
+		}
 	}
 
 	if (*zip_game_dirname) {
