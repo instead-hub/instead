@@ -21,6 +21,7 @@ struct _idf_t {
 	FILE	*fd;
 	char 	*path;
 	cache_t	dir;
+	int		idfonly;
 };
 
 void idf_done(idf_t idf)
@@ -96,6 +97,7 @@ idf_t idf_init(const char *fname)
 	idf->path = strdup(fname);
 	if (!idf->path)
 		goto err;
+	idf->idfonly = 0;
 	idf->fd = fopen(fp, "rb");
 	idf->dir = cache_init(-1, free);
 	if (!idf->fd || !idf->dir)
@@ -273,8 +275,15 @@ int idf_create(const char *file, const char *path)
 		s = strlen(it->path);
 		if (fwrite(&s, 1, 1, fd) != 1)
 			goto err;
-		if (fwrite(it->path, 1, s, fd) != s)
+		p = strdup(it->path);
+		if (!p)
 			goto err;
+		tolow(p); /* in idf always lowcase */
+		if (fwrite(p, 1, s, fd) != s) {
+			free(p);
+			goto err;
+		}
+		free(p);
 		if (write_word(fd, off) < 0)
 			goto err;
 		if (write_word(fd, it->size) < 0)
@@ -448,12 +457,29 @@ int idf_error(idff_t idf)
 	return ferror(idf->fd);
 }
 
+int idf_only(idf_t idf, int fl)
+{	int i;
+	if (!idf)
+		return -1;
+	if (fl == -1)
+		return idf->idfonly;
+	i = idf->idfonly;
+	idf->idfonly = fl;
+	return i;
+}
+
 idff_t idf_open(idf_t idf, const char *fname)
 {
 	idfd_t *dir = NULL;
 	idff_t fil = NULL;
+	char *p;
+	p = strdup(fname);
+	if (!p)
+		return NULL;
+	tolow(p);
 	if (idf)
-		dir = cache_lookup(idf->dir, fname);
+		dir = cache_lookup(idf->dir, p);
+	free(p);
 	if (!dir)
 		return NULL;
 
@@ -506,9 +532,11 @@ SDL_RWops *RWFromIdf(idf_t idf, const char *fname)
 	idff_t fil = NULL;
 	SDL_RWops *n;
 	fil = idf_open(idf, fname);
-	if (!fil)
-		return SDL_RWFromFile(dirpath(fname), "rb");
-
+	if (!fil) {
+		if (!idf || !idf->idfonly)
+			return SDL_RWFromFile(dirpath(fname), "rb");
+		return NULL;
+	}
 	n = SDL_AllocRW();
 	if (!n)
 		goto err;

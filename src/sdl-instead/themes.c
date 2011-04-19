@@ -585,7 +585,7 @@ int game_theme_optimize(void)
 static int game_theme_update_data(void)
 {
 	struct game_theme *t = &game_theme;
-
+	int idf = idf_only(game_idf, 0);
 	if (t->font_name && (t->changed & CHANGED_FONT)) {
 		fnt_free(t->font);
 		if (!(t->font = fnt_load(t->font_name, FONT_SZ(t->font_size))))
@@ -683,8 +683,10 @@ static int game_theme_update_data(void)
 		fprintf(stderr,"Can't init theme. Not all required elements are defined.\n");
 		goto err;
 	}
+	idf_only(game_idf, idf);
 	return 0;
 err:
+	idf_only(game_idf, idf);
 	t->changed = 0;
 	return -1;
 }
@@ -894,19 +896,19 @@ int game_theme_load(const char *name)
 {
 	struct theme *theme;
 	char cwd[PATH_MAX];
+	int rc = -1;
 	int rel = theme_relative;
 	getdir(cwd, sizeof(cwd));
 	setdir(game_cwd);
 	theme = theme_lookup(name);
 	theme_relative = 0;
-	if (!theme || setdir(theme->path) || theme_load(THEME_FILE)) {
-		setdir(cwd);
-		theme_relative = rel;
-		return -1;
-	}
+	if (!theme || setdir(theme->path) || theme_load(THEME_FILE))
+		goto err;
+	rc = 0;
+err:
 	setdir(cwd);
 	theme_relative = rel;
-	return 0;
+	return rc;
 }
 
 int game_theme_select(const char *name)
