@@ -473,6 +473,8 @@ idff_t idf_open(idf_t idf, const char *fname)
 	idfd_t *dir = NULL;
 	idff_t fil = NULL;
 	char *p;
+	if (!idf || !fname)
+		return NULL;
 	p = strdup(fname);
 	if (!p)
 		return NULL;

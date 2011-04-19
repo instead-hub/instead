@@ -175,7 +175,19 @@ int game_select(const char *name)
 static char *game_name(const char *path, const char *d_name)
 {
 	char *l;
-	char *p = getfilepath(path, MAIN_FILE);
+	char *p;
+
+	if (idf_magic(path)) {
+		idf_t idf = idf_init(path);
+		idff_t idff = idf_open(idf, MAIN_FILE);
+		l = lookup_lang_tag_idf(idff, "Name", "--");
+		idf_close(idff);
+		idf_done(idf);
+		if (l)
+			return l;
+		goto err;
+	}
+	p = getfilepath(path, MAIN_FILE);
 	if (!p)
 		goto err;
 	l = lookup_lang_tag(p, "Name", "--");
