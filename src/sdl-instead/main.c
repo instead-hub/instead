@@ -33,6 +33,7 @@ char *encode_output = NULL;
 char *mode_sw = NULL;
 char *appdata_sw = NULL;
 char *idf_sw = NULL;
+char *start_idf_sw = NULL;
 #ifdef _USE_UNPACK
 extern int unpack(const char *zipfilename, const char *where);
 extern char zip_game_dirname[];
@@ -56,6 +57,16 @@ static int setup_zip(const char *file, char *p)
 	return 0;
 }
 #endif
+
+static int start_idf(char *file)
+{
+	if (!file)
+		return -1;
+	if (!idf_magic(file))
+		return -1;
+	start_idf_sw = file;
+	return 0;
+}
 
 #ifdef __APPLE__
 #include <CoreFoundation/CoreFoundation.h>
@@ -219,6 +230,9 @@ int main(int argc, char *argv[])
 			fprintf(stderr,"Unknown option: %s\n", argv[i]);
 			exit(1);
 		}
+		else if (!start_idf(argv[i])) {
+			fprintf(stderr, "Adding idf: %s\n", argv[i]);
+		}
 #ifdef _USE_UNPACK
 		else {
 			char *p;
@@ -284,6 +298,27 @@ int main(int argc, char *argv[])
 	
 	if (!nostdgames_sw)
 		games_lookup(game_local_games_path(0));
+
+	if (start_idf_sw) {
+		char *d, *b;
+		char *dd, *bb;
+		static char idf_game[255];
+		d = strdup(start_idf_sw);
+		b = strdup(start_idf_sw);
+		if (d && b) {
+			dd = dirname(d);
+			bb = basename(b);
+			if (!games_replace(dirpath(dd), bb)) {
+				game_sw = idf_game;
+				strncpy(idf_game, bb, sizeof(idf_game) - 1);
+				idf_game[sizeof(idf_game) - 1] = 0;
+			}
+		}
+		if (d)
+			free(d); 
+		if (b)
+			free(b);
+	}
 
 	if (noauto_sw)
 		opt_autosave = 0;
