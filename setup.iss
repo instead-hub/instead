@@ -8,6 +8,7 @@ OutputDir=.
 OutputBaseFilename=instead-1.3.5
 AllowNoIcons=true
 SetupIconFile=icon\sdl_instead.ico
+ChangesAssociations=yes
 
 [Languages]
 Name: en; MessagesFile: compiler:Default.isl
@@ -58,6 +59,12 @@ Name: {group}\{cm:UninstallMsg}; Filename: {uninstallexe}
 [UninstallDelete]
 Name: {app}; Type: dirifempty
 Name: {pf}\Pinebrush games; Type: dirifempty
+
+[Registry]
+Root: HKCR; Subkey: ".idf"; ValueType: string; ValueName: ""; ValueData: "INSTEAD"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "INSTEAD"; ValueType: string; ValueName: ""; ValueData: "INSTEAD data file"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "INSTEAD\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\sdl-instead.exe,0"
+Root: HKCR; Subkey: "INSTEAD\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\sdl-instead.exe"" ""%1"""
 
 [Code]
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
