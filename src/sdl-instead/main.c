@@ -124,6 +124,7 @@ int main(int argc, char *argv[])
 #ifndef S60
 	putenv("SDL_MOUSE_RELATIVE=0"); /* test this! */
 #endif
+
 #ifdef _WIN32_WCE
 	wince_init(argv[0]);
 #else
@@ -131,7 +132,11 @@ int main(int argc, char *argv[])
 	extern char s60_data[];
 	strcpy(game_cwd, s60_data);
 #else
+#ifdef _WIN32
+	strcpy(game_cwd, dirname(argv[0]));
+#else
 	getcwd(game_cwd, sizeof(game_cwd));
+#endif
 #endif
 #endif
 	unix_path(game_cwd);
