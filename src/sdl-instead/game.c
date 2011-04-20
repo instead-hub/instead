@@ -864,6 +864,7 @@ void game_release_theme(void)
 	if (menubg)
 		gfx_free_image(menubg);
 	menu = menubg = NULL;
+	gfx_update(0, 0, game_theme.w, game_theme.h);
 }
 
 void game_done(int err)
@@ -2407,7 +2408,7 @@ void game_cursor(int on)
 		goto out;
 	}
 
-	if (on == CURSOR_CLEAR || on == CURSOR_OFF)
+	if (on == CURSOR_CLEAR)
 		goto out;
 
 	if (on != CURSOR_DRAW)
