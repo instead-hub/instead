@@ -262,7 +262,16 @@ int main(int argc, char *argv[])
 	}
 
 	if (idf_sw) {
-		idf_create("data.idf", idf_sw);
+		char *p = malloc(strlen(idf_sw) + 5);
+		if (p) {
+			char *b;
+			strcpy(p, idf_sw);
+			b = basename(p);
+			strcat(b, ".idf");
+			idf_create(b, idf_sw);
+			free(p);
+		} else
+			idf_create("data.idf", idf_sw);
 		goto out;
 	}
 	menu_langs_lookup(dirpath(LANG_PATH));
