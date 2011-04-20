@@ -87,6 +87,9 @@ function(f, s, cmd, press, mb, x, y, px, py, ...)
 				end
 			end
 		end
+		if stead.api_version < "1.3.5" and r == nil and v == nil then
+			return nil, true
+		end
 		return r,v
 	end
 	return f(s, cmd, x, y, px, py, ...)
