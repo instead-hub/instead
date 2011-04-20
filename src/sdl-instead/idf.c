@@ -5,16 +5,34 @@
 #include <SDL_rwops.h>
 
 typedef struct _idfd_t {
+	struct list_head list;
 	unsigned long offset;
 	unsigned long size;
 	idf_t			idf;
 } idfd_t;
 
+
 struct _idff_t {
+	struct list_head list;
 	idfd_t		*dir;
 	unsigned long pos;
 	FILE		*fd;
 };
+
+static void free_idfd(void *p)
+{
+	idfd_t *dir = (idfd_t*)p;
+	if (!p)
+		return;
+
+	while (!list_empty(&dir->list)) {
+		idff_t idff;
+		idff = (idff_t)(dir->list.next);
+		idf_close(idff);
+	}
+
+	free(p);
+}
 
 struct _idf_t {
 	unsigned long size;
@@ -99,7 +117,7 @@ idf_t idf_init(const char *fname)
 		goto err;
 	idf->idfonly = 0;
 	idf->fd = fopen(fp, "rb");
-	idf->dir = cache_init(-1, free);
+	idf->dir = cache_init(-1, free_idfd);
 	if (!idf->fd || !idf->dir)
 		goto err;
 	if (fseek(idf->fd, 0, SEEK_END))
@@ -138,6 +156,7 @@ idf_t idf_init(const char *fname)
 		e->offset = off;
 		e->size = size;
 		e->idf = idf;
+		INIT_LIST_HEAD(&e->list);
 		if (cache_add(idf->dir, name, e)) {
 			free(e);
 			goto err;
@@ -398,6 +417,7 @@ int idf_close(idff_t fil)
 {
 	if (fil) {
 		fclose(fil->fd);
+		list_del(&fil->list);
 		free(fil);
 	}
 	return 0; /* nothing todo */
@@ -488,12 +508,14 @@ idff_t idf_open(idf_t idf, const char *fname)
 	fil = malloc(sizeof(struct _idff_t));
 	if (!fil)
 		return NULL;
+	INIT_LIST_HEAD(&fil->list);
 
 	fil->dir = dir;
 	fil->pos = 0;
 	fil->fd = fopen(dirpath(idf->path), "rb");
 	if (!fil->fd)
 		goto err;
+	list_add(&fil->list, &dir->list);
 	return fil;
 err:
 	free(fil);
