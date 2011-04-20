@@ -1331,7 +1331,7 @@ static int luaB_mouse_pos(lua_State *L) {
 	if (x != -1 && y != -1) {
 		x *= v;
 		y *= v;
-		gfx_warp_cursor(x, y);
+		gfx_warp_cursor(x + game_theme.xoff, y + game_theme.yoff);
 		x = -1;
 		y = -1;
 	}
