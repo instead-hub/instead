@@ -45,7 +45,7 @@ RESOURCE FILESELECTIONDIALOG r_file_selection_dialog {
 		FILTER {
 			filter_type = EFilenameFilter;
 			filter_style = EInclusiveFilter;
-			filter_data = { "*.lua", "*.zip" };
+			filter_data = { "*.lua", "*.zip", "*.idf" };
 		}
 	};
 }
