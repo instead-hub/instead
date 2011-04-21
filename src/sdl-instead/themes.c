@@ -599,8 +599,14 @@ static int game_theme_update_data(void)
 	}
 
 	if (t->menu_font_name && (t->changed & CHANGED_MFONT)) {
+		int m = FONT_SZ(t->inv_font_size);
+		if (MAX_MENU_LINES * m * game_theme.menu_font_height > game_theme.h)
+			m = game_theme.h / MAX_MENU_LINES / game_theme.menu_font_height;
+		else if (m < t->menu_font_size)
+			m = t->menu_font_size;
+//		fprintf(stderr, "%d %d > %d? %d", (int)FONT_SZ(t->inv_font_size), (int)FONT_SZ(t->inv_font_size) * MAX_MENU_LINES, game_theme.h, m);
 		fnt_free(t->menu_font);
-		if (!(t->menu_font = fnt_load(t->menu_font_name, t->menu_font_size))) /* do not scale menu!!! */
+		if (!(t->menu_font = fnt_load(t->menu_font_name, m))) /* do not scale menu!!! */
 			goto err;
 	}
 

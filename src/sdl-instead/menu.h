@@ -11,6 +11,7 @@
 #define MAX_SAVE_SLOTS 6
 
 #define LANG_DEF	"en"
+#define MAX_MENU_LINES 18
 
 extern int cur_menu;
 extern char *game_menu_gen(void);
