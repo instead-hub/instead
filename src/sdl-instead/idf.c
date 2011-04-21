@@ -99,7 +99,7 @@ int	idf_magic(const char *fname)
 		return 0;
 	}
 	fclose(fd);
-	if (!memcmp(sign, "IDF\n", 4))
+	if (!memcmp(sign, "IDF1", 4))
 		return 1;
 	return 0;
 }
@@ -129,7 +129,7 @@ idf_t idf_init(const char *fname)
 		goto err;
 	if (fread(sign, 1, 4, idf->fd) != 4)
 		goto err;
-	if (memcmp(sign, "IDF\n", 4))
+	if (memcmp(sign, "IDF1", 4))
 		goto err;
 	if (read_word(idf->fd, &dir_size))
 		goto err;
@@ -284,7 +284,7 @@ int idf_create(const char *file, const char *path)
 	}
 
 	fd = fopen(dirpath(file), "wb");
-	fwrite("IDF\n", 1, 4, fd);
+	fwrite("IDF1", 1, 4, fd);
 	write_word(fd, dict_size);
 	off = 4 + 4 + dict_size;
 
