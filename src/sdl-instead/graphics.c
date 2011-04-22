@@ -1647,10 +1647,8 @@ int	word_geom(word_t v, int *x, int *y, int *w, int *h)
 	int xx, yy, ww, hh;
 	struct line *line;
 	struct word *word = (struct word*)v;
-	img_t img;
 	if (!word || !word->line)
 		return -1;
-	img = word->img;
 	line = word->line;
 	xx = word->x + line->x;
 	ww = word->w;
