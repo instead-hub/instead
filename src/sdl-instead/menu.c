@@ -21,7 +21,9 @@ char *SELECT_SAVE_MENU = NULL;
 char *MAIN_MENU = NULL;
 char *ABOUT_MENU = NULL;
 char *BACK_MENU = NULL;
-char *SETTINGS_MENU = NULL;
+char *SETTINGS_SND_MENU = NULL;
+char *SETTINGS_GFX_MENU = NULL;
+char *SETTINGS_OTH_MENU = NULL;
 char *CUSTOM_THEME_MENU = NULL;
 char *OWN_THEME_MENU = NULL;
 char *SELECT_GAME_MENU = NULL;
@@ -332,7 +334,7 @@ static char *opt_get_mode(void)
 }
 
 static int gtr = 0;
-
+static int menu_settings_num = 0;
 char *game_menu_gen(void)
 {
 	if (cur_menu == menu_main) {
@@ -341,10 +343,22 @@ char *game_menu_gen(void)
 		snprintf(menu_buff, sizeof(menu_buff), ABOUT_MENU, VERSION);
 	} else if (cur_menu == menu_settings) {
 		char *kbd [KBD_MAX] = { KBD_MODE_SMART, KBD_MODE_LINKS, KBD_MODE_SCROLL };
-		snprintf(menu_buff, sizeof(menu_buff), SETTINGS_MENU, 
-		snd_vol_to_pcn(snd_volume_mus(-1)), snd_hz(), opt_music?ON:OFF, opt_click?ON:OFF,
-		opt_get_mode(), opt_fs?ON:OFF, opt_fsize, opt_hl?ON:OFF, opt_motion?ON:OFF, opt_filter?ON:OFF, kbd[opt_kbd],
-		langs[cur_lang].name, opt_owntheme?ON:OFF, opt_autosave?ON:OFF);
+
+		switch (menu_settings_num) {
+		case 0:
+			snprintf(menu_buff, sizeof(menu_buff), SETTINGS_GFX_MENU, 
+			opt_get_mode(), opt_fs?ON:OFF, opt_fsize, opt_hl?ON:OFF, opt_owntheme?ON:OFF);
+			break;
+		case 1:
+			snprintf(menu_buff, sizeof(menu_buff), SETTINGS_SND_MENU, 
+			snd_vol_to_pcn(snd_volume_mus(-1)), snd_hz(), opt_music?ON:OFF, opt_click?ON:OFF);
+			break;
+		case 2:
+			snprintf(menu_buff, sizeof(menu_buff), SETTINGS_OTH_MENU, 
+			opt_motion?ON:OFF, opt_filter?ON:OFF, kbd[opt_kbd],
+			langs[cur_lang].name,  opt_autosave?ON:OFF);
+			break;
+		}
 	} else if (cur_menu == menu_askquit) {
 		snprintf(menu_buff, sizeof(menu_buff), QUIT_MENU);
 	} else if (cur_menu == menu_saved) {
@@ -559,6 +573,15 @@ int game_menu_act(const char *a)
 		game_menu_box(0, NULL);
 	} else if (!strcmp(a, "/settings")) {
 		game_menu(menu_settings);
+	} else if (!strcmp(a, "/settings-gfx")) {
+		menu_settings_num = 0;
+		game_menu_box(1, game_menu_gen());
+	} else if (!strcmp(a, "/settings-snd")) {
+		menu_settings_num = 1;
+		game_menu_box(1, game_menu_gen());
+	} else if (!strcmp(a, "/settings-oth")) {
+		menu_settings_num = 2;
+		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/vol--")) {
 		game_change_vol(-10, 0);
 		game_menu_box(1, game_menu_gen());
@@ -679,7 +702,9 @@ static void lang_free(void)
 	FREE(MAIN_MENU);
 	FREE(ABOUT_MENU);
 	FREE(BACK_MENU);
-	FREE(SETTINGS_MENU);
+	FREE(SETTINGS_SND_MENU);
+	FREE(SETTINGS_GFX_MENU);
+	FREE(SETTINGS_OTH_MENU);
 	FREE(CUSTOM_THEME_MENU);
 	FREE(OWN_THEME_MENU);
 	FREE(SELECT_GAME_MENU);
@@ -704,7 +729,7 @@ static int lang_ok(void)
 {
 	if (UNKNOWN_ERROR && ERROR_MENU && WARNING_MENU && SAVE_SLOT_EMPTY &&
 		SELECT_LOAD_MENU && AUTOSAVE_SLOT && BROKEN_SLOT && SELECT_SAVE_MENU &&
-		MAIN_MENU && ABOUT_MENU && BACK_MENU && SETTINGS_MENU &&
+		MAIN_MENU && ABOUT_MENU && BACK_MENU && SETTINGS_SND_MENU && SETTINGS_GFX_MENU && SETTINGS_OTH_MENU &&
 		CUSTOM_THEME_MENU && OWN_THEME_MENU && SELECT_GAME_MENU && SELECT_THEME_MENU &&
 		SAVED_MENU && NOGAMES_MENU && NOTHEMES_MENU && QUIT_MENU && REMOVE_MENU &&
 		ON && OFF && KBD_MODE_LINKS && KBD_MODE_SMART && KBD_MODE_SCROLL && CANCEL_MENU &&
@@ -725,7 +750,9 @@ struct parser lang_parser[] = {
 	{ "MAIN_MENU", parse_esc_string, &MAIN_MENU },
 	{ "ABOUT_MENU", parse_esc_string, &ABOUT_MENU },
 	{ "BACK_MENU", parse_esc_string, &BACK_MENU },
-	{ "SETTINGS_MENU", parse_esc_string, &SETTINGS_MENU },
+	{ "SETTINGS_GFX_MENU", parse_esc_string, &SETTINGS_GFX_MENU },
+	{ "SETTINGS_SND_MENU", parse_esc_string, &SETTINGS_SND_MENU },
+	{ "SETTINGS_OTH_MENU", parse_esc_string, &SETTINGS_OTH_MENU },
 	{ "CUSTOM_THEME_MENU", parse_esc_string, &CUSTOM_THEME_MENU },
 	{ "OWN_THEME_MENU", parse_esc_string, &OWN_THEME_MENU },
 	{ "SELECT_GAME_MENU", parse_esc_string, &SELECT_GAME_MENU },

@@ -1,9 +1,15 @@
 #ifndef __MENU_H_INCLUDED
 #define __MENU_H_INCLUDED
 
+#if defined(ANDROID) || defined(S60) || defined(_WIN32_WCE)
+#define MENU_GAMES_MAX 5
+#define MENU_THEMES_MAX 5
+#define MENU_PER_PAGER 5
+#else
 #define MENU_GAMES_MAX 8
 #define MENU_THEMES_MAX 8
 #define MENU_PER_PAGER 7
+#endif
 
 #define FONT_MIN_SZ	8
 #define FONT_MAX_SZ	64
@@ -11,7 +17,7 @@
 #define MAX_SAVE_SLOTS 6
 
 #define LANG_DEF	"en"
-#define MAX_MENU_LINES 18
+#define MAX_MENU_LINES 16
 
 extern int cur_menu;
 extern char *game_menu_gen(void);
