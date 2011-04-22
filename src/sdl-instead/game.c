@@ -1168,6 +1168,7 @@ void game_menu_box_width(int show, const char *txt, int width)
 		_txt_layout_free(el_layout(el_menu));
 		lay = el_layout(el_menu);
 	}
+
 	if (menubg) {
 		game_cursor(CURSOR_CLEAR);
 		gfx_draw(menubg, mx, my);
@@ -1175,7 +1176,13 @@ void game_menu_box_width(int show, const char *txt, int width)
 		menubg = NULL;
 	}
 
+	if (menu) {
+		gfx_free_image(menu);
+		menu = NULL;
+	}
+
 	el_clear(el_menu_button);
+
 	if (!show)
 		el_draw(el_menu_button);
 
@@ -1184,7 +1191,6 @@ void game_menu_box_width(int show, const char *txt, int width)
 		gfx_flip();
 		return;
 	}
-
 	if (!lay) {
 		lay = txt_layout(game_theme.menu_font, ALIGN_CENTER, game_theme.w - 2 * (b + pad), 0);
 		txt_layout_color(lay, game_theme.menu_fg);
@@ -1202,12 +1208,6 @@ void game_menu_box_width(int show, const char *txt, int width)
 
 	txt_layout_set_size(lay, w, h);
 	txt_layout_set(lay, (char*)txt);
-
-	if (menu) {
-		gfx_free_image(menu);
-		menu = NULL;
-	}
-
 	menu = gfx_new(w + (b + pad)*2, h + (b + pad)*2);
 	gfx_img_fill(menu, 0, 0, w + (b + pad)*2, h + (b + pad)*2, game_theme.border_col);
 	gfx_img_fill(menu, b, b, w + pad*2, h + pad*2, game_theme.menu_bg);
@@ -1230,6 +1230,7 @@ void game_menu_box_width(int show, const char *txt, int width)
 	mw = w + (b + pad) * 2;
 	mh = h + (b + pad) * 2;
 	game_cursor(CURSOR_CLEAR);
+
 	menubg = gfx_grab_screen(mx, my, mw, mh);
 	gfx_draw(menu, mx, my);
 	el_set(el_menu, elt_layout, /*game_theme.win_x*/  x, y, lay);
