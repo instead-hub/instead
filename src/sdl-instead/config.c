@@ -1,7 +1,11 @@
 #include "externals.h"
 #include "internals.h"
 
+#if defined(ANDROID) || defined(S60) || defined(_WIN32_WCE)
+int opt_fsize = 12;
+#else
 int opt_fsize = 0;
+#endif
 #if defined(MAEMO) || defined(ANDROID)
 int opt_fs = 1;
 int opt_owntheme = 0;
