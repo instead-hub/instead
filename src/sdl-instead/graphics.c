@@ -582,6 +582,57 @@ img_t gfx_display_alpha(img_t src)
 	return res;
 }
 
+int gfx_get_pixel(img_t src, int x, int y,  color_t *color)
+{
+	Uint8 r, g, b, a;
+	Uint32 col;
+	Uint32 *ptr;
+	SDL_Surface *img = Surf(src);
+	if (!img)
+		return -1;
+
+	if (x >= img->w || y >= img->h || x < 0 || y < 0)
+		return -1;
+
+	if (SDL_LockSurface(img))
+		return -1;
+	ptr = (Uint32*)img->pixels;
+	ptr += y * img->w + x;
+	col = *ptr;
+	SDL_UnlockSurface(img);	
+	if (color)
+		SDL_GetRGBA(col, img->format, &r, &g, &b, &a);
+
+	if (color) {
+		color->r = r;
+		color->g = g;
+		color->b = b;
+		color->a = a;
+	}
+	return 0;
+}
+
+int gfx_set_pixel(img_t src, int x, int y,  color_t color)
+{
+	Uint32 col;
+	Uint32 *ptr;
+	SDL_Surface *img = Surf(src);
+	if (!img)
+		return -1;
+
+	if (x >= img->w || y >= img->h || x < 0 || y < 0)
+		return -1;
+
+	if (SDL_LockSurface(img))
+		return -1;
+	ptr = (Uint32*)img->pixels;
+	ptr += y * img->w + x;
+	col = SDL_MapRGBA(img->format, color.r, color.g, color.b, color.a);
+	*ptr = col;
+	SDL_UnlockSurface(img);
+	return 0;
+}
+
 img_t gfx_alpha_img(img_t src, int alpha)
 {
 	Uint32 *ptr;

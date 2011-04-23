@@ -26,6 +26,7 @@ typedef struct {
 	int r;
 	int g;
 	int b;
+	int a;
 } color_t;
 
 #define ALIGN_LEFT 	1
@@ -99,6 +100,8 @@ extern void	gfx_change_screen(img_t src, int steps);
 extern int	gfx_fading(void);
 extern void	gfx_img_fill(img_t img, int x, int y, int w, int h, color_t col);
 extern void	gfx_fill(int x, int y, int w, int h, color_t col);
+extern int	gfx_get_pixel(img_t src, int x, int y,  color_t *color);
+extern int	gfx_set_pixel(img_t src, int x, int y,  color_t color);
 
 extern fnt_t 	fnt_load(const char *fname, int size);
 extern void 	fnt_free(fnt_t);
