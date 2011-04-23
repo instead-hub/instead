@@ -964,7 +964,7 @@ static int luaB_draw_sprite(lua_State *L) {
 		if (img2)
 			s = img2;
 	}
-	gfx_clip(game_theme.xoff, game_theme.yoff, game_theme.w, game_theme.h);
+	gfx_clip(game_theme.xoff, game_theme.yoff, game_theme.w - 2*game_theme.xoff, game_theme.h - 2*game_theme.yoff);
 	gfx_draw_from(s, x + xoff0, y + yoff0, w, h, d, xx + xoff, yy + yoff);
 	gfx_noclip();
 	gfx_free_image(img2);
@@ -1014,7 +1014,7 @@ static int luaB_copy_sprite(lua_State *L) {
 
 	game_pict_modify(d);
 
-	gfx_clip(game_theme.xoff, game_theme.yoff, game_theme.w, game_theme.h);
+	gfx_clip(game_theme.xoff, game_theme.yoff, game_theme.w - game_theme.xoff * 2, game_theme.h - game_theme.yoff * 2);
 	gfx_copy_from(s, x + xoff0, y + yoff0, w, h, d, xx + xoff, yy + yoff);
 	gfx_noclip();
 	gfx_free_image(img2);
