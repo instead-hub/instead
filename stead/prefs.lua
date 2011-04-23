@@ -18,7 +18,8 @@ prefs = obj {
 		h:flush();
 		h:close();
 	end,
-	save = function(s)
+	save = function(s) -- save prefs on every save
+		s:store()
 	end,
 	purge = function(s)
 		local name = get_savepath() .. '/prefs';
