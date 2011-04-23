@@ -27,8 +27,8 @@ sound = {
 		end
 		return stead.sound_channel(s,...)
 	end;
-	pan = function(...)
-		return stead.sound_panning(...)
+	pan = function(c, l, r, ...)
+		return stead.sound_panning(c, l, r, ...)
 	end;
 	vol = function(v, ...)
 		return stead.sound_volume(v, ...)
