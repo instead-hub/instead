@@ -8,6 +8,9 @@ game.action = stead.hook(game.action, function(f, s, cmd, ...)
 			r,v = call(s, 'kbd', 
 			input.key_event.down, input.key_event.key);
 		end
+		if r == nil and v == nil and stead.api_version < "1.3.5" then
+			return nil, true
+		end
 		return r,v
 	end
 	return f(s, cmd, ...);
