@@ -573,6 +573,8 @@ img_t gfx_display_alpha(img_t src)
 		return NULL;
 	if (!screen)
 		return src;
+	if (is_anigif(Surf(src))) /* already optimized */
+		return src;
 	res = SDL_DisplayFormatAlpha(Surf(src));
 	if (!res)
 		return src;
@@ -782,6 +784,7 @@ static img_t _gfx_load_image(char *filename, int combined)
 		agif->loop = loop;
 		agif->nr_frames = nr;
 		anigif_add(agif);
+//		fprintf(stderr, "anigif: %s %p\n", filename, agif->frames[0].surface);
 		return agif->frames[0].surface;
 	}
 	rw = RWFromIdf(game_idf, filename);
