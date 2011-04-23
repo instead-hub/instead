@@ -944,12 +944,17 @@ static int luaB_draw_sprite(lua_State *L) {
 	v = game_theme.scale;
 
 	if (v != 1.0f) {
+		int ww = w, hh = h;
 		x *= v;
 		y *= v;
 		w *= v;
 		h *= v;
 		xx *= v;
 		yy *= v;
+		if (!w && ww)
+			w = 1;
+		if (!h && hh)
+			h = 1;
 	}
 
 	if (!w)
@@ -999,12 +1004,17 @@ static int luaB_copy_sprite(lua_State *L) {
 	v = game_theme.scale;
 
 	if (v != 1.0f) {
+		int ww = w, hh = h;
 		x *= v;
 		y *= v;
 		w *= v;
 		h *= v;
 		xx *= v;
 		yy *= v;
+		if (!w && ww)
+			w = 1;
+		if (!h && hh)
+			h = 1;
 	}
 
 	if (!w)
@@ -1209,10 +1219,15 @@ static int luaB_fill_sprite(lua_State *L) {
 	v = game_theme.scale;
 
 	if (v != 1.0f) {
+		int ww = w, hh = h;
 		x *= v;
 		y *= v;
 		w *= v;
 		h *= v;
+		if (!w && ww)
+			w = 1;
+		if (!h && hh)
+			h = 1;
 	}
 	if (!w)
 		w = gfx_img_w(d) - 2 * xoff;
