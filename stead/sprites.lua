@@ -12,6 +12,7 @@ stead.sprite_text_size = sprite_text_size
 stead.sprite_draw = sprite_draw
 stead.sprite_copy = sprite_copy
 stead.sprite_fill = sprite_fill
+stead.sprite_pixel = sprite_pixel
 stead.sprite_load = sprite_load
 stead.sprite_free = sprite_free
 stead.sprite_size = sprite_size
@@ -80,6 +81,9 @@ sprite = {
 			return stead.sprite_fill(d, 0, 0, -1, -1, x);
 		end 
 		return stead.sprite_fill(d, x, y, w, h, col);
+	end;
+	pixel = function(d, x, y, col)
+		return stead.sprite_pixel(d, x, y, col)
 	end;
 	load = function(fname)
 		return stead.sprite_load(fname);
