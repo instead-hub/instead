@@ -1445,17 +1445,17 @@ static void sounds_shrink(void)
 
 void sounds_free(void)
 {
-//	int i = 0;
+	int i = 0;
 	snd_halt_chan(-1, 0); /* halt sounds */
 	while (!list_empty(&sounds)) {
 		_snd_t *sn = (_snd_t*)(sounds.next);
-		if (sound_playing(sn) == -1) {
+//		if (sound_playing(sn) == -1) {
 			sound_free(sn);
-		}
+//		}
 	}
-//	for (i = 0; i < SND_CHANNELS; i++)
-//		channels[i] = NULL;
-//	sounds_nr = 0;
+	for (i = 0; i < SND_CHANNELS; i++)
+		channels[i] = NULL;
+	sounds_nr = 0;
 }
 
 static _snd_t *sound_find(const char *fname)
