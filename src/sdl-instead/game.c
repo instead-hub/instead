@@ -750,7 +750,7 @@ static void anigif_do(void *data)
 int counter_fn(int interval, void *p)
 {
 	timer_counter ++;
-	if (gfx_is_drawn_gifs())
+	if (gfx_is_drawn_gifs() && !DIRECT_MODE)
 		push_user_event(anigif_do, NULL);
 	return interval;
 }

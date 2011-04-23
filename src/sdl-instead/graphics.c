@@ -939,7 +939,10 @@ void gfx_draw(img_t p, int x, int y)
 	dest.y = y; 
 	dest.w = pixbuf->w; 
 	dest.h = pixbuf->h;
-	ag = is_anigif(pixbuf);
+	if (!DIRECT_MODE) /* no gifs in direct mode */
+		ag = is_anigif(pixbuf);
+	else
+		ag = NULL;
 	if (ag) {
 		anigif_spawn(ag, x, y, dest.w, dest.h);
 		if (!ag->drawn)
