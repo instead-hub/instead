@@ -923,8 +923,8 @@ static int luaB_draw_sprite(lua_State *L) {
 	const char *src = luaL_optstring(L, 1, NULL);
 	int x = luaL_optnumber(L, 2, 0);
 	int y = luaL_optnumber(L, 3, 0);
-	int w = luaL_optnumber(L, 4, 0);
-	int h = luaL_optnumber(L, 5, 0);
+	int w = luaL_optnumber(L, 4, -1);
+	int h = luaL_optnumber(L, 5, -1);
 	const char *dst = luaL_optstring(L, 6, NULL);
 	int xx = luaL_optnumber(L, 7, 0);
 	int yy = luaL_optnumber(L, 8, 0);
@@ -944,22 +944,19 @@ static int luaB_draw_sprite(lua_State *L) {
 	v = game_theme.scale;
 
 	if (v != 1.0f) {
-		int ww = w, hh = h;
 		x *= v;
 		y *= v;
-		w *= v;
-		h *= v;
+		if (w != -1)
+			w = ceil(w * v);
+		if (h != -1)
+			h = ceil(h * v);
 		xx *= v;
 		yy *= v;
-		if (!w && ww)
-			w = 1;
-		if (!h && hh)
-			h = 1;
 	}
 
-	if (!w)
+	if (w == -1)
 		w = gfx_img_w(s) - 2 * xoff0;
-	if (!h)
+	if (h == -1)
 		h = gfx_img_h(s) - 2 * yoff0;
 
 	game_pict_modify(d);
@@ -984,8 +981,8 @@ static int luaB_copy_sprite(lua_State *L) {
 	const char *src = luaL_optstring(L, 1, NULL);
 	int x = luaL_optnumber(L, 2, 0);
 	int y = luaL_optnumber(L, 3, 0);
-	int w = luaL_optnumber(L, 4, 0);
-	int h = luaL_optnumber(L, 5, 0);
+	int w = luaL_optnumber(L, 4, -1);
+	int h = luaL_optnumber(L, 5, -1);
 	const char *dst = luaL_optstring(L, 6, NULL);
 	int xx = luaL_optnumber(L, 7, 0);
 	int yy = luaL_optnumber(L, 8, 0);
@@ -1004,22 +1001,19 @@ static int luaB_copy_sprite(lua_State *L) {
 	v = game_theme.scale;
 
 	if (v != 1.0f) {
-		int ww = w, hh = h;
 		x *= v;
 		y *= v;
-		w *= v;
-		h *= v;
+		if (w != -1)
+			w = ceil(w * v);
+		if (h != -1)
+			h = ceil(h * v);
 		xx *= v;
 		yy *= v;
-		if (!w && ww)
-			w = 1;
-		if (!h && hh)
-			h = 1;
 	}
 
-	if (!w)
+	if (w == -1)
 		w = gfx_img_w(s) - 2 * xoff0;
-	if (!h)
+	if (h == -1)
 		h = gfx_img_h(s) - 2 * yoff0;
 
 	game_pict_modify(d);
@@ -1200,8 +1194,8 @@ static int luaB_fill_sprite(lua_State *L) {
 	const char *dst = luaL_optstring(L, 1, NULL);
 	int x = luaL_optnumber(L, 2, 0);
 	int y = luaL_optnumber(L, 3, 0);
-	int w = luaL_optnumber(L, 4, 0);
-	int h = luaL_optnumber(L, 5, 0);
+	int w = luaL_optnumber(L, 4, -1);
+	int h = luaL_optnumber(L, 5, -1);
 	const char *color = luaL_optstring(L, 6, 0);
 	int xoff = 0, yoff = 0;
 	color_t  col = { .r = game_theme.bgcol.r, .g = game_theme.bgcol.g, .b = game_theme.bgcol.b };
@@ -1219,19 +1213,16 @@ static int luaB_fill_sprite(lua_State *L) {
 	v = game_theme.scale;
 
 	if (v != 1.0f) {
-		int ww = w, hh = h;
 		x *= v;
 		y *= v;
-		w *= v;
-		h *= v;
-		if (!w && ww)
-			w = 1;
-		if (!h && hh)
-			h = 1;
+		if (w != -1)
+			w = ceil(w * v);
+		if (h != -1)
+			h = ceil(h * v);
 	}
-	if (!w)
+	if (w == -1)
 		w = gfx_img_w(d) - 2 * xoff;
-	if (!h)
+	if (h == -1)
 		h = gfx_img_h(d) - 2 * yoff;
 	game_pict_modify(d);
 	gfx_img_fill(d, x + xoff, y + yoff, w, h, col);
