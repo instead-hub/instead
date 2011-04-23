@@ -221,6 +221,9 @@ player  = stead.inherit(player, function(v)
 			return stead.goto(here(), false, false, true);
 		end
 		NEED_SCENE = true
+		if stead.api_version >= "1.3.5" then
+			return true -- force action
+		end
 	end
 	return v
 end)
