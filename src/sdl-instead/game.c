@@ -1446,6 +1446,7 @@ static void sounds_shrink(void)
 void sounds_free(void)
 {
 //	int i = 0;
+	snd_halt_chan(-1, 0); /* halt sounds */
 	while (!list_empty(&sounds)) {
 		_snd_t *sn = (_snd_t*)(sounds.next);
 		if (sound_playing(sn) == -1) {
