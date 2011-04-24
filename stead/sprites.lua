@@ -82,8 +82,8 @@ sprite = {
 		end 
 		return stead.sprite_fill(d, x, y, w, h, col);
 	end;
-	pixel = function(d, x, y, col)
-		return stead.sprite_pixel(d, x, y, col)
+	pixel = function(d, x, y, col, alpha)
+		return stead.sprite_pixel(d, x, y, col, alpha)
 	end;
 	load = function(fname)
 		return stead.sprite_load(fname);
