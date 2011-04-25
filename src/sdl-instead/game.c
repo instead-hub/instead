@@ -1181,10 +1181,12 @@ void game_menu_box_width(int show, const char *txt, int width)
 		menu = NULL;
 	}
 
-	el_clear(el_menu_button);
+	if (!DIRECT_MODE) {
+		el_clear(el_menu_button);
 
-	if (!show)
-		el_draw(el_menu_button);
+		if (!show)
+			el_draw(el_menu_button);
+	}
 
 	if (!show) {
 		game_cursor(CURSOR_DRAW);
