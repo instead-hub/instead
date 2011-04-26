@@ -4064,3 +4064,8 @@ void gfx_del_timer(gtimer_t han)
 	if (han)
 		SDL_RemoveTimer((SDL_TimerID)han);
 }
+
+unsigned long gfx_ticks(void)
+{
+	return SDL_GetTicks();
+}

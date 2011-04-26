@@ -1400,6 +1400,10 @@ static int luaB_mouse_pos(lua_State *L) {
 	return 2;
 }
 
+static int luaB_get_ticks(lua_State *L) {
+	lua_pushnumber(L, gfx_ticks());
+	return 1;
+}
 
 static const luaL_Reg base_funcs[] = {
 	{"doencfile", luaB_doencfile},
@@ -1426,7 +1430,7 @@ static const luaL_Reg base_funcs[] = {
 	{"font_load", luaB_load_font},
 	{"font_free", luaB_free_font},
 	{"font_scaled_size", luaB_font_size_scaled},
-
+	{"get_ticks", luaB_get_ticks},
 	{"sprite_load", luaB_load_sprite},
 	{"sprite_text", luaB_text_sprite},
 	{"sprite_free", luaB_free_sprite},

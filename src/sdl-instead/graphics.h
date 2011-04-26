@@ -184,5 +184,7 @@ extern void	gfx_del_timer(gtimer_t han);
 extern gtimer_t gfx_add_timer(int delay, int (*fn)(int, void*), void *aux);
 extern void	gfx_update_gif(img_t img);
 extern void 	gfx_dispose_gif(img_t p);
+extern unsigned long gfx_ticks(void);
+
 #endif
 
