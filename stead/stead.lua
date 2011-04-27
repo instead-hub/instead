@@ -8,6 +8,7 @@ stead = {
 	math = math,
 	ticks = get_ticks,
 	mouse_pos = mouse_pos,
+	menu_toggle = menu_toggle,
 	io = io,
 	os = os,
 	readdir = readdir,

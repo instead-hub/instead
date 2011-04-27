@@ -1,4 +1,4 @@
-instead (1.3.5) unstable; urgency=low
+instead (1.4.0) unstable; urgency=low
 
   * bug fix in imgl/imgr;
   * bug fix in xact;
@@ -16,8 +16,10 @@ instead (1.3.5) unstable; urgency=low
   * start init function added;
   * idf files support (instead data format);
   * menu font is now scalable too;
+  * toggle_menu added;
+  * get_ticks added;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 29 Mar 2011 14:08:00 +0300  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 27 Apr 2011 11:01:00 +0400  
 
 instead (1.3.4) unstable; urgency=low
 
