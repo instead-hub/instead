@@ -2593,11 +2593,17 @@ function get_music_loop()
 end
 
 function save_music(s)
+	if s == nil then
+		s = self
+	end
 	s.__old_music__ = get_music();
 	s.__old_loop__ = get_music_loop();
 end
 
 function restore_music(s)
+	if s == nil then
+		s = self
+	end
 	set_music(s.__old_music__, s.__old_loop__);
 end
 function dec_music_loop()
