@@ -674,13 +674,14 @@ img_t gfx_alpha_img(img_t src, int alpha)
 	if (SDL_LockSurface(img) == 0) {
 		ptr = (Uint8*)img->pixels;
 		size = img->w * img->h;
-		while (size --) {
+		while (size > 0) {
 			Uint8 r, g, b, a;
 			memcpy(&col, ptr, bpp);
 			SDL_GetRGBA(col, img->format, &r, &g, &b, &a);
 			col = SDL_MapRGBA(img->format, r, g, b, a * alpha / 255);
 			memcpy(ptr, &col, bpp);
 			ptr += bpp;
+			-- size;
 		}
 		SDL_UnlockSurface(img);
 	}
