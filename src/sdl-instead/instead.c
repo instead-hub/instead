@@ -1409,6 +1409,47 @@ static int luaB_get_ticks(lua_State *L) {
 	return 1;
 }
 
+static int luaB_bit_and(lua_State *L) {
+	unsigned int a = luaL_optnumber(L, 1, 0);
+	unsigned int b = luaL_optnumber(L, 2, 0);
+	lua_pushnumber(L, a & b);
+	return 1;
+}
+
+static int luaB_bit_or(lua_State *L) {
+	unsigned int a = luaL_optnumber(L, 1, 0);
+	unsigned int b = luaL_optnumber(L, 2, 0);
+	lua_pushnumber(L, a | b);
+	return 1;
+}
+
+static int luaB_bit_xor(lua_State *L) {
+	unsigned int a = luaL_optnumber(L, 1, 0);
+	unsigned int b = luaL_optnumber(L, 2, 0);
+	lua_pushnumber(L, a ^ b);
+	return 1;
+}
+
+static int luaB_bit_shl(lua_State *L) {
+	unsigned int a = luaL_optnumber(L, 1, 0);
+	unsigned int b = luaL_optnumber(L, 2, 0);
+	lua_pushnumber(L, a << b);
+	return 1;
+}
+
+static int luaB_bit_shr(lua_State *L) {
+	unsigned int a = luaL_optnumber(L, 1, 0);
+	unsigned int b = luaL_optnumber(L, 2, 0);
+	lua_pushnumber(L, a >> b);
+	return 1;
+}
+
+static int luaB_bit_not(lua_State *L) {
+	unsigned int a = luaL_optnumber(L, 1, 0);
+	lua_pushnumber(L, ~a);
+	return 1;
+}
+
 static const luaL_Reg base_funcs[] = {
 	{"doencfile", luaB_doencfile},
 	{"dofile", luaB_dofile},
@@ -1449,6 +1490,13 @@ static const luaL_Reg base_funcs[] = {
 	{"sprite_rotate", luaB_rotate_sprite},
 	{"sprite_text_size", luaB_text_size},
 	{"sprite_pixel", luaB_pixel_sprite},
+	
+	{"bit_or", luaB_bit_or},
+	{"bit_and", luaB_bit_and},
+	{"bit_xor", luaB_bit_xor},
+	{"bit_shl", luaB_bit_shl},
+	{"bit_shr", luaB_bit_shr},
+	{"bit_not", luaB_bit_not},
 	{NULL, NULL}
 };
 
