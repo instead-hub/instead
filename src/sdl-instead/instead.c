@@ -1460,6 +1460,16 @@ static int luaB_bit_div(lua_State *L) {
 	return 0;
 }
 
+static int luaB_bit_mod(lua_State *L) {
+	unsigned int a = luaL_optnumber(L, 1, 0);
+	unsigned int b = luaL_optnumber(L, 2, 1);
+	if (b) {
+		lua_pushnumber(L, a % b);
+		return 1;
+	}
+	return 0;
+}
+
 static const luaL_Reg base_funcs[] = {
 	{"doencfile", luaB_doencfile},
 	{"dofile", luaB_dofile},
@@ -1508,6 +1518,7 @@ static const luaL_Reg base_funcs[] = {
 	{"bit_shr", luaB_bit_shr},
 	{"bit_not", luaB_bit_not},
 	{"bit_div", luaB_bit_div},
+	{"bit_mod", luaB_bit_mod},
 	
 	{NULL, NULL}
 };
