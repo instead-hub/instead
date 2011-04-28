@@ -30,9 +30,9 @@ At the beginning of “main.lua” file a header may be defined. It consists of 
 -- $Name: The most interesting game!$
 </code>
 
-From version 1.2.0 after headers you must define required STEAD API version. It is "1.3.1" currently.
+From version 1.2.0 after headers you must define required STEAD API version. It is "1.4.0" currently.
 <code>
-instead_version "1.3.1"
+instead_version "1.4.0"
 </code>
 
 Game initialization should be defined as init function. For example:

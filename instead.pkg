@@ -97,7 +97,7 @@
 ".\symbian_gamedata\themes\default\sans-i.ttf" -"!:\data\instead\themes\default\sans-i.ttf"
 ".\symbian_gamedata\themes\default\sans-bi.ttf" -"!:\data\instead\themes\default\sans-bi.ttf"
 ".\symbian_gamedata\themes\default\adown.png" -"!:\data\instead\themes\default\adown.png"
-".\symbian_gamedata\themes\default\aup.gif" -"!:\data\instead\themes\default\aup.gif"
+".\symbian_gamedata\themes\default\aup.png" -"!:\data\instead\themes\default\aup.png"
 ".\symbian_gamedata\themes\book\theme.ini" -"!:\data\instead\themes\book\theme.ini"
 ".\symbian_gamedata\themes\book\book.jpg" -"!:\data\instead\themes\book\book.jpg"
 ".\symbian_gamedata\themes\bluesteel\menu.png" -"!:\data\instead\themes\bluesteel\menu.png"
