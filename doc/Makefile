@@ -28,7 +28,8 @@ wiki:
 	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:modules:quotes&do=export_raw" -O modules/quotes.txt
 	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:modules:theme&do=export_raw" -O modules/theme.txt
 	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:modules:kbd&do=export_raw" -O modules/kbd.txt
-
+	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:modules:sprites&do=export_raw" -O modules/sprites.txt
+	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:modules:sound&do=export_raw" -O modules/sound.txt
 
 clean:
 all:
