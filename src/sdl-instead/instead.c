@@ -1412,49 +1412,57 @@ static int luaB_get_ticks(lua_State *L) {
 static int luaB_bit_and(lua_State *L) {
 	unsigned int a = luaL_optnumber(L, 1, 0);
 	unsigned int b = luaL_optnumber(L, 2, 0);
-	lua_pushnumber(L, a & b);
+	unsigned int r = a & b;
+	lua_pushnumber(L, r);
 	return 1;
 }
 
 static int luaB_bit_or(lua_State *L) {
 	unsigned int a = luaL_optnumber(L, 1, 0);
 	unsigned int b = luaL_optnumber(L, 2, 0);
-	lua_pushnumber(L, a | b);
+	unsigned int r = a | b;
+	lua_pushnumber(L, r);
 	return 1;
 }
 
 static int luaB_bit_xor(lua_State *L) {
 	unsigned int a = luaL_optnumber(L, 1, 0);
 	unsigned int b = luaL_optnumber(L, 2, 0);
-	lua_pushnumber(L, a ^ b);
+	unsigned int r = a ^ b;
+	lua_pushnumber(L, r);
 	return 1;
 }
 
 static int luaB_bit_shl(lua_State *L) {
 	unsigned int a = luaL_optnumber(L, 1, 0);
 	unsigned int b = luaL_optnumber(L, 2, 0);
-	lua_pushnumber(L, a << b);
+	unsigned int r = a << b;
+	lua_pushnumber(L, r);
 	return 1;
 }
 
 static int luaB_bit_shr(lua_State *L) {
 	unsigned int a = luaL_optnumber(L, 1, 0);
 	unsigned int b = luaL_optnumber(L, 2, 0);
-	lua_pushnumber(L, a >> b);
+	unsigned int r = a >> b;
+	lua_pushnumber(L, r);
 	return 1;
 }
 
 static int luaB_bit_not(lua_State *L) {
 	unsigned int a = luaL_optnumber(L, 1, 0);
-	lua_pushnumber(L, ~a);
+	unsigned int r = ~a;
+	lua_pushnumber(L, r);
 	return 1;
 }
 
 static int luaB_bit_div(lua_State *L) {
 	unsigned int a = luaL_optnumber(L, 1, 0);
 	unsigned int b = luaL_optnumber(L, 2, 1);
+	unsigned int r;
 	if (b) {
-		lua_pushnumber(L, a / b);
+		r = a / b;
+		lua_pushnumber(L, r);
 		return 1;
 	}
 	return 0;
@@ -1463,11 +1471,21 @@ static int luaB_bit_div(lua_State *L) {
 static int luaB_bit_mod(lua_State *L) {
 	unsigned int a = luaL_optnumber(L, 1, 0);
 	unsigned int b = luaL_optnumber(L, 2, 1);
+	unsigned int r;
 	if (b) {
-		lua_pushnumber(L, a % b);
+		r = a % b;
+		lua_pushnumber(L, r);
 		return 1;
 	}
 	return 0;
+}
+
+static int luaB_bit_mul(lua_State *L) {
+	unsigned int a = luaL_optnumber(L, 1, 0);
+	unsigned int b = luaL_optnumber(L, 2, 0);
+	unsigned int r = a * b;
+	lua_pushnumber(L, r);
+	return 1;
 }
 
 static const luaL_Reg base_funcs[] = {
@@ -1519,6 +1537,7 @@ static const luaL_Reg base_funcs[] = {
 	{"bit_not", luaB_bit_not},
 	{"bit_div", luaB_bit_div},
 	{"bit_mod", luaB_bit_mod},
+	{"bit_mul", luaB_bit_mul},
 	
 	{NULL, NULL}
 };
