@@ -604,7 +604,9 @@ int gfx_get_pixel(img_t src, int x, int y,  color_t *color)
 		bpp = 1; /* hack? */
 
 	ptr = (Uint8*)img->pixels;
-	ptr += (y * img->w + x) * bpp;
+	ptr += img->pitch * y;
+	ptr += x * bpp;
+
 	memcpy(&col, ptr, bpp);
 
 	SDL_UnlockSurface(img);	
@@ -641,7 +643,8 @@ int gfx_set_pixel(img_t src, int x, int y,  color_t color)
 		bpp = 1; /* hack? */
 
 	ptr = (Uint8*)img->pixels;
-	ptr += (y * img->w + x) * bpp;
+	ptr += img->pitch * y;
+	ptr += x * bpp;
 	col = SDL_MapRGBA(img->format, color.r, color.g, color.b, color.a);
 	memcpy(ptr, &col, bpp);
 
@@ -672,8 +675,9 @@ img_t gfx_alpha_img(img_t src, int alpha)
 	SDL_SetAlpha(img, SDL_SRCALPHA, SDL_ALPHA_OPAQUE);
 
 	if (SDL_LockSurface(img) == 0) {
+		int w = img->w;
 		ptr = (Uint8*)img->pixels;
-		size = img->w * img->h;
+		size = img->w * img->h;		
 		while (size --) {
 			Uint8 r, g, b, a;
 			memcpy(&col, ptr, bpp);
@@ -681,6 +685,12 @@ img_t gfx_alpha_img(img_t src, int alpha)
 			col = SDL_MapRGBA(img->format, r, g, b, a * alpha / 255);
 			memcpy(ptr, &col, bpp);
 			ptr += bpp;
+			w --;
+			if (!w) {
+				w = img->w;
+				ptr += img->pitch;
+				ptr -= w * bpp;
+			}
 		}
 		SDL_UnlockSurface(img);
 	}
