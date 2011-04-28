@@ -585,8 +585,9 @@ img_t gfx_display_alpha(img_t src)
 int gfx_get_pixel(img_t src, int x, int y,  color_t *color)
 {
 	Uint8 r, g, b, a;
-	Uint32 col;
-	Uint32 *ptr;
+	Uint32 col = 0;
+	Uint8 *ptr;
+	int	bpp;
 	SDL_Surface *img = Surf(src);
 	if (!img)
 		return -1;
@@ -596,9 +597,16 @@ int gfx_get_pixel(img_t src, int x, int y,  color_t *color)
 
 	if (SDL_LockSurface(img))
 		return -1;
-	ptr = (Uint32*)img->pixels;
-	ptr += y * img->w + x;
-	col = *ptr;
+
+	if (img->format)
+		bpp = img->format->BytesPerPixel;
+	else
+		bpp = 1; /* hack? */
+
+	ptr = (Uint8*)img->pixels;
+	ptr += (y * img->w + x) * bpp;
+	memcpy(&col, ptr, bpp);
+
 	SDL_UnlockSurface(img);	
 	if (color)
 		SDL_GetRGBA(col, img->format, &r, &g, &b, &a);
@@ -614,8 +622,9 @@ int gfx_get_pixel(img_t src, int x, int y,  color_t *color)
 
 int gfx_set_pixel(img_t src, int x, int y,  color_t color)
 {
+	int bpp;
 	Uint32 col;
-	Uint32 *ptr;
+	Uint8 *ptr;
 	SDL_Surface *img = Surf(src);
 	if (!img)
 		return -1;
@@ -625,20 +634,28 @@ int gfx_set_pixel(img_t src, int x, int y,  color_t color)
 
 	if (SDL_LockSurface(img))
 		return -1;
-	ptr = (Uint32*)img->pixels;
-	ptr += y * img->w + x;
+
+	if (img->format)
+		bpp = img->format->BytesPerPixel;
+	else
+		bpp = 1; /* hack? */
+
+	ptr = (Uint8*)img->pixels;
+	ptr += (y * img->w + x) * bpp;
 	col = SDL_MapRGBA(img->format, color.r, color.g, color.b, color.a);
-	*ptr = col;
+	memcpy(ptr, &col, bpp);
+
 	SDL_UnlockSurface(img);
 	return 0;
 }
 
 img_t gfx_alpha_img(img_t src, int alpha)
 {
-	Uint32 *ptr;
+	Uint8 *ptr;
 	Uint32 col;
 	int size;
-	
+	int bpp;
+
 	SDL_Surface *img;
 	if (screen)
 		img = SDL_DisplayFormatAlpha((SDL_Surface*)src);
@@ -646,17 +663,24 @@ img_t gfx_alpha_img(img_t src, int alpha)
 		img = gfx_new(Surf(src)->w, Surf(src)->h);
 	if (!img)
 		return NULL;
+
+	if (img->format)
+		bpp = img->format->BytesPerPixel;
+	else
+		bpp = 1;
+
 	SDL_SetAlpha(img, SDL_SRCALPHA, SDL_ALPHA_OPAQUE);
+
 	if (SDL_LockSurface(img) == 0) {
-		ptr = (Uint32*)img->pixels;
+		ptr = (Uint8*)img->pixels;
 		size = img->w * img->h;
 		while (size --) {
 			Uint8 r, g, b, a;
-			col = *ptr;
+			memcpy(&col, ptr, bpp);
 			SDL_GetRGBA(col, img->format, &r, &g, &b, &a);
 			col = SDL_MapRGBA(img->format, r, g, b, a * alpha / 255);
-			*ptr = col;
-			ptr ++;
+			memcpy(ptr, &col, bpp);
+			ptr += bpp;
 		}
 		SDL_UnlockSurface(img);
 	}
