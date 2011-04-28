@@ -1235,7 +1235,7 @@ static int luaB_fill_sprite(lua_State *L) {
 static int luaB_pixel_sprite(lua_State *L) {
 	img_t d;
 	float v;
-	int rc;
+	int rc, w, h;
 	color_t  col = { .r = game_theme.bgcol.r, .g = game_theme.bgcol.g, .b = game_theme.bgcol.b, .a = 255 };
 	const char *dst = luaL_optstring(L, 1, NULL);
 	int x = luaL_optnumber(L, 2, 0);
@@ -1255,18 +1255,22 @@ static int luaB_pixel_sprite(lua_State *L) {
 	if (!d)
 		return 0;
 
+	w = gfx_img_w(d) - 2 * xoff;
+	h = gfx_img_h(d) - 2 * yoff;
+
 	v = game_theme.scale;
 
 	if (v != 1.0f) {
 		x *= v;
 		y *= v;
 	}
+
 	if (color) {
+		if (x < 0 || y < 0 || x >= w || y >= h)
+			return 0;
 		game_pict_modify(d);
-		gfx_clip(game_theme.xoff, game_theme.yoff, game_theme.w - 2*game_theme.xoff, game_theme.h - 2*game_theme.yoff);
 		col.a = alpha;
 		rc = gfx_set_pixel(d, x + xoff, y + yoff, col);
-		gfx_noclip();
 	} else {
 		rc = gfx_get_pixel(d, x + xoff, y + yoff, &col);
 	}
