@@ -1213,7 +1213,7 @@ void game_menu_box_width(int show, const char *txt, int width)
 	menu = gfx_new(w + (b + pad)*2, h + (b + pad)*2);
 	gfx_img_fill(menu, 0, 0, w + (b + pad)*2, h + (b + pad)*2, game_theme.border_col);
 	gfx_img_fill(menu, b, b, w + pad*2, h + pad*2, game_theme.menu_bg);
-#if SDL_VERSION_ATLEAST(1,3,0)
+#if 0 //SDL_VERSION_ATLEAST(1,3,0)
 	do { /* hack while SDL 1.3.0 is not released */
 		img_t img2;
 		img2 = gfx_alpha_img(menu, game_theme.menu_alpha);
