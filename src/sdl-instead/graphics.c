@@ -699,7 +699,15 @@ img_t gfx_alpha_img(img_t src, int alpha)
 
 void	gfx_set_alpha(img_t src, int alpha)
 {
+#if SDL_VERSION_ATLEAST(1,3,0)
+	SDL_SetSurfaceAlphaMod((SDL_Surface *)src, alpha);
+	if (alpha == 0xff)
+		SDL_SetSurfaceBlendMode((SDL_Surface *)src, SDL_BLENDMODE_NONE);
+	else
+		SDL_SetSurfaceBlendMode((SDL_Surface *)src, SDL_BLENDMODE_BLEND);
+#else
 	SDL_SetAlpha((SDL_Surface *)src, SDL_SRCALPHA, alpha);
+#endif
 }
 
 void	gfx_unset_alpha(img_t src)
@@ -4014,7 +4022,7 @@ static void update_gfx(void *aux)
 	if (fade_step_nr == -1 || !img || !fade_bg)
 		return;
 	game_cursor(CURSOR_CLEAR);
-#if SDL_VERSION_ATLEAST(1,3,0)
+#if 0 //SDL_VERSION_ATLEAST(1,3,0)
 	do { /* hack while SDL 1.3.0 is not released */
 		img_t img2;
 		img2 = gfx_alpha_img(img, (255 * (fade_step_nr + 1)) / ALPHA_STEPS);
