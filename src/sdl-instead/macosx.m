@@ -174,7 +174,7 @@ char *open_file_dialog(void)
 {
 	const char *filename;
 	static char *file_name[PATH_MAX];
-	NSArray* fileTypes = [NSArray  arrayWithObjects: @"zip", @"lua", nil];
+	NSArray* fileTypes = [NSArray  arrayWithObjects: @"zip", @"lua", @"idf", nil];
 
 	NSOpenPanel * panel = [NSOpenPanel openPanel];
 	[panel setCanChooseDirectories:NO];
