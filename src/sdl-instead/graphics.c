@@ -1315,7 +1315,11 @@ int gfx_set_mode(int w, int h, int fs)
 		screen = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | SDL_SWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
    #else
     #ifndef _WIN32_WCE
+	#if SDL_VERSION_ATLEAST(1,3,0)
+	screen = SDL_SetVideoMode(gfx_width, gfx_height, 32, SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
+	#else
 	screen = SDL_SetVideoMode(gfx_width, gfx_height, (fs)?32:0, SDL_DOUBLEBUF | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
+	#endif
 	if (screen == NULL) /* ok, fallback to anyformat */
     #endif
 		screen = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | SDL_HWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
@@ -1327,6 +1331,7 @@ int gfx_set_mode(int w, int h, int fs)
 		fprintf(stderr, "Unable to set %dx%d video: %s\n", w, h, SDL_GetError());
 		return -1;
 	}
+	fprintf(stderr,"Video mode: %dx%d@%dbpp\n", screen->w, screen->h, screen->format->BitsPerPixel);
 	gfx_clear(0, 0, gfx_width, gfx_height);
 	return 0;
 }
