@@ -4027,21 +4027,9 @@ static void update_gfx(void *aux)
 	if (fade_step_nr == -1 || !img || !fade_bg)
 		return;
 	game_cursor(CURSOR_CLEAR);
-#if 0 //SDL_VERSION_ATLEAST(1,3,0)
-	do { /* hack while SDL 1.3.0 is not released */
-		img_t img2;
-		img2 = gfx_alpha_img(img, (255 * (fade_step_nr + 1)) / ALPHA_STEPS);
-		if (img2) {
-			gfx_draw(fade_bg, 0, 0);
-			gfx_draw(img2, 0, 0);
-			gfx_free_image(img2);
-		}
-	} while(0);
-#else
 	gfx_set_alpha(img, (255 * (fade_step_nr + 1)) / ALPHA_STEPS);
 	gfx_draw(fade_bg, 0, 0);
 	gfx_draw(img, 0, 0);
-#endif
 	game_cursor(CURSOR_DRAW);
 	gfx_flip();
 	fade_step_nr ++;
