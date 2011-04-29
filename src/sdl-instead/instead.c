@@ -525,17 +525,14 @@ static void instead_timer_do(void *data)
 	mouse_restore();
 	game_cursor(CURSOR_ON);
 out:
-	if (!DIRECT_MODE)
-		instead_timer_nr = 0;
+	instead_timer_nr = 0;
 }
 
 static int instead_fn(int interval, void *p)
 {
-	if (!DIRECT_MODE) {
-		if (instead_timer_nr)
-			return interval; /* framedrop */
-		instead_timer_nr ++;
-	}
+	if (instead_timer_nr)
+		return interval; /* framedrop */
+	instead_timer_nr ++;
 	push_user_event(instead_timer_do, NULL);
 	return interval;
 }
