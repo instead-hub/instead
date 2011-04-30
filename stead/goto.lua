@@ -168,6 +168,12 @@ function visited(w)
 	return w.__visited
 end
 
+function visits(w)
+	local n = visited(w)
+	if not n then n = 0 end
+	return n
+end
+
 iface.fmt = function(self, cmd, st, moved, r, av, objs, pv) -- st -- changed state (main win), move -- loc changed
 	local l
 	if st then

@@ -19,6 +19,7 @@ instead (1.4.0) unstable; urgency=low
   * toggle_menu added;
   * get_ticks added;
   * bit_xxx bitwise operations added;
+  * visits() added;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 27 Apr 2011 11:01:00 +0400  
 
