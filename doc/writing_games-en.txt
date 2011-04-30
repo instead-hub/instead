@@ -1240,6 +1240,20 @@ WARNING about using luac compiler:
 Do not use lua compiler luac, it produces platform-dependent code!
 But game compilation is useful to find errors in the game code.
 
+==== Packing resources in .idf file (from version 1.4.0) ====
+You can pack all game's resources (graphics, sounds, theme) in one .idf file. Put all resources in 'data' directory and run:
+
+instead -idf <path to data>
+
+The file data.idf will be created in the current directory. Put it in game's dir and remove resource files.
+
+You may pack whole game in .idf:
+
+instead -idf <path to game>
+
+Game in .idf format can be run like any other game (as it was directory) or directly from command line: 
+
+instead game.idf
 ==== Switching between players ====
 You can create a game with several characters and switch between them from time to time (see “change_pl”). But you can also use the same trick to switch between different types of inventory. 
 
