@@ -1524,6 +1524,18 @@ static int luaB_bit_add(lua_State *L) {
 	return 1;
 }
 
+static int luaB_bit_unsigned(lua_State *L) {
+	unsigned int a = luaL_optnumber(L, 1, 0);
+	lua_pushnumber(L, a);
+	return 1;
+}
+
+static int luaB_bit_signed(lua_State *L) {
+	unsigned int a = luaL_optnumber(L, 1, 0);
+	lua_pushnumber(L, (int)a);
+	return 1;
+}
+
 static const luaL_Reg base_funcs[] = {
 	{"doencfile", luaB_doencfile},
 	{"dofile", luaB_dofile},
@@ -1578,7 +1590,8 @@ static const luaL_Reg base_funcs[] = {
 	{"bit_imul", luaB_bit_imul},
 	{"bit_sub", luaB_bit_sub},
 	{"bit_add", luaB_bit_add},
-	
+	{"bit_signed", luaB_bit_signed},
+	{"bit_unsigned", luaB_bit_unsigned},	
 	{NULL, NULL}
 };
 
