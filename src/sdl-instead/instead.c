@@ -1468,6 +1468,18 @@ static int luaB_bit_div(lua_State *L) {
 	return 0;
 }
 
+static int luaB_bit_idiv(lua_State *L) {
+	int a = luaL_optnumber(L, 1, 0);
+	int b = luaL_optnumber(L, 2, 1);
+	int r;
+	if (b) {
+		r = a / b;
+		lua_pushnumber(L, r);
+		return 1;
+	}
+	return 0;
+}
+
 static int luaB_bit_mod(lua_State *L) {
 	unsigned int a = luaL_optnumber(L, 1, 0);
 	unsigned int b = luaL_optnumber(L, 2, 1);
@@ -1484,6 +1496,14 @@ static int luaB_bit_mul(lua_State *L) {
 	unsigned int a = luaL_optnumber(L, 1, 0);
 	unsigned int b = luaL_optnumber(L, 2, 0);
 	unsigned int r = a * b;
+	lua_pushnumber(L, r);
+	return 1;
+}
+
+static int luaB_bit_imul(lua_State *L) {
+	int a = luaL_optnumber(L, 1, 0);
+	int b = luaL_optnumber(L, 2, 0);
+	int r = a * b;
 	lua_pushnumber(L, r);
 	return 1;
 }
@@ -1552,8 +1572,10 @@ static const luaL_Reg base_funcs[] = {
 	{"bit_shr", luaB_bit_shr},
 	{"bit_not", luaB_bit_not},
 	{"bit_div", luaB_bit_div},
+	{"bit_idiv", luaB_bit_idiv},
 	{"bit_mod", luaB_bit_mod},
 	{"bit_mul", luaB_bit_mul},
+	{"bit_imul", luaB_bit_imul},
 	{"bit_sub", luaB_bit_sub},
 	{"bit_add", luaB_bit_add},
 	
