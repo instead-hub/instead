@@ -1486,6 +1486,10 @@ static int parse_fn(const char *f, char *files[])
 	while (1) {
 		f += strspn(f, " \t");
 		e = strcspn(f, ",}");
+		if (!e) { /* empty subst */
+			files[nr] = NULL;
+			goto skip;
+		}
 		files[nr] = malloc(e + pref + elen + 1);
 		if (!files[nr])
 			break;
@@ -1496,6 +1500,7 @@ static int parse_fn(const char *f, char *files[])
 		if (elen)
 			memcpy(files[nr] + pref + e, ep, elen);
 		*(files[nr] + pref + e + elen) = 0;
+skip:
 		nr ++;
 		if (!f[e] || f[e] == '}')
 			break;
