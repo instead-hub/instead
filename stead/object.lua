@@ -61,7 +61,14 @@ function player_use(self, what, onwhat, ...)
 	if not v and not vv then
 		v, r = call(game, 'use', obj, obj2, ...);
 	end
-	return stead.par(' ', v, vv);
+	if v == nil and vv == nil then
+		return
+	end
+	v = stead.par(' ', v, vv);
+	if v == nil and stead.api_version >= "1.3.5" then
+		return true
+	end
+	return v
 end
 
 function vobj_save(self, name, h, need)
