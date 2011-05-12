@@ -1,6 +1,6 @@
 Summary:	simply text adventures/visual novels engine and game
 Name:		instead
-Version:	1.4.0
+Version:	1.4.1
 Release:	1%{?dist}
 License:	GPLv2
 URL:		http://instead.googlecode.com

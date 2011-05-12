@@ -1,4 +1,4 @@
-INSTEAD 1.4.0
+INSTEAD 1.4.1
 =============
 
 WARNING! For successfull building you must install these development packages (names may vary in your distribution):
