@@ -1,3 +1,9 @@
+instead (1.4.1) unstable; urgency=low
+
+  * bug fix in use;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 12 May 2011 23:53:00 +0400
+
 instead (1.4.0) unstable; urgency=low
 
   * bug fix in imgl/imgr;

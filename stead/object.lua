@@ -61,7 +61,7 @@ function player_use(self, what, onwhat, ...)
 	if not v and not vv then
 		v, r = call(game, 'use', obj, obj2, ...);
 	end
-	if v == nil and vv == nil then
+	if not v and not vv then
 		return
 	end
 	v = stead.par(' ', v, vv);
