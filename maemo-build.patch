@@ -1,12 +1,12 @@
-diff -Nur instead-1.3.1/debian/compat instead-1.3.1-maemo/debian/compat
---- instead-1.3.1/debian/compat	2010-10-14 20:41:59.000000000 +0400
-+++ instead-1.3.1-maemo/debian/compat	2010-12-06 21:46:44.485908869 +0300
+diff -Nur instead-1.4.1/debian/compat instead-1.4.1-maemo/debian/compat
+--- instead-1.4.1/debian/compat	2011-05-13 11:40:08.000000000 +0400
++++ instead-1.4.1-maemo/debian/compat	2011-05-11 07:45:43.357935817 +0400
 @@ -1 +1 @@
 -7
 +4
-diff -Nur instead-1.3.1/debian/control instead-1.3.1-maemo/debian/control
---- instead-1.3.1/debian/control	2010-10-14 20:41:59.000000000 +0400
-+++ instead-1.3.1-maemo/debian/control	2010-12-06 21:46:44.485908869 +0300
+diff -Nur instead-1.4.1/debian/control instead-1.4.1-maemo/debian/control
+--- instead-1.4.1/debian/control	2011-05-13 11:40:08.000000000 +0400
++++ instead-1.4.1-maemo/debian/control	2011-05-11 07:45:43.357935817 +0400
 @@ -1,8 +1,8 @@
  Source: instead
 -Section: games
@@ -23,9 +23,9 @@ diff -Nur instead-1.3.1/debian/control instead-1.3.1-maemo/debian/control
  Description: simply text adventures/visual novels engine and game
   Visual novell/text quest-like game in Russian with engine.
 -
-diff -Nur instead-1.3.1/debian/rules instead-1.3.1-maemo/debian/rules
---- instead-1.3.1/debian/rules	2010-10-14 20:41:59.000000000 +0400
-+++ instead-1.3.1-maemo/debian/rules	2010-12-06 21:46:44.485908869 +0300
+diff -Nur instead-1.4.1/debian/rules instead-1.4.1-maemo/debian/rules
+--- instead-1.4.1/debian/rules	2011-05-13 11:40:08.000000000 +0400
++++ instead-1.4.1-maemo/debian/rules	2011-05-11 07:45:43.361932007 +0400
 @@ -52,7 +52,7 @@
  install: build
  	dh_testdir
@@ -35,9 +35,9 @@ diff -Nur instead-1.3.1/debian/rules instead-1.3.1-maemo/debian/rules
  	dh_installdirs
  
  	# Add here commands to install the package into debian/instead.
-diff -Nur instead-1.3.1/desktop/instead.desktop.in instead-1.3.1-maemo/desktop/instead.desktop.in
---- instead-1.3.1/desktop/instead.desktop.in	2010-11-23 20:28:46.000000000 +0300
-+++ instead-1.3.1-maemo/desktop/instead.desktop.in	2010-12-06 21:46:44.485908869 +0300
+diff -Nur instead-1.4.1/desktop/instead.desktop.in instead-1.4.1-maemo/desktop/instead.desktop.in
+--- instead-1.4.1/desktop/instead.desktop.in	2011-05-13 11:40:18.000000000 +0400
++++ instead-1.4.1-maemo/desktop/instead.desktop.in	2011-05-11 07:45:43.361932007 +0400
 @@ -7,6 +7,10 @@
  Comment=Siple Text Adventures Interpreter
  Comment[ru]=Интерпретатор простых приключений
@@ -50,9 +50,9 @@ diff -Nur instead-1.3.1/desktop/instead.desktop.in instead-1.3.1-maemo/desktop/i
 +X-HildonDesk-ShowInToolbar=true
 +StartupWMClass=instead
  Categories=Game;LogicGame;
-diff -Nur instead-1.3.1/desktop/Makefile instead-1.3.1-maemo/desktop/Makefile
---- instead-1.3.1/desktop/Makefile	2010-10-14 20:42:17.000000000 +0400
-+++ instead-1.3.1-maemo/desktop/Makefile	2010-12-06 21:46:44.485908869 +0300
+diff -Nur instead-1.4.1/desktop/Makefile instead-1.4.1-maemo/desktop/Makefile
+--- instead-1.4.1/desktop/Makefile	2011-05-13 11:40:18.000000000 +0400
++++ instead-1.4.1-maemo/desktop/Makefile	2011-05-11 07:45:43.361932007 +0400
 @@ -10,9 +10,9 @@
  	cat instead.desktop.in | sed -e "s|@BIN|$(BIN)|g" > instead.desktop
  
@@ -66,9 +66,9 @@ diff -Nur instead-1.3.1/desktop/Makefile instead-1.3.1-maemo/desktop/Makefile
 -	$(RM) $(DESTDIR)$(PREFIX)/share/applications/instead.desktop
 +	$(RM) $(DESTDIR)$(PREFIX)/share/applications/hildon/instead.desktop
  
-diff -Nur instead-1.3.1/Rules.make.system instead-1.3.1-maemo/Rules.make.system
---- instead-1.3.1/Rules.make.system	2010-11-23 20:28:46.000000000 +0300
-+++ instead-1.3.1-maemo/Rules.make.system	2010-12-06 21:46:44.485908869 +0300
+diff -Nur instead-1.4.1/Rules.make.system instead-1.4.1-maemo/Rules.make.system
+--- instead-1.4.1/Rules.make.system	2011-05-13 11:40:07.000000000 +0400
++++ instead-1.4.1-maemo/Rules.make.system	2011-05-11 07:45:43.361932007 +0400
 @@ -28,7 +28,7 @@
  SDL_CFLAGS=$(shell sdl-config --cflags)
  SDL_LFLAGS=$(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer -lSDL_image
@@ -78,31 +78,28 @@ diff -Nur instead-1.3.1/Rules.make.system instead-1.3.1-maemo/Rules.make.system
  
  INSTALLD=install -d -m 0755
  INSTALLB=install -m 0755
-diff -Nur instead-1.3.1/themes/default/theme.ini instead-1.3.1-maemo/themes/default/theme.ini
---- instead-1.3.1/themes/default/theme.ini	2010-10-30 18:36:00.000000000 +0400
-+++ instead-1.3.1-maemo/themes/default/theme.ini	2010-12-06 21:47:39.260333876 +0300
-@@ -2,9 +2,10 @@
- ; $Name(ru): Стандартная$
- ; $Name(es): Estándar$
+diff -Nur instead-1.4.1/themes/default/theme.ini instead-1.4.1-maemo/themes/default/theme.ini
+--- instead-1.4.1/themes/default/theme.ini	2011-05-13 11:40:10.000000000 +0400
++++ instead-1.4.1-maemo/themes/default/theme.ini	2011-05-11 07:49:15.577901900 +0400
+@@ -4,7 +4,7 @@
+ ; $Name(it): Predefinito$
+ 
  scr.w = 800
 -scr.h = 600
 +scr.h = 480
- scr.gfx.h = -1
+ scr.gfx.scalable = 1
  
-+
- scr.gfx.bg = bg.png
- scr.col.bg = white
- scr.gfx.cursor.x = 2
-@@ -17,7 +18,7 @@
+ scr.gfx.h = -1
+@@ -21,7 +21,7 @@
  win.x = 48
  win.y = 8
  win.w = 500
 -win.h = 568
 +win.h = 448
  
- win.fnt.name = sans.ttf
+ win.fnt.name = {sans,sans-b,sans-i,sans-bi}.ttf
  win.fnt.size = 16
-@@ -35,7 +36,8 @@
+@@ -39,7 +39,8 @@
  inv.x = 620
  inv.y = 8
  inv.w = 144
@@ -110,9 +107,9 @@ diff -Nur instead-1.3.1/themes/default/theme.ini instead-1.3.1-maemo/themes/defa
 +inv.h = 448
 +
  
- inv.fnt.name = sans.ttf
+ inv.fnt.name = {sans,sans-b,sans-i,sans-bi}.ttf
  inv.fnt.size = 16
-@@ -63,8 +65,8 @@
+@@ -67,8 +68,8 @@
  menu.fnt.height = 1.0
  menu.gfx.button = menu.png
  menu.button.x = 776
@@ -122,13 +119,13 @@ diff -Nur instead-1.3.1/themes/default/theme.ini instead-1.3.1-maemo/themes/defa
  
  snd.click = click.wav ; click.ogg
  
-diff -Nur instead-1.3.1/themes/wide/theme.ini instead-1.3.1-maemo/themes/wide/theme.ini
---- instead-1.3.1/themes/wide/theme.ini	2010-10-30 18:36:03.000000000 +0400
-+++ instead-1.3.1-maemo/themes/wide/theme.ini	1970-01-01 03:00:00.000000000 +0300
-@@ -1,10 +0,0 @@
--; $Name:Wide
--; $Name(ru):Широкая
--; $Name(es):Amplio
+diff -Nur instead-1.4.1/themes/wide/theme.ini instead-1.4.1-maemo/themes/wide/theme.ini
+--- instead-1.4.1/themes/wide/theme.ini	2011-05-13 11:40:11.000000000 +0400
++++ instead-1.4.1-maemo/themes/wide/theme.ini	2011-05-11 07:47:51.833957190 +0400
+@@ -2,10 +2,3 @@
+ ; $Name(ru):Широкая$
+ ; $Name(es):Amplio$
+ ; $Name(it):Ampio$
 -
 -scr.w = 800
 -scr.h = 480
