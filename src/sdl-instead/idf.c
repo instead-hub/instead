@@ -544,7 +544,14 @@ char *idf_gets(idff_t idf, char *b, int size)
 		return NULL;
 	if (!rc && idf_eof(idf))
 		return NULL;
-	b[rc - 1] = 0;
+	if (!idf_eof(idf))
+		b[rc - 1] = 0;
+	else {
+		if (rc < size)
+			b[rc] = 0;
+		else
+			b[size - 1] = 0;
+	}
 	rc2 = strcspn(b, "\n");
 	b[rc2] = 0;
 	idf_seek(idf, - (rc - rc2 - 1), SEEK_CUR);
