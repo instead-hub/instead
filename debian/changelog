@@ -1,3 +1,10 @@
+instead (1.4.2) unstable; urgency=low
+
+  * bug fix in idf gets;
+  * bug fix in kbd hooking;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 19 May 2011 20:14:00 +0400
+
 instead (1.4.1) unstable; urgency=low
 
   * bug fix in use;
