@@ -1757,7 +1757,7 @@ int game_cmd(char *cmd)
 //	if (dd)
 		game_cursor(CURSOR_CLEAR);
 
-	cmdstr = instead_cmd(cmd); rc = instead_bretval(1); instead_clear();
+	cmdstr = instead_cmd(cmd); rc = !instead_bretval(1); instead_clear();
 	game_music_player();
 	game_sound_player();
 
@@ -1775,12 +1775,10 @@ int game_cmd(char *cmd)
 	if (!cmdstr) {
 		if (game_pict_modify(NULL)) /* redraw pic only */
 			game_redraw_pic();
-		rc = (rc)?0:1; /* nothing happens? */
 		if (!rc)
 			goto inv; /* hackish? ok, yes  it is... */
 		goto err; /* really nothing to do */ 
 	}
-
 	fading = check_fading();
 
 	instead_function("instead.get_title", NULL); 
