@@ -1364,7 +1364,7 @@ end
 timer:set(100);
 main = room {
 	_time = 1,
-	force_dsc = true,
+	forcedsc = true,
 	nam = 'Timer',
 	dsc = function(s)
 	return 'Example: '..tostring(s._time);
@@ -1396,7 +1396,7 @@ end
 
 main = room {
 	_txt = '_',
-	force_dsc = true,
+	forcedsc = true,
 	nam = 'Keyboard',
 	dsc = function(s)
 		return 'Example: '..tostring(s._txt);

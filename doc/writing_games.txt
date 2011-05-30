@@ -1356,7 +1356,7 @@ end
 timer:set(100);
 main = room {
     _time = 1,
-    force_dsc = true,
+    forcedsc = true,
     nam = 'Таймер',
     dsc = function(s)
 	return 'Демонстрация: '..tostring(s._time);
@@ -1388,7 +1388,7 @@ end
 
 main = room {
 	_txt = '_',
-	force_dsc = true,
+	forcedsc = true,
 	nam = 'Клавиатура',
 	dsc = function(s)
 		return 'Демонстрация: '..tostring(s._txt);
