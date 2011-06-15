@@ -10,12 +10,13 @@ game.act = 'Не получается.';
 game.inv = "Гм.. Не то..";
 game.use = 'Не сработает...';
 
-game.pic = 'instead.png';
+--game.pic = 'pad:15 0 0 0,instead.png';
 
 set_music('ramparts.mod');
 
 main = room {
-	nam = 'Обучение',
+	nam = true; --'Обучение',
+	pic = 'pics/instead.gif';
 	act = function() -- only one vobj, no check, just goto
 		goto('r1');
 	end,

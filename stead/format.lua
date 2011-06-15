@@ -40,7 +40,7 @@ stead.fmt = stead.hook(stead.fmt, function(f, ...)
 			r = r:gsub(',,','„'):gsub("''",'”');
 		end
 		if call_bool(format, 'para') then
-			r = r:gsub('\n([^\n])', '<&para;>%1'):gsub('<&para;>[ \t]*'..format.nopara,''):gsub('<&para;>[ \t]*', '\n'..txtnb(format.para_space));
+			r = r:gsub('\n([^\n])', '<&para;>%1'):gsub('<&para;>[ \t]*'..format.nopara,'\n'):gsub('<&para;>[ \t]*', '\n'..txtnb(format.para_space));
 			r = r:gsub('^[ \t]*', '<&para;>'):gsub('<&para;>[ \t]*'..format.nopara,''):gsub('<&para;>[ \t]*', txtnb(format.para_space));
 		end
 	end
