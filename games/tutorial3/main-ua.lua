@@ -10,9 +10,9 @@ game.act = 'Не виходить.';
 game.inv = "Гм.. Не то..";
 game.use = 'Не зработає...';
 
-game.pic = '../tutorial2/instead.png';
+game.pic = 'instead.png';
 
-set_music('../tutorial2/ramparts.mod');
+set_music('ramparts.mod');
 
 main = room {
 	nam = 'Навчання',

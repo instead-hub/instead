@@ -5,9 +5,9 @@ game.act = 'You can\'t.';
 game.inv = "Hmm... Wrong...";
 game.use = 'Won\'t work...';
 
-game.pic = '../tutorial2/instead.png';
+game.pic = 'instead.png';
 
-set_music('../tutorial2/ramparts.mod');
+set_music('ramparts.mod');
 
 main = room {
 	nam = 'Tutorial',

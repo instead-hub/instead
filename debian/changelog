@@ -2,6 +2,7 @@ instead (1.4.3) unstable; urgency=low
 
   * bug fix in nopara logic;
   * ukranian translation and tutorial;
+  * multilang tutorial3;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 15 Jun 2011 16:56:00 +0400
 
