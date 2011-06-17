@@ -31,7 +31,7 @@ tut_title = tut_title[LANG]
 
 main = room {
 	nam = tut_title;
---	pic = 'instead.png';
+	pic = 'instead.png';
 	forcedsc = true;
 	dsc = txtc (
 		txtb(tut_lang)..'^^'..
