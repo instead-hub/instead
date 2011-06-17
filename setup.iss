@@ -17,11 +17,7 @@ Name: ru; MessagesFile: compiler:Languages\Russian.isl
 [Files]
 Source: sdl-instead.exe; DestDir: {app}
 Source: Microsoft.VC80.CRT\*; DestDir: {app}\Microsoft.VC80.CRT
-Source: games\tutorial2\*; DestDir: {app}\games\tutorial2
-Source: games\tutorial2-en\*; DestDir: {app}\games\tutorial2-en
-Source: games\tutorial2-es\*; DestDir: {app}\games\tutorial2-es
-Source: games\tutorial2-it\*; DestDir: {app}\games\tutorial2-it
-Source: games\tutorial2-ua\*; DestDir: {app}\games\tutorial2-ua
+Source: games\tutorial3\*; DestDir: {app}\games\tutorial3
 Source: icon\*; DestDir: {app}\icon
 Source: doc\*; DestDir: {app}\doc
 Source: doc\modules\*; DestDir: {app}\doc\modules
