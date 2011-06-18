@@ -4,6 +4,7 @@ instead (1.4.3) unstable; urgency=low
   * ukranian translation and tutorial;
   * multilang tutorial3;
   * sprites small fix (predefined handles);
+  * cursor changing from direct mode support;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 15 Jun 2011 16:56:00 +0400
 
