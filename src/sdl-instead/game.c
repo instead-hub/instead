@@ -1764,6 +1764,16 @@ int game_cmd(char *cmd)
 	if (DIRECT_MODE) {
 		if (cmdstr)
 			free(cmdstr);
+
+		if (game_theme_changed == 2) { /* cursor change only? */
+			img_t offscreen = gfx_new(game_theme.w, game_theme.h);
+			oldscreen = gfx_screen(offscreen);
+			gfx_draw(oldscreen, 0, 0);
+			game_theme_update();
+			game_theme_changed = 1;
+			gfx_screen(oldscreen);
+		}
+
 		if (game_pict_modify(NULL))
 			goto out;
 		return 0;
