@@ -33,8 +33,8 @@ sprite = {
 	font_scaled_size = function(size)
 		return stead.font_scaled_size(size);
 	end;
-	font = function(font, size)
-		return stead.font_load(font, size);
+	font = function(font, size, ...)
+		return stead.font_load(font, size, ...);
 	end;
 	free_font = function(font)
 		return stead.font_free(key);
@@ -43,20 +43,20 @@ sprite = {
 		local w,h = stead.sprite_text_size(font)
 		return h
 	end;
-	alpha = function(name, alpha)
-		return stead.sprite_alpha(name, alpha);
+	alpha = function(name, alpha, ...)
+		return stead.sprite_alpha(name, alpha, ...);
 	end;
-	dup = function(name)
-		return stead.sprite_dup(name);
+	dup = function(name, ...)
+		return stead.sprite_dup(name, ...);
 	end;
-	scale = function(name, xs, ys)
-		return stead.sprite_scale(name, xs, ys);
+	scale = function(name, xs, ys, ...)
+		return stead.sprite_scale(name, xs, ys, ...);
 	end;
-	rotate = function(name, angle)
-		return stead.sprite_rotate(name, angle);
+	rotate = function(name, angle, ...)
+		return stead.sprite_rotate(name, angle, ...);
 	end;
-	text = function(font, text, col, style)
-		return stead.sprite_text(font, text, col, style);
+	text = function(font, text, col, style, ...)
+		return stead.sprite_text(font, text, col, style, ...);
 	end;
 	size = function(spr)
 		return stead.sprite_size(spr);
@@ -85,8 +85,8 @@ sprite = {
 	pixel = function(d, x, y, col, alpha)
 		return stead.sprite_pixel(d, x, y, col, alpha)
 	end;
-	load = function(fname)
-		return stead.sprite_load(fname);
+	load = function(fname, ...)
+		return stead.sprite_load(fname, ...);
 	end;
 	free = function(key)
 		return stead.sprite_free(key);

@@ -836,6 +836,8 @@ static int luaB_text_sprite(lua_State *L) {
 	char txtkey[32];
 	const char *color = luaL_optstring(L, 3, NULL);
 	int style = luaL_optnumber(L, 4, 0);
+	const char *desc = luaL_optstring(L, 5, NULL);
+
 	color_t col = { .r = game_theme.fgcol.r, .g = game_theme.fgcol.g, .b = game_theme.fgcol.b };
 
 	if (!font)
@@ -858,14 +860,15 @@ static int luaB_text_sprite(lua_State *L) {
 
 	if (!img)
 		return 0;
-
-	key = sname;
-
-	strncpy(txtkey, text, sizeof(txtkey));
-	txtkey[sizeof(txtkey) - 1] = 0;
 	
-	sprite_name(text, sname, sizeof(sname));
-
+	if (!desc || sprite_lookup(desc)) {
+		key = sname;
+		strncpy(txtkey, text, sizeof(txtkey));
+		txtkey[sizeof(txtkey) - 1] = 0;
+		sprite_name(txtkey, sname, sizeof(sname));
+	} else
+		key = desc;
+	
 	sp = sprite_new(key, img);
 
 	if (!sp)
