@@ -1771,7 +1771,9 @@ int game_cmd(char *cmd)
 			gfx_draw(oldscreen, 0, 0);
 			game_theme_update();
 			game_theme_changed = 1;
-			gfx_screen(oldscreen);
+			offscreen = gfx_screen(oldscreen);
+			gfx_change_screen(offscreen, 1);
+			gfx_free_image(offscreen);
 		}
 
 		if (game_pict_modify(NULL))
