@@ -1,3 +1,9 @@
+instead (1.4.4) unstable; urgency=low
+
+  * bug fix in direct mode (memory leak);
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 21 Jun 2011 08:57:00 +0400
+
 instead (1.4.3) unstable; urgency=low
 
   * bug fix in nopara logic;
