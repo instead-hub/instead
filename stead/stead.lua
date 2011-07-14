@@ -98,6 +98,8 @@ function cctx()
 	return stead.cctx[stead.call_top];
 end
 
+stead.get_cctx = cctx
+
 function callpush(v, ...)
 	stead.call_top = stead.call_top + 1;
 	stead.cctx[stead.call_top] = { txt = nil, self = v, action = false };
@@ -114,6 +116,8 @@ function callpush(v, ...)
 	-- dirty but clean and fast :)
 	self = v
 end
+
+stead.callpush = callpush
 
 function clearargs()
 	arg1 = nil
@@ -136,38 +140,39 @@ function callpop()
 	if stead.call_top < 0 then
 		error ("callpush/callpop mismatch")
 	end 
-	clearargs()
+	stead.clearargs()
 end
+stead.callpop = callpop
 
 function pclr()
-	cctx().txt = nil
+	stead.get_cctx().txt = nil
 end
 stead.pclr = pclr
 
 function pget()
-	return cctx().txt;
+	return stead.get_cctx().txt;
 end
 stead.pget = pget
 function p(...)
 	local i
 	local a = {...}
 	for i = 1, stead.table.maxn(a) do
-		cctx().txt = stead.par('',cctx().txt, tostring(a[i]));
+		stead.get_cctx().txt = stead.par('', stead.get_cctx().txt, tostring(a[i]));
 	end
-	cctx().txt = stead.cat(cctx().txt, ' ');
+	stead.get_cctx().txt = stead.cat(stead.get_cctx().txt, ' ');
 end
 stead.p = p
 function pr(...)
 	local i
 	local a = {...}
 	for i = 1, stead.table.maxn(a) do
-		cctx().txt = stead.par('',cctx().txt, tostring(a[i]));
+		stead.get_cctx().txt = stead.par('', stead.get_cctx().txt, tostring(a[i]));
 	end
 end
 stead.pr = pr
 function pn(...)
 	p(...);
-	cctx().txt = stead.par('',cctx().txt,'^');
+	stead.get_cctx().txt = stead.par('', stead.get_cctx().txt,'^');
 end
 stead.pn = pn
 -- merge strings with "space" as separator
@@ -811,13 +816,13 @@ function call(v, n, ...)
 		return v[n];
 	end
 	if type(v[n]) == 'function' then
-		callpush(v, ...)
+		stead.callpush(v, ...)
 		local a,b = v[n](v, ...);
 		-- boolean, nil
 		if type(a) == 'boolean' and b == nil then
 			b, a = a, stead.pget()
 			if a == nil then
-				if cctx().action then
+				if stead.get_cctx().action then
 					a = true
 				else
 					a = b
@@ -828,10 +833,10 @@ function call(v, n, ...)
 			a = stead.pget()
 			b = nil
 		end
-		if a == nil and b == nil and cctx().action then
+		if a == nil and b == nil and stead.get_cctx().action then
 			a = true
 		end
-		callpop()
+		stead.callpop()
 		return a,b
 	end
 	if type(v[n]) == 'boolean' then
@@ -854,9 +859,9 @@ function call_bool(v, n, ...)
 	end
 	
 	if type(v[n]) == 'function' then
-		callpush(v, ...)
+		stead.callpush(v, ...)
 		local r,v = v[n](v, ...);
-		callpop();
+		stead.callpop();
 		return r,v;
 	end
 	return true; -- not nil
@@ -874,9 +879,9 @@ function call_value(v, n, ...)
 	if type(v[n]) ~= 'function' then
 		return v[n];
 	end
-	callpush(v, ...)
+	stead.callpush(v, ...)
 	local r,v = v[n](v, ...);
-	callpop();
+	stead.callpop();
 	return r,v;
 end
 
@@ -2368,6 +2373,9 @@ end
 stead.back = back;
 
 function rnd(m)
+	if not m then
+		return math.random();
+	end
 	return math.random(m);
 end
 
