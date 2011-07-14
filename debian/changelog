@@ -1,3 +1,10 @@
+instead (1.4.5) unstable; urgency=low
+
+  * bug fix in rnd() w/o parameter;
+  * callpush/callpop/cctx moved to stead;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 14 Jul 2011 16:18:00 +0400
+
 instead (1.4.4) unstable; urgency=low
 
   * bug fix in direct mode (memory leak);
