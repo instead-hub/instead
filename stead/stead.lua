@@ -321,7 +321,7 @@ local ilist = function(s, var)
 	return inext, s, nil;
 end
 
-local ordered_i =function(t)
+local ordered_i = function(t)
 	local ordered = {};
 	local i,v, max;
 	max = 0;
