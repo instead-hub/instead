@@ -9,6 +9,7 @@ stead = {
 	ticks = get_ticks,
 	mouse_pos = mouse_pos,
 	menu_toggle = menu_toggle,
+	next = next,
 	io = io,
 	os = os,
 	readdir = readdir,
@@ -304,11 +305,11 @@ end
 stead.fmt = fmt
 
 -- integer lists
-function inext(t, k)
+local inext = function(t, k)
 	local v
-	k, v = next(t, k);
+	k, v = stead.next(t, k);
 	while k and not tonumber(k) do
-		k, v = next(t, k);
+		k, v = stead.next(t, k);
 	end
 	if not tonumber(k) then
 		return nil
@@ -316,11 +317,11 @@ function inext(t, k)
 	return k, v
 end
 
-function ilist(s, var)
+local ilist = function(s, var)
 	return inext, s, nil;
 end
 
-function ordered_i(t)
+local ordered_i =function(t)
 	local ordered = {};
 	local i,v, max;
 	max = 0;
@@ -334,7 +335,7 @@ function ordered_i(t)
 	return ordered;
 end
 
-function onext(t, k)
+local onext = function(t, k)
 	local v
 	if not k then
 		k = ordered_i(t);
