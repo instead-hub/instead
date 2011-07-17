@@ -196,15 +196,15 @@ end
 
 stead.go = stead.hook(stead.go, function(f, ...)
 	local r,v = f(...)
-	if type(r) == 'string' and stead.get_cctx() then 
+	if type(r) == 'string' and stead.cctx() then 
 		pr (r)
 	end
 	if stead.in_life_call then
 		ACTION_TEXT = nil
 	end
 	if r == nil and v == nil then
-		if stead.get_cctx() then
-			stead.get_cctx().action = true
+		if stead.cctx() then
+			stead.cctx().action = true
 		else
 			r = true
 		end
