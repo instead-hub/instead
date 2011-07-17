@@ -98,7 +98,7 @@ stead.cctx = function()
 	return stead.call_ctx[stead.call_top];
 end
 
-function callpush(v, ...)
+stead.callpush = function(v, ...)
 	stead.call_top = stead.call_top + 1;
 	stead.call_ctx[stead.call_top] = { txt = nil, self = v, action = false };
 	args = {...};
@@ -115,9 +115,7 @@ function callpush(v, ...)
 	self = v
 end
 
-stead.callpush = callpush
-
-function clearargs()
+stead.clearargs = function()
 	arg1 = nil
 	arg2 = nil
 	arg3 = nil
@@ -130,9 +128,7 @@ function clearargs()
 	self = nil
 end
 
-stead.clearargs = clearargs
-
-function callpop()
+stead.callpop = function()
 	stead.call_ctx[stead.call_top] = nil;
 	stead.call_top = stead.call_top - 1;
 	if stead.call_top < 0 then
@@ -140,7 +136,6 @@ function callpop()
 	end 
 	stead.clearargs()
 end
-stead.callpop = callpop
 
 function pclr()
 	stead.cctx().txt = nil
@@ -151,6 +146,7 @@ function pget()
 	return stead.cctx().txt;
 end
 stead.pget = pget
+
 function p(...)
 	local i
 	local a = {...}
