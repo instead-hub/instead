@@ -1,5 +1,5 @@
 stead = {
-	version = "1.4.4",
+	version = "1.4.5",
 	api_version = "1.1.6", -- last version before 1.2.0
 	table = table,
 	delim = ',',
@@ -13,7 +13,7 @@ stead = {
 	os = os,
 	readdir = readdir,
 	call_top = 0,
-	cctx = { txt = nil, self = nil },
+	call_ctx = { txt = nil, self = nil },
 --	functions = {}, -- code blocks
 	timer = function()
 		if type(timer) == 'table' and type(timer.callback) == 'function' then
@@ -94,15 +94,13 @@ stead.tostring = function(v)
 	return v
 end
 
-function cctx()
-	return stead.cctx[stead.call_top];
+stead.cctx = function()
+	return stead.call_ctx[stead.call_top];
 end
-
-stead.get_cctx = cctx
 
 function callpush(v, ...)
 	stead.call_top = stead.call_top + 1;
-	stead.cctx[stead.call_top] = { txt = nil, self = v, action = false };
+	stead.call_ctx[stead.call_top] = { txt = nil, self = v, action = false };
 	args = {...};
 	arg1 = args[1]
 	arg2 = args[2]
@@ -135,7 +133,7 @@ end
 stead.clearargs = clearargs
 
 function callpop()
-	stead.cctx[stead.call_top] = nil;
+	stead.call_ctx[stead.call_top] = nil;
 	stead.call_top = stead.call_top - 1;
 	if stead.call_top < 0 then
 		error ("callpush/callpop mismatch")
@@ -145,34 +143,34 @@ end
 stead.callpop = callpop
 
 function pclr()
-	stead.get_cctx().txt = nil
+	stead.cctx().txt = nil
 end
 stead.pclr = pclr
 
 function pget()
-	return stead.get_cctx().txt;
+	return stead.cctx().txt;
 end
 stead.pget = pget
 function p(...)
 	local i
 	local a = {...}
 	for i = 1, stead.table.maxn(a) do
-		stead.get_cctx().txt = stead.par('', stead.get_cctx().txt, tostring(a[i]));
+		stead.cctx().txt = stead.par('', stead.cctx().txt, tostring(a[i]));
 	end
-	stead.get_cctx().txt = stead.cat(stead.get_cctx().txt, ' ');
+	stead.cctx().txt = stead.cat(stead.cctx().txt, ' ');
 end
 stead.p = p
 function pr(...)
 	local i
 	local a = {...}
 	for i = 1, stead.table.maxn(a) do
-		stead.get_cctx().txt = stead.par('', stead.get_cctx().txt, tostring(a[i]));
+		stead.cctx().txt = stead.par('', stead.cctx().txt, tostring(a[i]));
 	end
 end
 stead.pr = pr
 function pn(...)
 	p(...);
-	stead.get_cctx().txt = stead.par('', stead.get_cctx().txt,'^');
+	stead.cctx().txt = stead.par('', stead.cctx().txt,'^');
 end
 stead.pn = pn
 -- merge strings with "space" as separator
@@ -822,7 +820,7 @@ function call(v, n, ...)
 		if type(a) == 'boolean' and b == nil then
 			b, a = a, stead.pget()
 			if a == nil then
-				if stead.get_cctx().action then
+				if stead.cctx().action then
 					a = true
 				else
 					a = b
@@ -833,7 +831,7 @@ function call(v, n, ...)
 			a = stead.pget()
 			b = nil
 		end
-		if a == nil and b == nil and stead.get_cctx().action then
+		if a == nil and b == nil and stead.cctx().action then
 			a = true
 		end
 		stead.callpop()
