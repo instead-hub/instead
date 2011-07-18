@@ -2590,6 +2590,7 @@ static int is_delim(int c)
 	case ':':
 	case '!':
 	case '+':
+	case '@':
 	case '-':
 	case '?':
 	case '/':
@@ -2632,7 +2633,7 @@ static const char *lookup_token_or_sp(const char *ptr)
 	char *eptr;
 	const char *p = ptr;
 	while (*p) {
-		p += strcspn(p, " .,:!+-?/<\t\n");
+		p += strcspn(p, " .,:!+@-?/<\t\n");
 		if (*p != '<' ) {
 			while (is_delim(*p))
 				p ++;
