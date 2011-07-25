@@ -578,6 +578,13 @@ static int luaB_theme_var(lua_State *L) {
 	return 0;
 }
 
+static int luaB_theme_name(lua_State *L) {
+	if (game_own_theme && opt_owntheme)
+		return 0;
+	lua_pushstring(L, curtheme_dir);
+	return 1;
+}
+
 extern int dir_iter_factory (lua_State *L);
 extern int luaopen_lfs (lua_State *L);
 
@@ -1549,6 +1556,7 @@ static const luaL_Reg base_funcs[] = {
 	{"get_steadpath", luaB_get_steadpath},
 	{"set_timer", luaB_set_timer},
 	{"theme_var", luaB_theme_var},
+	{"theme_name", luaB_theme_name},
 	{"readdir", dir_iter_factory},
 	{"menu_toggle", luaB_show_menu},
 
