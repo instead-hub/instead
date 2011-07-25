@@ -63,7 +63,7 @@ function stead.getcmd(str)
 	end
 	stead.cmd = cmd
 	if cmd == 'load' or cmd == 'save' then
-		a[1] = strip(stead.string.sub(str, k + 1));
+		a[1] = stead.strip(stead.string.sub(str, k + 1));
 		stead.args = a;
 		return cmd, a
 	end
@@ -73,7 +73,7 @@ function stead.getcmd(str)
 		if not i then
 			break
 		end
-		a[n] = strip(stead.string.sub(str, i, k));
+		a[n] = stead.strip(stead.string.sub(str, i, k));
 		n = n + 1;
 	end
 	stead.args = a;
@@ -1925,6 +1925,7 @@ function strip(s)
 	s = stead.string.gsub(s, '[ \t]*$', '');
 	return s;
 end
+stead.strip = strip
 
 function isForcedsc(v)
 	local r,g
