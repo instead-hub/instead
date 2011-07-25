@@ -305,7 +305,7 @@ end
 stead.fmt = fmt
 
 -- integer lists
-stead.inext = function(t, k)
+local inext = function(t, k)
 	local v
 	k, v = stead.next(t, k);
 	while k and not tonumber(k) do
@@ -317,15 +317,15 @@ stead.inext = function(t, k)
 	return k, v
 end
 
-stead.ilist = function(s, var)
-	return stead.inext, s, nil;
+local ilist = function(s, var)
+	return inext, s, nil;
 end
 
-stead.ordered_i = function(t)
+local ordered_i = function(t)
 	local ordered = {};
 	local i,v, max;
 	max = 0;
-	for i,v in stead.ilist(t) do
+	for i,v in ilist(t) do
 		stead.table.insert(ordered, i);
 		max = max + 1;
 	end
@@ -335,10 +335,10 @@ stead.ordered_i = function(t)
 	return ordered;
 end
 
-stead.onext = function(t, k)
+local onext = function(t, k)
 	local v
 	if not k then
-		k = stead.ordered_i(t);
+		k = ordered_i(t);
 	end
 	if k.i > k.max then
 		return nil
@@ -349,7 +349,7 @@ stead.onext = function(t, k)
 end
 
 function opairs(s, var)
-	return stead.onext, s, nil;
+	return onext, s, nil;
 end
 
 function isPlayer(v)
@@ -1640,26 +1640,21 @@ function isEnableAutosave()
 end
 
 function for_each(o, n, f, fv, ...)
+	local call_list = {}
 	local k,v
 	if type(o) ~= 'table' then
 		return
 	end
 	stead.object = n;
+
 	for k,v in pairs(o) do
 		if fv(v) then
-			local i = tonumber(k);
-			local nn
-			if i then
-				nn = n.."["..i.."]"
-			else
-				if n == '_G' then
-					nn = k;
-				else
-					nn = n.."."..k;
-				end
-			end
-			f(k, v, ...);
+			stead.table.insert(call_list, { k = k, v = v });
 		end
+	end
+
+	for k, v in ipairs(call_list) do
+		f(v.k, v.v, ...);
 	end
 end
 
