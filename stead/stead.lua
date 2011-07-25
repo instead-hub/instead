@@ -305,7 +305,7 @@ end
 stead.fmt = fmt
 
 -- integer lists
-local inext = function(t, k)
+stead.inext = function(t, k)
 	local v
 	k, v = stead.next(t, k);
 	while k and not tonumber(k) do
@@ -317,15 +317,15 @@ local inext = function(t, k)
 	return k, v
 end
 
-local ilist = function(s, var)
-	return inext, s, nil;
+stead.ilist = function(s, var)
+	return stead.inext, s, nil;
 end
 
-local ordered_i = function(t)
+stead.ordered_i = function(t)
 	local ordered = {};
 	local i,v, max;
 	max = 0;
-	for i,v in ilist(t) do
+	for i,v in stead.ilist(t) do
 		stead.table.insert(ordered, i);
 		max = max + 1;
 	end
@@ -335,10 +335,10 @@ local ordered_i = function(t)
 	return ordered;
 end
 
-local onext = function(t, k)
+stead.onext = function(t, k)
 	local v
 	if not k then
-		k = ordered_i(t);
+		k = stead.ordered_i(t);
 	end
 	if k.i > k.max then
 		return nil
@@ -349,7 +349,7 @@ local onext = function(t, k)
 end
 
 function opairs(s, var)
-	return onext, s, nil;
+	return stead.onext, s, nil;
 end
 
 function isPlayer(v)
