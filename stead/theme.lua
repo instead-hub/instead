@@ -33,6 +33,9 @@ theme = {
 			theme.vars[name] = tostring(val);
 		end
 	end;
+	name = function()
+		return theme_name(name);
+	end;
 	get = function(name)
 		return theme_var(name);
 	end;
