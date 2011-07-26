@@ -26,8 +26,9 @@ struct game_theme {
 	img_t	use;
 	img_t	cursor;
 	int 	pad;
-	
-	int 	win_x;
+
+	int	win_align;
+	int	win_x;
 	int	win_y;
 	int	win_w;
 	int	win_h;

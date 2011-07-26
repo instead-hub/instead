@@ -1,10 +1,25 @@
-
 #include "externals.h"
 #include "internals.h"
 
 int theme_relative = 0;
 
 char	*curtheme_dir = NULL;
+
+static int parse_win_align(const char *v, void *data)
+{
+	int *i = (int *)data;
+	if (!strcmp(v, "left"))
+		*i = ALIGN_LEFT;
+	else if (!strcmp(v, "justify"))
+		*i = ALIGN_JUSTIFY;
+	else if (!strcmp(v, "center"))
+		*i = ALIGN_CENTER;
+	else if (!strcmp(v, "right"))
+		*i = ALIGN_RIGHT;
+	else
+		return -1;
+	return 0;
+}
 
 static int parse_gfx_mode(const char *v, void *data)
 {
@@ -149,6 +164,7 @@ struct parser cmd_parser[] = {
 	{ "scr.gfx.h", parse_int, &game_theme.max_scene_h },
 	{ "scr.gfx.mode", parse_gfx_mode, &game_theme.gfx_mode },
 
+	{ "win.align", parse_win_align, &game_theme.win_align },
 	{ "win.x", parse_int, &game_theme.win_x },
 	{ "win.y", parse_int, &game_theme.win_y },
 	{ "win.w", parse_int, &game_theme.win_w },
@@ -296,6 +312,7 @@ struct game_theme game_theme = {
 	.menu_font = NULL,
 	.menu_button_name = NULL,
 	.menu_button = NULL,
+	.win_align = ALIGN_JUSTIFY,
 	.gfx_mode = GFX_MODE_EMBEDDED,
 	.inv_mode = INV_MODE_VERT | INV_ALIGN_SET(ALIGN_LEFT),
 	.click_name = NULL,
