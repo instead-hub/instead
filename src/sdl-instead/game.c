@@ -551,7 +551,7 @@ int game_apply_theme(void)
 	if (!DIRECT_MODE)
 		game_clear(0, 0, game_theme.w, game_theme.h);
 	gfx_flip();
-	lay = txt_layout(game_theme.font, ALIGN_JUSTIFY, game_theme.win_w, game_theme.win_h);
+	lay = txt_layout(game_theme.font, game_theme.win_align, game_theme.win_w, game_theme.win_h);
 	if (!lay)
 		return -1;
 	box = txt_box(game_theme.win_w, game_theme.win_h);
