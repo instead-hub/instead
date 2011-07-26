@@ -3,6 +3,7 @@ instead (1.4.5) unstable; urgency=low
   * bug fix in rnd() w/o parameter;
   * callpush/callpop/cctx/strip moved to stead;
   * bug fix in for_each;
+  * bug fix in txtnb and \;
   * win.align added to theme;
   * theme_name added;
 
