@@ -3,12 +3,12 @@ Section: games
 Priority: optional
 Maintainer: Peter Kosyh <p.kosyh@gmail.com>
 Build-Depends: debhelper (>= 7), pkg-config, liblua5.1-dev, libsdl1.2-dev, libsdl-ttf2.0-dev, libsdl-image1.2-dev, libsdl-mixer1.2-dev, zlib1g-dev
-Standards-Version: 3.8.3
+Standards-Version: 3.9.2
 Homepage: http://instead.googlecode.com
 
 Package: instead
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: simply text adventures/visual novels engine and game
- Visual novell/text quest-like game in Russian with engine.
+ Visual novell/text quest-like game with engine.
 
