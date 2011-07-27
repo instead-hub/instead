@@ -1919,13 +1919,13 @@ Commands:^
 	showlast = true, 
 	_scripts = {};
 };
-function strip(s)
+
+stead.strip = function(s)
 	local s = tostring(s);
 	s = stead.string.gsub(s, '^[ \t]*', '');
 	s = stead.string.gsub(s, '[ \t]*$', '');
 	return s;
 end
-stead.strip = strip
 
 function isForcedsc(v)
 	local r,g
