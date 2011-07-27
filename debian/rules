@@ -30,6 +30,9 @@ build-stamp: configure-stamp
 	dh_testdir
 
 	# Add here commands to compile the package.
+	ln -s instead.6 doc/sdl-instead.6
+	ln -s instead.txt doc/sdl-instead.txt
+
 	rm -rf Rules.make
 	ln -s Rules.make.system Rules.make
 	echo "2" | ./configure.sh
@@ -44,6 +47,9 @@ clean:
 	rm -f build-stamp configure-stamp
 
 	# Add here commands to clean up after the build process.
+	rm -rf doc/sdl-instead.6
+	rm -rf doc/sdl-instead.txt
+
 	rm -rf Rules.make
 	ln -s Rules.make.system Rules.make
 	$(MAKE) clean
