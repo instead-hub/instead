@@ -2,10 +2,10 @@ game.action = stead.hook(game.action, function(f, s, cmd, ...)
 	if cmd == 'user_kbd' then
 		local r,v;
 		if here().kbd then
-			r,v = call(here(), 'kbd', 
+			r,v = stead.call(here(), 'kbd', 
 			input.key_event.down, input.key_event.key);
 		elseif s.kbd then
-			r,v = call(s, 'kbd', 
+			r,v = stead.call(s, 'kbd', 
 			input.key_event.down, input.key_event.key);
 		end
 		if r == nil and v == nil and stead.api_version < "1.3.5" then

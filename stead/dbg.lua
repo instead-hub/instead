@@ -31,8 +31,8 @@ function ordered_n(t)
 			return false
 		end
 		if isObject(a.v) and isObject(b.v) then
-			local n = call(a.v, 'nam');
-			local m = call(b.v, 'nam');
+			local n = stead.call(a.v, 'nam');
+			local m = stead.call(b.v, 'nam');
 			if type(n) ~= 'string' and type(m) ~= 'string' then
 				return false
 			end
@@ -104,7 +104,7 @@ dump_obj = function(w)
 			if rc ~='' then rc = rc..'^' end
 			local n = '';
 			if type(o) ~= 'function' and isObject(ref(o)) then
-				n = call(ref(o), 'nam');
+				n = stead.call(ref(o), 'nam');
 				if type(n) ~= 'string' then n = '' else n = ' : '..n; end
 			end
 			rc = stead.cat(rc, stead.par(' ', tostring(i)..' : '..t..n));
@@ -139,13 +139,13 @@ end
 list_objects = function()
 	local i,o
 	local rc = stead.par(' ', 'Room:'..tostring(deref(dbg_here())), 
-			'Nam:'..tostring(call(dbg_here(),'nam')));
+			'Nam:'..tostring(stead.call(dbg_here(),'nam')));
 	for i,o in opairs(objs(dbg_here())) do
 		rc = rc..'^';
 		o = ref(o)
 		rc = stead.cat(rc, stead.par(' ', 'Id:'..tostring(o.id), 
 			'Obj:'..tostring(deref(o)), 
-			'Nam:'..tostring(call(o, 'nam')), 
+			'Nam:'..tostring(stead.call(o, 'nam')), 
 			'Disabled:'..tostring(isDisabled(o))));
 	end
 --	seen('disp')._txt = rc
@@ -159,7 +159,7 @@ list_inv = function()
 		if rc ~='' then rc = rc..'^' end
 		o = ref(o)
 		rc = stead.cat(rc, stead.par(' ', 'Id:'..tostring(o.id), 'Obj:'..tostring(deref(o)), 
-			'Nam:'..tostring(call(o, 'nam')), 
+			'Nam:'..tostring(stead.call(o, 'nam')), 
 			'Disabled:'..tostring(isDisabled(o)), 
 			'Taken:'..tostring(taken(o))));
 	end
@@ -227,7 +227,7 @@ choose_location = dlg {
 		objs(s):zap();
 		for k,v,kk in spairs(_G) do
 			if isRoom(v) and not v.debug then
-				local n = tostring(call(v, 'nam'));
+				local n = tostring(stead.call(v, 'nam'));
 				local o = kk;
 				if type(o) == 'string' then
 					n = n..' : '..o;
@@ -251,7 +251,7 @@ choose_object = dlg {
 		objs(s):zap();
 		for k,v,kk in spairs(_G) do
 			if isObject(v) and not isPhrase(v) and not isRoom(v) and not isPlayer(v) and not v.debug and not have(v) and not isStatus(v) then
-				local n = tostring(call(v, 'nam'));
+				local n = tostring(stead.call(v, 'nam'));
 				local o = kk;
 				if type(o) == 'string' then
 					n = n..' : '..o;
@@ -276,7 +276,7 @@ drop_object = dlg {
 		for k,v in ipairs(inv()) do
 			v = ref(v);
 			if not v.debug then
-				local n = tostring(call(v, 'nam'));
+				local n = tostring(stead.call(v, 'nam'));
 				local o = deref(v);
 				if type(o) == 'string' then
 					n = n..' : '..o;
@@ -292,7 +292,7 @@ drop_object = dlg {
 function dbg_exit()
 	local r
 	if stead.api_version < "1.2.0" then
-		r = call(dbg_here(), 'dsc');
+		r = stead.call(dbg_here(), 'dsc');
 	end
 	game.lifes:cat(debug_tool.lifes);
 	timer:set(debug_tool._timer);
