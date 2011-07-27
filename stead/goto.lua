@@ -53,7 +53,7 @@ go = function (self, where, back, noenter, noexit, nodsc)
 		v, r = stead.call(stead.ref(where), 'enter', stead.ref(was));
 		if r == false or (stead.api_version >= "1.3.0" and v == false and r == nil) then
 			self.where = was;
-			return par('^^', res, v), ret(r)
+			return par(stead.scene_delim, res, v), ret(r)
 		end
 	end
 	
@@ -62,7 +62,7 @@ go = function (self, where, back, noenter, noexit, nodsc)
 		need_scene = false;
 	end
 
-	res = par('^^',res,v);
+	res = par(stead.scene_delim, res, v);
 
 	if not back then
 		stead.ref(where).__from__ = stead.deref(was);
@@ -82,7 +82,7 @@ go = function (self, where, back, noenter, noexit, nodsc)
 			stead.in_onexit_call = true
 			v = stead.call(stead.ref(was), 'left', stead.ref(to));
 			stead.in_onexit_call = false
-			res = par('^^',res,v);
+			res = par(stead.scene_delim, res, v);
 		end
 
 		self.where = stead.deref(to)
@@ -91,7 +91,7 @@ go = function (self, where, back, noenter, noexit, nodsc)
 			stead.in_entered_call = true
 			v = stead.call(stead.ref(to), 'entered', stead.ref(was));
 			stead.in_entered_call = false
-			res = par('^^',res,v);
+			res = par(stead.scene_delim, res, v);
 		end
 
 		if tonumber(stead.ref(to).__visited) then
