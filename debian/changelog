@@ -6,6 +6,7 @@ instead (1.4.5) unstable; urgency=low
   * bug fix in txtnb and \;
   * win.align added to theme;
   * theme_name added;
+  * now fading first value is new scene flag;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 14 Jul 2011 16:18:00 +0400
 

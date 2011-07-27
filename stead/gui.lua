@@ -313,25 +313,24 @@ function isFading() --to check fading from sdl gui
 	if not isRoom(h) then
 		return false
 	end
-	r,v = call_value(h, 'fading');
-	if r then
+	r, v = call_value(h, 'fading');
+	if r or r == false then
 		if tonumber(r) and v == nil then
 			return true, tonumber(r)
 		end
-		return true, v
+		return r, v
 	end
-	g,v = call_value(game, 'fading', h);
+	g, v = call_value(game, 'fading', h);
 	if tonumber(g) and v == nil then
-		v = tonumber(g)	
-		g = true
+		return true, tonumber(g)
 	end
-	return g and r ~= false, v
+	return g, v
 end
 
 instead.get_fading = function()
 	local r, v
 	r, v = isFading()
-	if v == nil then v = game.gui.fading end
+	if v == nil and r then v = game.gui.fading end
 	return r,v
 end
 -- vim:ts=4

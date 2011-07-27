@@ -1280,7 +1280,7 @@ int check_new_pict(char *pict)
 	return rc;
 }
 
-static int check_fading(void)
+static int check_fading(int *new_scene)
 {
 	int rc;
 	int st;
@@ -1294,7 +1294,9 @@ static int check_fading(void)
 		st = 255;
 
 	instead_clear();
-	return rc?st:0;
+	if (new_scene)
+		*new_scene = rc;
+	return st;
 }
 
 static void game_autosave(void)
@@ -1751,6 +1753,7 @@ int game_cmd(char *cmd)
 	img_t		oldscreen = NULL;
 	int 	dd = (DIRECT_MODE);
 	int			rc = 0;
+	int			new_scene = 0;
 	if (menu_shown)
 		return -1;
 
@@ -1791,7 +1794,7 @@ int game_cmd(char *cmd)
 			goto inv; /* hackish? ok, yes  it is... */
 		goto err; /* really nothing to do */ 
 	}
-	fading = check_fading();
+	fading = check_fading(&new_scene);
 
 	instead_function("instead.get_title", NULL); 
 	title = instead_retval(0); 
@@ -1939,7 +1942,7 @@ int game_cmd(char *cmd)
 		txt_layout_set(txt_box_layout(el_box(el_scene)), cmdstr);
 		txt_box_set(el_box(el_scene), txt_box_layout(el_box(el_scene)));
 	}
-	if (!fading)
+	if (!new_scene)
 		scroll_to_diff(cmdstr, old_off);
 	FREE(last_cmd);
 	last_cmd = cmdstr;
