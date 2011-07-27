@@ -88,7 +88,7 @@ function disp_obj()
 end
 
 dump_obj = function(w)
-	w = ref(w)
+	w = stead.ref(w)
 	if type(w) ~= 'table' then
 		seen('disp')._txt = '^^No such object.';
 		return true
@@ -103,8 +103,8 @@ dump_obj = function(w)
 		if t then
 			if rc ~='' then rc = rc..'^' end
 			local n = '';
-			if type(o) ~= 'function' and isObject(ref(o)) then
-				n = stead.call(ref(o), 'nam');
+			if type(o) ~= 'function' and isObject(stead.ref(o)) then
+				n = stead.call(stead.ref(o), 'nam');
 				if type(n) ~= 'string' then n = '' else n = ' : '..n; end
 			end
 			rc = stead.cat(rc, stead.par(' ', tostring(i)..' : '..t..n));
@@ -138,13 +138,13 @@ end
 
 list_objects = function()
 	local i,o
-	local rc = stead.par(' ', 'Room:'..tostring(deref(dbg_here())), 
+	local rc = stead.par(' ', 'Room:'..tostring(stead.deref(dbg_here())), 
 			'Nam:'..tostring(stead.call(dbg_here(),'nam')));
 	for i,o in opairs(objs(dbg_here())) do
 		rc = rc..'^';
-		o = ref(o)
+		o = stead.ref(o)
 		rc = stead.cat(rc, stead.par(' ', 'Id:'..tostring(o.id), 
-			'Obj:'..tostring(deref(o)), 
+			'Obj:'..tostring(stead.deref(o)), 
 			'Nam:'..tostring(stead.call(o, 'nam')), 
 			'Disabled:'..tostring(isDisabled(o))));
 	end
@@ -157,8 +157,8 @@ list_inv = function()
 	local rc=''
 	for i,o in opairs(inv()) do
 		if rc ~='' then rc = rc..'^' end
-		o = ref(o)
-		rc = stead.cat(rc, stead.par(' ', 'Id:'..tostring(o.id), 'Obj:'..tostring(deref(o)), 
+		o = stead.ref(o)
+		rc = stead.cat(rc, stead.par(' ', 'Id:'..tostring(o.id), 'Obj:'..tostring(stead.deref(o)), 
 			'Nam:'..tostring(stead.call(o, 'nam')), 
 			'Disabled:'..tostring(isDisabled(o)), 
 			'Taken:'..tostring(taken(o))));
@@ -201,7 +201,7 @@ dump_object = room {
 	inp_enter = function(s)
 		local w = s.obj[1]._txt
 		if type(w) == 'string' then
-			if not ref(w) then w = objs(dbg_here()):srch(w); end
+			if not stead.ref(w) then w = objs(dbg_here()):srch(w); end
 			return dump_obj(w);
 		end
 		return back();
@@ -274,14 +274,14 @@ drop_object = dlg {
 		local k,v
 		objs(s):zap();
 		for k,v in ipairs(inv()) do
-			v = ref(v);
+			v = stead.ref(v);
 			if not v.debug then
 				local n = tostring(stead.call(v, 'nam'));
-				local o = deref(v);
+				local o = stead.deref(v);
 				if type(o) == 'string' then
 					n = n..' : '..o;
 					n = _xref_escape(n);
-					put (phr(n, true, o..':enable(); drop('..o..','..deref(dbg_here())..')'), s)
+					put (phr(n, true, o..':enable(); drop('..o..','..stead.deref(dbg_here())..')'), s)
 				end
 			end
 		end
