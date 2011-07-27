@@ -263,7 +263,7 @@ function isMenu(v)
 	if type(v) ~= 'table' then
 		return false
 	end
-	if v.menu_type then
+	if stead.call_bool(v, 'menu_type') then
 		return true
 	end
 	return false
