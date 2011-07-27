@@ -175,10 +175,10 @@ instead.get_ways = get_ways;
 function get_title()
 	local s
 	if stead.api_version >= "1.2.0" then
-		s = call(here(), 'disp');
+		s = stead.call(here(), 'disp');
 	end
 	if type(s) ~= 'string' then
-		s = call(here(), 'nam');
+		s = stead.call(here(), 'nam');
 	end
 	if type(s) == 'string' and s ~= '' then
 		stead.state = false
@@ -234,7 +234,7 @@ function menu(v)
 	if v.inv == nil then
 		v.inv = function(s)
 			local r,v
-			r,v = call(s, 'menu');
+			r,v = stead.call(s, 'menu');
 			if v == nil then v = true end
 			if r == nil then
 				obj_tag(me(), MENU_TAG_ID); -- retag menu field
@@ -245,7 +245,7 @@ function menu(v)
 	if v.act == nil then
 		v.act = function(s)
 			local r,v
-			r,v = call(s, 'menu');
+			r,v = stead.call(s, 'menu');
 			if v == nil then v = true end
 			if r == nil then
 				obj_tag(me(), MENU_TAG_ID); -- retag menu field
@@ -288,7 +288,7 @@ stead.fmt = fmt
 
 game.fading = function(s)
 	local rc = false
-	local p = call(here(), 'pic');
+	local p = stead.call(here(), 'pic');
 	if stead.cmd == 'load' then
 		game.lastpic = p;
 		return true
@@ -313,14 +313,14 @@ function isFading() --to check fading from sdl gui
 	if not isRoom(h) then
 		return false
 	end
-	r, v = call_value(h, 'fading');
-	if r or r == false then
+	r,v = stead.call_value(h, 'fading');
+	if r then
 		if tonumber(r) and v == nil then
 			return true, tonumber(r)
 		end
 		return r, v
 	end
-	g, v = call_value(game, 'fading', h);
+	g,v = stead.call_value(game, 'fading', h);
 	if tonumber(g) and v == nil then
 		return true, tonumber(g)
 	end

@@ -194,9 +194,9 @@ game.action = stead.hook(game.action, function (f, s, cmd, ...)
 	if cmd == 'kbd_enter' then
 		local r,v
 		if here().inp_enter then
-			r,v = call(here(), 'inp_enter');
+			r,v = stead.call(here(), 'inp_enter');
 		elseif s.inp_enter then
-			r,v = call(s, 'inp_enter');
+			r,v = stead.call(s, 'inp_enter');
 		end
 		return r,v -- nothing todo
 	end

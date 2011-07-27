@@ -75,15 +75,15 @@ function(f, s, cmd, press, mb, x, y, px, py, ...)
 		if s.click then
 			if click.press then
 				if click.button then
-					r,v = call(s, 'click', press, mb, tonumber(x), tonumber(y), x2, y2, ...);
+					r,v = stead.call(s, 'click', press, mb, tonumber(x), tonumber(y), x2, y2, ...);
 				else
-					r,v = call(s, 'click', press, tonumber(x), tonumber(y), x2, y2, ...);
+					r,v = stead.call(s, 'click', press, tonumber(x), tonumber(y), x2, y2, ...);
 				end
 			else
 				if click.button then
-					r,v = call(s, 'click', mb, tonumber(x), tonumber(y), x2, y2, ...);
+					r,v = stead.call(s, 'click', mb, tonumber(x), tonumber(y), x2, y2, ...);
 				else
-					r,v = call(s, 'click', tonumber(x), tonumber(y), x2, y2, ...);
+					r,v = stead.call(s, 'click', tonumber(x), tonumber(y), x2, y2, ...);
 				end
 			end
 		end

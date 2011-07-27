@@ -10,7 +10,7 @@ game.kbd = stead.hook(game.kbd, function(f, s, down, key, ...)
 			if key == '0' then key = '10' end
 			local p = seen(key);
 			if p then
-				return call(p, 'act');
+				return stead.call(p, 'act');
 			end
 		end
 		return

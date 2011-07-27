@@ -31,7 +31,7 @@ go = function (self, where, back, noenter, noexit, nodsc)
 
 	if not isVroom(ref(where)) and not stead.in_exit_call and not noexit then
 		stead.in_exit_call = true -- to break recurse
-		v,r = call(ref(self.where), 'exit', ref(where));
+		v,r = stead.call(ref(self.where), 'exit', ref(where));
 		stead.in_exit_call = nil
 		if r == false or (stead.api_version >= "1.3.0" and v == false and r == nil) then
 			return v, ret(r)
@@ -50,7 +50,7 @@ go = function (self, where, back, noenter, noexit, nodsc)
 	end
 
 	if not jump and not noenter then
-		v, r = call(ref(where), 'enter', ref(was));
+		v, r = stead.call(ref(where), 'enter', ref(was));
 		if r == false or (stead.api_version >= "1.3.0" and v == false and r == nil) then
 			self.where = was;
 			return par('^^', res, v), ret(r)
@@ -80,7 +80,7 @@ go = function (self, where, back, noenter, noexit, nodsc)
 		if not noexit then
 			self.where = was
 			stead.in_onexit_call = true
-			v = call(ref(was), 'left', ref(to));
+			v = stead.call(ref(was), 'left', ref(to));
 			stead.in_onexit_call = false
 			res = par('^^',res,v);
 		end
@@ -89,7 +89,7 @@ go = function (self, where, back, noenter, noexit, nodsc)
 
 		if not noenter then
 			stead.in_entered_call = true
-			v = call(ref(to), 'entered', ref(was));
+			v = stead.call(ref(to), 'entered', ref(was));
 			stead.in_entered_call = false
 			res = par('^^',res,v);
 		end

@@ -110,7 +110,7 @@ function xdsc(n)
 		error("Wrong parameter to xdsc.", 2);
 	end
 	v.dsc = function(s)
-		return call(here(), s.disp);
+		return stead.call(here(), s.disp);
 	end
 	v.save = function(self, name, h, need)
 		if need then
@@ -123,7 +123,7 @@ end
 
 xroom = stead.inherit(room, function(v)
 	v.look = stead.hook(v.look, function(f, s,...)
-		local xdsc = call(s, 'xdsc');
+		local xdsc = stead.call(s, 'xdsc');
 		return par(' ', xdsc, f(s, ...));
 	end)
 	return v

@@ -406,7 +406,7 @@ function obj_look(self)
 	if isDisabled(self) then
 		return
 	end
-	local v = call(self,'dsc');
+	local v = stead.call(self,'dsc');
 	if game.hinting then
 		v = self:xref(v);
 	elseif v then
@@ -477,7 +477,7 @@ function obj_str(self)
 	for i,o in opairs(self.obj) do
 		o = ref(o);
 		if o~= nil and not isDisabled(o) then -- isObject is better, but compat layer must be ok
-			vv = call(o, 'nam');
+			vv = stead.call(o, 'nam');
 			vv = xref(vv, o);
 			v = stead.par(',', v, vv, obj_str(o));
 		end
@@ -594,7 +594,7 @@ function list_str(self)
 	for i,o in opairs(self) do
 		o = ref(o);
 		if o~= nil and not isDisabled(o) then
-			vv = call(o, 'nam');
+			vv = stead.call(o, 'nam');
 			vv = xref(vv, o);
 			v = stead.par(',', v, vv);
 		end
@@ -674,7 +674,7 @@ function list_name(self, name, dis)
 	for n,o,ii in opairs(self) do
 		o = ref(o);
 		if isObject(o) then
-			local nam = call(o,'nam') ;
+			local nam = stead.call(o,'nam') ;
 			if ( not isDisabled(o) or dis ) and name == tostring(nam) then
 				return ii;
 			end
@@ -839,6 +839,7 @@ function call(v, n, ...)
 	end
 	error ("Method not string nor function:"..tostring(n), 2);
 end
+stead.call = call
 
 function call_bool(v, n, ...)
 	if type(v) ~= 'table' then
@@ -861,6 +862,7 @@ function call_bool(v, n, ...)
 	end
 	return true; -- not nil
 end
+stead.call_bool = call_bool
 
 function call_value(v, n, ...)
 	if type(v) ~= 'table' then
@@ -879,11 +881,12 @@ function call_value(v, n, ...)
 	stead.callpop();
 	return r,v;
 end
+stead.call_value = call_value
 
 function room_scene(self)
 	local v;
-	v = iface:title(call(self,'nam'));
-	v = stead.par('^^', v, call(self,'dsc')); --obj_look(self));
+	v = iface:title(stead.call(self,'nam'));
+	v = stead.par('^^', v, stead.call(self,'dsc')); --obj_look(self));
 	return stead.cat(v,' ');
 end
 
@@ -960,8 +963,8 @@ end
 
 function dialog_scene(self)
 	local v
-	v = iface:title(call(self,'nam'));
-	v = stead.par('^^', v, call(self, 'dsc')); --obj_look(self));
+	v = iface:title(stead.call(self,'nam'));
+	v = stead.par('^^', v, stead.call(self, 'dsc')); --obj_look(self));
 	return v;
 end
 
@@ -1118,7 +1121,7 @@ function phrase_action(self)
 -- here it is
 	ph:disable(); -- /* disable it!!! */
 
-	local last = call(ph, 'ans');
+	local last = stead.call(ph, 'ans');
 
 	if type(ph.do_act) == 'string' then
 		local f = loadstring(ph.do_act);
@@ -1168,7 +1171,7 @@ function phrase_look(self, n)
 	if isDisabled(self) then
 		return
 	end
-	local v = call(self, 'dsc');
+	local v = stead.call(self, 'dsc');
 	if type(v) ~= 'string' then return; end
 	if game.hinting then
 		return self:xref('{'..v..'}');
@@ -1253,13 +1256,13 @@ function player_action(self, what, ...)
 	local v,r,obj
 	obj = ref(self.where):srch(what);
 	if not obj then
-		return call(ref(game), 'action', what, ...); --player_do(self, what, ...);
+		return stead.call(ref(game), 'action', what, ...); --player_do(self, what, ...);
 	end
 	v, r = player_take(self, what, ...);
 	if not v then
-		v, r = call(ref(obj), 'act', ...);
+		v, r = stead.call(ref(obj), 'act', ...);
 		if not v and r ~= true then
-			v, r = call(ref(game), 'act', obj, ...);
+			v, r = stead.call(ref(game), 'act', obj, ...);
 		end
 	end
 	return v, r;
@@ -1271,7 +1274,7 @@ function player_take(self, what, ...)
 	if not obj then
 		return nil, false;
 	end
-	v,r = call(ref(obj), 'tak', ...);
+	v,r = stead.call(ref(obj), 'tak', ...);
 	if v and r ~= false then
 		take(obj, w);
 	end
@@ -1294,10 +1297,10 @@ function player_use(self, what, onwhat, ...)
 		if scene_use_mode then
 			return self:action(what, ...); -- call act
 		else
-			v, r = call(ref(obj),'inv', ...); -- call inv
+			v, r = stead.call(ref(obj),'inv', ...); -- call inv
 		end
 		if not v and r ~= true then
-			v, r = call(game, 'inv', obj, ...);
+			v, r = stead.call(game, 'inv', obj, ...);
 		end
 		return v, r;
 	end
@@ -1309,13 +1312,13 @@ function player_use(self, what, onwhat, ...)
 		return game.err, false;
 	end
 	if not scene_use_mode or isSceneUse(ref(obj)) then
-		v, r = call(ref(obj), 'use', obj2, ...);
+		v, r = stead.call(ref(obj), 'use', obj2, ...);
 		if r ~= false then
-			vv = call(ref(obj2), 'used', obj, ...);
+			vv = stead.call(ref(obj2), 'used', obj, ...);
 		end
 	end
 	if not v and not vv then
-		v, r = call(game, 'use', obj, obj2, ...);
+		v, r = stead.call(game, 'use', obj, obj2, ...);
 	end
 	return stead.par(' ', v, vv);
 end
@@ -1358,7 +1361,7 @@ function go(self, where, back)
 	local v, r;
 	if not isVroom(ref(where)) and not stead.in_exit_call then
 		stead.in_exit_call = true -- to break recurse
-		v,r = call(ref(self.where), 'exit', where);
+		v,r = stead.call(ref(self.where), 'exit', where);
 		stead.in_exit_call = nil
 		if r == false then
 			return v, ret(r)
@@ -1369,7 +1372,7 @@ function go(self, where, back)
 
 	v = nil;
 	if not back or not isDialog(ref(self.where)) or isDialog(ref(where)) then
-		v, r = call(ref(where), 'enter', self.where);
+		v, r = stead.call(ref(where), 'enter', self.where);
 		if r == false then
 			return v, ret(r)
 		end
@@ -1471,7 +1474,7 @@ function game_life(self)
 		o = ref(o);
 		if not isDisabled(o) then
 			PLAYER_MOVED = false
-			vv,pre = call(o,'life');
+			vv,pre = stead.call(o, 'life');
 			if pre or (PLAYER_MOVED and pre ~= false) then
 				av = stead.par(' ', av, vv);
 			else
@@ -1541,7 +1544,7 @@ function do_ini(self, load)
 		stead.functions[o].key_name = k;
 	end
 	local function call_ini(k, o, ...)
-		v = stead.par('', v, call(o, 'ini', ...));
+		v = stead.par('', v, stead.call(o, 'ini', ...));
 	end
 	math.randomseed(os.time(os.date("*t")))
 	rnd(1); rnd(2); rnd(3); -- Lua bug?
@@ -1569,8 +1572,8 @@ stead.do_ini = do_ini
 function game_ini(self)
 	local v,vv
 	v = stead.do_ini(self);
-	vv = iface:title(call(self,'nam'));
-	vv = stead.par('^^', vv, call(self,'dsc'));
+	vv = iface:title(stead.call(self,'nam'));
+	vv = stead.par('^^', vv, stead.call(self,'dsc'));
 	if type(init) == 'function' then
 		init();
 	end
@@ -1629,14 +1632,14 @@ function isEnableSave()
 	if game.enable_save == nil or get_autosave() then
 		return true
 	end
-	return call_bool(game, 'enable_save');
+	return stead.call_bool(game, 'enable_save');
 end
 
 function isEnableAutosave()
 	if game.enable_autosave == nil then
 		return true
 	end
-	return call_bool(game, 'enable_autosave');
+	return stead.call_bool(game, 'enable_autosave');
 end
 
 function for_each(o, n, f, fv, ...)
@@ -1870,7 +1873,7 @@ function game_save(self, name, file)
 	if not h then
 		return nil, false
 	end
-	local n = call(here(),'nam');
+	local n = stead.call(here(),'nam');
 	if type(n) == 'string' and n ~= "" then
 		h:write("-- $Name: "..n:gsub("\n","\\n").."$\n");
 	end
@@ -1929,21 +1932,21 @@ end
 
 function isForcedsc(v)
 	local r,g
-	r = call_bool(v, 'forcedsc');
+	r = stead.call_bool(v, 'forcedsc');
 	if r then
 		return true
 	end
-	g = call_bool(game, 'forcedsc', v);
+	g = stead.call_bool(game, 'forcedsc', v);
 	return g and r ~= false
 end
 
 function isSceneUse(v)
 	local o,g
-	o = call_bool(v, 'scene_use');
+	o = stead.call_bool(v, 'scene_use');
 	if o then
 		return true
 	end
-	g = call_bool(game, 'scene_use', v);
+	g = stead.call_bool(game, 'scene_use', v);
 	return g and o ~= false
 end
 
@@ -2309,12 +2312,12 @@ function vobj_act(self, ...)
 	if ref(o) and ref(o).where then
 		return goto(ref(o).where);
 	end
-	return call(ref(r),'act', self.key, ...);
+	return stead.call(ref(r),'act', self.key, ...);
 end
 
 function vobj_used(self, ...)
 	local o, r = here():srch(self.nam);
-	return call(ref(r),'used', self.key, ...);
+	return stead.call(ref(r),'used', self.key, ...);
 end
 
 function vobj(key, name, dsc, w)
@@ -2571,15 +2574,15 @@ function movef(obj, there, from)
 end
 
 function get_picture()
-	local s = call(here(),'pic');
+	local s = stead.call(here(),'pic');
 	if not s then
-		s = call(game, 'pic');
+		s = stead.call(game, 'pic');
 	end
 	return s;
 end
 
 function get_title()
-	local s = call(here(),'nam');
+	local s = stead.call(here(),'nam');
 	return s;
 end
 
@@ -2794,7 +2797,7 @@ stead.hook = hook
 
 function nameof(v)
 	if isObject(v) then
-		local r = call(v, 'nam');
+		local r = stead.call(v, 'nam');
 		return r
 	end
 end

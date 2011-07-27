@@ -2,9 +2,9 @@ game.action = stead.hook(game.action, function(f, s, cmd, ...)
 	if cmd == 'user_timer' then
 		local r,v
 		if here().timer then
-			r,v = call(here(), 'timer');
+			r,v = stead.call(here(), 'timer');
 		elseif s.timer then
-			r,v = call(s, 'timer');
+			r,v = stead.call(s, 'timer');
 		end
 		if r == nil and v == nil and stead.api_version < "1.3.5" then
 			return nil, true
