@@ -2,7 +2,7 @@ function player_action(self, what, ...)
 	local v,r,obj
 	obj = _G[what];
 	if not isXaction(obj) then
-		obj = ref(self.where):srch(what);
+		obj = stead.ref(self.where):srch(what);
 	end
 	if not obj then
 		return stead.call(game, 'action', what, ...); --player_do(self, what, ...);
@@ -24,7 +24,7 @@ function player_use(self, what, onwhat, ...)
 
 	obj = self:srch(what); -- in inv?
 	if not obj then -- no
-		obj = ref(self.where):srch(what); -- in scene?
+		obj = stead.ref(self.where):srch(what); -- in scene?
 		if not obj then -- no!
 			return game.err, false;
 		end
@@ -34,14 +34,14 @@ function player_use(self, what, onwhat, ...)
 		if scene_use_mode then
 			return self:action(what, ...); -- call act
 		else
-			v, r = stead.call(ref(obj),'inv', ...); -- call inv
+			v, r = stead.call(stead.ref(obj),'inv', ...); -- call inv
 		end
 		if not v and r ~= true then
 			v, r = stead.call(game, 'inv', obj, ...);
 		end
 		return v, r;
 	end
-	obj2 = ref(self.where):srch(onwhat); -- in scene?
+	obj2 = stead.ref(self.where):srch(onwhat); -- in scene?
 	if not obj2 then
 		obj2 = self:srch(onwhat); -- in inv?
 	end
@@ -49,8 +49,8 @@ function player_use(self, what, onwhat, ...)
 		return game.err, false;
 	end
 	
-	obj = ref(obj)
-	obj2 = ref(obj2)
+	obj = stead.ref(obj)
+	obj2 = stead.ref(obj2)
 
 	if not scene_use_mode or isSceneUse(obj) then
 		v, r = stead.call(obj, 'use', obj2, ...);
@@ -72,7 +72,7 @@ function player_use(self, what, onwhat, ...)
 end
 
 function vobj_save(self, name, h, need)
-	local w = deref(self.where)
+	local w = stead.deref(self.where)
 	local dsc = self.dsc
 	
 	if need then
@@ -87,27 +87,27 @@ end
 
 function vobj_act(self, ...)
 	local o, r = here():srch(self); -- self.nam
-	if ref(o) and ref(o).where then
-		return goto(ref(o).where);
+	if stead.ref(o) and stead.ref(o).where then
+		return goto(stead.ref(o).where);
 	end
-	return stead.call(ref(r),'act', self.nam, ...);
+	return stead.call(stead.ref(r),'act', self.nam, ...);
 end
 
 function vobj_used(self, ...)
 	local o, r = here():srch(self.nam);
-	return stead.call(ref(r),'used', self.nam, ...);
+	return stead.call(stead.ref(r),'used', self.nam, ...);
 end
 
 function vobj_use(self, ...)
 	local o, r = here():srch(self.nam);
-	return stead.call(ref(r),'use', self.nam, ...);
+	return stead.call(stead.ref(r),'use', self.nam, ...);
 end
 
 function vobj(name, dsc, w)
 	return obj{ nam = tostring(name), 
 		vobject_type = true,
 		dsc = dsc, 
-		where = deref(w), 
+		where = stead.deref(w), 
 		act = vobj_act, 
 		used = vobj_used, 
 		use = vobj_use,
@@ -120,7 +120,7 @@ function vway(name, dsc, w)
 		vobject_type = true,
 		dsc = dsc, 
 		act = vobj_act, 
-		where = deref(w), 
+		where = stead.deref(w), 
 		used = vobj_used,
 		use = vobj_use, 
 		save = vobj_save };
@@ -133,18 +133,18 @@ end
 function list_check(self, name) -- force using of objects, instead refs
 	local i, v, ii;
 	for i,v,ii in opairs(self) do
-		local o = ref(v);
+		local o = stead.ref(v);
 		if not isObject(o) then 
 			error ("No object: "..tostring(v))
 			return false
 		end
-		if (v.auto_allocated and not ref(v.key_name)) -- renew
-			or (isObject(deref(v)) and not v._dynamic_type) then -- no named object!
+		if (v.auto_allocated and not stead.ref(v.key_name)) -- renew
+			or (isObject(stead.deref(v)) and not v._dynamic_type) then -- no named object!
 			local n = stead.string.format("%s[%d]", name, ii);
 			v = allocator:new(n, n);
 			self[ii] = v;
 			v.auto_allocated = true;
-			for_each(v, n, check_list, isList, deref(v));
+			for_each(v, n, check_list, isList, stead.deref(v));
 		else
 			self[ii] = o;
 		end
@@ -155,7 +155,7 @@ end
 function list_add(self, name, pos)
 	local nam = name
 	if stead.initialized then
-		nam = ref(name);
+		nam = stead.ref(name);
 	end
 	if not nam then
 		error ("Add wrong object to list: "..tostring(name), 2);
@@ -164,7 +164,7 @@ function list_add(self, name, pos)
 		return nil
 	end
 	self.__modified__ = true;
-	if isObject(deref(nam)) then
+	if isObject(stead.deref(nam)) then
 		nam._dynamic_type = true
 	end
 	if tonumber(pos) then
@@ -183,12 +183,12 @@ function list_set(self, name, pos)
 		return nil
 	end
 	if stead.initialized then
-		nam = ref(name);
+		nam = stead.ref(name);
 	end
 	if not nam then
 		error ("Set wrong object in list: "..tostring(name), 2);
 	end
-	if isObject(deref(nam)) then
+	if isObject(stead.deref(nam)) then
 		nam._dynamic_type = true
 	end
 	self.__modified__ = true;
@@ -199,7 +199,7 @@ end
 function list_concat(self, other, pos)
 	local n,o,ii
 	for n,o,ii in opairs(other) do
-		o = ref(o);
+		o = stead.ref(o);
 		if pos == nil then
 			self:add(o);
 		else 
@@ -214,7 +214,7 @@ stead.delim = '|'
 function list_str(self)
 	local i, v, vv, o;
 	for i,o in opairs(self) do
-		o = ref(o);
+		o = stead.ref(o);
 		if isObject(o) and not isDisabled(o) then
 			vv = nil
 			if game.gui then
@@ -239,7 +239,7 @@ function obj_str(self)
 		return 
 	end
 	for i,o in opairs(self.obj) do
-		o = ref(o);
+		o = stead.ref(o);
 		if isObject(o) and not isDisabled(o) then
 			vv = nil
 			if game.gui then
@@ -259,10 +259,10 @@ function path(w, wh) -- search in way, disabled too
 	if not wh then
 		wh = here();
 	else
-		wh = ref(wh);
+		wh = stead.ref(wh);
 	end
 	local o = ways(wh):srch(w, true);
-	o = ref(o);
+	o = stead.ref(o);
 	if isRoom(o) then
 		return o
 	end

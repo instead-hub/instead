@@ -9,14 +9,14 @@ game.gui = {
 }
 
 iface.xref = function(self, str, obj, ...)
-	local o = ref(obj);
+	local o = stead.ref(obj);
 	local cmd=''
 
 	if not isObject(o) or isStatus(o) or (not o.id and not isXaction(o)) then
 		return str;
 	end
 
-	if ref(ways():srch(obj)) then
+	if stead.ref(ways():srch(obj)) then
 		cmd = 'go ';
 	elseif isMenu(o) then
 		cmd = 'act ';
@@ -32,7 +32,7 @@ iface.xref = function(self, str, obj, ...)
 		a = a..','..varg[i]
 	end
 	if isXaction(o) and not o.id then
-		return stead.cat('<a:'..cmd..deref(obj)..a..'>',str,'</a>');
+		return stead.cat('<a:'..cmd..stead.deref(obj)..a..'>',str,'</a>');
 	end
 	return stead.cat('<a:'..cmd..'0'..tostring(o.id)..a..'>',str,'</a>');
 end;

@@ -206,7 +206,7 @@ end)
 lookup_inp = function()
 	local i,o 
 	for i,o in opairs(objs()) do
-		o = ref(o)
+		o = stead.ref(o)
 		if o._edit then
 			return o
 		end

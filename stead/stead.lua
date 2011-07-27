@@ -87,8 +87,8 @@ stead.tostring = function(v)
 		v = stead.string.format("%q", v);
 	elseif v == nil or type(v) == 'boolean' or type(v) == 'number' then
 		v = tostring(v);
-	elseif type(v) == 'table' and type(deref(v)) == 'string' then
-		v = deref(v);
+	elseif type(v) == 'table' and type(stead.deref(v)) == 'string' then
+		v = stead.deref(v);
 	else
 		v = nil
 	end
@@ -413,7 +413,7 @@ function obj_look(self)
 		v = stead.string.gsub(v, '[{}]','');
 	end
 	for i,o in opairs(self.obj) do
-		o = ref(o);
+		o = stead.ref(o);
 		if isObject(o) then
 			vv = obj_look(o);
 			v = stead.par(' ',v, vv); 
@@ -475,7 +475,7 @@ function obj_str(self)
 		return 
 	end
 	for i,o in opairs(self.obj) do
-		o = ref(o);
+		o = stead.ref(o);
 		if o~= nil and not isDisabled(o) then -- isObject is better, but compat layer must be ok
 			vv = stead.call(o, 'nam');
 			vv = xref(vv, o);
@@ -539,14 +539,14 @@ function obj(v)
 end
 
 
-function ref(n, nofunc) -- ref object by name
+function stead.ref(n, nofunc) -- ref object by name
 	if type(n) == 'string' then
 		if type(_G[n]) == 'table' then -- fastest path
 			return _G[n];
 		end
 		local f = loadstring('return '..n);
 		if f then
-			return ref(f(), nofunc);
+			return stead.ref(f(), nofunc);
 		end
 		return nil;
 	end
@@ -558,12 +558,13 @@ function ref(n, nofunc) -- ref object by name
 		if not r then
 			return nil
 		end
-		return ref(v);
+		return stead.ref(v);
 	end
 	return nil
 end
+ref = stead.ref
 
-function deref(n)
+function stead.deref(n)
 	if type(n) == 'string' then
 		return n
 	end
@@ -573,17 +574,18 @@ function deref(n)
 	end
 	return n
 end
+deref = stead.deref
 
 function list_check(self, name)
 	local i, v, ii;
 	for i,v,ii in opairs(self) do
-		local o = ref(v);
+		local o = stead.ref(v);
 		if not o then -- isObject(o) then -- compat
 			error ("No object: "..tostring(v))
 			return false
 		end
-		if deref(v) then
-			self[ii] = deref(v);
+		if stead.deref(v) then
+			self[ii] = stead.deref(v);
 		end
 	end
 	return true; 
@@ -592,7 +594,7 @@ end
 function list_str(self)
 	local i, v, vv, o;
 	for i,o in opairs(self) do
-		o = ref(o);
+		o = stead.ref(o);
 		if o~= nil and not isDisabled(o) then
 			vv = stead.call(o, 'nam');
 			vv = xref(vv, o);
@@ -605,7 +607,7 @@ end
 
 function list_add(self, name, pos)
 	local nam
-	nam = deref(name);
+	nam = stead.deref(name);
 	if self:look(nam) then
 		return nil
 	end
@@ -625,7 +627,7 @@ function list_set(self, name, pos)
 	if not i then
 		return nil
 	end
-	nam = deref(name);
+	nam = stead.deref(name);
 	self.__modified__ = true;
 	self[i] = nam; -- for spare lists
 	return true
@@ -634,7 +636,7 @@ end
 function list_find(self, name)
 	local n, v, ii
 	for n,v,ii in opairs(self) do 
-		if ref(v) == ref(name, true) then -- do not call func while search
+		if stead.ref(v) == stead.ref(name, true) then -- do not call func while search
 			return ii; 
 		end	
 	end
@@ -644,7 +646,7 @@ end
 function list_disable_all(s)
 	local k,v
 	for k,v in opairs(s) do
-		local o = ref(v);
+		local o = stead.ref(v);
 		if isObject(o) then
 			o:disable()
 		end
@@ -654,7 +656,7 @@ end
 function list_enable_all(s)
 	local k,v
 	for k,v in opairs(s) do
-		local o = ref(v);
+		local o = stead.ref(v);
 		if isObject(o) then
 			o:enable()
 		end
@@ -672,7 +674,7 @@ end
 function list_name(self, name, dis)
 	local n, o, ii
 	for n,o,ii in opairs(self) do
-		o = ref(o);
+		o = stead.ref(o);
 		if isObject(o) then
 			local nam = stead.call(o,'nam') ;
 			if ( not isDisabled(o) or dis ) and name == tostring(nam) then
@@ -685,7 +687,7 @@ end
 function list_id(self, id, dis)
 	local n,o,ii
 	for n,o,ii in opairs(self) do
-		o = ref(o);
+		o = stead.ref(o);
 		if dis or not isDisabled(o) then
 			if isObject(o) and id == o.id then
 				return ii;
@@ -706,7 +708,7 @@ function list_search(self, n, dis)
 			return nil
 		end
 	end
-	if not dis and isDisabled(ref(self[i])) then
+	if not dis and isDisabled(stead.ref(self[i])) then
 		return nil;
 	end
 	return self[i], i;
@@ -724,11 +726,11 @@ end
 function list_concat(self, other, pos)
 	local n,o,ii
 	for n,o,ii in opairs(other) do
-		o = ref(o);
+		o = stead.ref(o);
 		if pos == nil then
-			self:add(deref(o));
+			self:add(stead.deref(o));
 		else 
-			self:add(deref(o), pos);
+			self:add(stead.deref(o), pos);
 			pos = pos + 1;
 		end
 	end
@@ -893,7 +895,7 @@ end
 function room_look(self)
 	local i, vv, o;
 	for i,o in opairs(self.obj) do
-		o = ref(o);
+		o = stead.ref(o);
 		if isObject(o) then
 			vv = stead.par(' ',vv, o:look());
 		end
@@ -912,7 +914,7 @@ function obj_search(v, n, dis)
 		return o, v;
 	end
 	for i,o in opairs(v.obj) do
-		o = ref(o);
+		o = stead.ref(o);
 		if isObject(o) then
 			local r,rr = obj_search(o, n, dis);
 			if r then
@@ -972,7 +974,7 @@ function dialog_look(self)
 	local i,n,v,ph
 	n = 1
 	for i,ph in opairs(self.obj) do
-		ph = ref(ph);
+		ph = stead.ref(ph);
 		if isPhrase(ph) and not isDisabled(ph) then
 			v = stead.par('^', v, txtnm(n, ph:look()));
 			n = n + 1
@@ -985,7 +987,7 @@ function dialog_rescan(self)
 	local i,k,ph
 	k = 1
 	for i,ph in opairs(self.obj) do
-		ph = ref(ph);
+		ph = stead.ref(ph);
 		if isPhrase(ph) and not isDisabled(ph) then
 			ph.nam = tostring(k);
 			k = k + 1;
@@ -1003,12 +1005,12 @@ end
 
 function dialog_phrase(self, num)
 	if not tonumber(num) then
-		if isPhrase(ref(num)) then
-			return ref(num);
+		if isPhrase(stead.ref(num)) then
+			return stead.ref(num);
 		end
 		return nil
 	end
-	return ref(self.obj[tonumber(num)]);
+	return stead.ref(self.obj[tonumber(num)]);
 end
 
 function phrase_seen(s, enb, ...)
@@ -1207,15 +1209,15 @@ function player_inv(self)
 end
 
 function player_ways(self)
-	return iface:ways(stead.cat(ref(self.where).way:str()));
+	return iface:ways(stead.cat(stead.ref(self.where).way:str()));
 end
 
 function player_objs(self)
-	return iface:objs(stead.cat(ref(self.where):str()));
+	return iface:objs(stead.cat(stead.ref(self.where):str()));
 end
 
 function player_look(self)
-	return ref(self.where):scene();
+	return stead.ref(self.where):scene();
 end
 
 function obj_tag(self, id)
@@ -1226,7 +1228,7 @@ function obj_tag(self, id)
 	end
 	
 	for k,v in opairs(self.obj) do
-		v = ref(v);
+		v = stead.ref(v);
 		if isObject(v) and not isDisabled(v) then
 			id = id + 1;
 			v.id = id;
@@ -1244,7 +1246,7 @@ function player_tagall(self)
 	id = obj_tag(me(), id);
 
 	for k,v in opairs(ways()) do
-		v = ref(v);
+		v = stead.ref(v);
 		if isRoom(v) and not isDisabled(v) then
 			id = id + 1;
 			v.id = id;
@@ -1254,15 +1256,15 @@ end
 
 function player_action(self, what, ...)
 	local v,r,obj
-	obj = ref(self.where):srch(what);
+	obj = stead.ref(self.where):srch(what);
 	if not obj then
-		return stead.call(ref(game), 'action', what, ...); --player_do(self, what, ...);
+		return stead.call(stead.ref(game), 'action', what, ...); --player_do(self, what, ...);
 	end
 	v, r = player_take(self, what, ...);
 	if not v then
-		v, r = stead.call(ref(obj), 'act', ...);
+		v, r = stead.call(stead.ref(obj), 'act', ...);
 		if not v and r ~= true then
-			v, r = stead.call(ref(game), 'act', obj, ...);
+			v, r = stead.call(stead.ref(game), 'act', obj, ...);
 		end
 	end
 	return v, r;
@@ -1270,11 +1272,11 @@ end
 
 function player_take(self, what, ...)
 	local v,r,obj,w
-	obj,w = ref(self.where):srch(what);
+	obj,w = stead.ref(self.where):srch(what);
 	if not obj then
 		return nil, false;
 	end
-	v,r = stead.call(ref(obj), 'tak', ...);
+	v,r = stead.call(stead.ref(obj), 'tak', ...);
 	if v and r ~= false then
 		take(obj, w);
 	end
@@ -1287,7 +1289,7 @@ function player_use(self, what, onwhat, ...)
 
 	obj = self:srch(what); -- in inv?
 	if not obj then -- no
-		obj = ref(self.where):srch(what); -- in scene?
+		obj = stead.ref(self.where):srch(what); -- in scene?
 		if not obj then -- no!
 			return game.err, false;
 		end
@@ -1297,24 +1299,24 @@ function player_use(self, what, onwhat, ...)
 		if scene_use_mode then
 			return self:action(what, ...); -- call act
 		else
-			v, r = stead.call(ref(obj),'inv', ...); -- call inv
+			v, r = stead.call(stead.ref(obj),'inv', ...); -- call inv
 		end
 		if not v and r ~= true then
 			v, r = stead.call(game, 'inv', obj, ...);
 		end
 		return v, r;
 	end
-	obj2 = ref(self.where):srch(onwhat); -- in scene?
+	obj2 = stead.ref(self.where):srch(onwhat); -- in scene?
 	if not obj2 then
 		obj2 = self:srch(onwhat); -- in inv?
 	end
 	if not obj2 or obj2 == obj then
 		return game.err, false;
 	end
-	if not scene_use_mode or isSceneUse(ref(obj)) then
-		v, r = stead.call(ref(obj), 'use', obj2, ...);
+	if not scene_use_mode or isSceneUse(stead.ref(obj)) then
+		v, r = stead.call(stead.ref(obj), 'use', obj2, ...);
 		if r ~= false then
-			vv = stead.call(ref(obj2), 'used', obj, ...);
+			vv = stead.call(stead.ref(obj2), 'used', obj, ...);
 		end
 	end
 	if not v and not vv then
@@ -1324,7 +1326,7 @@ function player_use(self, what, onwhat, ...)
 end
 
 function player_back(self)
-	local where = ref(self.where);
+	local where = stead.ref(self.where);
 	if where == nil then
 		return nil,false
 	end
@@ -1347,10 +1349,10 @@ function go(self, where, back)
 	if where == nil then
 		return nil,ret(false)
 	end
-	if not isRoom(ref(where)) then
+	if not isRoom(stead.ref(where)) then
 		error ("Trying to go nowhere: "..where, 2);
 	end
-	if not isRoom(ref(self.where)) then
+	if not isRoom(stead.ref(self.where)) then
 		error ("Trying to go from nowhere: "..self.where, 2);
 	end
 
@@ -1359,9 +1361,9 @@ function go(self, where, back)
 	end
 
 	local v, r;
-	if not isVroom(ref(where)) and not stead.in_exit_call then
+	if not isVroom(stead.ref(where)) and not stead.in_exit_call then
 		stead.in_exit_call = true -- to break recurse
-		v,r = stead.call(ref(self.where), 'exit', where);
+		v,r = stead.call(stead.ref(self.where), 'exit', where);
 		stead.in_exit_call = nil
 		if r == false then
 			return v, ret(r)
@@ -1371,30 +1373,30 @@ function go(self, where, back)
 	local res = v;
 
 	v = nil;
-	if not back or not isDialog(ref(self.where)) or isDialog(ref(where)) then
-		v, r = stead.call(ref(where), 'enter', self.where);
+	if not back or not isDialog(stead.ref(self.where)) or isDialog(stead.ref(where)) then
+		v, r = stead.call(stead.ref(where), 'enter', self.where);
 		if r == false then
 			return v, ret(r)
 		end
 		need_scene = true;
-		if ref(was) ~= ref(self.where) then -- jump !!!
-			where = deref(self.where);
+		if stead.ref(was) ~= stead.ref(self.where) then -- jump !!!
+			where = stead.deref(self.where);
 			need_scene = false;
 		end
 	end
 	res = stead.par('^^',res,v);
 
 	if not back then
-		ref(where).__from__ = deref(self.where);
+		stead.ref(where).__from__ = stead.deref(self.where);
 	end
 
-	self.where = deref(where);
+	self.where = stead.deref(where);
 
 	ret();
 
 	PLAYER_MOVED = true
-	if need_scene then -- or isForcedsc(ref(where)) then -- i'am not sure...
-		return stead.par('^^',res,ref(where):scene());
+	if need_scene then -- or isForcedsc(stead.ref(where)) then -- i'am not sure...
+		return stead.par('^^', res, stead.ref(where):scene());
 	end
 	return res;
 end
@@ -1405,7 +1407,7 @@ function player_goto(self, where, ...)
 end
 
 function player_go(self, where)
-	local w = ref(self.where).way:srch(where);
+	local w = stead.ref(self.where).way:srch(where);
 	if not w then
 		return nil,false
 	end
@@ -1414,7 +1416,7 @@ function player_go(self, where)
 end
 
 function player_save(self, name, h)
-	h:write(tostring(name)..".where = '"..deref(self.where).."';\n");
+	h:write(tostring(name)..".where = '"..stead.deref(self.where).."';\n");
 	savemembers(h, self, name, false);
 end
 
@@ -1471,7 +1473,7 @@ function game_life(self)
 	for i,o in opairs(self.lifes) do
 		local vv
 		local pre
-		o = ref(o);
+		o = stead.ref(o);
 		if not isDisabled(o) then
 			PLAYER_MOVED = false
 			vv,pre = stead.call(o, 'life');
@@ -1512,7 +1514,7 @@ function check_room(k, v)
 end
 
 function check_player(k, v)
-	v.where = deref(v.where);
+	v.where = stead.deref(v.where);
 end
 
 function check_object(k, v)
@@ -1525,7 +1527,7 @@ function check_object(k, v)
 	if isPlayer(v) then
 		check_player(k, v);
 	end
-	for_each(v, k, check_list, isList, deref(v))
+	for_each(v, k, check_list, isList, stead.deref(v))
 end
 
 function for_everything(f, ...)
@@ -1549,15 +1551,15 @@ function do_ini(self, load)
 	math.randomseed(os.time(os.date("*t")))
 	rnd(1); rnd(2); rnd(3); -- Lua bug?
 
-	game.pl = deref(game.pl);
-	game.where = deref(game.where);
+	game.pl = stead.deref(game.pl);
+	game.where = stead.deref(game.where);
 
 	if not load then
 		for_each_object(call_key);
 		for_each_codeblock(call_codekey);
 		for_each_object(check_object);
 		call_key("game", game);
-		for_each(game, "game", check_list, isList, deref(game))
+		for_each(game, "game", check_list, isList, stead.deref(game))
 	end
 	for_each_object(call_ini, load);
 	me():tag();
@@ -1625,7 +1627,7 @@ function game(v)
 end
 
 function live(v)
-	return ref(game.lifes:srch(v));
+	return stead.ref(game.lifes:srch(v));
 end
 
 function isEnableSave()
@@ -1752,7 +1754,7 @@ function savevar (h, v, n, need)
 				v:save(v.key_name, h, false, true); -- here todo
 			end
 			if need then
-				if ref(v.key_name) == nil then
+				if stead.ref(v.key_name) == nil then
 					v.key_name = 'null'
 				end
 				h:write(stead.string.format("%s = %s\n", n, v.key_name));
@@ -1857,7 +1859,7 @@ function game_save(self, name, file)
 	local h;
 
 	if file ~= nil then
-		file:write(name..".pl = '"..deref(self.pl).."'\n");
+		file:write(name..".pl = '"..stead.deref(self.pl).."'\n");
 		savemembers(file, self, name, false);
 		return nil, true
 	end
@@ -1997,12 +1999,12 @@ iface = {
 		return n..' - '..str;
 	end,
 	xref = function(self, str, obj)
-		local o = ref(here():srch(obj));
+		local o = stead.ref(here():srch(obj));
 		if not o then 
-			o = ref(ways():srch(obj));
+			o = stead.ref(ways():srch(obj));
 		end
 		if not o then
-			o = ref(me():srch(obj));
+			o = stead.ref(me():srch(obj));
 		end
 		if not o or not o.id then
 			return str;
@@ -2152,28 +2154,28 @@ iface = {
 
 
 function me()
-	return ref(game.pl);
+	return stead.ref(game.pl);
 end
 
 function where(s)
-	if not isObject(ref(s)) then error("Wrong parameter to where.", 2); end
-	if isPlayer(ref(s)) then
-		return ref(ref(s).where);
+	if not isObject(stead.ref(s)) then error("Wrong parameter to where.", 2); end
+	if isPlayer(stead.ref(s)) then
+		return stead.ref(stead.ref(s).where);
 	end
-	return ref(ref(s).__where__);
+	return stead.ref(stead.ref(s).__where__);
 end
 
 function here()
-	return ref(me().where);
+	return stead.ref(me().where);
 end
 
 function from(w)
 	if w == nil then
 		w = here();
 	else
-		w = ref(w);
+		w = stead.ref(w);
 	end
-	return ref(w.__from__);
+	return stead.ref(w.__from__);
 end
 
 function time()
@@ -2189,7 +2191,7 @@ function objs(w)
 	if not w then
 		return here().obj;
 	else
-		return ref(w).obj;
+		return stead.ref(w).obj;
 	end
 end
 
@@ -2197,7 +2199,7 @@ function ways(w)
 	if not w then
 		return here().way;
 	else
-		return ref(w).way;
+		return stead.ref(w).way;
 	end
 end
 
@@ -2293,7 +2295,7 @@ end
 
 function vobj_save(self, name, h, need)
 	local dsc = self.dsc;
-	local w = deref(self.where);
+	local w = stead.deref(self.where);
 	
 	if need then
 		h:write(stead.string.format("%s  = vobj(%s, %s, %s, %s);\n",
@@ -2309,32 +2311,32 @@ end
 
 function vobj_act(self, ...)
 	local o, r = here():srch(self); -- self.nam
-	if ref(o) and ref(o).where then
-		return goto(ref(o).where);
+	if stead.ref(o) and stead.ref(o).where then
+		return goto(stead.ref(o).where);
 	end
-	return stead.call(ref(r),'act', self.key, ...);
+	return stead.call(stead.ref(r),'act', self.key, ...);
 end
 
 function vobj_used(self, ...)
 	local o, r = here():srch(self.nam);
-	return stead.call(ref(r),'used', self.key, ...);
+	return stead.call(stead.ref(r),'used', self.key, ...);
 end
 
 function vobj(key, name, dsc, w)
 	if not tonumber(key) then
 		error ("vobj key must be number!", 2);
 	end
-	return obj{ key = key, nam = name, dsc = dsc, where = deref(w), act = vobj_act, used = vobj_used, save = vobj_save, obj = list({}) };
+	return obj{ key = key, nam = name, dsc = dsc, where = stead.deref(w), act = vobj_act, used = vobj_used, save = vobj_save, obj = list({}) };
 end
 
 function vway(name, dsc, w)
 --	o.object_type = true;
-	return  obj{ key = -1, nam = name, dsc = dsc, act = vobj_act, where = deref(w), used = vobj_used, save = vobj_save, obj = list({}), };
+	return  obj{ key = -1, nam = name, dsc = dsc, act = vobj_act, where = stead.deref(w), used = vobj_used, save = vobj_save, obj = list({}), };
 end
 
 function vroom_save(self, name, h, need)
 	if need then
-		h:write(name.." = vroom('"..self.nam.."','"..deref(self.where).."');\n");
+		h:write(name.." = vroom('"..self.nam.."','"..stead.deref(self.where).."');\n");
 	end
 	savemembers(h, self, name,false);
 end
@@ -2351,7 +2353,7 @@ function vroom(name, w)
 	if w == nil then
 		error("Wrong parameter to vroom.", 2);
 	end
-	return room { vroom_type = true, nam = name, where = deref(w), enter = vroom_enter, save = vroom_save, };
+	return room { vroom_type = true, nam = name, where = stead.deref(w), enter = vroom_enter, save = vroom_save, };
 end
 
 function goto(what)
@@ -2374,7 +2376,7 @@ function rnd(m)
 end
 
 function taken(obj)
-	if isObject(ref(obj)) and ref(obj)._taken then
+	if isObject(stead.ref(obj)) and stead.ref(obj)._taken then
 		return true
 	end
 	return false;
@@ -2383,16 +2385,16 @@ end
 function remove(obj, from)
 	local o,w
 	if from then
-		o,w = ref(from):srch(obj);
+		o,w = stead.ref(from):srch(obj);
 	else
 		o,w = here():srch(obj);
 	end
 	if w then
-		ref(w).obj:del(obj);
+		stead.ref(w).obj:del(obj);
 	end
-	o = ref(o);
+	o = stead.ref(o);
 	if not isObject(o) then
-		o = ref(obj);
+		o = stead.ref(obj);
 	end
 	if isObject(o) then
 		o.__where__ = nil;
@@ -2403,16 +2405,16 @@ end
 function purge(obj, from)
 	local o,w
 	if from then
-		o,w = ref(from):srch(obj, true);
+		o,w = stead.ref(from):srch(obj, true);
 	else
 		o,w = here():srch(obj, true);
 	end
 	if w then
-		ref(w).obj:purge(obj);
+		stead.ref(w).obj:purge(obj);
 	end
-	o = ref(o);
+	o = stead.ref(o);
 	if not isObject(o) then
-		o = ref(obj);
+		o = stead.ref(obj);
 	end
 	if isObject(o) then
 		o.__where__ = nil;
@@ -2427,7 +2429,7 @@ function taketo(obj, wh, pos)
 	end
 	inv():add(obj, pos);
 	o._taken = true
-	wh = deref(me())
+	wh = stead.deref(me())
 	if type(wh) == 'string' then
 		o.__where__ = wh;
 	end
@@ -2444,16 +2446,16 @@ end
 
 function putto(obj, w, pos)
 	local wh
-	local o = ref(obj);
+	local o = stead.ref(obj);
 	if not isObject(o) then
 		error ("Trying to put wrong object.", 2);
 	end
 	if not w then
-		wh = deref(here());
+		wh = stead.deref(here());
 		w = here();
 	else
-		wh = deref(w);
-		w = ref(w);
+		wh = stead.deref(w);
+		w = stead.ref(w);
 	end
 	w.obj:add(obj, pos);
 	if type(wh) == 'string' then
@@ -2477,23 +2479,23 @@ placeto = putto
 
 function replace(obj, obj2, from)
 	local o,w,i
-	if not isObject(ref(obj2)) then
+	if not isObject(stead.ref(obj2)) then
 		error ("Wrong parameter to replace.", 2);
 	end
 	if from then
-		o,w = ref(from):srch(obj);
+		o,w = stead.ref(from):srch(obj);
 	else
 		o,w = here():srch(obj);
 	end
 	if w then
-		ref(w).obj:replace(o, obj2);
-		ref(obj2).__where__ = deref(w);
+		stead.ref(w).obj:replace(o, obj2);
+		stead.ref(obj2).__where__ = stead.deref(w);
 	else
 		place(obj2, from);
 	end
-	o = ref(o);
+	o = stead.ref(o);
 	if not isObject(o) then
-		o = ref(obj);
+		o = stead.ref(obj);
 	end
 	if isObject(o) then
 		o.__where__ = nil;
@@ -2525,10 +2527,10 @@ function seen(obj, wh)
 	if not wh then
 		wh = here();
 	else
-		wh = ref(wh);
+		wh = stead.ref(wh);
 	end
 	local o,w = wh:srch(obj);
-	o = ref(o);
+	o = stead.ref(o);
 	if isObject(o) then
 		return o,w
 	end
@@ -2539,10 +2541,10 @@ function exist(obj, wh)
 	if not wh then
 		wh = here();
 	else
-		wh = ref(wh);
+		wh = stead.ref(wh);
 	end
 	local o,w = wh:srch(obj, true);
-	o = ref(o);
+	o = stead.ref(o);
 	if isObject(o) then
 		return o,w
 	end
@@ -2551,7 +2553,7 @@ end
 
 function have(obj)
 	local o = inv():srch(obj);
-	o = ref(o);
+	o = stead.ref(o);
 	if isObject(o) then
 		return o
 	end
@@ -2561,7 +2563,7 @@ end
 function moveto(obj, there, from, pos)
 	remove(obj, from);
 	putto(obj, there, pos);
-	return ref(obj);
+	return stead.ref(obj);
 end
 
 
@@ -2719,20 +2721,20 @@ end
 stead.set_sound = set_sound
 
 function change_pl(p)
-	local o = ref(p);
-	if type(deref(p)) ~= 'string' or not o then
+	local o = stead.ref(p);
+	if type(stead.deref(p)) ~= 'string' or not o then
 		error ("Wrong player name in change_pl...", 2);
 	end
-	game.pl = deref(p);
+	game.pl = stead.deref(p);
 	return goto(o.where);
 end
 
 function disabled(o)
-	return isDisabled(ref(o))
+	return isDisabled(stead.ref(o))
 end
 
 function disable(o)
-	o = ref(o)
+	o = stead.ref(o)
 	if isObject(o) then
 		o:disable()
 	end
@@ -2740,7 +2742,7 @@ function disable(o)
 end
 
 function enable(o)
-	o = ref(o)
+	o = stead.ref(o)
 	if isObject(o) then
 		o:enable()
 	end
@@ -2748,7 +2750,7 @@ function enable(o)
 end
 
 function disable_all(o)
-	o = ref(o)
+	o = stead.ref(o)
 	if isObject(o) or isList(o) then
 		o:disable_all()
 	end
@@ -2756,7 +2758,7 @@ function disable_all(o)
 end
 
 function enable_all(o)
-	o = ref(o)
+	o = stead.ref(o)
 	if isObject(o) or isList(o) then
 		o:enable_all()
 	end
@@ -2880,10 +2882,10 @@ stead.objects = function(s)
 	allocator = obj {
 		nam = 'allocator',
 		get = function(s, n, c)
-			if isObject(ref(n)) and stead.api_version >= "1.3.0" then -- static?
-				return ref(n);
+			if isObject(stead.ref(n)) and stead.api_version >= "1.3.0" then -- static?
+				return stead.ref(n);
 			end
-			local v = ref(c);
+			local v = stead.ref(c);
 			if not v then
 				error ("Null object in allocator: "..tostring(c));
 			end
@@ -2893,7 +2895,7 @@ stead.objects = function(s)
 			return v
 		end,
 		delete = function(s, w)
-			w = ref(w);
+			w = stead.ref(w);
 			if type(w.key_name) ~= 'string' then
 				return
 			end
@@ -2903,7 +2905,7 @@ stead.objects = function(s)
 			end
 		end,
 		new = function(s, n, key)
-			local v = ref(n);
+			local v = stead.ref(n);
 			if type(v) ~= 'table' or type(n) ~= 'string' then
 				error ("Error in new.", 2);
 			end

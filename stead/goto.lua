@@ -15,11 +15,11 @@ go = function (self, where, back, noenter, noexit, nodsc)
 		return nil, ret(false)
 	end
 
-	if not isRoom(ref(where)) then
+	if not isRoom(stead.ref(where)) then
 		error ("Trying to go nowhere: "..where);
 	end
 
-	if not isRoom(ref(self.where)) then
+	if not isRoom(stead.ref(self.where)) then
 		error ("Trying to go from nowhere: "..self.where);
 	end
 
@@ -29,15 +29,15 @@ go = function (self, where, back, noenter, noexit, nodsc)
 
 	local v, r, jump;
 
-	if not isVroom(ref(where)) and not stead.in_exit_call and not noexit then
+	if not isVroom(stead.ref(where)) and not stead.in_exit_call and not noexit then
 		stead.in_exit_call = true -- to break recurse
-		v,r = stead.call(ref(self.where), 'exit', ref(where));
+		v,r = stead.call(stead.ref(self.where), 'exit', stead.ref(where));
 		stead.in_exit_call = nil
 		if r == false or (stead.api_version >= "1.3.0" and v == false and r == nil) then
 			return v, ret(r)
 		end
 		if self.where ~= was then
-			where = deref(self.where) -- jump
+			where = stead.deref(self.where) -- jump
 			jump = true
 		end
 	end
@@ -45,12 +45,12 @@ go = function (self, where, back, noenter, noexit, nodsc)
 	local res = v;
 	v = nil;
 
-	if not isVroom(ref(where)) then
-		self.where = deref(where);
+	if not isVroom(stead.ref(where)) then
+		self.where = stead.deref(where);
 	end
 
 	if not jump and not noenter then
-		v, r = stead.call(ref(where), 'enter', ref(was));
+		v, r = stead.call(stead.ref(where), 'enter', stead.ref(was));
 		if r == false or (stead.api_version >= "1.3.0" and v == false and r == nil) then
 			self.where = was;
 			return par('^^', res, v), ret(r)
@@ -58,14 +58,14 @@ go = function (self, where, back, noenter, noexit, nodsc)
 	end
 	
 	need_scene = true;
-	if ref(where) ~= ref(self.where) then -- jump !!!
+	if stead.ref(where) ~= stead.ref(self.where) then -- jump !!!
 		need_scene = false;
 	end
 
 	res = par('^^',res,v);
 
 	if not back then
-		ref(where).__from__ = deref(was);
+		stead.ref(where).__from__ = stead.deref(was);
 	end
 
 	ret()
@@ -80,28 +80,28 @@ go = function (self, where, back, noenter, noexit, nodsc)
 		if not noexit then
 			self.where = was
 			stead.in_onexit_call = true
-			v = stead.call(ref(was), 'left', ref(to));
+			v = stead.call(stead.ref(was), 'left', stead.ref(to));
 			stead.in_onexit_call = false
 			res = par('^^',res,v);
 		end
 
-		self.where = deref(to)
+		self.where = stead.deref(to)
 
 		if not noenter then
 			stead.in_entered_call = true
-			v = stead.call(ref(to), 'entered', ref(was));
+			v = stead.call(stead.ref(to), 'entered', stead.ref(was));
 			stead.in_entered_call = false
 			res = par('^^',res,v);
 		end
 
-		if tonumber(ref(to).__visited) then
-			ref(to).__visited = ref(to).__visited + 1;
+		if tonumber(stead.ref(to).__visited) then
+			stead.ref(to).__visited = stead.ref(to).__visited + 1;
 		elseif here().__visited == nil then
-			ref(to).__visited = 1
+			stead.ref(to).__visited = 1
 		end
 
-		if isDialog(ref(to)) then
-			dialog_rescan(ref(to));
+		if isDialog(stead.ref(to)) then
+			dialog_rescan(stead.ref(to));
 		end
 	end
 	return res;
@@ -109,7 +109,7 @@ end
 stead.go = go
 
 function player_go(self, where) -- cmd iface
-	local w = ref(self.where).way:srch(where);
+	local w = stead.ref(self.where).way:srch(where);
 	if not w then
 		return nil,false
 	end
@@ -149,7 +149,7 @@ end
 stead.goin = goin
 
 function goout(what)
-	if isRoom(ref(what)) then
+	if isRoom(stead.ref(what)) then
 		return me():goto(what, true, true, false, true);
 	end
 	return me():goto(from(), true, true, false, true);
@@ -158,7 +158,7 @@ stead.goout = goout
 
 function visited(w)
 	if not w then w = here() end
-	w = ref(w)
+	w = stead.ref(w)
 	if w == nil then
 		return nil;
 	end
