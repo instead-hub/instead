@@ -1686,16 +1686,17 @@ function for_each_list(f,...)
 	for_each(_G, '_G', f, isList, ...)
 end
 
-function clearvar (v)
+stead.clearvar = function(v)
 	local k,o
 	for k,o in pairs(v) do
 		if type(o) == 'table' and o.__visited__ ~= nil then
 			o.__visited__ = nil
 			o.auto_saved = nil
-			clearvar(o)
+			stead.clearvar(o)
 		end
 	end
 end
+clearvar = stead.clearvar
 
 function savemembers(h, self, name, need)
 	local k,v
@@ -1852,7 +1853,7 @@ function do_savegame(s, h)
 	save_object('game', self, h);
 	for_everything(save_var, h);
 --	save_object('_G', _G, h);
-	clearvar(_G);
+	stead.clearvar(_G);
 end
 
 function game_save(self, name, file) 
