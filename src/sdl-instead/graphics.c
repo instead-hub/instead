@@ -2126,7 +2126,25 @@ void layout_add_margin(struct layout *layout, struct margin *margin)
 	return;
 }
 
-int layout_find_margin(struct layout *layout, int y, int *w)
+static int layout_skip_margin(struct layout *layout, int y)
+{
+	struct margin *m = layout->margin;
+	int my = y;
+
+	if (!m)
+		return y;
+
+	while (m) {
+		if (m->y + m->h > my)
+			my = m->y + m->h;
+		m = m->next;
+	}
+	if (y < my)
+		y = my;
+	return y;
+}
+
+static int layout_find_margin(struct layout *layout, int y, int *w)
 {
 	struct margin *m = layout->margin;
 	int xpos = 0;
@@ -3702,6 +3720,8 @@ void _txt_layout_add(layout_t lay, char *txt)
 			line->align = layout->align;
 			line->h = 0;//h;
 			line->y = ol->y + ol->h;
+
+
 //			line->x = 0;
 			line->x = layout_find_margin(layout, line->y, &width);
 //			fprintf(stderr,"%d %d\n", line->x, width);
@@ -3755,6 +3775,12 @@ void _txt_layout_add(layout_t lay, char *txt)
 
 		if (img_align && (m = margin_new())) {
 			int x2, w2;
+
+			if (!line_empty(line) && !line->h) {
+				line->y = layout_skip_margin(layout, line->y);
+				width = layout->w;
+				line->x = 0;
+			}
 			
 			x2 = layout_find_margin(layout, line->y, &w2);
 
