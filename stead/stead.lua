@@ -888,7 +888,7 @@ stead.call_value = call_value
 function room_scene(self)
 	local v;
 	v = iface:title(stead.call(self,'nam'));
-	v = stead.par('^^', v, stead.call(self,'dsc')); --obj_look(self));
+	v = stead.par(stead.scene_delim, v, stead.call(self,'dsc')); --obj_look(self));
 	return stead.cat(v,' ');
 end
 
@@ -966,7 +966,7 @@ end
 function dialog_scene(self)
 	local v
 	v = iface:title(stead.call(self,'nam'));
-	v = stead.par('^^', v, stead.call(self, 'dsc')); --obj_look(self));
+	v = stead.par(stead.scene_delim, v, stead.call(self, 'dsc')); --obj_look(self));
 	return v;
 end
 
@@ -1145,7 +1145,7 @@ function phrase_action(self)
 		ret = stead.par(' ', ret, stead.back());
 	end
 	
-	ret = stead.par("^^", last, ret);
+	ret = stead.par(stead.scene_delim, last, ret);
 	
 	if ret == nil then
 		return r -- hack?
@@ -1384,7 +1384,7 @@ function go(self, where, back)
 			need_scene = false;
 		end
 	end
-	res = stead.par('^^',res,v);
+	res = stead.par(stead.scene_delim, res, v);
 
 	if not back then
 		stead.ref(where).__from__ = stead.deref(self.where);
@@ -1396,7 +1396,7 @@ function go(self, where, back)
 
 	PLAYER_MOVED = true
 	if need_scene then -- or isForcedsc(stead.ref(where)) then -- i'am not sure...
-		return stead.par('^^', res, stead.ref(where):scene());
+		return stead.par(stead.scene_delim, res, stead.ref(where):scene());
 	end
 	return res;
 end
@@ -1575,14 +1575,14 @@ function game_ini(self)
 	local v,vv
 	v = stead.do_ini(self);
 	vv = iface:title(stead.call(self,'nam'));
-	vv = stead.par('^^', vv, stead.call(self,'dsc'));
+	vv = stead.par(stead.scene_delim, vv, stead.call(self,'dsc'));
 	if type(init) == 'function' then
 		init();
 	end
 --	if type(hooks) == 'function' then
 --		hooks();
 --	end
-	return stead.par("^^", vv, v);
+	return stead.par(stead.scene_delim, vv, v);
 end
 
 function game_start(s)
@@ -2067,7 +2067,7 @@ iface = {
 		elseif cmd == 'way' then
 			r,v = me():ways();
 		elseif cmd == 'ls' then
-			r = stead.par('^^', me():objs(), me():inv(), me():ways());
+			r = stead.par(stead.scene_delim, me():objs(), me():inv(), me():ways());
 			v = nil;
 		elseif cmd == 'go' then
 			stead.state = true
