@@ -581,7 +581,7 @@ function list_check(self, name)
 	for i,v,ii in opairs(self) do
 		local o = stead.ref(v);
 		if not o then -- isObject(o) then -- compat
-			error ("No object: "..tostring(v))
+			error ("No object: "..name.."["..tostring(ii).."]".." ("..tostring(type(v))..")")
 			return false
 		end
 		if stead.deref(v) then

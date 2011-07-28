@@ -135,7 +135,7 @@ function list_check(self, name) -- force using of objects, instead refs
 	for i,v,ii in opairs(self) do
 		local o = stead.ref(v);
 		if not isObject(o) then 
-			error ("No object: "..tostring(v))
+			error ("No object: "..name.."["..tostring(ii).."]".." ("..tostring(type(v))..")")
 			return false
 		end
 		if (v.auto_allocated and not stead.ref(v.key_name)) -- renew
