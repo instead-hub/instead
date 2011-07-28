@@ -1712,6 +1712,7 @@ int  instead_encode(const char *s, const char *d)
 	dst = fopen(d, "wb");
 	if (!dst) {
 		fprintf(stderr,"Can't open on write: '%s'.\n", s);
+		fclose(src);
 		return -1;
 	}
 	while ((size = fread(buff, 1, sizeof(buff), src))) {
@@ -1722,6 +1723,8 @@ int  instead_encode(const char *s, const char *d)
 		}
 		if (fwrite(buff, 1, size, dst) != size) {
 			fprintf(stderr, "Error while writing file: '%s'.\n", d);
+			fclose(src);
+			fclose(dst);
 			return -1;
 		}
 	}
