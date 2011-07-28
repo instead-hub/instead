@@ -144,7 +144,7 @@ function list_check(self, name) -- force using of objects, instead refs
 			v = allocator:new(n, n);
 			self[ii] = v;
 			v.auto_allocated = true;
-			for_each(v, n, check_list, isList, stead.deref(v));
+			for_each(v, n, stead.check_list, isList, stead.deref(v));
 		else
 			self[ii] = o;
 		end

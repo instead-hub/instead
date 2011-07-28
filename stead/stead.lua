@@ -1498,13 +1498,13 @@ function player_moved()
 	return PLAYER_MOVED or stead.PLAYER_MOVED
 end
 
-function check_list(k, v, p)
+stead.check_list = function(k, v, p)
 	if v.check == nil or not v:check(stead.string.format("%s[%q]", p, k)) then
 		error ("error in list: "..stead.object..'.'..k);
 	end
 end
 
-function check_room(k, v)
+stead.check_room = function(k, v)
 	if v.obj == nil then
 		error("no obj in room:"..k);
 	end
@@ -1513,22 +1513,23 @@ function check_room(k, v)
 	end
 end
 
-function check_player(k, v)
+stead.check_player = function(k, v)
 	v.where = stead.deref(v.where);
 end
 
-function check_object(k, v)
+stead.check_object = function(k, v)
 	if not v.nam then
 		error ("No name in "..k);
 	end
 	if isRoom(v) then
-		check_room(k, v);
+		stead.check_room(k, v);
 	end
 	if isPlayer(v) then
-		check_player(k, v);
+		stead.check_player(k, v);
 	end
-	for_each(v, k, check_list, isList, stead.deref(v))
+	for_each(v, k, stead.check_list, isList, stead.deref(v))
 end
+check_object = stead.check_object
 
 function for_everything(f, ...)
 	local is_ok = function(s)
@@ -1537,7 +1538,7 @@ function for_everything(f, ...)
 	for_each(_G, '_G', f, is_ok, ...)
 end
 
-function do_ini(self, load)
+stead.do_ini = function(self, load)
 	local v='',vv
 	local function call_key(k, o)
 		o.key_name = k;
@@ -1557,9 +1558,9 @@ function do_ini(self, load)
 	if not load then
 		for_each_object(call_key);
 		for_each_codeblock(call_codekey);
-		for_each_object(check_object);
+		for_each_object(stead.check_object);
 		call_key("game", game);
-		for_each(game, "game", check_list, isList, stead.deref(game))
+		for_each(game, "game", stead.check_list, isList, stead.deref(game))
 	end
 	for_each_object(call_ini, load);
 	me():tag();
@@ -1569,7 +1570,7 @@ function do_ini(self, load)
 	stead.initialized = true
 	return stead.par('',v, self._lastdisp); --stead.par('^^',v);
 end
-stead.do_ini = do_ini
+do_ini = stead.do_ini
 
 function game_ini(self)
 	local v,vv
@@ -1709,15 +1710,15 @@ function savemembers(h, self, name, need)
 			end
 
 			if type(k) == 'string' then
-				savevar(h, v, name..'['..stead.string.format("%q",k)..']', need or need2);
+				stead.savevar(h, v, name..'['..stead.string.format("%q",k)..']', need or need2);
 			elseif type(k) ~= 'function' then
-				savevar(h, v, name.."["..k.."]", need or need2)
+				stead.savevar(h, v, name.."["..k.."]", need or need2)
 			end
 		end
 	end
 end
 
-function savevar (h, v, n, need)
+stead.savevar = function(h, v, n, need)
 	local r,f
 
 	if v == nil or type(v) == "userdata" or
@@ -1787,6 +1788,7 @@ function savevar (h, v, n, need)
 	h:write(n, " = ",tostring(v))
 	h:write("\n") 
 end
+savevar = stead.savevar
 
 function gamefile(file, forget)
 	stead.clearargs()
@@ -1833,13 +1835,13 @@ end
 
 stead.gamefile = gamefile
 
-function do_savegame(s, h)
+stead.do_savegame = function(s, h)
 	local function save_object(key, value, h)
-		savevar(h, value, key, false);
+		stead.savevar(h, value, key, false);
 		return true;
 	end
 	local function save_var(key, value, h)
-		savevar(h, value, key, isForSave(key, value, _G))
+		stead.savevar(h, value, key, isForSave(key, value, _G))
 	end
 	local forget = game.scriptsforget
 	local i,v
@@ -1855,6 +1857,7 @@ function do_savegame(s, h)
 --	save_object('_G', _G, h);
 	stead.clearvar(_G);
 end
+do_savegame = stead.do_savegame
 
 function game_save(self, name, file) 
 	local h;
@@ -1880,7 +1883,7 @@ function game_save(self, name, file)
 	if type(n) == 'string' and n ~= "" then
 		h:write("-- $Name: "..n:gsub("\n","\\n").."$\n");
 	end
-	do_savegame(self, h);
+	stead.do_savegame(self, h);
 	h:flush();
 	h:close();
 	game.autosave = false; -- we have only one try for autosave
@@ -2270,7 +2273,7 @@ function allocator_save(s, name, h, need, auto)
 				stead.tostring(s.constructor));
 			h:write(name..m);
 			if stead.api_version >= "1.3.0" then
-				m = stead.string.format("check_object(%s, %s)\n",
+				m = stead.string.format("stead.check_object(%s, %s)\n",
 					stead.tostring(name),
 					name);
 				h:write(m);
@@ -2920,7 +2923,7 @@ stead.objects = function(s)
 				v.key_name = 'allocator["objects"]['..stead.table.maxn(s.objects)..']';
 			end
 			if stead.api_version >= "1.3.0" then
-				check_object(v.key_name, v)
+				stead.check_object(v.key_name, v)
 			end
 			return v
 		end,

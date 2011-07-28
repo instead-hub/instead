@@ -11,7 +11,7 @@ stead.make_snapshot = function(nr)
 		end
 	end
 	local old = game._snapshots; game._snapshots = nil
-	do_savegame(game, h);
+	stead.do_savegame(game, h);
 	game._snapshots = old
 	game._snapshots[nr] = h.txt;
 end
