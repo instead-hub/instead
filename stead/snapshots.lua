@@ -36,7 +36,7 @@ stead.restore_snapshot = function (nr)
 	if r then
 		return nil, false
 	end
-	i = do_ini(game, true);
+	i = stead.do_ini(game, true);
 	RAW_TEXT = true
 --	delete_snapshot(nr);
 	if stead.cctx() then
