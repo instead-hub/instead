@@ -802,7 +802,7 @@ function isList(v)
 	return (type(v) == 'table') and (v.list_type == true)
 end
 
-function call(v, n, ...)
+stead.call = function(v, n, ...)
 	if type(v) ~= 'table' then
 		error ("Call on non table object:"..n, 2);
 	end
@@ -841,9 +841,9 @@ function call(v, n, ...)
 	end
 	error ("Method not string nor function:"..tostring(n), 2);
 end
-stead.call = call
+call = stead.call
 
-function call_bool(v, n, ...)
+stead.call_bool = function(v, n, ...)
 	if type(v) ~= 'table' then
 		error ("Call bool on non table object:"..n, 2);
 	end
@@ -864,9 +864,9 @@ function call_bool(v, n, ...)
 	end
 	return true; -- not nil
 end
-stead.call_bool = call_bool
+call_bool = stead.call_bool
 
-function call_value(v, n, ...)
+stead.call_value = function(v, n, ...)
 	if type(v) ~= 'table' then
 		error ("Call value on non table object:"..n, 2);
 	end
@@ -883,7 +883,7 @@ function call_value(v, n, ...)
 	stead.callpop();
 	return r,v;
 end
-stead.call_value = call_value
+call_value = stead.call_value
 
 function room_scene(self)
 	local v;
@@ -2780,14 +2780,14 @@ function isForSave(k, v, s) -- k - key, v - value, s -- parent table
 	return stead.string.find(k, '_') ==  1 or stead.string.match(k,'^%u')
 end
 
-function inherit(o, f)
+stead.inherit = function(o, f)
 	return function(...)
 		return f(o(...))
 	end
 end
-stead.inherit = inherit
+inherit = stead.inherit
 
-function hook(o, f)
+stead.hook = function(o, f)
 	return function(...)
 		local ff
 		if type(o) ~= 'function' then
@@ -2800,7 +2800,7 @@ function hook(o, f)
 		return f(ff, ...)
 	end
 end
-stead.hook = hook
+hook = stead.hook
 
 function nameof(v)
 	if isObject(v) then

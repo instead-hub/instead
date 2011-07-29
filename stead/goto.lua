@@ -1,4 +1,4 @@
-go = function (self, where, back, noenter, noexit, nodsc)
+stead.go = function (self, where, back, noenter, noexit, nodsc)
 	local was = self.where;
 	local need_scene = false;
 	local ret
@@ -106,7 +106,7 @@ go = function (self, where, back, noenter, noexit, nodsc)
 	end
 	return res;
 end
-stead.go = go
+go = stead.go
 
 function player_go(self, where) -- cmd iface
 	local w = stead.ref(self.where).way:srch(where);
@@ -125,36 +125,36 @@ function player_back(self) -- deprecated
 	error ("Do not use me():back(). It's deprecated.", 2)
 end
 
-function back()
+stead.back = function()
 	if isDialog(here()) and not isDialog(from()) then
 		return stead.goout();
 	end
 	return stead.goback();
 end
-stead.back = back
+back = stead.back
 
-function goback()
+stead.goback = function()
 	return me():goto(from(), true);
 end
-stead.goback = goback
+goback = stead.goback
 
-function goto(what, back, noenter, noexit, nodsc, ...)
+stead.goto = function(what, back, noenter, noexit, nodsc, ...)
 	return me():goto(what, back, noenter, noexit, nodsc, ...);
 end
-stead.goto = goto
+goto = stead.goto
 
-function goin(what)
+stead.goin = function(what)
 	return me():goto(what, false, false, true);
 end
-stead.goin = goin
+goin = stead.goin
 
-function goout(what)
+stead.goout = function(what)
 	if isRoom(stead.ref(what)) then
 		return me():goto(what, true, true, false, true);
 	end
 	return me():goto(from(), true, true, false, true);
 end
-stead.goout = goout
+goout = stead.goout
 
 function visited(w)
 	if not w then w = here() end
