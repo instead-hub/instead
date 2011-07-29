@@ -72,7 +72,7 @@ local __do_xact = function(str, self)
 			error("Wrong link: "..s, 3);
 		end
 		d = d:gsub("\001", delim);
-		return xref(d, stead.ref(oo, true), unpack(aarg));
+		return stead.xref(d, stead.ref(oo, true), unpack(aarg));
 	end
 	if type(str) ~= 'string' then return end
 	local s = stead.string.gsub(str, '\\?[\\{}]', 

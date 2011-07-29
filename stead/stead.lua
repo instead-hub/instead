@@ -388,7 +388,7 @@ end
 function obj_xref(self,str)
 	function xrefrep(str)
 		local s = stead.string.gsub(str,'[\001\002]','');
-		return xref(s, self);
+		return stead.xref(s, self);
 	end
 	if not str then
 		return
@@ -478,7 +478,7 @@ function obj_str(self)
 		o = stead.ref(o);
 		if o~= nil and not isDisabled(o) then -- isObject is better, but compat layer must be ok
 			vv = stead.call(o, 'nam');
-			vv = xref(vv, o);
+			vv = stead.xref(vv, o);
 			v = stead.par(',', v, vv, obj_str(o));
 		end
 	end
@@ -597,7 +597,7 @@ function list_str(self)
 		o = stead.ref(o);
 		if o~= nil and not isDisabled(o) then
 			vv = stead.call(o, 'nam');
-			vv = xref(vv, o);
+			vv = stead.xref(vv, o);
 			v = stead.par(',', v, vv);
 		end
 	end
@@ -1538,6 +1538,30 @@ function for_everything(f, ...)
 	for_each(_G, '_G', f, is_ok, ...)
 end
 
+local compat_api = function()
+	if stead.api_version >= "1.4.5" or stead.compat_api then
+		return
+	end
+	stead.xref = function(...)
+		return xref(...);
+	end
+
+	-- internals of call
+	cctx = stead.cctx
+	callpush = stead.callpush
+	callpop = stead.callpop
+	clearargs = stead.clearargs
+
+--	savemembers = stead.savemembers;
+--	savevar = stead.savevar
+
+	clearvar = stead.clearvar
+	do_ini = stead.do_ini
+	do_savegame = stead.do_savegame
+
+	stead.compat_api = true
+end
+
 stead.do_ini = function(self, load)
 	local v='',vv
 	local function call_key(k, o)
@@ -1556,12 +1580,14 @@ stead.do_ini = function(self, load)
 	game.where = stead.deref(game.where);
 
 	if not load then
+		compat_api()
 		for_each_object(call_key);
 		for_each_codeblock(call_codekey);
 		for_each_object(stead.check_object);
 		call_key("game", game);
 		for_each(game, "game", stead.check_list, isList, stead.deref(game))
 	end
+
 	for_each_object(call_ini, load);
 	me():tag();
 	if not self.showlast then
@@ -1570,7 +1596,6 @@ stead.do_ini = function(self, load)
 	stead.initialized = true
 	return stead.par('',v, self._lastdisp); --stead.par('^^',v);
 end
-do_ini = stead.do_ini
 
 function game_ini(self)
 	local v,vv
@@ -1697,7 +1722,6 @@ stead.clearvar = function(v)
 		end
 	end
 end
-clearvar = stead.clearvar
 
 stead.savemembers = function(h, self, name, need)
 	local k,v
@@ -1858,7 +1882,6 @@ stead.do_savegame = function(s, h)
 --	save_object('_G', _G, h);
 	stead.clearvar(_G);
 end
-do_savegame = stead.do_savegame
 
 function game_save(self, name, file) 
 	local h;
@@ -2208,10 +2231,12 @@ function ways(w)
 	end
 end
 
-function xref(str, obj, ...)
+stead.xref = function(str, obj, ...)
 	if type(str) ~= 'string' then return nil; end; 
 	return iface:xref(str, obj, ...);
 end
+
+xref = stead.xref
 
 function pseen(...)
 	if not isDialog(here()) then
