@@ -22,12 +22,12 @@ xact = function(n, f) -- just simple action!
 			end
 			h:write(stead.string.format("%s = xact(%q, %s);\n", name, self.nam, f))
 		end
-		savemembers(h, self, name, false);
+		stead.savemembers(h, self, name, false);
 	end
 	return v
 end
 
-__do_xact = function(str, self)
+local __do_xact = function(str, self)
 	local aarg = {}
 	local function parg(v)
 		stead.table.insert(aarg, v);
@@ -116,7 +116,7 @@ function xdsc(n)
 		if need then
 			h:write(stead.string.format("%s = xdsc(%q);\n", name, self.disp))
 		end
-		savemembers(h, self, name, false);
+		stead.savemembers(h, self, name, false);
 	end
 	return obj(v)
 end

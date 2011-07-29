@@ -81,7 +81,7 @@ function disp_obj()
 			if need then
 				h:write(stead.string.format("%s  = disp_obj();\n", name));
 			end
-			savemembers(h, self, name, false);
+			stead.savemembers(h, self, name, false);
 		end
 	}
 	return v;
