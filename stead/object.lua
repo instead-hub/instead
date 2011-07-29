@@ -82,7 +82,7 @@ function vobj_save(self, name, h, need)
 			stead.tostring(dsc), 
 			stead.tostring(w)));
 	end
-	savemembers(h, self, name, false);
+	stead.savemembers(h, self, name, false);
 end
 
 function vobj_act(self, ...)

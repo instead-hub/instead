@@ -13,7 +13,7 @@ function isForSave(k, v, s) -- k - key, v - value, s -- parent table
 	return stead.string.find(k, '_') ==  1
 end
 
-function __vars_add(s, v, set)
+local function __vars_add(s, v, set)
 	local k, o
 	for k,o in pairs(v) do
 		if tonumber(k) then
@@ -34,7 +34,7 @@ function __vars_add(s, v, set)
 	end
 end
 
-function __vars_fill(v)
+local function __vars_fill(v)
 	local k,o
 	if type(v) ~= 'table' then
 		return

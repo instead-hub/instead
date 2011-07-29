@@ -463,7 +463,7 @@ function obj_save(self, name, h, need)
 		print ("Warning: object "..name.." can not be saved!");
 		return
 	end
-	savemembers(h, self, name, need);
+	stead.savemembers(h, self, name, need);
 end
 
 function obj_str(self)
@@ -668,7 +668,7 @@ function list_save(self, name, h, need)
 		h:write(name.." = list({});\n");
 		need = true;
 	end
-	savemembers(h, self, name, need);
+	stead.savemembers(h, self, name, need);
 end
 
 function list_name(self, name, dis)
@@ -931,7 +931,7 @@ function room_save(self, name, h, need)
 		print ("Warning: room "..name.." can not be saved!");
 		return
 	end
-	savemembers(h, self, name, need);
+	stead.savemembers(h, self, name, need);
 end
 
 function room(v) --constructor
@@ -1166,7 +1166,7 @@ function phrase_save(self, name, h, need)
 			stead.tostring(self.ans), 
 			stead.tostring(self.do_act)));
 	end
-	savemembers(h, self, name, false);
+	stead.savemembers(h, self, name, false);
 end
 
 function phrase_look(self, n)
@@ -1417,7 +1417,7 @@ end
 
 function player_save(self, name, h)
 	h:write(tostring(name)..".where = '"..stead.deref(self.where).."';\n");
-	savemembers(h, self, name, false);
+	stead.savemembers(h, self, name, false);
 end
 
 function player(v)
@@ -1699,7 +1699,7 @@ stead.clearvar = function(v)
 end
 clearvar = stead.clearvar
 
-function savemembers(h, self, name, need)
+stead.savemembers = function(h, self, name, need)
 	local k,v
 	for k,v in pairs(self) do
 		local need2
@@ -1717,6 +1717,7 @@ function savemembers(h, self, name, need)
 		end
 	end
 end
+savemembers = stead.savemembers;
 
 stead.savevar = function(h, v, n, need)
 	local r,f
@@ -1778,7 +1779,7 @@ stead.savevar = function(h, v, n, need)
 			h:write(n.." = {};\n");
 		end
 
-		savemembers(h, v, n, need);
+		stead.savemembers(h, v, n, need);
 		return;
 	end
 
@@ -1864,7 +1865,7 @@ function game_save(self, name, file)
 
 	if file ~= nil then
 		file:write(name..".pl = '"..stead.deref(self.pl).."'\n");
-		savemembers(file, self, name, false);
+		stead.savemembers(file, self, name, false);
 		return nil, true
 	end
 
@@ -2280,7 +2281,7 @@ function allocator_save(s, name, h, need, auto)
 			end
 		end
 	end
-	savemembers(h, s, name, false);
+	stead.savemembers(h, s, name, false);
 	if s.auto_allocated then
 		s.auto_saved = true
 	end
@@ -2310,7 +2311,7 @@ function vobj_save(self, name, h, need)
 			stead.tostring(w)));
 
 	end
-	savemembers(h, self, name,false);
+	stead.savemembers(h, self, name,false);
 end
 
 function vobj_act(self, ...)
@@ -2342,7 +2343,7 @@ function vroom_save(self, name, h, need)
 	if need then
 		h:write(name.." = vroom('"..self.nam.."','"..stead.deref(self.where).."');\n");
 	end
-	savemembers(h, self, name,false);
+	stead.savemembers(h, self, name,false);
 end
 
 function vroom_enter(self, ...)
@@ -2929,7 +2930,7 @@ stead.objects = function(s)
 		end,
 		objects = {
 			save = function(self, name, h, need)
-				savemembers(h, self, name, true);
+				stead.savemembers(h, self, name, true);
 			end,
 		},
 	};

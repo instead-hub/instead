@@ -224,7 +224,7 @@ function menu_save(self, name, h, need)
 		print ("Warning: menu "..name.." can not be saved!");
 		return
 	end
-	savemembers(h, self, name, need);
+	stead.savemembers(h, self, name, need);
 end
 
 MENU_TAG_ID = 10000

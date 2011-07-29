@@ -310,7 +310,7 @@ function inp(n, info, txt)
 			h:write(stead.string.format("%s = inp (%q, %q, %q);\n", 
 				name, self.nam, self.info, self._txt))
 		end
-		savemembers(h, self, name, false);
+		stead.savemembers(h, self, name, false);
 	end
 	return obj(v)
 end

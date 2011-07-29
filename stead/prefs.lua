@@ -14,7 +14,7 @@ prefs = obj {
 		local name = get_savepath() .. '/prefs';
 		local h = stead.io.open(name,"w");
 		if not h then return false end
-		savemembers(h, s, 'prefs', true);
+		stead.savemembers(h, s, 'prefs', true);
 		h:flush();
 		h:close();
 	end,
