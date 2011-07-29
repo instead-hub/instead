@@ -223,7 +223,7 @@ function list_str(self)
 			if type(vv) ~= 'string' then
 				vv = stead.call(o, 'nam');
 			end
-			vv = xref(vv, o);
+			vv = stead.xref(vv, o);
 			v = stead.par(stead.delim, v, vv);
 		end
 	end
@@ -248,7 +248,7 @@ function obj_str(self)
 			if type(vv) ~= 'string' then
 				vv = stead.call(o, 'nam');
 			end
-			vv = xref(vv, o);
+			vv = stead.xref(vv, o);
 			v = stead.par(stead.delim, v, vv, obj_str(o));
 		end
 	end
