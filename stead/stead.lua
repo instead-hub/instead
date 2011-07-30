@@ -1551,13 +1551,13 @@ local compat_api = function()
 	callpush = stead.callpush
 	callpop = stead.callpop
 	clearargs = stead.clearargs
-
---	savemembers = stead.savemembers;
---	savevar = stead.savevar
-
+	-- saving
+	savemembers = stead.savemembers;
+	savevar = stead.savevar
 	clearvar = stead.clearvar
-	do_ini = stead.do_ini
-	do_savegame = stead.do_savegame
+
+--	do_ini = stead.do_ini
+--	do_savegame = stead.do_savegame
 
 	stead.compat_api = true
 end
@@ -1741,7 +1741,7 @@ stead.savemembers = function(h, self, name, need)
 		end
 	end
 end
-savemembers = stead.savemembers;
+-- savemembers = stead.savemembers;
 
 stead.savevar = function(h, v, n, need)
 	local r,f
@@ -1813,7 +1813,7 @@ stead.savevar = function(h, v, n, need)
 	h:write(n, " = ",tostring(v))
 	h:write("\n") 
 end
-savevar = stead.savevar
+-- savevar = stead.savevar
 
 function gamefile(file, forget)
 	stead.clearargs()
