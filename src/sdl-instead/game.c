@@ -1702,8 +1702,6 @@ static void game_pict_clip(void)
 		y = game_theme.win_y;
 		w = game_theme.win_w;
 		h = game_theme.win_h;
-		if (game_theme.max_scene_h >=0)
-			h = game_theme.max_scene_h;
 	} else {
 		x = game_theme.gfx_x;
 		y = game_theme.gfx_y;
