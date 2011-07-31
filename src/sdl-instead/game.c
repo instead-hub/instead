@@ -1807,7 +1807,7 @@ int game_cmd(char *cmd)
 	unix_path(pict);
 
 	new_pict = check_new_pict(pict);
-	
+
 	if (game_theme_changed == 2 && opt_owntheme && !fading)
 		fading = 1; /* one frame at least */
 
