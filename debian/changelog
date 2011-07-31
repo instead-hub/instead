@@ -5,6 +5,7 @@ instead (1.4.5) unstable; urgency=low
   * bug fix in txtnb and \;
   * bug fix in original theme picture scaling;
   * bug fix in left/right image alignment;
+  * bug fix in change_pl;
   * callpush/callpop/cctx/strip do_ini and some others moved to stead;
   * win.align added to theme;
   * theme_name added;
