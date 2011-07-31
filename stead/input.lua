@@ -170,7 +170,7 @@ local function kbdxlat(s)
 		return
 	end
 
-	if input.kbd_alt and 
+	if input.kbd_alt_xlat and 
 		(game.codepage == 'UTF-8' or game.codepage == 'utf-8') then
 		kbd = kbdru;
 	else
@@ -219,8 +219,11 @@ local input_kbd = function(s, down, key)
 	end
 	if key:find("shift") then
 		input.kbd_shift = down
-	elseif key:find("alt") and down then
-		input.kbd_alt = not input.kbd_alt;
+	elseif key:find("alt") then
+		if down and input.inp_xlat then
+			input.kbd_alt_xlat = not input.kbd_alt_xlat;
+		end
+		input.kbd_alt = down
 	elseif down then
 		if input.kbd_alt then
 			return
@@ -248,6 +251,10 @@ local input_kbd = function(s, down, key)
 		end
 		local c = kbdxlat(key);
 		if not c then return end
+		if type(input.inp_filter) == 'function' then
+			c = input:inp_filter(c);
+			if not c then return end
+		end
 		input._txt = input._txt..c;
 		return "wait"
 	end
@@ -255,6 +262,7 @@ end
 
 stead.module_init(function()
 	input.cursor = '_'
+	input.inp_xlat = true
 	input.key = stead.hook(input.key,
 	function(f, ...)
 		local r = input_kbd(...)
