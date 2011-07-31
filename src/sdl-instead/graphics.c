@@ -1810,6 +1810,18 @@ int line_empty(struct line *line)
 	return 1;
 }
 
+static int line_margin(struct line *line)
+{
+	struct word *w;
+	w = line->words;
+	while (w) {
+		if (w->img_align)
+			return 1;
+		w = w->next;
+	}
+	return 0;
+}
+
 static struct word *next_word(struct word *w)
 {
 	while (w->next && w->next->img_align) /* skip margins */
@@ -1821,6 +1833,7 @@ void line_justify(struct line *line, int width)
 {
 	int x = 0;
 	int last_margin = 0;
+	int last_unbrake = 0;
 	struct word *w;
 	int sp, spm, lw = 0;
 	int lnum = 0;
@@ -1829,10 +1842,14 @@ void line_justify(struct line *line, int width)
 	w = line->words;
 	while (w) {
 		lw += w->w;
-		if (last_margin)
-			w->unbrake = 0;
+		if (last_margin && w->unbrake)
+			w->unbrake = last_unbrake;
+
 		if (!w->unbrake && !w->img_align)
 			lnum ++;
+
+		if (!last_margin && w->img_align)
+			last_unbrake = w->unbrake;
 		last_margin = w->img_align;
 		w = w->next;
 	}
@@ -2126,7 +2143,7 @@ void layout_add_margin(struct layout *layout, struct margin *margin)
 	return;
 }
 
-#if 0
+#if 1
 static int layout_skip_margin(struct layout *layout, int y)
 {
 	struct margin *m = layout->margin;
@@ -3684,8 +3701,15 @@ void _txt_layout_add(layout_t lay, char *txt)
 		if (img) {
 			w = gfx_img_w(img);
 			h = gfx_img_h(img);
-			if (img_align && width - w <= 0)
-				img_align = 0;
+			if (img_align) {
+				if (!line_margin(line)) {
+					line->y = layout_skip_margin(layout, line->y);
+					width = layout->w;
+					line->x = 0;
+				}
+				if (width - w <= 0) 
+					img_align = 0;
+			}
 		} else {
 			p = get_word_token(p, &wtok);
 			txt_size(layout->fn, p, &w, &h);
@@ -3777,14 +3801,6 @@ void _txt_layout_add(layout_t lay, char *txt)
 
 		if (img_align && (m = margin_new())) {
 			int x2, w2;
-
-#if 0
-			if (!line_empty(line) && !line->h) {
-				line->y = layout_skip_margin(layout, line->y);
-				width = layout->w;
-				line->x = 0;
-			}
-#endif
 
 			x2 = layout_find_margin(layout, line->y, &w2);
 
