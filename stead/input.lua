@@ -1,4 +1,4 @@
-kbden = {
+local kbden = {
 	shifted = {
 	["1"] = "!",
 	["2"] = "@",
@@ -23,7 +23,7 @@ kbden = {
 	}
 }
 
-kbdru = {
+local kbdru = {
 	["q"] = "й",
 	["w"] = "ц",
 	["e"] = "у",
@@ -107,7 +107,7 @@ kbdru = {
 	}
 }
 
-kbdlower = {
+local kbdlower = {
 	['А'] = 'а',
 	['Б'] = 'б',
 	['В'] = 'в',
@@ -142,7 +142,7 @@ kbdlower = {
 	['Я'] = 'я',
 }
 
-function tolow(s)
+local function tolow(s)
 	if not s then
 		return
 	end
@@ -157,7 +157,7 @@ function tolow(s)
 	return s;
 end
 
-function kbdxlat(s)
+local function kbdxlat(s)
 	local kbd
 	if s == 'space' then
 		return ' '
@@ -203,7 +203,7 @@ game.action = stead.hook(game.action, function (f, s, cmd, ...)
 	return f(s, cmd, ...)
 end)
 
-lookup_inp = function()
+local lookup_inp = function()
 	local i,o 
 	for i,o in opairs(objs()) do
 		o = stead.ref(o)
@@ -213,7 +213,7 @@ lookup_inp = function()
 	end
 end
 
-input_kbd = function(s, down, key)
+local input_kbd = function(s, down, key)
 	if not input._txt then
 		return
 	end
@@ -222,6 +222,9 @@ input_kbd = function(s, down, key)
 	elseif key:find("alt") and down then
 		input.kbd_alt = not input.kbd_alt;
 	elseif down then
+		if input.kbd_alt then
+			return
+		end
 		if key == "return" then
 			local o = lookup_inp();
 			if o then
@@ -260,7 +263,7 @@ stead.module_init(function()
 	end)
 end)
 
-function input_esc(s)
+local function input_esc(s)
 	local rep = function(s)
 		return txtnb(s)
 	end
@@ -283,9 +286,23 @@ function inp(n, info, txt)
 		end
 		return s.info..input_esc(s._txt)
 	end
-	v.text = function(s)
-		if s._edit then return input._txt end
-		return s._txt
+	v.text = function(s, text)
+		local t
+		if s._edit then 
+			t = input._txt 
+		else
+			t = s._txt
+		end
+
+		if text then
+			if s._edit then
+				input._txt = text
+			else
+				s._txt = text
+			end
+			return
+		end
+		return t
 	end
 	v.match = function(s, str)
 		local aa = tolow(tostring(str)):gsub("\*",".*"):gsub("[?]",".?");

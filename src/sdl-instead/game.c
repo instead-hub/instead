@@ -1288,8 +1288,8 @@ static int check_fading(int *new_scene)
 	rc = instead_bretval(0);
 	st = instead_iretval(1);
 
-	if (st <= 0)
-		st = 1;
+	if (st < 0)
+		st = 0;
 	else if (st > 255)
 		st = 255;
 
