@@ -4100,9 +4100,15 @@ extern void nsleep(int delay);
 void gfx_change_screen(img_t src, int steps)
 {
 	struct inp_event ev;
+	SDL_TimerID han;
+	if (steps <= 1) {
+		gfx_draw(src, 0, 0);
+		game_cursor(CURSOR_DRAW);
+		gfx_flip();
+		return;
+	}
 	memset(&ev, 0, sizeof(ev));
 	ALPHA_STEPS = steps;
-	SDL_TimerID han;
 	fade_step_nr = 0;
 	fade_bg = gfx_grab_screen(0, 0, gfx_width, gfx_height);
 	if (!fade_bg) /* ok, i like kernel logic. No memory, but we must work! */
