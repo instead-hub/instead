@@ -2756,7 +2756,7 @@ function change_pl(p)
 		error ("Wrong player name in change_pl...", 2);
 	end
 	game.pl = stead.deref(p);
-	return goto(o.where);
+	return goto(o.where, false, true, true); -- no call enter/exit
 end
 
 function disabled(o)
