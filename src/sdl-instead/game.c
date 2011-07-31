@@ -2000,13 +2000,14 @@ inv:
 		gfx_start_gif(el_img(el_spic));
 		gfx_free_image(offscreen);
 //		input_clear();
-		goto err;
 	}
 	{ /* highlight new scene, to avoid flickering */
 		int x, y;
 		gfx_cursor(&x, &y);
 		game_highlight(x, y, 1);
 	}
+	if (fading)
+		goto err;
 out:
 	game_cursor(CURSOR_DRAW);
 	gfx_flip();
