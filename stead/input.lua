@@ -225,11 +225,14 @@ local input_kbd = function(s, down, key)
 		end
 		input.kbd_alt = down
 	elseif down then
+		local o = lookup_inp();
+		if not o then
+			return
+		end
 		if input.kbd_alt then
 			return
 		end
 		if key == "return" then
-			local o = lookup_inp();
 			if o then
 				o._edit = false
 				o._txt = input._txt
@@ -251,8 +254,8 @@ local input_kbd = function(s, down, key)
 		end
 		local c = kbdxlat(key);
 		if not c then return end
-		if type(input.inp_filter) == 'function' then
-			c = input:inp_filter(c);
+		if o and type(o.filter) == 'function' then
+			c = o:filter(c);
 			if not c then return end
 		end
 		input._txt = input._txt..c;
