@@ -3099,8 +3099,8 @@ void txt_box_scroll_next(textbox_t tbox, int disp)
 	
 	off = box->off - line->y; /* offset from cur line */
 	off += disp; /* needed offset */
-	while (line->next && off > line->h) {
-		off -= line->h;
+	while (line->next && off >= line->next->y - line->y) {
+		off -= (line->next->y - line->y);
 		line = line->next;
 	}
 	box->line = line;
@@ -3122,7 +3122,7 @@ void txt_box_scroll_prev(textbox_t tbox, int disp)
 	
 	while (line->prev && off < 0) {
 		line = line->prev;
-		off += line->h;
+		off += (line->next->y - line->y);
 	}
 
 	box->line = line;

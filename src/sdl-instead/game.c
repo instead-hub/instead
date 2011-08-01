@@ -2458,11 +2458,11 @@ static void scroll_up(int id, int count)
 	if (box_isscroll_up(id))
 		return;		
 //	game_highlight(-1, -1, 0);
-	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED)
+//	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED)
 		txt_box_scroll(el_box(id), -(FONT_SZ(game_theme.font_size)) * count);
-	else
-		for (i = 0; i < count; i++)
-			txt_box_prev_line(el_box(id));
+//	else
+//		for (i = 0; i < count; i++)
+//			txt_box_prev_line(el_box(id));
 	el_clear(id);
 	el_draw(id);
 	el_update(id);
@@ -2474,11 +2474,11 @@ static void scroll_down(int id, int count)
 	if (box_isscroll_down(id))
 		return;		
 //	game_highlight(-1, -1, 0);
-	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED)
+//	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED)
 		txt_box_scroll(el_box(id), (FONT_SZ(game_theme.font_size)) * count);
-	else
-		for (i = 0; i < count; i++)
-			txt_box_next_line(el_box(id));
+//	else
+//		for (i = 0; i < count; i++)
+//			txt_box_next_line(el_box(id));
 	el_clear(id);
 	el_draw(id);
 	el_update(id);
