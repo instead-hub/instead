@@ -1620,6 +1620,42 @@ int instead_lang(void)
 	return 0;
 }
 
+static int instead_platform(void)
+{
+	char plat[64];
+	if (!L)
+		return 0;
+
+	snprintf(plat, sizeof(plat) - 1, "PLATFORM='UNIX'");
+
+#ifdef __APPLE__
+	snprintf(plat, sizeof(plat) - 1, "PLATFORM='MACOSX'");
+#endif
+
+#ifdef _WIN32_WCE
+	snprintf(plat, sizeof(plat) - 1, "PLATFORM='WINCE'");
+#endif
+
+#ifdef S60
+	snprintf(plat, sizeof(plat) - 1, "PLATFORM='S60'");
+#endif
+
+#ifdef ANDROID
+	snprintf(plat, sizeof(plat) - 1, "PLATFORM='ANDROID'");
+#endif
+
+#ifdef _WIN32
+	snprintf(plat, sizeof(plat) - 1, "PLATFORM='WIN32'");
+#endif
+
+#ifdef MAEMO
+	snprintf(plat, sizeof(plat) - 1, "PLATFORM='MAEMO'");
+#endif
+	plat[sizeof(plat) - 1] = 0;
+	instead_eval(plat); instead_clear();
+	return 0;
+}
+
 static int instead_package(void)
 {
 	char *p;
@@ -1662,6 +1698,7 @@ int instead_init(void)
 	luaopen_lfs (L);
 
 	instead_package();
+	instead_platform();
 	instead_lang();
 
 	if (dofile(L, dirpath(STEAD_PATH"/stead.lua"))) {
