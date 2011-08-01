@@ -1,16 +1,19 @@
 ===== 0. General information =====
 
-Game code for STEAD is written in lua (5.1), therefore it is useful to know the language, though not necessary. The engine code in lua is about ~3000 lines long. And it is the best documentation.
+Game code for STEAD is written in //lua// (5.1), therefore it is useful to know the language, though not necessary. The engine code in lua is about ~3000 lines long. And it is the best documentation.
 
 The main game window contains information about static and dynamic parts of the scene, active events and the scene picture with possible passages to other scenes (in the graphic interpreter).
 
-The dynamic part of a scene is composed of descriptions of the scene objects. It is always shown.
+//Static part// of the scene is shown only once, when the player enters the scene. Also it is shown when the ''look'' command is repeated (click on the scene name in the graphic interpreter).
 
-Static part of the scene is shown only once, when the player enters the scene. Also it is shown when the “look” command is repeated (click on the scene name in the graphic interpreter).
+The //dynamic part// of a scene is composed of descriptions of the scene objects. It is always shown.
 
-Inventory contains objects, that the player can access in every scene. The player can interact with the inventory objects or use inventory objects on other objects in the scene or inventory.
+//Inventory// contains objects, that the player can access in every scene. The player can interact with the inventory objects or use inventory objects on other objects in the scene or inventory.
 
+<WRAP center round info>
 One should note that the “inventory” is defined rather vaguely. For example it may contain such objects as “open”, “examine”, “use”, etc.
+</WRAP>
+
 
 Possible actions of the player are:
 
@@ -19,23 +22,26 @@ Possible actions of the player are:
   * using an inventory object;
   * using an inventory object on a scene object;
   * using an inventory object on an inventory object;
-  * using a scene object on a scene object (scene_use mode);
-  * using a scene object on an inventroy object (scene_use mode);
+  * using a scene object on a scene object (''scene_use'' mode);
+  * using a scene object on an inventroy object (''scene_use'' mode);
   * passing to another scene;
 
-Each game is a directory with a “main.lua” script. Other game resources (lua scripts, images, music) should be in this directory. All references to the resources are given relative to this game directory.
+Each game is a directory with a ''main.lua'' script. Other game resources (lua scripts, images, music) should be in this directory. All references to the resources are given relative to this game directory.
 
-At the beginning of “main.lua” file a header may be defined. It consists of tags. Each tag should start with '--' symbols — lua comments. Right now only one tag exists: “$Name:”. It should contain the name of the game in UTF-8 encoding. For example:
-<code>
+At the beginning of ''main.lua'' file a header may be defined. It consists of tags. Each tag should start with ''--'' symbols — lua comments. Right now only one tag exists: ''$Name:''. It should contain the name of the game in UTF-8 encoding. For example:
+<code lua>
 -- $Name: The most interesting game!$
 </code>
 
 From version 1.2.0 after headers you must define required STEAD API version. It is "1.4.0" currently.
-<code>
+<code lua>
 instead_version "1.4.0"
 </code>
+<WRAP center round important>
+Without this line STEAD API will stay in compatible(legacy) mode.
+</WRAP>
 
-Game initialization should be defined as init function. For example:
+//Game initialization// should be defined as init function. For example:
 <code>
 function init()
     me()._know_truth = false
@@ -44,17 +50,14 @@ function init()
 end
 </code>
 
-Without this line STEAD API will stay in compatible(legacy) mode.
+The graphic interpreter searches for available games in the ''games'' directory. Unix version also checks ''~/.instead/games''. Windows version (>=0.8.7) checks ''Documents and Settings/USER/Local Settings/Application Data/instead/games''.
 
-
-The graphic interpreter searches for available games in the “games” directory. Unix version also checks “~/.instead/games”. Windows version (>=0.8.7) checks “Documents and Settings/USER/Local Settings/Application Data/instead/games”.
-
-From version 1.2.0 Windows and Unix standalone builds looks into ./appdata/games dir, if it exists.
+From version 1.2.0 Windows and Unix standalone builds looks into ''./appdata/games'' dir, if it exists.
 
 ===== 1. Scene =====
 
 A scene is a game unit. Within it a player can examine all the scene objects and interact with them. A game should contain at least one scene with the name “main”.
-<code>
+<code lua>
 main = room {
 	nam = 'main room',
 	dsc = 'You are in a large room.',
@@ -67,16 +70,16 @@ The “nam” attribute for a scene will be the scene name when it is played. Th
 The “dsc” attribute is a description of a static part of the scene. It is shown once when entering the scene or after the explicit “look” command.
 
 Attention!!! You may use symbol “;” instead of “,”. For example:
-<code>
+<code lua>
 main = room {
 	nam = 'main room';
 	dsc = 'You are in a large room.';
 };
 </code>
 Attention!!! If your creative design requires the static part description to be shown every time, you may define the “forcedsc” parameter for your game (at the start).
-<code>
+<code lua>
 game.forcedsc = true;
-</code>
+</code lua>
 Or similarly set the “forcedsc” for particular scenes.
 
 For long descriptions the following format is convenient:
@@ -85,7 +88,7 @@ For long descriptions the following format is convenient:
 
 In this format line breaks are ignored. If you need paragraph breaks in the description, use the “^” symbol.
 
-<code>
+<code lua>
 dsc = [[ First paragraph. ^^
 Second paragraph.^^
 
