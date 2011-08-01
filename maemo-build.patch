@@ -20,8 +20,8 @@ diff -Nur instead-1.4.1/debian/control instead-1.4.1-maemo/debian/control
  
 @@ -11,4 +11,3 @@
  Depends: ${shlibs:Depends}, ${misc:Depends}
- Description: simply text adventures/visual novels engine and game
-  Visual novell/text quest-like game in Russian with engine.
+ Description: simply text adventures/visual novels engine
+  Visual novell/text quest-like engine.
 -
 diff -Nur instead-1.4.1/debian/rules instead-1.4.1-maemo/debian/rules
 --- instead-1.4.1/debian/rules	2011-05-13 11:40:08.000000000 +0400
