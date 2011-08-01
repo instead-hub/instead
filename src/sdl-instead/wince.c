@@ -1,3 +1,4 @@
+#include "wince.h"
 #include <windows.h>
 #include <shlobj.h>
 #include <limits.h>
@@ -34,8 +35,8 @@ char *game_locale(void)
 	return strdup(buff);
 }
 
-static char *game_codepage = NULL;
 #if 0
+static char *game_codepage = NULL;
 #ifdef _HAVE_ICONV
 static char *game_cp(void)
 {
@@ -168,6 +169,7 @@ char *app_dir( void )
 	}
 	if (!access(appdir, W_OK))
 		return appdir;
+	return NULL;
 }
 
 char *game_cfg_path( void )
