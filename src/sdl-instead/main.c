@@ -14,6 +14,10 @@
 #include "android.h"
 #endif
 
+#ifdef _WIN32_WCE
+extern void	libwince_init(const char* prog, int debug);
+#endif
+
 extern int debug_init(void);
 extern void debug_done(void);
 
@@ -126,7 +130,7 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef _WIN32_WCE
-	libwince_init(argv, 1);
+	libwince_init(argv[0], 1);
 	wince_init(argv[0]);
 #else
 #ifdef S60
