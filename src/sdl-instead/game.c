@@ -2454,7 +2454,7 @@ out:
 
 static void scroll_up(int id, int count)
 {
-	int i;
+//	int i;
 	if (box_isscroll_up(id))
 		return;		
 //	game_highlight(-1, -1, 0);
@@ -2470,7 +2470,7 @@ static void scroll_up(int id, int count)
 
 static void scroll_down(int id, int count)
 {
-	int i;
+//	int i;
 	if (box_isscroll_down(id))
 		return;		
 //	game_highlight(-1, -1, 0);
