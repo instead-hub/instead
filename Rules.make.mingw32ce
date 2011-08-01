@@ -15,11 +15,11 @@ MANPATH=$(DESTDIR)$(PREFIX)doc
 ZLIB_CFLAGS=
 ZLIB_LFLAGS=-lz
 
-LUA_CFLAGS=
-LUA_LFLAGS=-llua
+LUA_CFLAGS=-I../mingw32ce/
+LUA_LFLAGS=-llua -L../mingw32ce/
 
-SDL_CFLAGS=-I/opt/mingw32ce/arm-mingw32ce/include/SDL
-SDL_LFLAGS=-lmikmod -lpng
+SDL_CFLAGS=-I../mingw32ce/SDL 
+SDL_LFLAGS=-lmikmod -lpng -L../mingw32ce/SDL
 
 CFLAGS  += -Wall -march=armv4t -Os -static \
 	-D_HAVE_ICONV -D_USE_SDL_ICONV -D_LOCAL_APPDATA -D_SDL_MOD_BUG
