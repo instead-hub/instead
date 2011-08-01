@@ -126,6 +126,7 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef _WIN32_WCE
+	libwince_init(argv, 1);
 	wince_init(argv[0]);
 #else
 #ifdef S60
