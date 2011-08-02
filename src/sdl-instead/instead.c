@@ -1632,6 +1632,10 @@ static int instead_platform(void)
 	snprintf(plat, sizeof(plat) - 1, "PLATFORM='MACOSX'");
 #endif
 
+#ifdef _WIN32
+	snprintf(plat, sizeof(plat) - 1, "PLATFORM='WIN32'");
+#endif
+
 #ifdef _WIN32_WCE
 	snprintf(plat, sizeof(plat) - 1, "PLATFORM='WINCE'");
 #endif
@@ -1644,13 +1648,10 @@ static int instead_platform(void)
 	snprintf(plat, sizeof(plat) - 1, "PLATFORM='ANDROID'");
 #endif
 
-#ifdef _WIN32
-	snprintf(plat, sizeof(plat) - 1, "PLATFORM='WIN32'");
-#endif
-
 #ifdef MAEMO
 	snprintf(plat, sizeof(plat) - 1, "PLATFORM='MAEMO'");
 #endif
+
 	plat[sizeof(plat) - 1] = 0;
 	instead_eval(plat); instead_clear();
 	return 0;
