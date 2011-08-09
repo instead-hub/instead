@@ -287,7 +287,7 @@ char *getdir(char *path, size_t size)
 
 char *dirpath(const char *path)
 {
-	static char fp[PATH_MAX];
+	static char fp[PATH_MAX * 4];
 	if (path[0] == '/')
 		return (char*)path;
 	strcpy(fp, curdir);
