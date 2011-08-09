@@ -1,3 +1,10 @@
+instead (1.4.6) unstable; urgency=low
+
+  * bug fix in gamefile;
+  * bug fix in lifes output;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 09 Aug 2011 12:24:00 +0400
+
 instead (1.4.5) unstable; urgency=low
 
   * bug fix in rnd() w/o parameter;

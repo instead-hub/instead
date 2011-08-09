@@ -1,5 +1,5 @@
 stead = {
-	version = "1.4.5",
+	version = "1.4.6",
 	api_version = "1.1.6", -- last version before 1.2.0
 	table = table,
 	delim = ',',
@@ -1477,6 +1477,10 @@ function game_life(self)
 		if not isDisabled(o) then
 			PLAYER_MOVED = false
 			vv,pre = stead.call(o, 'life');
+			if PLAYER_MOVED then -- clear life output, but not current
+				av = nil
+				v = nil
+			end
 			if pre or (PLAYER_MOVED and pre ~= false) then
 				av = stead.par(' ', av, vv);
 			else
@@ -1854,7 +1858,7 @@ function gamefile(file, forget)
 	if forget then
 		game:start()
 		stead.started = true
-		return goto(here());
+		return stead.goto(here(), false, false, true);
 	end
 end
 
