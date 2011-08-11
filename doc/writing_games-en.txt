@@ -42,7 +42,7 @@ Without this line STEAD API will stay in compatible(legacy) mode.
 </WRAP>
 
 //Game initialization// should be defined as init function. For example:
-<code>
+<code lua>
 function init()
     me()._know_truth = false
     take(knife);
@@ -56,18 +56,18 @@ From version 1.2.0 Windows and Unix standalone builds looks into ''./appdata/gam
 
 ===== 1. Scene =====
 
-A scene is a game unit. Within it a player can examine all the scene objects and interact with them. A game should contain at least one scene with the name “main”.
+A scene is a game unit. Within it a player can examine all the scene objects and interact with them. A game should contain at least one scene with the name ''main''.
 <code lua>
 main = room {
 	nam = 'main room',
 	dsc = 'You are in a large room.',
 };
 </code>
-The record means creation of an object “main” of a type “room”. Every object has attributes and handlers. For example the attribute “nam” (name) is obligatory for every object.
+The record means creation of an object ''main'' of a type ''room''. Every object has attributes and handlers. For example the attribute ''nam'' (name) is obligatory for every object.
 
-The “nam” attribute for a scene will be the scene name when it is played. The name of a scene is also used to identify it when passing between scenes.
+The ''nam'' attribute for a scene will be the scene name when it is played. The name of a scene is also used to identify it when passing between scenes.
 
-The “dsc” attribute is a description of a static part of the scene. It is shown once when entering the scene or after the explicit “look” command.
+The ''dsc'' attribute is a description of a static part of the scene. It is shown once when entering the scene or after the explicit ''look'' command.
 
 Attention!!! You may use symbol “;” instead of “,”. For example:
 <code lua>
@@ -79,12 +79,12 @@ main = room {
 Attention!!! If your creative design requires the static part description to be shown every time, you may define the “forcedsc” parameter for your game (at the start).
 <code lua>
 game.forcedsc = true;
-</code lua>
+</code>
 Or similarly set the “forcedsc” for particular scenes.
 
 For long descriptions the following format is convenient:
 
-<code>dsc = [[ Very long description... ]],</code>
+<code lua>dsc = [[ Very long description... ]],</code>
 
 In this format line breaks are ignored. If you need paragraph breaks in the description, use the “^” symbol.
 

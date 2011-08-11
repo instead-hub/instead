@@ -1467,6 +1467,7 @@ end
 function game_life(self)
 	local i,o
 	local av,v
+	local was_moved
 	stead.in_life_call = true;
 	stead.lifes_off = list {}; -- lifes to off 
 	stead.PLAYER_MOVED = PLAYER_MOVED
@@ -1480,6 +1481,7 @@ function game_life(self)
 			if PLAYER_MOVED then -- clear life output, but not current
 				av = nil
 				v = nil
+				was_moved = true
 			end
 			if pre or (PLAYER_MOVED and pre ~= false) then
 				av = stead.par(' ', av, vv);
@@ -1488,6 +1490,7 @@ function game_life(self)
 			end
 		end
 	end
+	PLAYER_MOVED = was_moved
 	if not PLAYER_MOVED then PLAYER_MOVED = stead.PLAYER_MOVED end
 	stead.PLAYER_MOVED = nil
 	stead.in_life_call = false;
