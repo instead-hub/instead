@@ -1315,22 +1315,22 @@ static void game_autosave(void)
 	}
 }
 
-static void dec_music(void *data)
+static void finish_music(void *data)
 {
 	int rc;
 	if (!curgame_dir)
 		return;
-	instead_function("instead.dec_music_loop", NULL);
-	rc = instead_iretval(0); 
+	instead_function("instead.finish_music", NULL);
+	rc = instead_bretval(0); 
 	instead_clear();
-	if (rc == -1)
+	if (rc)
 		free_last_music();
 	snd_volume_mus(cur_vol); /* reset volume */
 }
 
 void game_music_finished(void)
 {
-	push_user_event(&dec_music, NULL);
+	push_user_event(&finish_music, NULL);
 }
 
 void game_music_player(void)

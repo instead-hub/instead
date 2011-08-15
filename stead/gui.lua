@@ -195,7 +195,14 @@ instead.get_sound = get_sound;
 instead.set_sound = set_sound;
 instead.get_autosave = get_autosave;
 instead.get_music_loop = get_music_loop;
-instead.dec_music_loop = dec_music_loop;
+instead.finish_music = function()
+	if instead.get_music_loop() == 0 then
+		return false
+	end
+	local n = stead.get_music()
+	stead.set_music(n, -1);
+	return true
+end
 
 instead.isEnableSave = isEnableSave;
 instead.isEnableAutosave = isEnableAutosave;

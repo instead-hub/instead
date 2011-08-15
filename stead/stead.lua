@@ -2647,16 +2647,6 @@ function restore_music(s)
 	end
 	set_music(s.__old_music__, s.__old_loop__);
 end
-function dec_music_loop()
-	if game._music_loop == 0 then
-		return 0
-	end
-	game._music_loop = game._music_loop - 1;
-	if game._music_loop == 0 then
-		game._music_loop = -1;
-	end
-	return game._music_loop;
-end
 
 function set_music(s, count)
 	game._music = s;
