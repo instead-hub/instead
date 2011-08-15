@@ -2716,10 +2716,10 @@ stead.get_sound_loop = get_sound_loop
 
 function stop_sound(chan)
 	if not tonumber(chan) then
-		set_sound('@');
+		stead.set_sound('@');
 		return
 	end
-	set_sound('@'..tostring(chan));
+	stead.add_sound('@'..tostring(chan));
 end
 stead.stop_sound = stop_sound
 
@@ -2734,9 +2734,9 @@ function add_sound(s, chan, loop)
 		if tonumber(loop) then
 			s = s..','..tostring(loop)
 		end
-		set_sound(game._sound..';'..s, get_sound_chan(), get_sound_loop());
+		stead.set_sound(game._sound..';'..s, get_sound_chan(), get_sound_loop());
 	else
-		set_sound(s, chan, loop);
+		stead.set_sound(s, chan, loop);
 	end
 end
 stead.add_sound = add_sound
