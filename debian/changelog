@@ -4,6 +4,7 @@ instead (1.4.6) unstable; urgency=low
   * bug fix in lifes output;
   * bug fix in PLAYER_MOVED and lifes;
   * bug fix in stop_sound;
+  * bug fix in set_music with parameter;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 09 Aug 2011 12:24:00 +0400
 
