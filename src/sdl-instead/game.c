@@ -1346,11 +1346,14 @@ void game_music_player(void)
 	loop = instead_iretval(1);
 	unix_path(mus);
 	instead_clear();
-
 	if (mus && loop == -1) { /* disabled, 0 - forever, 1-n - loops */
 		free(mus);
 		mus = NULL;
 	}
+
+	if (loop == 0)
+		loop = -1;
+
 	if (!mus) {
 		if (last_music) {
 			game_stop_mus(500);
@@ -1358,11 +1361,11 @@ void game_music_player(void)
 	} else if (!last_music && mus) {
 		game_stop_mus(500);
 		last_music = mus;
-		snd_play_mus(mus, 0, loop - 1);
+		snd_play_mus(mus, 0, loop);
 	} else if (strcmp(last_music, mus)) {
 		game_stop_mus(500);
 		last_music = mus;
-		snd_play_mus(mus, 0, loop - 1);
+		snd_play_mus(mus, 0, loop);
 	} else
 		free(mus);
 }
