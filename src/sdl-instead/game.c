@@ -1337,15 +1337,18 @@ void game_music_player(void)
 {
 	int 	loop;
 	char		*mus;
+
 	if (!snd_volume_mus(-1))
 		return;
 	if (!opt_music || !curgame_dir)
 		return;
+
 	instead_function("instead.get_music", NULL);
 	mus = instead_retval(0);
 	loop = instead_iretval(1);
 	unix_path(mus);
 	instead_clear();
+
 	if (mus && loop == -1) { /* disabled, 0 - forever, 1-n - loops */
 		free(mus);
 		mus = NULL;
@@ -1358,11 +1361,7 @@ void game_music_player(void)
 		if (last_music) {
 			game_stop_mus(500);
 		}
-	} else if (!last_music && mus) {
-		game_stop_mus(500);
-		last_music = mus;
-		snd_play_mus(mus, 0, loop);
-	} else if (strcmp(last_music, mus)) {
+	} else if (!last_music || strcmp(last_music, mus)) {
 		game_stop_mus(500);
 		last_music = mus;
 		snd_play_mus(mus, 0, loop);
