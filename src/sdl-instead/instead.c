@@ -519,10 +519,11 @@ static void instead_timer_do(void *data)
 	p = instead_retval(0); instead_clear();
 	if (!p)
 		goto out;
+
 	mouse_reset(0);
-//	fprintf(stderr, "cmd =%s\n", p);
 	game_cmd(p); free(p);
 	mouse_restore();
+
 	game_cursor(CURSOR_ON);
 out:
 	instead_timer_nr = 0;
