@@ -5,6 +5,7 @@ instead (1.5.0) unstable; urgency=low
   * bug fix in PLAYER_MOVED and lifes;
   * bug fix in stop_sound;
   * bug fix in set_music with parameter;
+  * bug fix in highlighting;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 17 Aug 2011 15:40:00 +0400
 

@@ -2145,9 +2145,14 @@ void menu_update(struct el *elem)
 int game_highlight(int x, int y, int on)
 {
 	struct el 	 *elem = NULL;
-	static struct el *oel = NULL;
-	static xref_t 	 hxref = NULL;
+	struct el *oel = NULL;
+	xref_t 	 hxref = NULL;
 	xref_t		 xref = NULL;
+	static int	old_x = -1;
+	static int	old_y = -1;
+
+	hxref = look_xref(old_x, old_y, &oel);
+
 	if (on == 1) {
 		xref = look_xref(x, y, &elem);
 		if (xref && opt_hl && !xref_get_active(xref)) {
@@ -2159,13 +2164,11 @@ int game_highlight(int x, int y, int on)
 	if (hxref != xref && oel) {
 		if (hxref != use_xref && xref_get_active(hxref)) {
 			xref_set_active(hxref, 0);
-			if (on != -1)
-				game_xref_update(hxref, oel->x, oel->y);
+			game_xref_update(hxref, oel->x, oel->y);
 		}
-		hxref = NULL;
 	}
-	hxref = xref;
-	oel = elem;
+	old_x = x;
+	old_y = y;
 	return 0;
 }
 
@@ -2173,8 +2176,6 @@ void mouse_reset(int hl)
 {
 	if (hl)
 		game_highlight(-1, -1, 0);
-	else
-		game_highlight(-1, -1, -1);
 
 	disable_use();
 
