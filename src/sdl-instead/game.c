@@ -2912,10 +2912,10 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 	if (!p)
 		return -1;
 	mouse_reset(0);
-	if (opt_click && mb != -1)
-		snd_play(game_theme.click, -1, 0);
 	rc = game_cmd(p); free(p);
 	mouse_restore();
+	if (!rc)
+		snd_play(game_theme.click, -1, 0);
 	return (rc)?-1:0;
 }
 

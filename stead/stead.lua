@@ -1,5 +1,5 @@
 stead = {
-	version = "1.5.0",
+	version = "1.5.1",
 	api_version = "1.1.6", -- last version before 1.2.0
 	table = table,
 	delim = ',',
@@ -2141,7 +2141,7 @@ iface = {
 		end
 
 		if stead.state and r == nil and v == nil and stead.api_version >= "1.3.5" then -- new goto
-			return nil, nil -- really nothing
+			return nil, false -- really nothing
 		end
 
 		if RAW_TEXT then
@@ -2170,7 +2170,7 @@ iface = {
 			game._lastdisp = vv
 		end
 		if vv == nil then -- nil is error
-			return ''
+			vv = ''
 		end
 		return vv, true; -- action is here
 	end, 

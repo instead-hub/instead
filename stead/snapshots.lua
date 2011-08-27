@@ -71,7 +71,6 @@ iface.cmd = stead.hook(iface.cmd, function(f, ...)
 		stead.make_snapshot(MAKE_SNAPSHOT);
 		MAKE_SNAPSHOT = nil
 	end
-	if v == nil then return r end
 	return r,v
 end)
 -- vim:ts=4
