@@ -8,7 +8,7 @@ url="http://instead.googlecode.com/"
 license=('GPL')
 
 depends=('sdl' 'sdl_image' 'sdl_mixer' 'sdl_ttf' 'lua')
-makedepends=( 'pkgconfig' )
+makedepends=( 'pkg-config' )
 
 source=(http://instead.googlecode.com/files/instead_$pkgver.tar.gz)
 md5sums=(MD5SUM)
