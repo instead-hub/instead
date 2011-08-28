@@ -1,4 +1,4 @@
-Summary:	simply text adventures/visual novels engine and game
+Summary:	simple text adventures/visual novels engine and game
 Name:		instead
 Version:	1.5.1
 Release:	1%{?dist}
@@ -11,7 +11,7 @@ BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: SDL-devel, SDL_mixer-devel, SDL_image-devel, SDL_ttf-devel, lua-devel
 
 %description 
-Simply text adventures/visual novels engine and game
+Simple text adventures/visual novels engine and game
 Visual novell/text quest-like game in Russian with engine.
 
 %prep
