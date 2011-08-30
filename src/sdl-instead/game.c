@@ -2144,14 +2144,32 @@ void menu_update(struct el *elem)
 
 int game_highlight(int x, int y, int on)
 {
-	struct el 	 *elem = NULL;
-	struct el *oel = NULL;
-	xref_t 	 hxref = NULL;
-	xref_t		 xref = NULL;
+	struct el	*elem = NULL;
+	struct el	*oel = NULL;
+	xref_t		hxref = NULL;
+	xref_t		xref = NULL;
 	static int	old_x = -1;
 	static int	old_y = -1;
+	static int	old_off = 0;
+	int	new_off = old_off;
 
 	hxref = look_xref(old_x, old_y, &oel);
+
+	if (oel) { /* detect scrolling, ehhh... to hackish? */
+		int type;
+		struct el	*nel = NULL;
+		type = oel->type;
+		if (type == elt_box)
+			new_off = txt_box_off(oel->p.box);
+		if (new_off != old_off) {
+			old_y -= (new_off - old_off);
+			hxref = look_xref(old_x, old_y, &nel);
+			if (nel != oel) {
+				hxref = NULL;
+				oel = NULL;
+			}
+		}
+	}
 
 	if (on == 1) {
 		xref = look_xref(x, y, &elem);
@@ -2169,6 +2187,7 @@ int game_highlight(int x, int y, int on)
 	}
 	old_x = x;
 	old_y = y;
+	old_off = new_off;
 	return 0;
 }
 
@@ -2195,15 +2214,15 @@ void menu_toggle(void)
 
 static int scroll_pup(int id)
 {
+	int hh;
 	if (box_isscroll_up(id))
 		return -1;		
 //	game_highlight(-1, -1, 0);
-	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) {
-		int hh;
+//	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) {
 		el_size(el_scene, NULL, &hh);
 		txt_box_scroll(el_box(id), -hh);
-	} else
-		txt_box_prev(el_box(id));
+//	} else
+//		txt_box_prev(el_box(id));
 	el_clear(id);
 	el_draw(id);
 	el_update(id);
@@ -2212,15 +2231,15 @@ static int scroll_pup(int id)
 
 static int scroll_pdown(int id)
 {
+	int hh;
 	if (box_isscroll_down(id))
 		return -1;
 //	game_highlight(-1, -1, 0);
-	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) {
-		int hh;
+//	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) {
 		el_size(el_scene, NULL, &hh);
 		txt_box_scroll(el_box(id), hh);
-	} else
-		txt_box_next(el_box(id));
+//	} else
+//		txt_box_next(el_box(id));
 	el_clear(id);
 	el_draw(id);
 	el_update(id);
