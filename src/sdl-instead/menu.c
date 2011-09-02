@@ -116,7 +116,7 @@ static void load_menu(void)
 		strcat(menu_buff, CANCEL_MENU);
 		return;
 	} */
-	sprintf(menu_buff, SELECT_LOAD_MENU);
+	strcpy(menu_buff, SELECT_LOAD_MENU);
 	for (i = 0; i < MAX_SAVE_SLOTS; i ++) {
 		char tmp[PATH_MAX];
 		char *s = game_save_path(0, i);
@@ -152,7 +152,7 @@ static void save_menu(void)
 		strcat(menu_buff, CANCEL_MENU);
 		return;
 	}
-	sprintf(menu_buff, SELECT_SAVE_MENU);
+	strcpy(menu_buff, SELECT_SAVE_MENU);
 	for (i = 1; i < MAX_SAVE_SLOTS; i ++) {
 		char tmp[PATH_MAX];
 		char *s = game_save_path(0, i);
@@ -219,7 +219,7 @@ static void games_menu(void)
 #else
 	snprintf(tmp, sizeof(tmp), "\n");
 #endif
-	sprintf(menu_buff, SELECT_GAME_MENU);
+	strcpy(menu_buff, SELECT_GAME_MENU);
 	if ((games_nr - 1) / MENU_GAMES_MAX)
 		pages_menu(menu_buff, games_menu_from / MENU_GAMES_MAX, (games_nr - 1) / MENU_GAMES_MAX + 1, "games", tmp);
 	else 
@@ -281,7 +281,7 @@ int games_menu_maxw(void)
 static void themes_menu(void)
 {
 	int i, n;
-	sprintf(menu_buff, SELECT_THEME_MENU);
+	strcpy(menu_buff, SELECT_THEME_MENU);
 	if ((themes_nr - 1) / MENU_THEMES_MAX)
 		pages_menu(menu_buff, themes_menu_from / MENU_THEMES_MAX, (themes_nr - 1) / MENU_THEMES_MAX + 1, "themes", "\n");
 	for (i = themes_menu_from, n = 0; i < themes_nr && n < MENU_THEMES_MAX; i ++) {
@@ -338,7 +338,7 @@ static int menu_settings_num = 0;
 char *game_menu_gen(void)
 {
 	if (cur_menu == menu_main) {
-		snprintf(menu_buff, sizeof(menu_buff), MAIN_MENU);
+		strcpy(menu_buff, MAIN_MENU);
 	} else if (cur_menu == menu_about) {
 		snprintf(menu_buff, sizeof(menu_buff), ABOUT_MENU, VERSION);
 	} else if (cur_menu == menu_settings) {
@@ -360,20 +360,17 @@ char *game_menu_gen(void)
 			break;
 		}
 	} else if (cur_menu == menu_askquit) {
-		snprintf(menu_buff, sizeof(menu_buff), QUIT_MENU);
+		strcpy(menu_buff, QUIT_MENU);
 	} else if (cur_menu == menu_saved) {
-		snprintf(menu_buff, sizeof(menu_buff),
-		SAVED_MENU);
+		strcpy(menu_buff, SAVED_MENU);
 	} else if (cur_menu == menu_games) {
 		games_menu();
 	} else if (cur_menu == menu_themes) {
 		themes_menu();
 	} else if (cur_menu == menu_own_theme) {
-		snprintf(menu_buff, sizeof(menu_buff),
-		OWN_THEME_MENU);
+		strcpy(menu_buff, OWN_THEME_MENU);
 	} else if (cur_menu == menu_custom_theme) {
-		snprintf(menu_buff, sizeof(menu_buff),
-		CUSTOM_THEME_MENU);
+		strcpy(menu_buff, CUSTOM_THEME_MENU);
 	} else if (cur_menu == menu_load) {
 		load_menu();
 	} else if (cur_menu == menu_save) {

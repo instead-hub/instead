@@ -2205,11 +2205,11 @@ img_t txt_layout_images(layout_t lay, void **v)
 	if (!layout)
 		return NULL;
 		
-	if (!*g)
-		*g = layout->images;
+	if (!*v)
+		*v = layout->images;
 	else
-		*g = (*g)->next;
-	if (!*g)
+		*v = (*g)->next;
+	if (!*v)
 		return NULL;
 	return (*g)->image;
 }
