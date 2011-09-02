@@ -344,8 +344,12 @@ int unpack(const char *zipfilename, const char *dirname)
 
 	char filename_try[MAXFILENAME + 16] = "";
 	int ret_value = 0;
-	getcwd(game_cwd, sizeof(game_cwd));
 
+	if (dirname && !getcwd(game_cwd, sizeof(game_cwd))) {
+		fprintf(stderr, "Error: can not get current dir.\n");
+		return -1;
+	}
+	
 	unzFile uf = NULL;
 	zip_game_dirname[0] = 0;
 #        ifdef USEWIN32IOAPI
@@ -394,8 +398,10 @@ int unpack(const char *zipfilename, const char *dirname)
 	if (dirname)
 		_chdir(game_cwd);
 #else
-	if (dirname)
-		chdir(game_cwd);
+	if (dirname) {
+		if (chdir(game_cwd))
+			fprintf(stderr, "Warning: can not chdir.\n");
+	}
 #endif
 	return ret_value;
 }

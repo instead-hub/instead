@@ -140,7 +140,8 @@ int main(int argc, char *argv[])
 #ifdef _WIN32
 	strcpy(game_cwd, dirname(argv[0]));
 #else
-	getcwd(game_cwd, sizeof(game_cwd));
+	if (!getcwd(game_cwd, sizeof(game_cwd)))
+		fprintf(stderr,"Warning: can not get current dir\n.");
 #endif
 #endif
 #endif
