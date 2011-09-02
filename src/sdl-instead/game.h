@@ -60,7 +60,7 @@ extern int 	game_error(const char *name);
 
 extern int	game_restart(void);
 extern int	game_select(const char *name);
-extern int	game_cmd(char *cmd);
+extern int	game_cmd(char *cmd, int click);
 
 extern void	game_menu(int nr); /* select and show menu */
 extern void	game_menu_box(int show, const char *txt); /* show menu */

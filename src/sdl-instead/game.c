@@ -347,7 +347,7 @@ static img_t	menu = NULL;
 static int menu_shown = 0;
 static int browse_dialog = 0;
 
-int game_cmd(char *cmd);
+int game_cmd(char *cmd, int click);
 void game_clear(int x, int y, int w, int h)
 {
 	game_cursor(CURSOR_CLEAR);
@@ -471,7 +471,7 @@ int game_load(int nr)
 		char sav[PATH_MAX];
 		strcpy(sav, s);
 		snprintf(cmd, sizeof(cmd) - 1, "load %s", s);
-		game_cmd(cmd);
+		game_cmd(cmd, 0);
 		if (nr == -1)
 			unlink(sav);
 		return 0;
@@ -810,7 +810,7 @@ int game_init(const char *name)
 			goto out;
 		if (opt_autosave && !game_load(0))  /* autosave */
 			goto out;
-		game_cmd("look");
+		game_cmd("look", 0);
 		custom_theme_warn();
 		if (opt_autosave)
 			game_save(0);
@@ -1736,7 +1736,7 @@ static void game_redraw_pic(void)
 	el(el_spic)->y = oy;
 }
 
-int game_cmd(char *cmd)
+int game_cmd(char *cmd, int click)
 {
 	int		old_off;
 	int		fading = 0;
@@ -1764,6 +1764,9 @@ int game_cmd(char *cmd)
 	game_music_player();
 	game_sound_player();
 
+	if (opt_click && click && !rc)
+		snd_play(game_theme.click, -1, 0);
+
 	if (DIRECT_MODE) {
 		if (cmdstr)
 			free(cmdstr);
@@ -1781,7 +1784,7 @@ int game_cmd(char *cmd)
 
 		if (game_pict_modify(NULL))
 			goto out;
-		return 0;
+		return rc;
 	} else if (dd) { /* disable direct mode on the fly */
 		game_theme_changed = 2;  /* force redraw */
 		game_cursor(CURSOR_DRAW);
@@ -2378,9 +2381,7 @@ int game_click(int x, int y, int action, int filter)
 			snprintf(buf, sizeof(buf), "%s", xref_get_text(xref));
 		if (mouse_filter(filter))
 			return 0;
-		if (opt_click)
-			snd_play(game_theme.click, -1, 0);
-		game_cmd(buf);
+		game_cmd(buf, 1);
 		return 1;
 	}	
 
@@ -2400,10 +2401,7 @@ int game_click(int x, int y, int action, int filter)
 		
 	disable_use();
 
-	if (opt_click)
-		snd_play(game_theme.click, -1, 0);
-		
-	game_cmd(buf);
+	game_cmd(buf, 1);
 	return 1;
 }
 
@@ -2930,11 +2928,11 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 	p = instead_retval(0); instead_clear();
 	if (!p)
 		return -1;
+
 	mouse_reset(0);
-	rc = game_cmd(p); free(p);
+	rc = game_cmd(p, mb != -1); free(p);
 	mouse_restore();
-	if (!rc)
-		snd_play(game_theme.click, -1, 0);
+
 	return (rc)?-1:0;
 }
 
@@ -3088,7 +3086,7 @@ int game_loop(void)
 				}
 			} else if (!is_key(&ev, "f5") && curgame_dir && !menu_shown) {
 				mouse_reset(1);
-				game_cmd("look");
+				game_cmd("look", 0);
 			} else if (alt_pressed && !is_key(&ev, "r") && curgame_dir && !menu_shown && debug_sw) {
 				mouse_reset(1);
 				game_menu_act("/new");

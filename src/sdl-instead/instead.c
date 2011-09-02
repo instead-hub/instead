@@ -521,7 +521,7 @@ static void instead_timer_do(void *data)
 		goto out;
 
 	mouse_reset(0);
-	game_cmd(p); free(p);
+	game_cmd(p, 0); free(p);
 	mouse_restore();
 
 	game_cursor(CURSOR_ON);
