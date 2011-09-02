@@ -33,9 +33,9 @@ At the beginning of ''main.lua'' file a header may be defined. It consists of ta
 -- $Name: The most interesting game!$
 </code>
 
-From version 1.2.0 after headers you must define required STEAD API version. It is "1.4.5" currently.
+From version 1.2.0 after headers you must define required STEAD API version. It is "1.5.0" currently.
 <code lua>
-instead_version "1.4.5"
+instead_version "1.5.0"
 </code>
 <WRAP center round important>
 Without this line STEAD API will stay in compatible(legacy) mode.
