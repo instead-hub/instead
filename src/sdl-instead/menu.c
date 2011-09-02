@@ -533,7 +533,7 @@ int game_menu_act(const char *a)
 			unlink (s);
 		game_menu_box(0, NULL);
 		if (!game_reset()) {
-			game_cmd("look");
+			game_cmd("look", 0);
 			custom_theme_warn();
 		}
 	} else if (!strcmp(a,"/main")) {

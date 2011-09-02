@@ -2,7 +2,7 @@ instead (1.5.1) unstable; urgency=low
 
   * bug fix in game_cmd logic;
   * bug fix in highlight logic;
-  * no click snd in click logic;
+  * bug fix in click sound logic;
   * code cleanup (no warnings);
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 27 Aug 2011 20:27:00 +0400
