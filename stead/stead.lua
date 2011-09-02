@@ -9,6 +9,7 @@ stead = {
 	ticks = get_ticks,
 	mouse_pos = mouse_pos,
 	menu_toggle = menu_toggle,
+	set_timer = set_timer,
 	next = next,
 	io = io,
 	os = os,
@@ -2878,8 +2879,8 @@ stead.objects = function(s)
 	timer = obj { -- timer calls stead.timer callback 
 		nam = 'timer',
 		ini = function(s)
-			if tonumber(s._timer) ~= nil and type(set_timer) == 'function' then
-				set_timer(s._timer);
+			if tonumber(s._timer) ~= nil and type(stead.set_timer) == 'function' then
+				stead.set_timer(s._timer);
 			end
 		end,
 		get = function(s)
@@ -2896,10 +2897,10 @@ stead.objects = function(s)
 		end,
 		set = function(s, v)
 			s._timer = tonumber(v);
-			if type(set_timer) ~= 'function' then
+			if type(stead.set_timer) ~= 'function' then
 				return false
 			end
-			set_timer(v)
+			stead.set_timer(v)
 			return true
 		end,
 		--[[ 	callback = function(s)
