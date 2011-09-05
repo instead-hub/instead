@@ -810,6 +810,18 @@ static char *lang_name(const char *path, const char *file)
 }
 
 
+static int cmp_lang(const void *p1, const void *p2)
+{
+	const struct lang *l1 = (const struct lang*)p1;
+	const struct lang *l2 = (const struct lang*)p2;
+	return strcmp(l1->name, l2->name);
+}
+
+static void langs_sort()
+{
+	qsort(langs, langs_nr, sizeof(struct lang), cmp_lang);
+}
+
 int menu_langs_lookup(const char *path)
 {
 	char *p;
@@ -846,6 +858,7 @@ int menu_langs_lookup(const char *path)
 		i ++;
 	}
 out:	
+	langs_sort();
 	closedir(d);
 	return 0;
 }

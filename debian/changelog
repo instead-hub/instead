@@ -3,6 +3,8 @@ instead (1.5.1) unstable; urgency=low
   * bug fix in game_cmd logic;
   * bug fix in highlight logic;
   * bug fix in click sound logic;
+  * INSTEAD SDL -> INSTEAD;
+  * languages are sorted now;
   * set_timer moved to stead;
   * code cleanup (no warnings);
 
