@@ -1343,7 +1343,7 @@ int gfx_video_init(void)
 {
 	char title[4096];
 
-	strcpy( title, "INSTEAD SDL - " );
+	strcpy( title, "INSTEAD - " );
 	strcat( title, VERSION );
 
 	if (TTF_Init()) {
