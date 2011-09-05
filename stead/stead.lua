@@ -2145,8 +2145,8 @@ iface = {
 			return nil, false -- really nothing
 		end
 
-		if RAW_TEXT then
-			v = false
+		if RAW_TEXT and v ~= false then
+			return stead.cat(r, '\n'), true;
 		end
 
 		if v == false then
