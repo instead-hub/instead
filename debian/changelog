@@ -8,7 +8,7 @@ instead (1.5.1) unstable; urgency=low
   * set_timer moved to stead;
   * code cleanup (no warnings);
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 02 Sep 2011 16:12:00 +0400
+ -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 05 Sep 2011 16:11:00 +0400
 
 instead (1.5.0) unstable; urgency=low
 
