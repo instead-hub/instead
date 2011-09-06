@@ -27,7 +27,6 @@ static	char *last_title = NULL;
 static	char *last_cmd = NULL;
 
 void game_cursor(int on);
-void mouse_reset(int hl);
 
 void game_err_msg(const char *s)
 {

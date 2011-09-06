@@ -675,6 +675,7 @@ void custom_theme_warn(void)
 {
 #ifndef ANDROID
 	if (game_own_theme && !opt_owntheme && cur_menu != menu_warning) {
+		mouse_reset(1);
 		game_menu(menu_custom_theme);
 	}
 #endif
