@@ -284,8 +284,12 @@ int idf_create(const char *file, const char *path)
 	}
 
 	fd = fopen(dirpath(file), "wb");
-	fwrite("IDF1", 1, 4, fd);
-	write_word(fd, dict_size);
+	if (!fd)
+		goto err;
+	if (fwrite("IDF1", 1, 4, fd) != 4)
+		goto err;
+	if (write_word(fd, dict_size) < 0)
+		goto err;
 	off = 4 + 4 + dict_size;
 
 	list_for_each(pos, &items) {
@@ -334,7 +338,8 @@ err:
 		list_del(&it->list);
 		free(it);
 	}
-	fclose(fd);
+	if (fd)
+		fclose(fd);
 	return rc;
 }
 
