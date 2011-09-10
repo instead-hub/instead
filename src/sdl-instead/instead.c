@@ -504,8 +504,6 @@ static int luaB_get_steadpath(lua_State *L) {
 }
 
 
-extern void mouse_reset(int hl); /* too bad */
-
 static void instead_timer_do(void *data)
 {
 	char *p;
