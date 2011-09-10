@@ -124,7 +124,7 @@ int game_select(const char *name)
 		curgame_dir = g->dir;
 		instead_done();
 
-		if (instead_init()) {
+		if (instead_init(g->path)) {
 			curgame_dir = oldgame;
 			return -1;
 		}

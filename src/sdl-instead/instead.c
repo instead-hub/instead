@@ -1653,11 +1653,19 @@ static int instead_platform(void)
 	return 0;
 }
 
-static int instead_package(void)
+static int instead_package(const char *path)
 {
 	char *p;
+#ifdef _WIN32_WCE
+	char stead_path[PATH_MAX] = "package.path=\""; /* wince have not cwd, lol :) */
+	if (path) {
+		strcat(stead_path, path);
+		strcat(stead_path, "/?.lua");
+		strcat(stead_path, ";");
+	}
+#else
 	char stead_path[PATH_MAX] = "package.path=\"./?.lua;";
-
+#endif
 	p = game_local_stead_path();
 	if (p) {
 		strcat(stead_path, p);
@@ -1674,11 +1682,13 @@ static int instead_package(void)
 	}
 	strcat(stead_path, "/?.lua");
 	strcat(stead_path, "\"");
+
+
 	instead_eval(stead_path); instead_clear();
 /*	putenv(stead_path); */
 	return 0;
 }
-int instead_init(void)
+int instead_init(const char *path)
 {
 	setlocale(LC_ALL,"");
 	setlocale(LC_NUMERIC,"C"); /* to avoid . -> , in numbers */	
@@ -1694,7 +1704,7 @@ int instead_init(void)
 	luaL_register(L, "_G", base_funcs);
 	luaopen_lfs (L);
 
-	instead_package();
+	instead_package(path);
 	instead_platform();
 	instead_lang();
 

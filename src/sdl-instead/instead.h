@@ -11,7 +11,7 @@ struct instead_args {
 	const char *val;
 };
 
-extern int  instead_init(void);
+extern int  instead_init(const char *path);
 extern int  instead_load(char *game);
 extern void instead_done(void);
 extern char *instead_cmd(char *s);
