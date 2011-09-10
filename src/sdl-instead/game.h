@@ -68,6 +68,7 @@ extern int	game_menu_box_wh(const char *txt, int *w, int *h);
 extern void	game_menu_box_width(int show, const char *txt, int width);
 
 extern void mouse_reset(int hl);
+extern int mouse_restore(void);
 
 extern int	game_load(int nr);
 extern int	game_save(int nr);

@@ -1735,6 +1735,9 @@ static void game_redraw_pic(void)
 	el(el_spic)->y = oy;
 }
 
+static xref_t hl_xref = NULL;
+static struct el *hl_el = NULL;
+
 int game_cmd(char *cmd, int click)
 {
 	int		old_off;
@@ -1751,8 +1754,9 @@ int game_cmd(char *cmd, int click)
 	char		*pict = NULL;
 	img_t		oldscreen = NULL;
 	int 	dd = (DIRECT_MODE);
-	int			rc = 0;
-	int			new_scene = 0;
+	int		rc = 0;
+	int		new_scene = 0;
+	int		m_restore = 0;
 	if (menu_shown)
 		return -1;
 
@@ -1792,10 +1796,19 @@ int game_cmd(char *cmd, int click)
 	if (!cmdstr) {
 		if (game_pict_modify(NULL)) /* redraw pic only */
 			game_redraw_pic();
-		if (!rc)
+		if (!rc) {
+			if (hl_el == el(el_inv)) {
+				m_restore = 1;
+				mouse_reset(0);
+			}
 			goto inv; /* hackish? ok, yes  it is... */
+		}
 		goto err; /* really nothing to do */ 
 	}
+
+	m_restore = 1;
+	mouse_reset(0); /* redraw all, so, reset mouse */
+
 	fading = check_fading(&new_scene);
 
 	instead_function("instead.get_title", NULL); 
@@ -2005,19 +2018,24 @@ inv:
 		gfx_free_image(offscreen);
 //		input_clear();
 	}
-	{ /* highlight new scene, to avoid flickering */
+	{
 		int x, y;
-		gfx_cursor(&x, &y);
-		game_highlight(x, y, 1);
+		if (!m_restore || mouse_restore()) {
+			gfx_cursor(&x, &y);
+			game_highlight(x, y, 1); /* highlight new scene, to avoid flickering */
+		}
 	}
+
 	if (fading)
 		goto err;
+
 out:
 	game_cursor(CURSOR_DRAW);
 	gfx_flip();
 //	input_clear();
 err:
 	game_autosave();
+
 #if 0
 	if (err_msg) {
 		mouse_reset(1);
@@ -2124,15 +2142,15 @@ xref_t look_xref(int x, int y, struct el **elem)
 	return xref;
 }
 
-static xref_t old_xref = NULL;
-static struct el *old_el = NULL;
+static xref_t click_xref = NULL;
+static struct el *click_el = NULL;
 
 static int click_x = -1;
 static int click_y = -1;
 
 int game_paused(void)
 {
-	return browse_dialog || menu_shown || use_xref || old_xref || gfx_fading() || minimized();
+	return browse_dialog || menu_shown || use_xref || click_xref || gfx_fading() || minimized();
 }
 
 void menu_update(struct el *elem)
@@ -2147,31 +2165,7 @@ void menu_update(struct el *elem)
 int game_highlight(int x, int y, int on)
 {
 	struct el	*elem = NULL;
-	struct el	*oel = NULL;
-	xref_t		hxref = NULL;
 	xref_t		xref = NULL;
-	static int	old_x = -1;
-	static int	old_y = -1;
-	static int	old_off = 0;
-	int	new_off = old_off;
-
-	hxref = look_xref(old_x, old_y, &oel);
-
-	if (oel) { /* detect scrolling, ehhh... to hackish? */
-		int type;
-		struct el	*nel = NULL;
-		type = oel->type;
-		if (type == elt_box)
-			new_off = txt_box_off(oel->p.box);
-		if (new_off != old_off) {
-			old_y -= (new_off - old_off);
-			hxref = look_xref(old_x, old_y, &nel);
-			if (nel != oel) {
-				hxref = NULL;
-				oel = NULL;
-			}
-		}
-	}
 
 	if (on == 1) {
 		xref = look_xref(x, y, &elem);
@@ -2180,28 +2174,32 @@ int game_highlight(int x, int y, int on)
 			game_xref_update(xref, elem->x, elem->y);
 		}
 	}
-	
-	if (hxref != xref && oel) {
-		if (hxref != use_xref && xref_get_active(hxref)) {
-			xref_set_active(hxref, 0);
-			game_xref_update(hxref, oel->x, oel->y);
+
+	if (hl_xref != xref && hl_el) {
+		if (hl_xref != use_xref && xref_get_active(hl_xref)) {
+			xref_set_active(hl_xref, 0);
+			game_xref_update(hl_xref, hl_el->x, hl_el->y);
 		}
 	}
-	old_x = x;
-	old_y = y;
-	old_off = new_off;
+
+	hl_xref = xref;
+	hl_el = elem;
+
 	return 0;
 }
+
 
 void mouse_reset(int hl)
 {
 	if (hl)
 		game_highlight(-1, -1, 0);
+	else
+		hl_xref = hl_el = NULL;
 
 	disable_use();
 
 	motion_mode = 0;
-	old_xref = old_el = NULL;
+	click_xref = click_el = NULL;
 }
 
 
@@ -2285,21 +2283,21 @@ int game_click(int x, int y, int action, int filter)
 		xref_t new_xref;
 		struct el *new_elem;
 		new_xref = look_xref(x, y, &new_elem);
-		if (new_xref != old_xref || new_elem != old_el) {
-			old_el = NULL;
-			if (old_xref) {
-				old_xref = NULL;
+		if (new_xref != click_xref || new_elem != click_el) {
+			click_el = NULL;
+			if (click_xref) {
+				click_xref = NULL;
 				return 0; /* just filtered */
 			}
-			old_xref = NULL;
+			click_xref = NULL;
 		}
 	}
 
 	if (action == 1) {
-		xref = old_xref;
-		elem = old_el;
-		old_xref = NULL;
-		old_el = NULL;
+		xref = click_xref;
+		elem = click_el;
+		click_xref = NULL;
+		click_el = NULL;
 	} else  { /* just press */
 		xref = look_xref(x, y, &elem);
 		if (xref) {
@@ -2311,8 +2309,8 @@ int game_click(int x, int y, int action, int filter)
 			motion_id = elem->id;
 			return 0;
 		}
-		old_xref = xref;
-		old_el = elem;
+		click_xref = xref;
+		click_el = elem;
 		return 0;
 	}
 	/* now look only second press */
@@ -2404,9 +2402,12 @@ int game_click(int x, int y, int action, int filter)
 	return 1;
 }
 
-void mouse_restore(void)
+int mouse_restore(void)
 {
+	if (click_x == -1 || click_y == -1)
+		return -1;
 	game_click(click_x, click_y, -1, 0);
+	return 0;
 }
 
 void game_cursor(int on)
@@ -2928,9 +2929,7 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 	if (!p)
 		return -1;
 
-	mouse_reset(0);
 	rc = game_cmd(p, mb != -1); free(p);
-	mouse_restore();
 
 	return (rc)?-1:0;
 }
@@ -3234,7 +3233,7 @@ int game_loop(void)
 		}
 
 		if (!DIRECT_MODE || menu_shown) {
-			if (old_xref)
+			if (click_xref)
 				game_highlight(x, y, 1);
 			else {
 				int x, y;

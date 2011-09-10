@@ -505,7 +505,6 @@ static int luaB_get_steadpath(lua_State *L) {
 
 
 extern void mouse_reset(int hl); /* too bad */
-extern void mouse_restore(void);
 
 static void instead_timer_do(void *data)
 {
@@ -520,9 +519,7 @@ static void instead_timer_do(void *data)
 	if (!p)
 		goto out;
 
-	mouse_reset(0);
 	game_cmd(p, 0); free(p);
-	mouse_restore();
 
 	game_cursor(CURSOR_ON);
 out:
