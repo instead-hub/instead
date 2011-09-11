@@ -1657,7 +1657,7 @@ static int instead_package(const char *path)
 {
 	char *p;
 #ifdef _WIN32_WCE
-	char stead_path[PATH_MAX] = "package.path=\""; /* wince have not cwd, lol :) */
+	char stead_path[PATH_MAX * 4] = "package.path=\""; /* wince have not cwd, lol :) */
 	if (path) {
 		strcat(stead_path, path);
 		strcat(stead_path, "/?.lua");
