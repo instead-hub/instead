@@ -2098,7 +2098,7 @@ struct el *look_obj(int x, int y)
 		if (x < el(i)->x || y < el(i)->y || !el(i)->drawn)
 			continue;
 		el_size(i, &w, &h);
-		if (x >= el(i)->x && y >= el(i)->y && x <= el(i)->x + w && y <= el(i)->y + h)
+		if (x >= el(i)->x && y >= el(i)->y && x < el(i)->x + w && y < el(i)->y + h)
 			return el(i);
 	}
 	return NULL;
