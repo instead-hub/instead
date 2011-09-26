@@ -17,7 +17,7 @@ main = room {
 	dsc = txtc("Welcome to INSTEAD tutorial mode.")..[[^^
 	The game consists of scenes. Each game scene has a description, consisting of static and dynamic parts. Dynamic part includes objects, characters, etc.  A player can interact with the dynamic part by clicking mouse on the highlighted links.^^
 
-	The current scene is called "Tutorial" an you are reading the static part of its description. The only object in this scene is the "Next" object, which you can see below the text. Thus, to continue learning you can click "Next".]],
+	The current scene is called "Tutorial" and you are reading the static part of its description. The only object in this scene is the "Next" object, which you can see below the text. Thus, to continue learning you can click "Next".]],
 	obj = { 
 		vobj('continue', '{Next}'),
 	},
