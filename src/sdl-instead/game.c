@@ -1798,7 +1798,7 @@ int game_cmd(char *cmd, int click)
 			game_redraw_pic();
 		if (!rc) {
 			if (hl_el == el(el_inv)) {
-				m_restore = 1;
+				m_restore = !click;
 				mouse_reset(0);
 			}
 			goto inv; /* hackish? ok, yes  it is... */
@@ -1806,7 +1806,7 @@ int game_cmd(char *cmd, int click)
 		goto err; /* really nothing to do */ 
 	}
 
-	m_restore = 1;
+	m_restore = !click;
 	mouse_reset(0); /* redraw all, so, reset mouse */
 
 	fading = check_fading(&new_scene);
