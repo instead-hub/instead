@@ -2505,12 +2505,19 @@ static void scroll_down(int id, int count)
 	el_update(id);
 }
 
-static void scroll_motion(int id, int off)
+static int scroll_possible(int id, int off)
 {
-	game_highlight(-1, -1, 0);
 	if (!off || (off > 0 && box_isscroll_down(id)) ||
 		(off < 0  && box_isscroll_up(id)))
+		return -1;
+	return 0;
+}
+
+static void scroll_motion(int id, int off)
+{
+	if (scroll_possible(id, off))
 		return;
+	game_highlight(-1, -1, 0);
 	txt_box_scroll(el_box(id), off);
 	el_clear(id);
 	el_draw(id);
@@ -3225,7 +3232,8 @@ int game_loop(void)
 		} else if (ev.type == MOUSE_WHEEL_DOWN && !menu_shown) {
 			game_scroll_down(ev.count);
 		} else if (ev.type == MOUSE_MOTION) {
-			if (!motion_mode && click_el && abs(gfx_ticks() - click_time) > 300) {
+			if (!motion_mode && click_el && abs(gfx_ticks() - click_time) > 300
+				&& !scroll_possible(click_el->id, click_y - ev.y)) {
 				motion_id = click_el->id;
 				motion_y = click_y;
 				motion_mode = 1;
