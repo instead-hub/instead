@@ -3232,8 +3232,9 @@ int game_loop(void)
 		} else if (ev.type == MOUSE_WHEEL_DOWN && !menu_shown) {
 			game_scroll_down(ev.count);
 		} else if (ev.type == MOUSE_MOTION) {
-			if (!motion_mode && click_el && abs(gfx_ticks() - click_time) > 300
-				&& !scroll_possible(click_el->id, click_y - ev.y)) {
+			if (opt_motion && !motion_mode && click_el &&
+					abs(gfx_ticks() - click_time) > 300 &&
+					!scroll_possible(click_el->id, click_y - ev.y)) {
 				motion_id = click_el->id;
 				motion_y = click_y;
 				motion_mode = 1;
