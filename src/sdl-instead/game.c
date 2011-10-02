@@ -3233,7 +3233,7 @@ int game_loop(void)
 			game_scroll_down(ev.count);
 		} else if (ev.type == MOUSE_MOTION) {
 			if (opt_motion && !motion_mode && click_el &&
-					abs(timer_counter - click_time) >= 300/HZ &&
+					abs(timer_counter - click_time) >= 300 / HZ &&
 					!scroll_possible(click_el->id, click_y - ev.y)) {
 				motion_id = click_el->id;
 				motion_y = click_y;
