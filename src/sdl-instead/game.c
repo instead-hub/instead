@@ -2271,7 +2271,7 @@ int game_click(int x, int y, int action, int filter)
 		click_x = x;
 		click_y = y;
 		motion_y = y;
-		click_time = gfx_ticks();
+		click_time = timer_counter;
 	} else if (action == 1) {
 		click_x = -1;
 		click_y = -1;
@@ -3233,7 +3233,7 @@ int game_loop(void)
 			game_scroll_down(ev.count);
 		} else if (ev.type == MOUSE_MOTION) {
 			if (opt_motion && !motion_mode && click_el &&
-					abs(gfx_ticks() - click_time) > 300 &&
+					abs(timer_counter - click_time) >= 300/HZ &&
 					!scroll_possible(click_el->id, click_y - ev.y)) {
 				motion_id = click_el->id;
 				motion_y = click_y;
