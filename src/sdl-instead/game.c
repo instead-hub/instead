@@ -2144,7 +2144,7 @@ xref_t look_xref(int x, int y, struct el **elem)
 
 static xref_t click_xref = NULL;
 static struct el *click_el = NULL;
-
+static unsigned long click_time = 0;
 static int click_x = -1;
 static int click_y = -1;
 
@@ -2271,6 +2271,7 @@ int game_click(int x, int y, int action, int filter)
 		click_x = x;
 		click_y = y;
 		motion_y = y;
+		click_time = gfx_ticks();
 	} else if (action == 1) {
 		click_x = -1;
 		click_y = -1;
@@ -3224,6 +3225,12 @@ int game_loop(void)
 		} else if (ev.type == MOUSE_WHEEL_DOWN && !menu_shown) {
 			game_scroll_down(ev.count);
 		} else if (ev.type == MOUSE_MOTION) {
+			if (!motion_mode && click_el && abs(gfx_ticks() - click_time) > 300) {
+				motion_id = click_el->id;
+				motion_y = click_y;
+				motion_mode = 1;
+				click_xref = click_el = NULL;
+			}
 			if (motion_mode) {
 				motion_mode = 2;
 				scroll_motion(motion_id, motion_y - ev.y);
@@ -3235,7 +3242,7 @@ int game_loop(void)
 		if (!DIRECT_MODE || menu_shown) {
 			if (click_xref)
 				game_highlight(x, y, 1);
-			else {
+			else if (!motion_mode) {
 				int x, y;
 				gfx_cursor(&x, &y);
 				game_highlight(x, y, 1);
