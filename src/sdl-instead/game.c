@@ -1698,7 +1698,7 @@ static void game_pict_clip(void)
 		return;
 	}
 
-	if (game_theme.gfx_mode != GFX_MODE_FLOAT) {
+	if (GFX_MODE(game_theme.gfx_mode) != GFX_MODE_FLOAT) {
 		x = game_theme.win_x;
 		y = game_theme.win_y;
 		w = game_theme.win_w;
@@ -1882,7 +1882,7 @@ int game_cmd(char *cmd, int click)
 			if (el_img(el_spic))
 				gfx_free_image(el_img(el_spic));
 			el(el_spic)->p.p = NULL;
-			if (game_theme.gfx_mode != GFX_MODE_FLOAT) 
+			if (GFX_MODE(game_theme.gfx_mode) != GFX_MODE_FLOAT) 
 				img = game_pict_scale(img, game_theme.win_w, game_theme.max_scene_h);
 			else
 				img = game_pict_scale(img, game_theme.max_scene_w, game_theme.max_scene_h);
@@ -1892,14 +1892,30 @@ int game_cmd(char *cmd, int click)
 		if (img) {
 			w = gfx_img_w(img);
 			h = gfx_img_h(img);
-			if (game_theme.gfx_mode != GFX_MODE_FLOAT) {
+			if (GFX_MODE(game_theme.gfx_mode) != GFX_MODE_FLOAT) {
 				x = (game_theme.win_w - w)/2 + game_theme.win_x;
 				if (redraw_pict)
 					el_set(el_spic, elt_image, x, game_theme.win_y + title_h, img);
 			} else {
-				x = (game_theme.max_scene_w - w)/2 + game_theme.gfx_x;
+				int xx, yy;
+
+				if (GFX_ALIGN(game_theme.gfx_mode) & ALIGN_TOP)
+					yy = 0;
+				else if (GFX_ALIGN(game_theme.gfx_mode) & ALIGN_BOTTOM)
+					yy = game_theme.max_scene_h - h;
+				else
+					yy = (game_theme.max_scene_h - h)/2;
+
+				if (GFX_ALIGN(game_theme.gfx_mode) & ALIGN_LEFT)
+					xx = 0;
+				else if (GFX_ALIGN(game_theme.gfx_mode) & ALIGN_RIGHT)
+					xx = game_theme.max_scene_w - w;
+				else
+					xx = (game_theme.max_scene_w - w)/2;
+
+				x = xx + game_theme.gfx_x;
 				if (redraw_pict)
-					el_set(el_spic, elt_image, x, game_theme.gfx_y/* + (game_theme.max_scene_h - h)/2*/, img);
+					el_set(el_spic, elt_image, x, game_theme.gfx_y + yy, img);
 			}
 			pict_h = h;
 		}
@@ -1952,7 +1968,7 @@ int game_cmd(char *cmd, int click)
 		txt_layout_add(txt_box_layout(el_box(el_scene)), cmdstr);
 		txt_box_set(el_box(el_scene), txt_box_layout(el_box(el_scene)));
 	} else {
-		if (game_theme.gfx_mode == GFX_MODE_FLOAT) 
+		if (GFX_MODE(game_theme.gfx_mode) == GFX_MODE_FLOAT) 
 			pict_h = 0;	
 		txt_layout_set(txt_box_layout(el_box(el_scene)), cmdstr);
 		txt_box_set(el_box(el_scene), txt_box_layout(el_box(el_scene)));

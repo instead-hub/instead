@@ -28,9 +28,36 @@ static int parse_gfx_mode(const char *v, void *data)
 		*i = GFX_MODE_FIXED;	
 	else if (!strcmp(v, "embedded"))
 		*i = GFX_MODE_EMBEDDED;
-	else if (!strcmp(v, "float"))
-		*i = GFX_MODE_FLOAT;	
-	else if (!strcmp(v, "direct"))
+	else if (!strncmp(v, "float", 5)) {
+		*i = GFX_MODE_FLOAT;
+		v += 5;
+		if (!*v) /* compat */
+			*i |= GFX_ALIGN_SET(ALIGN_TOP);
+		while (*v) {
+			if (*v != '-')
+				return -1;
+			v ++;
+			if (!strncmp(v, "top", 3)) {
+				*i |= GFX_ALIGN_SET(ALIGN_TOP);
+				v += 3;
+			} else if (!strncmp(v, "middle", 6)) {
+				*i |= GFX_ALIGN_SET(ALIGN_MIDDLE);
+				v += 6;
+			} else if (!strncmp(v, "bottom", 6)) {
+				*i |= GFX_ALIGN_SET(ALIGN_BOTTOM);
+				v += 6;
+			} else if (!strncmp(v, "left", 4)) {
+				*i |= GFX_ALIGN_SET(ALIGN_LEFT);
+				v += 4;
+			} else if (!strncmp(v, "right", 5)) {
+				*i |= GFX_ALIGN_SET(ALIGN_RIGHT);
+				v += 5;
+			} else if (!strncmp(v, "center", 6)) {
+				*i |= GFX_ALIGN_SET(ALIGN_CENTER);
+				v += 6;
+			}
+		}
+	} else if (!strcmp(v, "direct"))
 		*i = GFX_MODE_DIRECT;	
 	else
 		return -1;
@@ -40,7 +67,9 @@ static int parse_gfx_mode(const char *v, void *data)
 static int out_gfx_mode(const void *v, char **out)
 {
 	char *o;
-	switch (*((int*)v)) {
+	char buff[256];
+	int m = *((int*)v);
+	switch (GFX_MODE(m)) {
 	case GFX_MODE_FIXED:
 		o = strdup("fixed");
 		break;
@@ -48,7 +77,18 @@ static int out_gfx_mode(const void *v, char **out)
 		o = strdup("embedded");
 		break;
 	case GFX_MODE_FLOAT:
-		o = strdup("float");
+		strcpy(buff, "float");
+		if (GFX_ALIGN(m) != ALIGN_TOP) { /* compat */
+			if (GFX_ALIGN(m) & ALIGN_TOP)
+				strcat(buff,"-top");
+			else if (GFX_ALIGN(m) & ALIGN_BOTTOM)
+				strcat(buff,"-bottom");
+			if (GFX_ALIGN(m) & ALIGN_LEFT)
+				strcat(buff,"-left");
+			else if (GFX_ALIGN(m) & ALIGN_RIGHT)
+				strcat(buff,"-right");
+		}
+		o = strdup(buff);
 		break;
 	case GFX_MODE_DIRECT:
 		o = strdup("direct");
