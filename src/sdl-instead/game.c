@@ -3,6 +3,7 @@
 #include "list.h"
 #include "idf.h"
 
+#define MOTION_TIME (abs(timer_counter - click_time) >= 200 / HZ)
 int game_running = 1;
 
 char *err_msg = NULL;
@@ -2283,6 +2284,8 @@ int game_click(int x, int y, int action, int filter)
 	xref_t 		xref = NULL;
 	char		*xref_txt;
 
+	int was_motion = (motion_mode == 2);
+
 	if (!action) {
 		click_x = x;
 		click_y = y;
@@ -2347,7 +2350,7 @@ int game_click(int x, int y, int action, int filter)
 			} else if (disable_use());
 //				el_update(el_inv);
 			motion_mode = 0;
-		} else if (disable_use()) {
+		} else if ((was_motion && MOTION_TIME) || disable_use()) {
 //			el_update(el_inv);
 //			gfx_flip();
 		}
@@ -3233,7 +3236,7 @@ int game_loop(void)
 		} else if (ev.type == MOUSE_DOWN) {
 			if (ev.code != 1)
 				disable_use();
-			else {	
+			else {
 				game_highlight(-1, -1, 0);
 				game_click(ev.x, ev.y, 0, 1);
 				x = ev.x;
@@ -3249,7 +3252,7 @@ int game_loop(void)
 			game_scroll_down(ev.count);
 		} else if (ev.type == MOUSE_MOTION) {
 			if (opt_motion && !motion_mode && click_el &&
-					abs(timer_counter - click_time) >= 300 / HZ &&
+					MOTION_TIME &&
 					!scroll_possible(click_el->id, click_y - ev.y)) {
 				motion_id = click_el->id;
 				motion_y = click_y;
