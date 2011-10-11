@@ -2350,7 +2350,8 @@ int game_click(int x, int y, int action, int filter)
 			} else if (disable_use());
 //				el_update(el_inv);
 			motion_mode = 0;
-		} else if ((was_motion && MOTION_TIME) || disable_use()) {
+		} else if (!(was_motion && MOTION_TIME)) { 
+			disable_use();
 //			el_update(el_inv);
 //			gfx_flip();
 		}
