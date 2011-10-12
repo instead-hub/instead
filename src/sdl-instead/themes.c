@@ -55,7 +55,8 @@ static int parse_gfx_mode(const char *v, void *data)
 			} else if (!strncmp(v, "center", 6)) {
 				*i |= GFX_ALIGN_SET(ALIGN_CENTER);
 				v += 6;
-			}
+			} else
+				return -1;
 		}
 	} else if (!strcmp(v, "direct"))
 		*i = GFX_MODE_DIRECT;	
