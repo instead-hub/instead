@@ -1275,7 +1275,7 @@ int gfx_get_max_mode(int *w, int *h)
 	int i = 0;
 	*w = 0;
 	*h = 0;
-/*	if (!vid_modes) */ /* SDL bug? After switching mode list is invalid? */
+	if (!vid_modes)
 		gfx_modes();
 
 	if (!vid_modes)
@@ -1296,6 +1296,7 @@ int gfx_set_mode(int w, int h, int fs)
 {
 	if (gfx_width == w && gfx_height == h && gfx_fs == fs)
 		return 0; /* already done */
+	vid_modes = NULL;
 	gfx_fs = fs;
 	gfx_width = w;
 	gfx_height = h;
