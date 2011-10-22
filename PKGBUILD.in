@@ -1,4 +1,5 @@
 # Contributor: Peter Kosyh <p.kosyhgmail.com>
+
 pkgname=instead
 pkgver=1.5.2
 pkgrel=1
@@ -6,17 +7,21 @@ pkgdesc="instead quest interpreter"
 arch=('i686' 'x86_64')
 url="http://instead.googlecode.com/"
 license=('GPL')
-
-depends=('sdl' 'sdl_image' 'sdl_mixer' 'sdl_ttf' 'lua')
-makedepends=( 'pkg-config' )
-
-source=(http://instead.googlecode.com/files/instead_$pkgver.tar.gz)
+depends=('sdl_image' 'sdl_mixer' 'sdl_ttf' 'lua')
+source=(http://instead.googlecode.com/files/instead_${pkgver}.tar.gz)
 md5sums=(MD5SUM)
+
 optdepends=('instead-launcher: install and update INSTEAD games from net')
 
 build() {
-cd $startdir/src/instead-$pkgver
+cd "${srcdir}/instead-${pkgver}"
+
 echo "2" | ./configure.sh
-make PREFIX=/usr || return 1.
-make DESTDIR=${startdir}/pkg PREFIX=/usr install
+make PREFIX=/usr
+}
+
+package() {
+cd "${srcdir}/instead-${pkgver}"
+
+make DESTDIR="${pkgdir}" PREFIX=/usr install
 }
