@@ -1338,6 +1338,9 @@ void game_music_player(void)
 	int 	loop;
 	char		*mus;
 
+	int cf_out = 0;
+	int cf_in = 0;
+
 	if (!snd_volume_mus(-1))
 		return;
 	if (!opt_music || !curgame_dir)
@@ -1349,6 +1352,11 @@ void game_music_player(void)
 	unix_path(mus);
 	instead_clear();
 
+	instead_function("instead.get_music_fading", NULL);
+	cf_out = instead_iretval(0);
+	cf_in = instead_iretval(1);
+	instead_clear();
+
 	if (mus && loop == -1) { /* disabled, 0 - forever, 1-n - loops */
 		free(mus);
 		mus = NULL;
@@ -1357,14 +1365,22 @@ void game_music_player(void)
 	if (loop == 0)
 		loop = -1;
 
+	if (cf_out == 0)
+		cf_out = 500;
+	else if (cf_out < 0)
+		cf_out = 0;
+
+	if (cf_in < 0)
+		cf_in = 0;
+
 	if (!mus) {
 		if (last_music) {
-			game_stop_mus(500);
+			game_stop_mus(cf_out);
 		}
 	} else if (!last_music || strcmp(last_music, mus)) {
-		game_stop_mus(500);
+		game_stop_mus(cf_out);
 		last_music = mus;
-		snd_play_mus(mus, 0, loop);
+		snd_play_mus(mus, cf_in, loop);
 	} else
 		free(mus);
 }
