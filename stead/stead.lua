@@ -2659,6 +2659,25 @@ function set_music(s, count)
 end
 stead.set_music = set_music
 
+function set_music_fading(o, i)
+
+	if o and o == 0 then o = -1 end
+	if i and i == 0 then i = -1 end
+
+	game._music_fadeout = o
+	if not i then
+		game._music_fadein = o
+	else
+		game._music_fadein = i
+	end
+end
+stead.set_music_fading = set_music_fading
+
+function get_music_fading()
+	return game._music_fadeout, game._music_fadein
+end
+stead.get_music_fading = get_music_fading
+
 function stop_music()
 	set_music(nil, -1);
 end
