@@ -2664,13 +2664,33 @@ static int word_token(const char *p, char **eptr)
 	return process_word_token(p, eptr, 'w');
 }
 
+static int lookup_cjk(const char *ptr)
+{
+	unsigned long sym;
+	int off = 0, rc;
+	while ((rc = get_utf8(ptr, &sym))) {
+		if (is_cjk(sym))
+			return off;
+		off += rc;
+		ptr += rc;
+	}
+	return off;
+}
 
 static const char *lookup_token_or_sp(const char *ptr)
 {
 	char *eptr;
 	const char *p = ptr;
 	while (*p) {
-		p += strcspn(p, " .,:!+-?/<\t\n");
+		int cjk, rc;
+		cjk = lookup_cjk(p);
+		rc = strcspn(p, " .,:!+-?/<\t\n");
+		if (p[cjk] && cjk < rc) { /* cjk symbol found! */
+			rc = cjk;
+			if (!rc)
+				rc += get_utf8(p, NULL);
+		}
+		p += rc;
 		if (*p != '<' ) {
 			while (is_delim(*p))
 				p ++;
@@ -3695,7 +3715,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 		if (!p)
 			break;
 		img = get_img(layout, p, &img_align);
-		if (!img_align) /* margins reset */
+		if (!img_align && (lookup_cjk(p) != 0)) /* margins reset */
 			addlen = get_unbrakable_len(layout, eptr);
 
 		wtok = 0;
