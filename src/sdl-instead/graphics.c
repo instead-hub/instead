@@ -3624,7 +3624,7 @@ int get_unbrakable_len(struct layout *layout, const char *ptr)
 		if (!p)
 			return w;
 
-		if (sp || cjk_here(p) || !*p || word_img(p, NULL) || word_token(p, NULL)) {
+		if (sp || !*p || cjk_here(p) || word_img(p, NULL) || word_token(p, NULL)) {
 			free(p);
 			return w;
 		}
