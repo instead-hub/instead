@@ -10,6 +10,8 @@ struct parser {
 	void		*p;
 	long		aux;
 };
+extern int is_cjk(unsigned long sym);
+extern int get_utf8(const char *p, unsigned long *sym_out);
 
 extern int is_space(int c);
 extern int is_empty(const char *str);

@@ -3,6 +3,105 @@
 #include "util.h"
 #include "idf.h"
 
+int get_utf8(const char *sp, unsigned long *sym_out)
+{
+	int i = 0, l = 0;
+	unsigned long sym = 0;
+	const unsigned char *p = (const unsigned char*)sp;
+
+	if (sym_out)
+		*sym_out = *p;
+
+	if (!*p)
+		return 0;
+
+	if (!(*p & 0xc0))
+		return 1;
+
+	if ((*p & 0xe0) == 0xc0) {
+		l = 1;
+		sym = (*p & 0x1f);
+	} else if ((*p & 0xf0) == 0xe0) {
+		l = 2;
+		sym = (*p & 0xf);
+	} else if ((*p & 0xf8) == 0xf0) {
+		l = 3;
+		sym = (*p & 7);
+	} else if ((*p & 0xfc) == 0xf8) {
+		l = 4;
+		sym = (*p & 3);
+	} else if ((*p & 0xfe) == 0xfc) {
+		l = 5;
+		sym = (*p & 1);
+	} else {
+		return 1;
+	}
+	p ++;
+	for (i = 0; i < l; i ++) {
+		sym <<= 6;
+		if ((*p & 0xc0) != 0x80) {
+			return 1;
+		}
+		sym |= (*p++ & 0x3f);
+	}
+	if (sym_out)
+		*sym_out = sym;
+	return l + 1;
+}
+
+int is_cjk(unsigned long sym)
+{
+	if (sym >=0x2E80 && sym <= 0x2EFF)
+		return 1;
+	if (sym >=0x2F00 && sym <= 0x2FDF)
+		return 1;
+	if (sym >= 0x2FF0 && sym <= 0x2FFF)
+		return 1;
+	if (sym >= 0x3000 && sym <= 0x303F)
+		return 1;
+	if (sym >= 0x3040 && sym <= 0x309F)
+		return 1;
+	if (sym >= 0x30A0 && sym <=0x30FF)
+		return 1;
+	if (sym >= 0x3100 && sym <=0x312F)
+		return 1;
+	if (sym >= 0x3130 && sym <= 0x318F)
+		return 1;
+	if (sym >= 0x3190 && sym <= 0x319F)
+		return 1;
+	if (sym >= 0x31A0 && sym <= 0x31BF)
+		return 1;
+	if (sym >= 0x31F0 && sym <= 0x31FF)
+		return 1;
+	if (sym >= 0x3200 && sym <= 0x32FF)
+		return 1;
+	if (sym >= 0x3300 && sym <= 0x33FF)
+		return 1;
+	if (sym >= 0x3400 && sym <= 0x4DBF)
+		return 1;
+	if (sym >= 0x4DC0 && sym <= 0x4DFF)
+		return 1;
+	if (sym >= 0x4E00 && sym <= 0x9FFF)
+		return 1;
+	if (sym >= 0xA000 && sym <= 0xA48F)
+		return 1;
+	if (sym >= 0xA490 && sym <= 0xA4CF)
+		return 1;
+	if (sym >= 0xAC00 && sym <= 0xD7AF)
+		return 1;
+	if (sym >= 0xF900 && sym <= 0xFAFF)
+		return 1;
+	if (sym >= 0xFE30 && sym <= 0xFE4F)
+		return 1;
+	if (sym >= 0x1D300 && sym <= 0x1D35F)
+		return 1;
+	if (sym >= 0x20000 && sym <= 0x2A6DF)
+		return 1;
+	if (sym >= 0x2F800 && sym <= 0x2FA1F)
+		return 1;
+	return 0;
+}
+
 void tolow(char *p)
 {
 	while (*p) {
