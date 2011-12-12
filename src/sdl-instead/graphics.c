@@ -2677,6 +2677,16 @@ static int lookup_cjk(const char *ptr)
 	return off;
 }
 
+static int cjk_here(const char *ptr)
+{
+	unsigned long sym;
+	int rc;
+	rc = get_utf8(ptr, &sym);
+	if (is_cjk(sym))
+		return rc;
+	return 0;
+}
+
 static const char *lookup_token_or_sp(const char *ptr)
 {
 	char *eptr;
@@ -3614,7 +3624,7 @@ int get_unbrakable_len(struct layout *layout, const char *ptr)
 		if (!p)
 			return w;
 
-		if (sp || !*p || word_img(p, NULL) || word_token(p, NULL)) {
+		if (sp || cjk_here(p) || !*p || word_img(p, NULL) || word_token(p, NULL)) {
 			free(p);
 			return w;
 		}
@@ -3715,7 +3725,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 		if (!p)
 			break;
 		img = get_img(layout, p, &img_align);
-		if (!img_align && (lookup_cjk(p) != 0)) /* margins reset */
+		if (!img_align) /* margins reset */
 			addlen = get_unbrakable_len(layout, eptr);
 
 		wtok = 0;
