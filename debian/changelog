@@ -2,6 +2,7 @@ instead (1.5.3) unstable; urgency=low
 
   * CJK support;
   * set_music_fading(out, in);
+  * 1 bit transparent icon added for SDL;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 12 Dec 2011 03:14:00 +0400
 
