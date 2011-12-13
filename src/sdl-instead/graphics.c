@@ -1358,7 +1358,7 @@ int gfx_video_init(void)
 #define ICON_PATH "./icon"
 #endif
 
-	icon = IMG_Load( ICON_PATH"/sdl_instead.png" );
+	icon = IMG_Load( ICON_PATH"/sdl_instead_1.png" );
 	if ( icon ) {
 		SDL_WM_SetIcon( icon, NULL );
 	}
