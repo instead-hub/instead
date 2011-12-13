@@ -6,6 +6,8 @@ all:
 install:
 	$(INSTALLD) $(ICONPATH)
 	$(INSTALL) sdl_instead.png $(ICONPATH)
+	$(INSTALL) sdl_instead_1.png $(ICONPATH)
 
 uninstall:
 	$(RM) $(ICONPATH)/sdl_instead.png
+	$(RM) $(ICONPATH)/sdl_instead_1.png

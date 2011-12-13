@@ -808,7 +808,7 @@ Also a simplified scene “vroom” is defined.
 Syntax: vroom(passage name, destination scene). For example:
 
 <code>
-	home.obj:add(vroom("go west", 'mountains');
+	home.way:add(vroom("go west", 'mountains');
 </code>
 
 ===== 16. Dynamic events =====

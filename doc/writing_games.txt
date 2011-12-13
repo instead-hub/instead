@@ -841,7 +841,7 @@ sside = room {
 Синтаксис: ''vroom(имя перехода, сцена назначения)''. Например:
 
 <code lua>
-	home.obj:add(vroom("идти на запад", 'mountains');
+	home.way:add(vroom("идти на запад", 'mountains');
 </code>
 
 ===== 16. Динамические события =====
