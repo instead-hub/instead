@@ -503,6 +503,16 @@ static int luaB_get_steadpath(lua_State *L) {
 	return 1;
 }
 
+static int luaB_get_themespath(lua_State *L) {
+	char themes_path[PATH_MAX];
+	strcpy(themes_path, game_cwd);
+	strcat(themes_path, "/");
+	strcat(themes_path, THEMES_PATH);
+	unix_path(themes_path);
+	lua_pushstring(L, themes_path);
+	return 1;
+}
+
 
 static void instead_timer_do(void *data)
 {
@@ -1551,6 +1561,7 @@ static const luaL_Reg base_funcs[] = {
 	{"get_savepath", luaB_get_savepath},
 	{"get_gamepath", luaB_get_gamepath},
 	{"get_steadpath", luaB_get_steadpath},
+	{"get_themespath", luaB_get_themespath},
 	{"set_timer", luaB_set_timer},
 	{"theme_var", luaB_theme_var},
 	{"theme_name", luaB_theme_name},
