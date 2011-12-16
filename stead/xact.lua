@@ -124,7 +124,7 @@ end
 xroom = stead.inherit(room, function(v)
 	v.look = stead.hook(v.look, function(f, s,...)
 		local xdsc = stead.call(s, 'xdsc');
-		return par(' ', xdsc, f(s, ...));
+		return par(stead.space_delim, xdsc, f(s, ...));
 	end)
 	return v
 end)

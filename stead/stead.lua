@@ -4,6 +4,7 @@ stead = {
 	table = table,
 	delim = ',',
 	scene_delim = "^^",
+	space_delim = ' ',
 	string = string,
 	math = math,
 	ticks = get_ticks,
@@ -155,7 +156,7 @@ function p(...)
 	for i = 1, stead.table.maxn(a) do
 		stead.cctx().txt = stead.par('', stead.cctx().txt, tostring(a[i]));
 	end
-	stead.cctx().txt = stead.cat(stead.cctx().txt, ' ');
+	stead.cctx().txt = stead.cat(stead.cctx().txt, stead.space_delim);
 end
 stead.p = p
 function pr(...)
@@ -295,8 +296,8 @@ fmt = function(...)
 
 	for i=1,stead.table.maxn(a) do
 		if type(a[i]) == 'string' then
-			local s = stead.string.gsub(a[i],'[\t ]+',' ');
-			s = stead.string.gsub(s, '[\n]+', ' ');
+			local s = stead.string.gsub(a[i],'[\t ]+', stead.space_delim);
+			s = stead.string.gsub(s, '[\n]+', stead.space_delim);
 			s = stead.string.gsub(s, '\\?[\\^]', { ['^'] = '\n', ['\\^'] = '^', ['\\\\'] = '\\'} );
 			res = stead.par('', res, s);
 		end
@@ -417,7 +418,7 @@ function obj_look(self)
 		o = stead.ref(o);
 		if isObject(o) then
 			vv = obj_look(o);
-			v = stead.par(' ',v, vv); 
+			v = stead.par(stead.space_delim, v, vv); 
 		end
 	end
 	return v;
@@ -890,7 +891,7 @@ function room_scene(self)
 	local v;
 	v = iface:title(stead.call(self,'nam'));
 	v = stead.par(stead.scene_delim, v, stead.call(self,'dsc')); --obj_look(self));
-	return stead.cat(v,' ');
+	return stead.cat(v, stead.space_delim);
 end
 
 function room_look(self)
@@ -898,10 +899,10 @@ function room_look(self)
 	for i,o in opairs(self.obj) do
 		o = stead.ref(o);
 		if isObject(o) then
-			vv = stead.par(' ',vv, o:look());
+			vv = stead.par(stead.space_delim, vv, o:look());
 		end
 	end
-	return stead.cat(vv,' ');
+	return stead.cat(vv, stead.space_delim);
 end
 
 function obj_search(v, n, dis)
@@ -1143,7 +1144,7 @@ function phrase_action(self)
 		r = true;
 	end
 	if isDialog(here()) and not dialog_rescan(here()) then
-		ret = stead.par(' ', ret, stead.back());
+		ret = stead.par(stead.space_delim, ret, stead.back());
 	end
 	
 	ret = stead.par(stead.scene_delim, last, ret);
@@ -1323,7 +1324,7 @@ function player_use(self, what, onwhat, ...)
 	if not v and not vv then
 		v, r = stead.call(game, 'use', obj, obj2, ...);
 	end
-	return stead.par(' ', v, vv);
+	return stead.par(stead.space_delim, v, vv);
 end
 
 function player_back(self)
@@ -1485,9 +1486,9 @@ function game_life(self)
 				was_moved = true
 			end
 			if pre or (PLAYER_MOVED and pre ~= false) then
-				av = stead.par(' ', av, vv);
+				av = stead.par(stead.space_delim, av, vv);
 			else
-				v = stead.par(' ',v, vv);
+				v = stead.par(stead.space_delim, v, vv);
 			end
 		end
 	end

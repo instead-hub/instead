@@ -282,7 +282,7 @@ fmt = function(...)
 
 	for i=1,stead.table.maxn(a) do
 		if type(a[i]) == 'string' then
-			local s = stead.string.gsub(a[i],'\t', ' '):gsub('[\n]+', ' ');
+			local s = stead.string.gsub(a[i],'\t', stead.space_delim):gsub('[\n]+', stead.space_delim);
 			s = stead.string.gsub(s, '\\?[\\^]', { ['^'] = '\n', ['\\^'] = '^',
 				['\\\\'] = '\\' });
 			res = stead.par('', res, s);

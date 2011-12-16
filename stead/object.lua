@@ -64,7 +64,7 @@ function player_use(self, what, onwhat, ...)
 	if not v and not vv then
 		return
 	end
-	v = stead.par(' ', v, vv);
+	v = stead.par(stead.space_delim, v, vv);
 	if v == nil and stead.api_version >= "1.3.5" then
 		return true
 	end
