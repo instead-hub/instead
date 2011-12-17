@@ -37,14 +37,21 @@ fi
 
 echo -n "Checking pkg-config --cflags lua[5.1]..."
 if ! pkg-config --cflags lua5.1 >/dev/null 2>&1; then
-	if ! pkg-config --cflags lua >/dev/null 2>&1; then
-		echo "failed: no package lua/lua5.1"
-		echo "Please install lua development package."
-		exit 1
+	if ! pkg-config --cflags lua5.2 >/dev/null 2>&1; then
+		if ! pkg-config --cflags lua >/dev/null 2>&1; then
+			echo "failed: no package lua/lua5.1/lua5.2"
+			echo "Please install lua development package."
+			exit 1
+		else
+			echo "lua"
+			lua_cflags="pkg-config --cflags lua"
+			lua_libs="pkg-config --libs lua"
+		fi
+	else
+		echo "lua5.2"
+		lua_cflags="pkg-config --cflags lua5.2"
+		lua_libs="pkg-config --libs lua5.2"
 	fi
-	echo "lua"
-	lua_cflags="pkg-config --cflags lua"
-	lua_libs="pkg-config --libs lua"
 else
 	echo "lua5.1"
 	lua_cflags="pkg-config --cflags lua5.1"	
