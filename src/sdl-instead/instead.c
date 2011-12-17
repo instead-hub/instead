@@ -8,7 +8,6 @@
 #endif
 
 /* the Lua interpreter */
-
 static gtimer_t instead_timer = NULL_TIMER;
 static int instead_timer_nr = 0;
 
@@ -36,6 +35,18 @@ static int report (lua_State *L, int status)
 	return status;
 }
 
+#if LUA_VERSION_NUM >= 502
+static int traceback (lua_State *L) {
+  const char *msg = lua_tostring(L, 1);
+  if (msg)
+    luaL_traceback(L, L, msg, 1);
+  else if (!lua_isnoneornil(L, 1)) {  /* is there an error object? */
+    if (!luaL_callmeta(L, 1, "__tostring"))  /* try its 'tostring' metamethod */
+      lua_pushliteral(L, "(no error message)");
+  }
+  return 1;
+}
+#else
 static int traceback (lua_State *L) 
 {
 	lua_getfield(L, LUA_GLOBALSINDEX, "debug");
@@ -53,7 +64,7 @@ static int traceback (lua_State *L)
 	lua_call(L, 2, 1);  /* call debug.traceback */
 	return 1;
 }
-
+#endif
 static int docall (lua_State *L) 
 {
 	int status;
@@ -89,7 +100,11 @@ static const char *idf_reader(lua_State *L, void *data, size_t *size)
 }
 
 static int dofile_idf (lua_State *L, idff_t idf, const char *name) {
+#if LUA_VERSION_NUM >= 502
+	int status = lua_load(L, idf_reader, idf, name, "bt") || docall(L);
+#else
 	int status = lua_load(L, idf_reader, idf, name) || docall(L);
+#endif
 	return report(L, status);
 }
 
@@ -410,8 +425,12 @@ static int loadfile (lua_State *L, const char *filename, int enc) {
 	lf.byte = 0xcc;
 	lf.enc = enc;
 	if (lf.f == NULL && lf.idff == NULL) return errfile(L, "open", fnameindex);
-	status = lua_load(L, getF, &lf, lua_tostring(L, -1));
 
+#if LUA_VERSION_NUM >= 502
+	status = lua_load(L, getF, &lf, lua_tostring(L, -1), "bt");
+#else
+	status = lua_load(L, getF, &lf, lua_tostring(L, -1));
+#endif
 	if (lf.f)
 		readstatus = ferror(lf.f);
 	else
@@ -1717,13 +1736,24 @@ int instead_init(const char *path)
 //	strcpy(curcp, "UTF-8");
 
 	/* initialize Lua */
-
+#if LUA_VERSION_NUM >= 502
+	L = luaL_newstate();
+#else
 	L = lua_open();
+#endif
 	if (!L)
 		return -1;
 
 	luaL_openlibs(L);
+#if LUA_VERSION_NUM >= 502
+	lua_pushglobaltable(L);
+	lua_pushglobaltable(L);
+	lua_setfield(L, -2, "_G");
+	/* open lib into global table */
+	luaL_setfuncs(L, base_funcs, 0);
+#else
 	luaL_register(L, "_G", base_funcs);
+#endif
 	luaopen_lfs (L);
 
 	instead_package(path);
