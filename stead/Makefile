@@ -8,7 +8,7 @@ install:
 	$(INSTALLD) $(STEADPATH) 
 	$(INSTALL) stead.lua $(STEADPATH)/stead.lua
 	$(INSTALL) gui.lua $(STEADPATH)/gui.lua
-	$(INSTALL) goto.lua $(STEADPATH)/goto.lua
+	$(INSTALL) walk.lua $(STEADPATH)/walk.lua
 	$(INSTALL) xact.lua $(STEADPATH)/xact.lua
 	$(INSTALL) input.lua $(STEADPATH)/input.lua
 	$(INSTALL) click.lua $(STEADPATH)/click.lua

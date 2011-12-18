@@ -1,5 +1,5 @@
 -- $Name:Tutorial Español$
-instead_version "1.3.1"
+instead_version "1.5.3"
 
 game.act = 'No puedes hacer eso.';
 game.inv = "Hmm... Nop...";
@@ -12,7 +12,7 @@ set_music('ramparts.mod');
 main = room {
 	nam = 'Tutorial',
 	act = function()
-		goto('r1');
+		walk('r1');
 	end,
 	dsc = txtc("Bienvenido al tutorial de INSTEAD.")..[[^^
 	En INSTEAD un juego se divide en "escenas". Cada escena tiene una descripción, conformada por secciones estáticas y dinámicas. Las secciones estáticas pueden incluir objetos, personajes, etc. Como jugador puedes interactuar con las partes dinámicas al hacer click en los links resaltados.^^

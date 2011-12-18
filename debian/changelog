@@ -5,6 +5,8 @@ instead (1.5.3) unstable; urgency=low
   * 1 bit transparent icon added for SDL;
   * stead.space_delim added
   * get_themespath, get_gamespath
+  * goto -> walk, goXX -> walkXX
+  * lua5.2 ready
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 12 Dec 2011 03:14:00 +0400
 

@@ -1,5 +1,5 @@
--- $Name:English Tutorial$                                         
-instead_version "1.3.1"
+-- $Name:English Tutorial$
+instead_version "1.5.3"
 
 game.act = 'You can\'t.';
 game.inv = "Hmm... Wrong...";
@@ -12,7 +12,7 @@ set_music('ramparts.mod');
 main = room {
 	nam = 'Tutorial',
 	act = function()
-		goto('r1');
+		walk('r1');
 	end,
 	dsc = txtc("Welcome to INSTEAD tutorial mode.")..[[^^
 	The game consists of scenes. Each game scene has a description, consisting of static and dynamic parts. Dynamic part includes objects, characters, etc.  A player can interact with the dynamic part by clicking mouse on the highlighted links.^^

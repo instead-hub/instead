@@ -3,13 +3,13 @@ stead.go = function (self, where, back, noenter, noexit, nodsc)
 	local need_scene = false;
 	local ret
 
-	if not stead.in_goto_call then
-		ret = function(rc) stead.in_goto_call = false return nil end
+	if not stead.in_walk_call then
+		ret = function(rc) stead.in_walk_call = false return nil end
 	else
 		ret = function(rc) return rc end
 	end
 
-	stead.in_goto_call = true
+	stead.in_walk_call = true
 
 	if where == nil then
 		return nil, ret(false)
@@ -24,7 +24,7 @@ stead.go = function (self, where, back, noenter, noexit, nodsc)
 	end
 
 	if stead.in_entered_call or stead.in_onexit_call then
-		error ("Do not use goto from left/entered action! Use exit/enter action instead:" .. self.where);
+		error ("Do not use walk from left/entered action! Use exit/enter action instead:" .. self.where);
 	end
 
 	local v, r, jump;
@@ -75,7 +75,7 @@ stead.go = function (self, where, back, noenter, noexit, nodsc)
 		NEED_SCENE = true
 	end
 
-	if not stead.in_goto_call  then
+	if not stead.in_walk_call  then
 		local to = self.where
 		if not noexit then
 			self.where = was
@@ -106,17 +106,16 @@ stead.go = function (self, where, back, noenter, noexit, nodsc)
 	end
 	return res;
 end
-go = stead.go
 
 function player_go(self, where) -- cmd iface
 	local w = stead.ref(self.where).way:srch(where);
 	if not w then
 		return nil,false
 	end
-	return self:goto(w);
+	return self:walk(w);
 end
 
-function player_goto(self, where, ...) -- real work
+function player_walk(self, where, ...) -- real work
 	local v, r = stead.go(self, where, ...);
 	return v, r;
 end
@@ -127,34 +126,34 @@ end
 
 stead.back = function()
 	if isDialog(here()) and not isDialog(from()) then
-		return stead.goout();
+		return stead.walkout();
 	end
-	return stead.goback();
+	return stead.walkback();
 end
 back = stead.back
 
-stead.goback = function()
-	return me():goto(from(), true);
+stead.walkback = function()
+	return me():walk(from(), true);
 end
-goback = stead.goback
+walkback = stead.walkback
 
-stead.goto = function(what, back, noenter, noexit, nodsc, ...)
-	return me():goto(what, back, noenter, noexit, nodsc, ...);
+stead.walk = function(what, back, noenter, noexit, nodsc, ...)
+	return me():walk(what, back, noenter, noexit, nodsc, ...);
 end
-goto = stead.goto
+walk = stead.walk
 
-stead.goin = function(what)
-	return me():goto(what, false, false, true);
+stead.walkin = function(what)
+	return me():walk(what, false, false, true);
 end
-goin = stead.goin
+walkin = stead.walkin
 
-stead.goout = function(what)
+stead.walkout = function(what)
 	if isRoom(stead.ref(what)) then
-		return me():goto(what, true, true, false, true);
+		return me():walk(what, true, true, false, true);
 	end
-	return me():goto(from(), true, true, false, true);
+	return me():walk(from(), true, true, false, true);
 end
-goout = stead.goout
+walkout = stead.walkout
 
 function visited(w)
 	if not w then w = here() end
@@ -224,7 +223,7 @@ player  = stead.inherit(player, function(v)
 			stead.started = true
 		end
 		if game._time == 0 then
-			return stead.goto(here(), false, false, true);
+			return stead.walk(here(), false, false, true);
 		end
 		NEED_SCENE = true
 		if stead.api_version >= "1.3.5" then
@@ -235,5 +234,4 @@ player  = stead.inherit(player, function(v)
 end)
 
 pl = player(pl) -- reinit
-
 -- vim:ts=4

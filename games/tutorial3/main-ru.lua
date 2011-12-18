@@ -1,6 +1,6 @@
 -- $Name:Обучение$
 
-instead_version "1.3.1"
+instead_version "1.5.3"
 
 require "dash" -- '--' replace :)
 require "para" -- be more "Russian"
@@ -17,7 +17,7 @@ set_music('ramparts.mod');
 main = room {
 	nam = 'Обучение',
 	act = function() -- only one vobj, no check, just goto
-		goto('r1');
+		walk('r1');
 	end,
 	dsc = txtc("Добро пожаловать в режим обучения INSTEAD.")..[[^^
 	Игра состоит из сцен. Каждая сцена игры имеет описание,
