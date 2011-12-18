@@ -1,5 +1,5 @@
 stead = {
-	version = "1.5.3",
+	version = "1.6.0",
 	api_version = "1.1.6", -- last version before 1.2.0
 	table = table,
 	delim = ',',
@@ -1551,7 +1551,7 @@ local compat_api = function()
 	if stead.compat_api then
 		return
 	end
-	if stead.api_version < "1.5.3" then
+	if stead.api_version < "1.6.0" then
 		go = stead.go
 		goin = walkin
 		goout = walkout

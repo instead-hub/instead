@@ -1,5 +1,5 @@
 -- $Name:English Tutorial$
-instead_version "1.5.3"
+instead_version "1.6.0"
 
 game.act = 'You can\'t.';
 game.inv = "Hmm... Wrong...";

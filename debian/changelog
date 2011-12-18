@@ -1,4 +1,4 @@
-instead (1.5.3) unstable; urgency=low
+instead (1.6.0) unstable; urgency=low
 
   * CJK support;
   * set_music_fading(out, in);
