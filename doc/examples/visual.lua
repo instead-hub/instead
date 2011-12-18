@@ -7,7 +7,7 @@ function fading_goto(where, step, bg)
 	fading_room.step = game.gui.fading;
 	if step then fading_room.step = step end
 	fading_room._bg = bg
-	return goto 'fading_room'
+	return walk 'fading_room'
 end
 
 game.fading = stead.hook(game.fading, 
@@ -44,6 +44,6 @@ fading_room = room {
 	end;
 	timer = function(s)
 		timer:set(s._timer);
-		goto(s.where)
+		walk(s.where)
 	end
 }
