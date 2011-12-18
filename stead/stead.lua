@@ -1603,9 +1603,18 @@ stead.do_ini = function(self, load)
 	end
 	math.randomseed(os.time(os.date("*t")))
 	rnd(1); rnd(2); rnd(3); -- Lua bug?
+	if type(game) ~= 'table' then
+		error ("No valid 'game' object.");
+	end
+	if not isPlayer(stead.me()) then
+		error ("No valid player.");
+	end
+	if not isRoom(stead.here()) then
+		error ("No valid room.");
+	end
 	game.pl = stead.deref(game.pl);
-	game.where = stead.deref(game.where);
-
+	stead.me().where = stead.deref(stead.me().where);
+--	game.where = stead.deref(game.where);
 	if not load then
 		compat_api()
 		for_each_object(call_key);
@@ -2211,6 +2220,7 @@ iface = {
 function me()
 	return stead.ref(game.pl);
 end
+stead.me = me
 
 function where(s)
 	if not isObject(stead.ref(s)) then error("Wrong parameter to where.", 2); end
@@ -2223,6 +2233,7 @@ end
 function here()
 	return stead.ref(me().where);
 end
+stead.here = here
 
 function from(w)
 	if w == nil then
