@@ -1557,14 +1557,14 @@ local compat_api = function()
 		goout = walkout
 		goback = walkback
 		if _VERSION == "Lua 5.1" then -- 5.1 lua
-			goto = walk
+			_G["goto"] = walk
 		end
 	else
 		goin = function() error ("Please use 'walkin' instead 'goin'.", 2) end
 		goout = function() error ("Please use 'walkout' instead 'goout'.", 2) end
 		goback = function() error ("Please use 'walkback' instead 'goback'.", 2) end
 		if _VERSION == "Lua 5.1" then -- 5.1 lua
-			goto = function() error ("Please use 'walk' instead 'goto'.", 2) end
+			_G["goto"] = function() error ("Please use 'walk' instead 'goto'.", 2) end
 		end
 	end
 	if stead.api_version >= "1.4.5" then
