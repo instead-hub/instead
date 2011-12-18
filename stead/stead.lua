@@ -1332,21 +1332,21 @@ function player_back(self)
 	if where == nil then
 		return nil,false
 	end
-	return go(self, where.__from__, true);
+	return stead.go(self, where.__from__, true);
 end
 
-function go(self, where, back)
+stead.go = function(self, where, back)
 	local was = self.where;
 	local need_scene = false;	
 	local ret
 
-	if not stead.in_goto_call then
-		ret = function(rc) stead.in_goto_call = false return nil end
+	if not stead.in_walk_call then
+		ret = function(rc) stead.in_walk_call = false return nil end
 	else
 		ret = function(rc) return rc end
 	end
 
-	stead.in_goto_call = true
+	stead.in_walk_call = true
 
 	if where == nil then
 		return nil,ret(false)
@@ -1359,7 +1359,7 @@ function go(self, where, back)
 	end
 
 	if stead.in_entered_call or stead.in_onexit_call then
-		error ("Do not use goto from onexit/entered action! Use exit/enter action instead:" .. self.where, 2);
+		error ("Do not use walk from onexit/entered action! Use exit/enter action instead:" .. self.where, 2);
 	end
 
 	local v, r;
@@ -1403,8 +1403,8 @@ function go(self, where, back)
 	return res;
 end
 
-function player_goto(self, where, ...)
-	local v, r = go(self, where, ...);
+function player_walk(self, where, ...)
+	local v, r = stead.go(self, where, ...);
 	return v, r;
 end
 
@@ -1413,7 +1413,7 @@ function player_go(self, where)
 	if not w then
 		return nil,false
 	end
-	local v, r = go(self, w, false);
+	local v, r = stead.go(self, w, false);
 	return v, r;
 end
 
@@ -1432,8 +1432,8 @@ function player(v)
 	if v.tag == nil then
 		v.tag = player_tagall;
 	end
-	if v.goto == nil then
-		v.goto = player_goto;
+	if v.walk == nil then
+		v.walk = player_walk;
 	end
 	if v.go == nil then
 		v.go = player_go;
@@ -1548,7 +1548,26 @@ function for_everything(f, ...)
 end
 
 local compat_api = function()
-	if stead.api_version >= "1.4.5" or stead.compat_api then
+	if stead.compat_api then
+		return
+	end
+	if stead.api_version < "1.5.3" then
+		go = stead.go
+		goin = walkin
+		goout = walkout
+		goback = walkback
+		if _VERSION == "Lua 5.1" then -- 5.1 lua
+			goto = walk
+		end
+	else
+		goin = function() error ("Please use 'walkin' instead 'goin'.", 2) end
+		goout = function() error ("Please use 'walkout' instead 'goout'.", 2) end
+		goback = function() error ("Please use 'walkback' instead 'goback'.", 2) end
+		if _VERSION == "Lua 5.1" then -- 5.1 lua
+			goto = function() error ("Please use 'walk' instead 'goto'.", 2) end
+		end
+	end
+	if stead.api_version >= "1.4.5" then
 		return
 	end
 	stead.xref = function(...)
@@ -1584,7 +1603,6 @@ stead.do_ini = function(self, load)
 	end
 	math.randomseed(os.time(os.date("*t")))
 	rnd(1); rnd(2); rnd(3); -- Lua bug?
-
 	game.pl = stead.deref(game.pl);
 	game.where = stead.deref(game.where);
 
@@ -1863,7 +1881,7 @@ function gamefile(file, forget)
 	if forget then
 		game:start()
 		stead.started = true
-		return stead.goto(here(), false, false, true);
+		return stead.walk(here(), false, false, true);
 	end
 end
 
@@ -2351,7 +2369,7 @@ end
 function vobj_act(self, ...)
 	local o, r = here():srch(self); -- self.nam
 	if stead.ref(o) and stead.ref(o).where then
-		return goto(stead.ref(o).where);
+		return stead.walk(stead.ref(o).where);
 	end
 	return stead.call(stead.ref(r),'act', self.key, ...);
 end
@@ -2381,7 +2399,7 @@ function vroom_save(self, name, h, need)
 end
 
 function vroom_enter(self, ...)
-	return stead.goto(self.where);
+	return stead.walk(self.where);
 end
 
 function isVroom(v)
@@ -2395,12 +2413,12 @@ function vroom(name, w)
 	return room { vroom_type = true, nam = name, where = stead.deref(w), enter = vroom_enter, save = vroom_save, };
 end
 
-function goto(what)
-	local v,r=me():goto(what);
+function walk(what)
+	local v,r=me():walk(what);
 	me():tag();
 	return v,r;
 end
-stead.goto = goto;
+stead.walk = walk;
 
 function back()
 	return me():back();
@@ -2774,7 +2792,7 @@ function change_pl(p)
 		error ("Wrong player name in change_pl...", 2);
 	end
 	game.pl = stead.deref(p);
-	return goto(o.where, false, true, true); -- no call enter/exit
+	return stead.walk(o.where, false, true, true); -- no call enter/exit
 end
 
 function disabled(o)
@@ -2862,7 +2880,7 @@ function stead_version(v)
 	end
 	stead.api_version = v
 	if v >= "1.2.0" then
-		require ("goto")
+		require ("walk")
 		require ("vars")
 		require ("object")
 	end

@@ -2,7 +2,7 @@
 -- $Name(ru):Обучение$
 -- $Name(ua):Навчання$
 
-instead_version "1.4.3"
+instead_version "1.5.3"
 require "xact"
 
 

@@ -88,7 +88,7 @@ end
 function vobj_act(self, ...)
 	local o, r = here():srch(self); -- self.nam
 	if stead.ref(o) and stead.ref(o).where then
-		return goto(stead.ref(o).where);
+		return stead.walk(stead.ref(o).where);
 	end
 	return stead.call(stead.ref(r),'act', self.nam, ...);
 end

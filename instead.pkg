@@ -51,7 +51,7 @@
 ".\symbian_gamedata\stead\vars.lua" -"!:\data\instead\stead\vars.lua"
 ".\symbian_gamedata\stead\timer.lua" -"!:\data\instead\stead\timer.lua"
 ".\symbian_gamedata\stead\kbd.lua" -"!:\data\instead\stead\kbd.lua"
-".\symbian_gamedata\stead\goto.lua" -"!:\data\instead\stead\goto.lua"
+".\symbian_gamedata\stead\walk.lua" -"!:\data\instead\stead\walk.lua"
 ".\symbian_gamedata\stead\object.lua" -"!:\data\instead\stead\object.lua"
 ".\symbian_gamedata\stead\dash.lua" -"!:\data\instead\stead\dash.lua"
 ".\symbian_gamedata\stead\snapshots.lua" -"!:\data\instead\stead\snapshots.lua"

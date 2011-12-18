@@ -1,5 +1,5 @@
--- $Name:Tutorial Italiano$                                         
-instead_version "1.3.1"
+-- $Name:Tutorial Italiano$
+instead_version "1.5.3"
 
 game.act = 'Non puoi.';
 game.inv = "Hmm... Sbagliato...";
@@ -12,7 +12,7 @@ set_music('ramparts.mod');
 main = room {
 	nam = 'Tutorial',
 	act = function()
-		goto('r1');
+		walk('r1');
 	end,
 	dsc = txtc("Benvenuto in questa guida introduttiva ad INSTEAD.")..[[^^
 	Il gioco consiste di scene. Ogni scena del gioco ha una descrizione, formata da parti statiche e dinamiche. Le parti dinamiche includono oggetti, personaggi, etc... Il giocatore può interagire con la parte dinamica cliccando con il mouse sui link evidenziati.^^
