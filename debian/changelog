@@ -8,7 +8,7 @@ instead (1.6.0) unstable; urgency=low
   * goto -> walk, goXX -> walkXX
   * lua5.2 ready
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 12 Dec 2011 03:14:00 +0400
+ -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 20 Dec 2011 08:37:00 +0400
 
 instead (1.5.2) unstable; urgency=low
 
