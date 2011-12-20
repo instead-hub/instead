@@ -176,7 +176,7 @@ execute_cmd = room {
 	dsc = "Enter Lua code here to exec.",
 	inp_enter = function(s)
 		if type(s.obj[1]._txt) == 'string' then
-			local f = loadstring(s.obj[1]._txt);
+			local f = stead.eval(s.obj[1]._txt);
 			if f then
 				seen('disp')._txt = stead.cat('^^', f());
 				return true

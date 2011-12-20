@@ -29,7 +29,7 @@ stead.restore_snapshot = function (nr)
 
 	stead.gamefile("main.lua", true);
 
-	local f, err = loadstring(ss[nr]..' ');
+	local f, err = stead.eval(ss[nr]..' ');
 	if not f then return end
 	local i,r = f();
 	game._snapshots = ss
