@@ -487,11 +487,11 @@ room2 = room {
 \index{Атрибуты!tak}
 Как видим, обработчики могут возвращать два значения: строку и статус. В нашем примере функция \verb/exit/ вернёт \verb/false/, если игрок попытается уйти из зала в \verb/main/. \verb/false/ блокирует переход. Такая же логика работает и для \verb/enter/. Кроме того, она работает и для обработчика \verb/tak/ (о нём чуть позже).
 
-\index{Функции!goto}
-Если требуется перейти на другую сцену автоматически, можно использовать функцию \verb/goto/ со ссылкой на сцену как параметром:
+\index{Функции!walk}
+Если требуется перейти на другую сцену автоматически, можно использовать функцию \verb/walk/ со ссылкой на сцену как параметром:
 
 \begin{verbatim}
-return goto('main');
+return walk('main');
 goto('main');
 \end{verbatim}
 
@@ -695,7 +695,7 @@ povardlg = dlg {
 Переход в диалог осуществляется как переход на сцену:
 
 \begin{verbatim}
-return goto('povardlg');
+return walk('povardlg');
 \end{verbatim}
 
 Вы можете переходить из одного диалога в другой диалог -- организовывая иерархические диалоги.
@@ -780,9 +780,9 @@ if dlg:empty() then p "Диалог пуст" end
 \item[taketo(object,position)] \index{Функции!taketo} берёт объект в инвентарь на указанную позицию
 \item[taken(object)] \index{Функции!taken} проверяет, взят ли уже объект
 \item[rnd(m)] \index{Функции!rnd} возвращает случайное целое значение от 1 до m
-\item[goto(destination)] \index{Функции!goto} переносит в сцену w; используется в конструкции вида \verb/return goto('inmycar');/
+\item[walk(destination)] \index{Функции!walk} переносит в сцену w; используется в конструкции вида \verb/return walk('inmycar');/
 \item[change\_pl(player)] \index{Функции!change\_pl} переключает на другого игрока (со своим инвентарём и позицией), также используется в \linebreak \verb/return/. Может использоваться для переключения между разными инвентарями.
-\item[back()] \index{Функции!back} переносит в предыдущую сцену (аналогично goto)
+\item[back()] \index{Функции!back} переносит в предыдущую сцену (аналогично walk)
 \item[time()] \index{Функции!time} возвращает текущее время игры в активных действиях.
 \item[cat(...)] \index{Функции!cat} возвращает строку -- склейку строк-аргументов. Если первый аргумент nil, то функция возвращает nil.\footnote{Функция легко и просто заменяется обычным оператором склейки строк Lua: \texttt{строка1 .. строка2}. Тем не менее, этот оператор выдаст ошибку при склейке nil}
 \item[par(...)] \index{Функции!par} возвращает строку -- склейку строк-аргументов, разбитых строкой-первым параметром.
@@ -879,7 +879,7 @@ mycat = obj {
 
 \begin{verbatim}
 ACTION_TEXT = nil
-return goto('theend'), true
+return walk('theend'), true
 \end{verbatim}
 
 Также для добавления динамики в игру служат объекты timer и input, см. разделы \ref{objects_timer} и \ref{objects_input}.
@@ -1514,7 +1514,7 @@ house = room {
  pic = 'house.png';
  click = function(scene, x, y)
   if x > 100 and x < 120 and y > 50 and y < 90 then
-   goto 'street'
+   walk 'street'
   end
  end
 }
