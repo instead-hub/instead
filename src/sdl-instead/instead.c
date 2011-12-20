@@ -1582,6 +1582,21 @@ static int luaB_bit_signed(lua_State *L) {
 	return 1;
 }
 
+static int luaB_maxn (lua_State *L) {
+	lua_Number max = 0;
+	luaL_checktype(L, 1, LUA_TTABLE);
+	lua_pushnil(L);  /* first key */
+	while (lua_next(L, 1)) {
+		lua_pop(L, 1);  /* remove value */
+		if (lua_type(L, -1) == LUA_TNUMBER) {
+			lua_Number v = lua_tonumber(L, -1);
+			if (v > max) max = v;
+		}
+	}
+	lua_pushnumber(L, max);
+	return 1;
+}
+
 static const luaL_Reg base_funcs[] = {
 	{"doencfile", luaB_doencfile},
 	{"dofile", luaB_dofile},
@@ -1640,7 +1655,9 @@ static const luaL_Reg base_funcs[] = {
 	{"bit_sub", luaB_bit_sub},
 	{"bit_add", luaB_bit_add},
 	{"bit_signed", luaB_bit_signed},
-	{"bit_unsigned", luaB_bit_unsigned},	
+	{"bit_unsigned", luaB_bit_unsigned},
+
+	{"get_table_maxn", luaB_maxn},
 	{NULL, NULL}
 };
 

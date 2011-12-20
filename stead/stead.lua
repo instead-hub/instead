@@ -48,6 +48,14 @@ stead = {
 		f();
 	end
 }
+if _VERSION == "5.1" then
+	stead.eval = loadstring
+	stead.unpack = unpack
+else
+	stead.eval = load
+	stead.unpack = table.unpack
+	stead.table.maxn = get_table_maxn
+end
 
 instead = stead;
 
@@ -546,7 +554,7 @@ function stead.ref(n, nofunc) -- ref object by name
 		if type(_G[n]) == 'table' then -- fastest path
 			return _G[n];
 		end
-		local f = loadstring('return '..n);
+		local f = stead.eval('return '..n);
 		if f then
 			return stead.ref(f(), nofunc);
 		end
@@ -1128,7 +1136,7 @@ function phrase_action(self)
 	local last = stead.call(ph, 'ans');
 
 	if type(ph.do_act) == 'string' then
-		local f = loadstring(ph.do_act);
+		local f = stead.eval(ph.do_act);
 		if f ~= nil then
 			ret = f();
 		else
@@ -2134,20 +2142,20 @@ iface = {
 			v = nil;
 		elseif cmd == 'go' then
 			stead.state = true
-			r,v = me():go(unpack(a));
+			r,v = me():go(stead.unpack(a));
 		elseif cmd == 'back' then
 			stead.state = true
 			r,v = me():go(from());
 		elseif cmd == 'act' then
 			stead.state = true
-			r,v = me():action(unpack(a));
+			r,v = me():action(stead.unpack(a));
 		elseif cmd == 'use' then
 			stead.state = true
-			r,v = me():use(unpack(a));
+			r,v = me():use(stead.unpack(a));
 		elseif cmd == 'save' then
-			r, v = game:save(unpack(a));
+			r, v = game:save(stead.unpack(a));
 		elseif cmd == 'load' then
-			r, v = game:load(unpack(a));
+			r, v = game:load(stead.unpack(a));
 			if v ~= false and game.showlast then
 				return r;
 			end
@@ -2161,7 +2169,7 @@ iface = {
 			stead.state = true
 		else
 			stead.state = true
-			r,v = me():action(cmd, unpack(a));
+			r,v = me():action(cmd, stead.unpack(a));
 		end
 		-- here r is action result, v - ret code value	
 		-- state -- game state changed
@@ -2899,7 +2907,7 @@ end
 instead_version = stead_version
 
 function code(v)
-	local f = loadstring(v)
+	local f = stead.eval(v)
 	if not f then
 		error ("Wrong script: "..tostring(v), 2);
 	end
@@ -2976,7 +2984,7 @@ stead.objects = function(s)
 			if type(w.key_name) ~= 'string' then
 				return
 			end
-			local f = loadstring(w.key_name..'= nil;');
+			local f = stead.eval(w.key_name..'= nil;');
 			if f then
 				f();
 			end
