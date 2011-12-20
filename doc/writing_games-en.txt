@@ -33,9 +33,9 @@ At the beginning of ''main.lua'' file a header may be defined. It consists of ta
 -- $Name: The most interesting game!$
 </code>
 
-From version 1.2.0 after headers you must define required STEAD API version. It is "1.5.0" currently.
+From version 1.2.0 after headers you must define required STEAD API version. It is "1.6.0" currently.
 <code lua>
-instead_version "1.5.0"
+instead_version "1.6.0"
 </code>
 <WRAP center round important>
 Without this line STEAD API will stay in compatible(legacy) mode.
@@ -619,37 +619,37 @@ taken(o) — returns true if the object has already been taken (with “tak” o
 
 rnd(m) — random number from 1 to m.
 
-goto(w) — go to scene w. If you are not using p/pn/pr output method, the handler has to return the “goto” return value. E.g:
+walk(w) — go to scene w. If you are not using p/pn/pr output method, the handler has to return the “walk” return value. E.g:
 <code>
 act = code [[
         pn "I am going to next room..."
-        goto (nextroom);
+        walk (nextroom);
 ]]
 ...
 act = code [[
-        return cat('I am going to next room...', goto (nextroom));
+        return cat('I am going to next room...', walk (nextroom));
 ]]
 </code>
-Attention!!!  After goto call, handler execution will continue until handler end or return.
+Attention!!!  After walk call, handler execution will continue until handler end or return.
 
-change_pl(p) — switch to another player (with one's own inventory and position). The function returns the scene description of the new player and the returned value has to be transferred from the handler (see “goto()”).
+change_pl(p) — switch to another player (with one's own inventory and position). The function returns the scene description of the new player and the returned value has to be transferred from the handler (see “walk()”).
 
 <code>
 mycar = obj {
 	nam = 'my car',
 	dsc = 'In front of the cabin there is my old Toyota {pickup}.',
 	act = function(s)
-		return goto('inmycar');
+		return walk('inmycar');
 	end
 };
 </code>
-goback() -- go to the previous scene.
+walkback() -- go to the previous scene.
 
 back() -- go to the previous scene. In case of returning from dialog to room, dsc/enter/entered methods of room will not be called. Use in dialogs.
 
-goin(room) -- go to scene, do not call exit/left of current scene;
+walkin(room) -- go to scene, do not call exit/left of current scene;
 
-goout() -- go to previous scene, do not call enter/entered of previous scene;
+walkout() -- go to previous scene, do not call enter/entered of previous scene;
 
 
 time() — returns the current game time in player's moves.
@@ -733,7 +733,7 @@ povar = obj {
 	nam = 'cook',
 	dsc = 'I see a {cook}.',
 	act = function()
-		return goto('povardlg');
+		return walk('povardlg');
 	end,
 };
 </code>
@@ -969,7 +969,7 @@ act = code [[ gamefile ("episode3.lua", true); ]]
 Starting from version 1.2.0 you can use modules via “require” function call. At the moment the following modules are available:
 
     * dbg — debug module (use ''require "dbg"'' to enable debugger);
-    * goto — improved implementation of passages;
+    * walk — improved implementation of passages;
     * xact — multiple references to objects;
     * input — keyboard input;
     * click — capturing mouse clicks on the scene picture;
@@ -988,7 +988,7 @@ require "para"
 require "dbg"
 ...
 </code>
-If version is >= 1.2.0 then the following modules are used automatically: vars, object, goto.
+If version is >= 1.2.0 then the following modules are used automatically: vars, object, walk.
 
 “prefs” object (included into “prefs” module) can store game preferences, e.g. player progress or attempt count…
 <code>
@@ -1180,19 +1180,9 @@ function init()
 end
 </code>
 
-==== “goto” from the “exit” handler ====
+==== “walk” from the “exit” and “enter” handlers ====
 
-If you use “goto” from the “exit” handler, you get stack overflow, because goto would call “exit” again and again. You can prevent it by aadding a check that breaks the recursioon. For example:
-<code>
-exit = function(s, t)
-	if t == 'dialog' then return; end
-	return goto('dialog');
-end
-</code>
-
-From version 0.9.1 this is done by stead engine.
-
-You can also do “goto” from the “enter” handlers.
+You can do “walk” from the “enter” and “exit” handlers.
 
 ==== Dynamically created references. ====
 Dynamically created references can be implemented in various ways. The example below uses “vway” objects. To add a reference one can write:
