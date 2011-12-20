@@ -48,7 +48,7 @@ stead = {
 		f();
 	end
 }
-if _VERSION == "5.1" then
+if _VERSION == "Lua 5.1" then
 	stead.eval = loadstring
 	stead.unpack = unpack
 else
