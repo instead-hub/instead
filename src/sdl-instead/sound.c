@@ -247,6 +247,13 @@ int snd_panning(int channel, int left, int right)
 	return Mix_SetPanning(channel, left, right);
 }
 
+static int mixer_version_atleast(int a, int b, int c)
+{
+	int v = ((a<<16) || (a << 8) || (c));
+	int vv = (SDL_MIXER_MAJOR_VERSION << 16) || (SDL_MIXER_MINOR_VERSION << 8) || SDL_MIXER_PATCHLEVEL;
+	return (v >= vv);
+}
+
 void snd_free_mus(mus_t mus)
 {
 	if (!sound_on)
@@ -256,10 +263,13 @@ void snd_free_mus(mus_t mus)
 	Mix_HaltMusic();
 	if (mus->mus) {
 #ifdef _SDL_MOD_BUG
-		if (Mix_GetMusicType(mus->mus) == MUS_MOD)
+		if ((Mix_GetMusicType(mus->mus) == MUS_MOD) && !mixer_version_atleast(1, 2, 12))
 			SDL_RWclose(mus->rw);
 #endif
 		Mix_FreeMusic((Mix_Music*) mus->mus);
+		if (mixer_version_atleast(1, 2, 12)) {
+			SDL_RWclose(mus->rw);
+		}
 	}
 	free(mus);
 }
