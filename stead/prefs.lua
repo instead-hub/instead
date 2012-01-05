@@ -15,6 +15,7 @@ prefs = obj {
 		local h = stead.io.open(name,"w");
 		if not h then return false end
 		stead.savemembers(h, s, 'prefs', true);
+		stead.clearvar(s);
 		h:flush();
 		h:close();
 	end,
