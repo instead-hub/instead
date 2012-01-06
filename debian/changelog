@@ -1,3 +1,10 @@
+instead (1.6.1) unstable; urgency=low
+
+  * SDL_mixer 1.2.12 ready
+  * bugfix in prefs
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 06 Jan 2012 10:32:00 +0400
+
 instead (1.6.0) unstable; urgency=low
 
   * CJK support;
