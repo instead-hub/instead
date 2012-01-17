@@ -10,6 +10,11 @@
 #define KBD_INVERSE	2
 #define KBD_MAX		3
 
+#define JUST_THEME	0
+#define JUST_NO		1
+#define JUST_YES	2
+#define JUST_MAX	3
+
 extern char *appdata_sw;
 extern int chunksize_sw;
 
@@ -25,6 +30,7 @@ extern int opt_music;
 extern int opt_autosave;
 extern int opt_filter;
 extern int opt_kbd;
+extern int opt_justify;
 
 extern int opt_mode[2];
 extern char *opt_game;
