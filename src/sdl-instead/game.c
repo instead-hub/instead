@@ -543,6 +543,7 @@ static int inv_enabled(void)
 
 int game_apply_theme(void)
 {
+	int align = game_theme.win_align;
 	layout_t lay;
 	textbox_t box;
 
@@ -551,7 +552,13 @@ int game_apply_theme(void)
 	if (!DIRECT_MODE)
 		game_clear(0, 0, game_theme.w, game_theme.h);
 	gfx_flip();
-	lay = txt_layout(game_theme.font, game_theme.win_align, game_theme.win_w, game_theme.win_h);
+
+	if (opt_justify == JUST_NO && align == ALIGN_JUSTIFY)
+		align = ALIGN_LEFT;
+	else if (opt_justify == JUST_YES && align == ALIGN_LEFT)
+		align = ALIGN_JUSTIFY;
+
+	lay = txt_layout(game_theme.font, align, game_theme.win_w, game_theme.win_h);
 	if (!lay)
 		return -1;
 	box = txt_box(game_theme.win_w, game_theme.win_h);

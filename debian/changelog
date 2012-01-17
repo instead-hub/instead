@@ -2,8 +2,9 @@ instead (1.6.1) unstable; urgency=low
 
   * SDL_mixer 1.2.12 ready
   * bugfix in prefs
+  * justify text option
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 06 Jan 2012 10:32:00 +0400
+ -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 17 Jan 2012 21:28:00 +0400
 
 instead (1.6.0) unstable; urgency=low
 

@@ -342,12 +342,15 @@ char *game_menu_gen(void)
 	} else if (cur_menu == menu_about) {
 		snprintf(menu_buff, sizeof(menu_buff), ABOUT_MENU, VERSION);
 	} else if (cur_menu == menu_settings) {
+		char *just[JUST_MAX] = { FROM_THEME, OFF, ON };
 		char *kbd [KBD_MAX] = { KBD_MODE_SMART, KBD_MODE_LINKS, KBD_MODE_SCROLL };
-
+		opt_kbd = opt_kbd % KBD_MAX;
+		opt_justify = opt_justify % JUST_MAX;
 		switch (menu_settings_num) {
 		case 0:
 			snprintf(menu_buff, sizeof(menu_buff), SETTINGS_GFX_MENU, 
-			opt_get_mode(), opt_fs?ON:OFF, opt_fsize, opt_hl?ON:OFF, opt_owntheme?ON:OFF);
+			opt_get_mode(), opt_fs?ON:OFF, opt_fsize, just[opt_justify],
+				opt_hl?ON:OFF, opt_owntheme?ON:OFF);
 			break;
 		case 1:
 			snprintf(menu_buff, sizeof(menu_buff), SETTINGS_SND_MENU, 
@@ -432,6 +435,18 @@ int game_menu_act(const char *a)
 			restart_needed = 1;
 		game_menu_box(1, game_menu_gen());
 #endif
+	} else if (!strcmp(a, "/just++")) {
+		restart_needed = 1;
+		opt_justify ++;
+		if (opt_justify >= JUST_MAX)
+			opt_justify = 0;
+		game_menu_box(1, game_menu_gen());
+	} else if (!strcmp(a, "/just--")) {	
+		restart_needed = 1;
+		opt_justify --;
+		if (opt_justify < 0)
+			opt_justify = JUST_MAX - 1;
+		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/fs--")) {
 		opt_fsize --;
 		if (FONT_SZ(game_theme.font_size) > FONT_MIN_SZ * game_theme.scale) {
