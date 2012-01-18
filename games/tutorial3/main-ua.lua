@@ -12,7 +12,7 @@ game.use = 'Не зработає...';
 
 game.pic = 'instead.png';
 
-set_music('ramparts.mod');
+set_music('sv_ttt.xm');
 
 main = room {
 	nam = 'Навчання',
@@ -233,7 +233,7 @@ theend = room {
 		натисніть мишею на символ меню (справа знизу).^^
 		Тепер Ви готові до гри. Хай щастить!!!^^
 		Ігри для INSTEAD можно завантажити тут: ]]..txtu("http://instead.syscall.ru")..[[^^
-		Для навчення використан трек Ramparts от Scorpion.]],
+		Для навчення використан трек The Titan Turrican от svenzzon.]],
 	obj = { vway('keys', 'Подивитись {список клавіш}.', 'help')},
 };
 
