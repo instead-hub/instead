@@ -344,8 +344,8 @@ char *game_menu_gen(void)
 	} else if (cur_menu == menu_settings) {
 		char *just[JUST_MAX] = { FROM_THEME, OFF, ON };
 		char *kbd [KBD_MAX] = { KBD_MODE_SMART, KBD_MODE_LINKS, KBD_MODE_SCROLL };
-		opt_kbd = opt_kbd % KBD_MAX;
-		opt_justify = opt_justify % JUST_MAX;
+		opt_kbd = (unsigned int)opt_kbd % KBD_MAX;
+		opt_justify = (unsigned int)opt_justify % JUST_MAX;
 		switch (menu_settings_num) {
 		case 0:
 			snprintf(menu_buff, sizeof(menu_buff), SETTINGS_GFX_MENU, 
