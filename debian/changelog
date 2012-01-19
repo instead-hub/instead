@@ -2,10 +2,11 @@ instead (1.6.1) unstable; urgency=low
 
   * SDL_mixer 1.2.12 ready
   * bugfix in prefs
+  * gentoo build fix
   * justify text option
   * new track in tutorial3 (svenzzon - The Titan Turrican, CC BY-NC-SA 3.0)
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 17 Jan 2012 21:28:00 +0400
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 19 Jan 2012 09:43:00 +0400
 
 instead (1.6.0) unstable; urgency=low
 
