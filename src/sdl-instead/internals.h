@@ -2,6 +2,7 @@
 #include "s60.h"
 #endif
 
+#include "util.h"
 #include "cache.h"
 #include "graphics.h"
 #include "sound.h"
@@ -10,5 +11,4 @@
 #include "menu.h"
 #include "config.h"
 #include "input.h"
-#include "util.h"
 #include "instead.h"
