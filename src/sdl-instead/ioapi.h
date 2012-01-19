@@ -48,9 +48,12 @@
 #include <stdlib.h>
 #include "zlib.h"
 
-#ifdef _Z_OF
-#undef OF
-#define OF _Z_OF
+#ifndef OF /* function prototypes */
+#  ifdef STDC
+#    define OF(args)  args
+#  else
+#    define OF(args)  ()
+#  endif
 #endif
 
 #if defined(USE_FILE32API)
