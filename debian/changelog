@@ -1,10 +1,12 @@
 instead (1.6.1) unstable; urgency=low
 
-  * bugfix in prefs
-  * justify text option
-  * new track in tutorial3 (svenzzon - The Titan Turrican, CC BY-NC-SA 3.0)
-  * SDL_mixer 1.2.12 ready
-  * gentoo build fix
+  * bugfix in prefs;
+  * justify text option;
+  * new track in tutorial3 (svenzzon - The Titan Turrican, CC BY-NC-SA 3.0);
+  * SDL_mixer 1.2.12 ready;
+  * gentoo build fix;
+  * fix build on systems w/o PATH_MAX;
+  * fix SDL icon;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 19 Jan 2012 09:43:00 +0400
 
@@ -13,10 +15,10 @@ instead (1.6.0) unstable; urgency=low
   * CJK support;
   * set_music_fading(out, in);
   * 1 bit transparent icon added for SDL;
-  * stead.space_delim added
-  * get_themespath, get_gamespath
-  * goto -> walk, goXX -> walkXX
-  * lua5.2 ready
+  * stead.space_delim added;
+  * get_themespath, get_gamespath;
+  * goto -> walk, goXX -> walkXX;
+  * lua5.2 ready;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 20 Dec 2011 08:37:00 +0400
 
