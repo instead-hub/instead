@@ -4,3 +4,4 @@ install:
 	if not exist ..\bin\icon mkdir ..\bin\icon
 	copy sdl_instead.png ..\bin\icon
 	copy sdl_instead_1.png ..\bin\icon
+	copy sdl_instead_1.ico ..\bin\icon
