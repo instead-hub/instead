@@ -36,26 +36,30 @@ fi
 
 
 echo -n "Checking pkg-config --cflags lua[5.1]..."
-if ! pkg-config --cflags lua5.1 >/dev/null 2>&1; then
-	if ! pkg-config --cflags lua5.2 >/dev/null 2>&1; then
-		if ! pkg-config --cflags lua >/dev/null 2>&1; then
-			echo "failed: no package lua/lua5.1/lua5.2"
-			echo "Please install lua development package."
-			exit 1
-		else
-			echo "lua"
-			lua_cflags="pkg-config --cflags lua"
-			lua_libs="pkg-config --libs lua"
-		fi
-	else
-		echo "lua5.2"
-		lua_cflags="pkg-config --cflags lua5.2"
-		lua_libs="pkg-config --libs lua5.2"
-	fi
-else
+if pkg-config --cflags lua5.1 >/dev/null 2>&1; then
 	echo "lua5.1"
 	lua_cflags="pkg-config --cflags lua5.1"	
 	lua_libs="pkg-config --libs lua5.1"	
+elif pkg-config --cflags lua5.2 >/dev/null 2>&1; then
+	echo "lua5.2"
+	lua_cflags="pkg-config --cflags lua5.2"
+	lua_libs="pkg-config --libs lua5.2"
+elif pkg-config --cflags lua >/dev/null 2>&1; then
+	echo "lua"
+	lua_cflags="pkg-config --cflags lua"
+	lua_libs="pkg-config --libs lua"
+elif pkg-config --cflags lua-5.1 >/dev/null 2>&1; then
+	echo "lua-5.1"
+	lua_cflags="pkg-config --cflags lua-5.1"
+	lua_libs="pkg-config --libs lua-5.1"
+elif pkg-config --cflags lua-5.2 >/dev/null 2>&1; then
+	echo "lua-5.2"
+	lua_cflags="pkg-config --cflags lua-5.2"
+	lua_libs="pkg-config --libs lua-5.2"
+else
+	echo "failed: no package lua/lua5.1/lua5.2/lua-5.1/lua-5.2"
+	echo "Please install lua development package."
+	exit 1
 fi
 
 
@@ -126,17 +130,20 @@ EOF
 echo $cc
 echo -n "Checking iconv...("
 echo -n "$cc /tmp/iconv-test.c -o iconv-test)..."
-if ! $cc /tmp/iconv-test.c -o /tmp/iconv-test; then
-	if ! $cc /tmp/iconv-test.c -liconv -o /tmp/iconv-test; then
-		echo -n "failed. Build without iconv.".
-	else
-		CFLAGS="$CFLAGS -D_HAVE_ICONV"
-		LDFLAGS="$LDFLAGS -liconv"
-		echo "ok, with -liconv"
-	fi
-else
+
+if $cc /tmp/iconv-test.c -o /tmp/iconv-test; then
 	CFLAGS="$CFLAGS -D_HAVE_ICONV"
 	echo "ok"
+elif $cc /tmp/iconv-test.c -liconv -o /tmp/iconv-test; then
+	CFLAGS="$CFLAGS -D_HAVE_ICONV"
+	LDFLAGS="$LDFLAGS -liconv"
+	echo "ok, with -liconv"
+elif $cc /tmp/iconv-test.c -I/usr/local/include -L/usr/local/lib -liconv -o /tmp/iconv-test; then
+	CFLAGS="$CFLAGS -I/usr/local/include -D_HAVE_ICONV"
+	LDFLAGS="$LDFLAGS -L/usr/local/lib -liconv"
+	echo "ok, with -liconv and -L/usr/local/lib"
+else
+	echo -n "failed. Build without iconv.".
 fi
 
 rm -f /tmp/iconv-test.c /tmp/iconv-test
