@@ -251,6 +251,7 @@ int snd_panning(int channel, int left, int right)
 
 void snd_free_mus(mus_t mus)
 {
+	int to_close = 0;
 	if (!sound_on)
 		return;
 	if (!mus)
@@ -261,10 +262,12 @@ void snd_free_mus(mus_t mus)
 		if ((Mix_GetMusicType(mus->mus) == MUS_MOD) && !MIXER_VERSION_ATLEAST(1, 2, 12))
 			SDL_RWclose(mus->rw);
 #endif
-		Mix_FreeMusic((Mix_Music*) mus->mus);
 		if (MIXER_VERSION_ATLEAST(1, 2, 12) && Mix_GetMusicType(mus->mus) != MUS_MP3) {
-			SDL_RWclose(mus->rw);
+			to_close = 1;
 		}
+		Mix_FreeMusic((Mix_Music*) mus->mus);
+		if (to_close)
+			SDL_RWclose(mus->rw);
 	}
 	free(mus);
 }
