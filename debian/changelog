@@ -1,3 +1,10 @@
+instead (1.6.2) unstable; urgency=low
+
+  * bugfix in build with SDL_mixer 1.2.12;
+  * configure.sh script is now compatible with BSD;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 08 Feb 2012 19:52:00 +0400
+
 instead (1.6.1) unstable; urgency=low
 
   * bugfix in prefs;
