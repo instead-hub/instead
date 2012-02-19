@@ -10,7 +10,7 @@ use_proxy = function(o)
 		if need then
 			h:write(stead.string.format(name.." = use_proxy(%q);\n", tostring(self.pobj)));
 		end
-		savemembers(h, self, name,false);
+		stead.savemembers(h, self, name,false);
 	end
 
 	if ref(o).use ~= nil then
@@ -50,7 +50,7 @@ act_proxy = function(o, act)
 		if need then
 			h:write(stead.string.format(name.." = act_proxy(%q, %q);\n", self.pobj, self.pact));
 		end
-		savemembers(h, self, name,false);
+		stead.savemembers(h, self, name,false);
 	end
 
 	if ref(o)[act] ~= nil then
