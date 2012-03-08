@@ -1123,8 +1123,8 @@ function dlg(v) --constructor
 	return v;
 end
 
-function phrase_action(self)
-	local ph = self;
+function phrase_action(s)
+	local ph = s;
 	local r, ret;
 
 	if isDisabled(ph) then
@@ -1135,6 +1135,8 @@ function phrase_action(self)
 
 	local last = stead.call(ph, 'ans');
 
+	self = s -- restore self (for pon/poff)
+
 	if type(ph.do_act) == 'string' then
 		local f = stead.eval(ph.do_act);
 		if f ~= nil then
@@ -1143,7 +1145,7 @@ function phrase_action(self)
 			error ("Error while eval phrase action.");
 		end
 	elseif type(ph.do_act) == 'function' then
-		ret = ph.do_act(self);
+		ret = ph.do_act(s);
 	end
 
 	if ret == nil then ret = stead.pget(); end
