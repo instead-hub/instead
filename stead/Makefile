@@ -28,6 +28,8 @@ install:
 	$(INSTALL) theme.lua $(STEADPATH)/theme.lua
 	$(INSTALL) sprites.lua $(STEADPATH)/sprites.lua
 	$(INSTALL) sound.lua $(STEADPATH)/sound.lua
+	$(INSTALL) wroom.lua $(STEADPATH)/wroom.lua
+	$(INSTALL) nouse.lua $(STEADPATH)/nouse.lua
 
 uninstall:
 	$(RM) $(STEADPATH)/stead.lua
