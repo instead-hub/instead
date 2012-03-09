@@ -2430,7 +2430,10 @@ end
 
 function vroom_save(self, name, h, need)
 	if need then
-		h:write(name.." = vroom('"..self.nam.."','"..stead.deref(self.where).."');\n");
+		local t = stead.string.format("%s = vroom(%s, %q);\n",
+			name, stead.tostring(self.nam), 
+				stead.deref(self.where))
+		h:write(t);
 	end
 	stead.savemembers(h, self, name,false);
 end
