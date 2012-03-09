@@ -165,6 +165,7 @@ unzFile uf;
 const char *password;
 {
 	char filename_inzip[256];
+	char dir_inzip[256];
 	char *filename_withoutpath;
 	char *p;
 	int err = UNZ_OK;
@@ -190,11 +191,15 @@ const char *password;
 	}
 
 	p = filename_withoutpath = filename_inzip;
+	strcpy(dir_inzip, filename_inzip);
 	while ((*p) != '\0') {
 		if (((*p) == '/') || ((*p) == '\\'))
 			filename_withoutpath = p + 1;
 		p++;
 	}
+
+	p = dir_inzip + strcspn(dir_inzip, "/\\");
+	*p = 0;
 
 	if ((*filename_withoutpath) == '\0') {
 		if (zip_game_dirname[0] && strncmp(zip_game_dirname, 
@@ -206,7 +211,7 @@ const char *password;
 		fprintf(stderr, "creating directory: %s\n", filename_inzip);
 		mymkdir(filename_inzip);
 		if (!*zip_game_dirname)
-			strcpy(zip_game_dirname, filename_inzip);
+			strcpy(zip_game_dirname, dir_inzip);
 	} else {
 		const char *write_filename;
 		int skip = 0;
@@ -240,8 +245,7 @@ const char *password;
 
 		if ((filename_withoutpath != (char *)filename_inzip) && 
 			!*zip_game_dirname) {
-			strcpy(zip_game_dirname, filename_inzip);
-			zip_game_dirname[strcspn(zip_game_dirname,"/\\")] = 0;
+			strcpy(zip_game_dirname, dir_inzip);
 		}
 
 
