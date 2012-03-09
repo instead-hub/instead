@@ -1027,7 +1027,7 @@ function phrase_seen(s, enb, ...)
 	local i, ph
 	local a = {...}
 	if stead.table.maxn(a) == 0 then
-		stead.table.insert(a, self);
+		stead.table.insert(a, stead.cctx().self);
 	end
 	for i=1,stead.table.maxn(a) do
 		ph = dialog_phrase(s, a[i]);
@@ -1051,7 +1051,7 @@ function ponoff(s, on, ...)
 	local i, ph
 	local a = {...}
 	if stead.table.maxn(a) == 0 then
-		stead.table.insert(a, self);
+		stead.table.insert(a, stead.cctx().self)
 	end
 	for i=1,stead.table.maxn(a) do
 		ph = dialog_phrase(s, a[i]);
@@ -1069,7 +1069,7 @@ function dialog_prem(s, ...)
 	local i, ph
 	local a = {...}
 	if stead.table.maxn(a) == 0 then
-		stead.table.insert(a, self);
+		stead.table.insert(a, stead.cctx().self);
 	end
 	for i=1,stead.table.maxn(a) do
 		ph = dialog_phrase(s, a[i]);
@@ -1123,8 +1123,8 @@ function dlg(v) --constructor
 	return v;
 end
 
-function phrase_action(s)
-	local ph = s;
+function phrase_action(self)
+	local ph = self;
 	local r, ret;
 
 	if isDisabled(ph) then
@@ -1135,8 +1135,6 @@ function phrase_action(s)
 
 	local last = stead.call(ph, 'ans');
 
-	self = s -- restore self (for pon/poff)
-
 	if type(ph.do_act) == 'string' then
 		local f = stead.eval(ph.do_act);
 		if f ~= nil then
@@ -1145,7 +1143,7 @@ function phrase_action(s)
 			error ("Error while eval phrase action.");
 		end
 	elseif type(ph.do_act) == 'function' then
-		ret = ph.do_act(s);
+		ret = ph.do_act(self);
 	end
 
 	if ret == nil then ret = stead.pget(); end
