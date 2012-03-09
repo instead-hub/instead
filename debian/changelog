@@ -1,3 +1,11 @@
+instead (1.6.3) unstable; urgency=low
+
+  * bugfix in phrase handling w/o parameter;
+  * fix in doc/menu;
+  * svg logo added;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 08 Mar 2012 09:27:00 +0400
+
 instead (1.6.2) unstable; urgency=low
 
   * bugfix in build with SDL_mixer 1.2.12;
