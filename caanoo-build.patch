@@ -2,7 +2,7 @@ diff -Nur instead/Rules.caanoo instead.caanoo/Rules.caanoo
 --- instead/Rules.caanoo	1970-01-01 03:00:00.000000000 +0300
 +++ instead.caanoo/Rules.caanoo	2012-01-05 17:41:44.081942766 +0400
 @@ -0,0 +1,44 @@
-+VERSION := 1.6.2
++VERSION := 1.6.3
 +
 +PREFIX  = /home/peter/Devel/GPH_SDK/tools/gcc-4.2.4-glibc-2.7-eabi
 +CC        = $(PREFIX)/bin/arm-gph-linux-gnueabi-gcc
