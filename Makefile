@@ -35,7 +35,7 @@ PKGBUILD: PKGBUILD.in tarball
 tarball: clean svnclean docs rules
 	echo "# you can define own flags here" > config.make
 	ln -sf ./ $(VERTITLE)
-	tar -cz --exclude $(VERTITLE)/$(VERTITLE) --exclude CJK.zip --exclude .svn --exclude $(ARCHIVE) --exclude mingw32ce.tar.gz --exclude windows.tar.gz -f $(ARCHIVE) $(VERTITLE)/*
+	tar -cz --exclude $(VERTITLE)/$(VERTITLE) --exclude CJK.zip --exclude .svn --exclude $(ARCHIVE) --exclude mingw32ce.tar.gz --exclude windows.tar.gz --exclude caanoo.tar.gz -f $(ARCHIVE) $(VERTITLE)/*
 	$(RM) -f $(VERTITLE)
 
 clean:
