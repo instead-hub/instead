@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 rm -f config.make
 rm -f Rules.make
 ln -sf Rules.mingw Rules.make
