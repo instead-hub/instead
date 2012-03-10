@@ -8,7 +8,7 @@ install:
 	for f in *; do \
 		if [ ! -d $$f ]; then continue; fi;\
 		$(INSTALLD) $(THEMESPATH)/$$f;\
-		tar --exclude=".svn" -c -C $$f . | tar -x -C $(THEMESPATH)/$$f;\
+		tar --exclude=".svn" -cf - -C $$f . | tar -xpf - -C $(THEMESPATH)/$$f;\
 	done
 
 uninstall:
