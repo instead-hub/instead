@@ -1,5 +1,9 @@
 function wroom_enter(self, ...)
-	local r, v = stead.walk(call(self, 'where'));
+	local w = self.where
+	if type(w) ~= 'table' then
+		w = call(self, 'where')
+	end
+	local r, v = stead.walk(w);
 	if v ~= false then
 		self._toggle = true
 	end
