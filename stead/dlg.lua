@@ -57,6 +57,14 @@ function dialog_rescan(self, from)
 	return true
 end
 
+function dialog_enter(self)
+	if not dialog_rescan(self) then
+		return nil, false
+	end
+	self.__last_answer = false
+	return nil, true
+end
+
 function dialog_current(self,...)
 	return phr_get(self)
 end
@@ -222,6 +230,7 @@ function(f, v, ...)
 		v.last = dialog_last
 	end
 	v = f(v, ...)
+	v.__last_answer = false
 	v.__phr_stack = { 1 }
 	dialog_phr2obj(v);
 	return v

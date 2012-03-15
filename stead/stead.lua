@@ -970,7 +970,6 @@ function dialog_enter(self)
 	if not dialog_rescan(self) then
 		return nil, false
 	end
-	self.__last_answer = false
 	return nil, true
 end
 
@@ -1120,7 +1119,6 @@ function dlg(v) --constructor
 		v.empty = dialog_empty;
 	end
 	v = room(v);
-	v.__last_answer = false
 	return v;
 end
 
@@ -1136,8 +1134,6 @@ function phrase_action(self)
 
 	local last = stead.call(ph, 'ans');
 
-	here().__last_answer = last;
-	
 	if type(ph.do_act) == 'string' then
 		local f = stead.eval(ph.do_act);
 		if f ~= nil then
