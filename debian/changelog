@@ -7,7 +7,8 @@ instead (1.6.3) unstable; urgency=low
   * wroom module added;
   * nouse module added;
   * better dlg syntax;
-  * psave/prestore, psub/pret
+  * psub/pret/pjump;
+  * dlg:answer() -- the last answer
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 08 Mar 2012 09:27:00 +0400
 
