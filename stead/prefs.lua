@@ -11,16 +11,16 @@ prefs = obj {
 		return s:load()
 	end,
 	store = function(s)
+		s:save()
+		stead.clearvar(s);
+	end,
+	save = function(s) -- save prefs on every save
 		local name = get_savepath() .. '/prefs';
 		local h = stead.io.open(name,"w");
 		if not h then return false end
 		stead.savemembers(h, s, 'prefs', true);
-		stead.clearvar(s);
 		h:flush();
 		h:close();
-	end,
-	save = function(s) -- save prefs on every save
-		s:store()
 	end,
 	purge = function(s)
 		local name = get_savepath() .. '/prefs';
