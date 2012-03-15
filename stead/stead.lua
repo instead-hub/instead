@@ -970,7 +970,7 @@ function dialog_enter(self)
 	if not dialog_rescan(self) then
 		return nil, false
 	end
-	self.last_answer = false
+	self.__last_answer = false
 	return nil, true
 end
 
@@ -997,7 +997,7 @@ end
 function dialog_look(self)
 	local i,n,v,ph,ii
 	n = 1
-	local start = phr_get(self)
+	local start = self:current(self)
 	for i,ph,ii in opairs(self.obj) do
 		if ii >= start then
 			ph = stead.ref(ph);
@@ -1013,10 +1013,15 @@ function dialog_look(self)
 	return v;
 end
 
-function dialog_rescan(self)
+function dialog_rescan(self, from)
 	local i,k,ph,ii, start
 	k = 1
-	local start = phr_get(self)
+	local start
+	if type(from) == 'number' then
+		start = from
+	else
+		start = self:current()
+	end
 	for i,ph,ii in opairs(self.obj) do
 		if ii >= start then
 			ph = stead.ref(ph);
@@ -1035,8 +1040,8 @@ function dialog_rescan(self)
 	return true
 end
 
-function dialog_empty(self)
-	return not dialog_rescan(self);
+function dialog_empty(self, n)
+	return not dialog_rescan(self, n);
 end
 
 local function dialog_phr2obj(self)
@@ -1156,6 +1161,10 @@ function dialog_poff(self,...)
 	return ponoff(self, false, ...);
 end
 
+function dialog_current(self,...)
+	return phr_get(self)
+end
+
 function dlg(v) --constructor
 	v.dialog_type = true;
 	if v.ini == nil then
@@ -1188,10 +1197,11 @@ function dlg(v) --constructor
 	if v.empty == nil then
 		v.empty = dialog_empty;
 	end
-	if stead.api_version >= "1.6.3" then
-		stead.table.insert(v, var { last_answer = false });
+	if v.current == nil then
+		v.current = dialog_current
 	end
 	v = room(v);
+	v.__last_answer = false
 	v.__phr_stack = { 1 }
 	if stead.api_version >= "1.6.3" then
 		dialog_phr2obj(v);
@@ -1211,7 +1221,7 @@ function phrase_action(self)
 
 	local last = stead.call(ph, 'ans');
 
-	here().last_answer = last;
+	here().__last_answer = last;
 	
 	if type(ph.do_act) == 'string' then
 		local f = stead.eval(ph.do_act);
@@ -2439,6 +2449,13 @@ function pjump(w)
 	else
 		here().__phr_stack[n] = w
 	end
+end
+
+function pstart(w)
+	if not isDialog(here()) or type(w) ~= 'number' then
+		return
+	end
+	here().__phr_stack = { w }
 end
 
 function psub(w)
