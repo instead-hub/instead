@@ -10,6 +10,7 @@ instead (1.6.3) unstable; urgency=low
   * - better dlg syntax;
   * - psub/pret/pjump/pstart;
   * - dlg:last() -- the last answer
+  * - stead.phrase_prefix;
   * compose in sprite;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 08 Mar 2012 09:27:00 +0400
