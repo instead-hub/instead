@@ -124,16 +124,19 @@ function player_back(self) -- deprecated
 	error ("Do not use me():back(). It's deprecated.", 2)
 end
 
-stead.back = function()
-	if isDialog(here()) and not isDialog(from()) then
-		return stead.walkout();
+stead.back = function(w)
+	if isDialog(here()) and not isDialog(stead.from()) then
+		return stead.walkout(w);
 	end
-	return stead.walkback();
+	return stead.walkback(w);
 end
 back = stead.back
 
-stead.walkback = function()
-	return me():walk(from(), true);
+stead.walkback = function(w)
+	if isRoom(stead.ref(w)) then
+		return me():walk(w, true);
+	end
+	return me():walk(stead.from(), true);
 end
 walkback = stead.walkback
 
@@ -151,7 +154,7 @@ stead.walkout = function(what)
 	if isRoom(stead.ref(what)) then
 		return me():walk(what, true, true, false, true);
 	end
-	return me():walk(from(), true, true, false, true);
+	return me():walk(stead.from(), true, true, false, true);
 end
 walkout = stead.walkout
 
