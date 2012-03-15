@@ -131,14 +131,14 @@ echo $cc
 echo -n "Checking iconv...("
 echo -n "$cc /tmp/iconv-test.c -o iconv-test)..."
 
-if $cc /tmp/iconv-test.c -o /tmp/iconv-test; then
+if $cc /tmp/iconv-test.c -o /tmp/iconv-test >/dev/null 2>&1; then
 	CFLAGS="$CFLAGS -D_HAVE_ICONV"
 	echo "ok"
-elif $cc /tmp/iconv-test.c -liconv -o /tmp/iconv-test; then
+elif $cc /tmp/iconv-test.c -liconv -o /tmp/iconv-test  >/dev/null 2>&1; then
 	CFLAGS="$CFLAGS -D_HAVE_ICONV"
 	LDFLAGS="$LDFLAGS -liconv"
 	echo "ok, with -liconv"
-elif $cc /tmp/iconv-test.c -I/usr/local/include -L/usr/local/lib -liconv -o /tmp/iconv-test; then
+elif $cc /tmp/iconv-test.c -I/usr/local/include -L/usr/local/lib -liconv -o /tmp/iconv-test  >/dev/null 2>&1; then
 	CFLAGS="$CFLAGS -I/usr/local/include -D_HAVE_ICONV"
 	LDFLAGS="$LDFLAGS -L/usr/local/lib -liconv"
 	echo "ok, with -liconv and -L/usr/local/lib"
