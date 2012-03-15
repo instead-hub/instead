@@ -1,3 +1,5 @@
+-- stead.phrase_prefix = '--'
+
 local function phr_get(self)
 	local n = #self.__phr_stack;
 	if n == 0 then return 1 end
@@ -22,7 +24,11 @@ function dialog_look(self)
 				break
 			end
 			if isPhrase(ph) and not isDisabled(ph) then
-				v = stead.par('^', v, txtnm(n, ph:look()));
+				if stead.phrase_prefix then
+					v = stead.par('^', v, stead.cat(stead.phrase_prefix, ph:look()));
+				else
+					v = stead.par('^', v, txtnm(n, ph:look()));
+				end
 				n = n + 1
 			end
 		end
