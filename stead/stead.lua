@@ -2420,12 +2420,26 @@ function prem(...)
 	here():prem(...);
 end
 
+local function psub_enable(start)
+	local i, v, ii
+
+	for i,v,ii in opairs(here().obj) do
+		if ii >= start then
+			if not v.dsc and v.ans then
+				break
+			end
+			pon(ii)
+		end
+	end
+end
+
 function psub(...)
 	if not isDialog(here()) or #{...} == 0 then
 		return
 	end
 	here():psave()
 	here():disable_all();
+--	psub_enable(...);
 	here():pon(...);
 end
 
