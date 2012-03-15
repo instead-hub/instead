@@ -1165,6 +1165,14 @@ function dialog_current(self,...)
 	return phr_get(self)
 end
 
+function dialog_last(self, v)
+	local r = self.__last_answer
+	if v ~= nil then
+		self.__last_answer = v
+	end
+	return r
+end
+
 function dlg(v) --constructor
 	v.dialog_type = true;
 	if v.ini == nil then
@@ -1199,6 +1207,9 @@ function dlg(v) --constructor
 	end
 	if v.current == nil then
 		v.current = dialog_current
+	end
+	if v.last == nil then
+		v.last = dialog_last
 	end
 	v = room(v);
 	v.__last_answer = false
@@ -2443,17 +2454,24 @@ function pjump(w)
 	if not isDialog(here()) or type(w) ~= 'number' then
 		return
 	end
+	if not dialog_rescan(here(), w) then
+		return false
+	end
 	local n = #here().__phr_stack;
 	if n == 0 then
 		stead.table.insert(here().__phr_stack, w);
 	else
 		here().__phr_stack[n] = w
 	end
+	return true
 end
 
 function pstart(w)
-	if not isDialog(here()) or type(w) ~= 'number' then
+	if not isDialog(here()) then
 		return
+	end
+	if type(w) ~= 'number' then
+		w = 1
 	end
 	here().__phr_stack = { w }
 end
@@ -2462,7 +2480,11 @@ function psub(w)
 	if not isDialog(here()) or type(w) ~= 'number' then
 		return
 	end
+	if not dialog_rescan(here(), w) then
+		return false
+	end
 	stead.table.insert(here().__phr_stack, w);
+	return true
 end
 
 function pret()
