@@ -25,3 +25,6 @@ install:
 	copy theme.lua ..\bin\stead
 	copy sprites.lua ..\bin\stead
 	copy sound.lua ..\bin\stead
+	copy wroom.lua ..\bin\stead
+	copy nouse.lua ..\bin\stead
+	copy dlg.lua ..\bin\stead

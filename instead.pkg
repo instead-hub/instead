@@ -72,6 +72,7 @@
 ".\symbian_gamedata\stead\sound.lua" -"!:\data\instead\stead\sound.lua"
 ".\symbian_gamedata\stead\wroom.lua" -"!:\data\instead\stead\wroom.lua"
 ".\symbian_gamedata\stead\nouse.lua" -"!:\data\instead\stead\nouse.lua"
+".\symbian_gamedata\stead\dlg.lua" -"!:\data\instead\stead\dlg.lua"
 ".\symbian_gamedata\lang\ru.ini" -"!:\data\instead\lang\ru.ini"
 ".\symbian_gamedata\lang\en.ini" -"!:\data\instead\lang\en.ini"
 ".\symbian_gamedata\themes\fantasy\down.png" -"!:\data\instead\themes\fantasy\down.png"

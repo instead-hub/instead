@@ -30,6 +30,7 @@ install:
 	$(INSTALL) sound.lua $(STEADPATH)/sound.lua
 	$(INSTALL) wroom.lua $(STEADPATH)/wroom.lua
 	$(INSTALL) nouse.lua $(STEADPATH)/nouse.lua
+	$(INSTALL) dlg.lua $(STEADPATH)/dlg.lua
 
 uninstall:
 	$(RM) $(STEADPATH)/stead.lua
