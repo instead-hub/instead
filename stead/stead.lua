@@ -1078,6 +1078,28 @@ function phrase_seen(s, enb, ...)
 	return true
 end
 
+function dialog_psave(self)
+	local i, ph, ii
+	local state = {}
+	for i,ph,ii in opairs(self.obj) do
+		ph = stead.ref(ph);
+		if isPhrase(ph) and not isDisabled(ph) then
+			stead.table.insert(state, ii);
+		end
+	end
+	stead.table.insert(self.__phr_stack, state);
+end
+
+function dialog_prestore(self)
+	local i, ph, v
+	local n = #self.__phr_stack
+	if n == 0 then return end
+	self:disable_all();
+	for i,v in ipairs(self.__phr_stack[n]) do
+		self:pon(v)
+	end
+	stead.table.remove(self.__phr_stack, n);
+end
 
 function dialog_pseen(s, ...)
 	return phrase_seen(s, true, ...);
@@ -1087,7 +1109,7 @@ function dialog_punseen(s, ...)
 	return phrase_seen(s, false, ...);
 end
 
-function ponoff(s, on, ...)
+local function ponoff(s, on, ...)
 	local i, ph
 	local a = {...}
 	if stead.table.maxn(a) == 0 then
@@ -1159,7 +1181,15 @@ function dlg(v) --constructor
 	if v.empty == nil then
 		v.empty = dialog_empty;
 	end
+	if v.psave == nil then
+		v.psave = dialog_psave;
+	end
+	if v.prestore == nil then
+		v.prestore = dialog_prestore;
+	end
+
 	v = room(v);
+	v.__phr_stack = {}
 	if stead.api_version >= "1.6.3" then
 		dialog_phr2obj(v);
 	end
@@ -2375,17 +2405,49 @@ function pon(...)
 	end
 	here():pon(...);
 end
+
 function poff(...)
 	if not isDialog(here()) then
 		return
 	end
 	here():poff(...);
 end
+
 function prem(...)
 	if not isDialog(here()) then
 		return
 	end
 	here():prem(...);
+end
+
+function psub(...)
+	if not isDialog(here()) or #{...} == 0 then
+		return
+	end
+	here():psave()
+	here():disable_all();
+	here():pon(...);
+end
+
+function pret()
+	if not isDialog(here()) then
+		return
+	end
+	here():prestore()
+end
+
+function psave(...)
+	if not isDialog(here()) then
+		return
+	end
+	here():psave(...);
+end
+
+function prestore(...)
+	if not isDialog(here()) then
+		return
+	end
+	here():prestore(...);
 end
 
 function lifeon(what)
