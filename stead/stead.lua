@@ -1119,8 +1119,8 @@ function dlg(v) --constructor
 	if v.empty == nil then
 		v.empty = dialog_empty;
 	end
-	v.__phr_stack = { 1 }
 	v = room(v);
+	v.__last_answer = false
 	return v;
 end
 

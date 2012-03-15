@@ -215,15 +215,14 @@ end
 
 dlg = stead.hook(dlg, 
 function(f, v, ...)
-	v = f(v, ...)
 	if v.current == nil then
 		v.current = dialog_current
 	end
 	if v.last == nil then
 		v.last = dialog_last
 	end
+	v = f(v, ...)
 	v.__phr_stack = { 1 }
-	v.__last_answer = false
 	dialog_phr2obj(v);
 	return v
 end)
