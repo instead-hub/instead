@@ -79,48 +79,70 @@ function dialog_empty(self, from)
 	return not dialog_rescan(self, from);
 end
 
-function pjump(w)
-	if not isDialog(here()) or type(w) ~= 'number' then
-		return
-	end
-	if not dialog_rescan(here(), w) then
+function dialog_pjump(self, w)
+	if type(w) ~= 'number' then
 		return false
 	end
-	local n = #here().__phr_stack;
+	if not dialog_rescan(self, w) then
+		return false
+	end
+	local n = #self.__phr_stack;
 	if n == 0 then
-		stead.table.insert(here().__phr_stack, w);
+		stead.table.insert(self.__phr_stack, w);
 	else
-		here().__phr_stack[n] = w
+		self.__phr_stack[n] = w
 	end
 	return true
+end
+
+function pjump(w)
+	if not isDialog(here()) then
+		return false
+	end
+	return here():pjump()
+end
+
+function dialog_pstart(self, w)
+	if type(w) ~= 'number' then
+		w = 1
+	end
+	self.__phr_stack = { w }
 end
 
 function pstart(w)
 	if not isDialog(here()) then
 		return
 	end
+	here():pstart(w)
+end
+
+function dialog_psub(self, w)
 	if type(w) ~= 'number' then
-		w = 1
+		return false
 	end
-	here().__phr_stack = { w }
+	if not dialog_rescan(self, w) then
+		return false
+	end
+	stead.table.insert(self.__phr_stack, w);
+	return true
 end
 
 function psub(w)
-	if not isDialog(here()) or type(w) ~= 'number' then
-		return
-	end
-	if not dialog_rescan(here(), w) then
+	if not isDialog(here()) then
 		return false
 	end
-	stead.table.insert(here().__phr_stack, w);
-	return true
+	return here():psub(w)
+end
+
+function dialog_pret(self)
+	return phr_pop(self)
 end
 
 function pret()
 	if not isDialog(here()) then
 		return
 	end
-	return phr_pop(here())
+	return here():pret()
 end
 
 local function dialog_phr2obj(self)
@@ -234,6 +256,18 @@ function(f, v, ...)
 	end
 	if v.last == nil then
 		v.last = dialog_last
+	end
+	if v.pstart == nil then
+		v.pstart = dialog_pstart
+	end
+	if v.pjump == nil then
+		v.pjump = dialog_pjump
+	end
+	if v.pret == nil then
+		v.pret = dialog_pret
+	end
+	if v.psub == nil then
+		v.psub = dialog_psub
 	end
 	v = f(v, ...)
 	v.__last_answer = false
