@@ -997,7 +997,7 @@ end
 function dialog_look(self)
 	local i,n,v,ph,ii
 	n = 1
-	local start = self:current(self)
+	local start = phr_get(self)
 	for i,ph,ii in opairs(self.obj) do
 		if ii >= start then
 			ph = stead.ref(ph);
@@ -1020,7 +1020,7 @@ function dialog_rescan(self, from)
 	if type(from) == 'number' then
 		start = from
 	else
-		start = self:current()
+		start = self:phr_get()
 	end
 	for i,ph,ii in opairs(self.obj) do
 		if ii >= start then
