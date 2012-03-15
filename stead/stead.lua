@@ -1013,6 +1013,46 @@ function dialog_empty(self)
 	return not dialog_rescan(self);
 end
 
+local function dialog_phr2obj(self)
+	local k, v, n, i
+	if type(self.phr) ~= 'table' then
+		return
+	end
+	for k,v in ipairs(self.phr) do
+		if k == 1 and type(v) == 'string' or type(v) == 'function' then
+			-- self.dsc = v
+		elseif type(v) == 'table' then
+			local q, a, c, on
+			on = true;
+			i = 1
+			if type(v[i]) == 'number' then
+				n = v[1]
+				i = i + 1
+			else
+				n = k
+			end
+			if type(v[i]) == 'boolean' then
+				on = v[i]
+				i = i + 1
+			end
+			q = v[i]
+			i = i + 1
+			a = v[i]
+			i = i + 1
+			c = v[i]
+			local p
+			if on then
+				p = stead.phr(q, a, c);
+			else
+				p = stead._phr(q, a, c);
+			end
+			self.obj[n] = p
+		else
+			error ("Error in phr structure.", 3);
+		end
+	end
+end
+
 function dialog_phrase(self, num)
 	if not tonumber(num) then
 		if isPhrase(stead.ref(num)) then
@@ -1120,6 +1160,9 @@ function dlg(v) --constructor
 		v.empty = dialog_empty;
 	end
 	v = room(v);
+	if stead.api_version >= "1.6.3" then
+		dialog_phr2obj(v);
+	end
 	return v;
 end
 
@@ -1151,8 +1194,15 @@ function phrase_action(self)
 	if last == true or ret == true then
 		r = true;
 	end
-	if isDialog(here()) and not dialog_rescan(here()) then
-		ret = stead.par(stead.space_delim, ret, stead.back());
+
+	local wh = here();
+
+	while isDialog(wh) and not dialog_rescan(wh) and stead.from(wh) ~= wh do
+		wh = stead.from(wh)
+	end
+
+	if wh ~= here() then
+		ret = stead.par(stead.space_delim, ret, stead.back(wh));
 	end
 	
 	ret = stead.par(stead.scene_delim, last, ret);
@@ -1160,15 +1210,14 @@ function phrase_action(self)
 	if ret == nil then
 		return r -- hack?
 	end
-	
 	return ret
 end
 
 function phrase_save(self, name, h, need)
 	if need then
-		local m = " = phr("
+		local m = " = stead.phr("
 		if isDisabled(self) then
-			m = " = _phr("
+			m = " = stead._phr("
 		end
 		h:write(stead.string.format("%s%s%s,%s,%s);\n", 
 			name, m, 
@@ -1208,11 +1257,14 @@ function _phr(ask, answ, act)
 	return p;
 end
 
+stead._phr = _phr;
+
 function phr(ask, answ, act)
-	local p =  phrase ( { dsc = ask, ans = answ, do_act = act });
+	local p = phrase ( { dsc = ask, ans = answ, do_act = act });
 --	p:enable();
 	return p;
 end
+stead.phr = phr;
 
 function player_inv(self)
 	return iface:inv(stead.cat(self:str()));
@@ -2269,6 +2321,7 @@ function from(w)
 	end
 	return stead.ref(w.__from__);
 end
+stead.from = from
 
 function time()
 	return game._time;
@@ -2909,6 +2962,8 @@ function nameof(v)
 		return r
 	end
 end
+
+stead.nameof = nameof
 
 function stead_version(v)
 	if not tostring(v) then
