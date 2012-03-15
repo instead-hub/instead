@@ -970,7 +970,7 @@ function dialog_enter(self)
 	if not dialog_rescan(self) then
 		return nil, false
 	end
-	self.__last_answer = nil
+	self.last_answer = false
 	return nil, true
 end
 
@@ -1083,10 +1083,6 @@ local function dialog_phr2obj(self)
 	end
 end
 
-function dialog_answer(self)
-	return self.__last_answer
-end
-
 function dialog_phrase(self, num)
 	if not tonumber(num) then
 		if isPhrase(stead.ref(num)) then
@@ -1192,8 +1188,8 @@ function dlg(v) --constructor
 	if v.empty == nil then
 		v.empty = dialog_empty;
 	end
-	if v.answer == nil then
-		v.answer = dialog_answer
+	if stead.api_version >= "1.6.3" then
+		stead.table.insert(v, var { last_answer = false });
 	end
 	v = room(v);
 	v.__phr_stack = { 1 }
@@ -1215,7 +1211,7 @@ function phrase_action(self)
 
 	local last = stead.call(ph, 'ans');
 
-	here().__last_answer = last;
+	here().last_answer = last;
 	
 	if type(ph.do_act) == 'string' then
 		local f = stead.eval(ph.do_act);
