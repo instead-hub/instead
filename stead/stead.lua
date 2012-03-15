@@ -970,6 +970,7 @@ function dialog_enter(self)
 	if not dialog_rescan(self) then
 		return nil, false
 	end
+	self.__last_answer = nil
 	return nil, true
 end
 
@@ -980,27 +981,52 @@ function dialog_scene(self)
 	return v;
 end
 
+local function phr_get(self)
+	local n = #self.__phr_stack;
+	if n == 0 then return 1 end
+	return self.__phr_stack[n];
+end
+
+local function phr_pop(self)
+	local n = #self.__phr_stack;
+	if n <= 1 then return false end
+	stead.table.remove(here().__phr_stack, n)
+	return true
+end
+
 function dialog_look(self)
-	local i,n,v,ph
+	local i,n,v,ph,ii
 	n = 1
-	for i,ph in opairs(self.obj) do
-		ph = stead.ref(ph);
-		if isPhrase(ph) and not isDisabled(ph) then
-			v = stead.par('^', v, txtnm(n, ph:look()));
-			n = n + 1
+	local start = phr_get(self)
+	for i,ph,ii in opairs(self.obj) do
+		if ii >= start then
+			ph = stead.ref(ph);
+			if not ph.dsc then
+				break
+			end
+			if isPhrase(ph) and not isDisabled(ph) then
+				v = stead.par('^', v, txtnm(n, ph:look()));
+				n = n + 1
+			end
 		end
 	end
 	return v;
 end
 
 function dialog_rescan(self)
-	local i,k,ph
+	local i,k,ph,ii, start
 	k = 1
-	for i,ph in opairs(self.obj) do
-		ph = stead.ref(ph);
-		if isPhrase(ph) and not isDisabled(ph) then
-			ph.nam = tostring(k);
-			k = k + 1;
+	local start = phr_get(self)
+	for i,ph,ii in opairs(self.obj) do
+		if ii >= start then
+			ph = stead.ref(ph);
+			if not ph.dsc then
+				break
+			end
+			if isPhrase(ph) and not isDisabled(ph) then
+				ph.nam = tostring(k);
+				k = k + 1;
+			end
 		end
 	end
 	if k == 1 then
@@ -1018,6 +1044,7 @@ local function dialog_phr2obj(self)
 	if type(self.phr) ~= 'table' then
 		return
 	end
+	n = 0
 	for k,v in ipairs(self.phr) do
 		if k == 1 and type(v) == 'string' or type(v) == 'function' then
 			-- self.dsc = v
@@ -1029,7 +1056,7 @@ local function dialog_phr2obj(self)
 				n = v[1]
 				i = i + 1
 			else
-				n = k
+				n = n + 1
 			end
 			if type(v[i]) == 'boolean' then
 				on = v[i]
@@ -1046,11 +1073,18 @@ local function dialog_phr2obj(self)
 			else
 				p = stead._phr(q, a, c);
 			end
+			if self.obj[n] then
+				error ("Error in phr structure (numbering).", 3);
+			end
 			self.obj[n] = p
 		else
-			error ("Error in phr structure.", 3);
+			error ("Error in phr structure (wrong item).", 3);
 		end
 	end
+end
+
+function dialog_answer(self)
+	return self.__last_answer
 end
 
 function dialog_phrase(self, num)
@@ -1076,29 +1110,6 @@ function phrase_seen(s, enb, ...)
 		if r then return false end
 	end
 	return true
-end
-
-function dialog_psave(self)
-	local i, ph, ii
-	local state = {}
-	for i,ph,ii in opairs(self.obj) do
-		ph = stead.ref(ph);
-		if isPhrase(ph) and not isDisabled(ph) then
-			stead.table.insert(state, ii);
-		end
-	end
-	stead.table.insert(self.__phr_stack, state);
-end
-
-function dialog_prestore(self)
-	local i, ph, v
-	local n = #self.__phr_stack
-	if n == 0 then return end
-	self:disable_all();
-	for i,v in ipairs(self.__phr_stack[n]) do
-		self:pon(v)
-	end
-	stead.table.remove(self.__phr_stack, n);
 end
 
 function dialog_pseen(s, ...)
@@ -1181,15 +1192,11 @@ function dlg(v) --constructor
 	if v.empty == nil then
 		v.empty = dialog_empty;
 	end
-	if v.psave == nil then
-		v.psave = dialog_psave;
+	if v.answer == nil then
+		v.answer = dialog_answer
 	end
-	if v.prestore == nil then
-		v.prestore = dialog_prestore;
-	end
-
 	v = room(v);
-	v.__phr_stack = {}
+	v.__phr_stack = { 1 }
 	if stead.api_version >= "1.6.3" then
 		dialog_phr2obj(v);
 	end
@@ -1208,6 +1215,8 @@ function phrase_action(self)
 
 	local last = stead.call(ph, 'ans');
 
+	here().__last_answer = last;
+	
 	if type(ph.do_act) == 'string' then
 		local f = stead.eval(ph.do_act);
 		if f ~= nil then
@@ -1223,6 +1232,10 @@ function phrase_action(self)
 
 	if last == true or ret == true then
 		r = true;
+	end
+
+	while not dialog_rescan(here()) and phr_pop(here())  do -- do returns
+
 	end
 
 	local wh = here();
@@ -2420,48 +2433,30 @@ function prem(...)
 	here():prem(...);
 end
 
-local function psub_enable(start)
-	local i, v, ii
-
-	for i,v,ii in opairs(here().obj) do
-		if ii >= start then
-			if not v.dsc and v.ans then
-				break
-			end
-			pon(ii)
-		end
+function pjump(w)
+	if not isDialog(here()) or type(w) ~= 'number' then
+		return
+	end
+	local n = #here().__phr_stack;
+	if n == 0 then
+		stead.table.insert(here().__phr_stack, w);
+	else
+		here().__phr_stack[n] = w
 	end
 end
 
-function psub(...)
-	if not isDialog(here()) or #{...} == 0 then
+function psub(w)
+	if not isDialog(here()) or type(w) ~= 'number' then
 		return
 	end
-	here():psave()
-	here():disable_all();
---	psub_enable(...);
-	here():pon(...);
+	stead.table.insert(here().__phr_stack, w);
 end
 
 function pret()
 	if not isDialog(here()) then
 		return
 	end
-	here():prestore()
-end
-
-function psave(...)
-	if not isDialog(here()) then
-		return
-	end
-	here():psave(...);
-end
-
-function prestore(...)
-	if not isDialog(here()) then
-		return
-	end
-	here():prestore(...);
+	return phr_pop(here())
 end
 
 function lifeon(what)
