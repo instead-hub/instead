@@ -1020,7 +1020,7 @@ function dialog_rescan(self, from)
 	if type(from) == 'number' then
 		start = from
 	else
-		start = self:phr_get()
+		start = phr_get(self)
 	end
 	for i,ph,ii in opairs(self.obj) do
 		if ii >= start then
