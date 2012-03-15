@@ -11,6 +11,7 @@ stead.sprite_text = sprite_text
 stead.sprite_text_size = sprite_text_size
 stead.sprite_draw = sprite_draw
 stead.sprite_copy = sprite_copy
+stead.sprite_compose = sprite_compose
 stead.sprite_fill = sprite_fill
 stead.sprite_pixel = sprite_pixel
 stead.sprite_load = sprite_load
@@ -75,6 +76,12 @@ sprite = {
 			return stead.sprite_copy(s, 0, 0, -1, -1, fx, fy, fw, fh);
 		end
 		return stead.sprite_copy(s, fx, fy, fw, fh, d, x, y, alpha);
+	end;
+	compose = function(s, fx, fy, fw, fh, d, x, y, alpha)
+		if d == nil and x == nil and y == nil then
+			return stead.sprite_compose(s, 0, 0, -1, -1, fx, fy, fw, fh);
+		end
+		return stead.sprite_compose(s, fx, fy, fw, fh, d, x, y, alpha);
 	end;
 	fill = function(d, x, y, w, h, col)
 		if h == nil and col == nil then
