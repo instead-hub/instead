@@ -158,11 +158,21 @@ local function dialog_phr2obj(self)
 			local q, a, c, on
 			on = true;
 			i = 1
-			if type(v[i]) == 'number' then
-				n = v[1]
+			local nn = {}
+			q = 0
+			while type(v[i]) == 'number' do
+				n = v[i]
+				if n > q then
+					q = n
+				end
 				i = i + 1
-			else
+				stead.table.insert(nn, n)
+			end
+			if #nn == 0 then
 				n = n + 1
+				stead.table.insert(nn, n)
+			else
+				n = q -- maximum index
 			end
 			if type(v[i]) == 'boolean' then
 				on = v[i]
@@ -179,10 +189,12 @@ local function dialog_phr2obj(self)
 			else
 				p = stead._phr(q, a, c);
 			end
-			if self.obj[n] then
-				error ("Error in phr structure (numbering).", 4);
+			for q,a in ipairs(nn) do
+				if self.obj[a] then
+					error ("Error in phr structure (numbering).", 4);
+				end
+				self.obj[a] = p
 			end
-			self.obj[n] = p
 		else
 			error ("Error in phr structure (wrong item).", 4);
 		end
