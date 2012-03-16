@@ -31,6 +31,7 @@ install:
 	$(INSTALL) wroom.lua $(STEADPATH)/wroom.lua
 	$(INSTALL) nouse.lua $(STEADPATH)/nouse.lua
 	$(INSTALL) dlg.lua $(STEADPATH)/dlg.lua
+	$(INSTALL) counters.lua $(STEADPATH)/counters.lua
 
 uninstall:
 	$(RM) $(STEADPATH)/stead.lua
