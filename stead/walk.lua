@@ -1,3 +1,17 @@
+local function onevent(ev, ...)
+	local vv, r
+	if stead.api_version >= "1.6.3" then
+		vv, r = call(game, ev, ...);
+		if r == false then
+			return vv, false
+		end
+		if vv == false then
+			return nil, false
+		end
+		return vv
+	end
+end
+
 stead.go = function (self, where, back, noenter, noexit, nodsc)
 	local was = self.where;
 	local need_scene = false;
@@ -116,7 +130,13 @@ function player_go(self, where) -- cmd iface
 end
 
 function player_walk(self, where, ...) -- real work
-	local v, r = stead.go(self, where, ...);
+	local v, r, vv;
+	vv, r = onevent('onwalk', stead.ref(where), ...);
+	if r == false then return vv end
+	v, r = stead.go(self, where, ...);
+	if type(vv) == 'string' then
+		v = stead.par(stead.space_delim, vv, v);
+	end
 	return v, r;
 end
 
