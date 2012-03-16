@@ -1,5 +1,19 @@
+local function onevent(ev, ...)
+	local vv, r
+	if stead.api_version >= "1.6.3" then
+		vv, r = call(game, ev, ...);
+		if r == false then
+			return vv, false
+		end
+		if vv == false then
+			return nil, false
+		end
+		return vv
+	end
+end
+
 function player_action(self, what, ...)
-	local v,r,obj
+	local v,r,obj,vv
 	obj = _G[what];
 	if not isXaction(obj) then
 		obj = stead.ref(self.where):srch(what);
@@ -7,12 +21,17 @@ function player_action(self, what, ...)
 	if not obj then
 		return stead.call(game, 'action', what, ...); --player_do(self, what, ...);
 	end
+	vv, r = onevent('onact', obj, ...);
+	if r == false then return vv end
 	v, r = player_take(self, what, ...);
 	if not v then
 		v, r = stead.call(obj, 'act', ...);
 		if not v and r ~= true then
 			v, r = stead.call(game, 'act', obj, ...);
 		end
+	end
+	if type(vv) == 'string' then
+		v = stead.par(stead.space_delim, vv, v);
 	end
 	return v, r;
 end
@@ -30,14 +49,20 @@ function player_use(self, what, onwhat, ...)
 		end
 		scene_use_mode = true -- scene_use_mode!
 	end
+	obj = stead.ref(obj);
 	if onwhat == nil then -- only one?
 		if scene_use_mode then
 			return self:action(what, ...); -- call act
 		else
-			v, r = stead.call(stead.ref(obj),'inv', ...); -- call inv
+			vv, r = onevent('oninv', obj, ...);
+			if r == false then return vv end
+			v, r = stead.call(obj, 'inv', ...); -- call inv
 		end
 		if not v and r ~= true then
 			v, r = stead.call(game, 'inv', obj, ...);
+		end
+		if type(vv) == 'string' then
+			v = stead.par(stead.space_delim, vv, v);
 		end
 		return v, r;
 	end
@@ -49,11 +74,15 @@ function player_use(self, what, onwhat, ...)
 		return game.err, false;
 	end
 	
-	obj = stead.ref(obj)
 	obj2 = stead.ref(obj2)
 
 	if not scene_use_mode or isSceneUse(obj) then
+		vv, r = onevent('onuse', obj, obj2, ...);
+		if r == false then return vv end
 		v, r = stead.call(obj, 'use', obj2, ...);
+		if type(vv) == 'string' then
+			v = stead.par(stead.space_delim, vv, v);
+		end
 		if r ~= false then
 			vv = stead.call(obj2, 'used', obj, ...);
 		end
