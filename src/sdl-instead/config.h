@@ -18,6 +18,7 @@
 extern char *appdata_sw;
 extern int chunksize_sw;
 
+extern int opt_fading;
 extern int opt_fsize;
 extern int opt_fs;
 extern int opt_owntheme;

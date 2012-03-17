@@ -350,7 +350,7 @@ char *game_menu_gen(void)
 		case 0:
 			snprintf(menu_buff, sizeof(menu_buff), SETTINGS_GFX_MENU, 
 			opt_get_mode(), opt_fs?ON:OFF, opt_fsize, just[opt_justify],
-				opt_hl?ON:OFF, opt_owntheme?ON:OFF);
+				opt_hl?ON:OFF, opt_fading?ON:OFF, opt_owntheme?ON:OFF);
 			break;
 		case 1:
 			snprintf(menu_buff, sizeof(menu_buff), SETTINGS_SND_MENU, 
@@ -463,6 +463,9 @@ int game_menu_act(const char *a)
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/hl")) {
 		opt_hl ^= 1;
+		game_menu_box(1, game_menu_gen());
+	} else if (!strcmp(a, "/fading")) {
+		opt_fading ^= 1;
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/fs")) {
 #ifndef ANDROID
