@@ -1,4 +1,21 @@
 -- stead.phrase_prefix = '--'
+local function isReaction(ph)
+	return ph.ans ~= nil or ph.do_act ~= nil
+end
+
+local function phr_call(self, w)
+	local r = true
+	local ph = dialog_phrase(self, w);
+	if isPhrase(ph) and not isDisabled(ph) and not isReaction(ph) then
+		r = stead.call(ph, 'dsc')
+		if type(r) ~= 'string' then
+			r = true
+		else
+			p (r)
+		end
+	end
+	return r
+end
 
 local function phr_get(self)
 	local n = #self.__phr_stack;
@@ -23,7 +40,7 @@ function dialog_look(self)
 			if not ph.dsc then
 				break
 			end
-			if isPhrase(ph) and not isDisabled(ph) then
+			if isPhrase(ph) and not isDisabled(ph) and isReaction(ph) then
 				if stead.phrase_prefix then
 					v = stead.par('^', v, stead.cat(stead.phrase_prefix, ph:look()));
 				else
@@ -51,7 +68,7 @@ function dialog_rescan(self, from)
 			if not ph.dsc then
 				break
 			end
-			if isPhrase(ph) and not isDisabled(ph) then
+			if isPhrase(ph) and not isDisabled(ph) and isReaction(ph) then
 				ph.nam = tostring(k);
 				k = k + 1;
 			end
@@ -92,14 +109,14 @@ function dialog_pjump(self, w)
 	else
 		self.__phr_stack[n] = w
 	end
-	return true
+	return phr_call(self, w)
 end
 
 function pjump(w)
 	if not isDialog(here()) then
 		return false
 	end
-	return here():pjump()
+	return here():pjump(w)
 end
 
 function dialog_pstart(self, w)
@@ -107,6 +124,7 @@ function dialog_pstart(self, w)
 		w = 1
 	end
 	self.__phr_stack = { w }
+	return phr_call(self, w)
 end
 
 function pstart(w)
@@ -124,7 +142,7 @@ function dialog_psub(self, w)
 		return false
 	end
 	stead.table.insert(self.__phr_stack, w);
-	return true
+	return phr_call(self, w)
 end
 
 function psub(w)
@@ -135,7 +153,15 @@ function psub(w)
 end
 
 function dialog_pret(self)
-	return phr_pop(self)
+	while true do
+		if  not phr_pop(self) then
+			break
+		end
+		if dialog_rescan(self) then
+			break
+		end
+	end
+	return phr_call(self, phr_get(self))
 end
 
 function pret()
@@ -152,9 +178,7 @@ local function dialog_phr2obj(self)
 	end
 	n = 0
 	for k,v in ipairs(self.phr) do
-		if k == 1 and type(v) == 'string' or type(v) == 'function' then
-			-- self.dsc = v
-		elseif type(v) == 'table' then
+		if type(v) == 'table' then
 			local q, a, c, on
 			on = true;
 			i = 1
