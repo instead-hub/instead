@@ -1,4 +1,5 @@
 -- stead.phrase_prefix = '--'
+
 local function isReaction(ph)
 	return ph.ans ~= nil or ph.do_act ~= nil
 end
@@ -28,6 +29,14 @@ local function phr_pop(self)
 	if n <= 1 then return false end
 	stead.table.remove(here().__phr_stack, n)
 	return true
+end
+
+function dialog_dsc(s)
+	if not s:last() then
+		phr_call(s, phr_get(s))
+	else
+		p(s:last())
+	end
 end
 
 function dialog_look(self)
@@ -244,7 +253,7 @@ function phrase_action(self)
 
 	local last = stead.call(ph, 'ans');
 
-	here().__last_answer = last;
+	
 	
 	if type(ph.do_act) == 'string' then
 		local f = stead.eval(ph.do_act);
@@ -278,7 +287,9 @@ function phrase_action(self)
 	end
 	
 	ret = stead.par(stead.scene_delim, last, ret);
-	
+
+	here().__last_answer = ret;
+
 	if ret == nil then
 		return r -- hack?
 	end
@@ -304,6 +315,9 @@ function(f, v, ...)
 	end
 	if v.psub == nil then
 		v.psub = dialog_psub
+	end
+	if v.dsc == nil then
+		v.dsc = dialog_dsc
 	end
 	v = f(v, ...)
 	v.__last_answer = false
