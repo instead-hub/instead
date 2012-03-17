@@ -21,6 +21,7 @@ int opt_hl = 0;
 	int opt_hl = 0;
 	#endif
 #endif
+int opt_fading = 1;
 int opt_hz = 22050;
 int opt_vol = 127;
 int opt_motion = 1;
@@ -71,6 +72,7 @@ static struct parser cfg_parser[] = {
 	{ "kbd", parse_int, &opt_kbd },
 	{ "mode", parse_mode, opt_mode },
 	{ "justify", parse_int, &opt_justify },
+	{ "fading", parse_int, &opt_fading },
 	{ NULL, },
 };
 
@@ -101,12 +103,12 @@ int cfg_save(void)
 	fprintf(fp, "fs = %d\nhl = %d\nhz = %d\nvol = %d\nautosave = %d\n\
 game = %s\nfscale = %d\nmotion = %d\n\
 click = %d\nmusic = %d\ntheme = %s\n\
-filter = %d\nowntheme = %d\nlang = %s\nkbd = %d\nmode = %dx%d\njustify = %d", 
+filter = %d\nowntheme = %d\nlang = %s\nkbd = %d\nmode = %dx%d\njustify = %d\nfading = %d", 
 		opt_fs, opt_hl, opt_hz, opt_vol, opt_autosave, 
 		curgame_dir?curgame_dir:"", opt_fsize, opt_motion, 
 		opt_click, opt_music, curtheme_dir?curtheme_dir:DEFAULT_THEME, 
 		opt_filter, opt_owntheme, opt_lang, opt_kbd, opt_mode[0], opt_mode[1], 
-		opt_justify);
+		opt_justify, opt_fading);
 	fclose(fp);
 	return 0;
 }
