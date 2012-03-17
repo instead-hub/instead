@@ -27,16 +27,18 @@ stead.obj_proxy = function(o, act, use_mode, reverse)
 		local f = function(s, w)
 			if w.proxy_type then
 				local v, r, vv, rr
-				v, r = stead.call(game, 'before_'..act, s.pobj);
-				if r == false or v == false then
-					return v
+				if s.pobj[act] then
+					v, r = stead.call(game, 'before_'..act, s.pobj, w.pobj);
+					if r == false or v == false then
+						return v
+					end
+					vv, r = stead.call(s.pobj, act, w.pobj);
+					v = stead.par(stead.space_delim, v, vv);
+					if r ~= false and v ~= false then
+						vv, rr = stead.call(game, 'after_'..act, s.pobj. w.pobj);
+					end
+					v = stead.par(stead.space_delim, v, vv);
 				end
-				vv, r = stead.call(s.pobj, act, w.pobj);
-				v = stead.par(stead.space_delim, v, vv);
-				if r ~= false and v ~= false then
-					vv, rr = stead.call(game, 'after_'..act, s.pobj. w.pobj);
-				end
-				v = stead.par(stead.space_delim, v, vv);
 				if not v then -- false or nil
 					v = stead.call(game, act, s.pobj, w.pobj);
 				end
@@ -52,16 +54,18 @@ stead.obj_proxy = function(o, act, use_mode, reverse)
 
 	v.inv = function(s)
 		local v, r, vv, rr
-		v, r = stead.call(game, 'before_'..act, s.pobj);
-		if r == false or v == false then
-			return v
+		if s.pobj[act] then
+			v, r = stead.call(game, 'before_'..act, s.pobj);
+			if r == false or v == false then
+				return v
+			end
+			vv, r = stead.call(s.pobj, act);
+			v = stead.par(stead.space_delim, v, vv);
+			if r ~= false and v ~= false then
+				vv, rr = stead.call(game, 'after_'..act, s.pobj);
+			end
+			v = stead.par(stead.space_delim, v, vv);
 		end
-		vv, r = stead.call(s.pobj, act);
-		v = stead.par(stead.space_delim, v, vv);
-		if r ~= false and v ~= false then
-			vv, rr = stead.call(game, 'after_'..act, s.pobj);
-		end
-		v = stead.par(stead.space_delim, v, vv);
 		if not v then -- false or nil
 			v = stead.call(game, act, s.pobj);
 		end
@@ -76,6 +80,7 @@ end
 
 fill_objs = function(s, w, act, use_mode, reverse)
 	local ii,i,o
+	local rc = false
 	for i,o,ii in opairs(w) do
 		o = ref(o);
 		if isObject(o) and not isDisabled(o) and o ~= s and not isPhrase(o) 
@@ -84,8 +89,10 @@ fill_objs = function(s, w, act, use_mode, reverse)
 			s.obj:add(stead.obj_proxy(o, act, use_mode, reverse));
 
 			fill_objs(s, o.obj, act, use_mode, reverse);
+			rc = true
 		end
 	end
+	return rc
 end 
 
 local select_only = function(s)
