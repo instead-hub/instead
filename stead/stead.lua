@@ -2127,7 +2127,7 @@ iface = {
 		end
 	end,
 	fmt = function(self, cmd, st, moved, r, av, objs, pv) -- st -- changed state (main win), move -- loc changed
-		local l
+		local l, vv
 		if st and not moved then
 			if cmd ~= 'look' then
 				av = txtem(av);
