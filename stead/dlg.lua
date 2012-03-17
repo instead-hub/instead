@@ -4,20 +4,6 @@ local function isReaction(ph)
 	return ph.ans ~= nil or ph.do_act ~= nil
 end
 
-local function phr_call(self, w)
-	local r = true
-	local ph = dialog_phrase(self, w);
-	if isPhrase(ph) and not isDisabled(ph) and not isReaction(ph) then
-		r = stead.call(ph, 'dsc')
-		if type(r) ~= 'string' then
-			r = true
-		else
-			p (r)
-		end
-	end
-	return r
-end
-
 local function phr_get(self)
 	local n = #self.__phr_stack;
 	if n == 0 then return 1 end
@@ -31,14 +17,6 @@ local function phr_pop(self)
 	return true
 end
 
-function dialog_dsc(s)
-	if not s:last() then
-		phr_call(s, phr_get(s))
-	else
-		p(s:last())
-	end
-end
-
 function dialog_look(self)
 	local i,n,v,ph,ii
 	n = 1
@@ -49,13 +27,19 @@ function dialog_look(self)
 			if not ph.dsc then
 				break
 			end
-			if isPhrase(ph) and not isDisabled(ph) and isReaction(ph) then
-				if stead.phrase_prefix then
-					v = stead.par('^', v, stead.cat(stead.phrase_prefix, ph:look()));
+			if isPhrase(ph) and not isDisabled(ph) then
+				if isReaction(ph) then
+					local a
+					if stead.phrase_prefix then
+						a = stead.cat(stead.phrase_prefix, ph:look())
+					else
+						a = txtnm(n, ph:look())
+					end
+					v = stead.par('^', v, a);
+					n = n + 1
 				else
-					v = stead.par('^', v, txtnm(n, ph:look()));
+					v = stead.par('^', v, stead.call(ph, 'dsc'))
 				end
-				n = n + 1
 			end
 		end
 	end
@@ -118,7 +102,7 @@ function dialog_pjump(self, w)
 	else
 		self.__phr_stack[n] = w
 	end
-	return phr_call(self, w)
+	return true
 end
 
 function pjump(w)
@@ -133,7 +117,7 @@ function dialog_pstart(self, w)
 		w = 1
 	end
 	self.__phr_stack = { w }
-	return phr_call(self, w)
+	return
 end
 
 function pstart(w)
@@ -151,7 +135,7 @@ function dialog_psub(self, w)
 		return false
 	end
 	stead.table.insert(self.__phr_stack, w);
-	return phr_call(self, w)
+	return
 end
 
 function psub(w)
@@ -170,7 +154,7 @@ function dialog_pret(self)
 			break
 		end
 	end
-	return phr_call(self, phr_get(self))
+	return
 end
 
 function pret()
@@ -253,7 +237,7 @@ function phrase_action(self)
 
 	local last = stead.call(ph, 'ans');
 
-	
+	here().__last_answer = last;
 	
 	if type(ph.do_act) == 'string' then
 		local f = stead.eval(ph.do_act);
@@ -315,9 +299,6 @@ function(f, v, ...)
 	end
 	if v.psub == nil then
 		v.psub = dialog_psub
-	end
-	if v.dsc == nil then
-		v.dsc = dialog_dsc
 	end
 	v = f(v, ...)
 	v.__last_answer = false
