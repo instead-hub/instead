@@ -1,3 +1,7 @@
+if stead.api_version < "1.6.3" then
+	error ("Counters module can not run with api version < 1.6.3", 3)
+end
+
 local function inc_nr(v, n)
 	local name = '__'..n..'_nr'
 	if not v[name] then
