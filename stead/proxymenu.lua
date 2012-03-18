@@ -27,11 +27,11 @@ stead.obj_proxy = function(o, act, use_mode, reverse)
 		local f = function(s, w)
 			if w.proxy_type then
 				local v, r, vv, rr
+				v, r = stead.call(game, 'before_'..act, s.pobj, w.pobj);
+				if r == false or v == false then
+					return v
+				end
 				if s.pobj[act] then
-					v, r = stead.call(game, 'before_'..act, s.pobj, w.pobj);
-					if r == false or v == false then
-						return v
-					end
 					vv, r = stead.call(s.pobj, act, w.pobj);
 					v = stead.par(stead.space_delim, v, vv);
 					if r ~= false and v ~= false then
@@ -54,11 +54,11 @@ stead.obj_proxy = function(o, act, use_mode, reverse)
 
 	v.inv = function(s)
 		local v, r, vv, rr
+		v, r = stead.call(game, 'before_'..act, s.pobj);
+		if r == false or v == false then
+			return v
+		end
 		if s.pobj[act] then
-			v, r = stead.call(game, 'before_'..act, s.pobj);
-			if r == false or v == false then
-				return v
-			end
 			vv, r = stead.call(s.pobj, act);
 			v = stead.par(stead.space_delim, v, vv);
 			if r ~= false and v ~= false then
