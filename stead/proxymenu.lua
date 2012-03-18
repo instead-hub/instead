@@ -1,5 +1,6 @@
 stead.menu_prefix = '   '
-stead.obj_proxy = function(o, act, use_mode, useit_mode)
+
+stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 	local v = {};
 	v.proxy_type = true;
 	v.nam = stead.menu_prefix..stead.nameof(o);
@@ -10,15 +11,17 @@ stead.obj_proxy = function(o, act, use_mode, useit_mode)
 	v.pobj = o;
 	v.pact = act;
 	v.use_mode = use_mode;
-	v.useit_mode = useit_mode
+	v.used_act = used_act;
+	v.useit_act = useit_act;
 
 	v.save = function(self, name, h, need)
 		if need then
-			h:write(stead.string.format(name.." = stead.obj_proxy(%s, %s, %s, %s);\n", 
+			h:write(stead.string.format(name.." = stead.obj_proxy(%s, %s, %s, %s, %s);\n", 
 				stead.tostring(self.pobj), 
 				stead.tostring(self.pact),  
 				stead.tostring(self.use_mode),
-				stead.tostring(self.useit_mode)));
+				stead.tostring(self.used_act),
+				stead.tostring(self.useit_act)));
 		end
 		stead.savemembers(h, self, name, false);
 	end
@@ -26,76 +29,87 @@ stead.obj_proxy = function(o, act, use_mode, useit_mode)
 	if use_mode then
 		v.use = function(s, w)
 			if w.proxy_type then
-				local v, r, vv, rr
+				local v, r, vv, rr, rc = false
 				local act = s.pact
-				if s == w and type(s.useit_mode) == 'string' then
-					act = s.useit_mode
-				end
-				v, r = stead.call(game, 'before_'..act, s.pobj, w.pobj);
-				if r == false or v == false then
-					return v, false
-				end
-				if s.pobj[act] then
-					vv, r = stead.call(s.pobj, act, w.pobj);
-					v = stead.par(stead.space_delim, v, vv);
-					vv = nil
-					if r ~= false and v ~= false then
-						vv, rr = stead.call(game, 'after_'..act, s.pobj, w.pobj);
-					end
-					v = stead.par(stead.space_delim, v, vv);
-				end
-				if not v then -- false or nil
-					v = stead.call(game, act, s.pobj, w.pobj);
-				end
-				return v, r;
-			end
-		end
-	end
+				local useit_mode = false
 
-	if type(use_mode) == 'string'  then -- reverse
-		v.used = function(s, w)
-			if w.proxy_type then
-				local v, r, vv, rr
-				local act = s.use_mode
-				v, r = stead.call(game, 'before_'..act, s.pobj, w.pobj);
-				if r == false or v == false then
-					return v
+				if s == w and type(s.useit_act) == 'string' then
+					useit_mode = true
+					act = s.useit_act
 				end
+
+				v, r = stead.call(game, 'before_'..act, s.pobj, w.pobj);
+				if r == false or v == false then 
+					return v, false 
+				end
+				if r == true or v == true then 
+					rc = true 
+				end
+
 				if s.pobj[act] then
 					vv, r = stead.call(s.pobj, act, w.pobj);
 					v = stead.par(stead.space_delim, v, vv);
-					vv = nil
-					if r ~= false and v ~= false then
-						vv, rr = stead.call(game, 'after_'..act, s.pobj, w.pobj);
+					if r == false or vv == false then
+						return v, false
 					end
-					v = stead.par(stead.space_delim, v, vv);
+					if vv == true or r == true then 
+						rc = true 
+					end
 				end
-				if not v then -- false or nil
+				if not useit_mode and type(s.used_act) == 'string' 
+					and w.pobj[s.used_act] and vv == nil then -- used only if use did nothing
+					vv, r = stead.call(w.pobj, s.used_act, s.pobj);
+					v = stead.par(stead.space_delim, v, vv);
+					if r == false or vv == false then
+						return v, false
+					end
+					if vv == true or r == true then 
+						rc = true 
+					end
+				end
+				
+				vv, rr = stead.call(game, 'after_'..act, s.pobj, w.pobj);
+				v = stead.par(stead.space_delim, v, vv);
+
+				if rr == false or vv == false then return v, false end
+				if vv == true or rr == true then rc = true end
+
+				if not v and not rc then-- false or nil
 					v = stead.call(game, act, s.pobj, w.pobj);
 				end
-				return v;
+				return v, false;
 			end
 		end
 	end
 
 	v.inv = function(s)
-		local v, r, vv, rr
+		local v, r, vv, rr, rc = false
 		v, r = stead.call(game, 'before_'..act, s.pobj);
 		if r == false or v == false then
 			return v
 		end
+		if r == true or v == true then
+			rc = true
+		end
 		if s.pobj[act] then
 			vv, r = stead.call(s.pobj, act);
 			v = stead.par(stead.space_delim, v, vv);
-			if r ~= false and v ~= false then
-				vv, rr = stead.call(game, 'after_'..act, s.pobj);
+			if r == false or vv == false then
+				return v
 			end
+			if r == true or vv == true then
+				rc = true
+			end
+			vv, rr = stead.call(game, 'after_'..act, s.pobj);
 			v = stead.par(stead.space_delim, v, vv);
+			if vv == true or rr == true then
+				rc = true
+			end
 		end
-		if not v then -- false or nil
+		if not v and not rc then -- false or nil
 			v = stead.call(game, act, s.pobj);
 		end
-		return v, r;
+		return v;
 	end
 
 	if use_mode then
@@ -104,7 +118,7 @@ stead.obj_proxy = function(o, act, use_mode, useit_mode)
 	return menu(v)
 end
 
-fill_objs = function(s, w, act, use_mode, reverse)
+fill_objs = function(s, w, act, use_mode, used_act, useit_act)
 	local ii,i,o
 	local rc = false
 	for i,o,ii in opairs(w) do
@@ -112,9 +126,9 @@ fill_objs = function(s, w, act, use_mode, reverse)
 		if isObject(o) and not isDisabled(o) and o ~= s and not isPhrase(o) 
 			and not o.proxy_type and not isStatus(o) then
 
-			s.obj:add(stead.obj_proxy(o, act, use_mode, reverse));
+			s.obj:add(stead.obj_proxy(o, act, use_mode, used_act, useit_act));
 
-			fill_objs(s, o.obj, act, use_mode, reverse);
+			fill_objs(s, o.obj, act, use_mode, used_act, useit_act);
 			rc = true
 		end
 	end
@@ -132,7 +146,7 @@ local select_only = function(s)
 	obj_tag(me(), MENU_TAG_ID);
 end
 
-proxy_menu = function(nam, act, _scene, _inv,  use_mode, useit_mode, _ifhave)
+proxy_menu = function(nam, act, _scene, _inv,  use_mode, used_act, useit_act, _ifhave)
 	local v = { };
 	v.action_type = true;
 	v._state = false;
@@ -150,11 +164,11 @@ proxy_menu = function(nam, act, _scene, _inv,  use_mode, useit_mode, _ifhave)
 		local rc = false
 		s.obj:zap();
 		if s._inv then
-			rc = fill_objs(s, inv(), act, use_mode, useit_mode);
+			rc = fill_objs(s, inv(), act, use_mode, used_act, useit_act);
 		end
 		if not _ifhave or rc then
 			if s._scene then
-				fill_objs(s, here().obj, act, use_mode, useit_mode);
+				fill_objs(s, here().obj, act, use_mode, used_act, useit_act);
 			end
 		end
 		select_only(s);
