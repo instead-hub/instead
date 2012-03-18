@@ -42,6 +42,14 @@ function ordered_n(t)
 			if type(m) ~= 'string' then
 				return false
 			end
+			if n == m then
+				local o1, o2
+				o1 = stead.deref(n)
+				o2 = stead.deref(m)
+				if type(o1) == 'string' and type(o2) == 'string' then
+					return o1 < o2
+				end
+			end
 			return n < m;
 		end
 		return false
