@@ -24,9 +24,39 @@ stead.obj_proxy = function(o, act, use_mode, reverse)
 	end
 
 	if use_mode then
-		local f = function(s, w)
+		v.use = function(s, w)
 			if w.proxy_type then
 				local v, r, vv, rr
+				local act = s.pact
+				v, r = stead.call(game, 'before_'..act, s.pobj, w.pobj);
+				if r == false or v == false then
+					return v, false
+				end
+				if s.pobj[act] then
+					vv, r = stead.call(s.pobj, act, w.pobj);
+					v = stead.par(stead.space_delim, v, vv);
+					vv = nil
+					if r ~= false and v ~= false then
+						vv, rr = stead.call(game, 'after_'..act, s.pobj, w.pobj);
+					end
+					v = stead.par(stead.space_delim, v, vv);
+				end
+				if not v then -- false or nil
+					v = stead.call(game, act, s.pobj, w.pobj);
+				end
+				return v, r;
+			end
+		end
+	end
+
+	if reverse then
+		v.used = function(s, w)
+			if w.proxy_type then
+				local v, r, vv, rr
+				local act = s.pact
+				if type(s.reverse) == 'string' then
+					act = s.reverse
+				end
 				v, r = stead.call(game, 'before_'..act, s.pobj, w.pobj);
 				if r == false or v == false then
 					return v
@@ -34,21 +64,17 @@ stead.obj_proxy = function(o, act, use_mode, reverse)
 				if s.pobj[act] then
 					vv, r = stead.call(s.pobj, act, w.pobj);
 					v = stead.par(stead.space_delim, v, vv);
+					vv = nil
 					if r ~= false and v ~= false then
-						vv, rr = stead.call(game, 'after_'..act, s.pobj. w.pobj);
+						vv, rr = stead.call(game, 'after_'..act, s.pobj, w.pobj);
 					end
 					v = stead.par(stead.space_delim, v, vv);
 				end
 				if not v then -- false or nil
 					v = stead.call(game, act, s.pobj, w.pobj);
 				end
-				return v, false;
+				return v;
 			end
-		end
-		if reverse then
-			v.used = f
-		else
-			v.use = f
 		end
 	end
 
@@ -106,7 +132,7 @@ local select_only = function(s)
 	obj_tag(me(), MENU_TAG_ID);
 end
 
-proxy_menu = function(nam, act, use_mode, reverse, _scene, _inv, _ifhave)
+proxy_menu = function(nam, act, _scene, _inv, _ifhave, use_mode, reverse)
 	local v = { };
 	v.action_type = true;
 	v._state = false;
@@ -171,10 +197,8 @@ act_menu = function(nam, act)
 	return menu(v);
 end
 
-inventory = list { };
-
 inv = function(s)
-    return inventory;
+    return me().inventory;
 end
 
 player  = stead.inherit(player, function(v)
@@ -182,6 +206,7 @@ player  = stead.inherit(player, function(v)
 		gen_actions(s);
 		return player_inv(s);
 	end
+	v.inventory = list {}
 	return v
 end)
 
