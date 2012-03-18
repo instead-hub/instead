@@ -44,8 +44,8 @@ function ordered_n(t)
 			end
 			if n == m then
 				local o1, o2
-				o1 = stead.deref(n)
-				o2 = stead.deref(m)
+				o1 = stead.deref(a.v)
+				o2 = stead.deref(b.v)
 				if type(o1) == 'string' and type(o2) == 'string' then
 					return o1 < o2
 				end
