@@ -1,5 +1,5 @@
 stead.menu_prefix = '   '
-stead.obj_proxy = function(o, act, use_mode, reverse)
+stead.obj_proxy = function(o, act, use_mode, useit_mode)
 	local v = {};
 	v.proxy_type = true;
 	v.nam = stead.menu_prefix..stead.nameof(o);
@@ -10,7 +10,7 @@ stead.obj_proxy = function(o, act, use_mode, reverse)
 	v.pobj = o;
 	v.pact = act;
 	v.use_mode = use_mode;
-	v.reverse = reverse
+	v.useit_mode = useit_mode
 
 	v.save = function(self, name, h, need)
 		if need then
@@ -18,7 +18,7 @@ stead.obj_proxy = function(o, act, use_mode, reverse)
 				stead.tostring(self.pobj), 
 				stead.tostring(self.pact),  
 				stead.tostring(self.use_mode),
-				stead.tostring(self.reverse)));
+				stead.tostring(self.useit_mode)));
 		end
 		stead.savemembers(h, self, name, false);
 	end
@@ -28,6 +28,9 @@ stead.obj_proxy = function(o, act, use_mode, reverse)
 			if w.proxy_type then
 				local v, r, vv, rr
 				local act = s.pact
+				if s == w and type(s.useit_mode) == 'string' then
+					act = s.useit_mode
+				end
 				v, r = stead.call(game, 'before_'..act, s.pobj, w.pobj);
 				if r == false or v == false then
 					return v, false
@@ -49,14 +52,11 @@ stead.obj_proxy = function(o, act, use_mode, reverse)
 		end
 	end
 
-	if reverse then
+	if type(use_mode) == 'string'  then -- reverse
 		v.used = function(s, w)
 			if w.proxy_type then
 				local v, r, vv, rr
-				local act = s.pact
-				if type(s.reverse) == 'string' then
-					act = s.reverse
-				end
+				local act = s.use_mode
 				v, r = stead.call(game, 'before_'..act, s.pobj, w.pobj);
 				if r == false or v == false then
 					return v
@@ -132,7 +132,7 @@ local select_only = function(s)
 	obj_tag(me(), MENU_TAG_ID);
 end
 
-proxy_menu = function(nam, act, _scene, _inv, _ifhave, use_mode, reverse)
+proxy_menu = function(nam, act, _scene, _inv,  use_mode, useit_mode, _ifhave)
 	local v = { };
 	v.action_type = true;
 	v._state = false;
@@ -150,11 +150,11 @@ proxy_menu = function(nam, act, _scene, _inv, _ifhave, use_mode, reverse)
 		local rc = false
 		s.obj:zap();
 		if s._inv then
-			rc = fill_objs(s, inv(), act, use_mode, reverse);
+			rc = fill_objs(s, inv(), act, use_mode, useit_mode);
 		end
 		if not _ifhave or rc then
 			if s._scene then
-				fill_objs(s, here().obj, act, use_mode, reverse);
+				fill_objs(s, here().obj, act, use_mode, useit_mode);
 			end
 		end
 		select_only(s);
