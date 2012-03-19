@@ -118,7 +118,7 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 	return menu(v)
 end
 
-fill_objs = function(s, w, act, use_mode, used_act, useit_act)
+proxy_fill_objs = function(s, w, act, use_mode, used_act, useit_act)
 	local ii,i,o
 	local rc = false
 	for i,o,ii in opairs(w) do
@@ -128,7 +128,7 @@ fill_objs = function(s, w, act, use_mode, used_act, useit_act)
 
 			s.obj:add(stead.obj_proxy(o, act, use_mode, used_act, useit_act));
 
-			fill_objs(s, o.obj, act, use_mode, used_act, useit_act);
+			proxy_fill_objs(s, o.obj, act, use_mode, used_act, useit_act);
 			rc = true
 		end
 	end
@@ -165,12 +165,15 @@ local proxy_menu = function(nam, act, _scene, _inv, _way, use_mode, used_act, us
 		local rc = false
 		s.obj:zap();
 		if s._inv then
-			rc = fill_objs(s, inv(), act, use_mode, used_act, useit_act);
+			rc = proxy_fill_objs(s, inv(), act, use_mode, used_act, useit_act);
 		end
 		if not _ifhave or rc then
 			if s._scene then
-				fill_objs(s, here().obj, act, use_mode, used_act, useit_act);
+				proxy_fill_objs(s, here().obj, act, use_mode, used_act, useit_act);
 			end
+		end
+		if _way then
+			proxy_fill_objs(s, here().way, act, use_mode, used_act, useit_act);
 		end
 		select_only(s);
 	end
