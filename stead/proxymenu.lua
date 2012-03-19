@@ -46,18 +46,17 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 					rc = true 
 				end
 
-				if s.pobj[act] then
-					vv, r = stead.call(s.pobj, act, w.pobj);
-					v = stead.par(stead.space_delim, v, vv);
-					if r == false or vv == false then
-						return v, false
-					end
-					if vv == true or r == true then 
-						rc = true 
-					end
+				vv, r = stead.call(s.pobj, act, w.pobj);
+				v = stead.par(stead.space_delim, v, vv);
+				if r == false or vv == false then
+					return v, false
 				end
+				if vv == true or r == true then 
+					rc = true 
+				end
+
 				if not useit_mode and type(s.used_act) == 'string' 
-					and w.pobj[s.used_act] and vv == nil then -- used only if use did nothing
+					and not vv and not r then -- used only if use did nothing
 					vv, r = stead.call(w.pobj, s.used_act, s.pobj);
 					v = stead.par(stead.space_delim, v, vv);
 					if r == false or vv == false then
@@ -67,12 +66,14 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 						rc = true 
 					end
 				end
-				
-				vv, rr = stead.call(game, 'after_'..act, s.pobj, w.pobj);
-				v = stead.par(stead.space_delim, v, vv);
 
-				if rr == false or vv == false then return v, false end
-				if vv == true or rr == true then rc = true end
+				if v or rc then
+					vv, rr = stead.call(game, 'after_'..act, s.pobj, w.pobj);
+					v = stead.par(stead.space_delim, v, vv);
+
+					if rr == false or vv == false then return v, false end
+					if vv == true or rr == true then rc = true end
+				end
 
 				if not v and not rc then-- false or nil
 					v = stead.call(game, act, s.pobj, w.pobj);
@@ -91,15 +92,15 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 		if r == true or v == true then
 			rc = true
 		end
-		if s.pobj[act] then
-			vv, r = stead.call(s.pobj, act);
-			v = stead.par(stead.space_delim, v, vv);
-			if r == false or vv == false then
-				return v
-			end
-			if r == true or vv == true then
-				rc = true
-			end
+		vv, r = stead.call(s.pobj, act);
+		v = stead.par(stead.space_delim, v, vv);
+		if r == false or vv == false then
+			return v
+		end
+		if r == true or vv == true then
+			rc = true
+		end
+		if vv or rc then
 			vv, rr = stead.call(game, 'after_'..act, s.pobj);
 			v = stead.par(stead.space_delim, v, vv);
 			if vv == true or rr == true then
