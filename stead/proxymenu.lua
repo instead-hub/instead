@@ -127,8 +127,9 @@ proxy_fill_objs = function(s, w, act, use_mode, used_act, useit_act)
 			and not o.proxy_type and not isStatus(o) then
 
 			s.obj:add(stead.obj_proxy(o, act, use_mode, used_act, useit_act));
-
-			proxy_fill_objs(s, o.obj, act, use_mode, used_act, useit_act);
+			if not isRoom(o) then
+				proxy_fill_objs(s, o.obj, act, use_mode, used_act, useit_act);
+			end
 			rc = true
 		end
 	end
