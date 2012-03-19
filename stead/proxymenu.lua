@@ -228,7 +228,7 @@ inv = function(s)
     return me().inventory;
 end
 
-player  = stead.inherit(player, function(v)
+player = stead.inherit(player, function(v)
 	v.inv = function(s)
 		gen_actions(s);
 		return player_inv(s);
