@@ -146,7 +146,8 @@ local select_only = function(s)
 	obj_tag(me(), MENU_TAG_ID);
 end
 
-proxy_menu = function(nam, act, _scene, _inv,  use_mode, used_act, useit_act, _ifhave)
+
+local proxy_menu = function(nam, act, _scene, _inv, _way, use_mode, used_act, useit_act, _ifhave)
 	local v = { };
 	v.action_type = true;
 	v._state = false;
@@ -209,6 +210,14 @@ act_menu = function(nam, act)
 		return v, r
 	end
 	return menu(v);
+end
+
+obj_menu = function(nam, act, _scene, _inv, _way)
+	return proxy_menu(nam, act, _scene, _inv, _way)
+end
+
+use_menu = function(nam, act, used_act, useit_act, _scene, _inv, _ifhave)
+	return proxy_menu(nam, act, _scene, _inv, false, true, used_act, useit_act, _ifhave)
 end
 
 inv = function(s)
