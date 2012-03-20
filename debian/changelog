@@ -16,6 +16,7 @@ instead (1.6.3) unstable; urgency=low
   * counters module;
   * opt_fading;
   * proxymenu module;
+  * configure.sh now checks gtk+-3.0;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 08 Mar 2012 09:27:00 +0400
 
