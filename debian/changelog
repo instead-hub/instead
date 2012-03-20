@@ -15,6 +15,7 @@ instead (1.6.3) unstable; urgency=low
   * game.onact/onwalk/onuse/oninv handlers;
   * counters module;
   * opt_fading;
+  * proxymenu module;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 08 Mar 2012 09:27:00 +0400
 
