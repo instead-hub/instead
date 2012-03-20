@@ -151,7 +151,9 @@ end
 
 local proxy_menu = function(nam, act, _scene, _inv, _way, use_mode, used_act, useit_act, _ifhave)
 	local v = { };
-
+	if type(act) ~= 'string' then
+		error("Wrong parameter to proxy_menu.", 3)
+	end
 	if null[act] then
 		error(stead.tostring(act).."is a reserved handler. Do not use it.", 3)
 	end
@@ -168,10 +170,11 @@ local proxy_menu = function(nam, act, _scene, _inv, _way, use_mode, used_act, us
 	v._state = false;
 	v.nam = nam;
 	v.disp = function(s)
+		local n = stead.call(s, 'nam')
 		if s._state then
-			return txtu(txtnb(s.nam));
+			return txtu(txtnb(n));
 		end
-		return txtnb(s.nam);
+		return txtnb(n);
 	end
 	v._scene = _scene;
 	v._inv = _inv;
