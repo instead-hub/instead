@@ -31,12 +31,6 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 			if w.proxy_type then
 				local v, r, vv, rr, rc = false
 				local act = s.pact
-				local useit_mode = false
-
-				if s == w and type(s.useit_act) == 'string' then
-					useit_mode = true
-					act = s.useit_act
-				end
 
 				v, r = stead.call(game, 'before_'..act, s.pobj, w.pobj);
 				if r == false or v == false then 
@@ -55,7 +49,7 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 					rc = true 
 				end
 
-				if not useit_mode and type(s.used_act) == 'string' 
+				if type(s.used_act) == 'string' 
 					and not vv and not r then -- used only if use did nothing
 					vv, r = stead.call(w.pobj, s.used_act, s.pobj);
 					v = stead.par(stead.space_delim, v, vv);
@@ -85,6 +79,10 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 
 	v.inv = function(s)
 		local v, r, vv, rr, rc = false
+		local act = s.pact
+		if s.use_mode then
+			act = s.useit_act
+		end
 		v, r = stead.call(game, 'before_'..act, s.pobj);
 		if r == false or v == false then
 			return v
