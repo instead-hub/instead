@@ -82,6 +82,9 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 		local act = s.pact
 		if s.use_mode then
 			act = s.useit_act
+			if type(act) ~= 'string' then
+				return nil
+			end
 		end
 		v, r = stead.call(game, 'before_'..act, s.pobj);
 		if r == false or v == false then
