@@ -151,6 +151,19 @@ end
 
 local proxy_menu = function(nam, act, _scene, _inv, _way, use_mode, used_act, useit_act, _ifhave)
 	local v = { };
+
+	if null[act] then
+		error(stead.tostring(act).."is a reserved handler. Do not use it.", 3)
+	end
+
+	if used_act and null[used_act] then
+		error(stead.tostring(used_act).."is a reserved handler. Do not use it.", 3)
+	end
+
+	if useit_act and null[useit_act] then
+		error(stead.tostring(useit_act).."is a reserved handler. Do not use it.", 3)
+	end
+
 	v.action_type = true;
 	v._state = false;
 	v.nam = nam;
