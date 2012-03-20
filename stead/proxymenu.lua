@@ -176,8 +176,12 @@ local proxy_menu = function(nam, act, _scene, _inv, _way, use_mode, used_act, us
 		end
 		return txtnb(n);
 	end
+
 	v._scene = _scene;
 	v._inv = _inv;
+	v._ifhave = _ifhave;
+	v._way = _way;
+
 	v.gen = function(s)
 		local k,o,i
 		local rc = false
@@ -185,12 +189,12 @@ local proxy_menu = function(nam, act, _scene, _inv, _way, use_mode, used_act, us
 		if s._inv then
 			rc = proxy_fill_objs(s, inv(), act, use_mode, used_act, useit_act);
 		end
-		if not _ifhave or rc then
+		if not s._ifhave or rc then
 			if s._scene then
 				proxy_fill_objs(s, here().obj, act, use_mode, used_act, useit_act);
 			end
 		end
-		if _way then
+		if s._way then
 			proxy_fill_objs(s, here().way, act, use_mode, used_act, useit_act);
 		end
 		select_only(s);
