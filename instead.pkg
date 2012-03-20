@@ -74,6 +74,7 @@
 ".\symbian_gamedata\stead\nouse.lua" -"!:\data\instead\stead\nouse.lua"
 ".\symbian_gamedata\stead\dlg.lua" -"!:\data\instead\stead\dlg.lua"
 ".\symbian_gamedata\stead\counters.lua" -"!:\data\instead\stead\counters.lua"
+".\symbian_gamedata\stead\proxymenu.lua" -"!:\data\instead\stead\proxymenu.lua"
 ".\symbian_gamedata\lang\ru.ini" -"!:\data\instead\lang\ru.ini"
 ".\symbian_gamedata\lang\en.ini" -"!:\data\instead\lang\en.ini"
 ".\symbian_gamedata\themes\fantasy\down.png" -"!:\data\instead\themes\fantasy\down.png"

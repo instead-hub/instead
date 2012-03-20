@@ -29,3 +29,4 @@ install:
 	copy nouse.lua ..\bin\stead
 	copy dlg.lua ..\bin\stead
 	copy counters.lua ..\bin\stead
+	copy proxymenu.lua ..\bin\stead
