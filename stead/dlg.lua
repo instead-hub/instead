@@ -256,7 +256,7 @@ function phrase_action(self)
 		r = true;
 	end
 
-	while not dialog_rescan(here()) and phr_pop(here())  do -- do returns
+	while isDialog(here()) and not dialog_rescan(here()) and phr_pop(here())  do -- do returns
 
 	end
 
