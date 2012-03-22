@@ -95,6 +95,20 @@ sprite = {
 	load = function(fname, ...)
 		return stead.sprite_load(fname, ...);
 	end;
+	blank = function(w, h, ...)
+		local t = 'blank:'..tostring(w)..'x'..tostring(h)
+		return stead.sprite_load(t, ...)
+	end;
+	box = function(w, h, col, alpha, ...)
+		local t = 'box:'..tostring(w)..'x'..tostring(h)
+		if col then
+			t = t..','..tostring(col)
+		end
+		if alpha then
+			t = t..','..tostring(alpha)
+		end
+		return stead.sprite_load(t, ...)
+	end;
 	free = function(key)
 		return stead.sprite_free(key);
 	end;
