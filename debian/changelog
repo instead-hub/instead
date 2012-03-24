@@ -18,6 +18,7 @@ instead (1.6.3) unstable; urgency=low
   * proxymenu module;
   * configure.sh now checks gtk+-3.0;
   * sprite.box and sprite.blank;
+  * stead.add_var internal command;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 08 Mar 2012 09:27:00 +0400
 

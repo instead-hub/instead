@@ -1897,6 +1897,7 @@ function gamefile(file, forget)
 				_G[v] = nil
 			end
 			variables = nil
+			variables_save = nil
 		end
 		init = function() -- null init function
 		end

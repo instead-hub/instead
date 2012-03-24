@@ -84,6 +84,25 @@ function(f, v, ...)
 	return f(v, ...)
 end)
 
+stead.add_var = function(s, name) 
+	if not s then s = _G end
+
+	if type(name) ~= 'string' then
+		error("Wrong parameter to stead.add_var.");
+	end
+
+	if type(s.variables_save) ~= 'table' then
+		s.variables_save = {}
+	elseif s.variables_save[name] then
+		return
+	end
+	if type(s.variables) ~= 'table' then
+		s.variables = {}
+	end
+	stead.table.insert(s.variables, name)
+	s.variables_save[name] = true
+end
+
 stead.module_init(function()
 	local k,v
 	if type(variables) == 'nil' then
