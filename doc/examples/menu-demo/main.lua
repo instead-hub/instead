@@ -43,11 +43,15 @@ put(mgive, me())
 
 status = stat {
 	_Turns = 0,
-	nam = function(s)
+	life = function(s)
 		s._Turns = s._Turns + 1;
+	end;
+	nam = function(s)
 		return 'Статус игрока: '..s._Turns..'^';
 	end
 };
+lifeon 'status'
+
 put(status, me());
 
 knife = obj {
