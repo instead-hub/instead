@@ -2956,15 +2956,9 @@ stead.code = code
 
 --- here the game begins
 stead.objects = function(s)
-	if stead.api_version >= "1.6.3" then
-		none = obj {
-			nam = 'none';
-		}
-	else
-		null = obj {
-			nam = 'null';
-		}
-	end
+	null = obj {
+		nam = 'null';
+	}
 
 	input = obj { -- input object
 		system_type = true,
