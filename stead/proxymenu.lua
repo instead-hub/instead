@@ -1,5 +1,25 @@
 stead.menu_prefix = '   '
 
+local par = function(v, vv, rc) 		
+	if type(v) == 'string' or type(vv) == 'string' then
+		return stead.par(stead.space_delim, v, vv);
+	elseif v == true or vv == true then
+		return true
+	end
+	return rc
+end
+
+local call = function(o, m, ...)
+	local rc = nil
+	local v, r = stead.call(o, m, ...); 
+	if r == false or v == false then
+		rc = false
+	elseif r or v then 
+		rc = true 
+	end
+	return v, r, rc
+end
+
 stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 	local v = {};
 	v.proxy_type = true;
@@ -29,55 +49,53 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 	if use_mode then
 		v.use = function(s, w)
 			if w.proxy_type then
-				local v, r, vv, rr, rc = false
+				local v, r, vv, rr, rc = false, ri
 				local act = s.pact
-				v, r = stead.call(game, 'before_'..act, s.pobj, w.pobj);
-				if r == false or v == false then 
+				v, r, ri = call(game, 'before_'..act, s.pobj, w.pobj);
+				rc = ri or rc
+				if ri == false then 
 					return v, false 
 				end
-				if r == true or v == true then 
-					rc = true 
-				end
+				vv, r, ri = call(s.pobj, act, w.pobj);
+				rc = ri or rc
+				v = par(v, vv, rc);
 
-				vv, r = stead.call(s.pobj, act, w.pobj);
-				v = stead.par(stead.space_delim, v, vv);
-				if r == false or vv == false then
+				if ri == false then
 					return v, false
-				end
-				if vv == true or r == true then 
-					rc = true 
 				end
 
 				if type(s.used_act) == 'string' 
-					and not vv and not r then -- used only if use did nothing
-					vv, r = stead.call(w.pobj, s.used_act, s.pobj);
-					v = stead.par(stead.space_delim, v, vv);
-					if r == false or vv == false then
+					and ri == nil then -- used only if use did nothing
+					vv, r, ri = call(w.pobj, s.used_act, s.pobj);
+					rc = ri or rc
+					v = par(v, vv, rc);
+
+					if ri == false then
 						return v, false
 					end
-					if vv == true or r == true then 
-						rc = true 
+				end
+
+				if ri then
+					vv, rr, ri = call(game, 'after_'..act, s.pobj, w.pobj);
+					rc = rc or ri
+					v = par(v, vv, rc);
+
+					if ri == false then
+						return v, false
 					end
 				end
 
-				if v or rc then
-					vv, rr = stead.call(game, 'after_'..act, s.pobj, w.pobj);
-					v = stead.par(stead.space_delim, v, vv);
-
-					if rr == false or vv == false then return v, false end
-					if vv == true or rr == true then rc = true end
-				end
-
-				if not v and not rc then-- false or nil
+				if not v then-- false or nil
 					v = stead.call(game, act, s.pobj, w.pobj);
 				end
+
 				return v, false;
 			end
 		end
 	end
 
 	v.inv = function(s)
-		local v, r, vv, rr, rc = false
+		local v, r, vv, rr, rc = false, ri
 		local act = s.pact
 		if s.use_mode then
 			act = s.useit_act
@@ -85,32 +103,32 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 				return nil
 			end
 		end
-		v, r = stead.call(game, 'before_'..act, s.pobj);
-		if r == false or v == false then
+
+		v, r, ri = call(game, 'before_'..act, s.pobj); 
+		rc = rc or ri
+		if ri == false then
 			return v
 		end
-		if r == true or v == true then
-			rc = true
-		end
-		vv, r = stead.call(s.pobj, act);
-		v = stead.par(stead.space_delim, v, vv);
-		if r == false or vv == false then
+
+		vv, r, ri = call(s.pobj, act); 
+		rc = rc or ri
+		v = par(v, vv, rc)
+
+		if ri == false then
 			return v
 		end
-		if r == true or vv == true then
-			rc = true
+
+		if ri then
+			vv, rr, ri = call(game, 'after_'..act, s.pobj); 
+			rc = rc or ri
+			v = par(v, vv, rc);
 		end
-		if vv or rc then
-			vv, rr = stead.call(game, 'after_'..act, s.pobj);
-			v = stead.par(stead.space_delim, v, vv);
-			if vv == true or rr == true then
-				rc = true
-			end
-		end
-		if not v and not rc then -- false or nil
+
+		if not v then -- false or nil
 			v = stead.call(game, act, s.pobj);
 		end
-		return v;
+
+		return v, rc;
 	end
 
 	if use_mode then
