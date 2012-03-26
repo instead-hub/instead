@@ -319,7 +319,7 @@ game.fading = function(s)
 	return rc
 end
 
-local function isFading() --to check fading from sdl gui
+game.gui.is_fading = function() --to check fading from sdl gui
 	local r,g,v
 	local h = here()
 	if not isRoom(h) then
@@ -341,7 +341,7 @@ end
 
 instead.get_fading = function()
 	local r, v
-	r, v = isFading()
+	r, v = stead.call_value(game.gui, 'is_fading')
 	if v == nil and r then v = game.gui.fading end
 	return r,v
 end
