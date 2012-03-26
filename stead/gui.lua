@@ -6,6 +6,7 @@ game.gui = {
 	ways_delim = ' | ';
 	inv_delim = '\n';
 	hinv_delim = ' | ';
+	hideways = false;
 }
 
 iface.xref = function(self, str, obj, ...)
@@ -161,6 +162,10 @@ end
 instead.get_inv = get_inv;
 
 function get_ways()
+	local r = stead.call_value(game.gui, 'hideways');
+	if r then
+		return
+	end
 	local str = iface:cmd("way");
 	if str and str ~= '' then
 		str = stead.string.gsub(str, '\n$','');
@@ -234,7 +239,7 @@ function menu_save(self, name, h, need)
 	stead.savemembers(h, self, name, need);
 end
 
-MENU_TAG_ID = 10000
+MENU_TAG_ID = 100000000
 
 function menu(v)
 	v.menu_type = true
@@ -314,7 +319,7 @@ game.fading = function(s)
 	return rc
 end
 
-function isFading() --to check fading from sdl gui
+local function isFading() --to check fading from sdl gui
 	local r,g,v
 	local h = here()
 	if not isRoom(h) then

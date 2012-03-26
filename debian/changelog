@@ -19,6 +19,7 @@ instead (1.6.3) unstable; urgency=low
   * configure.sh now checks gtk+-3.0;
   * sprite.box and sprite.blank;
   * stead.add_var internal command;
+  * stead.gui.hideways added;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 08 Mar 2012 09:27:00 +0400
 
