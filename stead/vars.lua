@@ -15,6 +15,7 @@ end
 
 local function __vars_add(s, v, set)
 	local k, o
+	if type(s.variables) ~= 'table' then s.variables = {} end
 	for k,o in pairs(v) do
 		if tonumber(k) then
 			stead.table.insert(s.variables, o);
@@ -23,7 +24,7 @@ local function __vars_add(s, v, set)
 		elseif k ~= 'variable_type' then
 			if set and not isObject(o) then 
 				if s[k] then
-					error ("Global variable conflict: "..tostring(k));
+					error ("Variable conflict: "..tostring(k));
 				end
 				stead.table.insert(s.variables, k);
 				s[k] = o
@@ -41,7 +42,6 @@ local function __vars_fill(v)
 	end
 	for k,o in ipairs(v) do
 		if type(o) == 'table' and o.variable_type then
-			if type(v.variables) ~= 'table' then v.variables = {} end
 			__vars_add(v, o);
 			v[k] = nil
 		end
@@ -84,23 +84,19 @@ function(f, v, ...)
 	return f(v, ...)
 end)
 
-stead.add_var = function(s, name) 
-	if not s then s = _G end
-
-	if type(name) ~= 'string' then
+stead.add_var = function(s, v) 
+	if not v then 
+		v = s 
+		s = _G 
+	end
+	if type(v) ~= 'table' then
 		error("Wrong parameter to stead.add_var.");
 	end
-
-	if type(s.variables_save) ~= 'table' then
-		s.variables_save = {}
-	elseif s.variables_save[name] then
-		return
+	if not v.variable_type then
+		v = var(v)
 	end
-	if type(s.variables) ~= 'table' then
-		s.variables = {}
-	end
-	stead.table.insert(s.variables, name)
-	s.variables_save[name] = true
+	__vars_add(s, v, true)
+	__vars_fill(s)
 end
 
 stead.module_init(function()
