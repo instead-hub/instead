@@ -7,6 +7,7 @@ game.gui = {
 	inv_delim = '\n';
 	hinv_delim = ' | ';
 	hideways = false;
+	hideinv = false;
 }
 
 iface.xref = function(self, str, obj, ...)
@@ -146,6 +147,10 @@ iface.ways = function(self, str)
 end;
 
 function get_inv(horiz)
+	local r = stead.call_value(game.gui, 'hideinv');
+	if r then
+		return
+	end
 	local str = iface:cmd("inv");
 	if str then
 		str = stead.string.gsub(str, '\n$','');
@@ -332,7 +337,7 @@ game.gui.is_fading = function() --to check fading from sdl gui
 		end
 		return r, v
 	end
-	g,v = stead.call_value(game, 'fading', h);
+	g,v = stead.call_value(game, 'fading');
 	if tonumber(g) and v == nil then
 		return true, tonumber(g)
 	end
