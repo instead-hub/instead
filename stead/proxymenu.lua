@@ -141,7 +141,7 @@ proxy_fill_objs = function(s, w, act, use_mode, used_act, useit_act)
 	local ii,i,o
 	local rc = false
 	for i,o,ii in opairs(w) do
-		o = ref(o);
+		o = stead.ref(o);
 		if isObject(o) and not isDisabled(o) and o ~= s and not isPhrase(o) 
 			and not o.proxy_type and not isStatus(o) then
 
@@ -158,7 +158,7 @@ end
 local select_only = function(s)
 	local k, o, i
 	for k,o in opairs(me().obj) do
-		o = ref(o)
+		o = stead.ref(o)
 		if o.action_type and o._state and o ~= s then
 			o:inv();
 		end
@@ -234,7 +234,7 @@ end
 local function gen_actions(s)
 	local k, o
 	for k, o in opairs(me().obj) do
-		o = ref(o)
+		o = stead.ref(o)
 		if o.action_type and o._state then
 			o:gen();
 		end
