@@ -90,8 +90,6 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 				end
 
 				return v, false;
-			else
-				return false, false
 			end
 		end
 	end
@@ -267,6 +265,12 @@ end
 
 inv = function(s)
     return me().inventory;
+end
+
+game.onuse = function(s, v, w) -- do not let use on non proxy obj
+	if not v.proxy_type or not w.proxy_type then
+		return nil, false
+	end
 end
 
 player = stead.inherit(player, function(v)

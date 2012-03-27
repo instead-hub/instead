@@ -22,19 +22,21 @@ function player_action(self, what, ...)
 		return stead.call(game, 'action', what, ...); --player_do(self, what, ...);
 	end
 	vv, r = onevent('onact', obj, ...);
-	if r == false then return vv end
-	v, r = player_take(self, what, ...);
-	if v == nil then
-		v, r = stead.call(obj, 'act', ...);
-		if v == nil and vv == nil and r ~= true then
-			v, r = stead.call(game, 'act', obj, ...);
-		end
-	end
-	if not v and not vv then
+	if vv == false then
 		return
 	end
+	if r == false then 
+		return vv
+	end
+	v, r = player_take(self, what, ...);
 	if type(vv) == 'string' then
 		v = stead.par(stead.space_delim, vv, v);
+	end
+	if not v and not r then
+		v, r = stead.call(obj, 'act', ...);
+		if not v and not r then
+			v, r = stead.call(game, 'act', obj, ...);
+		end
 	end
 	return v, r;
 end
@@ -56,16 +58,20 @@ function player_use(self, what, onwhat, ...)
 	if onwhat == nil then -- only one?
 		if scene_use_mode then
 			return self:action(what, ...); -- call act
-		else
-			vv, r = onevent('oninv', obj, ...);
-			if r == false then return vv end
-			v, r = stead.call(obj, 'inv', ...); -- call inv
 		end
-		if not v and r ~= true then
-			v, r = stead.call(game, 'inv', obj, ...);
+		vv, r = onevent('oninv', obj, ...);
+		if vv == false then
+			return
 		end
+		if r == false then
+			return vv
+		end
+		v, r = stead.call(obj, 'inv', ...); -- call inv
 		if type(vv) == 'string' then
 			v = stead.par(stead.space_delim, vv, v);
+		end
+		if not v and not r then
+			v, r = stead.call(game, 'inv', obj, ...);
 		end
 		return v, r;
 	end
@@ -81,25 +87,29 @@ function player_use(self, what, onwhat, ...)
 
 	if not scene_use_mode or isSceneUse(obj) then
 		vv, r = onevent('onuse', obj, obj2, ...);
-		if r == false then return vv end
+		if vv == false then
+			return
+		end
+		if r == false then 
+			return vv 
+		end
 		v, r = stead.call(obj, 'use', obj2, ...);
 		if type(vv) == 'string' then
 			v = stead.par(stead.space_delim, vv, v);
 		end
 		if r ~= false then
 			vv = stead.call(obj2, 'used', obj, ...);
+			if type(vv) == 'string' then
+				v = stead.par(stead.space_delim, v, vv);
+			end
 		end
 	end
-	if v == nil and vv == nil then
+	if not v then
 		v, r = stead.call(game, 'use', obj, obj2, ...);
 	end
-	if not v and not vv then
-		return
-	end
-	v = stead.par(stead.space_delim, v, vv);
-	if v == nil and stead.api_version >= "1.3.5" then
-		return true
-	end
+--	if v == nil and stead.api_version >= "1.3.5" then
+--		return true
+--	end
 	return v
 end
 
