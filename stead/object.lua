@@ -24,11 +24,14 @@ function player_action(self, what, ...)
 	vv, r = onevent('onact', obj, ...);
 	if r == false then return vv end
 	v, r = player_take(self, what, ...);
-	if not v then
+	if v == nil then
 		v, r = stead.call(obj, 'act', ...);
-		if not v and r ~= true then
+		if v == nil and vv == nil and r ~= true then
 			v, r = stead.call(game, 'act', obj, ...);
 		end
+	end
+	if not v and not vv then
+		return
 	end
 	if type(vv) == 'string' then
 		v = stead.par(stead.space_delim, vv, v);
@@ -87,7 +90,7 @@ function player_use(self, what, onwhat, ...)
 			vv = stead.call(obj2, 'used', obj, ...);
 		end
 	end
-	if not v and not vv then
+	if v == nil and vv == nil then
 		v, r = stead.call(game, 'use', obj, obj2, ...);
 	end
 	if not v and not vv then

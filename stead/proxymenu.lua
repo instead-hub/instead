@@ -85,11 +85,13 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 					end
 				end
 
-				if not v then-- false or nil
+				if v == nil then
 					v = stead.call(game, act, s.pobj, w.pobj);
 				end
 
 				return v, false;
+			else
+				return false, false
 			end
 		end
 	end
@@ -124,7 +126,7 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 			v = par(v, vv, rc);
 		end
 
-		if not v then -- false or nil
+		if v == nil then
 			v = stead.call(game, act, s.pobj);
 		end
 
