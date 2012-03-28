@@ -35,14 +35,26 @@ Or build from svn:
 
 And, I think, you have enough skills to build package yourself. ;)
 
-3) For other distributions 
+3) On FreeBSD
+==============
+Install instead from ports:
+	# pkg_add -r instead
+Or:
+	# cd /usr/ports/games/instead
+	# make install
+
+Or build from tarball:
+	$ ./configure.sh
+	$ gmake
+
+4) For other distributions 
 ==========================
 You have a two choices:
 	a) try run ./configure.sh and follow instructions
 or
 	b) do all things manually
 
-4) Manual build
+5) Manual build
 ===============
 
 To build game, that runs just from build dir use Rules.make.standalone
