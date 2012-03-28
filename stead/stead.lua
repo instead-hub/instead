@@ -3,6 +3,7 @@ stead = {
 	api_version = "1.1.6", -- last version before 1.2.0
 	table = table,
 	delim = ',',
+	busy = stead_busy,
 	scene_delim = "^^",
 	space_delim = ' ',
 	string = string,
@@ -48,6 +49,12 @@ stead = {
 		f();
 	end
 }
+
+if not stead.busy then
+	stead.busy = function(v)
+	end
+end
+
 if _VERSION == "Lua 5.1" then
 	stead.eval = loadstring
 	stead.unpack = unpack
@@ -1657,7 +1664,6 @@ stead.do_ini = function(self, load)
 		call_key("game", game);
 		for_each(game, "game", stead.check_list, isList, stead.deref(game))
 	end
-
 	for_each_object(call_ini, load);
 	me():tag();
 	if not self.showlast then
@@ -1932,11 +1938,14 @@ end
 stead.gamefile = gamefile
 
 stead.do_savegame = function(s, h)
+	stead.busy(true)
 	local function save_object(key, value, h)
+		stead.busy(true)
 		stead.savevar(h, value, key, false);
 		return true;
 	end
 	local function save_var(key, value, h)
+		stead.busy(true)
 		stead.savevar(h, value, key, isForSave(key, value, _G))
 	end
 	local forget = game.scriptsforget
@@ -1952,6 +1961,7 @@ stead.do_savegame = function(s, h)
 	for_everything(save_var, h);
 --	save_object('_G', _G, h);
 	stead.clearvar(_G);
+	stead.busy(false)
 end
 
 function game_save(self, name, file) 

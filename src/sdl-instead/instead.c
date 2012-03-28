@@ -7,6 +7,8 @@
 #define STEAD_PATH 	"./stead"
 #endif
 
+static int busy = 0;
+
 /* the Lua interpreter */
 static gtimer_t instead_timer = NULL_TIMER;
 static int instead_timer_nr = 0;
@@ -14,6 +16,11 @@ static int instead_timer_nr = 0;
 char 		*fromgame(const char *s);
 char 		*togame(const char *s);
 lua_State	*L = NULL;
+
+int instead_busy(void)
+{
+	return busy;
+}
 
 static int report (lua_State *L, int status) 
 {
@@ -74,7 +81,9 @@ static int docall (lua_State *L)
 		lua_pushcfunction(L, traceback);  /* push traceback function */
 		lua_insert(L, base);  /* put it under chunk and args */
 	}
+	busy ++;
 	status = lua_pcall(L, 0, LUA_MULTRET, base);
+	busy --;
 	if (debug_sw)
 		lua_remove(L, base);  /* remove traceback function */
 	/* force a complete garbage collection in case of errors */
@@ -258,7 +267,9 @@ int instead_function(char *s, struct instead_args *args)
 		lua_pushcfunction(L, traceback);  /* push traceback function */
 		lua_insert(L, base);  /* put it under chunk and args */
 	}
+	busy ++;
 	status = lua_pcall(L, method + n, LUA_MULTRET, base);
+	busy --;
 	if (debug_sw)
 		lua_remove(L, base);  /* remove traceback function */
 	if (status) {
@@ -1343,6 +1354,27 @@ static int luaB_show_menu(lua_State *L) {
 	return 0;
 }
 
+static int luaB_stead_busy(lua_State *L) {
+	static unsigned long busy_time = 0;
+	int busy = lua_toboolean(L, 1);
+	if (busy) {
+		struct inp_event ev;
+		while (input(&ev, 0) == AGAIN);
+		if (ev.type == MOUSE_MOTION)
+			game_cursor(CURSOR_ON); /* to make all happy */
+		if (!busy_time)
+			busy_time = gfx_ticks();
+		if (gfx_ticks() - busy_time >= 750 && menu_visible() != menu_wait)
+			game_menu(menu_wait);
+		return 0;
+	}
+	if (menu_visible() == menu_wait) {
+		menu_toggle();
+	}
+	busy_time = 0;
+	return 0;
+}
+
 static int luaB_free_font(lua_State *L) {
 	const char *key = luaL_optstring(L, 1, NULL);
 	_fnt_t *fn;
@@ -1593,7 +1625,7 @@ static const luaL_Reg base_funcs[] = {
 	{"theme_name", luaB_theme_name},
 	{"readdir", dir_iter_factory},
 	{"menu_toggle", luaB_show_menu},
-
+	{"stead_busy", luaB_stead_busy},
 	{"sound_load", luaB_load_sound},
 	{"sound_free", luaB_free_sound},
 	{"sound_channel", luaB_channel_sound},
@@ -1728,8 +1760,10 @@ static int instead_package(const char *path)
 /*	putenv(stead_path); */
 	return 0;
 }
+
 int instead_init(const char *path)
 {
+	busy = 0;
 	setlocale(LC_ALL,"");
 	setlocale(LC_NUMERIC,"C"); /* to avoid . -> , in numbers */	
 //	strcpy(curcp, "UTF-8");

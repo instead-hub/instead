@@ -697,7 +697,7 @@ int game_change_hz(int hz)
 	return 0;
 }
 
-unsigned int	timer_counter = 0;
+unsigned long	timer_counter = 0;
 
 gtimer_t timer_han = NULL_TIMER;
 
@@ -2187,10 +2187,18 @@ static struct el *click_el = NULL;
 static unsigned long click_time = 0;
 static int click_x = -1;
 static int click_y = -1;
+int menu_visible(void)
+{
+	if (menu_shown)
+		return cur_menu;
+	return 0;
+}
 
 int game_paused(void)
 {
-	return browse_dialog || menu_shown || use_xref || click_xref || gfx_fading() || minimized();
+	return browse_dialog || menu_shown || 
+		use_xref || click_xref || 
+		gfx_fading() || minimized() || instead_busy();
 }
 
 void menu_update(struct el *elem)

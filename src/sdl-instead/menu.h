@@ -37,7 +37,7 @@ extern struct	lang *langs;
 extern int	langs_nr;
 
 enum {
-	menu_main = 0,
+	menu_main = 1,
 	menu_about, 
 	menu_settings,
 	menu_quit,
@@ -52,6 +52,8 @@ enum {
 	menu_error, 
 	menu_warning,
 	menu_remove,
+	menu_wait,
+	menu_max,
 };
 
 
