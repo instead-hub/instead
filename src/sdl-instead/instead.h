@@ -24,4 +24,5 @@ extern int  instead_iretval(int n);
 extern int	instead_lang(void);
 char 		*fromgame(const char *s);
 extern int  instead_encode(const char *s, const char *d);
+extern int  instead_busy(void);
 #endif

@@ -8,7 +8,7 @@ static int themes_menu_from = 0;
 
 static int cur_lang = 0;
 
-int cur_menu = 0;
+int cur_menu = menu_main;
 
 char *UNKNOWN_ERROR = NULL;
 char *ERROR_MENU = NULL;
@@ -26,6 +26,7 @@ char *SETTINGS_GFX_MENU = NULL;
 char *SETTINGS_OTH_MENU = NULL;
 char *CUSTOM_THEME_MENU = NULL;
 char *OWN_THEME_MENU = NULL;
+char *WAIT_MENU = NULL;
 char *SELECT_GAME_MENU = NULL;
 char *SELECT_THEME_MENU = NULL;
 char *SAVED_MENU = NULL;
@@ -372,6 +373,8 @@ char *game_menu_gen(void)
 		themes_menu();
 	} else if (cur_menu == menu_own_theme) {
 		strcpy(menu_buff, OWN_THEME_MENU);
+	} else if (cur_menu == menu_wait) {
+		strcpy(menu_buff, WAIT_MENU);
 	} else if (cur_menu == menu_custom_theme) {
 		strcpy(menu_buff, CUSTOM_THEME_MENU);
 	} else if (cur_menu == menu_load) {
@@ -723,6 +726,7 @@ static void lang_free(void)
 	FREE(SETTINGS_OTH_MENU);
 	FREE(CUSTOM_THEME_MENU);
 	FREE(OWN_THEME_MENU);
+	FREE(WAIT_MENU);
 	FREE(SELECT_GAME_MENU);
 	FREE(SELECT_THEME_MENU);
 	FREE(SAVED_MENU);
@@ -746,7 +750,7 @@ static int lang_ok(void)
 	if (UNKNOWN_ERROR && ERROR_MENU && WARNING_MENU && SAVE_SLOT_EMPTY &&
 		SELECT_LOAD_MENU && AUTOSAVE_SLOT && BROKEN_SLOT && SELECT_SAVE_MENU &&
 		MAIN_MENU && ABOUT_MENU && BACK_MENU && SETTINGS_SND_MENU && SETTINGS_GFX_MENU && SETTINGS_OTH_MENU &&
-		CUSTOM_THEME_MENU && OWN_THEME_MENU && SELECT_GAME_MENU && SELECT_THEME_MENU &&
+		CUSTOM_THEME_MENU && OWN_THEME_MENU && SELECT_GAME_MENU && SELECT_THEME_MENU && WAIT_MENU &&
 		SAVED_MENU && NOGAMES_MENU && NOTHEMES_MENU && QUIT_MENU && REMOVE_MENU &&
 		ON && OFF && KBD_MODE_LINKS && KBD_MODE_SMART && KBD_MODE_SCROLL && CANCEL_MENU &&
 		FROM_THEME && DISABLED_SAVE_MENU && BROWSE_MENU)
@@ -771,6 +775,7 @@ struct parser lang_parser[] = {
 	{ "SETTINGS_OTH_MENU", parse_esc_string, &SETTINGS_OTH_MENU },
 	{ "CUSTOM_THEME_MENU", parse_esc_string, &CUSTOM_THEME_MENU },
 	{ "OWN_THEME_MENU", parse_esc_string, &OWN_THEME_MENU },
+	{ "WAIT_MENU", parse_esc_string, &WAIT_MENU },
 	{ "SELECT_GAME_MENU", parse_esc_string, &SELECT_GAME_MENU },
 	{ "SELECT_THEME_MENU", parse_esc_string, &SELECT_THEME_MENU },
 	{ "SAVED_MENU", parse_esc_string, &SAVED_MENU },

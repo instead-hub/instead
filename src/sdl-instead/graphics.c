@@ -251,7 +251,6 @@ struct _anigif_t {
 };
 
 typedef struct _anigif_t *anigif_t;
-extern int timer_counter;
 
 static int anigif_spawn(anigif_t ag, int x, int y, int w, int h)
 {

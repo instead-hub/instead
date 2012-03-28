@@ -268,8 +268,11 @@ inv = function(s)
 end
 
 game.onuse = function(s, v, w) -- do not let use on non proxy obj
+	if not v.proxy_type and not w.proxy_type then
+		return
+	end
 	if not v.proxy_type or not w.proxy_type then
-		return nil, false
+		return false
 	end
 end
 
