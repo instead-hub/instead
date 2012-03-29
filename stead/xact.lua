@@ -132,4 +132,8 @@ xroom = stead.inherit(room, function(v)
 	end)
 	return v
 end)
+
+if stead.api_version >= "1.6.3" then
+	xwalk = xact('xwalk', code [[ stead.walk(arg1) ]]);
+end
 -- vim:ts=4
