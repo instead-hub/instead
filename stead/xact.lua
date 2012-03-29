@@ -60,7 +60,11 @@ local __do_xact = function(str, self)
 					error("Empty link: "..s, 3);
 				end
 			else
-				oo = objs():srch(o)
+				if stead.api_version >= "1.6.3" then
+					oo = here():srch(o)
+				else
+					oo = objs():srch(o)
+				end
 				if not oo then
 					oo = stead.ref(o, true)
 				end

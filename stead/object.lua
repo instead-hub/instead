@@ -97,13 +97,6 @@ function player_use(self, what, onwhat, ...)
 		if type(vv) == 'string' then
 			v = stead.par(stead.space_delim, vv, v);
 		end
-		if stead.api_version >= "1.6.3" then
-			if not v and not r then
-				r = true
-			else
-				r = false
-			end
-		end
 		if r ~= false then
 			vv = stead.call(obj2, 'used', obj, ...);
 			if type(vv) == 'string' then
