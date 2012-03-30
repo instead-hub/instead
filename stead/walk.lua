@@ -132,7 +132,12 @@ end
 function player_walk(self, where, ...) -- real work
 	local v, r, vv;
 	vv, r = onevent('onwalk', stead.ref(where), ...);
-	if r == false then return vv end
+	if vv == false then
+		return
+	end
+	if r == false then 
+		return vv 
+	end
 	v, r = stead.go(self, where, ...);
 	if type(vv) == 'string' then
 		v = stead.par(stead.space_delim, vv, v);
