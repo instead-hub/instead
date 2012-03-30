@@ -25,6 +25,7 @@ instead (1.6.3) unstable; urgency=low
   * normal fonts in MAEMO build;
   * xact now searches recursive;
   * xwalk xact added;
+  * lifeon with order;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 08 Mar 2012 09:27:00 +0400
 
