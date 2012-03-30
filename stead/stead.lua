@@ -2357,8 +2357,8 @@ function prem(...)
 	here():prem(...);
 end
 
-function lifeon(what)
-	game.lifes:add(what);
+function lifeon(what, nr)
+	game.lifes:add(what, nr);
 end
 
 function lifeoff(what)
