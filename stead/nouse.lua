@@ -1,9 +1,11 @@
 game.use = function(s, w, o)
-	if w.nouse then
-		return call(w, 'nouse', o);
+	local r, v
+	r, v = call(w, 'nouse', o);
+	if not r and not v then
+		r, v = call(o, 'noused', w);
 	end
-	if o.noused then
-		return call(o, 'noused', w);
+	if not r and not v then
+		r, v = call(s, 'nouse', w, o)
 	end
-	return call(s, 'nouse', w, o)
+	return r,v
 end
