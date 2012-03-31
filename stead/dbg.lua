@@ -240,7 +240,7 @@ choose_location = dlg {
 				if type(o) == 'string' then
 					n = n..' : '..o;
 					n = _xref_escape(n);
-					put(phr(n, true, [[timer:set(debug_tool._timer); game.lifes:cat(debug_tool.lifes); return walk(]]..o..[[)]]), s);
+					put(phr(n, true, [[timer:set(debug_tool._timer); game.lifes:cat(debug_tool.lifes); return stead.walk(]]..o..[[)]]), s);
 				end
 			end
 		end
@@ -314,13 +314,13 @@ debug_dlg = dlg {
 	nam = 'Debug Tool',
 	dsc = 'Select tool.',
 	obj = {
-		phr('Go to location...', true, [[pon(); choose_location:gen(); return walk('choose_location')]]),
-		phr('Get object...', true, [[pon(); choose_object:gen(); return walk('choose_object')]]),
-		phr('Put object...', true, [[pon(); drop_object:gen(); return walk('drop_object')]]),
+		phr('Go to location...', true, [[pon(); choose_location:gen(); return stead.walk('choose_location')]]),
+		phr('Get object...', true, [[pon(); choose_object:gen(); return stead.walk('choose_object')]]),
+		phr('Put object...', true, [[pon(); drop_object:gen(); return stead.walk('drop_object')]]),
 		phr('Current scene...', true, [[pon(); return list_objects();]]),
 		phr('Inventory...', true, [[pon(); return list_inv();]]),
-		phr('Dump object...', true, [[pon(); return walk(dump_object);]]),
-		phr('Exec Lua string...', true, [[pon(); return walk('execute_cmd')]]),
+		phr('Dump object...', true, [[pon(); return stead.walk(dump_object);]]),
+		phr('Exec Lua string...', true, [[pon(); return stead.walk('execute_cmd')]]),
 		phr('Exit',true , [[pon(); return dbg_exit()]]),
 	},
 };
@@ -343,7 +343,7 @@ debug_tool = menu {
 		game.lifes:zap();
 		s._here = here();
 		me().where = 'debug_dlg'; -- force to go
-		return walk(self.where);
+		return stead.walk(self.where);
 	end,
 };
 
