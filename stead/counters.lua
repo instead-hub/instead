@@ -53,21 +53,45 @@ function(f, v, w, ...)
 end)
 
 function act_count(s, v)
-	if s then return read_nr(s, 'act', v) end
-	return read_nr(game, 'act', v)
+	if not s and not v then
+		s = game
+		v = nil
+	elseif tonumber(s) then
+		v = s
+		s = game
+	end
+	return read_nr(s, 'act', v)
 end
 
 function inv_count(s, v)
-	if s then return read_nr(s, 'inv', v) end
-	return read_nr(game, 'inv', v)
+	if not s and not v then
+		s = game
+		v = nil
+	elseif tonumber(s) then
+		v = s
+		s = game
+	end
+	return read_nr(s, 'inv', v)
 end
 
 function use_count(s, v)
-	if s then return read_nr(s, 'use', v) end
-	return read_nr(game, 'use', v)
+	if not s and not v then
+		s = game
+		v = nil
+	elseif tonumber(s) then
+		v = s
+		s = game
+	end
+	return read_nr(s, 'use', v)
 end
 
 function walk_count(s, v)
-	if s then return read_nr(s, 'walk', v) end
-	return read_nr(game, 'walk', v)
+	if not s and not v then
+		s = game
+		v = nil
+	elseif tonumber(s) then
+		v = s
+		s = game
+	end
+	return read_nr(s, 'walk', v)
 end
