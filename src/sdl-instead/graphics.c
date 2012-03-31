@@ -175,7 +175,7 @@ int gfx_parse_color (
 
         if (!spec)
 		return -1;
-
+	spec += strspn(spec, " \t");
 	n = strlen (spec);
 
 	if (*spec == '#') {
