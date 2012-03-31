@@ -1,7 +1,7 @@
 function wroom_enter(self, ...)
 	local w = self.where
 	if type(w) ~= 'table' then
-		w = call(self, 'where')
+		w = stead.call(self, 'where')
 	end
 	local r, v = stead.walk(w);
 	if v ~= false then
@@ -37,9 +37,9 @@ function wroom(a, b, c)
 	end
 	v.nam = function(s)
 		if s._toggle and s.newname then
-			return call(s, 'newname')
+			return stead.call(s, 'newname')
 		else
-			return call(s, 'oldname');
+			return stead.call(s, 'oldname');
 		end
 	end
 	return v
