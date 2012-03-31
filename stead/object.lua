@@ -1,7 +1,7 @@
 local function onevent(ev, ...)
 	local vv, r
 	if stead.api_version >= "1.6.3" then
-		vv, r = call(game, ev, ...);
+		vv, r = stead.call(game, ev, ...);
 		if r == false then
 			return vv, false
 		end
