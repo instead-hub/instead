@@ -1,6 +1,9 @@
 function trigger(act, cond)
 	local v = {}
 	v.nam = 'trigger';
+	if not act then
+		error("Wrong parameter to trigger.", 2)
+	end
 	v.act = act;
 	if not cond then
 		cond = true
