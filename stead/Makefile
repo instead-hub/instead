@@ -34,6 +34,7 @@ install:
 	$(INSTALL) counters.lua $(STEADPATH)/counters.lua
 	$(INSTALL) proxymenu.lua $(STEADPATH)/proxymenu.lua
 	$(INSTALL) trigger.lua $(STEADPATH)/trigger.lua
+	$(INSTALL) nolife.lua $(STEADPATH)/nolife.lua
 
 uninstall:
 	$(RM) $(STEADPATH)/stead.lua
