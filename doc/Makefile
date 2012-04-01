@@ -32,6 +32,7 @@ wiki:
 	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:modules:sound&do=export_raw" -O modules/sound.txt
 	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:modules:counters&do=export_raw" -O modules/counters.txt
 	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:modules:nouse&do=export_raw" -O modules/nouse.txt
+	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:modules:trigger&do=export_raw" -O modules/trigger.txt
 
 clean:
 all:
