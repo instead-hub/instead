@@ -12,7 +12,7 @@ local function onevent(ev, ...)
 	end
 end
 
-stead.go = function (self, where, back, noenter, noexit, nodsc)
+local go = function (self, where, back, noenter, noexit, nodsc)
 	local was = self.where;
 	local need_scene = false;
 	local ret
@@ -214,21 +214,21 @@ iface.fmt = function(self, cmd, st, moved, r, av, objs, pv) -- st -- changed sta
 		end
 	end
 	if moved then
-		vv = stead.fmt(stead.cat(stead.par(stead.scene_delim, r, av, l, objs, pv), '^'));
+		vv = stead.fmt(stead.cat(stead.par(stead.scene_delim, r, l, av, objs, pv), '^'));
 	else
 		vv = stead.fmt(stead.cat(stead.par(stead.scene_delim, l, r, av, objs, pv), '^'));
 	end
 	return vv
 end
 
-stead.go = stead.hook(stead.go, function(f, ...)
-	local r,v = f(...)
+stead.go = function(...)
+	local r,v = go(...)
 	if type(r) == 'string' and stead.cctx() then 
 		pr (r)
 	end
-	if stead.in_life_call then
-		ACTION_TEXT = nil
-	end
+--	if stead.in_life_call then
+--		ACTION_TEXT = nil
+--	end
 	if r == nil and v == nil then
 		if stead.cctx() then
 			stead.cctx().action = true
@@ -237,7 +237,7 @@ stead.go = stead.hook(stead.go, function(f, ...)
 		end
 	end
 	return r,v
-end)
+end
 
 iface.cmd = stead.hook(iface.cmd, function(f, ...)
 	NEED_SCENE = nil

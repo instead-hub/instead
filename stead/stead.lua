@@ -1507,8 +1507,8 @@ function game_life(self)
 				av = nil
 				v = nil
 				was_moved = true
-			end
-			if pre or (PLAYER_MOVED and pre ~= false) then
+				ACTION_TEXT = vv;
+			elseif pre then
 				av = stead.par(stead.space_delim, av, vv);
 			else
 				v = stead.par(stead.space_delim, v, vv);
