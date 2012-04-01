@@ -33,6 +33,7 @@ install:
 	$(INSTALL) dlg.lua $(STEADPATH)/dlg.lua
 	$(INSTALL) counters.lua $(STEADPATH)/counters.lua
 	$(INSTALL) proxymenu.lua $(STEADPATH)/proxymenu.lua
+	$(INSTALL) trigger.lua $(STEADPATH)/trigger.lua
 
 uninstall:
 	$(RM) $(STEADPATH)/stead.lua

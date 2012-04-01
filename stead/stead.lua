@@ -1520,7 +1520,7 @@ function game_life(self)
 	stead.PLAYER_MOVED = nil
 	stead.in_life_call = false;
 	for i,o in ipairs(stead.lifes_off) do
-		lifeoff(o);
+		stead.lifeoff(o);
 	end
 	stead.lifes_off = nil;
 	return v, av;
@@ -2360,6 +2360,7 @@ end
 function lifeon(what, nr)
 	game.lifes:add(what, nr);
 end
+stead.lifeon = lifeon
 
 function lifeoff(what)
 	if stead.in_life_call then
@@ -2368,6 +2369,7 @@ function lifeoff(what)
 	end
 	game.lifes:del(what);
 end
+stead.lifeoff = lifeoff
 
 function allocator_save(s, name, h, need, auto)
 	if s.auto_allocated and not auto then
