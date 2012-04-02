@@ -1494,7 +1494,8 @@ function game_life(self)
 	local av,v
 	local was_moved
 	stead.in_life_call = true;
-	stead.lifes_off = list {}; -- lifes to off 
+	stead.lifes_off = {}; -- lifes to off 
+	stead.lifes_on = {}; -- lifes to on
 	stead.PLAYER_MOVED = PLAYER_MOVED
 	for i,o in opairs(self.lifes) do
 		local vv
@@ -1519,10 +1520,14 @@ function game_life(self)
 	if not PLAYER_MOVED then PLAYER_MOVED = stead.PLAYER_MOVED end
 	stead.PLAYER_MOVED = nil
 	stead.in_life_call = false;
+	for i,o in ipairs(stead.lifes_on) do
+		stead.lifeon(o[1], o[2]);
+	end
 	for i,o in ipairs(stead.lifes_off) do
 		stead.lifeoff(o);
 	end
 	stead.lifes_off = nil;
+	stead.lifes_on = nil;
 	return v, av;
 end
 
@@ -2358,13 +2363,17 @@ function prem(...)
 end
 
 function lifeon(what, nr)
+	if stead.in_life_call then
+		stead.table.insert(stead.lifes_on, { what, nr });
+		return
+	end
 	game.lifes:add(what, nr);
 end
 stead.lifeon = lifeon
 
 function lifeoff(what)
 	if stead.in_life_call then
-		stead.lifes_off:add(what);
+		stead.table.insert(stead.lifes_off, what);
 		return
 	end
 	game.lifes:del(what);
