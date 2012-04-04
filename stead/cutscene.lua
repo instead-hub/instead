@@ -163,6 +163,9 @@ cutscene = function(v)
 				if a and a ~= "" then
 					return stead.walk(a)
 				end
+			elseif c == "cls" then
+				out = ''
+				strip = true
 			end
 			if strip then
 				out = out..txt:sub(oe, s - 1)
