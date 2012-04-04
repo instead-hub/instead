@@ -34,7 +34,7 @@ myroom = room  {
     end;
     timer = function(s)
         timer:stop();
-        goto 'myroom2';
+        walk 'myroom2';
     end;
     nam = 'Проверка таймера';
     dsc = [[Ждите.]];
