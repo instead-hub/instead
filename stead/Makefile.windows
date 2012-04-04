@@ -30,5 +30,4 @@ install:
 	copy dlg.lua ..\bin\stead
 	copy counters.lua ..\bin\stead
 	copy proxymenu.lua ..\bin\stead
-	copy trigger.lua ..\bin\stead
 	copy nolife.lua ..\bin\stead
