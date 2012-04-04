@@ -64,6 +64,10 @@ cutscene = function(v)
 		s:reset()
 	end;
 
+	if v.timer then
+		error ("Do not use timer in cutscene.", 2)
+	end
+
 	v.timer = function(s)
 		s._fading = nil
 		s._state = s._state + 1
