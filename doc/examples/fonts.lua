@@ -1,3 +1,4 @@
+-- example module
 require "sprites"
 require "theme"
 

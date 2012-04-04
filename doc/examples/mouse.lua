@@ -1,3 +1,4 @@
+-- LEGACY CODE, use module click instead
 -- call here().click or game.click on pic clicks
 
 input.click = function(s, press, mb, x, y, px, py)
