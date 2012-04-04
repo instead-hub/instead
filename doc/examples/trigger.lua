@@ -1,3 +1,4 @@
+-- example module
 function trigger(act, cond)
 	local v = {}
 	v.nam = 'trigger';
