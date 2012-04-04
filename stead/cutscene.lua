@@ -205,6 +205,9 @@ cutscene = function(v)
 			return s._dsc
 		end
 	end
-	v.obj = { xact('cut', function() here():step(); return true; end ) };
+	if not v.obj then
+		v.obj = {}
+	end
+	stead.table.insert(v.obj, 1, xact('cut', function() here():step(); return true; end ))
 	return room(v)
 end
