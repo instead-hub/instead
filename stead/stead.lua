@@ -1178,16 +1178,15 @@ end
 
 function phrase_save(self, name, h, need)
 	if need then
-		local m = " = stead.phr("
+		local m = " = phr("
 		if isDisabled(self) then
-			m = " = stead._phr("
+			m = " = _phr("
 		end
-		h:write(stead.string.format("%s%s%s,%s,%s,%s);\n", 
+		h:write(stead.string.format("%s%s%s,%s,%s);\n", 
 			name, m, 
 			stead.tostring(self.dsc), 
 			stead.tostring(self.ans), 
-			stead.tostring(self.do_act),
-			stead.tostring(self.key)));
+			stead.tostring(self.do_act)));
 	end
 	stead.savemembers(h, self, name, false);
 end
@@ -1215,20 +1214,17 @@ function phrase(o) --constructor
 	return ret;
 end
 
-function _phr(ask, answ, act, key)
-	local p = phrase ( { dsc = ask, ans = answ, do_act = act, key = key });
+function _phr(ask, answ, act)
+	local p = phrase ({ dsc = ask, ans = answ, do_act = act });
 	p:disable();
 	return p;
 end
 
-stead._phr = _phr;
-
-function phr(ask, answ, act, key)
-	local p = phrase ( { dsc = ask, ans = answ, do_act = act, key = key });
+function phr(ask, answ, act)
+	local p = phrase ({ dsc = ask, ans = answ, do_act = act });
 --	p:enable();
 	return p;
 end
-stead.phr = phr;
 
 function player_inv(self)
 	return iface:inv(stead.cat(self:str()));

@@ -20,7 +20,7 @@ instead (1.6.3) unstable; urgency=low
   * sprite.box and sprite.blank;
   * stead.add_var internal command;
   * stead.gui.hideways added;
-  * hideinv module is better now;
+  * hideinv module is better now, noinv added;
   * busy dialog;
   * normal fonts in MAEMO build;
   * xact now searches recursive;
