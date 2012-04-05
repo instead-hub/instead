@@ -51,12 +51,12 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 			if w.proxy_type then
 				local v, r, vv, rr, rc = false, ri
 				local act = s.pact
-				v, r, ri = stead.call(game, 'before_'..act, s.pobj, w.pobj);
+				v, r, ri = call(game, 'before_'..act, s.pobj, w.pobj);
 				rc = ri or rc
 				if ri == false then 
 					return v, false 
 				end
-				vv, r, ri = stead.call(s.pobj, act, w.pobj);
+				vv, r, ri = call(s.pobj, act, w.pobj);
 				rc = ri or rc
 				v = par(v, vv, rc);
 
@@ -66,7 +66,7 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 
 				if type(s.used_act) == 'string' 
 					and ri == nil then -- used only if use did nothing
-					vv, r, ri = stead.call(w.pobj, s.used_act, s.pobj);
+					vv, r, ri = call(w.pobj, s.used_act, s.pobj);
 					rc = ri or rc
 					v = par(v, vv, rc);
 
@@ -76,7 +76,7 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 				end
 
 				if ri then
-					vv, rr, ri = stead.call(game, 'after_'..act, s.pobj, w.pobj);
+					vv, rr, ri = call(game, 'after_'..act, s.pobj, w.pobj);
 					rc = rc or ri
 					v = par(v, vv, rc);
 
@@ -104,13 +104,13 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 			end
 		end
 
-		v, r, ri = stead.call(game, 'before_'..act, s.pobj); 
+		v, r, ri = call(game, 'before_'..act, s.pobj); 
 		rc = rc or ri
 		if ri == false then
 			return v
 		end
 
-		vv, r, ri = stead.call(s.pobj, act); 
+		vv, r, ri = call(s.pobj, act); 
 		rc = rc or ri
 		v = par(v, vv, rc)
 
@@ -119,7 +119,7 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 		end
 
 		if ri then
-			vv, rr, ri = stead.call(game, 'after_'..act, s.pobj); 
+			vv, rr, ri = call(game, 'after_'..act, s.pobj); 
 			rc = rc or ri
 			v = par(v, vv, rc);
 		end
