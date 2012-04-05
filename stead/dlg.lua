@@ -1,7 +1,7 @@
 -- stead.phrase_prefix = '--'
 
 local function isReaction(ph)
-	return ph.ans ~= nil or ph.do_act ~= nil
+	return ph.ans ~= nil or ph.code ~= nil
 end
 
 local function phr_get(self)
@@ -170,52 +170,105 @@ function pret()
 	return here():pret()
 end
 
+function phr(ask, answ, act)
+	local i = 1
+	local r = {}
+	local dis = false
+	
+	if type(ask) ~= 'table' then -- old style
+		local p = phrase ( { dsc = ask, ans = answ, code = act });
+		return p
+	end
+
+	local v = ask
+
+	if type(v[i]) == 'boolean' then
+		i = i + 1
+		dis = not v[i]
+	end
+	r.dsc = v[i]
+	i = i + 1
+	r.ans = v[i]
+	i = i + 1
+	r.code = v[i]
+	r.always = v.always
+	r.key = v.key
+	r = phrase(r)
+	if dis then
+		r = r:disable()
+	end
+	return r;
+end
+
+function _phr(ask, answ, act) -- compat only?
+	local p = phr(ask, answ, act);
+	p:disable()
+	return p
+end
+
+stead.phr = phr
+
+function phrase_save(self, name, h, need)
+	if need then
+		local m = " = phrase {"
+		local post = '}\n'
+		if isDisabled(self) then
+			post = "}:disable()\n"
+		end
+		m = stead.string.format("%s%s", name, m);
+		if self.dsc then
+			m = m..stead.string.format("dsc = %s, ", stead.tostring(self.dsc));
+		end
+
+		if self.ans then
+			m = m..stead.string.format("ans = %s, ", stead.tostring(self.ans));
+		end
+
+		if self.code then
+			m = m..stead.string.format("code = %s, ", stead.tostring(self.code));
+		end
+
+		if self.key then
+			m = m..stead.string.format("key = %s, ", stead.tostring(self.key));
+		end
+
+		if self.always then
+			m = m..stead.string.format("always = %s, ", stead.tostring(self.always));
+		end
+		h:write(m..post);
+	end
+	stead.savemembers(h, self, name, false);
+end
+
 local function dialog_phr2obj(self)
-	local k, v, n, i
+	local k, v, n, q, a
+
 	if type(self.phr) ~= 'table' then
 		return
 	end
+
 	n = 0
+
 	for k,v in ipairs(self.phr) do
 		if type(v) == 'table' then
-			local q, a, c, on
-			on = true;
-			i = 1
 			local nn = {}
-			q = 0
-			while type(v[i]) == 'number' do
-				n = v[i]
-				if n > q then
-					q = n
-				end
-				i = i + 1
-				stead.table.insert(nn, n)
+
+			while type(v[1]) == 'number' do
+				stead.table.insert(nn, v[1])
+				stead.table.remove(v, 1)
 			end
+
+			stead.table.sort(nn);
+
+			local p = stead.phr(v)
 			if #nn == 0 then
 				n = n + 1
 				stead.table.insert(nn, n)
 			else
-				n = q -- maximum index
-			end
-			if type(v[i]) == 'boolean' then
-				on = v[i]
-				i = i + 1
-			end
-			q = v[i]
-			i = i + 1
-			a = v[i]
-			i = i + 1
-			c = v[i]
-			local p
-			if on then
-				p = stead.phr(q, a, c);
-			else
-				p = stead._phr(q, a, c);
+				n = nn[#nn] -- maximum index
 			end
 
-			p.key = v.key;
-
-			for q,a in ipairs(nn) do
+			for q, a in ipairs(nn) do
 				if self.obj[a] then
 					error ("Error in phr structure (numbering).", 4);
 				end
@@ -261,21 +314,23 @@ function phrase_action(self)
 		return nil, false
 	end
 -- here it is
-	ph:disable(); -- /* disable it!!! */
+	if not ph.always then
+		ph:disable(); -- /* disable it!!! */
+	end
 
 	local last = stead.call(ph, 'ans');
 
 	here().__last_answer = last;
 	
-	if type(ph.do_act) == 'string' then
-		local f = stead.eval(ph.do_act);
+	if type(ph.code) == 'string' then
+		local f = stead.eval(ph.code);
 		if f ~= nil then
 			ret = f();
 		else
 			error ("Error while eval phrase action.");
 		end
-	elseif type(ph.do_act) == 'function' then
-		ret = ph.do_act(self);
+	elseif type(ph.code) == 'function' then
+		ret = ph.code(self);
 	end
 
 	if ret == nil then ret = stead.pget(); end
@@ -295,7 +350,7 @@ function phrase_action(self)
 	end
 
 	if wh ~= here() then
-		ret = stead.par(stead.space_delim, ret, stead.back(wh));
+		ret = stead.par(stead.scene_delim, ret, stead.back(wh));
 	end
 	
 	ret = stead.par(stead.scene_delim, last, ret);
