@@ -119,6 +119,7 @@ function dialog_look(self)
 			if isPhrase(ph) and not isDisabled(ph) then
 				if isReaction(ph) then
 					local a
+					ph.nam = tostring(n)
 					if stead.phrase_prefix then
 						a = stead.cat(stead.phrase_prefix, ph:look())
 					else
@@ -471,6 +472,9 @@ function(f, v, ...)
 	end
 	if v.psub == nil then
 		v.psub = dialog_psub
+	end
+	if v.phrase == nil then
+		v.phrase = dialog_phrase
 	end
 	v = f(v, ...)
 	v.__last_answer = false
