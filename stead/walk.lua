@@ -113,7 +113,9 @@ local go = function (self, where, back, noenter, noexit, nodsc)
 		elseif here().__visited == nil then
 			stead.ref(to).__visited = 1
 		end
-		dialog_rescan(stead.ref(to));
+		if isDialog(stead.ref(to)) then
+			dialog_rescan(stead.ref(to));
+		end
 	end
 	return res;
 end
