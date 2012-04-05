@@ -365,7 +365,7 @@ local onext = function(t, k)
 	return k, t[v], v;
 end
 
-function opairs(s, var)
+function opairs(s)
 	return onext, s, nil;
 end
 
