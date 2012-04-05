@@ -90,17 +90,18 @@ function dialog_empty(self, from)
 end
 
 function dialog_pjump(self, w)
-	if type(w) ~= 'number' then
+	local ph, i = dialog_phrase(self, w)
+	if not ph then
 		return false
 	end
-	if not dialog_rescan(self, w) then
+	if not dialog_rescan(self, i) then
 		return false
 	end
 	local n = #self.__phr_stack;
 	if n == 0 then
-		stead.table.insert(self.__phr_stack, w);
+		stead.table.insert(self.__phr_stack, i);
 	else
-		self.__phr_stack[n] = w
+		self.__phr_stack[n] = i
 	end
 	return true
 end
@@ -113,10 +114,14 @@ function pjump(w)
 end
 
 function dialog_pstart(self, w)
-	if type(w) ~= 'number' then
-		w = 1
+	if not w then 
+		w = 1 
 	end
-	self.__phr_stack = { w }
+	local ph, i = dialog_phrase(self, w)
+	if not ph then
+		return
+	end
+	self.__phr_stack = { i }
 	return
 end
 
@@ -128,13 +133,14 @@ function pstart(w)
 end
 
 function dialog_psub(self, w)
-	if type(w) ~= 'number' then
+	local ph, i = dialog_phrase(self, w)
+	if not ph then
 		return false
 	end
-	if not dialog_rescan(self, w) then
+	if not dialog_rescan(self, i) then
 		return false
 	end
-	stead.table.insert(self.__phr_stack, w);
+	stead.table.insert(self.__phr_stack, i);
 	return
 end
 
@@ -207,7 +213,7 @@ local function dialog_phr2obj(self)
 				p = stead._phr(q, a, c);
 			end
 
-			p._key = v.key;
+			p.key = v.key;
 
 			for q,a in ipairs(nn) do
 				if self.obj[a] then
@@ -226,19 +232,17 @@ function dialog_phrase(self, num)
 		return
 	end
 	if not tonumber(num) then
-		local k,v
-		for k,v in opairs(self.obj) do
+		local k,v,i
+		for k,v,i in opairs(self.obj) do
 			v = stead.ref(v)
-			if isPhrase(v) and v._key == num then
-				return v
+			if isPhrase(v) and v.key == num then
+				return v, i
 			end
-		end
-		if isPhrase(stead.ref(num)) then
-			return stead.ref(num);
 		end
 		return nil
 	end
-	return stead.ref(self.obj[tonumber(num)]);
+	num = tonumber(num)
+	return stead.ref(self.obj[num]), num;
 end
 
 function dialog_last(self, v)
