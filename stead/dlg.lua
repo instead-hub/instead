@@ -89,10 +89,6 @@ function dialog_poff(self,...)
 	return ponoff(self, false, ...);
 end
 
-local function isReaction(ph)
-	return ph.ans ~= nil or ph.code ~= nil
-end
-
 local function phr_get(self)
 	local n = #self.__phr_stack;
 	if n == 0 then return 1 end
@@ -117,19 +113,13 @@ function dialog_look(self)
 				break
 			end
 			if isPhrase(ph) and not isDisabled(ph) then
-				if isReaction(ph) then
-					local a
-					ph.nam = tostring(n)
-					if stead.phrase_prefix then
-						a = stead.cat(stead.phrase_prefix, ph:look())
-					else
-						a = txtnm(n, ph:look())
-					end
-					v = stead.par('^', v, a);
-					n = n + 1
+				ph.nam = tostring(n)
+				if stead.phrase_prefix then
+					v = stead.par('^', v, stead.cat(stead.phrase_prefix, ph:look()));
 				else
-					v = stead.par('^', v, stead.call(ph, 'dsc'))
+					v = stead.par('^', v, txtnm(n, ph:look()))
 				end
+				n = n + 1
 			end
 		end
 	end
@@ -151,7 +141,7 @@ function dialog_rescan(self, from)
 			if not ph.dsc then
 				break
 			end
-			if isPhrase(ph) and not isDisabled(ph) and isReaction(ph) then
+			if isPhrase(ph) and not isDisabled(ph) then
 				ph.nam = tostring(k);
 				k = k + 1;
 			end
