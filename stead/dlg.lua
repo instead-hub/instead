@@ -206,6 +206,9 @@ local function dialog_phr2obj(self)
 			else
 				p = stead._phr(q, a, c);
 			end
+
+			p._key = v.key;
+
 			for q,a in ipairs(nn) do
 				if self.obj[a] then
 					error ("Error in phr structure (numbering).", 4);
@@ -217,6 +220,27 @@ local function dialog_phr2obj(self)
 		end
 	end
 end
+
+function dialog_phrase(self, num)
+	if not num then
+		return
+	end
+	if not tonumber(num) then
+		local k,v
+		for k,v in opairs(self.obj) do
+			v = stead.ref(v)
+			if isPhrase(v) and v._key == num then
+				return v
+			end
+		end
+		if isPhrase(stead.ref(num)) then
+			return stead.ref(num);
+		end
+		return nil
+	end
+	return stead.ref(self.obj[tonumber(num)]);
+end
+
 function dialog_last(self, v)
 	local r = self.__last_answer
 	if v ~= nil then
