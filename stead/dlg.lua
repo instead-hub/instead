@@ -1,4 +1,93 @@
 -- stead.phrase_prefix = '--'
+local tagpnext = function(a, k)
+	if not k then
+		if tonumber(a.tag) then
+			return 1, dialog_phrase(a.s, a.tag)
+		end
+		k = {}
+		local r,v 
+		for r,v in opairs(a.s.obj) do
+			v = stead.ref(v)
+			if isPhrase(v) and v.tag == a.tag then
+				stead.table.insert(k, v)
+			end
+		end
+		k.i = 0
+		k.n = stead.table.maxn(k)
+	end
+	if k == 1 or k.i >= k.n then
+		return nil
+	end
+	k.i = k.i + 1
+	return k, k[k.i]
+end
+
+local function phrases(s, tag)
+	local a = { s = s, tag = tag }
+	return tagpnext, a, nil;
+end
+
+function phrase_seen(s, enb, ...)
+	local i, ph, k
+	local a = {...}
+	if stead.table.maxn(a) == 0 then
+		stead.table.insert(a, stead.cctx().self);
+	end
+	for i=1,stead.table.maxn(a) do
+		local r
+		for k, ph in phrases(s, a[i]) do
+			r = isPhrase(ph) and not isRemoved(ph) and not ph:disabled();
+			if r then 
+				break 
+			end
+		end
+		if enb then r = not r end
+		if r then return false end
+	end
+	return true
+end
+
+local function ponoff(s, on, ...)
+	local i, ph, k
+	local a = {...}
+	if stead.table.maxn(a) == 0 then
+		stead.table.insert(a, stead.cctx().self)
+	end
+	for i=1,stead.table.maxn(a) do
+		for k, ph in phrases(s, a[i]) do
+			if isPhrase(ph) and not isRemoved(ph) then
+				if on then
+					ph:enable();
+				else 
+					ph:disable();
+				end
+			end
+		end
+	end
+end
+
+function dialog_prem(s, ...)
+	local i, ph, k
+	local a = {...}
+	if stead.table.maxn(a) == 0 then
+		stead.table.insert(a, stead.cctx().self);
+	end
+	for i=1,stead.table.maxn(a) do
+		for k, ph in phrases(s, a[i]) do
+			if isPhrase(ph) then
+				ph:remove();
+			end
+		end
+	end
+end
+
+function dialog_pon(self,...)
+	return ponoff(self, true, ...);
+end
+
+function dialog_poff(self,...)
+	return ponoff(self, false, ...);
+end
 
 local function isReaction(ph)
 	return ph.ans ~= nil or ph.code ~= nil
@@ -183,8 +272,8 @@ function phr(ask, answ, act)
 	local v = ask
 
 	if type(v[i]) == 'boolean' then
-		i = i + 1
 		dis = not v[i]
+		i = i + 1
 	end
 	r.dsc = v[i]
 	i = i + 1
@@ -192,7 +281,7 @@ function phr(ask, answ, act)
 	i = i + 1
 	r.code = v[i]
 	r.always = v.always
-	r.key = v.key
+	r.tag = v.tag
 	r = phrase(r)
 	if dis then
 		r = r:disable()
@@ -228,8 +317,8 @@ function phrase_save(self, name, h, need)
 			m = m..stead.string.format("code = %s, ", stead.tostring(self.code));
 		end
 
-		if self.key then
-			m = m..stead.string.format("key = %s, ", stead.tostring(self.key));
+		if self.tag then
+			m = m..stead.string.format("tag = %s, ", stead.tostring(self.tag));
 		end
 
 		if self.always then
@@ -288,7 +377,7 @@ function dialog_phrase(self, num)
 		local k,v,i
 		for k,v,i in opairs(self.obj) do
 			v = stead.ref(v)
-			if isPhrase(v) and v.key == num then
+			if isPhrase(v) and v.tag == num then
 				return v, i
 			end
 		end
