@@ -1182,11 +1182,12 @@ function phrase_save(self, name, h, need)
 		if isDisabled(self) then
 			m = " = stead._phr("
 		end
-		h:write(stead.string.format("%s%s%s,%s,%s);\n", 
+		h:write(stead.string.format("%s%s%s,%s,%s,%s);\n", 
 			name, m, 
 			stead.tostring(self.dsc), 
 			stead.tostring(self.ans), 
-			stead.tostring(self.do_act)));
+			stead.tostring(self.do_act),
+			stead.tostring(self.key)));
 	end
 	stead.savemembers(h, self, name, false);
 end
@@ -1214,16 +1215,16 @@ function phrase(o) --constructor
 	return ret;
 end
 
-function _phr(ask, answ, act)
-	local p = phrase ( { dsc = ask, ans = answ, do_act = act });
+function _phr(ask, answ, act, key)
+	local p = phrase ( { dsc = ask, ans = answ, do_act = act, key = key });
 	p:disable();
 	return p;
 end
 
 stead._phr = _phr;
 
-function phr(ask, answ, act)
-	local p = phrase ( { dsc = ask, ans = answ, do_act = act });
+function phr(ask, answ, act, key)
+	local p = phrase ( { dsc = ask, ans = answ, do_act = act, key = key });
 --	p:enable();
 	return p;
 end
