@@ -260,5 +260,13 @@ player  = stead.inherit(player, function(v)
 	return v
 end)
 
+function need_scene(s)
+	if not s then
+		NEED_SCENE = true
+	else
+		NEED_SCENE = s
+	end
+end
+
 pl = player(pl) -- reinit
 -- vim:ts=4
