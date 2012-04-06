@@ -157,7 +157,7 @@ function dialog_enter(self)
 	if not dialog_rescan(self) then
 		return nil, false
 	end
-	self.__last_answer = false
+	self.__last_answer = nil
 	return nil, true
 end
 
@@ -389,6 +389,9 @@ end
 function dialog_last(self, v)
 	local r = self.__last_answer
 	if v ~= nil then
+		if not v then
+			v = nil
+		end
 		self.__last_answer = v
 	end
 	return r
@@ -513,7 +516,7 @@ function dlg(v) --constructor
 
 	v = room(v);
 
-	v.__last_answer = false
+	v.__last_answer = nil
 	v.__phr_stack = { 1 }
 	dialog_phr2obj(v);
 
