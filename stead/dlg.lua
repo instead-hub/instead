@@ -165,6 +165,14 @@ function dialog_current(self,...)
 	return phr_get(self)
 end
 
+function dialog_curtag(self,...)
+	local p = dialog_phrase(self, phr_get(self))
+	if not isPhrase(p) then
+		return
+	end
+	return p.tag
+end
+
 function dialog_empty(self, from)
 	return not dialog_rescan(self, from);
 end
@@ -479,6 +487,11 @@ function dlg(v) --constructor
 	if v.current == nil then
 		v.current = dialog_current
 	end
+
+	if v.curtag == nil then
+		v.curtag = dialog_curtag
+	end
+
 	if v.last == nil then
 		v.last = dialog_last
 	end
