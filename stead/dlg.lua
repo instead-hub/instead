@@ -275,10 +275,15 @@ function phr(ask, answ, act)
 
 	local v = ask
 
+	if type(v[1]) == 'number' then -- just skip number
+		i = i + 1
+	end
+
 	if type(v[i]) == 'boolean' then
 		dis = not v[i]
 		i = i + 1
 	end
+
 	r.dsc = v[i]
 	i = i + 1
 	r.ans = v[i]
@@ -335,27 +340,37 @@ end
 
 local function dialog_phr2obj(self)
 	local k, v, n
+	local aliases = {}
 	if type(self.phr) ~= 'table' then
 		return
 	end
 	n = 0
-	for k,v in ipairs(self.phr) do
+	for k, v in ipairs(self.phr) do
 		if type(v) == 'table' then
 			if type(v[1]) == 'number' then
 				n = v[1]
-				stead.table.remove(v, 1)
 			else
 				n = n + 1
 			end
-
 			local p = stead.phr(v)
 			if self.obj[n] then
 				error ("Error in phr structure (numbering).", 4);
+			end
+			if v.alias then
+				p.alias = v.alias
+				stead.table.insert(aliases, n);
 			end
 			self.obj[n] = p
 		else
 			error ("Error in phr structure (wrong item).", 4);
 		end
+	end
+	for k, v in ipairs(aliases) do
+		local ph = dialog_phrase(self, self.obj[v].alias)
+		if not ph then
+			error ("Wrong alias in dlg.", 3);
+		end
+		self.obj[v] = ph
 	end
 end
 
