@@ -1,8 +1,13 @@
 -- stead.phrase_prefix = '--'
 local tagpnext = function(a, k)
 	if not k then
+		if isPhrase(a.tag) then
+			return 1, a.tag
+		end
 		if tonumber(a.tag) then
-			return 1, dialog_phrase(a.s, a.tag)
+			local r = dialog_phrase(a.s, a.tag)
+			if r then return 1, r end
+			return
 		end
 		k = {}
 		local r,v 
@@ -371,6 +376,9 @@ end
 function dialog_phrase(self, num)
 	if not num then
 		return
+	end
+	if isPhrase(num) then
+		return num
 	end
 	if not tonumber(num) then
 		local k,v,i
