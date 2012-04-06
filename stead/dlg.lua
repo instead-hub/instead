@@ -16,7 +16,7 @@ local function call_reaction(ph)
 		end
 	end
 	if type(r) == 'string' then
-		p(r)
+		stead.p(r)
 	end
 end
 
@@ -561,6 +561,14 @@ function dlg(v) --constructor
 	end
 	if v.phrase == nil then
 		v.phrase = dialog_phrase
+	end
+
+	if v.dsc == nil then
+		v.dsc = function(s)
+			if type(ACTION_TEXT) ~= 'string' then
+				stead.p(stead.last_act())
+			end
+		end
 	end
 
 	v = room(v);
