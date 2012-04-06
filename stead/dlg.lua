@@ -1,4 +1,24 @@
 -- stead.phrase_prefix = '--'
+local function call_reaction(p)
+	local r
+	if p.dsc then
+		r = stead.call(p, 'dsc')
+	elseif p.code then
+		r = stead.call(p, 'code')
+	end
+	if type(r) == 'string' then
+		p(r)
+	end
+end
+
+local function isReaction(p)
+	return  not (p.dsc and (p.ans or p.code))
+end
+
+local function isDelimiter(p)
+	return isPhrase(p) and not isDisabled(p) and (p.dsc == nil and p.ans == nil and p.code == nil)
+end
+
 local tagpnext = function(a, k)
 	if not k then
 		if isPhrase(a.tag) then
@@ -114,10 +134,10 @@ function dialog_look(self)
 	for i,ph,ii in opairs(self.obj) do
 		if ii >= start then
 			ph = stead.ref(ph);
-			if not ph.dsc then
+			if isDelimiter(ph) then
 				break
 			end
-			if isPhrase(ph) and not isDisabled(ph) then
+			if isPhrase(ph) and not isDisabled(ph) and not isReaction(ph) then
 				ph.nam = tostring(n)
 				if stead.phrase_prefix then
 					v = stead.par('^', v, stead.cat(stead.phrase_prefix, ph:look()));
@@ -143,10 +163,10 @@ function dialog_rescan(self, from)
 	for i,ph,ii in opairs(self.obj) do
 		if ii >= start then
 			ph = stead.ref(ph);
-			if not ph.dsc then
+			if isDelimiter(ph) then
 				break
 			end
-			if isPhrase(ph) and not isDisabled(ph) then
+			if isPhrase(ph) and not isDisabled(ph) and not isReaction(ph) then
 				ph.nam = tostring(k);
 				k = k + 1;
 			end
@@ -196,6 +216,10 @@ function dialog_pjump(self, w)
 	else
 		self.__phr_stack[n] = i
 	end
+	if isReaction(ph) then
+		call_reaction(ph)
+	end
+	stead.cctx().action = true
 	return true
 end
 
