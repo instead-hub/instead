@@ -193,7 +193,6 @@ function dialog_enter(self)
 	if not dialog_rescan(self) then
 		return nil, false
 	end
-	self.__last_answer = nil
 	return nil, true
 end
 
@@ -436,17 +435,6 @@ function dialog_phrase(self, num)
 	return stead.ref(self.obj[num]), num;
 end
 
-function dialog_last(self, v)
-	local r = self.__last_answer
-	if v ~= nil then
-		if not v then
-			v = nil
-		end
-		self.__last_answer = v
-	end
-	return r
-end
-
 function phrase_action(self)
 	local ph = self;
 	local r, ret;
@@ -460,8 +448,6 @@ function phrase_action(self)
 	end
 	local last = stead.call(ph, 'ans');
 
-	here().__last_answer = last;
-	
 	if type(ph.code) == 'string' then
 		local f = stead.eval(ph.code);
 		if f ~= nil then
@@ -494,8 +480,6 @@ function phrase_action(self)
 	end
 	
 	ret = stead.par(stead.space_delim, last, ret);
-
-	here().__last_answer = ret;
 
 	if ret == nil then
 		return r -- hack?
@@ -543,10 +527,6 @@ function dlg(v) --constructor
 	if v.curtag == nil then
 		v.curtag = dialog_curtag
 	end
-
-	if v.last == nil then
-		v.last = dialog_last
-	end
 	if v.pstart == nil then
 		v.pstart = dialog_pstart
 	end
@@ -573,7 +553,6 @@ function dlg(v) --constructor
 
 	v = room(v);
 
-	v.__last_answer = nil
 	v.__phr_stack = { 1 }
 	dialog_phr2obj(v);
 
