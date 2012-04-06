@@ -288,7 +288,10 @@ function phr(ask, answ, act)
 	i = i + 1
 	r.ans = v[i]
 	i = i + 1
-	r.code = v[i]
+	r.code = v.code
+	if r.code == nil then
+		r.code = v[i]
+	end
 	r.always = v.always
 	r.tag = v.tag
 	r = phrase(r)
