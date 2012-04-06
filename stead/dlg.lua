@@ -1,10 +1,19 @@
 -- stead.phrase_prefix = '--'
-local function call_reaction(p)
+local function call_reaction(ph)
 	local r
-	if p.dsc then
-		r = stead.call(p, 'dsc')
-	elseif p.code then
-		r = stead.call(p, 'code')
+	if ph.dsc then
+		r = stead.call(ph, 'dsc')
+	elseif ph.code then
+		local f = ph.code
+		if type(f) == 'string' then
+			f = stead.eval(f)
+			if not f then
+				error("Error in expression: " .. ph.code, 3);
+			end
+			r = f()
+		else
+			r = stead.call(ph, 'code')
+		end
 	end
 	if type(r) == 'string' then
 		p(r)
@@ -12,7 +21,7 @@ local function call_reaction(p)
 end
 
 local function isReaction(p)
-	return  not (p.dsc and (p.ans or p.code))
+	return  not (isPhrase(p) and p.dsc and (p.ans or p.code))
 end
 
 local function isDelimiter(p)
@@ -166,7 +175,9 @@ function dialog_rescan(self, from)
 			if isDelimiter(ph) then
 				break
 			end
-			if isPhrase(ph) and not isDisabled(ph) and not isReaction(ph) then
+			if ii == start and isReaction(ph) then
+				k = k + 1
+			elseif isPhrase(ph) and not isDisabled(ph) and not isReaction(ph) then
 				ph.nam = tostring(k);
 				k = k + 1;
 			end
@@ -258,6 +269,9 @@ function dialog_psub(self, w)
 		return false
 	end
 	stead.table.insert(self.__phr_stack, i);
+	if isReaction(ph) then
+		call_reaction(ph)
+	end
 	return
 end
 
