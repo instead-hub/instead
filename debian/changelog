@@ -1,4 +1,4 @@
-instead (1.6.3) unstable; urgency=low
+7instead (1.6.3) unstable; urgency=low
 
   * bugfix in phrase handling w/o parameter;
   * bugfix in zip unpack;
@@ -14,7 +14,6 @@ instead (1.6.3) unstable; urgency=low
   * new dlg module:
   * - better dlg syntax;
   * - psub/pret/pjump/pstart;
-  * - dlg:last() -- the last answer
   * - stead.phrase_prefix;
   * compose in sprite;
   * game.onact/onwalk/onuse/oninv handlers;
@@ -28,7 +27,8 @@ instead (1.6.3) unstable; urgency=low
   * xwalk xact added;
   * lifeon with order;
   * correct output from life methods while moving;
-  * need_scene() added;
+  * stead.need_scene() added;
+  * stead.last_act() added;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 08 Mar 2012 09:27:00 +0400
 
