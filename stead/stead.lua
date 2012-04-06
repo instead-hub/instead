@@ -2243,7 +2243,9 @@ iface = {
 
 		if stead.state then
 			game._lastdisp = vv
-			game.__last_act = ACTION_TEXT
+			if type(ACTION_TEXT) == 'string' then
+				game.__last_act = ACTION_TEXT
+			end
 		end
 		if vv == nil then -- nil is error
 			vv = ''
