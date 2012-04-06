@@ -441,7 +441,7 @@ function phrase_action(self)
 		ret = stead.par(stead.scene_delim, ret, stead.back(wh));
 	end
 	
-	ret = stead.par(stead.scene_delim, last, ret);
+	ret = stead.par(stead.space_delim, last, ret);
 
 	here().__last_answer = ret;
 
