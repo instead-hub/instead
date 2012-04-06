@@ -263,6 +263,15 @@ function pret()
 	return here():pret()
 end
 
+function palias(w)
+	return function(s)
+		local ph, i = dialog_phrase(here(), w)
+		if isPhrase(ph) then
+			return ph:act()
+		end
+	end
+end
+
 function phr(ask, answ, act)
 	local i = 1
 	local r = {}
@@ -334,39 +343,25 @@ function phrase_save(self, name, h, need)
 end
 
 local function dialog_phr2obj(self)
-	local k, v, n, q, a
-
+	local k, v, n
 	if type(self.phr) ~= 'table' then
 		return
 	end
-
 	n = 0
-
 	for k,v in ipairs(self.phr) do
 		if type(v) == 'table' then
-			local nn = {}
-
-			while type(v[1]) == 'number' do
-				stead.table.insert(nn, v[1])
+			if type(v[1]) == 'number' then
+				n = v[1]
 				stead.table.remove(v, 1)
+			else
+				n = n + 1
 			end
-
-			stead.table.sort(nn);
 
 			local p = stead.phr(v)
-			if #nn == 0 then
-				n = n + 1
-				stead.table.insert(nn, n)
-			else
-				n = nn[#nn] -- maximum index
+			if self.obj[n] then
+				error ("Error in phr structure (numbering).", 4);
 			end
-
-			for q, a in ipairs(nn) do
-				if self.obj[a] then
-					error ("Error in phr structure (numbering).", 4);
-				end
-				self.obj[a] = p
-			end
+			self.obj[n] = p
 		else
 			error ("Error in phr structure (wrong item).", 4);
 		end
@@ -416,7 +411,6 @@ function phrase_action(self)
 	if not ph.always then
 		ph:disable(); -- /* disable it!!! */
 	end
-
 	local last = stead.call(ph, 'ans');
 
 	here().__last_answer = last;
