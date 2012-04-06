@@ -260,11 +260,13 @@ player  = stead.inherit(player, function(v)
 	return v
 end)
 
-function need_scene(s)
-	if not s then
-		NEED_SCENE = true
-	else
-		NEED_SCENE = s
+if stead.api_version >= "1.6.3" then
+	function need_scene(s)
+		if not s then
+			NEED_SCENE = true
+		else
+			NEED_SCENE = s
+		end
 	end
 end
 
