@@ -263,15 +263,6 @@ function pret()
 	return here():pret()
 end
 
-function palias(w)
-	return function(s)
-		local ph, i = dialog_phrase(here(), w)
-		if isPhrase(ph) then
-			return ph:act()
-		end
-	end
-end
-
 function phr(ask, answ, act)
 	local i = 1
 	local r = {}
