@@ -156,7 +156,6 @@ int game_select(const char *name)
 			curgame_dir = oldgame;
 			return -1;
 		}
-		gfx_flip();
 
 		if (instead_load(MAIN_FILE)) {
 			curgame_dir = oldgame;
