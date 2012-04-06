@@ -4,8 +4,13 @@ instead (1.6.3) unstable; urgency=low
   * bugfix in zip unpack;
   * fix in doc/menu;
   * svg logo added;
+  * busy dialog;
+  * opt_fading;
+  * normal fonts in MAEMO build;
   * wroom module added;
   * nouse module added;
+  * nolife module added;
+  * hideinv module is better now, noinv added;
   * new dlg module:
   * - better dlg syntax;
   * - psub/pret/pjump/pstart;
@@ -14,20 +19,15 @@ instead (1.6.3) unstable; urgency=low
   * compose in sprite;
   * game.onact/onwalk/onuse/oninv handlers;
   * counters module;
-  * opt_fading;
   * proxymenu module;
   * configure.sh now checks gtk+-3.0;
   * sprite.box and sprite.blank;
   * stead.add_var internal command;
   * stead.gui.hideways added;
-  * hideinv module is better now, noinv added;
-  * busy dialog;
-  * normal fonts in MAEMO build;
   * xact now searches recursive;
   * xwalk xact added;
   * lifeon with order;
   * correct output from life methods while moving;
-  * nolife module added;
   * need_scene() added;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 08 Mar 2012 09:27:00 +0400
