@@ -443,8 +443,39 @@ function phrase_action(self)
 	return ret
 end
 
-dlg = stead.hook(dlg, 
-function(f, v, ...)
+function dlg(v) --constructor
+	v.dialog_type = true;
+	if v.ini == nil then
+		v.ini = dialog_enter;
+	end
+	if v.enter == nil then
+		v.enter = dialog_enter;
+	end
+	if v.look == nil then
+		v.look = dialog_look;
+	end
+	if v.scene == nil then
+		v.scene = dialog_scene;
+	end
+	if v.pon == nil then
+		v.pon = dialog_pon;
+	end
+	if v.poff == nil then
+		v.poff = dialog_poff;
+	end
+	if v.prem == nil then
+		v.prem = dialog_prem;
+	end
+	if v.pseen == nil then
+		v.pseen = dialog_pseen;
+	end
+	if v.punseen == nil then
+		v.punseen = dialog_punseen;
+	end
+	if v.empty == nil then
+		v.empty = dialog_empty;
+	end
+
 	if v.current == nil then
 		v.current = dialog_current
 	end
@@ -466,9 +497,12 @@ function(f, v, ...)
 	if v.phrase == nil then
 		v.phrase = dialog_phrase
 	end
-	v = f(v, ...)
+
+	v = room(v);
+
 	v.__last_answer = false
 	v.__phr_stack = { 1 }
 	dialog_phr2obj(v);
-	return v
-end)
+
+	return v;
+end
