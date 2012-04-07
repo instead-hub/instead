@@ -1,27 +1,6 @@
 -- stead.phrase_prefix = '--'
-local function call_reaction(ph)
-	local r
-	if ph.dsc then
-		r = stead.call(ph, 'dsc')
-	elseif ph.code then
-		local f = ph.code
-		if type(f) == 'string' then
-			f = stead.eval(f)
-			if not f then
-				error("Error in expression: " .. ph.code, 3);
-			end
-			r = f()
-		else
-			r = stead.call(ph, 'code')
-		end
-	end
-	if type(r) == 'string' then
-		stead.p(r)
-	end
-end
-
-local function isReaction(p)
-	return  not (isPhrase(p) and p.dsc and (p.ans or p.code))
+local function isValid(p)
+	return isPhrase(p) and p.dsc and (p.ans or p.code)
 end
 
 local function isDelimiter(p)
@@ -33,7 +12,7 @@ local tagpnext = function(a, k)
 		if isPhrase(a.tag) then
 			return 1, a.tag
 		end
-		if tonumber(a.tag) then
+		if type(a.tag) == 'number' then
 			local r = dialog_phrase(a.s, a.tag)
 			if r then return 1, r end
 			return
@@ -136,6 +115,34 @@ local function phr_pop(self)
 	return true
 end
 
+local function call_empty(self)
+	local ph = dialog_phrase(self, phr_get(self))
+	local r 
+	if not isPhrase(ph) or isDisabled(ph) then
+		return
+	end
+	r = stead.call(ph, "empty")
+	if type(r) == 'string' then
+		stead.p(r)
+	end
+	return r
+end
+
+local function call_enter(ph)
+	local r, n
+	if not isPhrase(ph) or isDisabled(ph) then
+		return
+	end
+	n = 'enter'
+	if ph.dsc and not ph.ans and not ph.code then
+		n = 'dsc'
+	end
+	r = stead.call(ph, n)
+	if type(r) == 'string' then
+		stead.p(r)
+	end
+end
+
 function dialog_look(self)
 	local i,n,v,ph,ii
 	n = 1
@@ -143,10 +150,10 @@ function dialog_look(self)
 	for i,ph,ii in opairs(self.obj) do
 		if ii >= start then
 			ph = stead.ref(ph);
-			if isDelimiter(ph) then
+			if ii ~= start and isDelimiter(ph) then
 				break
 			end
-			if isPhrase(ph) and not isDisabled(ph) and not isReaction(ph) then
+			if isPhrase(ph) and not isDisabled(ph) and isValid(ph) then
 				ph.nam = tostring(n)
 				if stead.phrase_prefix then
 					v = stead.par('^', v, stead.cat(stead.phrase_prefix, ph:look()));
@@ -172,12 +179,10 @@ function dialog_rescan(self, from)
 	for i,ph,ii in opairs(self.obj) do
 		if ii >= start then
 			ph = stead.ref(ph);
-			if isDelimiter(ph) then
+			if ii ~= start and isDelimiter(ph) then
 				break
 			end
-			if ii == start and isReaction(ph) then
-				k = k + 1
-			elseif isPhrase(ph) and not isDisabled(ph) and not isReaction(ph) then
+			if isPhrase(ph) and not isDisabled(ph) and isValid(ph) then
 				ph.nam = tostring(k);
 				k = k + 1;
 			end
@@ -215,10 +220,7 @@ end
 function dialog_pjump(self, w)
 	local ph, i = dialog_phrase(self, w)
 	if not ph then
-		return false
-	end
-	if not dialog_rescan(self, i) then
-		return false
+		return
 	end
 	local n = #self.__phr_stack;
 	if n == 0 then
@@ -226,9 +228,7 @@ function dialog_pjump(self, w)
 	else
 		self.__phr_stack[n] = i
 	end
-	if isReaction(ph) then
-		call_reaction(ph)
-	end
+	call_enter(ph)
 	stead.cctx().action = true
 	return true
 end
@@ -249,6 +249,8 @@ function dialog_pstart(self, w)
 		return
 	end
 	self.__phr_stack = { i }
+	call_enter(ph)
+	stead.cctx().action = true
 	return
 end
 
@@ -264,13 +266,9 @@ function dialog_psub(self, w)
 	if not ph then
 		return false
 	end
-	if not dialog_rescan(self, i) then
-		return false
-	end
 	stead.table.insert(self.__phr_stack, i);
-	if isReaction(ph) then
-		call_reaction(ph)
-	end
+	call_enter(ph)
+	stead.cctx().action = true
 	return
 end
 
@@ -282,14 +280,14 @@ function psub(w)
 end
 
 function dialog_pret(self)
-	while true do
-		if  not phr_pop(self) then
-			break
-		end
-		if dialog_rescan(self) then
-			break
-		end
+	if not phr_pop(self) then
+		return
 	end
+	stead.cctx().action = true
+	if dialog_rescan(self) then
+		return
+	end
+	call_empty(self)
 	return
 end
 
@@ -331,6 +329,8 @@ function phr(ask, answ, act)
 	end
 	r.always = v.always
 	r.tag = v.tag
+	r.enter = v.enter
+	r.empty = v.empty
 	r = phrase(r)
 	if dis then
 		r = r:disable()
@@ -373,6 +373,15 @@ function phrase_save(self, name, h, need)
 		if self.always then
 			m = m..stead.string.format("always = %s, ", stead.tostring(self.always));
 		end
+
+		if self.enter then
+			m = m..stead.string.format("enter = %s, ", stead.tostring(self.enter));
+		end
+
+		if self.empty then
+			m = m..stead.string.format("empty = %s, ", stead.tostring(self.empty));
+		end
+
 		h:write(m..post);
 	end
 	stead.savemembers(h, self, name, false);
@@ -421,7 +430,7 @@ function dialog_phrase(self, num)
 	if isPhrase(num) then
 		return num
 	end
-	if not tonumber(num) then
+	if type(num) ~= 'number' then
 		local k,v,i
 		for k,v,i in opairs(self.obj) do
 			v = stead.ref(v)
@@ -431,13 +440,13 @@ function dialog_phrase(self, num)
 		end
 		return nil
 	end
-	num = tonumber(num)
 	return stead.ref(self.obj[num]), num;
 end
 
 function phrase_action(self)
 	local ph = self;
 	local r, ret;
+	local empty
 
 	if isDisabled(ph) then
 		return nil, false
@@ -465,8 +474,8 @@ function phrase_action(self)
 		r = true;
 	end
 
-	while isDialog(here()) and not dialog_rescan(here()) and phr_pop(here())  do -- do returns
-
+	if isDialog(here()) and not dialog_rescan(here()) then
+		empty = call_empty(here());
 	end
 
 	local wh = here();
@@ -479,7 +488,7 @@ function phrase_action(self)
 		ret = stead.par(stead.scene_delim, ret, stead.back(wh));
 	end
 	
-	ret = stead.par(stead.space_delim, last, ret);
+	ret = stead.par(stead.space_delim, last, empty, ret);
 
 	if ret == nil then
 		return r -- hack?
