@@ -114,7 +114,7 @@ local go = function (self, where, back, noenter, noexit, nodsc)
 			stead.ref(to).__visited = 1
 		end
 		if isDialog(stead.ref(to)) then
-			dialog_rescan(stead.ref(to));
+			stead.ref(to):empty(); -- aka dialog_rescan
 		end
 	end
 	return res;

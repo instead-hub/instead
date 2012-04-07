@@ -13,7 +13,7 @@ local tagpnext = function(a, k)
 			return 1, a.tag
 		end
 		if type(a.tag) == 'number' then
-			local r = dialog_phrase(a.s, a.tag)
+			local r = a.s:phrase(a.tag)
 			if r then return 1, r end
 			return
 		end
@@ -116,9 +116,10 @@ local function phr_pop(self)
 end
 
 local function call_empty(self)
-	local ph = dialog_phrase(self, phr_get(self))
+	local ph = self:phrase(phr_get(self))
 	local r 
-	if not isPhrase(ph) or isDisabled(ph) then
+	if not isPhrase(ph) or isDisabled(ph) or not ph.empty then
+		self:pret()
 		return
 	end
 	r = stead.call(ph, "empty")
@@ -167,7 +168,7 @@ function dialog_look(self)
 	return v;
 end
 
-function dialog_rescan(self, from)
+local function dialog_rescan(self, from)
 	local i,k,ph,ii, start
 	k = 1
 	local start
@@ -195,7 +196,7 @@ function dialog_rescan(self, from)
 end
 
 function dialog_enter(self)
-	if not dialog_rescan(self) then
+	if self:empty(self) then
 		return nil, false
 	end
 	return nil, true
@@ -206,7 +207,7 @@ function dialog_current(self,...)
 end
 
 function dialog_curtag(self,...)
-	local p = dialog_phrase(self, phr_get(self))
+	local p = self:phrase(phr_get(self))
 	if not isPhrase(p) then
 		return
 	end
@@ -218,9 +219,12 @@ function dialog_empty(self, from)
 end
 
 function dialog_pjump(self, w)
-	local ph, i = dialog_phrase(self, w)
+	local ph, i = self:phrase(w)
 	if not ph then
-		return
+		return false
+	end
+	if self:empty(i) then
+		return false
 	end
 	local n = #self.__phr_stack;
 	if n == 0 then
@@ -244,7 +248,7 @@ function dialog_pstart(self, w)
 	if not w then 
 		w = 1 
 	end
-	local ph, i = dialog_phrase(self, w)
+	local ph, i = self:phrase(w)
 	if not ph then
 		return
 	end
@@ -262,14 +266,17 @@ function pstart(w)
 end
 
 function dialog_psub(self, w)
-	local ph, i = dialog_phrase(self, w)
+	local ph, i = self:phrase(w)
 	if not ph then
+		return false
+	end
+	if self:empty(i) then
 		return false
 	end
 	stead.table.insert(self.__phr_stack, i);
 	call_enter(ph)
 	stead.cctx().action = true
-	return
+	return true
 end
 
 function psub(w)
@@ -284,7 +291,7 @@ function dialog_pret(self)
 		return
 	end
 	stead.cctx().action = true
-	if dialog_rescan(self) then
+	if not self:empty() then
 		return
 	end
 	call_empty(self)
@@ -415,7 +422,7 @@ local function dialog_phr2obj(self)
 		end
 	end
 	for k, v in ipairs(aliases) do
-		local ph = dialog_phrase(self, self.obj[v].alias)
+		local ph = self:phrase(self.obj[v].alias)
 		if not ph then
 			error ("Wrong alias in dlg.", 3);
 		end
@@ -474,13 +481,13 @@ function phrase_action(self)
 		r = true;
 	end
 
-	if isDialog(here()) and not dialog_rescan(here()) then
+	if isDialog(here()) and here():empty() then
 		empty = call_empty(here());
 	end
 
 	local wh = here();
 
-	while isDialog(wh) and not dialog_rescan(wh) and stead.from(wh) ~= wh do
+	while isDialog(wh) and wh:empty() and stead.from(wh) ~= wh do
 		wh = stead.from(wh)
 	end
 
