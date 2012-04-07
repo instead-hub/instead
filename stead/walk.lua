@@ -113,8 +113,8 @@ local go = function (self, where, back, noenter, noexit, nodsc)
 		elseif here().__visited == nil then
 			stead.ref(to).__visited = 1
 		end
-		if isDialog(stead.ref(to)) then
-			stead.ref(to):empty(); -- aka dialog_rescan
+		if stead.api_version < "1.6.3" and isDialog(stead.ref(to)) then
+			dialog_rescan(stead.ref(to))
 		end
 	end
 	return res;
