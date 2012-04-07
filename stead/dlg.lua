@@ -134,11 +134,10 @@ local function call_enter(ph)
 	if not isPhrase(ph) or isDisabled(ph) then
 		return
 	end
-	n = 'enter'
-	if ph.dsc and not ph.ans and not ph.code then
-		n = 'dsc'
+	if isValid(ph) then
+		return
 	end
-	r = stead.call(ph, n)
+	r = stead.call(ph, 'dsc')
 	if type(r) == 'string' then
 		stead.p(r)
 	end
@@ -149,6 +148,9 @@ function dialog_look(self)
 	n = 1
 	local start = phr_get(self)
 	for i,ph,ii in opairs(self.obj) do
+		if isPhrase(ph) then
+			ph.nam = ''
+		end
 		if ii >= start then
 			ph = stead.ref(ph);
 			if ii ~= start and isDelimiter(ph) then
@@ -338,7 +340,6 @@ function phr(ask, answ, act)
 	end
 	r.always = v.always
 	r.tag = v.tag
-	r.enter = v.enter
 	r.empty = v.empty
 	r = phrase(r)
 	if dis then
@@ -381,10 +382,6 @@ function phrase_save(self, name, h, need)
 
 		if self.always then
 			m = m..stead.string.format("always = %s, ", stead.tostring(self.always));
-		end
-
-		if self.enter then
-			m = m..stead.string.format("enter = %s, ", stead.tostring(self.enter));
 		end
 
 		if self.empty then
