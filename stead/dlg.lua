@@ -182,6 +182,9 @@ local function dialog_rescan(self, from)
 		start = phr_get(self)
 	end
 	for i,ph,ii in opairs(self.obj) do
+		if isPhrase(ph) then
+			ph.nam = ''
+		end
 		if ii >= start then
 			ph = stead.ref(ph);
 			if ii ~= start and isDelimiter(ph) then
