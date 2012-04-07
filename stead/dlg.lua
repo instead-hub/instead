@@ -471,7 +471,7 @@ function phrase_action(self)
 		if f ~= nil then
 			ret = f();
 		else
-			error ("Error while eval phrase action.");
+			error ("Error while eval phrase action:"..ph.code);
 		end
 	elseif type(ph.code) == 'function' then
 		ret = ph.code(self);
