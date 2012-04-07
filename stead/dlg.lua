@@ -174,6 +174,8 @@ local function dialog_rescan(self, from)
 	local start
 	if type(from) == 'number' then
 		start = from
+	elseif type(from) == 'string' then
+		ph, start = self:phrase(from)
 	else
 		start = phr_get(self)
 	end
