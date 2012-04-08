@@ -143,16 +143,22 @@ local function call_enter(ph)
 	end
 end
 
+local function dialog_reset(self)
+	local i,ph
+	for i,ph in pairs(self.obj) do
+		if isPhrase(ph) then
+			ph.nam = ''
+		end
+	end
+end
+
 function dialog_look(self)
 	local i,n,v,ph,ii
 	n = 1
 	local start = phr_get(self)
+	dialog_reset(self)
 	for i,ph,ii in opairs(self.obj) do
-		if isPhrase(ph) then
-			ph.nam = ''
-		end
 		if ii >= start then
-			ph = stead.ref(ph);
 			if ii ~= start and isDelimiter(ph) then
 				break
 			end
@@ -170,10 +176,9 @@ function dialog_look(self)
 	return v;
 end
 
-local function dialog_rescan(self, from)
+local function dialog_rescan(self, from, naming)
 	local i,k,ph,ii, start
 	k = 1
-	local start
 	if type(from) == 'number' then
 		start = from
 	elseif type(from) == 'string' then
@@ -182,16 +187,14 @@ local function dialog_rescan(self, from)
 		start = phr_get(self)
 	end
 	for i,ph,ii in opairs(self.obj) do
-		if isPhrase(ph) then
-			ph.nam = ''
-		end
 		if ii >= start then
-			ph = stead.ref(ph);
 			if ii ~= start and isDelimiter(ph) then
 				break
 			end
 			if isPhrase(ph) and not isDisabled(ph) and isValid(ph) then
-				ph.nam = tostring(k);
+				if naming then
+					ph.nam = tostring(k)
+				end
 				k = k + 1;
 			end
 		end
@@ -222,7 +225,7 @@ function dialog_curtag(self,...)
 end
 
 function dialog_empty(self, from)
-	return not dialog_rescan(self, from);
+	return not dialog_rescan(self, from, false);
 end
 
 function dialog_pjump(self, w)
@@ -508,7 +511,9 @@ end
 function dlg(v) --constructor
 	v.dialog_type = true;
 	if v.ini == nil then
-		v.ini = dialog_enter;
+		v.ini = function(s)
+			dialog_rescan(s, nil, true);
+		end
 	end
 	if v.enter == nil then
 		v.enter = dialog_enter;
