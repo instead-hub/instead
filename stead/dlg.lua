@@ -176,7 +176,7 @@ function dialog_look(self)
 	return v;
 end
 
-local function dialog_rescan(self, from, naming)
+function dialog_rescan(self, naming, from)
 	local i,k,ph,ii, start
 	k = 1
 	if type(from) == 'number' then
@@ -225,16 +225,13 @@ function dialog_curtag(self,...)
 end
 
 function dialog_empty(self, from)
-	return not dialog_rescan(self, from, false);
+	return not dialog_rescan(self, false, from);
 end
 
 function dialog_pjump(self, w)
 	local ph, i = self:phrase(w)
 	if not ph then
-		return false
-	end
-	if self:empty(i) then
-		return false
+		return
 	end
 	local n = #self.__phr_stack;
 	if n == 0 then
@@ -244,7 +241,7 @@ function dialog_pjump(self, w)
 	end
 	call_enter(ph)
 	stead.cctx().action = true
-	return true
+	return
 end
 
 function pjump(w)
@@ -278,15 +275,12 @@ end
 function dialog_psub(self, w)
 	local ph, i = self:phrase(w)
 	if not ph then
-		return false
-	end
-	if self:empty(i) then
-		return false
+		return
 	end
 	stead.table.insert(self.__phr_stack, i);
 	call_enter(ph)
 	stead.cctx().action = true
-	return true
+	return
 end
 
 function psub(w)
@@ -512,7 +506,7 @@ function dlg(v) --constructor
 	v.dialog_type = true;
 	if v.ini == nil then
 		v.ini = function(s)
-			dialog_rescan(s, nil, true);
+			dialog_rescan(s, true);
 		end
 	end
 	if v.enter == nil then
