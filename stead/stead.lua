@@ -50,6 +50,24 @@ stead = {
 	end
 }
 
+stead.last_act = function(s)
+	local r = game.__last_act
+
+	if s ~= nil and s ~= true then
+		game.__last_act = s
+	end
+
+	return r
+end
+
+stead.need_scene = function(s)
+	if not s then
+		NEED_SCENE = true
+	else
+		NEED_SCENE = s
+	end
+end
+
 if not stead.busy then
 	stead.busy = function(v)
 	end
@@ -2243,9 +2261,7 @@ iface = {
 
 		if stead.state then
 			game._lastdisp = vv
-			if type(ACTION_TEXT) == 'string' then
-				game.__last_act = ACTION_TEXT
-			end
+			stead.last_act(ACTION_TEXT)
 		end
 		if vv == nil then -- nil is error
 			vv = ''
@@ -2960,16 +2976,6 @@ function stead_version(v)
 	end
 	if v >= "1.6.3" then
 		require ("dlg")
-		stead.last_act = function()
-			return game.__last_act
-		end
-		stead.need_scene = function(s)
-			if not s then
-				NEED_SCENE = true
-			else
-				NEED_SCENE = s
-			end
-		end
 	end
 end
 instead_version = stead_version
