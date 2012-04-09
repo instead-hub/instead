@@ -311,7 +311,6 @@ end
 
 function phr(ask, answ, act)
 	local i = 1
-	local r = {}
 	local dis = false
 	
 	if type(ask) ~= 'table' then -- old style
@@ -330,22 +329,18 @@ function phr(ask, answ, act)
 		i = i + 1
 	end
 
-	r.dsc = v[i]
+	v.dsc = v[i];
 	i = i + 1
-	r.ans = v[i]
+	v.ans = v[i];
 	i = i + 1
-	r.code = v.code
-	if r.code == nil then
-		r.code = v[i]
+	if v.code == nil then
+		v.code = v[i];
 	end
-	r.always = v.always
-	r.tag = v.tag
-	r.empty = v.empty
-	r = phrase(r)
+	v = phrase(v)
 	if dis then
-		r = r:disable()
+		v = v:disable()
 	end
-	return r;
+	return v;
 end
 
 function _phr(ask, answ, act) -- compat only?
