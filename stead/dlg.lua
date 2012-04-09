@@ -329,11 +329,15 @@ function phr(ask, answ, act)
 		i = i + 1
 	end
 
-	v.dsc = v[i];
-	i = i + 1
-	v.ans = v[i];
-	i = i + 1
-	if v.code == nil then
+	if v.dsc == nil then
+		v.dsc = v[i];
+		i = i + 1
+	end
+	if v.ans == nil then
+		v.ans = v[i];
+		i = i + 1
+	end
+	if v.code == nil and (type(v[i]) == 'function' or type(v[i]) == 'string') then
 		v.code = v[i];
 	end
 	v = phrase(v)
