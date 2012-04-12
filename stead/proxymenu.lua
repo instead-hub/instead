@@ -23,7 +23,7 @@ end
 stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 	local v = {};
 	v.proxy_type = true;
-	v.nam = stead.menu_prefix..stead.nameof(o);
+	v.nam = stead.menu_prefix..stead.dispof(o);
 	if inv():srch(o) then
 		v.nam = txtem(v.nam);
 	end

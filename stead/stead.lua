@@ -2960,6 +2960,21 @@ end
 
 stead.nameof = nameof
 
+function dispof(v)
+	if isObject(v) then
+		local r
+		if game.gui then
+			r = stead.call(v, 'disp')
+		end
+		if r == nil then
+			r = stead.call(v, 'nam');
+		end
+		return r
+	end
+end
+
+stead.dispof = dispof
+
 function stead_version(v)
 	if not tostring(v) then
 		return
