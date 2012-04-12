@@ -2960,7 +2960,7 @@ end
 
 stead.nameof = nameof
 
-function dispof(v)
+stead.dispof = function(v)
 	if isObject(v) then
 		local r
 		if game.gui then
@@ -2972,8 +2972,6 @@ function dispof(v)
 		return r
 	end
 end
-
-stead.dispof = dispof
 
 function stead_version(v)
 	if not tostring(v) then
