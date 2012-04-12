@@ -258,13 +258,7 @@ function list_str(self)
 	for i,o in opairs(self) do
 		o = stead.ref(o);
 		if isObject(o) and not isDisabled(o) then
-			vv = nil
-			if game.gui then
-				vv = stead.call(o, 'disp');
-			end
-			if type(vv) ~= 'string' then
-				vv = stead.call(o, 'nam');
-			end
+			vv = stead.dispof(o)
 			vv = stead.xref(vv, o);
 			v = stead.par(stead.delim, v, vv);
 		end
@@ -283,13 +277,7 @@ function obj_str(self)
 	for i,o in opairs(self.obj) do
 		o = stead.ref(o);
 		if isObject(o) and not isDisabled(o) then
-			vv = nil
-			if game.gui then
-				vv = stead.call(o, 'disp');
-			end
-			if type(vv) ~= 'string' then
-				vv = stead.call(o, 'nam');
-			end
+			vv = stead.dispof(o)
 			vv = stead.xref(vv, o);
 			v = stead.par(stead.delim, v, vv, obj_str(o));
 		end
