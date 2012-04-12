@@ -11,6 +11,9 @@ xact = function(n, f) -- just simple action!
 	end
 	v.xaction_type = true
 	v.nam = n
+	if stead.api_version >= "1.6.3" then
+		v.disp = false
+	end
 	v.act = f;
 	v = obj(v);
 	v.save = function(self, name, h, need)
