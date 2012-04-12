@@ -2697,7 +2697,12 @@ function exist(obj, wh)
 end
 
 function have(obj)
-	local o = inv():srch(obj);
+	local o
+	if stead.api_version >= "1.6.3" then
+		o = me():srch(obj);
+	else
+		o = inv():srch(obj);
+	end
 	o = stead.ref(o);
 	if isObject(o) then
 		return o
