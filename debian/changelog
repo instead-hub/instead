@@ -29,6 +29,7 @@
   * correct output from life methods while moving;
   * stead.need_scene() added;
   * stead.last_act() added;
+  * move/purge/remove/replace now works with lists too;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 08 Mar 2012 09:27:00 +0400
 

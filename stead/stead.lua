@@ -2550,6 +2550,7 @@ function remove(obj, from)
 	end
 	return o
 end
+stead.remove = remove
 
 function purge(obj, from)
 	local o,w
@@ -2574,6 +2575,7 @@ function purge(obj, from)
 	end
 	return o
 end
+stead.purge = purge
 
 function taketo(obj, wh, pos)
 	local o = remove(obj, wh);
@@ -2610,7 +2612,11 @@ function putto(obj, w, pos)
 		wh = stead.deref(w);
 		w = stead.ref(w);
 	end
-	w.obj:add(obj, pos);
+	if isList(w) then
+		w:add(obj, pos);
+	else
+		w.obj:add(obj, pos);
+	end
 	if type(wh) == 'string' then
 		o.__where__ = wh;
 	end
@@ -2619,24 +2625,30 @@ end
 
 
 function put(obj, w)
-	return putto(obj, w);
+	return stead.placeto(obj, w);
 end
 
 function putf(obj, w)
-	return putto(obj, w, 1);
+	return stead.placeto(obj, w, 1);
 end
 
 place = put
 placef = putf
 placeto = putto
+stead.placeto = placeto
 
 function replace(obj, obj2, from)
 	local o,w,i
 	if not isObject(stead.ref(obj2)) then
 		error ("Wrong parameter to replace.", 2);
 	end
+	from = stead.ref(from)
 	if from then
-		o,w = stead.ref(from):srch(obj);
+		if isList(from) then
+			from:replace(obj, obj2);
+			return stead.ref(obj)
+		end
+		o,w = from:srch(obj);
 	else
 		o,w = here():srch(obj);
 	end
@@ -2644,7 +2656,7 @@ function replace(obj, obj2, from)
 		stead.ref(w).obj:replace(o, obj2);
 		stead.ref(obj2).__where__ = stead.deref(w);
 	else
-		place(obj2, from);
+		stead.placeto(obj2, from);
 	end
 	o = stead.ref(o);
 	if not isObject(o) then
@@ -2714,18 +2726,18 @@ function have(obj)
 end
 
 function moveto(obj, there, from, pos)
-	remove(obj, from);
-	putto(obj, there, pos);
+	stead.remove(obj, from);
+	stead.placeto(obj, there, pos);
 	return stead.ref(obj);
 end
-
+stead.moveto = moveto
 
 function move(obj, there, from)
-	return moveto(obj, there, from);
+	return stead.moveto(obj, there, from);
 end
 
 function movef(obj, there, from)
-	return moveto(obj, there, from, 1);
+	return stead.moveto(obj, there, from, 1);
 end
 
 function get_picture()
