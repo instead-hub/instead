@@ -2529,8 +2529,12 @@ end
 
 function remove(obj, from)
 	local o,w
+	from = stead.ref(from)
 	if from then
-		o,w = stead.ref(from):srch(obj);
+		if isList(from) then
+			return from:del(obj)
+		end
+		o,w = from:srch(obj);
 	else
 		o,w = here():srch(obj);
 	end
@@ -2549,8 +2553,12 @@ end
 
 function purge(obj, from)
 	local o,w
+	from = stead.ref(from)
 	if from then
-		o,w = stead.ref(from):srch(obj, true);
+		if isList(from) then
+			return from:purge(obj)
+		end
+		o,w = from:srch(obj, true);
 	else
 		o,w = here():srch(obj, true);
 	end
