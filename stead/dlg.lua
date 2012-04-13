@@ -178,7 +178,7 @@ end
 
 function dialog_rescan(self, naming, from)
 	local i,k,ph,ii, start
-	k = 1
+	k = 0
 	if type(from) == 'number' then
 		start = from
 	elseif type(from) == 'string' then
@@ -199,10 +199,10 @@ function dialog_rescan(self, naming, from)
 			end
 		end
 	end
-	if k == 1 then
+	if k == 0 then
 		return false
 	end
-	return true
+	return k
 end
 
 function dialog_enter(self)
@@ -225,7 +225,13 @@ function dialog_curtag(self,...)
 end
 
 function dialog_empty(self, from)
-	return not dialog_rescan(self, false, from);
+	return (dialog_rescan(self, false, from) == false)
+end
+
+function dialog_visible(self, from)
+	local r = dialog_rescan(self, false, from);
+	if not r then r = 0 end
+	return r
 end
 
 function dialog_pjump(self, w)
@@ -534,6 +540,10 @@ function dlg(v) --constructor
 	end
 	if v.empty == nil then
 		v.empty = dialog_empty;
+	end
+
+	if v.visible == nil then
+		v.visible = dialog_visible;
 	end
 
 	if v.current == nil then
