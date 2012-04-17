@@ -1,7 +1,7 @@
 instead (1.7.0) unstable; urgency=low
 
-  * bugfix in phrase handling w/o parameter;
-  * bugfix in zip unpack;
+  * bug fix in phrase handling w/o parameter;
+  * bug fix in zip unpack;
   * fix in doc/menu;
   * svg logo added;
   * busy dialog;
