@@ -218,9 +218,6 @@ function dialog_current(self, w, ...)
 		local ph, i = self:phrase(w)
 		if ph then
 			self.__phr_stack = { i }
-			if self == here() then
-				stead.cctx().action = true
-			end
 		end
 	end
 	return r
