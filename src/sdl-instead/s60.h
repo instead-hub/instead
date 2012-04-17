@@ -1,7 +1,7 @@
 #ifndef S60_H
 #define S60_H
 #define PATH_MAX 256
-#define VERSION "1.6.3"
+#define VERSION "1.7.0"
 #define DATAPATH "./"
 #define STEAD_PATH DATAPATH"stead/"
 #define THEMES_PATH DATAPATH"themes/"

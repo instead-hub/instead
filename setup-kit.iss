@@ -1,11 +1,11 @@
 [Setup]
 AppName=INSTEAD-KIT
-AppVerName=INSTEAD 1.6.3
+AppVerName=INSTEAD 1.7.0
 DefaultDirName={pf}\Pinebrush games\INSTEAD
 DefaultGroupName=Pinebrush games
 UninstallDisplayIcon={app}\sdl-instead.exe
 OutputDir=.
-OutputBaseFilename=instead-kit-1.6.3
+OutputBaseFilename=instead-kit-1.7.0
 AllowNoIcons=true
 
 [Languages]

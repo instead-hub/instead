@@ -1,4 +1,4 @@
-instead (1.6.3) unstable; urgency=low
+instead (1.7.0) unstable; urgency=low
 
   * bugfix in phrase handling w/o parameter;
   * bugfix in zip unpack;
@@ -32,7 +32,7 @@ instead (1.6.3) unstable; urgency=low
   * move/purge/remove/replace now works with lists too;
   * dialog:visible added;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 08 Mar 2012 09:27:00 +0400
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 17 Apr 2012 13:40:00 +0400
 
 instead (1.6.2) unstable; urgency=low
 
