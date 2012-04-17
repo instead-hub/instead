@@ -1,4 +1,4 @@
-7instead (1.6.3) unstable; urgency=low
+instead (1.6.3) unstable; urgency=low
 
   * bugfix in phrase handling w/o parameter;
   * bugfix in zip unpack;
