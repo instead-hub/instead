@@ -212,12 +212,25 @@ function dialog_enter(self)
 	return nil, true
 end
 
-function dialog_current(self,...)
-	return phr_get(self)
+function dialog_current(self, w, ...)
+	local r = phr_get(self)
+	if w then
+		local ph, i = self:phrase(w)
+		if ph then
+			self.__phr_stack = { i }
+			if self == here() then
+				stead.cctx().action = true
+			end
+		end
+	end
+	return r
 end
 
-function dialog_curtag(self,...)
+function dialog_curtag(self, w, ...)
 	local p = self:phrase(phr_get(self))
+	if w then
+		self:current(w)
+	end
 	if not isPhrase(p) then
 		return
 	end
@@ -553,6 +566,7 @@ function dlg(v) --constructor
 	if v.curtag == nil then
 		v.curtag = dialog_curtag
 	end
+
 	if v.pstart == nil then
 		v.pstart = dialog_pstart
 	end
