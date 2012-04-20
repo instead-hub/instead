@@ -185,9 +185,8 @@ instead.get_ways = get_ways;
 function get_title()
 	local s
 	if stead.api_version >= "1.2.0" then
-		s = stead.call(here(), 'disp');
-	end
-	if type(s) ~= 'string' then
+		s = stead.dispof(here());
+	else
 		s = stead.call(here(), 'nam');
 	end
 	if type(s) == 'string' and s ~= '' then
