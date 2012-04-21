@@ -14,7 +14,12 @@ end
 
 function player_action(self, what, ...)
 	local v,r,obj,vv
-	obj = _G[what];
+
+	if isXaction(what) then -- already xact
+		obj = what
+	else
+		obj = _G[what];
+	end
 	if not isXaction(obj) then
 		obj = stead.ref(self.where):srch(what);
 	end
@@ -46,7 +51,14 @@ function player_use(self, what, onwhat, ...)
 	local obj, obj2, v, vv, r;
 	local scene_use_mode = false
 
+	obj = _G[what];
+
+	if isXaction(obj) then -- use xact is act
+		return self:action(obj, onwhat, ...)
+	end
+
 	obj = self:srch(what); -- in inv?
+
 	if not obj then -- no
 		obj = stead.ref(self.where):srch(what); -- in scene?
 		if not obj then -- no!
@@ -54,6 +66,7 @@ function player_use(self, what, onwhat, ...)
 		end
 		scene_use_mode = true -- scene_use_mode!
 	end
+
 	obj = stead.ref(obj);
 	if onwhat == nil then -- only one?
 		if scene_use_mode then
