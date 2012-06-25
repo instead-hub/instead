@@ -61,7 +61,7 @@ stead.last_act = function(s)
 end
 
 stead.need_scene = function(s)
-	if not s then
+	if s == nil then
 		NEED_SCENE = true
 	else
 		NEED_SCENE = s
