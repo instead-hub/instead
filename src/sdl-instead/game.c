@@ -1110,8 +1110,11 @@ img_t	game_pict_scale(img_t img, int ww, int hh)
 	game_pic_w = gfx_img_w(img);
 	game_pic_h = gfx_img_h(img);
 
-	if (!cache_have(gfx_image_cache(), img))
+	if (!cache_have(gfx_image_cache(), img)) {
+		game_pic_w = (int)((float)game_pic_w / (float)game_theme.scale);
+		game_pic_h = (int)((float)game_pic_h / (float)game_theme.scale);
 		return img; /* do not scale sprites! */
+	}
 
 	if (game_theme.scale > 1.0f)
 		theme_img_scale(&img);
