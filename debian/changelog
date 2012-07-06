@@ -1,6 +1,7 @@
 instead (1.7.1) unstable; urgency=low
 
   * bug fix in stead.need_scene() with parameter;
+  * bug fix in click on sprite;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 25 Jun 2012 13:40:00 +0400
 
