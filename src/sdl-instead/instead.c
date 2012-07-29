@@ -1463,6 +1463,17 @@ static int luaB_mouse_pos(lua_State *L) {
 	return 2;
 }
 
+extern int mouse_filter_delay;
+
+static int luaB_mouse_filter(lua_State *L) {
+	int d = luaL_optnumber(L, 1, -1);
+	int ov = mouse_filter_delay;
+	if (d != -1)
+		mouse_filter_delay = d;
+	lua_pushnumber(L, ov);
+	return 1;
+}
+
 static int luaB_get_ticks(lua_State *L) {
 	lua_pushnumber(L, gfx_ticks());
 	return 1;
@@ -1634,6 +1645,8 @@ static const luaL_Reg base_funcs[] = {
 	{"sounds_free", luaB_free_sounds},
 	
 	{"mouse_pos", luaB_mouse_pos},
+	{"mouse_filter", luaB_mouse_filter},
+
 
 	{"font_load", luaB_load_font},
 	{"font_free", luaB_free_font},

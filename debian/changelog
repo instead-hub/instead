@@ -2,6 +2,7 @@ instead (1.7.1) unstable; urgency=low
 
   * bug fix in stead.need_scene() with parameter;
   * bug fix in click on sprite;
+  * stead.mouse_filter(ms) added;
   * CPPFLAGS added in Makefile;
   * scaler is updaed from SDL_gfx 2.0.24;
 
