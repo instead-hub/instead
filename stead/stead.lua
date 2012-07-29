@@ -10,6 +10,7 @@ stead = {
 	math = math,
 	ticks = get_ticks,
 	mouse_pos = mouse_pos,
+	mouse_filter = mouse_filter, 
 	menu_toggle = menu_toggle,
 	set_timer = set_timer,
 	next = next,

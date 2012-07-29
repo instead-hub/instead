@@ -18,6 +18,7 @@ idf_t game_idf = NULL;
 
 int game_own_theme = 0;
 int game_theme_changed = 0;
+int mouse_filter_delay = 400;
 
 static int game_pic_w = 0;
 static int game_pic_h = 0;
@@ -2300,9 +2301,9 @@ static int scroll_pdown(int id)
 int mouse_filter(int filter)
 {
 	static unsigned int old_counter = 0;
-	if (!opt_filter)
+	if (!opt_filter || !mouse_filter_delay)
 		return 0;
-	if (filter && (abs(old_counter - timer_counter) <= (400 / HZ))) /* 400 ms */
+	if (filter && (abs(old_counter - timer_counter) <= (mouse_filter_delay / HZ))) /* 400 ms */
 		return -1;
 	old_counter = timer_counter;
 	return 0;
