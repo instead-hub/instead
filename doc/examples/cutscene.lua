@@ -56,11 +56,11 @@ end
 cutscene = function(v)
 	v.txt = v.dsc
 
-	if v.left then
-		error ("Do not use left in cutscene.", 2)
+	if v.exit then
+		error ("Do not use exit in cutscene.", 2)
 	end
 
-	v.left = function(s)
+	v.exit = function(s)
 		timer:set(s._timer);
 		s:reset()
 	end;
