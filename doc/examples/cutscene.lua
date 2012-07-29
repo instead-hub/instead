@@ -98,6 +98,7 @@ cutscene = function(v)
 		s._fading = nil
 		s._txt = nil
 		s._dsc = nil
+		s._pic = nil
 	end
 
 	v:reset()
