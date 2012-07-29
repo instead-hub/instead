@@ -56,11 +56,11 @@ end
 cutscene = function(v)
 	v.txt = v.dsc
 
-	if v.exit then
-		error ("Do not use exit in cutscene.", 2)
+	if v.left then
+		error ("Do not use left in cutscene.", 2)
 	end
 
-	v.exit = function(s)
+	v.left = function(s)
 		timer:set(s._timer);
 		s:reset()
 	end;
@@ -103,11 +103,11 @@ cutscene = function(v)
 
 	v:reset()
 
-	if v.enter then
-		error ("Do not use enter in cutscene.", 2)
+	if v.entered then
+		error ("Do not use entered in cutscene.", 2)
 	end
 
-	v.enter = function(self)
+	v.entered = function(self)
 		self:reset()
 		self._timer = timer:get()
 		self:step();
