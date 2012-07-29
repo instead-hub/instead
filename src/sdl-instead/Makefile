@@ -14,7 +14,7 @@ OBJ     := $(patsubst %.c, %.o, $(SRC)) $(ADDOBJ)
 all: sdl-instead$(EXE)
 
 $(OBJ): %.o : %.c $(H)
-	$(CC) -c $(<) $(I) $(CFLAGS)
+	$(CC) -c $(<) $(I) $(CFLAGS) $(CPPFLAGS)
 
 sdl-instead$(EXE):  $(OBJ) $(RESOURCES)
 	$(CC) $(CFLAGS) $(^) $(LDFLAGS) -o $(@) 
