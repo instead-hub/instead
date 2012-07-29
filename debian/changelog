@@ -2,6 +2,8 @@ instead (1.7.1) unstable; urgency=low
 
   * bug fix in stead.need_scene() with parameter;
   * bug fix in click on sprite;
+  * CPPFLAGS added in Makefile;
+  * scaler is updaed from SDL_gfx 2.0.24;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 25 Jun 2012 13:40:00 +0400
 
