@@ -10,6 +10,9 @@ function isForSave(k, v, s) -- k - key, v - value, s -- parent table
 	if type(v) == 'function' or type(v) == 'userdata' then
 		return false
 	end
+	if type(k) ~= 'string' then
+		return false
+	end
 	return stead.string.find(k, '_') ==  1
 end
 

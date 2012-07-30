@@ -1831,8 +1831,10 @@ stead.savemembers = function(h, self, name, need)
 
 			if type(k) == 'string' then
 				stead.savevar(h, v, name..'['..stead.string.format("%q",k)..']', need or need2);
-			elseif type(k) ~= 'function' then
+			elseif type(k) == 'number' then
 				stead.savevar(h, v, name.."["..k.."]", need or need2)
+			elseif type(k) == 'table' and type(k.key_name) == 'string' then
+				stead.savevar(h, v, name.."["..k.key_name.."]", need or need2)
 			end
 		end
 	end
