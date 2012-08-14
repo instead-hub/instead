@@ -179,6 +179,7 @@ end
 execute_cmd = room {
 	nam = "Execute Lua code",
 	debug = true,
+	pic = true,
 	system_type = true, 
 	forcedsc = true,
 	dsc = "Enter Lua code here to exec.",
@@ -203,6 +204,7 @@ execute_cmd = room {
 dump_object = room {
 	nam = "Dump object",
 	debug = true,
+	pic = true,
 	system_type = true, 
 	forcedsc = true,
 	dsc = "Enter object name here to dump.",
@@ -226,6 +228,7 @@ dump_object = room {
 
 choose_location = dlg {
 	debug = true,
+	pic = true,
 	system_type = true, 
 	forcedsc = true,
 	nam = 'Go to',
@@ -250,6 +253,7 @@ choose_location = dlg {
 
 choose_object = dlg {
 	debug = true,
+	pic = true,
 	system_type = true, 
 	forcedsc = true,
 	nam = 'Get object',
@@ -274,6 +278,7 @@ choose_object = dlg {
 
 drop_object = dlg {
 	debug = true,
+	pic = true,
 	forcedsc = true,
 	system_type = true, 
 	nam = 'Drop object',
@@ -309,6 +314,7 @@ end
 
 debug_dlg = dlg {
 	debug = true,
+	pic = true,
 	system_type = true, 
 	forcedsc = true,
 	nam = 'Debug Tool',
