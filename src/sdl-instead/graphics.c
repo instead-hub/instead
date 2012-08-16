@@ -2681,7 +2681,7 @@ static int word_token(const char *p, char **eptr)
 	return process_word_token(p, eptr, 'w');
 }
 
-static int lookup_cjk(const char *ptr)
+static int lookup_cjk(const char *ptr, int limit)
 {
 	unsigned long sym;
 	int off = 0, rc;
@@ -2690,6 +2690,8 @@ static int lookup_cjk(const char *ptr)
 			return off;
 		off += rc;
 		ptr += rc;
+		if (off >= limit)
+			break;
 	}
 	return off;
 }
@@ -2710,8 +2712,8 @@ static const char *lookup_token_or_sp(const char *ptr)
 	const char *p = ptr;
 	while (*p) {
 		int cjk, rc;
-		cjk = lookup_cjk(p);
 		rc = strcspn(p, " .,:!+-?/<\t\n");
+		cjk = lookup_cjk(p, rc);
 		if (p[cjk] && cjk < rc) { /* cjk symbol found! */
 			rc = cjk;
 			if (!rc)
