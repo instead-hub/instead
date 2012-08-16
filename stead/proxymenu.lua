@@ -23,9 +23,19 @@ end
 stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 	local v = {};
 	v.proxy_type = true;
-	v.nam = stead.menu_prefix..stead.dispof(o);
+
+	local d = stead.dispof(o);
+
+	if type(d) == 'string' then
+		v.nam = stead.menu_prefix..d;
+	end
+
 	if inv():srch(o) then
 		v.nam = txtem(v.nam);
+	end
+
+	if not v.nam then
+		v.nam = true
 	end
 
 	v.pobj = o;
