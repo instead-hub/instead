@@ -164,7 +164,6 @@ extern int theme_relative;
 
 #define DIRECT_MODE (game_theme.gfx_mode == GFX_MODE_DIRECT)
 #define SCALABLE_THEME (game_theme.gfx_scalable)
-#define SCALABLE_X_THEME (game_theme.gfx_scalable & 2)
 #define SCALABLE_THEME_SMOOTH (game_theme.gfx_scalable & 1)
 
 #endif

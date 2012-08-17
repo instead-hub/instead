@@ -457,26 +457,22 @@ static  int game_theme_scale(int w, int h)
 		goto out;
 	}
 
-	if (!SCALABLE_THEME) {
-		t->scale = 1.0f;
-		t->xoff = (w - t->w) / 2;
-		t->yoff = (h - t->h) / 2;
-		goto out;
-	}
 
 	xs = (float)w / (float)t->w;
 	ys = (float)h / (float)t->h;
 	
 	v = (xs < ys)?xs:ys;
 
-	if (SCALABLE_X_THEME) {
-		if (v > 1.0f)
-			t->scale = floor(v);
-		else
-			t->scale = 1.0f / ceil(1.0f / v);
-		t->xoff = (w - t->w * t->scale) / 2;
-		t->yoff = (h - t->h * t->scale) / 2;
-		goto out;
+	if (!SCALABLE_THEME) {
+		if (v > 1.0f) 
+			v = floor(v);
+		else {
+			float f = ceil(1.0f / v);
+			int ff = 1;
+			while (ff && ff < f)
+				ff <<= 1;
+			v = 1.0f / (float)ff;
+		}
 	}
 
 	xoff = (w - t->w*v)/2;
@@ -809,10 +805,12 @@ int game_theme_init(void)
 		}
 	}
 #endif
+#if 0
 	if (!SCALABLE_THEME && (w < game_theme.w || h < game_theme.h)) { /* no scalable? TODO: message? */
 		w = game_theme.w;
 		h = game_theme.h;
 	}
+#endif
 	game_theme_scale(w, h);
 
 	if (gfx_set_mode(game_theme.w, game_theme.h, opt_fs)) {
