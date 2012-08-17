@@ -814,13 +814,15 @@ int game_theme_init(void)
 			w = opt_mode[0];
 			h = opt_mode[1];
 		}
-	} else if (opt_fs) { /* selected and full screen */
+	}
+#if 0 /* not useful */
+	 else if (opt_fs) { /* selected and full screen */
 		if (gfx_get_max_mode(&w, &h) || (opt_mode[0] <= w && opt_mode[1] <= h)) {
 			w = opt_mode[0];
 			h = opt_mode[1];
 		}
 	}
-
+#endif
 	if (theme_scalable_mode(w, h)) { /* no scalable? TODO: message? */
 		w = game_theme.w;
 		h = game_theme.h;
