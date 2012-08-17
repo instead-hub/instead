@@ -1254,9 +1254,15 @@ int gfx_prev_mode(int *w, int *h)
 		return -1;
 	i --;	
 		
-	if (gfx_get_mode(i, &ww, &hh))
+	while (i >= 0) {
+		if (gfx_get_mode(i, &ww, &hh))
+			return -1;
+		if (!theme_scalable_mode(ww, hh))
+			break;
+		i --;
+	}
+	if (i < 0)
 		return -1;
-		
 	*w = ww; *h = hh;
 	return 0;
 }
@@ -1274,10 +1280,15 @@ int gfx_next_mode(int *w, int *h)
 		if (ww == *w && hh == *h)
 			break;
 	}
-	
-	if (gfx_get_mode(i, &ww, &hh))
-		return -1;
-		
+
+	while (1) {
+		if (gfx_get_mode(i, &ww, &hh))
+			return -1;
+		if (!theme_scalable_mode(ww, hh))
+			break;
+		i ++;
+	}
+
 	*w = ww; *h = hh;
 	return 0;
 }
@@ -1300,8 +1311,10 @@ int gfx_get_max_mode(int *w, int *h)
 
 	while (!gfx_get_mode(i, &ww, &hh)) {
 		if ((ww * hh >= (*w) * (*h)) && ww > (*w)) {
-			*w = ww;
-			*h = hh;
+			if (!theme_scalable_mode(ww, hh)) {
+				*w = ww;
+				*h = hh;
+			}
 		}
 		i ++;
 	}
@@ -1418,7 +1431,7 @@ void gfx_video_done(void)
 	TTF_Quit();
 }
 
-img_t gfx_scale(img_t src, float xscale, float yscale)
+img_t gfx_scale(img_t src, float xscale, float yscale, int smooth)
 {
 	anigif_t ag;
 	if ((ag = is_anigif(Surf(src)))) {
@@ -1433,7 +1446,7 @@ img_t gfx_scale(img_t src, float xscale, float yscale)
 		}
 		return ag->frames[0].surface;
 	}
-	return (img_t)zoomSurface((SDL_Surface *)src, xscale, yscale, 1);
+	return (img_t)zoomSurface((SDL_Surface *)src, xscale, yscale, smooth);
 }
 
 img_t gfx_rotate(img_t src, float angle)

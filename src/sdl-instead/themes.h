@@ -143,6 +143,7 @@ extern int	game_theme_update(void);
 extern int 	theme_load(const char *name);
 extern char 	*game_local_themes_path(void);
 extern int 	theme_img_scale(img_t *p);
+extern int	theme_scalable_mode(int w, int h);
 
 extern int theme_relative;
 
@@ -163,5 +164,7 @@ extern int theme_relative;
 
 #define DIRECT_MODE (game_theme.gfx_mode == GFX_MODE_DIRECT)
 #define SCALABLE_THEME (game_theme.gfx_scalable)
+#define SCALABLE_X_THEME (game_theme.gfx_scalable & 2)
+#define SCALABLE_THEME_SMOOTH (game_theme.gfx_scalable & 1)
 
 #endif
