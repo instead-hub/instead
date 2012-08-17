@@ -50,8 +50,11 @@ sprite = {
 	dup = function(name, ...)
 		return stead.sprite_dup(name, ...);
 	end;
-	scale = function(name, xs, ys, ...)
-		return stead.sprite_scale(name, xs, ys, ...);
+	scale = function(name, xs, ys, smooth, ...)
+		if smooth ~= nil then
+			if smooth then smooth = 1 else smooth = 0 end
+		end
+		return stead.sprite_scale(name, xs, ys, smooth,...);
 	end;
 	rotate = function(name, angle, ...)
 		return stead.sprite_rotate(name, angle, ...);

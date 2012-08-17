@@ -1150,7 +1150,8 @@ static int luaB_scale_sprite(lua_State *L) {
 	const char *src = luaL_optstring(L, 1, NULL);
 	float xs = luaL_optnumber(L, 2, 0);
 	float ys = luaL_optnumber(L, 3, 0);
-	const char *desc = luaL_optstring(L, 4, NULL);
+	int smooth = luaL_optnumber(L, 4, 1);
+	const char *desc = luaL_optstring(L, 5, NULL);
 
 	if (!src)
 		return 0;
@@ -1165,7 +1166,7 @@ static int luaB_scale_sprite(lua_State *L) {
 	if (ys == 0)
 		ys = xs;
 
-	img2 = gfx_scale(s, xs, ys, 1);
+	img2 = gfx_scale(s, xs, ys, smooth);
 
 	if (!img2)
 		return 0;
