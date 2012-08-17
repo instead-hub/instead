@@ -433,13 +433,46 @@ int theme_img_scale(img_t *p)
 	if (!cache_have(gfx_image_cache(), *p))
 		return 0; /* do not scale sprites! */
 
-	pic = gfx_scale(*p, v, v); 
+	pic = gfx_scale(*p, v, v, SCALABLE_THEME_SMOOTH);
 	if (!pic)
 		return -1;
 	gfx_free_image(*p); 
 	*p = pic;
 	return 0;
 }
+
+int theme_scalable_mode(int w, int h)
+{
+	float factor = 1.0;
+	if (w == game_theme.w && h == game_theme.h)
+		return 0;
+
+	if (!SCALABLE_THEME)
+		return -1;
+
+	if (!SCALABLE_X_THEME)
+		return 0;
+
+	factor = (float)w / (float)game_theme.w;
+
+	if (game_theme.w > 0) {
+		if (w > game_theme.w && w % game_theme.w)
+			return -1;
+		if (w < game_theme.w && game_theme.w % w)
+			return -1;
+	}
+
+	if (game_theme.h > 0) {
+		if (game_theme.h * factor != h)
+			return -1;
+		if (h > game_theme.h && h % game_theme.h)
+			return -1;
+		if (h < game_theme.h && game_theme.h % h)
+			return -1;
+	}
+	return 0;
+}
+
 static  int game_theme_scale(int w, int h)
 {
 	int i;
@@ -776,12 +809,19 @@ int game_theme_init(void)
 	int w  = opt_mode[0];
 	int h  = opt_mode[1];
 
-	if ((w == -1) 
-		&& (gfx_get_max_mode(&w, &h) || (game_theme.w <= w && game_theme.h <= h))) {
-		w = opt_mode[0];
-		h = opt_mode[1];
+	if (w == -1) { /* as theme */
+		if (gfx_get_max_mode(&w, &h) || (game_theme.w <= w && game_theme.h <= h)) {
+			w = opt_mode[0];
+			h = opt_mode[1];
+		}
+	} else if (opt_fs) { /* selected and full screen */
+		if (gfx_get_max_mode(&w, &h) || (opt_mode[0] <= w && opt_mode[1] <= h)) {
+			w = opt_mode[0];
+			h = opt_mode[1];
+		}
 	}
-	if (!SCALABLE_THEME) { /* no scalable? TODO: message? */
+
+	if (theme_scalable_mode(w, h)) { /* no scalable? TODO: message? */
 		w = game_theme.w;
 		h = game_theme.h;
 	}

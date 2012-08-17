@@ -89,7 +89,7 @@ extern void	gfx_unset_alpha(img_t src);
 
 extern img_t	gfx_alpha_img(img_t src, int alpha);
 extern img_t	gfx_display_alpha(img_t src);
-extern img_t	gfx_scale(img_t src, float xscale, float yscale);
+extern img_t	gfx_scale(img_t src, float xscale, float yscale, int smooth);
 extern img_t	gfx_rotate(img_t src, float angle);
 
 extern void	gfx_draw_bg(img_t p, int x, int y, int width, int height);

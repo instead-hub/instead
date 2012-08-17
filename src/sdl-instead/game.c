@@ -1145,7 +1145,7 @@ img_t	game_pict_scale(img_t img, int ww, int hh)
 	}
 	if (scale < 0)
 		scale = 0;
-	img2 = gfx_scale(img, scale, scale);
+	img2 = gfx_scale(img, scale, scale, SCALABLE_THEME_SMOOTH);
 	gfx_free_image(img);
 	return img2;
 }
