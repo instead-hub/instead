@@ -1165,7 +1165,7 @@ static int luaB_scale_sprite(lua_State *L) {
 	if (ys == 0)
 		ys = xs;
 
-	img2 = gfx_scale(s, xs, ys, SCALABLE_THEME_SMOOTH);
+	img2 = gfx_scale(s, xs, ys, 1);
 
 	if (!img2)
 		return 0;
