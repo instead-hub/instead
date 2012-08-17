@@ -56,8 +56,11 @@ sprite = {
 		end
 		return stead.sprite_scale(name, xs, ys, smooth,...);
 	end;
-	rotate = function(name, angle, ...)
-		return stead.sprite_rotate(name, angle, ...);
+	rotate = function(name, angle, smooth, ...)
+		if smooth ~= nil then
+			if smooth then smooth = 1 else smooth = 0 end
+		end
+		return stead.sprite_rotate(name, angle, smooth, ...);
 	end;
 	text = function(font, text, col, style, ...)
 		return stead.sprite_text(font, text, col, style, ...);
