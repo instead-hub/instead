@@ -441,38 +441,6 @@ int theme_img_scale(img_t *p)
 	return 0;
 }
 
-int theme_scalable_mode(int w, int h)
-{
-	float factor = 1.0;
-	if (w == game_theme.w && h == game_theme.h)
-		return 0;
-
-	if (!SCALABLE_THEME)
-		return -1;
-
-	if (!SCALABLE_X_THEME)
-		return 0;
-
-	factor = (float)w / (float)game_theme.w;
-
-	if (game_theme.w > 0) {
-		if (w > game_theme.w && w % game_theme.w)
-			return -1;
-		if (w < game_theme.w && game_theme.w % w)
-			return -1;
-	}
-
-	if (game_theme.h > 0) {
-		if (game_theme.h * factor != h)
-			return -1;
-		if (h > game_theme.h && h % game_theme.h)
-			return -1;
-		if (h < game_theme.h && game_theme.h % h)
-			return -1;
-	}
-	return 0;
-}
-
 static  int game_theme_scale(int w, int h)
 {
 	int i;
@@ -488,10 +456,28 @@ static  int game_theme_scale(int w, int h)
 		h = t->h;
 		goto out;
 	}
+
+	if (!SCALABLE_THEME) {
+		t->scale = 1.0f;
+		t->xoff = (w - t->w) / 2;
+		t->yoff = (h - t->h) / 2;
+		goto out;
+	}
+
 	xs = (float)w / (float)t->w;
 	ys = (float)h / (float)t->h;
 	
 	v = (xs < ys)?xs:ys;
+
+	if (SCALABLE_X_THEME) {
+		if (v > 1.0f)
+			t->scale = floor(v);
+		else
+			t->scale = 1.0f / ceil(1.0f / v);
+		t->xoff = (w - t->w * t->scale) / 2;
+		t->yoff = (h - t->h * t->scale) / 2;
+		goto out;
+	}
 
 	xoff = (w - t->w*v)/2;
 	yoff = (h - t->h*v)/2;
@@ -823,7 +809,7 @@ int game_theme_init(void)
 		}
 	}
 #endif
-	if (theme_scalable_mode(w, h)) { /* no scalable? TODO: message? */
+	if (!SCALABLE_THEME && (w < game_theme.w || h < game_theme.h)) { /* no scalable? TODO: message? */
 		w = game_theme.w;
 		h = game_theme.h;
 	}
