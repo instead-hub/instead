@@ -7,7 +7,7 @@ instead (1.7.1) unstable; urgency=low
   * bug fix in proxy_menu - possible to work with nam = true objects;
   * bug fix much more faster text output;
   * sprite.rotate, sprite.scale smooth parameter;
-  * new scr.gfx.scalable values, 2x scaled mode for pixel graphics;
+  * much better scr.gfx.scalable handling, uses /2^x downscaler and *x scaler;
   * CPPFLAGS added in Makefile;
   * scaler is updaed from SDL_gfx 2.0.24;
 
