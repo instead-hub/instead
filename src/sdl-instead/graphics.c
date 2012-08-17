@@ -1252,16 +1252,8 @@ int gfx_prev_mode(int *w, int *h)
 
 	if (!i)
 		return -1;
-	i --;	
-		
-	while (i >= 0) {
-		if (gfx_get_mode(i, &ww, &hh))
-			return -1;
-		if (!theme_scalable_mode(ww, hh))
-			break;
-		i --;
-	}
-	if (i < 0)
+	i --;
+	if (gfx_get_mode(i, &ww, &hh))
 		return -1;
 	*w = ww; *h = hh;
 	return 0;
@@ -1281,14 +1273,8 @@ int gfx_next_mode(int *w, int *h)
 			break;
 	}
 
-	while (1) {
-		if (gfx_get_mode(i, &ww, &hh))
-			return -1;
-		if (!theme_scalable_mode(ww, hh))
-			break;
-		i ++;
-	}
-
+	if (gfx_get_mode(i, &ww, &hh))
+		return -1;
 	*w = ww; *h = hh;
 	return 0;
 }
@@ -1311,10 +1297,8 @@ int gfx_get_max_mode(int *w, int *h)
 
 	while (!gfx_get_mode(i, &ww, &hh)) {
 		if ((ww * hh >= (*w) * (*h)) && ww > (*w)) {
-			if (!theme_scalable_mode(ww, hh)) {
-				*w = ww;
-				*h = hh;
-			}
+			*w = ww;
+			*h = hh;
 		}
 		i ++;
 	}
