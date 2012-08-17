@@ -1197,7 +1197,8 @@ static int luaB_rotate_sprite(lua_State *L) {
 
 	const char *src = luaL_optstring(L, 1, NULL);
 	float angle = luaL_optnumber(L, 2, 1.0f);
-	const char *desc = luaL_optstring(L, 3, NULL);
+	int smooth = luaL_optnumber(L, 3, 1);
+	const char *desc = luaL_optstring(L, 4, NULL);
 
 	if (!src)
 		return 0;
@@ -1205,8 +1206,7 @@ static int luaB_rotate_sprite(lua_State *L) {
 	s = cache_lookup(gfx_image_cache(), src);
 	if (!s)
 		return 0;
-	
-	img2 = gfx_rotate(s, angle);
+	img2 = gfx_rotate(s, angle, smooth);
 
 	if (!img2)
 		return 0;

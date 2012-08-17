@@ -1449,7 +1449,7 @@ img_t gfx_scale(img_t src, float xscale, float yscale, int smooth)
 	return (img_t)zoomSurface((SDL_Surface *)src, xscale, yscale, smooth);
 }
 
-img_t gfx_rotate(img_t src, float angle)
+img_t gfx_rotate(img_t src, float angle, int smooth)
 {
 	anigif_t ag;
 
@@ -1464,7 +1464,7 @@ img_t gfx_rotate(img_t src, float angle)
 		h = gfx_img_h(src);
 
 		for (i = 0; i < ag->nr_frames; i ++) {
-			SDL_Surface *s = rotozoomSurface(ag->frames[i].surface, angle, 1.0, 11);
+			SDL_Surface *s = rotozoomSurface(ag->frames[i].surface, angle, 1.0, smooth);
 			if (i)
 				SDL_FreeSurface(ag->frames[i].surface);
 
@@ -1481,7 +1481,7 @@ img_t gfx_rotate(img_t src, float angle)
 		}
 		return ag->frames[0].surface;
 	}
-	return (img_t)rotozoomSurface(Surf(src), angle, 1.0, 1);
+	return (img_t)rotozoomSurface(Surf(src), angle, 1.0, smooth);
 }
 
 #define FN_REG  0
