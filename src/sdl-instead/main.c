@@ -373,7 +373,7 @@ int main(int argc, char *argv[])
 		return -1;
 
 	if (game_init(opt_game)) {
-		game_error(opt_game);
+		game_error();
 	}
 
 	game_loop();

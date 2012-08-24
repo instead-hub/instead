@@ -719,13 +719,13 @@ static int game_theme_update_data(void)
 		gfx_free_image(t->bg);
 		t->bg = NULL;
 		if (t->bg_name[0] && !(t->bg = gfx_load_image(t->bg_name)))
-			goto err;
+			goto skip; /* not fatal */
 		if (theme_img_scale(&t->bg))
 			goto err;
 		if (theme_bg_scale())
 			goto err;
 	}
-
+skip:
 	if (t->use_name && (t->changed & CHANGED_USE)) {
 		gfx_free_image(t->use);	
 		if (!(t->use = gfx_load_image(t->use_name)))
@@ -775,11 +775,13 @@ int game_theme_update(void)
 	game_release_theme();
 	if (game_theme_update_data()) {
 		fprintf(stderr, "Can not update theme!\n");
+		game_error();
 		return -1;
 	}
 
 	if (game_apply_theme()) {
 		fprintf(stderr, "Can not apply theme!\n");
+		game_error();
 		return -1;
 	}
 	return 0;

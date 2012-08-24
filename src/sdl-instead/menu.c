@@ -507,7 +507,7 @@ int game_menu_act(const char *a)
 		if (curgame_dir && !strcmp(curgame_dir, games[gtr].dir)) {
 			game_done(0);
 			if (game_init(NULL)) {
-				game_error("");
+				game_error();
 				return 0;
 			}
 		}
@@ -666,7 +666,7 @@ int game_menu_act(const char *a)
 		if (p) {
 			game_done(0);
 			if (game_init(p)) {
-				game_error(p);
+				game_error();
 			}
 			free(p);
 		}
@@ -680,7 +680,7 @@ int game_menu_act(const char *a)
 			game_save(-1);
 			game_done(0);
 			if (game_init(og)) {
-				game_error(og);
+				game_error();
 			} else if (curgame_dir && game_own_theme && opt_owntheme) {
 				game_menu(menu_own_theme);
 			}

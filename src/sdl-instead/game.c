@@ -102,7 +102,7 @@ int game_reset(void)
 out:
 	game_done(0);
 	if (game_init(NULL)) {
-		game_error("");
+		game_error();
 		return -1;
 	}
 	return -1;
@@ -447,7 +447,7 @@ void game_menu(int nr)
 	game_menu_box(1, game_menu_gen());
 }
 
-int game_error(const char *name)
+int game_error(void)
 {
 	game_done(1);
 	if (game_init(NULL)) {
@@ -635,7 +635,7 @@ int game_restart(void)
 	game_save(-1);
 	game_done(0);
 	if (game_init(og)) {
-		game_error(og);
+		game_error();
 		return 0;
 	}
 	return 0;
@@ -3059,7 +3059,7 @@ int game_from_disk(void)
 		p = b;
 	game_done(0);
 	if (game_init(p)) {
-		game_error(p);
+		game_error();
 	}
 	return 0;
 #ifdef _USE_UNPACK
