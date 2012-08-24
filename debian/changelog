@@ -10,7 +10,7 @@ instead (1.7.1) unstable; urgency=low
   * bug fix in change theme on the fly via theme module (segfault);
   * dbg module: use f7 key again to exit debugger;
   * sprite.rotate, sprite.scale smooth parameter;
-  * much better scr.gfx.scalable handling, uses /2^x downscaler and *x scaler;
+  * much better scr.gfx.scalable handling, uses /2^x scaler;
   * CPPFLAGS added in Makefile;
   * scaler is updaed from SDL_gfx 2.0.24;
 
