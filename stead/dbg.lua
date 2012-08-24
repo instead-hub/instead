@@ -357,6 +357,9 @@ game.action = stead.hook(game.action,
 function (f, s, cmd, ...)
 	if cmd == 'use_debug' then
 		return debug_tool:inv()
+	elseif cmd == 'exit_debug' then
+		me().where = 'debug_dlg';
+		return dbg_exit()
 	end
 	return f(s, cmd, ...)
 end)
@@ -364,7 +367,14 @@ end)
 stead.module_init(function()
 	input.key = stead.hook(input.key,
 	function(f, s, down, key, ...)
-		if not here().debug and down and key == 'f7' then return 'use_debug' end
+		if down and key == 'f7' then 
+			if here().debug then
+				return 'exit_debug'
+			else
+				return 'use_debug'
+			end
+		end
+		
 		return f(s, down, key, ...)
 	end)
 	putf('debug_tool', me());
