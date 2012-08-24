@@ -6,6 +6,7 @@ instead (1.7.1) unstable; urgency=low
   * bug fix in dbg - disable game.pic logic;
   * bug fix in proxy_menu - possible to work with nam = true objects;
   * bug fix much more faster text output;
+  * bug fix if use returns nil and used returns true;
   * sprite.rotate, sprite.scale smooth parameter;
   * much better scr.gfx.scalable handling, uses /2^x downscaler and *x scaler;
   * CPPFLAGS added in Makefile;
