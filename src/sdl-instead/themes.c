@@ -464,12 +464,16 @@ static  int game_theme_scale(int w, int h)
 	v = (xs < ys)?xs:ys;
 
 	if (!SCALABLE_THEME) {
-		if (v > 1.0f) 
-			v = floor(v);
-		else {
+		if (v > 1.0f) {
+			int ff = 1;
+			while (ff && ff <= v && ff < 0x1000)
+				ff <<= 1;
+			ff >>= 1;
+			v = ff;
+		} else {
 			float f = ceil(1.0f / v);
 			int ff = 1;
-			while (ff && ff < f)
+			while (ff && ff < f && ff < 0x1000)
 				ff <<= 1;
 			v = 1.0f / (float)ff;
 		}
