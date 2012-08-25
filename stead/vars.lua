@@ -27,7 +27,11 @@ local function __vars_add(s, v, set)
 		elseif k ~= 'variable_type' then
 			if set and not isObject(o) then 
 				if s[k] then
-					error ("Variable conflict: "..tostring(k));
+					if s == _G then
+						print ("Global variable '"..tostring(k).."' conflicts with "..type(s[k]));
+					else
+						error ("Variable conflict: "..tostring(k));
+					end
 				end
 				stead.table.insert(s.variables, k);
 				s[k] = o

@@ -40,7 +40,7 @@ stead.restore_snapshot = function (nr)
 	RAW_TEXT = true
 --	delete_snapshot(nr);
 	if stead.cctx() then
-		pr(i)
+		stead.pr(i)
 	end
 	return i;
 end
