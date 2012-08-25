@@ -114,13 +114,13 @@ local go = function (self, where, back, noenter, noexit, nodsc)
 			stead.ref(to).__visited = 1
 		end
 		if stead.api_version < "1.6.3" and isDialog(stead.ref(to)) then
-			dialog_rescan(stead.ref(to))
+			stead.dialog_rescan(stead.ref(to))
 		end
 	end
 	return res;
 end
 
-function player_go(self, where) -- cmd iface
+stead.player_go = function(self, where) -- cmd iface
 	local w = stead.ref(self.where).way:srch(where);
 	if not w then
 		return nil,false
@@ -128,7 +128,7 @@ function player_go(self, where) -- cmd iface
 	return self:walk(w);
 end
 
-function player_walk(self, where, ...) -- real work
+stead.player_walk = function(self, where, ...) -- real work
 	local v, r, vv;
 	vv, r = onevent('onwalk', stead.ref(where), ...);
 	if vv == false then
@@ -144,7 +144,7 @@ function player_walk(self, where, ...) -- real work
 	return v, r;
 end
 
-function player_back(self) -- deprecated
+stead.player_back = function(self) -- deprecated
 	error ("Do not use me():back(). It's deprecated.", 2)
 end
 

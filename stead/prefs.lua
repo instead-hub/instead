@@ -2,7 +2,7 @@ prefs = obj {
 	nam = 'preferences',
 	system_type = true,
 	load = function(s)
-		local name = get_savepath() .. '/prefs';
+		local name = instead_savepath() .. '/prefs';
 		local f, err = loadfile(name);
 		if not f then return nil end
 		f();
@@ -15,7 +15,7 @@ prefs = obj {
 		stead.clearvar(s);
 	end,
 	save = function(s) -- save prefs on every save
-		local name = get_savepath() .. '/prefs';
+		local name = instead_savepath() .. '/prefs';
 		local h = stead.io.open(name,"w");
 		if not h then return false end
 		stead.savemembers(h, s, 'prefs', true);
@@ -23,7 +23,7 @@ prefs = obj {
 		h:close();
 	end,
 	purge = function(s)
-		local name = get_savepath() .. '/prefs';
+		local name = instead_savepath() .. '/prefs';
 		local k,v
 		for k,v in pairs(s) do
 			if type(v) ~= 'function' and k ~= 'nam' and k ~= 'system_type' then

@@ -12,7 +12,7 @@ local function onevent(ev, ...)
 	end
 end
 
-function player_action(self, what, ...)
+stead.player_action = function(self, what, ...)
 	local v,r,obj,vv
 
 	if isXaction(what) then -- already xact
@@ -33,7 +33,7 @@ function player_action(self, what, ...)
 	if r == false then 
 		return vv
 	end
-	v, r = player_take(self, what, ...);
+	v, r = stead.player_take(self, what, ...);
 	if type(vv) == 'string' then
 		v = stead.par(stead.space_delim, vv, v);
 	end
@@ -47,7 +47,7 @@ function player_action(self, what, ...)
 end
 
 
-function player_use(self, what, onwhat, ...)
+stead.player_use = function(self, what, onwhat, ...)
 	local obj, obj2, v, vv, r;
 	local scene_use_mode = false
 
@@ -129,7 +129,7 @@ function player_use(self, what, onwhat, ...)
 	return v
 end
 
-function vobj_save(self, name, h, need)
+stead.vobj_save = function(self, name, h, need)
 	local w = stead.deref(self.where)
 	local dsc = self.dsc
 	
@@ -143,7 +143,7 @@ function vobj_save(self, name, h, need)
 	stead.savemembers(h, self, name, false);
 end
 
-function vobj_act(self, ...)
+stead.vobj_act = function(self, ...)
 	local o, r = here():srch(self); -- self.nam
 	if stead.ref(o) and stead.ref(o).where then
 		return stead.walk(stead.ref(o).where);
@@ -151,12 +151,12 @@ function vobj_act(self, ...)
 	return stead.call(stead.ref(r),'act', self.nam, ...);
 end
 
-function vobj_used(self, ...)
+stead.vobj_used = function(self, ...)
 	local o, r = here():srch(self.nam);
 	return stead.call(stead.ref(r),'used', self.nam, ...);
 end
 
-function vobj_use(self, ...)
+stead.vobj_use = function(self, ...)
 	local o, r = here():srch(self.nam);
 	return stead.call(stead.ref(r),'use', self.nam, ...);
 end
@@ -166,10 +166,10 @@ function vobj(name, dsc, w)
 		vobject_type = true,
 		dsc = dsc, 
 		where = stead.deref(w), 
-		act = vobj_act, 
-		used = vobj_used, 
-		use = vobj_use,
-		save = vobj_save };
+		act = stead.vobj_act, 
+		used = stead.vobj_used, 
+		use = stead.vobj_use,
+		save = stead.vobj_save };
 end
 
 function vway(name, dsc, w)
@@ -177,18 +177,18 @@ function vway(name, dsc, w)
 	return  obj{ nam = tostring(name), 
 		vobject_type = true,
 		dsc = dsc, 
-		act = vobj_act, 
+		act = stead.vobj_act, 
 		where = stead.deref(w), 
-		used = vobj_used,
-		use = vobj_use, 
-		save = vobj_save };
+		used = stead.vobj_used,
+		use = stead.vobj_use, 
+		save = stead.vobj_save };
 end
 
 function isVobject(v)
 	return (type(v) == 'table') and (v.vobject_type)
 end
 
-function list_check(self, name) -- force using of objects, instead refs
+stead.list_check = function(self, name) -- force using of objects, instead refs
 	local i, v, ii;
 	for i,v,ii in opairs(self) do
 		local o = stead.ref(v);
@@ -210,7 +210,7 @@ function list_check(self, name) -- force using of objects, instead refs
 	return true; 
 end
 
-function list_add(self, name, pos)
+stead.list_add = function(self, name, pos)
 	local nam = name
 	if stead.initialized then
 		nam = stead.ref(name);
@@ -234,7 +234,7 @@ function list_add(self, name, pos)
 	return true
 end
 
-function list_set(self, name, pos)
+stead.list_set = function(self, name, pos)
 	local nam = name
 	local i = tonumber(pos);
 	if not i then
@@ -254,7 +254,7 @@ function list_set(self, name, pos)
 	return true
 end
 
-function list_concat(self, other, pos)
+stead.list_concat = function(self, other, pos)
 	local n,o,ii
 	for n,o,ii in opairs(other) do
 		o = stead.ref(o);
@@ -269,7 +269,7 @@ end
 
 stead.delim = '|'
 
-function list_str(self)
+stead.list_str = function(self)
 	local i, v, vv, o;
 	for i,o in opairs(self) do
 		o = stead.ref(o);
@@ -282,7 +282,7 @@ function list_str(self)
 	return v;
 end
 
-function obj_str(self)
+stead.obj_str = function(self)
 	local i, v, vv, o;
 	if not isObject(self) then
 		return
@@ -295,7 +295,7 @@ function obj_str(self)
 		if isObject(o) and not isDisabled(o) then
 			vv = stead.dispof(o)
 			vv = stead.xref(vv, o);
-			v = stead.par(stead.delim, v, vv, obj_str(o));
+			v = stead.par(stead.delim, v, vv, stead.obj_str(o));
 		end
 	end
 	return v;

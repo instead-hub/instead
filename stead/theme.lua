@@ -17,7 +17,7 @@ theme = {
 			if name then
 				v = theme.reset_vars[name]
 				if v then
-					theme_var(name, v);
+					instead_theme_var(name, v);
 					theme.vars[name] = nil
 					theme.reset_vars[name] = nil
 				end
@@ -27,17 +27,17 @@ theme = {
 	set = function(name, val)
 		if val and name then
 			if not theme.reset_vars[name] then
-				theme.reset_vars[name] = theme_var(name)
+				theme.reset_vars[name] = instead_theme_var(name)
 			end
-			theme_var(name, tostring(val));
+			instead_theme_var(name, tostring(val));
 			theme.vars[name] = tostring(val);
 		end
 	end;
 	name = function()
-		return theme_name(name);
+		return instead_theme_name(name);
 	end;
 	get = function(name)
-		return theme_var(name);
+		return instead_theme_var(name);
 	end;
 	win = {
 		reset = function()
