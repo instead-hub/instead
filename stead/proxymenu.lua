@@ -147,7 +147,7 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 	return menu(v)
 end
 
-local proxy_fill_objs = function(s, w, act, use_mode, used_act, useit_act)
+stead.proxy_fill_objs = function(s, w, act, use_mode, used_act, useit_act)
 	local ii,i,o
 	local rc = false
 	for i,o,ii in opairs(w) do
@@ -157,7 +157,7 @@ local proxy_fill_objs = function(s, w, act, use_mode, used_act, useit_act)
 
 			s.obj:add(stead.obj_proxy(o, act, use_mode, used_act, useit_act));
 			if not isRoom(o) then
-				proxy_fill_objs(s, o.obj, act, use_mode, used_act, useit_act);
+				stead.proxy_fill_objs(s, o.obj, act, use_mode, used_act, useit_act);
 			end
 			rc = true
 		end
@@ -215,15 +215,15 @@ local proxy_menu = function(nam, act, _scene, _inv, _way, use_mode, used_act, us
 		local rc = false
 		s.obj:zap();
 		if s.fill_inv then
-			rc = proxy_fill_objs(s, inv(), act, use_mode, used_act, useit_act);
+			rc = stead.proxy_fill_objs(s, inv(), act, use_mode, used_act, useit_act);
 		end
 		if not s.fill_ifhave or rc then
 			if s.fill_scene then
-				proxy_fill_objs(s, here().obj, act, use_mode, used_act, useit_act);
+				stead.proxy_fill_objs(s, here().obj, act, use_mode, used_act, useit_act);
 			end
 		end
 		if s.fill_way then
-			proxy_fill_objs(s, here().way, act, use_mode, used_act, useit_act);
+			stead.proxy_fill_objs(s, here().way, act, use_mode, used_act, useit_act);
 		end
 		select_only(s);
 	end
