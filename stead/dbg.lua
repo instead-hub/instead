@@ -199,7 +199,10 @@ dbg_execute_cmd = room {
 	obj = { inp('inp', '{Enter cmd}: ', 'return "Hello World!"'), 
 		obj { nam = 'Back', dsc = '^{Back}', act = code [[ stead.back() ]] },
 		dbg_disp_obj(),
-	}
+	},
+	exit = function(s)
+		s.obj[1]:state(false)
+	end;
 }
 
 dbg_dump_object = room {
@@ -224,7 +227,10 @@ dbg_dump_object = room {
 		obj{nam = 'Ways', dsc = '^{Dump ways}', act = code[[ return dbg_dump_obj(ways(dbg_here()))]]},
 		obj{nam = 'Globals', dsc = '^{Dump globals}', act = code [[return dbg_dump_globals()]] },
 		obj{nam = 'Back', dsc = '^{Back}', act = code [[ return stead.back() ]] },
-		dbg_disp_obj() }
+		dbg_disp_obj() },
+	exit = function(s)
+		s.obj[1]:state(false)
+	end;
 }
 
 dbg_choose_location = dlg {
@@ -360,6 +366,8 @@ function (f, s, cmd, ...)
 		return debug_tool:inv()
 	elseif cmd == 'exit_debug' then
 		stead.me().where = 'debug_dlg';
+		dbg_execute_cmd.obj[1]:state(false)
+		dbg_dump_object.obj[1]:state(false)
 		return dbg_exit()
 	end
 	return f(s, cmd, ...)

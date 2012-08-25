@@ -322,15 +322,26 @@ function inp(n, info, txt)
 			return true
 		end
 	end
-	v.act = function(s)
-		if input._txt and not s._edit then return true end -- somewhere else
-		s._edit = not s._edit;
+	v.state = function(s, t)
+		local os = s._edit
+		if t == nil then
+			return os
+		end
+		s._edit = t
+		if os == t then
+			return os
+		end
 		if s._edit then
 			input._txt = s._txt;
 		else
 			s._txt = input._txt
 			input._txt = false
 		end
+		return os
+	end;
+	v.act = function(s)
+		if input._txt and not s._edit then return true end -- somewhere else
+		s:state(not s._edit)
 		return true
 	end
 	v.save = function(self, name, h, need)
