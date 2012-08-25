@@ -3,7 +3,7 @@
 -- for debug tools
 require "input"
 
-function _xref_escape(n)
+local function _xref_escape(n)
 	local delim = ':'
 	if stead.api_version >= "1.2.2" then
 		delim = stead.delim;
@@ -14,7 +14,7 @@ function _xref_escape(n)
 	return n
 end
 
-function ordered_n(t)
+local function ordered_n(t)
 	local ordered = {};
 	local i,v, max;
 	max = 0;
@@ -59,7 +59,7 @@ function ordered_n(t)
 	return ordered;
 end
 
-function snext(t, k)
+local function snext(t, k)
 	local v
 	if not k then
 		k = ordered_n(t);
@@ -72,11 +72,11 @@ function snext(t, k)
 	return k, v.v, v.k;
 end
 
-function spairs(s, var)
+local function spairs(s, var)
 	return snext, s, nil;
 end
 
-function disp_obj()
+function dbg_disp_obj()
 	local v = obj {
 		nam = 'disp',
 		act = true,
@@ -87,7 +87,7 @@ function disp_obj()
 		end;
 		save = function(self, name, h, need)
 			if need then
-				h:write(stead.string.format("%s  = disp_obj();\n", name));
+				h:write(stead.string.format("%s  = dbg_disp_obj();\n", name));
 			end
 			stead.savemembers(h, self, name, false);
 		end
@@ -95,7 +95,7 @@ function disp_obj()
 	return v;
 end
 
-dump_obj = function(w)
+dbg_dump_obj = function(w)
 	w = stead.ref(w)
 	if type(w) ~= 'table' then
 		seen('disp')._txt = '^^No such object.';
@@ -122,7 +122,7 @@ dump_obj = function(w)
 	return true;
 end
 
-dump_globals = function()
+dbg_dump_globals = function()
 	local i,o
 	local rc=''
 	if type(variables) ~= 'table' then
@@ -144,7 +144,7 @@ dbg_here = function()
 	return debug_tool._here
 end
 
-list_objects = function()
+dbg_list_objects = function()
 	local i,o
 	local rc = stead.par(' ', 'Room:'..tostring(stead.deref(dbg_here())), 
 			'Nam:'..tostring(stead.call(dbg_here(),'nam')));
@@ -160,7 +160,7 @@ list_objects = function()
 	return rc
 end
 
-list_inv = function()
+dbg_list_inv = function()
 	local i,o
 	local rc=''
 	for i,o in opairs(inv()) do
@@ -176,7 +176,7 @@ list_inv = function()
 	return rc
 end
 
-execute_cmd = room {
+dbg_execute_cmd = room {
 	nam = "Execute Lua code",
 	debug = true,
 	pic = true,
@@ -197,11 +197,11 @@ execute_cmd = room {
 	end,
 	obj = { inp('inp', '{Enter cmd}: ', 'return "Hello World!"'), 
 		obj { nam = 'Back', dsc = '^{Back}', act = code [[ back() ]] },
-		disp_obj(),
+		dbg_disp_obj(),
 	}
 }
 
-dump_object = room {
+dbg_dump_object = room {
 	nam = "Dump object",
 	debug = true,
 	pic = true,
@@ -212,21 +212,21 @@ dump_object = room {
 		local w = s.obj[1]._txt
 		if type(w) == 'string' then
 			if not stead.ref(w) then w = objs(dbg_here()):srch(w); end
-			return dump_obj(w);
+			return dbg_dump_obj(w);
 		end
 		return back();
 	end,
 	obj = { inp('inp', '{Enter object}: ', 'main'), 
-		obj{nam = 'Here', dsc = '^{Dump here}', act = code[[ return dump_obj(dbg_here())]]},
-		obj{nam = 'Player',dsc =  '^{Dump player}', act = code[[ return dump_obj(me())]]},
-		obj{nam = 'Lifes', dsc = '^{Dump lifes}', act = code[[ return dump_obj(debug_tool.lifes)]]},
-		obj{nam = 'Ways', dsc = '^{Dump ways}', act = code[[ return dump_obj(ways(dbg_here()))]]},
-		obj{nam = 'Globals', dsc = '^{Dump globals}', act = code [[return dump_globals()]] },
+		obj{nam = 'Here', dsc = '^{Dump here}', act = code[[ return dbg_dump_obj(dbg_here())]]},
+		obj{nam = 'Player',dsc =  '^{Dump player}', act = code[[ return dbg_dump_obj(me())]]},
+		obj{nam = 'Lifes', dsc = '^{Dump lifes}', act = code[[ return dbg_dump_obj(debug_tool.lifes)]]},
+		obj{nam = 'Ways', dsc = '^{Dump ways}', act = code[[ return dbg_dump_obj(ways(dbg_here()))]]},
+		obj{nam = 'Globals', dsc = '^{Dump globals}', act = code [[return dbg_dump_globals()]] },
 		obj{nam = 'Back', dsc = '^{Back}', act = code [[ return back() ]] },
-		disp_obj() }
+		dbg_disp_obj() }
 }
 
-choose_location = dlg {
+dbg_choose_location = dlg {
 	debug = true,
 	pic = true,
 	system_type = true, 
@@ -251,7 +251,7 @@ choose_location = dlg {
 	end
 }
 
-choose_object = dlg {
+dbg_choose_object = dlg {
 	debug = true,
 	pic = true,
 	system_type = true, 
@@ -276,7 +276,7 @@ choose_object = dlg {
 	end
 }
 
-drop_object = dlg {
+dbg_drop_object = dlg {
 	debug = true,
 	pic = true,
 	forcedsc = true,
@@ -320,13 +320,13 @@ debug_dlg = dlg {
 	nam = 'Debug Tool',
 	dsc = 'Select tool.',
 	obj = {
-		phr('Go to location...', true, [[pon(); choose_location:gen(); return stead.walk('choose_location')]]),
-		phr('Get object...', true, [[pon(); choose_object:gen(); return stead.walk('choose_object')]]),
-		phr('Put object...', true, [[pon(); drop_object:gen(); return stead.walk('drop_object')]]),
-		phr('Current scene...', true, [[pon(); return list_objects();]]),
-		phr('Inventory...', true, [[pon(); return list_inv();]]),
-		phr('Dump object...', true, [[pon(); return stead.walk(dump_object);]]),
-		phr('Exec Lua string...', true, [[pon(); return stead.walk('execute_cmd')]]),
+		phr('Go to location...', true, [[pon(); dbg_choose_location:gen(); return stead.walk('dbg_choose_location')]]),
+		phr('Get object...', true, [[pon(); dbg_choose_object:gen(); return stead.walk('dbg_choose_object')]]),
+		phr('Put object...', true, [[pon(); dbg_drop_object:gen(); return stead.walk('dbg_drop_object')]]),
+		phr('Current scene...', true, [[pon(); return dbg_list_objects();]]),
+		phr('Inventory...', true, [[pon(); return dbg_list_inv();]]),
+		phr('Dump object...', true, [[pon(); return stead.walk(dbg_dump_object);]]),
+		phr('Exec Lua string...', true, [[pon(); return stead.walk('dbg_execute_cmd')]]),
 		phr('Exit',true , [[pon(); return dbg_exit()]]),
 	},
 };
