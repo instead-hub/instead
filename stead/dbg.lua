@@ -194,10 +194,10 @@ dbg_execute_cmd = room {
 			seen('disp')._txt = "^^Error in exec.";
 			return true
 		end
-		return back();
+		return stead.back();
 	end,
 	obj = { inp('inp', '{Enter cmd}: ', 'return "Hello World!"'), 
-		obj { nam = 'Back', dsc = '^{Back}', act = code [[ back() ]] },
+		obj { nam = 'Back', dsc = '^{Back}', act = code [[ stead.back() ]] },
 		dbg_disp_obj(),
 	}
 }
@@ -215,7 +215,7 @@ dbg_dump_object = room {
 			if not stead.ref(w) then w = objs(dbg_here()):srch(w); end
 			return dbg_dump_obj(w);
 		end
-		return back();
+		return stead.back();
 	end,
 	obj = { inp('inp', '{Enter object}: ', 'main'), 
 		obj{nam = 'Here', dsc = '^{Dump here}', act = code[[ return dbg_dump_obj(dbg_here())]]},
@@ -223,7 +223,7 @@ dbg_dump_object = room {
 		obj{nam = 'Lifes', dsc = '^{Dump lifes}', act = code[[ return dbg_dump_obj(debug_tool.lifes)]]},
 		obj{nam = 'Ways', dsc = '^{Dump ways}', act = code[[ return dbg_dump_obj(ways(dbg_here()))]]},
 		obj{nam = 'Globals', dsc = '^{Dump globals}', act = code [[return dbg_dump_globals()]] },
-		obj{nam = 'Back', dsc = '^{Back}', act = code [[ return back() ]] },
+		obj{nam = 'Back', dsc = '^{Back}', act = code [[ return stead.back() ]] },
 		dbg_disp_obj() }
 }
 
@@ -248,7 +248,7 @@ dbg_choose_location = dlg {
 				end
 			end
 		end
-		put (phr('Back',true, 'return back()'), s)
+		put (phr('Back',true, 'return stead.back()'), s)
 	end
 }
 
@@ -273,7 +273,7 @@ dbg_choose_object = dlg {
 				end
 			end
 		end
-		put (phr('Back',true, 'return back()'), s)
+		put (phr('Back',true, 'return stead.back()'), s)
 	end
 }
 
@@ -299,7 +299,7 @@ dbg_drop_object = dlg {
 				end
 			end
 		end
-		put (phr('Back', true, 'return back()'), s)
+		put (phr('Back', true, 'return stead.back()'), s)
 	end
 }
 
@@ -310,7 +310,7 @@ function dbg_exit()
 	end
 	game.lifes:cat(debug_tool.lifes);
 	timer:set(debug_tool._timer);
-	return stead.par ('^^', back(), r);
+	return stead.par ('^^', stead.back(), r);
 end
 
 debug_dlg = dlg {
