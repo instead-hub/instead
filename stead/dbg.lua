@@ -148,7 +148,7 @@ dbg_list_objects = function()
 	local i,o
 	local rc = stead.par(' ', 'Room:'..tostring(stead.deref(dbg_here())), 
 			'Nam:'..tostring(stead.call(dbg_here(),'nam')));
-	for i,o in opairs(objs(dbg_stead.here())) do
+	for i,o in opairs(objs(dbg_here())) do
 		rc = rc..'^';
 		o = stead.ref(o)
 		rc = stead.cat(rc, stead.par(' ', 'Id:'..tostring(o.id), 
