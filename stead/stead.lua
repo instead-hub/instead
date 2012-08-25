@@ -1680,11 +1680,6 @@ local compat_api = function()
 
 		obj_tag = stead.obj_tag
 
-		mouse_pos = stead.mouse_pos
-		mouse_filter = stead.mouse_filter
-
-		get_ticks = stead.ticks
-
 		module_init = stead.module_init
 	end
 
@@ -3220,5 +3215,9 @@ is_music = stead.is_music
 ref = stead.ref
 deref = stead.deref
 
+mouse_pos = stead.mouse_pos
+mouse_filter = stead.mouse_filter
+
+get_ticks = stead.ticks
 
 -- vim:ts=4

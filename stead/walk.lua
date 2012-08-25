@@ -223,7 +223,7 @@ end
 stead.go = function(...)
 	local r,v = go(...)
 	if type(r) == 'string' and stead.cctx() then 
-		pr (r)
+		stead.pr (r)
 	end
 --	if stead.in_life_call then
 --		ACTION_TEXT = nil
