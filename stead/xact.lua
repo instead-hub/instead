@@ -64,7 +64,7 @@ local __do_xact = function(str, self)
 				end
 			else
 				if stead.api_version >= "1.6.3" then
-					oo = here():srch(o)
+					oo = stead.here():srch(o)
 				else
 					oo = objs():srch(o)
 				end
@@ -117,7 +117,7 @@ function xdsc(n)
 		error("Wrong parameter to xdsc.", 2);
 	end
 	v.dsc = function(s)
-		return stead.call(here(), s.disp);
+		return stead.call(stead.here(), s.disp);
 	end
 	v.save = function(self, name, h, need)
 		if need then
@@ -131,7 +131,7 @@ end
 xroom = stead.inherit(room, function(v)
 	v.look = stead.hook(v.look, function(f, s,...)
 		local xdsc = stead.call(s, 'xdsc');
-		return par(stead.space_delim, xdsc, f(s, ...));
+		return stead.par(stead.space_delim, xdsc, f(s, ...));
 	end)
 	return v
 end)

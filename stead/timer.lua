@@ -1,8 +1,8 @@
 game.action = stead.hook(game.action, function(f, s, cmd, ...)
 	if cmd == 'user_timer' then
 		local r,v
-		if here().timer then
-			r,v = stead.call(here(), 'timer');
+		if stead.here().timer then
+			r,v = stead.call(stead.here(), 'timer');
 		elseif s.timer then
 			r,v = stead.call(s, 'timer');
 		end

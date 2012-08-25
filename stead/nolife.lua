@@ -1,5 +1,5 @@
 game.life = stead.hook(game.life, function(f, ...)
-	if stead.call_bool(here(), 'nolife') then
+	if stead.call_bool(stead.here(), 'nolife') then
 		return
 	end
 	return f(...)

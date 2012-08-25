@@ -1,8 +1,8 @@
 game.action = stead.hook(game.action, function(f, s, cmd, ...)
 	if cmd == 'user_kbd' then
 		local r,v;
-		if here().kbd then
-			r,v = stead.call(here(), 'kbd', 
+		if stead.here().kbd then
+			r,v = stead.call(stead.here(), 'kbd', 
 			input.key_event.down, input.key_event.key);
 		elseif s.kbd then
 			r,v = stead.call(s, 'kbd', 

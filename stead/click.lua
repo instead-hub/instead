@@ -62,8 +62,8 @@ function(f, s, cmd, press, mb, x, y, px, py, ...)
 			y2 = tonumber(py)
 		end
 
-		if here().click then
-			s = here()
+		if stead.here().click then
+			s = stead.here()
 		end
 
 		if press == 'true' then
