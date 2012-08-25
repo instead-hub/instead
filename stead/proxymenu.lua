@@ -289,7 +289,7 @@ end
 player = stead.inherit(player, function(v)
 	v.inv = function(s)
 		gen_actions(s);
-		return player_inv(s);
+		return stead.player_inv(s);
 	end
 	v.inventory = list {}
 	return v
