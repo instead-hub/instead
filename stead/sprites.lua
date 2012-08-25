@@ -51,14 +51,14 @@ sprite = {
 		return stead.sprite_dup(name, ...);
 	end;
 	scale = function(name, xs, ys, smooth, ...)
-		if smooth ~= nil then
-			if smooth then smooth = 1 else smooth = 0 end
+		if smooth == nil then
+			smooth = true -- default is on
 		end
 		return stead.sprite_scale(name, xs, ys, smooth,...);
 	end;
 	rotate = function(name, angle, smooth, ...)
-		if smooth ~= nil then
-			if smooth then smooth = 1 else smooth = 0 end
+		if smooth == nil then
+			smooth = true -- default is on
 		end
 		return stead.sprite_rotate(name, angle, smooth, ...);
 	end;
