@@ -1625,24 +1625,34 @@ local compat_api = function()
 		get_steadpath = instead_steadpath
 		get_themespath = instead_themespath
 		get_gamespath = instead_gamespath
+
 		mouse_pos = instead_mouse_pos
 		mouse_filter = instead_mouse_filter
+
 		get_ticks = instead_ticks
+
 		theme_var = instead_themevar
 		theme_name = instead_theme_name
+
 		is_sound = instead_sound
+
 		set_timer = instead_timer
+
 		menu_toggle = instead_menu_toggle
+
 		stead_busy = instead_busy
+
 		sound_load = instead_sound_load
 		sound_free = instead_sound_free
 		sounds_free = instead_sounds_free
 		sound_channel = instead_sound_channel
 		sound_volume = instead_sound_volume
 		sound_panning = instead_sound_panning
+
 		font_load = instead_font_load
 		font_free = instead_font_free
 		font_scaled_size = instead_font_scaled_size
+
 		sprite_alpha = instead_sprite_alpha
 		sprite_dup = instead_sprite_dup
 		sprite_scale = instead_sprite_scale
@@ -1658,12 +1668,17 @@ local compat_api = function()
 		sprite_free = instead_sprite_free
 		sprite_size = instead_sprite_size
 		sprites_free = instead_sprites_free
+
 		readdir = instead_readdir
+
 		call = stead.call_bool
 		call_bool = stead.call_bool
 		call_value = stead.call_value
+
 		deref = stead.deref
+
 		check_object = stead.check_object
+
 		get_title = stead.get_title
 		get_picture = stead.get_picture
 		get_inv = stead.get_inv
@@ -1673,7 +1688,6 @@ local compat_api = function()
 		get_autosave = stead.get_autosave
 
 		fmt = stead.fmt
-
 
 		obj_tag = stead.obj_tag
 
@@ -1698,27 +1712,6 @@ local compat_api = function()
 	--	do_ini = stead.do_ini
 	--	do_savegame = stead.do_savegame
 	end
-
--- those are sill in global space
-	add_sound = stead.add_sound
-	set_sound = stead.set_sound
-	stop_sound = stead.stop_sound
-
-	get_sound = stead.get_sound
-	get_sound_loop = stead.get_sound_loop
-	get_sound_chan = stead.get_sound_chan
-
-	get_music = stead.get_music
-	get_music_fading = stead.get_music_fading
-	get_music_loop = stead.get_music_loop
-
-	set_music = stead.set_music
-	set_music_fading = stead.set_music_fading
-
-	save_music = stead.save_muscic
-	restore_music = stead.restore_muscic
-
-	is_music = stead.is_music
 
 	stead.compat_api = true
 end
@@ -3208,4 +3201,26 @@ stead.init = function(s)
 	end
 end
 stead:init();
+
+-- those are sill in global space
+add_sound = stead.add_sound
+set_sound = stead.set_sound
+stop_sound = stead.stop_sound
+
+get_sound = stead.get_sound
+get_sound_loop = stead.get_sound_loop
+get_sound_chan = stead.get_sound_chan
+
+get_music = stead.get_music
+get_music_fading = stead.get_music_fading
+get_music_loop = stead.get_music_loop
+
+set_music = stead.set_music
+set_music_fading = stead.set_music_fading
+
+save_music = stead.save_muscic
+restore_music = stead.restore_muscic
+
+is_music = stead.is_music
+
 -- vim:ts=4
