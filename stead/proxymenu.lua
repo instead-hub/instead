@@ -1,6 +1,6 @@
 stead.menu_prefix = '   '
 
-local par = function(v, vv, rc) 		
+local mpar = function(v, vv, rc) 		
 	if type(v) == 'string' or type(vv) == 'string' then
 		return stead.par(stead.space_delim, v, vv);
 	elseif v == true or vv == true then
@@ -68,7 +68,7 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 				end
 				vv, r, ri = call(s.pobj, act, w.pobj);
 				rc = ri or rc
-				v = stead.par(v, vv, rc);
+				v = mpar(v, vv, rc);
 
 				if ri == false then
 					return v, false
@@ -78,7 +78,7 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 					and ri == nil then -- used only if use did nothing
 					vv, r, ri = call(w.pobj, s.used_act, s.pobj);
 					rc = ri or rc
-					v = stead.par(v, vv, rc);
+					v = mpar(v, vv, rc);
 
 					if ri == false then
 						return v, false
@@ -88,7 +88,7 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 				if ri then
 					vv, rr, ri = call(game, 'after_'..act, s.pobj, w.pobj);
 					rc = rc or ri
-					v = stead.par(v, vv, rc);
+					v = mpar(v, vv, rc);
 
 					if ri == false then
 						return v, false
@@ -122,7 +122,7 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 
 		vv, r, ri = call(s.pobj, act); 
 		rc = rc or ri
-		v = stead.par(v, vv, rc)
+		v = mpar(v, vv, rc)
 
 		if ri == false then
 			return v
@@ -131,9 +131,8 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 		if ri then
 			vv, rr, ri = call(game, 'after_'..act, s.pobj); 
 			rc = rc or ri
-			v = stead.par(v, vv, rc);
+			v = mpar(v, vv, rc);
 		end
-
 		if v == nil then
 			v = stead.call(game, act, s.pobj);
 		end
