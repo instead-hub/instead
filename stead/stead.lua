@@ -984,7 +984,7 @@ function room(v) --constructor
 end
 
 stead.dialog_enter = function(self)
-	if not dialog_rescan(self) then
+	if not stead.dialog_rescan(self) then
 		return nil, false
 	end
 	return nil, true
@@ -1620,16 +1620,12 @@ local compat_api = function()
 				_G["goto"] = function() error ("Please use 'walk' instead 'goto'.", 2) end
 			end
 		end
+
 		get_savepath = instead_savepath
 		get_gamepath = instead_gamepath
 		get_steadpath = instead_steadpath
 		get_themespath = instead_themespath
 		get_gamespath = instead_gamespath
-
-		mouse_pos = instead_mouse_pos
-		mouse_filter = instead_mouse_filter
-
-		get_ticks = instead_ticks
 
 		theme_var = instead_themevar
 		theme_name = instead_theme_name
@@ -1639,8 +1635,8 @@ local compat_api = function()
 		set_timer = instead_timer
 
 		menu_toggle = instead_menu_toggle
-
 		stead_busy = instead_busy
+		readdir = instead_readdir
 
 		sound_load = instead_sound_load
 		sound_free = instead_sound_free
@@ -1669,21 +1665,14 @@ local compat_api = function()
 		sprite_size = instead_sprite_size
 		sprites_free = instead_sprites_free
 
-		readdir = instead_readdir
-
-		call = stead.call_bool
+		call = stead.call
 		call_bool = stead.call_bool
 		call_value = stead.call_value
-
-		deref = stead.deref
-
-		check_object = stead.check_object
 
 		get_title = stead.get_title
 		get_picture = stead.get_picture
 		get_inv = stead.get_inv
 		get_ways = stead.get_ways
-		ref = stead.ref
 
 		get_autosave = stead.get_autosave
 
@@ -1691,7 +1680,12 @@ local compat_api = function()
 
 		obj_tag = stead.obj_tag
 
-		module_init = stead.module_init;
+		mouse_pos = stead.mouse_pos
+		mouse_filter = stead.mouse_filter
+
+		get_ticks = stead.ticks
+
+		module_init = stead.module_init
 	end
 
 	if stead.api_version < "1.4.5" then
@@ -3222,5 +3216,9 @@ save_music = stead.save_muscic
 restore_music = stead.restore_muscic
 
 is_music = stead.is_music
+
+ref = stead.ref
+deref = stead.deref
+
 
 -- vim:ts=4
