@@ -1150,7 +1150,7 @@ static int luaB_scale_sprite(lua_State *L) {
 	const char *src = luaL_optstring(L, 1, NULL);
 	float xs = luaL_optnumber(L, 2, 0);
 	float ys = luaL_optnumber(L, 3, 0);
-	int smooth = luaL_optnumber(L, 4, 1);
+	int smooth = lua_toboolean(L, 4);
 	const char *desc = luaL_optstring(L, 5, NULL);
 
 	if (!src)
@@ -1197,7 +1197,7 @@ static int luaB_rotate_sprite(lua_State *L) {
 
 	const char *src = luaL_optstring(L, 1, NULL);
 	float angle = luaL_optnumber(L, 2, 1.0f);
-	int smooth = luaL_optnumber(L, 3, 1);
+	int smooth = lua_toboolean(L, 3);
 	const char *desc = luaL_optstring(L, 4, NULL);
 
 	if (!src)
