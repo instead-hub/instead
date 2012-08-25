@@ -147,15 +147,19 @@ end
 
 dbg_list_objects = function()
 	local i,o
+	local dis = function(o)
+		if isDisabled(o) then
+			return ", disabled"
+		end
+		return ''
+	end
 	local rc = stead.par(' ', 'Room:'..tostring(stead.deref(dbg_here())), 
 			'Nam:'..tostring(stead.call(dbg_here(),'nam')));
 	for i,o in opairs(objs(dbg_here())) do
 		rc = rc..'^';
 		o = stead.ref(o)
-		rc = stead.cat(rc, stead.par(' ', 'Id:'..tostring(o.id), 
-			'Obj:'..tostring(stead.deref(o)), 
-			'Nam:'..tostring(stead.call(o, 'nam')), 
-			'Disabled:'..tostring(isDisabled(o))));
+		rc = stead.cat(rc, stead.par(' ', 'Id: '..tostring(o.id)..', '..
+			tostring(stead.deref(o))..': '..tostring(stead.call(o, 'nam'))..dis(o)));
 	end
 --	seen('disp')._txt = rc
 	return rc
@@ -164,13 +168,25 @@ end
 dbg_list_inv = function()
 	local i,o
 	local rc=''
+	local dis = function(o)
+		if isDisabled(o) then
+			return ", disabled"
+		end
+		return ''
+	end
+
+	local tak = function(o)
+		if taken(o) then
+			return ", taken"
+		end
+		return ''
+	end
+
 	for i,o in opairs(inv()) do
 		if rc ~='' then rc = rc..'^' end
 		o = stead.ref(o)
-		rc = stead.cat(rc, stead.par(' ', 'Id:'..tostring(o.id), 'Obj:'..tostring(stead.deref(o)), 
-			'Nam:'..tostring(stead.call(o, 'nam')), 
-			'Disabled:'..tostring(isDisabled(o)), 
-			'Taken:'..tostring(taken(o))));
+		rc = stead.cat(rc, stead.par(' ', 'Id: '..tostring(o.id)..', '..
+			tostring(stead.deref(o))..': '..tostring(stead.call(o, 'nam'))..dis(o)..tak(o)));
 	end
 	if rc == '' then return end
 --	seen('disp')._txt = rc
