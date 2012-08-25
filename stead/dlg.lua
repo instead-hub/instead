@@ -111,7 +111,7 @@ end
 local function phr_pop(self)
 	local n = #self.__phr_stack;
 	if n <= 1 then return false end
-	stead.table.remove(here().__phr_stack, n)
+	stead.table.remove(stead.here().__phr_stack, n)
 	return true
 end
 
@@ -261,10 +261,10 @@ stead.dialog_pjump = function(self, w)
 end
 
 function pjump(w)
-	if not isDialog(here()) then
+	if not isDialog(stead.here()) then
 		return false
 	end
-	return here():pjump(w)
+	return stead.here():pjump(w)
 end
 
 stead.dialog_pstart = function(self, w)
@@ -282,10 +282,10 @@ stead.dialog_pstart = function(self, w)
 end
 
 function pstart(w)
-	if not isDialog(here()) then
+	if not isDialog(stead.here()) then
 		return
 	end
-	here():pstart(w)
+	stead.here():pstart(w)
 end
 
 stead.dialog_psub = function(self, w)
@@ -300,10 +300,10 @@ stead.dialog_psub = function(self, w)
 end
 
 function psub(w)
-	if not isDialog(here()) then
+	if not isDialog(stead.here()) then
 		return false
 	end
-	return here():psub(w)
+	return stead.here():psub(w)
 end
 
 stead.dialog_pret = function(self)
@@ -319,10 +319,10 @@ stead.dialog_pret = function(self)
 end
 
 function pret()
-	if not isDialog(here()) then
+	if not isDialog(stead.here()) then
 		return
 	end
-	return here():pret()
+	return stead.here():pret()
 end
 
 function phr(ask, answ, act)
@@ -495,17 +495,17 @@ stead.phrase_action = function(self)
 		r = true;
 	end
 
-	if isDialog(here()) and here():empty() then
-		empty = call_empty(here());
+	if isDialog(stead.here()) and stead.here():empty() then
+		empty = call_empty(stead.here());
 	end
 
-	local wh = here();
+	local wh = stead.here();
 
 	while isDialog(wh) and wh:empty() and stead.from(wh) ~= wh do
 		wh = stead.from(wh)
 	end
 
-	if wh ~= here() then
+	if wh ~= stead.here() then
 		ret = stead.par(stead.scene_delim, ret, stead.back(wh));
 	end
 	

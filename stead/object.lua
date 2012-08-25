@@ -144,7 +144,7 @@ stead.vobj_save = function(self, name, h, need)
 end
 
 stead.vobj_act = function(self, ...)
-	local o, r = here():srch(self); -- self.nam
+	local o, r = stead.here():srch(self); -- self.nam
 	if stead.ref(o) and stead.ref(o).where then
 		return stead.walk(stead.ref(o).where);
 	end
@@ -152,12 +152,12 @@ stead.vobj_act = function(self, ...)
 end
 
 stead.vobj_used = function(self, ...)
-	local o, r = here():srch(self.nam);
+	local o, r = stead.here():srch(self.nam);
 	return stead.call(stead.ref(r),'used', self.nam, ...);
 end
 
 stead.vobj_use = function(self, ...)
-	local o, r = here():srch(self.nam);
+	local o, r = stead.here():srch(self.nam);
 	return stead.call(stead.ref(r),'use', self.nam, ...);
 end
 
@@ -303,7 +303,7 @@ end
 
 function path(w, wh) -- search in way, disabled too
 	if not wh then
-		wh = here();
+		wh = stead.here();
 	else
 		wh = stead.ref(wh);
 	end

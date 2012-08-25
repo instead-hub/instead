@@ -183,9 +183,9 @@ end
 instead.get_title = function()
 	local s
 	if stead.api_version >= "1.2.0" then
-		s = stead.dispof(here());
+		s = stead.dispof(stead.here());
 	else
-		s = stead.call(here(), 'nam');
+		s = stead.call(stead.here(), 'nam');
 	end
 	if type(s) == 'string' and s ~= '' then
 		stead.state = false
@@ -243,7 +243,7 @@ function menu(v)
 			r,v = stead.call(s, 'menu');
 			if v == nil then v = true end
 			if r == nil then
-				stead.obj_tag(me(), MENU_TAG_ID); -- retag menu field
+				stead.obj_tag(stead.me(), MENU_TAG_ID); -- retag menu field
 			end
 			return r, v
 		end
@@ -254,7 +254,7 @@ function menu(v)
 			r,v = stead.call(s, 'menu');
 			if v == nil then v = true end
 			if r == nil then
-				stead.obj_tag(me(), MENU_TAG_ID); -- retag menu field
+				stead.obj_tag(stead.me(), MENU_TAG_ID); -- retag menu field
 			end
 			return r, v
 		end
@@ -292,7 +292,7 @@ end
 
 game.fading = function(s)
 	local rc = false
-	local p = stead.call(here(), 'pic');
+	local p = stead.call(stead.here(), 'pic');
 	if stead.cmd == 'load' then
 		game.lastpic = p;
 		return true
@@ -313,7 +313,7 @@ end
 
 game.gui.is_fading = function() --to check fading from sdl gui
 	local r,g,v
-	local h = here()
+	local h = stead.here()
 	if not isRoom(h) then
 		return false
 	end

@@ -146,9 +146,9 @@ end
 
 dbg_list_objects = function()
 	local i,o
-	local rc = stead.par(' ', 'Room:'..tostring(stead.deref(dbg_here())), 
-			'Nam:'..tostring(stead.call(dbg_here(),'nam')));
-	for i,o in opairs(objs(dbg_here())) do
+	local rc = stead.par(' ', 'Room:'..tostring(stead.deref(dbg_stead.here())), 
+			'Nam:'..tostring(stead.call(dbg_stead.here(),'nam')));
+	for i,o in opairs(objs(dbg_stead.here())) do
 		rc = rc..'^';
 		o = stead.ref(o)
 		rc = stead.cat(rc, stead.par(' ', 'Id:'..tostring(o.id), 
@@ -211,16 +211,16 @@ dbg_dump_object = room {
 	inp_enter = function(s)
 		local w = s.obj[1]._txt
 		if type(w) == 'string' then
-			if not stead.ref(w) then w = objs(dbg_here()):srch(w); end
+			if not stead.ref(w) then w = objs(dbg_stead.here()):srch(w); end
 			return dbg_dump_obj(w);
 		end
 		return back();
 	end,
 	obj = { inp('inp', '{Enter object}: ', 'main'), 
-		obj{nam = 'Here', dsc = '^{Dump here}', act = code[[ return dbg_dump_obj(dbg_here())]]},
-		obj{nam = 'Player',dsc =  '^{Dump player}', act = code[[ return dbg_dump_obj(me())]]},
+		obj{nam = 'Here', dsc = '^{Dump here}', act = code[[ return dbg_dump_obj(dbg_stead.here())]]},
+		obj{nam = 'Player',dsc =  '^{Dump player}', act = code[[ return dbg_dump_obj(stead.me())]]},
 		obj{nam = 'Lifes', dsc = '^{Dump lifes}', act = code[[ return dbg_dump_obj(debug_tool.lifes)]]},
-		obj{nam = 'Ways', dsc = '^{Dump ways}', act = code[[ return dbg_dump_obj(ways(dbg_here()))]]},
+		obj{nam = 'Ways', dsc = '^{Dump ways}', act = code[[ return dbg_dump_obj(ways(dbg_stead.here()))]]},
 		obj{nam = 'Globals', dsc = '^{Dump globals}', act = code [[return dbg_dump_globals()]] },
 		obj{nam = 'Back', dsc = '^{Back}', act = code [[ return back() ]] },
 		dbg_disp_obj() }
@@ -294,7 +294,7 @@ dbg_drop_object = dlg {
 				if type(o) == 'string' then
 					n = n..' : '..o;
 					n = _xref_escape(n);
-					put (phr(n, true, o..':enable(); drop('..o..','..stead.deref(dbg_here())..')'), s)
+					put (phr(n, true, o..':enable(); drop('..o..','..stead.deref(dbg_stead.here())..')'), s)
 				end
 			end
 		end
@@ -305,7 +305,7 @@ dbg_drop_object = dlg {
 function dbg_exit()
 	local r
 	if stead.api_version < "1.2.0" then
-		r = stead.call(dbg_here(), 'dsc');
+		r = stead.call(dbg_stead.here(), 'dsc');
 	end
 	game.lifes:cat(debug_tool.lifes);
 	timer:set(debug_tool._timer);
@@ -338,17 +338,17 @@ debug_tool = menu {
 	nam = txtb('debug'),
 	lifes = list {},
 	inv = function(s)
-		if here().debug then
+		if stead.here().debug then
 			return nil, true --nothing todo
 		end
-		debug_dlg.__from__ = here();
+		debug_dlg.__from__ = stead.here();
 		s._timer = timer:get();
 		timer:stop();
 		s.lifes:zap();
 		s.lifes:cat(game.lifes);
 		game.lifes:zap();
-		s._here = here();
-		me().where = 'debug_dlg'; -- force to go
+		s._here = stead.here();
+		stead.me().where = 'debug_dlg'; -- force to go
 		return stead.walk(self.where);
 	end,
 };
@@ -358,7 +358,7 @@ function (f, s, cmd, ...)
 	if cmd == 'use_debug' then
 		return debug_tool:inv()
 	elseif cmd == 'exit_debug' then
-		me().where = 'debug_dlg';
+		stead.me().where = 'debug_dlg';
 		return dbg_exit()
 	end
 	return f(s, cmd, ...)
@@ -368,7 +368,7 @@ stead.module_init(function()
 	input.key = stead.hook(input.key,
 	function(f, s, down, key, ...)
 		if down and key == 'f7' then 
-			if here().debug then
+			if stead.here().debug then
 				return 'exit_debug'
 			else
 				return 'use_debug'
@@ -377,7 +377,7 @@ stead.module_init(function()
 		
 		return f(s, down, key, ...)
 	end)
-	putf('debug_tool', me());
+	putf('debug_tool', stead.me());
 end)
 
 

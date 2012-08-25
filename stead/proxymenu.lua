@@ -68,7 +68,7 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 				end
 				vv, r, ri = call(s.pobj, act, w.pobj);
 				rc = ri or rc
-				v = par(v, vv, rc);
+				v = stead.par(v, vv, rc);
 
 				if ri == false then
 					return v, false
@@ -78,7 +78,7 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 					and ri == nil then -- used only if use did nothing
 					vv, r, ri = call(w.pobj, s.used_act, s.pobj);
 					rc = ri or rc
-					v = par(v, vv, rc);
+					v = stead.par(v, vv, rc);
 
 					if ri == false then
 						return v, false
@@ -88,7 +88,7 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 				if ri then
 					vv, rr, ri = call(game, 'after_'..act, s.pobj, w.pobj);
 					rc = rc or ri
-					v = par(v, vv, rc);
+					v = stead.par(v, vv, rc);
 
 					if ri == false then
 						return v, false
@@ -122,7 +122,7 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 
 		vv, r, ri = call(s.pobj, act); 
 		rc = rc or ri
-		v = par(v, vv, rc)
+		v = stead.par(v, vv, rc)
 
 		if ri == false then
 			return v
@@ -131,7 +131,7 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 		if ri then
 			vv, rr, ri = call(game, 'after_'..act, s.pobj); 
 			rc = rc or ri
-			v = par(v, vv, rc);
+			v = stead.par(v, vv, rc);
 		end
 
 		if v == nil then
@@ -167,13 +167,13 @@ end
 
 local select_only = function(s)
 	local k, o, i
-	for k,o in opairs(me().obj) do
+	for k,o in opairs(stead.me().obj) do
 		o = stead.ref(o)
 		if o.action_type and o._state and o ~= s then
 			o:inv();
 		end
 	end
-	stead.obj_tag(me(), MENU_TAG_ID);
+	stead.obj_tag(stead.me(), MENU_TAG_ID);
 end
 
 
@@ -219,11 +219,11 @@ local proxy_menu = function(nam, act, _scene, _inv, _way, use_mode, used_act, us
 		end
 		if not s.fill_ifhave or rc then
 			if s.fill_scene then
-				stead.proxy_fill_objs(s, here().obj, act, use_mode, used_act, useit_act);
+				stead.proxy_fill_objs(s, stead.here().obj, act, use_mode, used_act, useit_act);
 			end
 		end
 		if s.fill_way then
-			stead.proxy_fill_objs(s, here().way, act, use_mode, used_act, useit_act);
+			stead.proxy_fill_objs(s, stead.here().way, act, use_mode, used_act, useit_act);
 		end
 		select_only(s);
 	end
@@ -243,7 +243,7 @@ end
 
 local function gen_actions(s)
 	local k, o
-	for k, o in opairs(me().obj) do
+	for k, o in opairs(stead.me().obj) do
 		o = stead.ref(o)
 		if o.action_type and o._state then
 			o:gen();
@@ -274,7 +274,7 @@ use_menu = function(nam, act, used_act, useit_act, _scene, _inv, _ifhave)
 end
 
 inv = function(s)
-    return me().inventory;
+    return stead.me().inventory;
 end
 
 game.onuse = function(s, v, w) -- do not let use on non proxy obj

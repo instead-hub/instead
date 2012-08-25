@@ -1168,13 +1168,13 @@ stead.phrase_action = function(self)
 		r = true;
 	end
 
-	local wh = here();
+	local wh = stead.here();
 
 	while isDialog(wh) and not stead.dialog_rescan(wh) and stead.from(wh) ~= wh do
 		wh = stead.from(wh)
 	end
 
-	if wh ~= here() then
+	if wh ~= stead.here() then
 		ret = stead.par(stead.space_delim, ret, stead.back(wh));
 	end
 	
@@ -1274,8 +1274,8 @@ stead.player_tagall = function(self)
 	local id, k, v;
 	id = 0;
 
-	id = stead.obj_tag(here(), id);
-	id = stead.obj_tag(me(), id);
+	id = stead.obj_tag(stead.here(), id);
+	id = stead.obj_tag(stead.me(), id);
 
 	for k,v in opairs(ways()) do
 		v = stead.ref(v);
@@ -1739,7 +1739,7 @@ stead.do_ini = function(self, load)
 		for_each(game, "game", stead.check_list, isList, stead.deref(game))
 	end
 	for_each_object(call_ini, load);
-	me():tag();
+	stead.me():tag();
 	if not self.showlast then
 		self._lastdisp = nil;
 	end
@@ -2007,7 +2007,7 @@ function gamefile(file, forget)
 	if forget then
 		game:start()
 		stead.started = true
-		return stead.walk(here(), false, false, true);
+		return stead.walk(stead.here(), false, false, true);
 	end
 end
 
@@ -2060,7 +2060,7 @@ stead.game_save = function(self, name, file)
 	if not h then
 		return nil, false
 	end
-	local n = stead.call(here(),'nam');
+	local n = stead.call(stead.here(),'nam');
 	if type(n) == 'string' and n ~= "" then
 		h:write("-- $Name: "..n:gsub("\n","\\n").."$\n");
 	end
@@ -2184,12 +2184,12 @@ iface = {
 		return n..' - '..str;
 	end,
 	xref = function(self, str, obj)
-		local o = stead.ref(here():srch(obj));
+		local o = stead.ref(stead.here():srch(obj));
 		if not o then 
 			o = stead.ref(ways():srch(obj));
 		end
 		if not o then
-			o = stead.ref(me():srch(obj));
+			o = stead.ref(stead.me():srch(obj));
 		end
 		if not o or not o.id then
 			return str;
@@ -2220,8 +2220,8 @@ iface = {
 				av = txtem(av);
 				pv = txtem(pv);
 				r  = txtem(r);
-				if isForcedsc(here()) then
-					l = me():look();
+				if isForcedsc(stead.here()) then
+					l = stead.me():look();
 				end
 			end
 		end
@@ -2239,32 +2239,32 @@ iface = {
 		stead.set_sound(); -- empty sound
 		cmd,a = stead.getcmd(inp);
 		if cmd == '' then cmd = 'look' end
---		me():tag();
-		local oldloc = here();
+--		stead.me():tag();
+		local oldloc = stead.here();
 		if cmd == 'look' then
 			stead.state = true
-			r,v = me():look();
+			r,v = stead.me():look();
 		elseif cmd == 'obj' then
-			r,v = me():objs();
+			r,v = stead.me():objs();
 		elseif cmd == 'inv' then
-			r,v = me():inv();
+			r,v = stead.me():inv();
 		elseif cmd == 'way' then
-			r,v = me():ways();
+			r,v = stead.me():ways();
 		elseif cmd == 'ls' then
-			r = stead.par(stead.scene_delim, me():objs(), me():inv(), me():ways());
+			r = stead.par(stead.scene_delim, stead.me():objs(), stead.me():inv(), stead.me():ways());
 			v = nil;
 		elseif cmd == 'go' then
 			stead.state = true
-			r,v = me():go(stead.unpack(a));
+			r,v = stead.me():go(stead.unpack(a));
 		elseif cmd == 'back' then
 			stead.state = true
-			r,v = me():go(from());
+			r,v = stead.me():go(stead.from());
 		elseif cmd == 'act' then
 			stead.state = true
-			r,v = me():action(stead.unpack(a));
+			r,v = stead.me():action(stead.unpack(a));
 		elseif cmd == 'use' then
 			stead.state = true
-			r,v = me():use(stead.unpack(a));
+			r,v = stead.me():use(stead.unpack(a));
 		elseif cmd == 'save' then
 			r, v = game:save(stead.unpack(a));
 		elseif cmd == 'load' then
@@ -2282,7 +2282,7 @@ iface = {
 			stead.state = true
 		else
 			stead.state = true
-			r,v = me():action(cmd, stead.unpack(a));
+			r,v = stead.me():action(cmd, stead.unpack(a));
 		end
 		-- here r is action result, v - ret code value	
 		-- state -- game state changed
@@ -2309,11 +2309,11 @@ iface = {
 
 		if stead.state then
 			pv,av = game:step();
-			me():tag();
-			vv = here():look();
+			stead.me():tag();
+			vv = stead.here():look();
 		end
 
-		vv = self:fmt(cmd, stead.state, (oldloc ~= here()) or PLAYER_MOVED, 
+		vv = self:fmt(cmd, stead.state, (oldloc ~= stead.here()) or PLAYER_MOVED, 
 			ACTION_TEXT, av, vv, pv);
 
 		if stead.state then
@@ -2327,7 +2327,7 @@ iface = {
 	end, 
 	shell = function(self)
 		local inp, i, k, cmd, a, n;
-		me():tag();		
+		stead.me():tag();		
 		while game._running do
 			inp = stead.io.read("*l");
 			if inp == 'quit' then
@@ -2353,13 +2353,13 @@ function where(s)
 end
 
 function here()
-	return stead.ref(me().where);
+	return stead.ref(stead.me().where);
 end
 stead.here = here
 
 function from(w)
 	if w == nil then
-		w = here();
+		w = stead.here();
 	else
 		w = stead.ref(w);
 	end
@@ -2373,12 +2373,12 @@ end
 stead.time = time
 
 function inv()
-	return me().obj;
+	return stead.me().obj;
 end
 
 function objs(w)
 	if not w then
-		return here().obj;
+		return stead.here().obj;
 	else
 		return stead.ref(w).obj;
 	end
@@ -2386,7 +2386,7 @@ end
 
 function ways(w)
 	if not w then
-		return here().way;
+		return stead.here().way;
 	else
 		return stead.ref(w).way;
 	end
@@ -2399,38 +2399,38 @@ end
 xref = stead.xref
 
 function pseen(...)
-	if not isDialog(here()) then
+	if not isDialog(stead.here()) then
 		return
 	end
-	return here():pseen(...);
+	return stead.here():pseen(...);
 end
 
 function punseen(...)
-	if not isDialog(here()) then
+	if not isDialog(stead.here()) then
 		return
 	end
-	return here():punseen(...);
+	return stead.here():punseen(...);
 end
 
 function pon(...)
-	if not isDialog(here()) then
+	if not isDialog(stead.here()) then
 		return
 	end
-	here():pon(...);
+	stead.here():pon(...);
 end
 
 function poff(...)
-	if not isDialog(here()) then
+	if not isDialog(stead.here()) then
 		return
 	end
-	here():poff(...);
+	stead.here():poff(...);
 end
 
 function prem(...)
-	if not isDialog(here()) then
+	if not isDialog(stead.here()) then
 		return
 	end
-	here():prem(...);
+	stead.here():prem(...);
 end
 
 function lifeon(what, nr)
@@ -2508,7 +2508,7 @@ stead.vobj_save = function(self, name, h, need)
 end
 
 stead.vobj_act = function(self, ...)
-	local o, r = here():srch(self); -- self.nam
+	local o, r = stead.here():srch(self); -- self.nam
 	if stead.ref(o) and stead.ref(o).where then
 		return stead.walk(stead.ref(o).where);
 	end
@@ -2516,7 +2516,7 @@ stead.vobj_act = function(self, ...)
 end
 
 stead.vobj_used = function(self, ...)
-	local o, r = here():srch(self.nam);
+	local o, r = stead.here():srch(self.nam);
 	return stead.call(stead.ref(r),'used', self.key, ...);
 end
 
@@ -2558,14 +2558,14 @@ function vroom(name, w)
 end
 
 function walk(what)
-	local v,r=me():walk(what);
-	me():tag();
+	local v,r=stead.me():walk(what);
+	stead.me():tag();
 	return v,r;
 end
 stead.walk = walk;
 
 function back()
-	return me():back();
+	return stead.me():back();
 end
 stead.back = back;
 
@@ -2592,7 +2592,7 @@ function remove(obj, from)
 		end
 		o,w = from:srch(obj);
 	else
-		o,w = here():srch(obj);
+		o,w = stead.here():srch(obj);
 	end
 	if w then
 		stead.ref(w).obj:del(obj);
@@ -2617,7 +2617,7 @@ function purge(obj, from)
 		end
 		o,w = from:srch(obj, true);
 	else
-		o,w = here():srch(obj, true);
+		o,w = stead.here():srch(obj, true);
 	end
 	if w then
 		stead.ref(w).obj:purge(obj);
@@ -2640,7 +2640,7 @@ function taketo(obj, wh, pos)
 	end
 	inv():add(obj, pos);
 	o._taken = true
-	wh = stead.deref(me())
+	wh = stead.deref(stead.me())
 	if type(wh) == 'string' then
 		o.__where__ = wh;
 	end
@@ -2662,8 +2662,8 @@ function putto(obj, w, pos)
 		error ("Trying to put wrong object.", 2);
 	end
 	if not w then
-		wh = stead.deref(here());
-		w = here();
+		wh = stead.deref(stead.here());
+		w = stead.here();
 	else
 		wh = stead.deref(w);
 		w = stead.ref(w);
@@ -2706,7 +2706,7 @@ function replace(obj, obj2, from)
 		end
 		o,w = from:srch(obj);
 	else
-		o,w = here():srch(obj);
+		o,w = stead.here():srch(obj);
 	end
 	if w then
 		stead.ref(w).obj:replace(o, obj2);
@@ -2746,7 +2746,7 @@ end
 
 function seen(obj, wh)
 	if not wh then
-		wh = here();
+		wh = stead.here();
 	else
 		wh = stead.ref(wh);
 	end
@@ -2760,7 +2760,7 @@ end
 
 function exist(obj, wh)
 	if not wh then
-		wh = here();
+		wh = stead.here();
 	else
 		wh = stead.ref(wh);
 	end
@@ -2797,7 +2797,7 @@ function movef(obj, there, from)
 end
 
 stead.get_picture = function()
-	local s = stead.call(here(),'pic');
+	local s = stead.call(stead.here(),'pic');
 	if not s then
 		s = stead.call(game, 'pic');
 	end
@@ -2805,7 +2805,7 @@ stead.get_picture = function()
 end
 
 stead.get_title = function()
-	local s = stead.call(here(),'nam');
+	local s = stead.call(stead.here(),'nam');
 	return s;
 end
 

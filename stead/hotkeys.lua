@@ -6,7 +6,7 @@ end)
 
 game.kbd = stead.hook(game.kbd, function(f, s, down, key, ...)
 	if down and key >= '0' and key <= '9' then
-		if isDialog(here()) then
+		if isDialog(stead.here()) then
 			if key == '0' then key = '10' end
 			local p = seen(key);
 			if p and stead.nameof(p) == key then

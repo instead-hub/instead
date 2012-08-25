@@ -67,7 +67,7 @@ local go = function (self, where, back, noenter, noexit, nodsc)
 		v, r = stead.call(stead.ref(where), 'enter', stead.ref(was));
 		if r == false or (stead.api_version >= "1.3.0" and v == false and r == nil) then
 			self.where = was;
-			return par(stead.scene_delim, res, v), ret(r)
+			return stead.par(stead.scene_delim, res, v), ret(r)
 		end
 	end
 	
@@ -76,7 +76,7 @@ local go = function (self, where, back, noenter, noexit, nodsc)
 		need_scene = false;
 	end
 
-	res = par(stead.scene_delim, res, v);
+	res = stead.par(stead.scene_delim, res, v);
 
 	if not back then
 		stead.ref(where).__from__ = stead.deref(was);
@@ -96,7 +96,7 @@ local go = function (self, where, back, noenter, noexit, nodsc)
 			stead.in_onexit_call = true
 			v = stead.call(stead.ref(was), 'left', stead.ref(to));
 			stead.in_onexit_call = false
-			res = par(stead.scene_delim, res, v);
+			res = stead.par(stead.scene_delim, res, v);
 		end
 
 		self.where = stead.deref(to)
@@ -105,12 +105,12 @@ local go = function (self, where, back, noenter, noexit, nodsc)
 			stead.in_entered_call = true
 			v = stead.call(stead.ref(to), 'entered', stead.ref(was));
 			stead.in_entered_call = false
-			res = par(stead.scene_delim, res, v);
+			res = stead.par(stead.scene_delim, res, v);
 		end
 
 		if tonumber(stead.ref(to).__visited) then
 			stead.ref(to).__visited = stead.ref(to).__visited + 1;
-		elseif here().__visited == nil then
+		elseif stead.here().__visited == nil then
 			stead.ref(to).__visited = 1
 		end
 		if stead.api_version < "1.6.3" and isDialog(stead.ref(to)) then
@@ -145,11 +145,11 @@ stead.player_walk = function(self, where, ...) -- real work
 end
 
 stead.player_back = function(self) -- deprecated
-	error ("Do not use me():back(). It's deprecated.", 2)
+	error ("Do not use stead.me():back(). It's deprecated.", 2)
 end
 
 stead.back = function(w)
-	if isDialog(here()) and not isDialog(stead.from()) then
+	if isDialog(stead.here()) and not isDialog(stead.from()) then
 		return stead.walkout(w);
 	end
 	return stead.walkback(w);
@@ -158,32 +158,32 @@ back = stead.back
 
 stead.walkback = function(w)
 	if isRoom(stead.ref(w)) then
-		return me():walk(w, true);
+		return stead.me():walk(w, true);
 	end
-	return me():walk(stead.from(), true);
+	return stead.me():walk(stead.from(), true);
 end
 walkback = stead.walkback
 
 stead.walk = function(what, back, noenter, noexit, nodsc, ...)
-	return me():walk(what, back, noenter, noexit, nodsc, ...);
+	return stead.me():walk(what, back, noenter, noexit, nodsc, ...);
 end
 walk = stead.walk
 
 stead.walkin = function(what)
-	return me():walk(what, false, false, true);
+	return stead.me():walk(what, false, false, true);
 end
 walkin = stead.walkin
 
 stead.walkout = function(what)
 	if isRoom(stead.ref(what)) then
-		return me():walk(what, true, true, false, true);
+		return stead.me():walk(what, true, true, false, true);
 	end
-	return me():walk(stead.from(), true, true, false, true);
+	return stead.me():walk(stead.from(), true, true, false, true);
 end
 walkout = stead.walkout
 
 function visited(w)
-	if not w then w = here() end
+	if not w then w = stead.here() end
 	w = stead.ref(w)
 	if w == nil then
 		return nil;
@@ -208,8 +208,8 @@ iface.fmt = function(self, cmd, st, moved, r, av, objs, pv) -- st -- changed sta
 --		if not PLAYER_MOVED then
 			r = txtem(r)
 --		end
-		if isForcedsc(here()) or NEED_SCENE then
-			l = here():scene();
+		if isForcedsc(stead.here()) or NEED_SCENE then
+			l = stead.here():scene();
 		end
 	end
 	if moved then
@@ -250,7 +250,7 @@ player  = stead.inherit(player, function(v)
 			stead.started = true
 		end
 		if game._time == 0 then
-			return stead.walk(here(), false, false, true);
+			return stead.walk(stead.here(), false, false, true);
 		end
 		NEED_SCENE = true
 		if stead.api_version >= "1.3.5" then
