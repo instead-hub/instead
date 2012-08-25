@@ -117,7 +117,7 @@ function player_use(self, what, onwhat, ...)
 			end
 		end
 	end
-	if not v and vv and stead.api_version >= "1.7.1" then
+	if v == nil and vv == true and stead.api_version >= "1.7.1" then
 		v = true
 	end
 	if not v then
