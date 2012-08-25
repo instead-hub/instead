@@ -146,8 +146,8 @@ end
 
 dbg_list_objects = function()
 	local i,o
-	local rc = stead.par(' ', 'Room:'..tostring(stead.deref(dbg_stead.here())), 
-			'Nam:'..tostring(stead.call(dbg_stead.here(),'nam')));
+	local rc = stead.par(' ', 'Room:'..tostring(stead.deref(dbg_here())), 
+			'Nam:'..tostring(stead.call(dbg_here(),'nam')));
 	for i,o in opairs(objs(dbg_stead.here())) do
 		rc = rc..'^';
 		o = stead.ref(o)
@@ -211,16 +211,16 @@ dbg_dump_object = room {
 	inp_enter = function(s)
 		local w = s.obj[1]._txt
 		if type(w) == 'string' then
-			if not stead.ref(w) then w = objs(dbg_stead.here()):srch(w); end
+			if not stead.ref(w) then w = objs(dbg_here()):srch(w); end
 			return dbg_dump_obj(w);
 		end
 		return back();
 	end,
 	obj = { inp('inp', '{Enter object}: ', 'main'), 
-		obj{nam = 'Here', dsc = '^{Dump here}', act = code[[ return dbg_dump_obj(dbg_stead.here())]]},
+		obj{nam = 'Here', dsc = '^{Dump here}', act = code[[ return dbg_dump_obj(dbg_here())]]},
 		obj{nam = 'Player',dsc =  '^{Dump player}', act = code[[ return dbg_dump_obj(stead.me())]]},
 		obj{nam = 'Lifes', dsc = '^{Dump lifes}', act = code[[ return dbg_dump_obj(debug_tool.lifes)]]},
-		obj{nam = 'Ways', dsc = '^{Dump ways}', act = code[[ return dbg_dump_obj(ways(dbg_stead.here()))]]},
+		obj{nam = 'Ways', dsc = '^{Dump ways}', act = code[[ return dbg_dump_obj(ways(dbg_here()))]]},
 		obj{nam = 'Globals', dsc = '^{Dump globals}', act = code [[return dbg_dump_globals()]] },
 		obj{nam = 'Back', dsc = '^{Back}', act = code [[ return back() ]] },
 		dbg_disp_obj() }
@@ -294,7 +294,7 @@ dbg_drop_object = dlg {
 				if type(o) == 'string' then
 					n = n..' : '..o;
 					n = _xref_escape(n);
-					put (phr(n, true, o..':enable(); drop('..o..','..stead.deref(dbg_stead.here())..')'), s)
+					put (phr(n, true, o..':enable(); drop('..o..','..stead.deref(dbg_here())..')'), s)
 				end
 			end
 		end
@@ -305,7 +305,7 @@ dbg_drop_object = dlg {
 function dbg_exit()
 	local r
 	if stead.api_version < "1.2.0" then
-		r = stead.call(dbg_stead.here(), 'dsc');
+		r = stead.call(dbg_here(), 'dsc');
 	end
 	game.lifes:cat(debug_tool.lifes);
 	timer:set(debug_tool._timer);
