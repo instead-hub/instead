@@ -97,12 +97,13 @@ end
 
 dbg_dump_obj = function(w)
 	w = stead.ref(w)
+
 	if type(w) ~= 'table' then
 		seen('disp')._txt = '^^No such object.';
 		return true
 	end
 	local i,o,n
-	local rc=''
+	local rc = ''
 	for i,o in pairs(w) do
 		local t = stead.tostring(o);
 		if t == i then
@@ -111,8 +112,8 @@ dbg_dump_obj = function(w)
 		if t then
 			if rc ~='' then rc = rc..'^' end
 			local n = '';
-			if type(o) ~= 'function' and isObject(stead.ref(o)) then
-				n = stead.call(stead.ref(o), 'nam');
+			if isObject(o) then
+				n = stead.call(o, 'nam');
 				if type(n) ~= 'string' then n = '' else n = ' : '..n; end
 			end
 			rc = stead.cat(rc, stead.par(' ', tostring(i)..' : '..t..n));
@@ -217,7 +218,7 @@ dbg_dump_object = room {
 		return back();
 	end,
 	obj = { inp('inp', '{Enter object}: ', 'main'), 
-		obj{nam = 'Here', dsc = '^{Dump here}', act = code[[ return dbg_dump_obj(stead.here())]]},
+		obj{nam = 'Here', dsc = '^{Dump here}', act = code[[ return dbg_dump_obj(dbg_here())]]},
 		obj{nam = 'Player',dsc =  '^{Dump player}', act = code[[ return dbg_dump_obj(stead.me())]]},
 		obj{nam = 'Lifes', dsc = '^{Dump lifes}', act = code[[ return dbg_dump_obj(debug_tool.lifes)]]},
 		obj{nam = 'Ways', dsc = '^{Dump ways}', act = code[[ return dbg_dump_obj(ways(dbg_here()))]]},
@@ -309,7 +310,7 @@ function dbg_exit()
 	end
 	game.lifes:cat(debug_tool.lifes);
 	timer:set(debug_tool._timer);
-	return par ('^^', back(), r);
+	return stead.par ('^^', back(), r);
 end
 
 debug_dlg = dlg {
