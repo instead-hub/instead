@@ -1,9 +1,9 @@
-stead.sound_load = sound_load
-stead.sound_free = sound_free
-stead.sounds_free = sounds_free
-stead.sound_channel = sound_channel
-stead.sound_volume = sound_volume
-stead.sound_panning = sound_panning
+stead.sound_load = instead_sound_load
+stead.sound_free = instead_sound_free
+stead.sounds_free = instead_sounds_free
+stead.sound_channel = instead_sound_channel
+stead.sound_volume = instead_sound_volume
+stead.sound_panning = instead_sound_panning
 
 sound = {
 	nam = 'sound';

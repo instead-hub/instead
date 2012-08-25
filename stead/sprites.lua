@@ -1,23 +1,23 @@
 require "theme"
 
-stead.font_load = font_load
-stead.font_free = font_free
-stead.font_scaled_size = font_scaled_size
-stead.sprite_alpha = sprite_alpha
-stead.sprite_dup = sprite_dup
-stead.sprite_scale = sprite_scale
-stead.sprite_rotate = sprite_rotate
-stead.sprite_text = sprite_text
-stead.sprite_text_size = sprite_text_size
-stead.sprite_draw = sprite_draw
-stead.sprite_copy = sprite_copy
-stead.sprite_compose = sprite_compose
-stead.sprite_fill = sprite_fill
-stead.sprite_pixel = sprite_pixel
-stead.sprite_load = sprite_load
-stead.sprite_free = sprite_free
-stead.sprite_size = sprite_size
-stead.sprites_free = sprites_free
+stead.font_load = instead_font_load
+stead.font_free = instead_font_free
+stead.font_scaled_size = instead_font_scaled_size
+stead.sprite_alpha = instead_sprite_alpha
+stead.sprite_dup = instead_sprite_dup
+stead.sprite_scale = instead_sprite_scale
+stead.sprite_rotate = instead_sprite_rotate
+stead.sprite_text = instead_sprite_text
+stead.sprite_text_size = instead_sprite_text_size
+stead.sprite_draw = instead_sprite_draw
+stead.sprite_copy = instead_sprite_copy
+stead.sprite_compose = instead_sprite_compose
+stead.sprite_fill = instead_sprite_fill
+stead.sprite_pixel = instead_sprite_pixel
+stead.sprite_load = instead_sprite_load
+stead.sprite_free = instead_sprite_free
+stead.sprite_size = instead_sprite_size
+stead.sprites_free = instead_sprites_free
 
 sprite = {
 	nam = 'sprites';

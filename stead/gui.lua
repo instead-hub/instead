@@ -146,7 +146,7 @@ iface.ways = function(self, str)
 	return str
 end;
 
-function get_inv(horiz)
+instead.get_inv = function(horiz)
 	local r = stead.call_value(game.gui, 'hideinv');
 	if r then
 		return
@@ -164,9 +164,8 @@ function get_inv(horiz)
 	end
 	return str
 end
-instead.get_inv = get_inv;
 
-function get_ways()
+instead.get_ways = function()
 	local r = stead.call_value(game.gui, 'hideways');
 	if r then
 		return
@@ -180,9 +179,8 @@ function get_ways()
 	end
 	return str
 end
-instead.get_ways = get_ways;
 
-function get_title()
+instead.get_title = function()
 	local s
 	if stead.api_version >= "1.2.0" then
 		s = stead.dispof(here());
@@ -197,13 +195,6 @@ function get_title()
 	return s
 end
 
-instead.get_title = get_title;
-instead.get_picture = get_picture;
-instead.get_music = get_music;
-instead.get_sound = get_sound;
-instead.set_sound = set_sound;
-instead.get_autosave = get_autosave;
-instead.get_music_loop = get_music_loop;
 instead.finish_music = function()
 	if instead.get_music_loop() == 0 then
 		return false
@@ -216,7 +207,6 @@ end
 instead.isEnableSave = isEnableSave;
 instead.isEnableAutosave = isEnableAutosave;
 instead.autosave = autosave;
-
 
 -- here is gui staff only
 function stat(v)
@@ -234,7 +224,7 @@ function isStatus(v)
 	return false
 end
 
-function menu_save(self, name, h, need)
+stead.menu_save = function(self, name, h, need)
 	local dsc;
 	if need then
 		print ("Warning: menu "..name.." can not be saved!");
@@ -253,7 +243,7 @@ function menu(v)
 			r,v = stead.call(s, 'menu');
 			if v == nil then v = true end
 			if r == nil then
-				obj_tag(me(), MENU_TAG_ID); -- retag menu field
+				stead.obj_tag(me(), MENU_TAG_ID); -- retag menu field
 			end
 			return r, v
 		end
@@ -264,13 +254,13 @@ function menu(v)
 			r,v = stead.call(s, 'menu');
 			if v == nil then v = true end
 			if r == nil then
-				obj_tag(me(), MENU_TAG_ID); -- retag menu field
+				stead.obj_tag(me(), MENU_TAG_ID); -- retag menu field
 			end
 			return r, v
 		end
 	end
 	if v.save == nil then
-		v.save = menu_save;
+		v.save = stead.menu_save;
 	end
 	return obj(v);
 end
@@ -285,7 +275,7 @@ function isMenu(v)
 	return false
 end
 
-fmt = function(...)
+stead.fmt = function(...)
 	local i, res
 	local a={...}
 
@@ -299,8 +289,6 @@ fmt = function(...)
 	end
 	return res
 end
-
-stead.fmt = fmt
 
 game.fading = function(s)
 	local rc = false

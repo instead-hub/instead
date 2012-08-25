@@ -40,7 +40,7 @@ local function phrases(s, tag)
 	return tagpnext, a, nil;
 end
 
-function phrase_seen(s, enb, ...)
+stead.phrase_seen = function(s, enb, ...)
 	local i, ph, k
 	local a = {...}
 	if stead.table.maxn(a) == 0 then
@@ -79,7 +79,7 @@ local function ponoff(s, on, ...)
 	end
 end
 
-function dialog_prem(s, ...)
+stead.dialog_prem = function(s, ...)
 	local i, ph, k
 	local a = {...}
 	if stead.table.maxn(a) == 0 then
@@ -94,11 +94,11 @@ function dialog_prem(s, ...)
 	end
 end
 
-function dialog_pon(self,...)
+stead.dialog_pon = function(self,...)
 	return ponoff(self, true, ...);
 end
 
-function dialog_poff(self,...)
+stead.dialog_poff = function(self,...)
 	return ponoff(self, false, ...);
 end
 
@@ -152,7 +152,7 @@ local function dialog_reset(self)
 	end
 end
 
-function dialog_look(self)
+stead.dialog_look = function(self)
 	local i,n,v,ph,ii
 	n = 1
 	local start = phr_get(self)
@@ -176,7 +176,7 @@ function dialog_look(self)
 	return v;
 end
 
-function dialog_rescan(self, naming, from)
+stead.dialog_rescan = function(self, naming, from)
 	local i,k,ph,ii, start
 	k = 0
 	if type(from) == 'number' then
@@ -205,14 +205,14 @@ function dialog_rescan(self, naming, from)
 	return k
 end
 
-function dialog_enter(self)
+stead.dialog_enter = function(self)
 	if self:empty(self) then
 		return nil, false
 	end
 	return nil, true
 end
 
-function dialog_current(self, w, ...)
+stead.dialog_current = function(self, w, ...)
 	local r = phr_get(self)
 	if w then
 		local ph, i = self:phrase(w)
@@ -223,7 +223,7 @@ function dialog_current(self, w, ...)
 	return r
 end
 
-function dialog_curtag(self, w, ...)
+stead.dialog_curtag = function(self, w, ...)
 	local p = self:phrase(phr_get(self))
 	if w then
 		self:current(w)
@@ -234,17 +234,17 @@ function dialog_curtag(self, w, ...)
 	return p.tag
 end
 
-function dialog_empty(self, from)
-	return (dialog_rescan(self, false, from) == false)
+stead.dialog_empty = function(self, from)
+	return (stead.dialog_rescan(self, false, from) == false)
 end
 
-function dialog_visible(self, from)
-	local r = dialog_rescan(self, false, from);
+stead.dialog_visible = function(self, from)
+	local r = stead.dialog_rescan(self, false, from);
 	if not r then r = 0 end
 	return r
 end
 
-function dialog_pjump(self, w)
+stead.dialog_pjump = function(self, w)
 	local ph, i = self:phrase(w)
 	if not ph then
 		return
@@ -267,7 +267,7 @@ function pjump(w)
 	return here():pjump(w)
 end
 
-function dialog_pstart(self, w)
+stead.dialog_pstart = function(self, w)
 	if not w then 
 		w = 1 
 	end
@@ -288,7 +288,7 @@ function pstart(w)
 	here():pstart(w)
 end
 
-function dialog_psub(self, w)
+stead.dialog_psub = function(self, w)
 	local ph, i = self:phrase(w)
 	if not ph then
 		return
@@ -306,7 +306,7 @@ function psub(w)
 	return here():psub(w)
 end
 
-function dialog_pret(self)
+stead.dialog_pret = function(self)
 	if not phr_pop(self) then
 		return
 	end
@@ -371,7 +371,7 @@ end
 
 stead.phr = phr
 
-function phrase_save(self, name, h, need)
+stead.phrase_save = function(self, name, h, need)
 	if need then
 		local m = " = phrase {"
 		local post = '}\n'
@@ -444,7 +444,7 @@ local function dialog_phr2obj(self)
 	end
 end
 
-function dialog_phrase(self, num)
+stead.dialog_phrase = function(self, num)
 	if not num then
 		return
 	end
@@ -464,7 +464,7 @@ function dialog_phrase(self, num)
 	return stead.ref(self.obj[num]), num;
 end
 
-function phrase_action(self)
+stead.phrase_action = function(self)
 	local ph = self;
 	local r, ret;
 	local empty
@@ -521,63 +521,63 @@ function dlg(v) --constructor
 	v.dialog_type = true;
 	if v.ini == nil then
 		v.ini = function(s)
-			dialog_rescan(s, true);
+			stead.dialog_rescan(s, true);
 		end
 	end
 	if v.enter == nil then
-		v.enter = dialog_enter;
+		v.enter = stead.dialog_enter;
 	end
 	if v.look == nil then
-		v.look = dialog_look;
+		v.look = stead.dialog_look;
 	end
 	if v.scene == nil then
-		v.scene = dialog_scene;
+		v.scene = stead.dialog_scene;
 	end
 	if v.pon == nil then
-		v.pon = dialog_pon;
+		v.pon = stead.dialog_pon;
 	end
 	if v.poff == nil then
-		v.poff = dialog_poff;
+		v.poff = stead.dialog_poff;
 	end
 	if v.prem == nil then
-		v.prem = dialog_prem;
+		v.prem = stead.dialog_prem;
 	end
 	if v.pseen == nil then
-		v.pseen = dialog_pseen;
+		v.pseen = stead.dialog_pseen;
 	end
 	if v.punseen == nil then
-		v.punseen = dialog_punseen;
+		v.punseen = stead.dialog_punseen;
 	end
 	if v.empty == nil then
-		v.empty = dialog_empty;
+		v.empty = stead.dialog_empty;
 	end
 
 	if v.visible == nil then
-		v.visible = dialog_visible;
+		v.visible = stead.dialog_visible;
 	end
 
 	if v.current == nil then
-		v.current = dialog_current
+		v.current = stead.dialog_current
 	end
 
 	if v.curtag == nil then
-		v.curtag = dialog_curtag
+		v.curtag = stead.dialog_curtag
 	end
 
 	if v.pstart == nil then
-		v.pstart = dialog_pstart
+		v.pstart = stead.dialog_pstart
 	end
 	if v.pjump == nil then
-		v.pjump = dialog_pjump
+		v.pjump = stead.dialog_pjump
 	end
 	if v.pret == nil then
-		v.pret = dialog_pret
+		v.pret = stead.dialog_pret
 	end
 	if v.psub == nil then
-		v.psub = dialog_psub
+		v.psub = stead.dialog_psub
 	end
 	if v.phrase == nil then
-		v.phrase = dialog_phrase
+		v.phrase = stead.dialog_phrase
 	end
 
 	if v.dsc == nil then

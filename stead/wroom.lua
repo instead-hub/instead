@@ -1,4 +1,4 @@
-function wroom_enter(self, ...)
+stead.wroom_enter = function(self, ...)
 	local w = self.where
 	if type(w) ~= 'table' then
 		w = stead.call(self, 'where')
@@ -10,7 +10,7 @@ function wroom_enter(self, ...)
 	return r, v
 end
 
-function wroom_save(self, name, h, need)
+stead.wroom_save = function(self, name, h, need)
 	if need then
 		local a = stead.tostring(self.oldname);
 		local b = stead.tostring(self.newname);
@@ -27,7 +27,7 @@ function wroom_save(self, name, h, need)
 end
 
 function wroom(a, b, c)
-	local v = room { vroom_type = true, nam = a, where = c, enter = wroom_enter, save = wroom_save };
+	local v = room { vroom_type = true, nam = a, where = c, enter = stead.wroom_enter, save = stead.wroom_save };
 	v.newname = b;
 	v.oldname = a;
 	v._toggle = false

@@ -147,7 +147,7 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 	return menu(v)
 end
 
-proxy_fill_objs = function(s, w, act, use_mode, used_act, useit_act)
+local proxy_fill_objs = function(s, w, act, use_mode, used_act, useit_act)
 	local ii,i,o
 	local rc = false
 	for i,o,ii in opairs(w) do
@@ -173,7 +173,7 @@ local select_only = function(s)
 			o:inv();
 		end
 	end
-	obj_tag(me(), MENU_TAG_ID);
+	stead.obj_tag(me(), MENU_TAG_ID);
 end
 
 

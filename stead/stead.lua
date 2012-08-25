@@ -3,20 +3,20 @@ stead = {
 	api_version = "1.1.6", -- last version before 1.2.0
 	table = table,
 	delim = ',',
-	busy = stead_busy,
+	busy = instead_busy,
 	scene_delim = "^^",
 	space_delim = ' ',
 	string = string,
 	math = math,
-	ticks = get_ticks,
-	mouse_pos = mouse_pos,
-	mouse_filter = mouse_filter, 
-	menu_toggle = menu_toggle,
-	set_timer = set_timer,
+	ticks = instead_ticks,
+	mouse_pos = instead_mouse_pos,
+	mouse_filter = instead_mouse_filter, 
+	menu_toggle = instead_menu_toggle,
+	set_timer = instead_timer,
 	next = next,
 	io = io,
 	os = os,
-	readdir = readdir,
+	readdir = instead_readdir,
 	call_top = 0,
 	call_ctx = { txt = nil, self = nil },
 --	functions = {}, -- code blocks
@@ -80,12 +80,10 @@ if _VERSION == "Lua 5.1" then
 else
 	stead.eval = load
 	stead.unpack = table.unpack
-	stead.table.maxn = get_table_maxn
+	stead.table.maxn = table_get_maxn
 end
 
 instead = stead;
-
-module_init = stead.module_init;
 
 function stead.getcmd(str)
 	local a = {}
@@ -324,7 +322,7 @@ function txtmiddle(v)
 	return iface:middle(v)
 end
 
-fmt = function(...)
+stead.fmt = function(...)
 	local i, res
 	local a = {...};
 
@@ -338,7 +336,6 @@ fmt = function(...)
 	end
 	return res
 end
-stead.fmt = fmt
 
 -- integer lists
 local inext = function(t, k)
@@ -421,7 +418,7 @@ function isXaction(v)
 end
 
 
-function obj_xref(self,str)
+stead.obj_xref = function(self,str)
 	function xrefrep(str)
 		local s = stead.string.gsub(str,'[\001\002]','');
 		return stead.xref(s, self);
@@ -437,7 +434,7 @@ function obj_xref(self,str)
 	return s;
 end
 
-function obj_look(self)
+stead.obj_look = function(self)
 	local i, vv, o
 	if isDisabled(self) then
 		return
@@ -451,7 +448,7 @@ function obj_look(self)
 	for i,o in opairs(self.obj) do
 		o = stead.ref(o);
 		if isObject(o) then
-			vv = obj_look(o);
+			vv = stead.obj_look(o);
 			v = stead.par(stead.space_delim, v, vv); 
 		end
 	end
@@ -459,41 +456,40 @@ function obj_look(self)
 end
 
 
-function obj_remove(self)
+stead.obj_remove = function(self)
 	self._disabled = -1;
 	return self
 end
 
-function obj_disable(self)
+stead.obj_disable = function(self)
 	self._disabled = true;
 	return self
 end
 
-function obj_enable(self)
+stead.obj_enable = function(self)
 	self._disabled = false;
 	return self
 end
 
-function obj_disabled(self)
+stead.obj_disabled = function(self)
 	return (self._disabled == true);
 end
 
-function obj_enable_all(s)
+stead.obj_enable_all = function(s)
 	if not isObject(s) then
 		return
 	end
 	objs(s):enable_all();
 end
 
-function obj_disable_all(s)
+stead.obj_disable_all = function(s)
 	if not isObject(s) then
 		return
 	end
 	objs(s):disable_all();
 end
 
-
-function obj_save(self, name, h, need)
+stead.obj_save = function(self, name, h, need)
 	local dsc;
 	if need then
 		print ("Warning: object "..name.." can not be saved!");
@@ -502,7 +498,7 @@ function obj_save(self, name, h, need)
 	stead.savemembers(h, self, name, need);
 end
 
-function obj_str(self)
+stead.obj_str = function(self)
 	local i, v, vv, o;
 	if not isObject(self) then
 		return
@@ -515,7 +511,7 @@ function obj_str(self)
 		if o~= nil and not isDisabled(o) then -- isObject is better, but compat layer must be ok
 			vv = stead.call(o, 'nam');
 			vv = stead.xref(vv, o);
-			v = stead.par(',', v, vv, obj_str(o));
+			v = stead.par(',', v, vv, stead.obj_str(o));
 		end
 	end
 	return v;
@@ -534,42 +530,42 @@ function obj(v)
 	v.object_type = true;
 
 	if v.xref == nil then
-		v.xref = obj_xref;
+		v.xref = stead.obj_xref;
 	end
 
 	if v.look == nil then
-		v.look = obj_look;
+		v.look = stead.obj_look;
 	end
 	if v.enable == nil then
-		v.enable = obj_enable;
+		v.enable = stead.obj_enable;
 	end
 	if v.disable == nil then
-		v.disable = obj_disable;
+		v.disable = stead.obj_disable;
 	end
 	if v.disabled == nil then
-		v.disabled = obj_disabled;
+		v.disabled = stead.obj_disabled;
 	end
 	if v.enable_all == nil then
-		v.enable_all = obj_enable_all;
+		v.enable_all = stead.obj_enable_all;
 	end
 	if v.disable_all == nil then
-		v.disable_all = obj_disable_all;
+		v.disable_all = stead.obj_disable_all;
 	end
 	if v.remove == nil then
-		v.remove = obj_remove;
+		v.remove = stead.obj_remove;
 	end
 	if v.obj == nil then
 		v.obj = {};
 	end
 	if v.srch == nil then
-		v.srch = obj_search;
+		v.srch = stead.obj_search;
 	end
 	if v.str == nil then
-		v.str = obj_str;
+		v.str = stead.obj_str;
 	end
 	v.obj = list(v.obj);
 	if v.save == nil then
-		v.save = obj_save;
+		v.save = stead.obj_save;
 	end
 	return v
 end
@@ -598,7 +594,6 @@ function stead.ref(n, nofunc) -- ref object by name
 	end
 	return nil
 end
-ref = stead.ref
 
 function stead.deref(n)
 	if type(n) == 'string' then
@@ -610,9 +605,8 @@ function stead.deref(n)
 	end
 	return n
 end
-deref = stead.deref
 
-function list_check(self, name)
+stead.list_check = function(self, name)
 	local i, v, ii;
 	for i,v,ii in opairs(self) do
 		local o = stead.ref(v);
@@ -627,7 +621,7 @@ function list_check(self, name)
 	return true; 
 end
 
-function list_str(self)
+stead.list_str = function(self)
 	local i, v, vv, o;
 	for i,o in opairs(self) do
 		o = stead.ref(o);
@@ -641,7 +635,7 @@ function list_str(self)
 end
 
 
-function list_add(self, name, pos)
+stead.list_add = function(self, name, pos)
 	local nam
 	nam = stead.deref(name);
 	if self:look(nam) then
@@ -657,7 +651,7 @@ function list_add(self, name, pos)
 	return true
 end
 
-function list_set(self, name, pos)
+stead.list_set = function(self, name, pos)
 	local nam
 	local i = tonumber(pos);
 	if not i then
@@ -669,7 +663,7 @@ function list_set(self, name, pos)
 	return true
 end
 
-function list_find(self, name)
+stead.list_find = function(self, name)
 	local n, v, ii
 	for n,v,ii in opairs(self) do 
 		if stead.ref(v) == stead.ref(name, true) then -- do not call func while search
@@ -679,7 +673,7 @@ function list_find(self, name)
 	return nil
 end
 
-function list_disable_all(s)
+stead.list_disable_all = function(s)
 	local k,v
 	for k,v in opairs(s) do
 		local o = stead.ref(v);
@@ -689,7 +683,7 @@ function list_disable_all(s)
 	end
 end
 
-function list_enable_all(s)
+stead.list_enable_all = function(s)
 	local k,v
 	for k,v in opairs(s) do
 		local o = stead.ref(v);
@@ -699,7 +693,7 @@ function list_enable_all(s)
 	end
 end
 
-function list_save(self, name, h, need)
+stead.list_save = function(self, name, h, need)
 	if self.__modifyed__ or self.__modified__ then -- compat
 		h:write(name.." = list({});\n");
 		need = true;
@@ -707,7 +701,7 @@ function list_save(self, name, h, need)
 	stead.savemembers(h, self, name, need);
 end
 
-function list_name(self, name, dis)
+stead.list_name = function(self, name, dis)
 	local n, o, ii
 	for n,o,ii in opairs(self) do
 		o = stead.ref(o);
@@ -720,7 +714,7 @@ function list_name(self, name, dis)
 	end
 	return nil
 end
-function list_id(self, id, dis)
+stead.list_id = function(self, id, dis)
 	local n,o,ii
 	for n,o,ii in opairs(self) do
 		o = stead.ref(o);
@@ -732,7 +726,7 @@ function list_id(self, id, dis)
 	end
 end
 
-function list_search(self, n, dis)
+stead.list_search = function(self, n, dis)
 	local i;
 	i = self:look(n);
 	if not i then
@@ -750,7 +744,7 @@ function list_search(self, n, dis)
 	return self[i], i;
 end
 
-function list_zap(self)
+stead.list_zap = function(self)
 	local n,o,ii
 	for n,o,ii in opairs(self) do
 		self[ii] = nil;
@@ -759,7 +753,7 @@ function list_zap(self)
 	return self
 end
 
-function list_concat(self, other, pos)
+stead.list_concat = function(self, other, pos)
 	local n,o,ii
 	for n,o,ii in opairs(other) do
 		o = stead.ref(o);
@@ -772,7 +766,7 @@ function list_concat(self, other, pos)
 	end
 end
 
-function list_del(self, name)
+stead.list_del = function(self, name)
 	local v,n
 	v, n = self:srch(name);
 	if n == nil then
@@ -787,7 +781,7 @@ function list_del(self, name)
 	return v
 end
 
-function list_purge(self, name)
+stead.list_purge = function(self, name)
 	local v,n
 	v, n = self:srch(name, true);
 	if n == nil then
@@ -802,7 +796,7 @@ function list_purge(self, name)
 	return v
 end
 
-function list_replace(self, name, name2)
+stead.list_replace = function(self, name, name2)
 	local o, ii
 	o, ii = self:srch(name);
 	if ii then
@@ -815,22 +809,22 @@ end
 
 function list(v)
 	v.list_type = true;
-	v.add = list_add;
-	v.set = list_set;
-	v.cat = list_concat;
-	v.zap = list_zap;
-	v.del = list_del;
-	v.purge = list_purge;
-	v.replace = list_replace;
-	v.look = list_find;
-	v.name = list_name;
-	v.byid = list_id;
-	v.srch = list_search;
-	v.str = list_str;
-	v.check = list_check;
-	v.save = list_save;
-	v.enable_all = list_enable_all;
-	v.disable_all = list_disable_all;
+	v.add = stead.list_add;
+	v.set = stead.list_set;
+	v.cat = stead.list_concat;
+	v.zap = stead.list_zap;
+	v.del = stead.list_del;
+	v.purge = stead.list_purge;
+	v.replace = stead.list_replace;
+	v.look = stead.list_find;
+	v.name = stead.list_name;
+	v.byid = stead.list_id;
+	v.srch = stead.list_search;
+	v.str = stead.list_str;
+	v.check = stead.list_check;
+	v.save = stead.list_save;
+	v.enable_all = stead.list_enable_all;
+	v.disable_all = stead.list_disable_all;
 	return v;
 end
 
@@ -877,7 +871,6 @@ stead.call = function(v, n, ...)
 	end
 	error ("Method not string nor function:"..tostring(n), 2);
 end
-call = stead.call
 
 stead.call_bool = function(v, n, ...)
 	if type(v) ~= 'table' then
@@ -900,7 +893,6 @@ stead.call_bool = function(v, n, ...)
 	end
 	return true; -- not nil
 end
-call_bool = stead.call_bool
 
 stead.call_value = function(v, n, ...)
 	if type(v) ~= 'table' then
@@ -919,16 +911,15 @@ stead.call_value = function(v, n, ...)
 	stead.callpop();
 	return r,v;
 end
-call_value = stead.call_value
 
-function room_scene(self)
+stead.room_scene = function(self)
 	local v;
 	v = iface:title(stead.call(self,'nam'));
 	v = stead.par(stead.scene_delim, v, stead.call(self,'dsc')); --obj_look(self));
 	return stead.cat(v, stead.space_delim);
 end
 
-function room_look(self)
+stead.room_look = function(self)
 	local i, vv, o;
 	for i,o in opairs(self.obj) do
 		o = stead.ref(o);
@@ -939,7 +930,7 @@ function room_look(self)
 	return stead.cat(vv, stead.space_delim);
 end
 
-function obj_search(v, n, dis)
+stead.obj_search = function(v, n, dis)
 	local i;
 	local o;
 	if not dis and isDisabled(v) then
@@ -952,7 +943,7 @@ function obj_search(v, n, dis)
 	for i,o in opairs(v.obj) do
 		o = stead.ref(o);
 		if isObject(o) then
-			local r,rr = obj_search(o, n, dis);
+			local r,rr = stead.obj_search(o, n, dis);
 			if r then
 				return r, rr;
 			end
@@ -961,7 +952,7 @@ function obj_search(v, n, dis)
 	return;
 end
 
-function room_save(self, name, h, need)
+stead.room_save = function(self, name, h, need)
 	local dsc;
 	if need then
 		print ("Warning: room "..name.." can not be saved!");
@@ -975,13 +966,13 @@ function room(v) --constructor
 --		error ("No room name in constructor.", 2);
 --	end
 	if v.scene == nil then
-		v.scene = room_scene;
+		v.scene = stead.room_scene;
 	end
 	if v.look == nil then
-		v.look = room_look;
+		v.look = stead.room_look;
 	end
 	if v.save == nil then
-		v.save = room_save;
+		v.save = stead.room_save;
 	end
 	v.location_type = true;
 	if v.way == nil then
@@ -992,21 +983,21 @@ function room(v) --constructor
 	return v;
 end
 
-function dialog_enter(self)
+stead.dialog_enter = function(self)
 	if not dialog_rescan(self) then
 		return nil, false
 	end
 	return nil, true
 end
 
-function dialog_scene(self)
+stead.dialog_scene = function(self)
 	local v
 	v = iface:title(stead.call(self,'nam'));
 	v = stead.par(stead.scene_delim, v, stead.call(self, 'dsc')); --obj_look(self));
 	return v;
 end
 
-function dialog_look(self)
+stead.dialog_look = function(self)
 	local i,n,v,ph
 	n = 1
 	for i,ph in opairs(self.obj) do
@@ -1019,7 +1010,7 @@ function dialog_look(self)
 	return v;
 end
 
-function dialog_rescan(self)
+stead.dialog_rescan = function(self)
 	local i,k,ph
 	k = 1
 	for i,ph in opairs(self.obj) do
@@ -1035,11 +1026,11 @@ function dialog_rescan(self)
 	return true
 end
 
-function dialog_empty(self)
-	return not dialog_rescan(self);
+stead.dialog_empty = function(self)
+	return not stead.dialog_rescan(self);
 end
 
-function dialog_phrase(self, num)
+stead.dialog_phrase = function(self, num)
 	if not tonumber(num) then
 		if isPhrase(stead.ref(num)) then
 			return stead.ref(num);
@@ -1049,14 +1040,14 @@ function dialog_phrase(self, num)
 	return stead.ref(self.obj[tonumber(num)]);
 end
 
-function phrase_seen(s, enb, ...)
+stead.phrase_seen = function(s, enb, ...)
 	local i, ph
 	local a = {...}
 	if stead.table.maxn(a) == 0 then
 		stead.table.insert(a, stead.cctx().self);
 	end
 	for i=1,stead.table.maxn(a) do
-		ph = dialog_phrase(s, a[i]);
+		ph = stead.dialog_phrase(s, a[i]);
 		local r = not isPhrase(ph) or isRemoved(ph) or ph:disabled();
 		if not enb then r = not r end
 		if r then return false end
@@ -1064,12 +1055,12 @@ function phrase_seen(s, enb, ...)
 	return true
 end
 
-function dialog_pseen(s, ...)
-	return phrase_seen(s, true, ...);
+stead.dialog_pseen = function(s, ...)
+	return stead.phrase_seen(s, true, ...);
 end
 
-function dialog_punseen(s, ...)
-	return phrase_seen(s, false, ...);
+stead.dialog_punseen = function(s, ...)
+	return stead.phrase_seen(s, false, ...);
 end
 
 local function ponoff(s, on, ...)
@@ -1079,7 +1070,7 @@ local function ponoff(s, on, ...)
 		stead.table.insert(a, stead.cctx().self)
 	end
 	for i=1,stead.table.maxn(a) do
-		ph = dialog_phrase(s, a[i]);
+		ph = stead.dialog_phrase(s, a[i]);
 		if isPhrase(ph) and not isRemoved(ph) then
 			if on then
 				ph:enable();
@@ -1090,65 +1081,65 @@ local function ponoff(s, on, ...)
 	end
 end
 
-function dialog_prem(s, ...)
+stead.dialog_prem = function(s, ...)
 	local i, ph
 	local a = {...}
 	if stead.table.maxn(a) == 0 then
 		stead.table.insert(a, stead.cctx().self);
 	end
 	for i=1,stead.table.maxn(a) do
-		ph = dialog_phrase(s, a[i]);
+		ph = stead.dialog_phrase(s, a[i]);
 		if isPhrase(ph) then
 			ph:remove();
 		end
 	end
 end
 
-function dialog_pon(self,...)
+stead.dialog_pon = function(self,...)
 	return ponoff(self, true, ...);
 end
 
-function dialog_poff(self,...)
+stead.dialog_poff = function(self,...)
 	return ponoff(self, false, ...);
 end
 
 function dlg(v) --constructor
 	v.dialog_type = true;
 	if v.ini == nil then
-		v.ini = dialog_enter;
+		v.ini = stead.dialog_enter;
 	end
 	if v.enter == nil then
-		v.enter = dialog_enter;
+		v.enter = stead.dialog_enter;
 	end
 	if v.look == nil then
-		v.look = dialog_look;
+		v.look = stead.dialog_look;
 	end
 	if v.scene == nil then
-		v.scene = dialog_scene;
+		v.scene = stead.dialog_scene;
 	end
 	if v.pon == nil then
-		v.pon = dialog_pon;
+		v.pon = stead.dialog_pon;
 	end
 	if v.poff == nil then
-		v.poff = dialog_poff;
+		v.poff = stead.dialog_poff;
 	end
 	if v.prem == nil then
-		v.prem = dialog_prem;
+		v.prem = stead.dialog_prem;
 	end
 	if v.pseen == nil then
-		v.pseen = dialog_pseen;
+		v.pseen = stead.dialog_pseen;
 	end
 	if v.punseen == nil then
-		v.punseen = dialog_punseen;
+		v.punseen = stead.dialog_punseen;
 	end
 	if v.empty == nil then
-		v.empty = dialog_empty;
+		v.empty = stead.dialog_empty;
 	end
 	v = room(v);
 	return v;
 end
 
-function phrase_action(self)
+stead.phrase_action = function(self)
 	local ph = self;
 	local r, ret;
 
@@ -1179,7 +1170,7 @@ function phrase_action(self)
 
 	local wh = here();
 
-	while isDialog(wh) and not dialog_rescan(wh) and stead.from(wh) ~= wh do
+	while isDialog(wh) and not stead.dialog_rescan(wh) and stead.from(wh) ~= wh do
 		wh = stead.from(wh)
 	end
 
@@ -1195,7 +1186,7 @@ function phrase_action(self)
 	return ret
 end
 
-function phrase_save(self, name, h, need)
+stead.phrase_save = function(self, name, h, need)
 	if need then
 		local m = " = phr("
 		if isDisabled(self) then
@@ -1210,7 +1201,7 @@ function phrase_save(self, name, h, need)
 	stead.savemembers(h, self, name, false);
 end
 
-function phrase_look(self, n)
+stead.phrase_look = function(self, n)
 	if isDisabled(self) then
 		return
 	end
@@ -1224,11 +1215,11 @@ end
 
 function phrase(o) --constructor
 	local ret = o;
-	ret.look = phrase_look;
+	ret.look = stead.phrase_look;
 	ret.nam = ''; -- for start
 	ret.phrase_type = true;
-	ret.act = phrase_action;
-	ret.save = phrase_save;
+	ret.act = stead.phrase_action;
+	ret.save = stead.phrase_save;
 	ret = obj(ret);
 	return ret;
 end
@@ -1245,23 +1236,23 @@ function phr(ask, answ, act)
 	return p;
 end
 
-function player_inv(self)
+stead.player_inv = function(self)
 	return iface:inv(stead.cat(self:str()));
 end
 
-function player_ways(self)
+stead.player_ways = function(self)
 	return iface:ways(stead.cat(stead.ref(self.where).way:str()));
 end
 
-function player_objs(self)
+stead.player_objs = function(self)
 	return iface:objs(stead.cat(stead.ref(self.where):str()));
 end
 
-function player_look(self)
+stead.player_look = function(self)
 	return stead.ref(self.where):scene();
 end
 
-function obj_tag(self, id)
+stead.obj_tag = function(self, id)
 	local k,v
 
 	if isDisabled(self) then
@@ -1273,18 +1264,18 @@ function obj_tag(self, id)
 		if isObject(v) and not isDisabled(v) then
 			id = id + 1;
 			v.id = id;
-			id = obj_tag(v, id);
+			id = stead.obj_tag(v, id);
 		end
 	end
 	return id;
 end
 
-function player_tagall(self)
+stead.player_tagall = function(self)
 	local id, k, v;
 	id = 0;
 
-	id = obj_tag(here(), id);
-	id = obj_tag(me(), id);
+	id = stead.obj_tag(here(), id);
+	id = stead.obj_tag(me(), id);
 
 	for k,v in opairs(ways()) do
 		v = stead.ref(v);
@@ -1295,13 +1286,13 @@ function player_tagall(self)
 	end
 end
 
-function player_action(self, what, ...)
+stead.player_action = function(self, what, ...)
 	local v,r,obj
 	obj = stead.ref(self.where):srch(what);
 	if not obj then
 		return stead.call(stead.ref(game), 'action', what, ...); --player_do(self, what, ...);
 	end
-	v, r = player_take(self, what, ...);
+	v, r = stead.player_take(self, what, ...);
 	if not v then
 		v, r = stead.call(stead.ref(obj), 'act', ...);
 		if not v and r ~= true then
@@ -1311,7 +1302,7 @@ function player_action(self, what, ...)
 	return v, r;
 end
 
-function player_take(self, what, ...)
+stead.player_take = function(self, what, ...)
 	local v,r,obj,w
 	obj,w = stead.ref(self.where):srch(what);
 	if not obj then
@@ -1324,7 +1315,7 @@ function player_take(self, what, ...)
 	return v;
 end
 
-function player_use(self, what, onwhat, ...)
+stead.player_use = function(self, what, onwhat, ...)
 	local obj, obj2, v, vv, r;
 	local scene_use_mode = false
 
@@ -1366,7 +1357,7 @@ function player_use(self, what, onwhat, ...)
 	return stead.par(stead.space_delim, v, vv);
 end
 
-function player_back(self)
+stead.player_back = function(self)
 	local where = stead.ref(self.where);
 	if where == nil then
 		return nil,false
@@ -1442,12 +1433,12 @@ stead.go = function(self, where, back)
 	return res;
 end
 
-function player_walk(self, where, ...)
+stead.player_walk = function(self, where, ...)
 	local v, r = stead.go(self, where, ...);
 	return v, r;
 end
 
-function player_go(self, where)
+stead.player_go = function(self, where)
 	local w = stead.ref(self.where).way:srch(where);
 	if not w then
 		return nil,false
@@ -1456,7 +1447,7 @@ function player_go(self, where)
 	return v, r;
 end
 
-function player_save(self, name, h)
+stead.player_save = function(self, name, h)
 	h:write(tostring(name)..".where = '"..stead.deref(self.where).."';\n");
 	stead.savemembers(h, self, name, false);
 end
@@ -1469,43 +1460,43 @@ function player(v)
 		v.where = 'main';
 	end
 	if v.tag == nil then
-		v.tag = player_tagall;
+		v.tag = stead.player_tagall;
 	end
 	if v.walk == nil then
-		v.walk = player_walk;
+		v.walk = stead.player_walk;
 	end
 	if v.go == nil then
-		v.go = player_go;
+		v.go = stead.player_go;
 	end
 	if v.ways == nil then
-		v.ways = player_ways;
+		v.ways = stead.player_ways;
 	end
 	if v.back == nil then
-		v.back = player_back;
+		v.back = stead.player_back;
 	end
 	if v.look == nil then
-		v.look = player_look;
+		v.look = stead.player_look;
 	end
 	if v.inv == nil then
-		v.inv = player_inv;
+		v.inv = stead.player_inv;
 	end
 	if v.use == nil then
-		v.use = player_use;
+		v.use = stead.player_use;
 	end
 	if v.action == nil then
-		v.action = player_action;
+		v.action = stead.player_action;
 	end
 	if v.save == nil then
-		v.save = player_save;
+		v.save = stead.player_save;
 	end
 	if v.objs == nil then
-		v.objs = player_objs;
+		v.objs = stead.player_objs;
 	end
 	v.player_type = true;
 	return obj(v);
 end
 
-function game_life(self)
+stead.game_life = function(self)
 	local i,o
 	local av,v
 	local was_moved
@@ -1581,7 +1572,6 @@ stead.check_object = function(k, v)
 	end
 	for_each(v, k, stead.check_list, isList, stead.deref(v))
 end
-check_object = stead.check_object
 
 function for_everything(f, ...)
 	local is_ok = function(s)
@@ -1594,6 +1584,7 @@ local compat_api = function()
 	if stead.compat_api then
 		return
 	end
+
 	if stead.api_version < "1.6.0" then
 		if not go then
 			go = stead.go
@@ -1612,7 +1603,9 @@ local compat_api = function()
 				_G["goto"] = walk
 			end
 		end
-	else
+	end
+
+	if stead.api_version < "1.7.1" then
 		if not goin then
 			goin = function() error ("Please use 'walkin' instead 'goin'.", 2) end
 		end
@@ -1627,26 +1620,105 @@ local compat_api = function()
 				_G["goto"] = function() error ("Please use 'walk' instead 'goto'.", 2) end
 			end
 		end
-	end
-	if stead.api_version >= "1.4.5" then
-		return
-	end
-	stead.xref = function(...)
-		return xref(...);
+		get_savepath = instead_savepath
+		get_gamepath = instead_gamepath
+		get_steadpath = instead_steadpath
+		get_themespath = instead_themespath
+		get_gamespath = instead_gamespath
+		mouse_pos = instead_mouse_pos
+		mouse_filter = instead_mouse_filter
+		get_ticks = instead_ticks
+		theme_var = instead_themevar
+		theme_name = instead_theme_name
+		is_sound = instead_sound
+		set_timer = instead_timer
+		menu_toggle = instead_menu_toggle
+		stead_busy = instead_busy
+		sound_load = instead_sound_load
+		sound_free = instead_sound_free
+		sounds_free = instead_sounds_free
+		sound_channel = instead_sound_channel
+		sound_volume = instead_sound_volume
+		sound_panning = instead_sound_panning
+		font_load = instead_font_load
+		font_free = instead_font_free
+		font_scaled_size = instead_font_scaled_size
+		sprite_alpha = instead_sprite_alpha
+		sprite_dup = instead_sprite_dup
+		sprite_scale = instead_sprite_scale
+		sprite_rotate = instead_sprite_rotate
+		sprite_text = instead_sprite_text
+		sprite_text_size = instead_sprite_text_size
+		sprite_draw = instead_sprite_draw
+		sprite_copy = instead_sprite_copy
+		sprite_compose = instead_sprite_compose
+		sprite_fill = instead_sprite_fill
+		sprite_pixel = instead_sprite_pixel
+		sprite_load = instead_sprite_load
+		sprite_free = instead_sprite_free
+		sprite_size = instead_sprite_size
+		sprites_free = instead_sprites_free
+		readdir = instead_readdir
+		call = stead.call_bool
+		call_bool = stead.call_bool
+		call_value = stead.call_value
+		deref = stead.deref
+		check_object = stead.check_object
+		get_title = stead.get_title
+		get_picture = stead.get_picture
+		get_inv = stead.get_inv
+		get_ways = stead.get_ways
+		ref = stead.ref
+
+		get_autosave = stead.get_autosave
+
+		fmt = stead.fmt
+
+
+		obj_tag = stead.obj_tag
+
+		module_init = stead.module_init;
 	end
 
-	-- internals of call
-	cctx = stead.cctx
-	callpush = stead.callpush
-	callpop = stead.callpop
-	clearargs = stead.clearargs
-	-- saving
-	savemembers = stead.savemembers;
-	savevar = stead.savevar
-	clearvar = stead.clearvar
+	if stead.api_version < "1.4.5" then
+		stead.xref = function(...)
+			return xref(...);
+		end
 
---	do_ini = stead.do_ini
---	do_savegame = stead.do_savegame
+		-- internals of call
+		cctx = stead.cctx
+		callpush = stead.callpush
+		callpop = stead.callpop
+		clearargs = stead.clearargs
+		-- saving
+		savemembers = stead.savemembers;
+		savevar = stead.savevar
+		clearvar = stead.clearvar
+
+	--	do_ini = stead.do_ini
+	--	do_savegame = stead.do_savegame
+	end
+
+-- those are sill in global space
+	add_sound = stead.add_sound
+	set_sound = stead.set_sound
+	stop_sound = stead.stop_sound
+
+	get_sound = stead.get_sound
+	get_sound_loop = stead.get_sound_loop
+	get_sound_chan = stead.get_sound_chan
+
+	get_music = stead.get_music
+	get_music_fading = stead.get_music_fading
+	get_music_loop = stead.get_music_loop
+
+	set_music = stead.set_music
+	set_music_fading = stead.set_music_fading
+
+	save_music = stead.save_muscic
+	restore_music = stead.restore_muscic
+
+	is_music = stead.is_music
 
 	stead.compat_api = true
 end
@@ -1693,7 +1765,7 @@ stead.do_ini = function(self, load)
 	return stead.par('',v, self._lastdisp); --stead.par('^^',v);
 end
 
-function game_ini(self)
+stead.game_ini = function(self)
 	local v,vv
 	v = stead.do_ini(self);
 	vv = iface:title(stead.call(self,'nam'));
@@ -1707,7 +1779,7 @@ function game_ini(self)
 	return stead.par(stead.scene_delim, vv, v);
 end
 
-function game_start(s)
+stead.game_start = function(s)
 	if type(start) == 'function' then
 		start() -- start function
 	end
@@ -1721,22 +1793,22 @@ function game(v)
 		v.pl = 'player';
 	end
 	if v.ini == nil then
-		v.ini = game_ini;
+		v.ini = stead.game_ini;
 	end
 	if v.start == nil then
-		v.start = game_start
+		v.start = stead.game_start
 	end
 	if v.save == nil then
-		v.save = game_save;
+		v.save = stead.game_save;
 	end
 	if v.load == nil then
-		v.load = game_load;
+		v.load = stead.game_load;
 	end
 	if v.life == nil then
-		v.life = game_life;
+		v.life = stead.game_life;
 	end
 	if v.step == nil then
-		v.step = game_step;
+		v.step = stead.game_step;
 	end
 	if v.lifes == nil then
 		v.lifes = {};
@@ -1753,7 +1825,7 @@ function live(v)
 end
 
 function isEnableSave()
-	if game.enable_save == nil or get_autosave() then
+	if game.enable_save == nil or stead.get_autosave() then
 		return true
 	end
 	return stead.call_bool(game, 'enable_save');
@@ -1986,7 +2058,7 @@ stead.do_savegame = function(s, h)
 	stead.busy(false)
 end
 
-function game_save(self, name, file) 
+stead.game_save = function(self, name, file) 
 	local h;
 
 	if file ~= nil then
@@ -2017,7 +2089,7 @@ function game_save(self, name, file)
 	return nil;
 end
 
-function game_load(self, name) 
+stead.game_load = function(self, name) 
 	if name == nil then
 		return nil, false
 	end
@@ -2038,7 +2110,7 @@ function game_load(self, name)
 end
 
 
-function game_step(self)
+stead.game_step = function(self)
 	self._time = self._time + 1;
 	return self:life(self);
 end
@@ -2342,7 +2414,6 @@ stead.xref = function(str, obj, ...)
 	if type(str) ~= 'string' then return nil; end; 
 	return iface:xref(str, obj, ...);
 end
-
 xref = stead.xref
 
 function pseen(...)
@@ -2398,7 +2469,7 @@ function lifeoff(what)
 end
 stead.lifeoff = lifeoff
 
-function allocator_save(s, name, h, need, auto)
+stead.allocator_save = function(s, name, h, need, auto)
 	if s.auto_allocated and not auto then
 		return
 	end
@@ -2438,7 +2509,7 @@ function delete(v)
 	allocator:delete(v);
 end
 
-function vobj_save(self, name, h, need)
+stead.vobj_save = function(self, name, h, need)
 	local dsc = self.dsc;
 	local w = stead.deref(self.where);
 	
@@ -2454,7 +2525,7 @@ function vobj_save(self, name, h, need)
 	stead.savemembers(h, self, name,false);
 end
 
-function vobj_act(self, ...)
+stead.vobj_act = function(self, ...)
 	local o, r = here():srch(self); -- self.nam
 	if stead.ref(o) and stead.ref(o).where then
 		return stead.walk(stead.ref(o).where);
@@ -2462,7 +2533,7 @@ function vobj_act(self, ...)
 	return stead.call(stead.ref(r),'act', self.key, ...);
 end
 
-function vobj_used(self, ...)
+stead.vobj_used = function(self, ...)
 	local o, r = here():srch(self.nam);
 	return stead.call(stead.ref(r),'used', self.key, ...);
 end
@@ -2471,15 +2542,15 @@ function vobj(key, name, dsc, w)
 	if not tonumber(key) then
 		error ("vobj key must be number!", 2);
 	end
-	return obj{ key = key, nam = name, dsc = dsc, where = stead.deref(w), act = vobj_act, used = vobj_used, save = vobj_save, obj = list({}) };
+	return obj{ key = key, nam = name, dsc = dsc, where = stead.deref(w), act = stead.vobj_act, used = stead.vobj_used, save = stead.vobj_save, obj = list({}) };
 end
 
 function vway(name, dsc, w)
 --	o.object_type = true;
-	return  obj{ key = -1, nam = name, dsc = dsc, act = vobj_act, where = stead.deref(w), used = vobj_used, save = vobj_save, obj = list({}), };
+	return  obj{ key = -1, nam = name, dsc = dsc, act = stead.vobj_act, where = stead.deref(w), used = stead.vobj_used, save = stead.vobj_save, obj = list({}), };
 end
 
-function vroom_save(self, name, h, need)
+stead.vroom_save = function(self, name, h, need)
 	if need then
 		local t = stead.string.format("%s = vroom(%s, %q);\n",
 			name, stead.tostring(self.nam), 
@@ -2489,7 +2560,7 @@ function vroom_save(self, name, h, need)
 	stead.savemembers(h, self, name,false);
 end
 
-function vroom_enter(self, ...)
+stead.vroom_enter = function(self, ...)
 	return stead.walk(self.where);
 end
 
@@ -2501,7 +2572,7 @@ function vroom(name, w)
 	if w == nil then
 		error("Wrong parameter to vroom.", 2);
 	end
-	return room { vroom_type = true, nam = name, where = stead.deref(w), enter = vroom_enter, save = vroom_save, };
+	return room { vroom_type = true, nam = name, where = stead.deref(w), enter = stead.vroom_enter, save = stead.vroom_save, };
 end
 
 function walk(what)
@@ -2743,7 +2814,7 @@ function movef(obj, there, from)
 	return stead.moveto(obj, there, from, 1);
 end
 
-function get_picture()
+stead.get_picture = function()
 	local s = stead.call(here(),'pic');
 	if not s then
 		s = stead.call(game, 'pic');
@@ -2751,35 +2822,35 @@ function get_picture()
 	return s;
 end
 
-function get_title()
+stead.get_title = function()
 	local s = stead.call(here(),'nam');
 	return s;
 end
 
-function get_music()
+stead.get_music = function()
 	return game._music, game._music_loop;
 end
 
-function get_music_loop()
+stead.get_music_loop = function()
 	return game._music_loop;
 end
 
-function save_music(s)
+stead.save_music = function(s)
 	if s == nil then
 		s = self
 	end
-	s.__old_music__ = get_music();
-	s.__old_loop__ = get_music_loop();
+	s.__old_music__ = stead.get_music();
+	s.__old_loop__ = stead.get_music_loop();
 end
 
-function restore_music(s)
+stead.restore_music = function(s)
 	if s == nil then
 		s = self
 	end
-	set_music(s.__old_music__, s.__old_loop__);
+	stead.set_music(s.__old_music__, s.__old_loop__);
 end
 
-function set_music(s, count)
+stead.set_music = function(s, count)
 	game._music = s;
 	if not tonumber(count) then
 		game._music_loop = 0;
@@ -2787,10 +2858,8 @@ function set_music(s, count)
 		game._music_loop = tonumber(count);
 	end
 end
-stead.set_music = set_music
 
-function set_music_fading(o, i)
-
+stead.set_music_fading = function(o, i)
 	if o and o == 0 then o = -1 end
 	if i and i == 0 then i = -1 end
 
@@ -2801,31 +2870,28 @@ function set_music_fading(o, i)
 		game._music_fadein = i
 	end
 end
-stead.set_music_fading = set_music_fading
 
-function get_music_fading()
+stead.get_music_fading = function()
 	return game._music_fadeout, game._music_fadein
 end
-stead.get_music_fading = get_music_fading
 
-function stop_music()
-	set_music(nil, -1);
+stead.stop_music = function()
+	stead.set_music(nil, -1);
 end
-stead.stop_music = stop_music
 
-function is_music()
+stead.is_music = function()
 	return game._music ~= nil and game._music_loop ~= -1
 end
 
-if is_sound == nil then
-	function is_sound()
+if instead_sound == nil then
+	function instead_sound()
 		return false -- sdl-instead export own function
 	end
 end
-stead.is_sound = is_sound
+stead.is_sound = instead_sound
 
-if get_savepath == nil then
-	function get_savepath()
+if instead_savepath == nil then
+	function instead_savepath()
 		return "./"
 	end
 end
@@ -2835,35 +2901,31 @@ function autosave(slot)
 	game.autosave_slot = slot;
 end
 
-function get_autosave()
+stead.get_autosave = function()
 	return game.autosave, game.autosave_slot
 end
 
-function get_sound()
+stead.get_sound = function()
 	return game._sound, game._sound_channel, game._sound_loop;
 end
-stead.get_sound = get_sound
 
-function get_sound_chan()
+stead.get_sound_chan = function()
 	return game._sound_channel
 end
-stead.get_sound_chan = get_sound_chan
 
-function get_sound_loop()
+stead.get_sound_loop = function()
 	return game._sound_loop
 end
-stead.get_sound_loop = get_sound_loop
 
-function stop_sound(chan)
+stead.stop_sound = function(chan)
 	if not tonumber(chan) then
 		stead.set_sound('@');
 		return
 	end
 	stead.add_sound('@'..tostring(chan));
 end
-stead.stop_sound = stop_sound
 
-function add_sound(s, chan, loop)
+stead.add_sound = function(s, chan, loop)
 	if type(s) ~= 'string' then
 		return
 	end
@@ -2874,14 +2936,13 @@ function add_sound(s, chan, loop)
 		if tonumber(loop) then
 			s = s..','..tostring(loop)
 		end
-		stead.set_sound(game._sound..';'..s, get_sound_chan(), get_sound_loop());
+		stead.set_sound(game._sound..';'..s, stead.get_sound_chan(), stead.get_sound_loop());
 	else
 		stead.set_sound(s, chan, loop);
 	end
 end
-stead.add_sound = add_sound
 
-function set_sound(s, chan, loop)
+stead.set_sound = function(s, chan, loop)
 	game._sound = s;	
 	if not tonumber(loop) then
 		game._sound_loop = 1;
@@ -2895,7 +2956,6 @@ function set_sound(s, chan, loop)
 		game._sound_channel = tonumber(chan);
 	end
 end
-stead.set_sound = set_sound
 
 function change_pl(p)
 	local o = stead.ref(p);
@@ -3085,7 +3145,7 @@ stead.objects = function(s)
 				error ("Null object in allocator: "..tostring(c));
 			end
 			v.key_name = n;
-			v.save = allocator_save;
+			v.save = stead.allocator_save;
 			v.constructor = c;
 			return v
 		end,
@@ -3104,7 +3164,7 @@ stead.objects = function(s)
 			if type(v) ~= 'table' or type(n) ~= 'string' then
 				error ("Error in new.", 2);
 			end
-			v.save = allocator_save;
+			v.save = stead.allocator_save;
 			v.constructor = n;
 			if key then
 				s.objects[key] = v
