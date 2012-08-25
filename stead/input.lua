@@ -328,7 +328,7 @@ function inp(n, info, txt)
 			return os
 		end
 		s._edit = t
-		if os == t then
+		if os and  t or (not os and not t) then
 			return os
 		end
 		if s._edit then
