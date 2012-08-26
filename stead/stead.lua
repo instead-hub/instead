@@ -1679,6 +1679,7 @@ local compat_api = function()
 		module_init = stead.module_init
 
 		player_inv = stead.player_inv
+		dialog_enter = stead.dialog_enter
 	end
 
 	if stead.api_version < "1.4.5" then
