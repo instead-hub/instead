@@ -172,17 +172,15 @@ stead.callpop = function()
 	stead.clearargs()
 end
 
-function pclr()
+stead.pclr = function()
 	stead.cctx().txt = nil
 end
-stead.pclr = pclr
 
-function pget()
+stead.pget = function()
 	return stead.cctx().txt;
 end
-stead.pget = pget
 
-function p(...)
+stead.p = function(...)
 	local i
 	local a = {...}
 	for i = 1, stead.table.maxn(a) do
@@ -190,22 +188,22 @@ function p(...)
 	end
 	stead.cctx().txt = stead.cat(stead.cctx().txt, stead.space_delim);
 end
-stead.p = p
-function pr(...)
+
+stead.pr = function(...)
 	local i
 	local a = {...}
 	for i = 1, stead.table.maxn(a) do
 		stead.cctx().txt = stead.par('', stead.cctx().txt, tostring(a[i]));
 	end
 end
-stead.pr = pr
-function pn(...)
+
+stead.pn = function(...)
 	p(...);
 	stead.cctx().txt = stead.par('', stead.cctx().txt,'^');
 end
-stead.pn = pn
+
 -- merge strings with "space" as separator
-function par(space,...)
+stead.par = function(space,...)
 	local i, res
 	local a = {...};
 	for i = 1, stead.table.maxn(a) do
@@ -220,9 +218,8 @@ function par(space,...)
 	end
 	return res;
 end
-stead.par = par
 -- add to not nill string any string
-function cat(v,...)
+stead.cat = function(v,...)
 	local i, res
 	if not v then
 		return nil
@@ -236,7 +233,6 @@ function cat(v,...)
 	end
 	return res;
 end
-stead.cat = cat;
 
 function txtnb(v)
 	if type(v) ~= 'string' then return nil; end
@@ -3219,5 +3215,13 @@ mouse_pos = stead.mouse_pos
 mouse_filter = stead.mouse_filter
 
 get_ticks = stead.ticks
+
+pclr = stead.pclr
+pget =  stead.pget
+p = stead.p
+pr = stead.pr
+pn = stead.pn
+par = stead.par
+cat = stead.cat
 
 -- vim:ts=4
