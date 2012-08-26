@@ -1677,6 +1677,8 @@ local compat_api = function()
 		obj_tag = stead.obj_tag
 
 		module_init = stead.module_init
+
+		player_inv = stead.player_inv
 	end
 
 	if stead.api_version < "1.4.5" then
