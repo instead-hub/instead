@@ -582,7 +582,7 @@ function dlg(v) --constructor
 
 	if v.dsc == nil then
 		v.dsc = function(s)
-			if player_moved() then
+			if stead.player_moved() then
 				stead.last_act(false)
 			elseif type(ACTION_TEXT) ~= 'string' and stead.last_act() then
 				stead.p(stead.last_act())

@@ -1533,7 +1533,7 @@ stead.game_life = function(self)
 	return v, av;
 end
 
-function player_moved()
+stead.player_moved()
 	return PLAYER_MOVED or stead.PLAYER_MOVED
 end
 
@@ -3227,5 +3227,6 @@ pr = stead.pr
 pn = stead.pn
 par = stead.par
 cat = stead.cat
+player_moved = stead.player_moved
 
 -- vim:ts=4
