@@ -1533,7 +1533,7 @@ stead.game_life = function(self)
 	return v, av;
 end
 
-stead.player_moved()
+stead.player_moved = function()
 	return PLAYER_MOVED or stead.PLAYER_MOVED
 end
 
