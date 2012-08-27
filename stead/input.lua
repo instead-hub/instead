@@ -280,7 +280,8 @@ local function input_esc(s)
 	end
 	if not s then return end
 --	return s:gsub("\\","\\\\\\\\"):gsub(">","\\\\>"):gsub("%^","\\%^"):
-	return s:gsub("[^ ]+", rep):gsub("[ \t]", rep);
+	local r = s:gsub("[^ ]+", rep):gsub("[ \t]", rep):gsub("{","\\{"):gsub("}","\\}");
+	return r
 end
 
 function inp(n, info, txt)
