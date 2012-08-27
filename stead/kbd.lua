@@ -27,7 +27,7 @@ stead.module_init(function()
 	input._key_hooks = {}
 end)
 
-function hook_keys(...)
+stead.hook_keys = function(...)
 	local i
 	local a = {...};
 	for i = 1, stead.table.maxn(a) do
@@ -35,7 +35,7 @@ function hook_keys(...)
 	end
 end
 
-function unhook_keys(...)
+stead.unhook_keys = function(...)
 	local i
 	local a = {...};
 	for i = 1, stead.table.maxn(a) do
@@ -43,4 +43,6 @@ function unhook_keys(...)
 	end
 end
 
+hook_keys = stead.hook_keys
+unhook_keys = stead.unhook_keys
 -- vim:ts=4
