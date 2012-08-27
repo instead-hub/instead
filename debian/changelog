@@ -3,7 +3,7 @@ instead (1.8.0) unstable; urgency=low
   * bug fix in stead.need_scene() with parameter;
   * bug fix in click on sprite;
   * bug fix in save logic (table keys);
-  * bug fix in dbg - disable game.pic logic;
+  * bug fixes in dbg;
   * bug fix in proxy_menu - possible to work with nam = true objects;
   * bug fix much more faster text output;
   * bug fix if use returns nil and used returns true;
