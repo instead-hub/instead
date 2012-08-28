@@ -830,7 +830,7 @@ end
 
 stead.call = function(v, n, ...)
 	if type(v) ~= 'table' then
-		error ("Call on non table object:"..n, 2);
+		error ("Call on non table object:"..tostring(n), 2);
 	end
 	if v[n] == nil then
 		return nil,nil;
