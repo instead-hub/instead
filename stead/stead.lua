@@ -1716,7 +1716,7 @@ stead.do_ini = function(self, load)
 		v = stead.par('', v, stead.call(o, 'ini', ...));
 	end
 	math.randomseed(os.time(os.date("*t")))
-	rnd(1); rnd(2); rnd(3); -- Lua bug?
+	stead.rnd(1); stead.rnd(2); stead.rnd(3); -- Lua bug?
 	if type(game) ~= 'table' then
 		error ("No valid 'game' object.");
 	end
