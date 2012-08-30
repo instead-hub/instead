@@ -2568,7 +2568,7 @@ function back()
 end
 stead.back = back;
 
-function rnd(m)
+stead.rnd = function(m)
 	if not m then
 		return math.random();
 	end
@@ -3228,5 +3228,5 @@ pn = stead.pn
 par = stead.par
 cat = stead.cat
 player_moved = stead.player_moved
-
+rnd = stead.rnd;
 -- vim:ts=4
