@@ -689,6 +689,24 @@ stead.list_enable_all = function(s)
 	end
 end
 
+stead.list_enable = function(s, w)
+	local o, i = stead.list_search(s, w, true);
+	o = stead.ref(o);
+	if isObject(o) then
+		o:enable()
+		return o
+	end
+end
+
+stead.list_disable = function(s, w)
+	local o, i = stead.list_search(s, w, true);
+	o = stead.ref(o);
+	if isObject(o) then
+		o:disable()
+		return o
+	end
+end
+
 stead.list_save = function(self, name, h, need)
 	if self.__modifyed__ or self.__modified__ then -- compat
 		h:write(name.." = list({});\n");
@@ -819,6 +837,8 @@ function list(v)
 	v.str = stead.list_str;
 	v.check = stead.list_check;
 	v.save = stead.list_save;
+	v.enable = stead.list_enable;
+	v.disable = stead.list_disable;
 	v.enable_all = stead.list_enable_all;
 	v.disable_all = stead.list_disable_all;
 	return v;

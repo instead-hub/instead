@@ -11,6 +11,7 @@ instead (1.8.0) unstable; urgency=low
   * bug fix in restore_snapshot (extra call to main.enter);
   * internal functions are moved in stead. table;
   * dbg module: use f7 key again to exit debugger;
+  * enable and disable methods in list;
   * sprite.rotate, sprite.scale smooth parameter;
   * much better scr.gfx.scalable handling, uses /2^x scaler;
   * CPPFLAGS added in Makefile;
