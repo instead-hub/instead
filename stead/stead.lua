@@ -2370,10 +2370,13 @@ function from(w)
 end
 stead.from = from
 
-function time()
-	return game._time;
+stead.time = function(s)
+	local n = game._time;
+	if type(s) == 'number' then
+		game._time = s
+	end
+	return n
 end
-stead.time = time
 
 function inv()
 	return stead.me().obj;
@@ -3234,5 +3237,6 @@ cat = stead.cat
 player_moved = stead.player_moved
 rnd = stead.rnd;
 gamefile = stead.gamefile
+time = stead.time
 
 -- vim:ts=4
