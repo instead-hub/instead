@@ -27,7 +27,11 @@ stead.restore_snapshot = function (nr)
 	if not ss[nr] then return nil, true end -- nothing todo
 	local i,v
 
-	stead.gamefile("main.lua", true);
+	if stead.api_version >= "1.8.0" then
+		stead.gamereset("main.lua", true);
+	else
+		stead.gamefile("main.lua", true);
+	end
 
 	local f, err = stead.eval(ss[nr]..' ');
 	if not f then return end
@@ -36,7 +40,14 @@ stead.restore_snapshot = function (nr)
 	if r then
 		return nil, false
 	end
+
 	i = stead.do_ini(game, true);
+
+	if stead.api_version >= "1.8.0" then
+		game:start()
+		stead.started = true
+	end
+
 	RAW_TEXT = true
 --	delete_snapshot(nr);
 	if stead.cctx() then

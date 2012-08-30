@@ -1966,7 +1966,7 @@ stead.savevar = function(h, v, n, need)
 end
 -- savevar = stead.savevar
 
-function gamefile(file, forget)
+stead.gamereset = function(file, forget)
 	stead.clearargs()
 	if forget then
 		stead.stop_music();
@@ -1998,11 +1998,16 @@ function gamefile(file, forget)
 	end
 	dofile(file);
 	game:ini();
+
 	if #game._scripts == 0 or file ~= game._scripts[#game._scripts] then
 		if #game._scripts ~= 0 or file ~= 'main.lua' then
 			stead.table.insert(game._scripts, file);
 		end
 	end
+end
+
+stead.gamefile = function(file, forget)
+	stead.gamereset(file, forget)
 	if forget then
 		game:start()
 		stead.started = true
@@ -2010,7 +2015,6 @@ function gamefile(file, forget)
 	end
 end
 
-stead.gamefile = gamefile
 
 stead.do_savegame = function(s, h)
 	stead.busy(true)
@@ -3229,4 +3233,6 @@ par = stead.par
 cat = stead.cat
 player_moved = stead.player_moved
 rnd = stead.rnd;
+gamefile = stead.gamefile
+
 -- vim:ts=4
