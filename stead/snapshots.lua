@@ -27,7 +27,7 @@ stead.restore_snapshot = function (nr)
 	if not ss[nr] then return nil, true end -- nothing todo
 	local i,v
 
-	if stead.api_version >= "1.8.0" then
+	if stead.api_version >= "1.7.1" then
 		stead.gamereset("main.lua", true);
 	else
 		stead.gamefile("main.lua", true);
