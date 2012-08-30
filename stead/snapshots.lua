@@ -43,7 +43,7 @@ stead.restore_snapshot = function (nr)
 
 	i = stead.do_ini(game, true);
 
-	if stead.api_version >= "1.8.0" then
+	if stead.api_version >= "1.7.1" then
 		game:start()
 		stead.started = true
 	end
