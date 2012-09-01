@@ -33,9 +33,9 @@ At the beginning of ''main.lua'' file a header may be defined. It consists of ta
 -- $Name: The most interesting game!$
 </code>
 
-From version 1.2.0 after headers you must define required STEAD API version. It is "1.6.0" currently.
+From version 1.2.0 after headers you must define required STEAD API version. It is "1.8.0" currently.
 <code lua>
-instead_version "1.6.0"
+instead_version "1.8.0"
 </code>
 <WRAP center round important>
 Without this line STEAD API will stay in compatible(legacy) mode.
@@ -505,6 +505,9 @@ Apart from adding and deleting objects from lists you may switch them on and off
 “enable_all()” and “disable_all()” methods works (from 0.9.1) with embedded objects (objects in object).
 
 From version 0.9.1 methods “zap” and “cat” can be used. zap() -- delete all elements. cat(b, [pos]) -- add all elements of list b to current list at position [pos].
+
+
+From version 1.8.0 methods “disabe” and “enable” can be used to disable/enable selected object in list (usually by name);
 
 Attention!!! Currently, it is recommended to use higher lever functions like: put/get/take/drop/remove/seen/have and so on, to work with objects and inventory.
 
