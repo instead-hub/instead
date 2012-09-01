@@ -3234,8 +3234,8 @@ set_music = stead.set_music
 set_music_fading = stead.set_music_fading
 stop_music = stead.stop_music
 
-save_music = stead.save_muscic
-restore_music = stead.restore_muscic
+save_music = stead.save_music
+restore_music = stead.restore_music
 
 is_music = stead.is_music
 
