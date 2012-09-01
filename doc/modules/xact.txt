@@ -26,6 +26,7 @@
 ===== Примеры использования =====
 <code lua>
 main = room {
+    nam = 'Начало';
     forcedsc = true;
     dsc = [[От автора. Эту игру я писал очень  {note1|долго}.]];
     obj = {
@@ -35,6 +36,7 @@ main = room {
 </code>
 
 <code lua>main = room {
+    nam = 'Комната';
     forcedsc = true;
     dsc = [[Я в комнате.]];
     xdsc = [[ Я вижу {apple|яблоко} и {knife|нож}. ]];
@@ -49,6 +51,7 @@ main = room {
 
 <code lua>
 main = xroom {
+    nam = 'Комната';
     forcedsc = true;
     dsc = [[Я в комнате.]];
     xdsc = [[ Я вижу {apple|яблоко} и {knife|нож}. ]];
@@ -60,6 +63,7 @@ main = xroom {
 
 <code lua>
 main = room {
+    nam = 'Начало';
     forcedsc = true;
     dsc = [[ Начать {xwalk(startgame)|приключение}? ]];
 }
