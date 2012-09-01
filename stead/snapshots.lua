@@ -46,6 +46,7 @@ stead.restore_snapshot = function (nr)
 	if stead.api_version >= "1.7.1" then
 		game:start()
 		stead.started = true
+		PLAYER_MOVED = true -- force fading
 	end
 
 	RAW_TEXT = true
