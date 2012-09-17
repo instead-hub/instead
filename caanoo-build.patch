@@ -1,6 +1,6 @@
 diff -Nur instead-1.8.0/Rules.caanoo instead-1.8.0-caanoo/Rules.caanoo
 --- instead-1.8.0/Rules.caanoo	1970-01-01 03:00:00.000000000 +0300
-+++ instead-1.8.0-caanoo/Rules.caanoo	2012-09-17 08:29:46.000000000 +0400
++++ instead-1.8.0-caanoo/Rules.caanoo	2012-09-17 08:41:50.000000000 +0400
 @@ -0,0 +1,45 @@
 +VERSION := 1.8.0
 +
@@ -49,7 +49,7 @@ diff -Nur instead-1.8.0/Rules.caanoo instead-1.8.0-caanoo/Rules.caanoo
 +RANLIB=ranlib
 diff -Nur instead-1.8.0/instead/Rules.caanoo instead-1.8.0-caanoo/instead/Rules.caanoo
 --- instead-1.8.0/instead/Rules.caanoo	1970-01-01 03:00:00.000000000 +0300
-+++ instead-1.8.0-caanoo/instead/Rules.caanoo	2012-09-17 08:27:56.000000000 +0400
++++ instead-1.8.0-caanoo/instead/Rules.caanoo	2012-09-17 08:41:50.000000000 +0400
 @@ -0,0 +1,44 @@
 +VERSION := 1.8.0
 +
@@ -96,8 +96,8 @@ diff -Nur instead-1.8.0/instead/Rules.caanoo instead-1.8.0-caanoo/instead/Rules.
 +AR=ar rc
 +RANLIB=ranlib
 diff -Nur instead-1.8.0/src/sdl-instead/game.c instead-1.8.0-caanoo/src/sdl-instead/game.c
---- instead-1.8.0/src/sdl-instead/game.c	2012-09-01 17:13:05.000000000 +0400
-+++ instead-1.8.0-caanoo/src/sdl-instead/game.c	2012-09-17 08:28:01.000000000 +0400
+--- instead-1.8.0/src/sdl-instead/game.c	2012-09-17 08:40:58.000000000 +0400
++++ instead-1.8.0-caanoo/src/sdl-instead/game.c	2012-09-17 08:41:50.000000000 +0400
 @@ -3163,7 +3163,7 @@
  				mouse_reset(1);
  				game_menu(menu_askquit);
@@ -108,8 +108,8 @@ diff -Nur instead-1.8.0/src/sdl-instead/game.c instead-1.8.0-caanoo/src/sdl-inst
  			} else if (alt_pressed &&
  				(!is_key(&ev, "enter") || !is_key(&ev, "return"))) {
 diff -Nur instead-1.8.0/src/sdl-instead/graphics.c instead-1.8.0-caanoo/src/sdl-instead/graphics.c
---- instead-1.8.0/src/sdl-instead/graphics.c	2012-09-01 17:13:05.000000000 +0400
-+++ instead-1.8.0-caanoo/src/sdl-instead/graphics.c	2012-09-17 08:28:01.000000000 +0400
+--- instead-1.8.0/src/sdl-instead/graphics.c	2012-09-17 08:40:58.000000000 +0400
++++ instead-1.8.0-caanoo/src/sdl-instead/graphics.c	2012-09-17 08:41:50.000000000 +0400
 @@ -1308,13 +1308,20 @@
  
  int gfx_set_mode(int w, int h, int fs)
@@ -168,8 +168,8 @@ diff -Nur instead-1.8.0/src/sdl-instead/graphics.c instead-1.8.0-caanoo/src/sdl-
  		return -1;
  	}
 diff -Nur instead-1.8.0/src/sdl-instead/input.c instead-1.8.0-caanoo/src/sdl-instead/input.c
---- instead-1.8.0/src/sdl-instead/input.c	2012-09-01 17:13:05.000000000 +0400
-+++ instead-1.8.0-caanoo/src/sdl-instead/input.c	2012-09-17 08:26:14.000000000 +0400
+--- instead-1.8.0/src/sdl-instead/input.c	2012-09-17 08:40:58.000000000 +0400
++++ instead-1.8.0-caanoo/src/sdl-instead/input.c	2012-09-17 08:42:04.000000000 +0400
 @@ -44,6 +44,10 @@
  {
  	SDL_EnableKeyRepeat(500, 30);
@@ -181,7 +181,7 @@ diff -Nur instead-1.8.0/src/sdl-instead/input.c instead-1.8.0-caanoo/src/sdl-ins
  	return 0;
  }
  
-@@ -53,7 +57,36 @@
+@@ -53,7 +57,40 @@
  	while (SDL_PollEvent(&event));
  	return;
  }
@@ -209,6 +209,10 @@ diff -Nur instead-1.8.0/src/sdl-instead/input.c instead-1.8.0-caanoo/src/sdl-ins
 +		return "return"; // b
 +	case 8:
 +		return "quit";
++	case 10:
++		return "page up";
++	case 11:
++		return "page down";
 +	case 9:
 +	case 20:
 +		return "f1";
@@ -219,7 +223,7 @@ diff -Nur instead-1.8.0/src/sdl-instead/input.c instead-1.8.0-caanoo/src/sdl-ins
  int input(struct inp_event *inp, int wait)
  {	
  	int rc;
-@@ -102,6 +135,20 @@
+@@ -102,6 +139,20 @@
  	case SDL_QUIT:
  		game_running = 0;
  		return -1;
@@ -241,8 +245,8 @@ diff -Nur instead-1.8.0/src/sdl-instead/input.c instead-1.8.0-caanoo/src/sdl-ins
  		inp->type = KEY_DOWN; 
  		inp->code = event.key.keysym.scancode;
 diff -Nur instead-1.8.0/src/sdl-instead/sound.c instead-1.8.0-caanoo/src/sdl-instead/sound.c
---- instead-1.8.0/src/sdl-instead/sound.c	2012-09-01 17:13:05.000000000 +0400
-+++ instead-1.8.0-caanoo/src/sdl-instead/sound.c	2012-09-17 08:28:01.000000000 +0400
+--- instead-1.8.0/src/sdl-instead/sound.c	2012-09-17 08:40:58.000000000 +0400
++++ instead-1.8.0-caanoo/src/sdl-instead/sound.c	2012-09-17 08:41:50.000000000 +0400
 @@ -1,8 +1,9 @@
 +#include <SDL.h>
 +#include <SDL_mixer.h>
