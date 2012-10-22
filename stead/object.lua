@@ -34,14 +34,16 @@ stead.player_action = function(self, what, ...)
 		return vv
 	end
 	v, r = stead.player_take(self, what, ...);
-	if type(vv) == 'string' then
-		v = stead.par(stead.space_delim, vv, v);
-	end
 	if not v and not r then
 		v, r = stead.call(obj, 'act', ...);
+		if type(vv) == 'string' then
+			v = stead.par(stead.space_delim, vv, v);
+		end
 		if not v and not r then
 			v, r = stead.call(game, 'act', obj, ...);
 		end
+	elseif type(vv) == 'string' then
+		v = stead.par(stead.space_delim, vv, v);
 	end
 	return v, r;
 end
