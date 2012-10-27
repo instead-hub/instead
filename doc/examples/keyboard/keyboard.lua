@@ -269,6 +269,9 @@ keyboard = function(v)
 			local row = ''
 			for kk, vv in ipairs(v) do
 				local a = kbdxlat(s, vv)
+				if vv == ',' then
+					vv = 'comma'
+				end
 				row = row.."{key("..vv..")|"..input_esc(a).."}"..txtnb "  ";
 			end
 			pn(txtc(row))
@@ -279,6 +282,9 @@ keyboard = function(v)
 		obj {
 			nam = 'key';
 			act = function(s, w)
+				if w == 'comma' then
+					w = ','
+				end
 				if w:find("alt") then
 					stead.here().alt_xlat = not stead.here().alt_xlat
 					return true
