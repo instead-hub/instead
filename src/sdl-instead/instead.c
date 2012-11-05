@@ -525,8 +525,12 @@ static int luaB_get_gamepath(lua_State *L) {
 
 static int luaB_get_steadpath(lua_State *L) {
 	char stead_path[PATH_MAX];
-	strcpy(stead_path, game_cwd);
-	strcat(stead_path, "/");
+
+	if (STEAD_PATH[0] != '/') {
+		strcpy(stead_path, game_cwd);
+		strcat(stead_path, "/");
+	} else
+		stead_path[0] = 0;
 	strcat(stead_path, STEAD_PATH);
 	unix_path(stead_path);
 	lua_pushstring(L, stead_path);
@@ -535,8 +539,12 @@ static int luaB_get_steadpath(lua_State *L) {
 
 static int luaB_get_themespath(lua_State *L) {
 	char themes_path[PATH_MAX];
-	strcpy(themes_path, game_cwd);
-	strcat(themes_path, "/");
+
+	if (THEMES_PATH[0] != '/') {
+		strcpy(themes_path, game_cwd);
+		strcat(themes_path, "/");
+	} else
+		themes_path[0] = 0;
 	strcat(themes_path, THEMES_PATH);
 	unix_path(themes_path);
 	lua_pushstring(L, themes_path);
@@ -545,8 +553,11 @@ static int luaB_get_themespath(lua_State *L) {
 
 static int luaB_get_gamespath(lua_State *L) {
 	char games_path[PATH_MAX];
-	strcpy(games_path, game_cwd);
-	strcat(games_path, "/");
+	if (GAMES_PATH[0] != '/') {
+		strcpy(games_path, game_cwd);
+		strcat(games_path, "/");
+	} else
+		games_path[0] = 0;
 	strcat(games_path, GAMES_PATH);
 	unix_path(games_path);
 	lua_pushstring(L, games_path);
