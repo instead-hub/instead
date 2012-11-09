@@ -50,7 +50,7 @@ local function __vars_fill(v)
 	for k,o in ipairs(v) do
 		if type(o) == 'table' and o.variable_type then
 			__vars_add(v, o);
-			v[k] = nil
+			v[k] = false
 		end
 	end
 	if type(v.variables) == 'table' then
