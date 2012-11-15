@@ -3136,7 +3136,7 @@ void txt_box_scroll_next(textbox_t tbox, int disp)
 		return;
 
 	txt_layout_real_size(box->lay, NULL, &h);
-	
+
 	if (h - box->off < box->h)
 		return;
 
@@ -3146,6 +3146,7 @@ void txt_box_scroll_next(textbox_t tbox, int disp)
 	
 	off = box->off - line->y; /* offset from cur line */
 	off += disp; /* needed offset */
+
 	while (line->next && off >= line->next->y - line->y) {
 		off -= (line->next->y - line->y);
 		line = line->next;
