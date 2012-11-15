@@ -1706,9 +1706,9 @@ static void scroll_to_diff(const char *cmdstr, int cur_off)
 
 static void scroll_to_last(void)
 {
-	int w, h;
+	int h;
 
-	txt_layout_size(txt_box_layout(el_box(el_scene)), &w, &h);
+	txt_layout_real_size(txt_box_layout(el_box(el_scene)), NULL, &h);
 	txt_box_scroll(el_box(el_scene), h);
 }
 
@@ -2009,14 +2009,6 @@ int game_cmd(char *cmd, int click)
 		txt_layout_set(txt_box_layout(el_box(el_scene)), cmdstr);
 		txt_box_set(el_box(el_scene), txt_box_layout(el_box(el_scene)));
 	}
-	if (game_theme.win_scroll_mode == 1 || game_theme.win_scroll_mode == 2) {
-		if (!new_scene)
-			scroll_to_diff(cmdstr, old_off);
-	} else if (game_theme.win_scroll_mode == 3) {
-		scroll_to_last();
-	}
-	FREE(last_cmd);
-	last_cmd = cmdstr;
 	
 	el(el_ways)->y = el(el_title)->y + title_h + pict_h;
 
@@ -2044,8 +2036,17 @@ int game_cmd(char *cmd, int click)
 
 	txt_box_resize(el_box(el_scene), game_theme.win_w, game_theme.win_h - title_h - ways_h - pict_h);
 
+	if (game_theme.win_scroll_mode == 1 || game_theme.win_scroll_mode == 2) {
+		if (!new_scene)
+			scroll_to_diff(cmdstr, old_off);
+	} else if (game_theme.win_scroll_mode == 3) {
+		scroll_to_last();
+	}
+	FREE(last_cmd);
+	last_cmd = cmdstr;
+
 	el_draw(el_scene);
-	
+
 inv:
 	if (inv_enabled()) {
 		int off;
