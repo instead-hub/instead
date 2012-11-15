@@ -1697,11 +1697,19 @@ static void scroll_to_diff(const char *cmdstr, int cur_off)
 		off = txt_layout_pos2off(txt_box_layout(el_box(el_scene)), pos, &hh);
 	el_size(el_scene, NULL, &h);
 
-	if (cur_off <= off && cur_off + h >= off + hh) { /* do not scroll */
+	if (game_theme.win_scroll_mode == 2 && (cur_off <= off && cur_off + h >= off + hh)) { /* do not scroll */
 		off = cur_off;
 	}
 
 	txt_box_scroll(el_box(el_scene), off);
+}
+
+static void scroll_to_last(void)
+{
+	int w, h;
+
+	txt_layout_size(txt_box_layout(el_box(el_scene)), &w, &h);
+	txt_box_scroll(el_box(el_scene), h);
 }
 
 int game_highlight(int x, int y, int on);
@@ -2001,8 +2009,12 @@ int game_cmd(char *cmd, int click)
 		txt_layout_set(txt_box_layout(el_box(el_scene)), cmdstr);
 		txt_box_set(el_box(el_scene), txt_box_layout(el_box(el_scene)));
 	}
-	if (!new_scene)
-		scroll_to_diff(cmdstr, old_off);
+	if (game_theme.win_scroll_mode == 1 || game_theme.win_scroll_mode == 2) {
+		if (!new_scene)
+			scroll_to_diff(cmdstr, old_off);
+	} else if (game_theme.win_scroll_mode == 3) {
+		scroll_to_last();
+	}
 	FREE(last_cmd);
 	last_cmd = cmdstr;
 	

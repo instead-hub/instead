@@ -32,6 +32,7 @@ struct game_theme {
 	int	win_y;
 	int	win_w;
 	int	win_h;
+	int	win_scroll_mode;
 
 	char	*font_name;
 	int	font_size;

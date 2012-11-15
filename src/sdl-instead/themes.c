@@ -210,6 +210,8 @@ struct parser cmd_parser[] = {
 	{ "win.y", parse_int, &game_theme.win_y },
 	{ "win.w", parse_int, &game_theme.win_w },
 	{ "win.h", parse_int, &game_theme.win_h },
+	{ "win.scroll.mode", parse_int, &game_theme.win_scroll_mode },
+
 	{ "win.fnt.name", parse_full_path, &game_theme.font_name, CHANGED_FONT },
 	{ "win.fnt.size", parse_int, &game_theme.font_size, CHANGED_FONT },
 	{ "win.fnt.height", parse_float, &game_theme.font_height },
@@ -354,6 +356,7 @@ struct game_theme game_theme = {
 	.menu_button_name = NULL,
 	.menu_button = NULL,
 	.win_align = ALIGN_JUSTIFY,
+	.win_scroll_mode = 2,
 	.gfx_mode = GFX_MODE_EMBEDDED,
 	.inv_mode = INV_MODE_VERT | INV_ALIGN_SET(ALIGN_LEFT),
 	.click_name = NULL,
