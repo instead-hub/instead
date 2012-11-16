@@ -3135,7 +3135,7 @@ void txt_box_scroll_next(textbox_t tbox, int disp)
 	if (!line)
 		return;
 
-	txt_layout_real_size(box->lay, NULL, &h);
+	txt_box_real_size(box, NULL, &h);
 
 	if (h - box->off < box->h)
 		return;
@@ -4064,18 +4064,17 @@ void txt_layout_set(layout_t lay, char *txt)
 	_txt_layout_free(lay);
 	_txt_layout_add(lay, txt);
 }
-
-
-void txt_layout_real_size(layout_t lay, int *pw, int *ph)
+void _txt_layout_real_size(layout_t lay, struct line *line, int *pw, int *ph)
 {
 	int w = 0;
 	int h = 0;
 	struct margin *margin;
-	struct line *line;
 	struct layout *layout = (struct layout*)lay;
 	if (!layout)
 		return;	
-	for (line = layout->lines; line; line = line->next) {
+	if (!line)
+		line = layout->lines;
+	for ( ; line; line = line->next) {
 		while (!line->num && line->next)
 			line = line->next;
 		if (line->w > w)
@@ -4093,6 +4092,22 @@ void txt_layout_real_size(layout_t lay, int *pw, int *ph)
 		*pw = w;
 	if (ph)
 		*ph = h;
+}
+
+
+void txt_layout_real_size(layout_t lay, int *pw, int *ph)
+{
+	_txt_layout_real_size(lay, NULL, pw, ph);
+}
+
+void txt_box_real_size(textbox_t box, int *pw, int *ph)
+{
+	if (!box)
+		return;
+	if (pw)
+		_txt_layout_real_size(txt_box_layout(box), NULL, pw, ph);
+	else /* faster path */
+		_txt_layout_real_size(txt_box_layout(box), ((struct textbox *)box)->line, pw, ph);
 }
 
 void gfx_cursor(int *xp, int *yp)
