@@ -986,14 +986,12 @@ int box_isscroll_up(int n)
 
 int box_isscroll_down(int n)
 {
-	layout_t l;
 	int off;
 	int h, hh;
 	if (el(n)->type != elt_box)
 		return -1;
 	el_size(n, NULL, &h);
-	l = txt_box_layout(el_box(n));
-	txt_layout_real_size(l, NULL, &hh);
+	txt_box_real_size(el_box(n), NULL, &hh);
 	off = txt_box_off(el_box(n));
 
 	if (hh - off > h)
@@ -1006,7 +1004,6 @@ void box_update_scrollbar(int n)
 	struct el *elup = NULL;
 	struct el *eldown = NULL;
 //	struct el *elslide;
-	layout_t l;
 
 	int x1, y1;
 	int x2, y2;
@@ -1049,8 +1046,7 @@ void box_update_scrollbar(int n)
 	if (y2 == -1)
 		y2 = y1 + h - gfx_img_h(game_theme.a_down);
 
-	l = txt_box_layout(el_box(n));
-	txt_layout_real_size(l, NULL, &hh);
+	txt_box_real_size(el_box(n), NULL, &hh);
 	off = txt_box_off(el_box(n));
 
 	if (el_clear(elup->id)) {
@@ -1706,9 +1702,9 @@ static void scroll_to_diff(const char *cmdstr, int cur_off)
 
 static void scroll_to_last(void)
 {
-	int h;
+	int w, h;
 
-	txt_layout_real_size(txt_box_layout(el_box(el_scene)), NULL, &h);
+	txt_layout_size(txt_box_layout(el_box(el_scene)), &w, &h);
 	txt_box_scroll(el_box(el_scene), h);
 }
 

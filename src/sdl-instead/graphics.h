@@ -148,6 +148,7 @@ extern void 	txt_box_prev_line(textbox_t tbox);
 extern void	txt_box_scroll(textbox_t tbox, int disp);
 extern xref_t	txt_box_xref(textbox_t tbox, int x, int y);
 extern xref_t 	txt_box_xrefs(textbox_t tbox);
+extern void	txt_box_real_size(textbox_t box, int *pw, int *ph);
 
 extern int	txt_box_off(textbox_t tbox);
 extern void	txt_box_size(textbox_t tbox, int *w, int *h);
