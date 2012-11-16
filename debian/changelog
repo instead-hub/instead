@@ -3,6 +3,7 @@ instead (1.8.1) unstable; urgency=low
   * bug fix in instead_gamespath/instead_themespath/instead_steadpath;
   * bug fix in vars, now do not empty [k] indexes in obj;
   * new theme parameter: win.scroll.mode = [0|1|2|3]
+  * faster working with layouts;
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 21 Oct 2012 12:08:00 +0400
 
 instead (1.8.0) unstable; urgency=low

@@ -1711,6 +1711,7 @@ struct word {
 	char *word;
 	img_t	img;
 	struct word *next; /* in line */
+	struct word *prev; /* in line */
 	struct line *line;
 	struct xref *xref;
 	img_t prerend;
@@ -1957,11 +1958,13 @@ void line_add_word(struct line *l, struct word *word)
 	word->line = l;
 	if (!l->words) {
 		l->words = word;
+		word->prev = word;
 		return;
 	}
-	while (w->next)
-		w = w->next;
+	w = w->prev;
 	w->next = word;
+	word->prev = w;
+	l->words->prev = word;
 	return;
 }
 
@@ -2131,17 +2134,15 @@ void layout_add_line(struct layout *layout, struct line *line)
 {
 	struct line *l = layout->lines;
 	line->layout = layout;
-//	if (line->w > layout->w)
-//		layout->w = line->w;
 	if (!l) {
 		layout->lines = line;
-		line->prev = NULL;
+		line->prev = line;
 		return;
 	}
-	while (l->next)
-		l = l->next;
+	l = l->prev;
 	l->next = line;
 	line->prev = l;
+	layout->lines->prev = line;
 	return;
 }
 
@@ -2254,13 +2255,13 @@ void layout_add_xref(struct layout *layout, struct xref *xref)
 	xref->layout = layout;
 	if (!x) {
 		layout->xrefs = xref;
-		xref->prev = NULL;
+		xref->prev = xref;
 		return;
 	}
-	while (x->next)
-		x = x->next;
+	x = x->prev;
 	x->next = xref;
 	xref->prev = x;
+	layout->xrefs->prev = xref;
 	return;
 }
 
@@ -3160,6 +3161,7 @@ void txt_box_scroll_prev(textbox_t tbox, int disp)
 	int off;
 	struct textbox *box = (struct textbox *)tbox;
 	struct line  *line;
+	struct layout *l= box->lay;
 	if (!tbox)
 		return;
 	line = box->line;
@@ -3168,7 +3170,7 @@ void txt_box_scroll_prev(textbox_t tbox, int disp)
 	off = box->off - line->y; /* offset from cur line */
 	off -= disp; /* offset from current line */
 	
-	while (line->prev && off < 0) {
+	while (line->prev != l->lines && off < 0) {
 		line = line->prev;
 		off += (line->next->y - line->y);
 	}
@@ -3213,13 +3215,14 @@ void txt_box_prev_line(textbox_t tbox)
 {
 	struct textbox *box = (struct textbox *)tbox;
 	struct line  *line;
+	struct layout *l = box->lay;
 	if (!box || !box->lay)
 		return;
 	line = box->line;
 	if (!line)
 		return;
 	line = line->prev;
-	if (line) {
+	if (line != l->lines) {
 		box->line = line;
 		box->off = line->y;
 	} else 
@@ -3266,7 +3269,7 @@ void txt_box_prev(textbox_t tbox)
 	line = box->line;
 	if (!line)
 		return;
-	for (; line; line = line->prev) {
+	for (; line != lay->lines; line = line->prev) {
 		if ((box->off - line->y) >= box->h)
 			break;
 	}
@@ -3924,9 +3927,14 @@ xref_t	xref_next(xref_t x)
 
 xref_t	xref_prev(xref_t x)
 {
+	struct layout *l;
 	if (!x)
 		return NULL;
-	return ((struct xref*)x)->prev;
+	l = ((struct xref*)x)->layout;
+	x = ((struct xref*)x)->prev;
+	if (x == l->xrefs)
+		return NULL;
+	return x;
 }
 
 xref_t	txt_layout_xrefs(layout_t lay)
@@ -4106,8 +4114,14 @@ void txt_box_real_size(textbox_t box, int *pw, int *ph)
 		return;
 	if (pw)
 		_txt_layout_real_size(txt_box_layout(box), NULL, pw, ph);
-	else /* faster path */
-		_txt_layout_real_size(txt_box_layout(box), ((struct textbox *)box)->line, pw, ph);
+	else {/* faster path */
+		struct line *line = ((struct layout*)txt_box_layout(box))->lines;
+		struct line *lines = line;
+		if (!line)
+			return;
+		for (; line != lines && !line->num; line = line->prev);
+		_txt_layout_real_size(txt_box_layout(box), line, NULL, ph);
+	}
 }
 
 void gfx_cursor(int *xp, int *yp)
