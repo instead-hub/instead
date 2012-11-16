@@ -3701,8 +3701,8 @@ void _txt_layout_add(layout_t lay, char *txt)
 	fnt_style(layout->fn, 0);
 	txt_size(layout->fn, " ", &spw, NULL);
 
-	for (line = layout->lines; line; line = line->next) {
-		lastline = line;
+	if (layout->lines) {
+		lastline = layout->lines->prev;
 		lastline->pos = 0;
 	}
 	
