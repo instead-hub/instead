@@ -2161,6 +2161,9 @@ function isSceneUse(v)
 end
 
 iface = {
+	anchor = function(self)
+		return '';
+	end;
 	img = function(self, str)
 		return '';
 	end,

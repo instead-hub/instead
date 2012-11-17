@@ -4,6 +4,7 @@ instead (1.8.1) unstable; urgency=low
   * bug fix in vars, now do not empty [k] indexes in obj;
   * bug fix flickering while theme update;
   * new theme parameter: win.scroll.mode = [0|1|2|3]
+  * new iface.anchor feature;
   * faster working with layouts;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 17 Nov 2012 10:32:00 +0400

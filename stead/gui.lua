@@ -38,7 +38,9 @@ iface.xref = function(self, str, obj, ...)
 	end
 	return stead.cat('<a:'..cmd..'0'..tostring(o.id)..a..'>',str,'</a>');
 end;
-
+iface.anchor = function(self)
+	return '<a:#>'
+end
 iface.enum = function(self, n, str)
 	if str == nil or n == nil then return nil; end;
 	return n..self:nb(' - ')..str;

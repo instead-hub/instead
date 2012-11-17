@@ -162,6 +162,7 @@ extern void 	txt_layout_real_size(layout_t lay, int *w, int *h);
 extern void	txt_layout_set_size(layout_t lay, int w, int h); /* without text only */
 
 extern int 	txt_layout_pos2off(layout_t lay, int pos, int *hh);
+extern int 	txt_layout_anchor(layout_t lay, int *hh);
 
 extern img_t 	txt_box_render(textbox_t tbox);
 
