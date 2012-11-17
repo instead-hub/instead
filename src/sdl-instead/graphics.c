@@ -4180,7 +4180,7 @@ void gfx_change_screen(img_t src, int steps)
 	SDL_TimerID han;
 	if (steps <= 1 || !opt_fading) {
 		gfx_draw(src, 0, 0);
-		game_cursor(CURSOR_DRAW);
+		game_cursor(CURSOR_ON);
 		gfx_flip();
 		return;
 	}
