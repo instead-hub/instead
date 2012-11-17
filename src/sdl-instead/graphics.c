@@ -2038,6 +2038,7 @@ struct layout {
 	struct image *images;
 	struct xref *xrefs;
 	struct line *lines;
+	struct line *anchor;
 	struct textbox *box;
 	struct margin *margin;
 	int w;
@@ -2277,6 +2278,7 @@ struct layout *layout_new(fnt_t fn, int w, int h)
 	if (!l)
 		return NULL;
 	l->lines = NULL;
+	l->anchor = NULL;
 	l->images = NULL;
 	l->w = w;
 	l->h = h;
@@ -2377,6 +2379,7 @@ void _txt_layout_free(layout_t lay)
 	layout->images = NULL;
 	layout->xrefs = NULL;
 	layout->lines = NULL;
+	layout->anchor = NULL;
 	layout->margin = NULL;
 
 	memset(layout->scnt, 0, sizeof(layout->scnt));
@@ -3616,7 +3619,11 @@ char *process_token(char *ptr, struct layout *layout, struct line *line, struct 
 				eptr = NULL;
 				goto out;
 			}
-			*xref = xref_new(val);
+			if (!strcmp(val, "#")) { /* jump anchor */
+				layout->anchor = line;
+			} else {
+				*xref = xref_new(val);
+			}
 		}
 	}
 out:
@@ -3676,6 +3683,22 @@ int txt_layout_pos2off(layout_t lay, int pos, int *hh)
 		if (hh)
 			*hh = line->h;
 	}
+	return off;
+}
+
+int txt_layout_anchor(layout_t lay, int *hh)
+{
+	int off;
+	struct line *line;
+	struct layout *layout = (struct layout*)lay;
+	if (!layout)
+		return -1;
+	line = layout->anchor;
+	if (!line)
+		return -1;
+	off = line->y; // + line->h;
+	if (hh)
+		*hh = line->h;
 	return off;
 }
 
