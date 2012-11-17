@@ -2,6 +2,7 @@ instead (1.8.1) unstable; urgency=low
   * bug fix in onact (stop act on non-nil return);
   * bug fix in instead_gamespath/instead_themespath/instead_steadpath;
   * bug fix in vars, now do not empty [k] indexes in obj;
+  * bug fix flickering while theme update;
   * new theme parameter: win.scroll.mode = [0|1|2|3]
   * faster working with layouts;
 
