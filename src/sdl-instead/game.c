@@ -1686,7 +1686,6 @@ static void scroll_to_diff(const char *cmdstr, int cur_off, int new_scene)
 	int pos = 0;
 	int h = 0;
 	int hh = 0;
-	int anchor = 0;
 
 	off = txt_layout_anchor(txt_box_layout(el_box(el_scene)), &hh); /* <a:#> tag? */
 	if (off == -1) {
@@ -1697,12 +1696,11 @@ static void scroll_to_diff(const char *cmdstr, int cur_off, int new_scene)
 			off = txt_layout_pos2off(txt_box_layout(el_box(el_scene)), pos, &hh);
 		if (off == -1)
 			off = cur_off;
-	} else
-		anchor = 1;
+	} 
 
 	el_size(el_scene, NULL, &h);
 
-	if (!anchor && game_theme.win_scroll_mode == 2 && (cur_off <= off && cur_off + h >= off + hh)) { /* do not scroll */
+	if (game_theme.win_scroll_mode == 2 && (cur_off <= off && cur_off + h >= off + hh)) { /* do not scroll */
 		off = cur_off;
 	}
 
