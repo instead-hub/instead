@@ -630,8 +630,10 @@ static int luaB_theme_var(lua_State *L) {
 	game_own_theme = 1;
 	if (!opt_owntheme)
 		return 0;
-	if (!theme_setvar((char*)var, (char*)val))
-		game_theme_changed = 2;
+	if (!theme_setvar((char*)var, (char*)val)) {
+		if (strcmp(var, "win.scroll.mode")) /* let change scroll mode w/o theme reload */
+			game_theme_changed = 2;
+	}
 	return 0;
 }
 
