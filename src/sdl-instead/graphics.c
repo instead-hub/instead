@@ -3170,7 +3170,7 @@ void txt_box_scroll_prev(textbox_t tbox, int disp)
 	off = box->off - line->y; /* offset from cur line */
 	off -= disp; /* offset from current line */
 	
-	while (line->prev != l->lines && off < 0) {
+	while (line != l->lines && off < 0) {
 		line = line->prev;
 		off += (line->next->y - line->y);
 	}
@@ -3221,8 +3221,8 @@ void txt_box_prev_line(textbox_t tbox)
 	line = box->line;
 	if (!line)
 		return;
-	line = line->prev;
 	if (line != l->lines) {
+		line = line->prev;
 		box->line = line;
 		box->off = line->y;
 	} else 
@@ -3273,7 +3273,7 @@ void txt_box_prev(textbox_t tbox)
 		if ((box->off - line->y) >= box->h)
 			break;
 	}
-	if (!line) {
+	if (line == lay->lines) {
 		box->off = 0;
 		box->line = lay->lines;
 		return;
@@ -3931,9 +3931,9 @@ xref_t	xref_prev(xref_t x)
 	if (!x)
 		return NULL;
 	l = ((struct xref*)x)->layout;
-	x = ((struct xref*)x)->prev;
-	if (x == l->xrefs)
+	if (x == l->xrefs) /* last one */
 		return NULL;
+	x = ((struct xref*)x)->prev;
 	return x;
 }
 
@@ -4117,8 +4117,8 @@ void txt_box_real_size(textbox_t box, int *pw, int *ph)
 	else {/* faster path */
 		struct line *line = ((struct layout*)txt_box_layout(box))->lines;
 		struct line *lines = line;
-		if (!line)
-			return;
+		if (lines)
+			line = lines->prev;
 		for (; line != lines && !line->num; line = line->prev);
 		_txt_layout_real_size(txt_box_layout(box), line, NULL, ph);
 	}
