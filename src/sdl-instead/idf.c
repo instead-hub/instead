@@ -123,7 +123,7 @@ idf_t idf_init(const char *fname)
 	if (fseek(idf->fd, 0, SEEK_END))
 		goto err;
 	idf->size = ftell(idf->fd);
-	if (idf->size < 0)
+	if ((int)idf->size < 0)
 		goto err;
 	if (fseek(idf->fd, 0, SEEK_SET))
 		goto err;
@@ -355,13 +355,13 @@ int idf_seek(idff_t fil, int offset, int whence)
 		fil->pos = offset;
 		break;
 	case SEEK_END:
-		if (dir->size + offset > dir->size || dir->size + offset < 0) {
+		if (dir->size + offset > dir->size || (int)(dir->size + offset) < 0) {
 			return -1;
 		}
 		fil->pos = dir->size + offset;
 		break;
 	case SEEK_CUR:
-		if (fil->pos + offset > dir->size || fil->pos + offset < 0) {
+		if (fil->pos + offset > dir->size || (int)(fil->pos + offset) < 0) {
 			return -1;
 		}
 		fil->pos += offset;
