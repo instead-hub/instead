@@ -1373,6 +1373,7 @@ static int luaB_stead_busy(lua_State *L) {
 	int busy = lua_toboolean(L, 1);
 	if (busy) {
 		struct inp_event ev;
+		memset(&ev, 0, sizeof(ev));
 		while (input(&ev, 0) == AGAIN);
 		if (ev.type == MOUSE_MOTION)
 			game_cursor(CURSOR_ON); /* to make all happy */

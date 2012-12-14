@@ -1,3 +1,9 @@
+instead (1.8.2) unstable; urgency=low
+  * bug fix in gfx_chnage_screen (sigsegv);
+  * cleanup code for clang;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 14 Dec 2012 23:26:00 +0400
+
 instead (1.8.1) unstable; urgency=low
   * bug fix in onact (stop act on non-nil return);
   * bug fix in instead_gamespath/instead_themespath/instead_steadpath;
