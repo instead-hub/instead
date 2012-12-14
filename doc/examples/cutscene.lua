@@ -161,8 +161,8 @@ cutscene = function(v)
 					if not f then
 						error ("Wrong expression in cutscene: "..tostring(a))
 					end
-					f()
 					self._code = self._code + 1
+					f()
 				end
 				strip = true
 			elseif c == "walk" then
