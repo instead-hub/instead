@@ -4215,7 +4215,7 @@ void gfx_change_screen(img_t src, int steps)
 	memset(&ev, 0, sizeof(ev));
 	ALPHA_STEPS = steps;
 	fade_step_nr = 0;
-	han = SDL_AddTimer(1, update, NULL);
+	han = SDL_AddTimer(60, update, NULL);
 	while (input(&ev, 1) >=0 && gfx_fading()) /* just wait for change */
 		game_cursor(CURSOR_ON);
 	SDL_RemoveTimer(han);
