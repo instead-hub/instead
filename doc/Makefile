@@ -38,7 +38,6 @@ clean:
 all:
 install:
 	$(INSTALLD) $(DOCPATH)
-	$(INSTALL) *.html *.txt *.pdf $(DOCPATH)
 	$(INSTALLD) $(DOCPATH)/modules
 	$(INSTALL) modules/*.txt $(DOCPATH)/modules
 	$(INSTALLD) $(MANPATH)

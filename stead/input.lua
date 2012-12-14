@@ -317,7 +317,7 @@ function inp(n, info, txt)
 		return t
 	end
 	v.match = function(s, str)
-		local aa = tolow(tostring(str)):gsub("\*",".*"):gsub("[?]",".?");
+		local aa = tolow(tostring(str)):gsub("[*]",".*"):gsub("[?]",".?");
 		local bb = tolow(tostring(s:text()));
 		if bb:find("^"..aa.."$") then
 			return true

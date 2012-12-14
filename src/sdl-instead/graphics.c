@@ -4163,7 +4163,7 @@ void gfx_warp_cursor(int x, int y)
 }
 
 int ALPHA_STEPS = 4;
-static int   fade_step_nr = -1;
+static volatile int   fade_step_nr = -1;
 
 int gfx_fading(void)
 {
@@ -4171,10 +4171,12 @@ int gfx_fading(void)
 }
 
 img_t	*fade_bg = NULL;
+static volatile int update_in_way = 0;
 
 static void update_gfx(void *aux)
 {
 	img_t img = (img_t) aux;
+	update_in_way --;
 	if (fade_step_nr == -1 || !img || !fade_bg)
 		return;
 	game_cursor(CURSOR_CLEAR);
@@ -4188,9 +4190,11 @@ static void update_gfx(void *aux)
 		fade_step_nr = -1;
 	}
 }
-
 static Uint32 update(Uint32 interval, void *aux)
 {
+	if (!gfx_fading())
+		return 0; /* no work */
+	update_in_way ++;
 	push_user_event(update_gfx, aux);
 	return interval;
 }
@@ -4207,14 +4211,15 @@ void gfx_change_screen(img_t src, int steps)
 		gfx_flip();
 		return;
 	}
-	memset(&ev, 0, sizeof(ev));
-	ALPHA_STEPS = steps;
-	fade_step_nr = 0;
 	fade_bg = gfx_grab_screen(0, 0, gfx_width, gfx_height);
 	if (!fade_bg) /* ok, i like kernel logic. No memory, but we must work! */
 		return;
+
+	memset(&ev, 0, sizeof(ev));
+	ALPHA_STEPS = steps;
+	fade_step_nr = 0;
 	han = SDL_AddTimer(60, update, src);
-	while (input(&ev, 1) >=0 && gfx_fading()) /* just wait for change */
+	while (input(&ev, 1) >=0 && (update_in_way || gfx_fading())) /* just wait for change */
 		game_cursor(CURSOR_ON);
 	SDL_RemoveTimer(han);
 	gfx_free_image(fade_bg);
