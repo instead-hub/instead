@@ -1405,11 +1405,23 @@ typedef struct {
 } _snd_t;
 
 static _snd_t *channels[SND_CHANNELS] = {};
+static void snd_callback(void *aux)
+{
+	int channel = *((int *)aux);
+	free(aux);
+//	fprintf(stderr, "finished: %d\n", channel);
+	channels[channel % SND_CHANNELS] = NULL;
+}
 
 void game_channel_finished(int channel)
 {
-//	fprintf(stderr, "finished: %d\n", channel);
-	channels[channel % SND_CHANNELS] = NULL;
+	int *i = malloc(sizeof(channel));
+	if (!i) {
+		fprintf(stderr, "game_channel_finished: No memory\n");
+		return;
+	}
+	*i = channel;
+	push_user_event(snd_callback, i);
 }
 
 static int  sound_playing(_snd_t *snd)

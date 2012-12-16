@@ -292,7 +292,7 @@ void snd_done(void)
 {
 	if (!sound_on)
 		return;
-	Mix_ChannelFinished(game_channel_finished);
+	Mix_ChannelFinished(NULL);
 	if (timer_id) {
 		SDL_RemoveTimer(timer_id);
 		timer_id = NULL_TIMER;

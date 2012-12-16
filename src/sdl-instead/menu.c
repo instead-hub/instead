@@ -213,7 +213,10 @@ static int pages_menu(char *res, int nr, int max, const char *menu, const char *
 
 static void games_menu(void)
 {
-	int i, n, append_browse = 0;
+	int i, n;
+#ifdef _USE_BROWSE
+	int append_browse = 0;
+#endif
 	char tmp[PATH_MAX];
 #ifdef _USE_BROWSE
 	snprintf(tmp, sizeof(tmp), " <u><a:/browse>%s</a></u>\n", BROWSE_MENU);
@@ -223,8 +226,10 @@ static void games_menu(void)
 	strcpy(menu_buff, SELECT_GAME_MENU);
 	if ((games_nr - 1) / MENU_GAMES_MAX)
 		pages_menu(menu_buff, games_menu_from / MENU_GAMES_MAX, (games_nr - 1) / MENU_GAMES_MAX + 1, "games", tmp);
+#ifdef _USE_BROWSE
 	else 
 		append_browse = 1;
+#endif
 	for (i = games_menu_from, n = 0; i < games_nr && n < MENU_GAMES_MAX; i ++) {
 		
 		if (!games[i].name[0]) /* empty */
