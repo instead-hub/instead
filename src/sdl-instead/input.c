@@ -31,6 +31,8 @@ void push_user_event(void (*p) (void*), void *data)
 {
 	SDL_Event event;
 	SDL_UserEvent uevent;
+	memset(&event, 0, sizeof(event));
+	memset(&uevent, 0, sizeof(uevent));
 	uevent.type = SDL_USEREVENT;
 	uevent.code = 0;
 	event.type = SDL_USEREVENT;
@@ -59,6 +61,8 @@ int input(struct inp_event *inp, int wait)
 	int rc;
 	SDL_Event event;
 	SDL_Event peek;
+	if (!gfx_screen(NULL))
+		return 0;
 	memset(&event, 0, sizeof(event));
 	memset(&peek, 0, sizeof(peek));
 	if (wait) {
