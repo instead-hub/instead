@@ -61,8 +61,7 @@ int input(struct inp_event *inp, int wait)
 	int rc;
 	SDL_Event event;
 	SDL_Event peek;
-	if (!gfx_screen(NULL))
-		return 0;
+
 	memset(&event, 0, sizeof(event));
 	memset(&peek, 0, sizeof(peek));
 	if (wait) {
