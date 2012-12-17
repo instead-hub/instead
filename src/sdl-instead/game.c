@@ -1459,7 +1459,7 @@ const char *sound_channel(int i)
 	if (i == -1) {
 		for (i = 0; i < SND_CHANNELS; i++) {
 			sn = channels[i];
-			if (sn && (!sn->system || sn->loaded > 1))
+			if (sn && !sn->system)
 				return sn->fname;
 		}
 		return NULL;
@@ -1467,7 +1467,7 @@ const char *sound_channel(int i)
 	sn = channels[i];
 	if (!sn)
 		return NULL;
-	if (sn->system && sn->loaded == 1)
+	if (sn->system)
 		return NULL; /* hidden system sound */
 	return sn->fname;
 }
