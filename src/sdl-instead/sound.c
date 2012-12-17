@@ -136,16 +136,18 @@ void	snd_free_wav(wav_t w)
 {	
 	if (!w)
 		return;	
-	Mix_HaltChannel(-1);
+//	Mix_HaltChannel(-1);
 	Mix_FreeChunk((Mix_Chunk*)w);
 }
-
 void snd_halt_chan(int han, int ms)
 {
+	if (han >= MIX_CHANNELS)
+		han %= MIX_CHANNELS;
 	if (ms)
 		Mix_FadeOutChannel(han, ms);
-	else
+	else {
 		Mix_HaltChannel(han);
+	}
 }
 
 mus_t snd_load_mus(const char *fname)

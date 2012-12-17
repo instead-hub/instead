@@ -413,9 +413,9 @@ int game_theme_free(void)
 	if (game_theme.menu_button)
 		gfx_free_image(game_theme.menu_button);
 
-	if (game_theme.click)
-		snd_free_wav(game_theme.click);
-
+	if (game_theme.click) {
+		sound_put(game_theme.click);
+	}
 	game_theme.font = game_theme.inv_font = game_theme.menu_font = NULL;
 	game_theme.a_up = game_theme.a_down = game_theme.use = NULL;
 	game_theme.inv_a_up = game_theme.inv_a_down = NULL;
@@ -758,8 +758,8 @@ skip:
 	}
 	
 	if (t->click_name && (t->changed & CHANGED_CLICK)) {
-		snd_free_wav(t->click);
-		t->click = snd_load_wav(t->click_name);
+		sound_put(t->click);
+		t->click = sound_get(t->click_name);
 	}
 
 //	free_theme_strings(); /* todo, font */

@@ -690,8 +690,6 @@ int game_change_hz(int hz)
 	free_last_music();
 	snd_init(hz);
 	snd_volume_mus(cur_vol);
-	snd_free_wav(game_theme.click);
-	game_theme.click = snd_load_wav(game_theme.click_name);
 	sounds_reload();
 	game_music_player();
 	opt_hz = snd_hz();
@@ -1402,15 +1400,32 @@ typedef struct {
 	char	*fname;
 	wav_t	wav;
 	int	loaded;
+	int	system;
 } _snd_t;
-
+typedef struct {
+	_snd_t *snd;
+	int	loop;
+	int	channel;
+} _snd_req_t;
 static _snd_t *channels[SND_CHANNELS] = {};
-static void snd_callback(void *aux)
+static _snd_req_t sound_reqs[SND_CHANNELS] = {};
+static void sound_play(_snd_t *sn, int chan, int loop);
+
+static void sound_callback(void *aux)
 {
+	_snd_req_t *r;
 	int channel = *((int *)aux);
+	int c = channel % SND_CHANNELS;
 	free(aux);
 //	fprintf(stderr, "finished: %d\n", channel);
-	channels[channel % SND_CHANNELS] = NULL;
+	channels[c] = NULL;
+	r = &sound_reqs[c];
+	if (r->snd) {
+		sound_play(r->snd->wav, channel, r->loop);
+		r->snd = NULL;
+	} else {
+		snd_halt_chan(channel, 0); /* to avoid races */
+	}
 }
 
 void game_channel_finished(int channel)
@@ -1421,7 +1436,7 @@ void game_channel_finished(int channel)
 		return;
 	}
 	*i = channel;
-	push_user_event(snd_callback, i);
+	push_user_event(sound_callback, i);
 }
 
 static int  sound_playing(_snd_t *snd)
@@ -1429,6 +1444,8 @@ static int  sound_playing(_snd_t *snd)
 	int i;
 	for (i = 0; i < SND_CHANNELS; i++) {
 		if (channels[i] == snd)
+			return i;
+		if (sound_reqs[i].snd == snd)
 			return i;
 	}
 	return -1;
@@ -1440,6 +1457,8 @@ const char *sound_channel(int i)
 	sn = channels[i];
 	if (!sn)
 		return NULL;
+	if (sn->system && sn->loaded == 1)
+		return NULL; /* hidden system sound */
 	return sn->fname;
 }
 
@@ -1447,11 +1466,11 @@ static void sound_free(_snd_t *sn)
 {
 	if (!sn)
 		return;
+	list_del(&sn->list);
+	sounds_nr --;
 	free(sn->fname);
 	snd_free_wav(sn->wav);
-	list_del(&sn->list);
 	free(sn);
-	sounds_nr --;
 }
 
 static void sounds_shrink(void)
@@ -1476,16 +1495,27 @@ static void sounds_shrink(void)
 void sounds_free(void)
 {
 	int i = 0;
+	struct list_head *pos, *pos2;
+	_snd_t *sn;
+	pos = sounds.next;
+
 	snd_halt_chan(-1, 0); /* halt sounds */
-	while (!list_empty(&sounds)) {
-		_snd_t *sn = (_snd_t*)(sounds.next);
-//		if (sound_playing(sn) == -1) {
+	while (pos != &sounds) {
+		sn = (_snd_t*)pos;
+		pos2 = pos->next;
+		if (sn->system)
+			sn->loaded = 1; /* ref by system only */
+		else
 			sound_free(sn);
-//		}
+		pos = pos2;
 	}
-	for (i = 0; i < SND_CHANNELS; i++)
+	for (i = 0; i < SND_CHANNELS; i++) {
 		channels[i] = NULL;
-	sounds_nr = 0;
+		sound_reqs[i].snd = NULL;
+	}
+//	sounds_nr = 0;
+//	fprintf(stderr, "%d\n", sounds_nr);
+	input_clear(); /* all callbacks */
 }
 
 static _snd_t *sound_find(const char *fname)
@@ -1502,9 +1532,34 @@ static _snd_t *sound_find(const char *fname)
 	return NULL;
 }
 
+static int sound_find_channel(int chan)
+{
+	int i;
+	for (i = 0; i < SND_CHANNELS; i ++) {
+		if (!channels[i] && !sound_reqs[i].snd)
+			return i;
+	}
+	return -1;
+}
+
 static void sound_play(_snd_t *sn, int chan, int loop)
 {
-	int c = snd_play(sn->wav, chan, loop - 1);
+	int c;
+	if (chan == -1) {
+		c = sound_find_channel(chan);
+		if (c == -1)
+			return; /* all channels are busy */
+	} else
+		c = chan;
+
+	if (channels[c]) {
+		sound_reqs[c].snd = sn;
+		sound_reqs[c].loop = loop;
+		sound_reqs[c].channel = chan;
+		snd_halt_chan(chan, 0); /* work in callback */
+		return;
+	}
+	c = snd_play(sn->wav, c, loop - 1);
 //	fprintf(stderr, "added: %d\n", c);
 	if (c == -1)
 		return;
@@ -1547,25 +1602,71 @@ static void sounds_reload(void)
 {
 	struct list_head *pos;
 	_snd_t *sn;
+	int i;
+	snd_halt_chan(-1, 0); /* stop all sound */
 	list_for_each(pos, &sounds) {
 		sn = (_snd_t*)pos;
 		snd_free_wav(sn->wav);
 		sn->wav = snd_load_wav(sn->fname);
 	}
+	for (i = 0; i < SND_CHANNELS; i++) {
+		channels[i] = NULL;
+		sound_reqs[i].snd = NULL;
+	}
+	input_clear(); /* all callbacks */
 }
 
-int sound_load(const char *fname)
+static void *_sound_get(const char *fname)
 {
 	_snd_t *sn;
 	sn = sound_find(fname);
 	if (sn) {
 		sn->loaded ++; /* to pin */
-		return 0;
+		return sn;
 	}
 	sn = sound_add(fname);
 	if (!sn)
-		return -1;
+		return NULL;
 	sn->loaded = 1;
+	sn->system = 0;
+	return sn;
+}
+
+static void _sound_put(void *s)
+{
+	_snd_t *sn = (_snd_t *)s;
+	if (!sn || !sn->loaded)
+		return;
+	if (!sn->system || sn->loaded > 1)
+		sn->loaded --;
+	if (!sn->loaded && sound_playing(sn) == -1)
+		sound_free(sn);
+	return;
+}
+
+void *sound_get(const char *fname)
+{
+	_snd_t *sn = _sound_get(fname);
+	if (!sn)
+		return NULL;
+	sn->system = 1;
+	return sn;
+}
+
+void sound_put(void *s)
+{
+	_snd_t *sn = (_snd_t *)s;
+	if (!sn)
+		return;
+	sn->system = 0;
+	_sound_put(sn);
+}
+
+int sound_load(const char *fname)
+{
+	_snd_t *sn = _sound_get(fname);
+	if (!sn)
+		return -1;
 	return 0;
 }
 
@@ -1573,11 +1674,7 @@ void sound_unload(const char *fname)
 {
 	_snd_t *sn;
 	sn = sound_find(fname);
-	if (!sn || !sn->loaded)
-		return;
-	sn->loaded --;
-	if (!sn->loaded && sound_playing(sn) == -1)
-		sound_free(sn);
+	_sound_put(sn);
 	return;
 }
 
@@ -1819,7 +1916,7 @@ int game_cmd(char *cmd, int click)
 	game_sound_player();
 
 	if (opt_click && click && !rc)
-		snd_play(game_theme.click, -1, 0);
+		sound_play(game_theme.click, -1, 1);
 
 	if (DIRECT_MODE) {
 		if (cmdstr)
