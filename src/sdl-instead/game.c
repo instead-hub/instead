@@ -1545,6 +1545,8 @@ static int sound_find_channel(int chan)
 static void sound_play(_snd_t *sn, int chan, int loop)
 {
 	int c;
+	if (!sn)
+		return;
 	if (chan == -1) {
 		c = sound_find_channel(chan);
 		if (c == -1)
