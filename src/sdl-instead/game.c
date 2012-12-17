@@ -1454,6 +1454,16 @@ static int  sound_playing(_snd_t *snd)
 const char *sound_channel(int i)
 {
 	_snd_t *sn;
+	if (i >= SND_CHANNELS)
+		i = i % SND_CHANNELS;
+	if (i == -1) {
+		for (i = 0; i < SND_CHANNELS; i++) {
+			sn = channels[i];
+			if (sn && (!sn->system || sn->loaded > 1))
+				return sn->fname;
+		}
+		return NULL;
+	}
 	sn = channels[i];
 	if (!sn)
 		return NULL;
