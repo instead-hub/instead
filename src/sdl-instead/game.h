@@ -95,6 +95,9 @@ extern int sound_load(const char *fname);
 extern void sound_unload(const char *fname);
 extern void sounds_free(void);
 extern const char *sound_channel(int i);
+extern void *sound_get(const char *fname);
+extern void sound_put(void *sn);
+
 
 #define CURSOR_CLEAR -1
 #define CURSOR_OFF    0
