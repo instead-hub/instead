@@ -1554,9 +1554,6 @@ static void sound_play(_snd_t *sn, int chan, int loop)
 	} else
 		c = chan;
 	if (channels[c]) {
-		_snd_t *snc = channels[c];
-		if (snc == sn)
-			return; /* nothing todo */
 		sound_reqs[c].snd = sn;
 		sound_reqs[c].loop = loop;
 		sound_reqs[c].channel = chan;
