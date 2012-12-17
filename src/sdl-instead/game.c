@@ -1421,7 +1421,7 @@ static void sound_callback(void *aux)
 	channels[c] = NULL;
 	r = &sound_reqs[c];
 	if (r->snd) {
-		sound_play(r->snd->wav, channel, r->loop);
+		sound_play(r->snd, channel, r->loop);
 		r->snd = NULL;
 	} else {
 		snd_halt_chan(channel, 0); /* to avoid races */
@@ -1551,8 +1551,10 @@ static void sound_play(_snd_t *sn, int chan, int loop)
 			return; /* all channels are busy */
 	} else
 		c = chan;
-
 	if (channels[c]) {
+		_snd_t *snc = channels[c];
+		if (snc == sn)
+			return; /* nothing todo */
 		sound_reqs[c].snd = sn;
 		sound_reqs[c].loop = loop;
 		sound_reqs[c].channel = chan;
