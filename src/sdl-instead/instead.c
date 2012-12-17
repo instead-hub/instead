@@ -504,8 +504,8 @@ static int luaB_is_sound(lua_State *L) {
 		c = -1;
 	else
 		c = atoi(chan);
-	r = snd_playing(c);
-	lua_pushboolean(L, (r != 0));  /* else not a number */
+	r = (sound_channel(c) != NULL);
+	lua_pushboolean(L, r);  /* else not a number */
 	return 1;
 }
 
