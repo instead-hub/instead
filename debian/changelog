@@ -2,6 +2,7 @@ instead (1.8.2) unstable; urgency=low
   * bug fix in gfx_chnage_screen (sigsegv);
   * bug fix in sound system (sigsegv);
   * bug fix in input.lua and lua 5.2;
+  * icon fix in windows;
   * cleanup code for clang;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 17 Dec 2012 21:26:00 +0400
