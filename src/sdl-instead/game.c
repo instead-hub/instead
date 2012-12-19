@@ -1421,8 +1421,9 @@ static void sound_callback(void *aux)
 	channels[c] = NULL;
 	r = &sound_reqs[c];
 	if (r->snd) {
-		sound_play(r->snd, channel, r->loop);
+		_snd_t *s = r->snd;
 		r->snd = NULL;
+		sound_play(s, channel, r->loop);
 	} else {
 		snd_halt_chan(channel, 0); /* to avoid races */
 	}
@@ -1525,7 +1526,7 @@ void sounds_free(void)
 	}
 //	sounds_nr = 0;
 //	fprintf(stderr, "%d\n", sounds_nr);
-	input_clear(); /* all callbacks */
+	input_uevents(); /* all callbacks */
 }
 
 static _snd_t *sound_find(const char *fname)
@@ -1568,6 +1569,7 @@ static void sound_play(_snd_t *sn, int chan, int loop)
 		sound_reqs[c].loop = loop;
 		sound_reqs[c].channel = chan;
 		snd_halt_chan(chan, 0); /* work in callback */
+		input_uevents(); /* all callbacks */
 		return;
 	}
 	c = snd_play(sn->wav, c, loop - 1);
