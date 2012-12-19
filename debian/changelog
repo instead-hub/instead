@@ -3,6 +3,7 @@ instead (1.8.2) unstable; urgency=low
   * bug fix in sound system (sigsegv);
   * bug fix in input.lua and lua 5.2;
   * bug fix filter scr.w scr.h changing from lua;
+  * fixes in ua tutorial;
   * icon fix in windows;
   * cleanup code for clang;
 
