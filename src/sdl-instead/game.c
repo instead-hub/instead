@@ -1591,6 +1591,7 @@ static _snd_t *sound_add(const char *fname)
 	INIT_LIST_HEAD(&sn->list);
 	sn->fname = strdup(fname);
 	sn->loaded = 0;
+	sn->system = 0;
 	if (!sn->fname) {
 		free(sn);
 		return NULL;
@@ -1641,7 +1642,6 @@ static void *_sound_get(const char *fname)
 	if (!sn)
 		return NULL;
 	sn->loaded = 1;
-	sn->system = 0;
 	return sn;
 }
 
