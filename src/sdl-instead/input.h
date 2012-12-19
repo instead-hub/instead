@@ -23,6 +23,7 @@ struct inp_event {
 int input(struct inp_event *ev, int wait);
 int input_init(void);
 void input_clear(void);
+void input_uevents(void);
 void push_user_event(void (*p) (void*), void *data);
 int mouse_focus(void);
 extern int minimized(void);

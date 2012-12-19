@@ -56,6 +56,19 @@ void input_clear(void)
 	return;
 }
 
+void input_uevents(void)
+{
+	SDL_Event peek;
+#if SDL_VERSION_ATLEAST(1,3,0)
+	while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_USEREVENT, SDL_USEREVENT) > 0) {
+#else
+	while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_EVENTMASK (SDL_USEREVENT)) > 0) {
+#endif
+		void (*p) (void*) = peek.user.data1;
+		p(peek.user.data2);
+	}
+}
+
 int input(struct inp_event *inp, int wait)
 {	
 	int rc;
