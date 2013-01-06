@@ -2027,10 +2027,13 @@ stead.gamereset = function(file, forget)
 end
 
 stead.gamefile = function(file, forget)
+	local started = stead.started
 	stead.gamereset(file, forget)
 	if forget then
-		game:start()
-		stead.started = true
+		if started then -- gamefile from game code
+			game:start()
+			stead.started = true
+		end
 		return stead.walk(stead.here(), false, false, true);
 	end
 end
