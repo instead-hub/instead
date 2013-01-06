@@ -2027,13 +2027,10 @@ stead.gamereset = function(file, forget)
 end
 
 stead.gamefile = function(file, forget)
-	local started = stead.started
 	stead.gamereset(file, forget)
 	if forget then
-		if started then -- gamefile from game code
-			game:start()
-			stead.started = true
-		end
+		game:start()
+		stead.started = true
 		return stead.walk(stead.here(), false, false, true);
 	end
 end
@@ -2053,7 +2050,7 @@ stead.do_savegame = function(s, h)
 	local forget = game.scriptsforget
 	local i,v
 	for i,v in ipairs(s._scripts) do
-		h:write(stead.string.format("stead.gamefile(%q,%s)\n", 
+		h:write(stead.string.format("stead.gamereset(%q,%s)\n", 
 			v, tostring(forget)))
 		forget = nil
 	end
