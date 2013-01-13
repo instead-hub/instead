@@ -1,6 +1,7 @@
 instead (1.8.3) unstable; urgency=low
   * bug fix in start() from gamefile;
   * bug fix do not remove xwalk after gamereset;
+  * stead.savename function to redefine saves;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Sun, 06 Jan 2013 15:56:00 +0400
 
