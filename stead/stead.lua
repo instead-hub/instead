@@ -2063,6 +2063,10 @@ stead.do_savegame = function(s, h)
 	stead.busy(false)
 end
 
+stead.savename = function()
+	return stead.call(stead.here(), 'nam');
+end
+
 stead.game_save = function(self, name, file) 
 	local h;
 
@@ -2083,7 +2087,7 @@ stead.game_save = function(self, name, file)
 	if not h then
 		return nil, false
 	end
-	local n = stead.call(stead.here(),'nam');
+	local n = stead.savename()
 	if type(n) == 'string' and n ~= "" then
 		h:write("-- $Name: "..n:gsub("\n","\\n").."$\n");
 	end
