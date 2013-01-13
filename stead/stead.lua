@@ -183,6 +183,9 @@ end
 stead.p = function(...)
 	local i
 	local a = {...}
+	if stead.cctx() == nil then
+		error ("Call from global context.", 2);
+	end
 	for i = 1, stead.table.maxn(a) do
 		stead.cctx().txt = stead.par('', stead.cctx().txt, tostring(a[i]));
 	end
@@ -192,12 +195,18 @@ end
 stead.pr = function(...)
 	local i
 	local a = {...}
+	if stead.cctx() == nil then
+		error ("Call from global context.", 2);
+	end
 	for i = 1, stead.table.maxn(a) do
 		stead.cctx().txt = stead.par('', stead.cctx().txt, tostring(a[i]));
 	end
 end
 
 stead.pn = function(...)
+	if stead.cctx() == nil then
+		error ("Call from global context.", 2);
+	end
 	p(...);
 	stead.cctx().txt = stead.par('', stead.cctx().txt,'^');
 end
