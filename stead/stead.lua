@@ -2087,7 +2087,10 @@ stead.game_save = function(self, name, file)
 	if not h then
 		return nil, false
 	end
-	local n = stead.savename()
+	local n
+	if type(stead.savename) == 'function' then
+		n = stead.savename()
+	end
 	if type(n) == 'string' and n ~= "" then
 		h:write("-- $Name: "..n:gsub("\n","\\n").."$\n");
 	end
