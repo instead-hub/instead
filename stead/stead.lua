@@ -2146,7 +2146,7 @@ Commands:^
     back, inv, way, obj, quit, save <fname>, load <fname>.]],
 	pl ='pl',
 	showlast = true, 
-	_scripts = {};
+	_scripts = {},
 };
 
 stead.strip = function(s)
