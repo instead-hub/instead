@@ -670,8 +670,9 @@ end
 
 stead.list_find = function(self, name)
 	local n, v, ii
+	local o = stead.ref(name, true)
 	for n,v,ii in opairs(self) do 
-		if stead.ref(v) == stead.ref(name, true) then -- do not call func while search
+		if stead.ref(v) == o then -- do not call func while search
 			return ii; 
 		end	
 	end
