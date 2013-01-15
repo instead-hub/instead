@@ -3218,9 +3218,10 @@ void txt_box_prev_line(textbox_t tbox)
 {
 	struct textbox *box = (struct textbox *)tbox;
 	struct line  *line;
-	struct layout *l = box->lay;
+	struct layout *l;
 	if (!box || !box->lay)
 		return;
+	l = box->lay;
 	line = box->line;
 	if (!line)
 		return;
