@@ -1,6 +1,7 @@
 instead (1.8.3) unstable; urgency=low
   * bug fix in start() from gamefile;
   * bug fix do not remove xwalk after gamereset;
+  * bug fix in txtnb (lua5.2 compat);
   * stead.savename function to redefine saves;
   * p/pr/pn now do error when called from global context;
 
