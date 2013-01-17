@@ -164,7 +164,7 @@ stead.dialog_look = function(self)
 			end
 			if isPhrase(ph) and not isDisabled(ph) and isValid(ph) then
 				ph.nam = tostring(n)
-				if stead.phrase_prefix then
+				if type(stead.phrase_prefix) == 'string' then
 					v = stead.par('^', v, stead.cat(stead.phrase_prefix, ph:look()));
 				else
 					v = stead.par('^', v, txtnm(n, ph:look()))
