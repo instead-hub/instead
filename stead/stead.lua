@@ -14,6 +14,7 @@ stead = {
 	menu_toggle = instead_menu_toggle,
 	set_timer = instead_timer,
 	next = next,
+	math = math,
 	io = io,
 	os = os,
 	readdir = instead_readdir,
@@ -1745,7 +1746,7 @@ stead.do_ini = function(self, load)
 	local function call_ini(k, o, ...)
 		v = stead.par('', v, stead.call(o, 'ini', ...));
 	end
-	math.randomseed(os.time(os.date("*t")))
+	stead.math.randomseed(stead.os.time(stead.os.date("*t")))
 	stead.rnd(1); stead.rnd(2); stead.rnd(3); -- Lua bug?
 	if type(game) ~= 'table' then
 		error ("No valid 'game' object.");
@@ -2617,9 +2618,9 @@ stead.back = back;
 
 stead.rnd = function(m)
 	if not m then
-		return math.random();
+		return stead.math.random();
 	end
-	return math.random(m);
+	return stead.math.random(m);
 end
 
 function taken(obj)

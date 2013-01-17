@@ -4,6 +4,7 @@ instead (1.8.3) unstable; urgency=low
   * bug fix in txtnb (lua5.2 compat);
   * stead.savename function to redefine saves;
   * p/pr/pn now do error when called from global context;
+  * now math. and os. moved to stead;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Sun, 06 Jan 2013 15:56:00 +0400
 
