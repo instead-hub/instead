@@ -3213,6 +3213,7 @@ int game_loop(void)
 {
 	static int alt_pressed = 0;
 	static int shift_pressed = 0;
+	static int control_pressed = 0;
 	static int x = 0, y = 0;
 	struct inp_event ev;
 	memset(&ev, 0, sizeof(struct inp_event));
@@ -3236,6 +3237,9 @@ int game_loop(void)
 		} else if (((ev.type ==  KEY_DOWN) || (ev.type == KEY_UP)) && 
 			(!is_key(&ev,"left shift") || !is_key(&ev, "right shift"))) {
 			shift_pressed = (ev.type == KEY_DOWN) ? 1:0;
+		} else if (((ev.type ==  KEY_DOWN) || (ev.type == KEY_UP)) &&
+			(!is_key(&ev,"left ctrl") || !is_key(&ev, "right ctrl"))) {
+			control_pressed = (ev.type == KEY_DOWN) ? 1:0;
 		} else if (ev.type == KEY_DOWN) {
 			if (!is_key(&ev, "escape")
 #if defined(S60) || defined(_WIN32_WCE)
@@ -3285,10 +3289,10 @@ int game_loop(void)
 			} else if (!is_key(&ev, "f5") && curgame_dir && !menu_shown) {
 				mouse_reset(1);
 				game_cmd("look", 0);
-			} else if (alt_pressed && !is_key(&ev, "r") && curgame_dir && !menu_shown && debug_sw) {
+			} else if ((alt_pressed || control_pressed) && !is_key(&ev, "r") && curgame_dir && !menu_shown && debug_sw) {
 				mouse_reset(1);
 				game_menu_act("/new");
-				shift_pressed = alt_pressed = 0;
+				shift_pressed = alt_pressed = control_pressed = 0;
 			} else if (!is_key(&ev, "f10")
 #ifdef ANDROID
 					|| ev.code == 270
@@ -3305,7 +3309,7 @@ int game_loop(void)
 			} else if (alt_pressed &&
 				(!is_key(&ev, "enter") || !is_key(&ev, "return"))) {
 				int old_menu = (menu_shown) ? cur_menu: -1;
-				shift_pressed = alt_pressed = 0;
+				shift_pressed = alt_pressed = control_pressed = 0;
 				opt_fs ^= 1;
 				game_restart();
 				if (old_menu != -1)
@@ -3315,7 +3319,7 @@ int game_loop(void)
 #ifdef _USE_BROWSE
 				mouse_reset(1);
 				if (!game_from_disk()) {
-					shift_pressed = alt_pressed = 0;
+					shift_pressed = alt_pressed = control_pressed = 0;
 				}
 #endif
 #endif
