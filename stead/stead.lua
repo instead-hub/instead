@@ -2575,7 +2575,6 @@ function vobj(key, name, dsc, w)
 end
 
 function vway(name, dsc, w)
---	o.object_type = true;
 	return  obj{ key = -1, nam = name, dsc = dsc, act = stead.vobj_act, where = stead.deref(w), used = stead.vobj_used, save = stead.vobj_save, obj = list({}), };
 end
 
