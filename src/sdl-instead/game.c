@@ -3304,7 +3304,7 @@ int game_loop(void)
 				mouse_reset(1);
 				game_menu(menu_askquit);
 #endif
-			} else if (alt_pressed && (!is_key(&ev, "q") || !is_key(&ev, "f4"))) {
+			} else if ((alt_pressed | control_pressed) && (!is_key(&ev, "q") || !is_key(&ev, "f4"))) {
 				break;
 			} else if (alt_pressed &&
 				(!is_key(&ev, "enter") || !is_key(&ev, "return"))) {
