@@ -2,11 +2,11 @@ include ../Rules.make
 include ../config.make
 
 pdf:
-	# try xetex here, and hope it works ;)
-	pdflatex reference.tex
-	makeindex reference.idx
-	pdflatex reference.tex
-	$(RM) -f reference.aux reference.log reference.toc reference.out reference.idx reference.ind reference.ilg
+#	# try xetex here, and hope it works ;)
+#	pdflatex reference.tex
+#	makeindex reference.idx
+#	pdflatex reference.tex
+#	$(RM) -f reference.aux reference.log reference.toc reference.out reference.idx reference.ind reference.ilg
 #to-do: interpret $PATH
 
 wiki:
