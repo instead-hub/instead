@@ -140,7 +140,6 @@ $endif$
 $if(title)$
 \maketitle
 $endif$
-
 $for(include-before)$
 $include-before$
 
@@ -148,7 +147,9 @@ $endfor$
 $if(toc)$
 {
 \hypersetup{linkcolor=black}
+\renewcommand{\contentsname}{Оглавление}
 \tableofcontents
+\clearpage
 }
 $endif$
 $body$

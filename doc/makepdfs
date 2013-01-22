@@ -20,7 +20,7 @@ function build_html()
 function build_manual()
 {
 	build_html "ru:gamedev:documentation" manual
-	pandoc -f html manual.html -t latex --template=template.tex  | sed -e 's/\xc2\xa0//g' | sed -e 's/\\title{.*}/\\title{Руководство INSTEAD}/' > modules.tex> "manual.tex"
+	pandoc --toc -f html manual.html -t latex --template=template.tex  | sed -e 's/\xc2\xa0//g' | sed -e 's/\\title{.*}/\\title{Руководство INSTEAD}/' > modules.tex> "manual.tex"
 	rm -f manual.html
 	pdflatex manual.tex
 	pdflatex manual.tex
@@ -35,7 +35,7 @@ function build_modules()
 		build_html ru:gamedev:modules:$m $m #--template=template.tex
 		mod2="$mod2$m.html "
 	done
-	pandoc -f html $mod2 -t latex --template=template.tex | sed -e 's/\xc2\xa0//g' | awk 'BEGIN {
+	pandoc --toc -f html $mod2 -t latex --template=template.tex | sed -e 's/\xc2\xa0//g' | awk 'BEGIN {
 			scr = 0;
 		}
 		{
