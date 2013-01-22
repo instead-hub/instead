@@ -1,0 +1,2355 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <title>en:gamedev:documentation</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2012-09-01T12:07:30+0400"/>
+<meta name="keywords" content="en,gamedev,documentation"/>
+<link rel="search" type="application/opensearchdescription+xml" href="/wiki/lib/exe/opensearch.php" title="instead-wiki"/>
+<link rel="start" href="/wiki/"/>
+<link rel="contents" href="/wiki/en/gamedev/documentation?do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="/wiki/feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="/wiki/feed.php?mode=list&amp;ns=en:gamedev"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="/wiki/_export/xhtml/en/gamedev/documentation"/>
+<link rel="alternate" type="text/plain" title="Wiki Markup" href="/wiki/_export/raw/en/gamedev/documentation"/>
+<link rel="canonical" href="http://instead.syscall.ru/wiki/en/gamedev/documentation"/>
+<link rel="stylesheet" type="text/css" href="/wiki/lib/exe/css.php?t=vector&amp;tseed=1358764403"/>
+<link rel="stylesheet" type="text/css" href="/wiki/lib/plugins/syntaxhighlighter3/sxh3/styles/shCore.css"/>
+<link rel="stylesheet" type="text/css" href="/wiki/lib/plugins/syntaxhighlighter3/sxh3/styles/shThemeDefault.css"/>
+<script type="text/javascript">/*<![CDATA[*/var NS='en:gamedev';var JSINFO = {"id":"en:gamedev:documentation","namespace":"en:gamedev"};
+/*!]]>*/</script>
+<script type="text/javascript" charset="utf-8" src="/wiki/lib/exe/js.php?tseed=1358764403"></script>
+<script type="text/javascript" src="/wiki/lib/plugins/syntaxhighlighter3/sxh3/scripts/shCore.js"></script>
+<script type="text/javascript" src="/wiki/lib/plugins/syntaxhighlighter3/sxh3/scripts/shAutoloader.js"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div id="dw__toc">
+<h3 class="toggle">Table of Contents</h3>
+<div>
+
+<ul class="toc">
+<li class="level2"><div class="li"><a href="#general_information">0. General information</a></div></li>
+<li class="level2"><div class="li"><a href="#scene">1. Scene</a></div></li>
+<li class="level2"><div class="li"><a href="#objects">2. Objects</a></div></li>
+<li class="level2"><div class="li"><a href="#adding_objects_to_the_scene">3. Adding objects to the scene</a></div></li>
+<li class="level2"><div class="li"><a href="#objects_referencing_objects">4. Objects referencing objects</a></div></li>
+<li class="level2"><div class="li"><a href="#attributes_and_handlers_as_functions">5. Attributes and handlers as functions</a></div></li>
+<li class="level2"><div class="li"><a href="#inventory">6. Inventory</a></div></li>
+<li class="level2"><div class="li"><a href="#passing_between_the_scenes">7. Passing between the scenes</a></div></li>
+<li class="level2"><div class="li"><a href="#using_an_object_on_an_object">8. Using an object on an object</a></div></li>
+<li class="level2"><div class="li"><a href="#player_object">9. Player object</a></div></li>
+<li class="level2"><div class="li"><a href="#the_object_game">10. The object “game”</a></div></li>
+<li class="level2"><div class="li"><a href="#attribute_lists">11. Attribute lists</a></div></li>
+<li class="level2"><div class="li"><a href="#functions_that_return_objects">12. Functions, that return objects</a></div></li>
+<li class="level2"><div class="li"><a href="#some_auxiliary_functions">13. Some auxiliary functions.</a></div></li>
+<li class="level2"><div class="li"><a href="#dialogs">14. Dialogs</a></div></li>
+<li class="level2"><div class="li"><a href="#lightweight_objects">15. Lightweight objects</a></div></li>
+<li class="level2"><div class="li"><a href="#dynamic_events">16. Dynamic events</a></div></li>
+<li class="level2"><div class="li"><a href="#graphics_and_music">17. Graphics and music</a></div></li>
+<li class="level2"><div class="li"><a href="#advices">18. Advices</a></div>
+<ul class="toc">
+<li class="level3"><div class="li"><a href="#split_game_into_files">Split game into files</a></div></li>
+<li class="level3"><div class="li"><a href="#modules">Modules</a></div></li>
+<li class="level3"><div class="li"><a href="#formatting">Formatting</a></div></li>
+<li class="level3"><div class="li"><a href="#menus">Menus</a></div></li>
+<li class="level3"><div class="li"><a href="#player_status">Player status</a></div></li>
+<li class="level3"><div class="li"><a href="#walk_from_the_exit_and_enter_handlers">“walk” from the “exit” and “enter” handlers</a></div></li>
+<li class="level3"><div class="li"><a href="#dynamically_created_references">Dynamically created references.</a></div></li>
+<li class="level3"><div class="li"><a href="#encoding_game_sources_from_version_093">Encoding game sources (from version 0.9.3)</a></div></li>
+<li class="level3"><div class="li"><a href="#packing_resources_in_idf_file_from_version_140">Packing resources in .idf file (from version 1.4.0)</a></div></li>
+<li class="level3"><div class="li"><a href="#switching_between_players">Switching between players</a></div></li>
+<li class="level3"><div class="li"><a href="#using_the_first_parameter_of_a_handler">Using the first parameter of a handler</a></div></li>
+<li class="level3"><div class="li"><a href="#using_set_music">Using “set_music”</a></div></li>
+<li class="level3"><div class="li"><a href="#living_objects">Living objects</a></div></li>
+<li class="level3"><div class="li"><a href="#timer">Timer</a></div></li>
+<li class="level3"><div class="li"><a href="#keyboard">Keyboard</a></div></li>
+<li class="level3"><div class="li"><a href="#mouse">Mouse</a></div></li>
+<li class="level3"><div class="li"><a href="#dynamic_object_creation">Dynamic object creation</a></div></li>
+<li class="level3"><div class="li"><a href="#complex_output_from_event_handlers">Complex output from event handlers</a></div></li>
+<li class="level3"><div class="li"><a href="#debugging">Debugging</a></div></li>
+</ul>
+</li>
+<li class="level2"><div class="li"><a href="#themes_for_sdl-instead">19. Themes for sdl-instead</a></div></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h2 class="sectionedit1" id="general_information">0. General information</h2>
+<div class="level2">
+
+<p>
+Game code for STEAD is written in <em>lua</em> (5.1), therefore it is useful to know the language, though not necessary. The engine code in lua is about ~3000 lines long. And it is the best documentation.
+</p>
+
+<p>
+The main game window contains information about static and dynamic parts of the scene, active events and the scene picture with possible passages to other scenes (in the graphic interpreter).
+</p>
+
+<p>
+<em>Static part</em> of the scene is shown only once, when the player enters the scene. Also it is shown when the <code>look</code> command is repeated (click on the scene name in the graphic interpreter).
+</p>
+
+<p>
+The <em>dynamic part</em> of a scene is composed of descriptions of the scene objects. It is always shown.
+</p>
+
+<p>
+<em>Inventory</em> contains objects, that the player can access in every scene. The player can interact with the inventory objects or use inventory objects on other objects in the scene or inventory.
+</p>
+<div class="wrap_center wrap_round wrap_info plugin_wrap">
+<p>
+One should note that the “inventory” is defined rather vaguely. For example it may contain such objects as “open”, “examine”, “use”, etc.
+</p>
+</div>
+<p>
+Possible actions of the player are:
+</p>
+<ul>
+<li class="level1"><div class="li"> looking at the scene;</div>
+</li>
+<li class="level1"><div class="li"> using a scene object;</div>
+</li>
+<li class="level1"><div class="li"> using an inventory object;</div>
+</li>
+<li class="level1"><div class="li"> using an inventory object on a scene object;</div>
+</li>
+<li class="level1"><div class="li"> using an inventory object on an inventory object;</div>
+</li>
+<li class="level1"><div class="li"> using a scene object on a scene object (<code>scene_use</code> mode);</div>
+</li>
+<li class="level1"><div class="li"> using a scene object on an inventroy object (<code>scene_use</code> mode);</div>
+</li>
+<li class="level1"><div class="li"> passing to another scene;</div>
+</li>
+</ul>
+
+<p>
+Each game is a directory with a <code>main.lua</code> script. Other game resources (lua scripts, images, music) should be in this directory. All references to the resources are given relative to this game directory.
+</p>
+
+<p>
+At the beginning of <code>main.lua</code> file a header may be defined. It consists of tags. Each tag should start with <code>–</code> symbols — lua comments. Right now only one tag exists: <code>$Name:</code>. It should contain the name of the game in UTF-8 encoding. For example:
+</p>
+<pre class="code lua"><span class="co1">-- $Name: The most interesting game!$</span></pre>
+
+<p>
+From version 1.2.0 after headers you must define required STEAD <abbr title="Application Programming Interface">API</abbr> version. It is “1.8.0” currently.
+</p>
+<pre class="code lua">instead_version <span class="st0">&quot;1.8.0&quot;</span></pre>
+<div class="wrap_center wrap_round wrap_important plugin_wrap">
+<p>
+Without this line STEAD <abbr title="Application Programming Interface">API</abbr> will stay in compatible(legacy) mode.
+</p>
+</div>
+<p>
+<em>Game initialization</em> should be defined as init function. For example:
+</p>
+<pre class="code lua"><span class="kw1">function</span> init<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    me<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">.</span>_know_truth <span class="sy0">=</span> <span class="kw4">false</span>
+    take<span class="br0">&#40;</span>knife<span class="br0">&#41;</span><span class="sy0">;</span>
+    take<span class="br0">&#40;</span>paper<span class="br0">&#41;</span><span class="sy0">;</span>
+<span class="kw1">end</span></pre>
+
+<p>
+The graphic interpreter searches for available games in the <code>games</code> directory. Unix version also checks <code>~/.instead/games</code>. Windows version (&gt;=0.8.7) checks <code>Documents and Settings/USER/Local Settings/Application Data/instead/games</code>.
+</p>
+
+<p>
+From version 1.2.0 Windows and Unix standalone builds looks into <code>./appdata/games</code> dir, if it exists.
+</p>
+
+</div>
+<!-- EDIT1 SECTION "0. General information" [1-2796] -->
+<h2 class="sectionedit2" id="scene">1. Scene</h2>
+<div class="level2">
+
+<p>
+A scene is a game unit. Within it a player can examine all the scene objects and interact with them. A game should contain at least one scene with the name <code>main</code>.
+</p>
+<pre class="code lua">main <span class="sy0">=</span> room <span class="br0">&#123;</span>
+	nam <span class="sy0">=</span> <span class="st0">'main room'</span><span class="sy0">,</span>
+	dsc <span class="sy0">=</span> <span class="st0">'You are in a large room.'</span><span class="sy0">,</span>
+<span class="br0">&#125;</span><span class="sy0">;</span></pre>
+
+<p>
+The record means creation of an object <code>main</code> of a type <code>room</code>. Every object has attributes and handlers. For example the attribute <code>nam</code> (name) is obligatory for every object.
+</p>
+
+<p>
+The <code>nam</code> attribute for a scene will be the scene name when it is played. The name of a scene is also used to identify it when passing between scenes.
+</p>
+
+<p>
+The <code>dsc</code> attribute is a description of a static part of the scene. It is shown once when entering the scene or after the explicit <code>look</code> command.
+</p>
+
+<p>
+Attention!!! You may use symbol “;” instead of “,”. For example:
+</p>
+<pre class="code lua">main <span class="sy0">=</span> room <span class="br0">&#123;</span>
+	nam <span class="sy0">=</span> <span class="st0">'main room'</span><span class="sy0">;</span>
+	dsc <span class="sy0">=</span> <span class="st0">'You are in a large room.'</span><span class="sy0">;</span>
+<span class="br0">&#125;</span><span class="sy0">;</span></pre>
+
+<p>
+Attention!!! If your creative design requires the static part description to be shown every time, you may define the “forcedsc” parameter for your game (at the start).
+</p>
+<pre class="code lua">game<span class="sy0">.</span>forcedsc <span class="sy0">=</span> <span class="kw4">true</span><span class="sy0">;</span></pre>
+
+<p>
+Or similarly set the “forcedsc” for particular scenes.
+</p>
+
+<p>
+For long descriptions the following format is convenient:
+</p>
+<pre class="code lua">dsc <span class="sy0">=</span> <span class="co2">[[ Very long description... ]]</span><span class="sy0">,</span></pre>
+
+<p>
+In this format line breaks are ignored. If you need paragraph breaks in the description, use the “^” symbol.
+</p>
+<pre class="code lua">dsc <span class="sy0">=</span> <span class="co2">[[ First paragraph. ^^
+Second paragraph.^^
+&nbsp;
+Third paragraph.^
+New line.]]</span><span class="sy0">,</span></pre>
+
+</div>
+<!-- EDIT2 SECTION "1. Scene" [2797-4333] -->
+<h2 class="sectionedit3" id="objects">2. Objects</h2>
+<div class="level2">
+
+<p>
+Objects are units of a scene, with which the player interacts.
+</p>
+<pre class="code">tabl = obj {
+	nam = &#039;table&#039;,
+	dsc = &#039;There is a {table} in the room.&#039;,
+	act = &#039;Hm... Just a table...&#039;,
+};</pre>
+
+<p>
+Object name “nam” is used when the object gets into the inventory or to address the object in a text interpreter.
+</p>
+
+<p>
+“dsc” is an object descriptor. It will be shown in the dynamic part of the scene. Curly brackets indicate the text fragment which will be a link anchor in the graphic interpreter.
+</p>
+
+<p>
+“act” is a handler, called when the player uses a scene object. It has to return a text line, which will become a part of the scene events, or a boolean value (see chapter 5)
+</p>
+
+<p>
+WARNING: in the lua namespace some objects (tables) already exist. For example “table”, “io”, “string”… Be careful when creating objects. In the example above “tabl” is used instead of “table”. (But in fact, in modern versions of INSTEAD this problem is almost solved).
+</p>
+
+</div>
+<!-- EDIT3 SECTION "2. Objects" [4334-5319] -->
+<h2 class="sectionedit4" id="adding_objects_to_the_scene">3. Adding objects to the scene</h2>
+<div class="level2">
+
+<p>
+A reference to an object is a text string, with the object name at its creation. For example &#039;tabl&#039; is a reference to the object “tabl”.
+</p>
+
+<p>
+To place objects to the scene one has to define the “obj” array of references to objects:
+</p>
+<pre class="code">main = room {
+	nam = &#039;main room&#039;,
+	dsc = &#039;You are in a large room.&#039;,
+	obj = { &#039;tabl&#039; },
+};</pre>
+
+<p>
+This way when the scene is shown we&#039;ll see the table object in the dynamic part.
+</p>
+
+<p>
+Attention!!! You can use references to objects without quotes, if the object was defined before reference, but using quotes is always safe.
+</p>
+
+</div>
+<!-- EDIT4 SECTION "3. Adding objects to the scene" [5320-5928] -->
+<h2 class="sectionedit5" id="objects_referencing_objects">4. Objects referencing objects</h2>
+<div class="level2">
+
+<p>
+Objects may contain “obj” attribute too. This way the list will expand sequentially. For example let&#039;s place an apple on the table.
+</p>
+<pre class="code">aple = obj {
+	nam = &#039;apple&#039;,
+	dsc = &#039;There is an {apple} on the table.&#039;,
+	act = &#039;Should I take it?&#039;,
+};
+
+tabl = obj {
+	nam = &#039;table&#039;,
+	dsc = &#039;There is a {table} in the room.&#039;,
+	act = &#039;Hm... Just a table...&#039;,
+	obj = { &#039;aple&#039; },
+};</pre>
+
+<p>
+This way in the scene description we&#039;ll see descriptions of objects “table” and “apple”, because “aple” is an object referenced by tabl.
+/* Translator&#039;s note: in the English version of the document I renamed the “apple” variable to “aple” to distinguish it from aple.nam */
+</p>
+
+</div>
+<!-- EDIT5 SECTION "4. Objects referencing objects" [5929-6649] -->
+<h2 class="sectionedit6" id="attributes_and_handlers_as_functions">5. Attributes and handlers as functions</h2>
+<div class="level2">
+
+<p>
+Most attributes and handlers may also be functions. For example:
+</p>
+<pre class="code">nam = function()
+	return &#039;apple&#039;;
+end,</pre>
+
+<p>
+This is synonymous to: nam = &#039;apple&#039;;
+</p>
+
+<p>
+Handler must return string. You can also use more user-friendly functions:
+</p>
+<ul>
+<li class="level1"><div class="li"> p (“text”) – output text with space;</div>
+</li>
+<li class="level1"><div class="li"> pn (“text”) – output text with newline;</div>
+</li>
+<li class="level1"><div class="li"> pr (“text”) – output text as-is;</div>
+</li>
+</ul>
+
+<p>
+If you call p/pn/pr with only one text parameter, the parentheses could be omitted. Use .. or , for string concatenation. For example:
+</p>
+<pre class="code">pn &quot;No parentheses&quot;;
+pn (&quot;This is string 1&quot;..&quot; This is string 2&quot;);
+pn (&quot;This is string 1&quot;, &quot;This is string 2&quot;);</pre>
+
+<p>
+Functions greatly enhance STEAD capabilities, for example:
+</p>
+<pre class="code">aple = obj {
+	nam = &#039;apple&#039;,
+	dsc = function(s)
+		if not s._seen then
+			p &#039;There is {something} on the table.&#039;;
+		else
+			p &#039;There is an {apple} on the table.&#039;;
+		end
+	end,
+	act = function(s)
+		if s._seen then
+			p &#039;It\&#039;s an apple!&#039;;
+		else
+			s._seen = true;
+			p &#039;Hm... But it\&#039;s an apple!&#039;;
+		end
+	end,
+};</pre>
+
+<p>
+If the attribute or handler is laid out as a function, then the first argument of the function (s) is the object itself. In the example scene the dynamic part will have the text: &#039;There is something on the table.&#039; When you try to use this “something”, &#039;_seen&#039; variable of the object “aple” will be set to “true” and we will see it was an apple.
+</p>
+
+<p>
+`s._seen` means that the `_seen` variable is placed in the “s” object (in our case “aple”). Underscore means that this variable is saved in a savegame file. 
+</p>
+
+<p>
+From version 1.2.0 you can define variables as shown in the example:
+</p>
+<pre class="code">global {
+    global_var = 1;    
+}
+main = room {
+    var {
+        i = &quot;a&quot;;
+        z = &quot;b&quot;;
+    };
+    nam = &#039;My first room&#039;;
+    var {
+        new_var = 3;
+    };
+    dsc = function(s)
+        p (&quot;i == &quot;, s.i);
+        p (&quot;new_var == &quot;, s.new_var);
+        p (&quot;global_var == &quot;, global_var);
+    end;</pre>
+
+<p>
+From version 1.2.0 you may define function like this:
+</p>
+<pre class="code">	dsc = code [[
+		if not self._seen then
+			p &#039;There is {something} on the table.&#039;;
+		else
+			p &#039;There is an {apple} on the table.&#039;;
+		end
+	]],</pre>
+
+<p>
+While running code, the object itself is written into “self” variable. arg1 .. arg9 and args[] array holds all arguments.
+</p>
+
+<p>
+Warning! Variable will be saved to savegame file if it was defined in: room, game, obj, player, global space and it&#039;s name begins from _ symbol or if it was defined using var/global.
+</p>
+
+<p>
+These types of variables can be saved:
+</p>
+<ul>
+<li class="level1"><div class="li"> strings;</div>
+</li>
+<li class="level1"><div class="li"> boolean values;</div>
+</li>
+<li class="level1"><div class="li"> numeric values;</div>
+</li>
+<li class="level1"><div class="li"> links to objects;</div>
+</li>
+<li class="level1"><div class="li"> code constructions;</div>
+</li>
+</ul>
+
+<p>
+Sometimes we need a handler that would do something without showing any description, e.g.:
+</p>
+<pre class="code">button = obj {
+	nam = &quot;button&quot;,
+	dsc = &quot;There is a big red {button} on the room wall.&quot;,
+	act = function (s)
+		here()._dynamic_dsc = [[The room transformed after I pressed the button. 
+			The book-case disappeared along with the table and the chest, and a strange 
+			looking device took its place.]];
+		return true;
+	end,
+}
+r12 = room {
+	nam = &#039;room&#039;,
+	_dynamic_dsc = &#039;I am in the room.&#039;,
+	dsc = function (s) return s._dynamic_dsc end,
+	obj = {&#039;button&#039;}
+}</pre>
+
+<p>
+In this case <code>act</code> handler is used to change room description but it is not supposed to add any description of its own. To achieve this we need to return true from the handler. It means the action is done successfully but does not require to diplay any additional description.
+</p>
+
+<p>
+If you need to show some action is impossible, just don&#039;t return anything from handler. In this case default description will be shown for this action. Default actions can be set via <code>game.act</code> handler and are generally used for description of impossible actions.
+</p>
+
+<p>
+Please note the new variable <code>_dynamic_dsc</code> is used to make a dynamic description in the above example. This is done to ensure new description is saved during the game save. Since the name &#039;dsc&#039; does not start with underscore or capital letter it will not be saved by default.
+</p>
+
+<p>
+So, example above can be looks like this:
+</p>
+<pre class="code">button = obj {
+	nam = &quot;button&quot;;
+	dsc = &quot;There is a big red {button} on the room wall.&quot;;
+	act = function (s)
+		here().dsc = &quot;The room looks strange now...&quot;;
+		p [[The room transformed after I pressed the button. 
+			The book-case disappeared along with the table and the chest, and a strange 
+			looking device took its place.]];
+	end
+}
+r12 = room {
+        forcedsc = true;
+	nam = &#039;room&#039;;
+        var {
+	    dsc = &#039;I am in the room.&#039;;
+        };
+	obj = {&#039;button&#039;}
+}</pre>
+
+</div>
+<!-- EDIT6 SECTION "5. Attributes and handlers as functions" [6650-11196] -->
+<h2 class="sectionedit7" id="inventory">6. Inventory</h2>
+<div class="level2">
+
+<p>
+The easiest way to create a takeable object is to define a “tak” handler.
+</p>
+
+<p>
+For example:
+</p>
+<pre class="code">aple = obj {
+	nam = &#039;apple&#039;,
+	dsc = &#039;There is an {apple} on the table.&#039;,
+	inv = function(s)
+		inv():del(s);
+		return &#039;I ate the apple.&#039;;
+	end,
+	tak = &#039;You take the apple.&#039;,
+};</pre>
+
+<p>
+This way when the player uses the “apple” object the apple is removed from the scene and added to the inventory. When the player uses the inventory “inv” handler is called.
+</p>
+
+<p>
+In the present example when the player uses the apple in the inventory, the apple is eaten.
+</p>
+
+</div>
+<!-- EDIT7 SECTION "6. Inventory" [11197-11780] -->
+<h2 class="sectionedit8" id="passing_between_the_scenes">7. Passing between the scenes</h2>
+<div class="level2">
+
+<p>
+To pass from one scene to another use the scene attribute — the “way” list.
+</p>
+<pre class="code">room2 = room {
+	nam = &#039;hall&#039;,
+	dsc = &#039;You are in a huge hall.&#039;,
+	way = { &#039;main&#039; },
+};
+
+
+main = room {
+	nam = &#039;main room&#039;,
+	dsc = &#039;You are in a large room.&#039;,
+	obj = { &#039;tabl&#039; },
+	way = { &#039;room2&#039; },
+};</pre>
+
+<p>
+This way you can pass between ”main” and “room2” scenes. As you remember, “nam” may be a function, and you can generate scene names on the fly. For example if you don&#039;t want the player to know the name of the scene until he gets there.
+</p>
+
+<p>
+When switching between scenes the engine calls the “exit” handler from the current scene and the “enter” from the destination scene. For example:
+</p>
+<pre class="code">room2 = room {
+	enter = &#039;You enter the hall.&#039;,
+	nam = &#039;hall&#039;,
+	dsc = &#039;You are in a huge hall.&#039;,
+	way = { &#039;main&#039; },
+	exit = &#039;You leave the hall.&#039;,
+};</pre>
+
+<p>
+“exit” and “enter” may be functions. Then the first parameter is the object itself (as usual) and the second parameter is the room where the player is heading (for “exit”) or which he is leaving (for “enter”). For example:
+</p>
+<pre class="code">room2 = room {
+	enter = function(s, f)
+		if f == main then
+			return &#039;You came from the room.&#039;;
+		end
+	end,
+	nam = &#039;hall&#039;,
+	dsc = &#039;You are in a huge hall.&#039;,
+	way = { &#039;main&#039; },
+	exit = function(s, t)
+		if t == main then
+			return &#039;I don\&#039;t wanna go back!&#039;, false
+		end
+	end,
+};</pre>
+
+<p>
+As we see, the handlers can return two values: the string and the status. In our example the “exit” function returns “false” if the player tries to go to the “main” room from the hall. “false” means that the player will not pass. Same logic works for “enter” and “tak”.
+</p>
+
+<p>
+If you like p/pn/pr instead, just return status itself:
+</p>
+<pre class="code">room2 = room {
+	enter = function(s, f)
+		if f == main then
+			p &#039;You came from the room.&#039;;
+		end
+	end,
+	nam = &#039;hall&#039;,
+	dsc = &#039;You are in a huge hall.&#039;,
+	way = { &#039;main&#039; },
+	exit = function(s, t)
+		if t == main then
+			p &#039;I don\&#039;t wanna go back!&#039;
+                        return false
+		end
+	end,
+};</pre>
+
+<p>
+Keep in mind that the current scene may not be changed by the moment of an enter action handler invocation. Since the version 1.2.0 available two new action handlers: &#039;left&#039; and &#039;entered&#039;. They are invoked immediately after the transition and recommended to use in case when transition prohibition is not required.
+</p>
+
+</div>
+<!-- EDIT8 SECTION "7. Passing between the scenes" [11781-14198] -->
+<h2 class="sectionedit9" id="using_an_object_on_an_object">8. Using an object on an object</h2>
+<div class="level2">
+
+<p>
+The player may use an inventory object on other objects. In this case “use” handler is invoked for the object in the inventory and “used” for the other one.
+</p>
+
+<p>
+For example:
+</p>
+<pre class="code">knife = obj {
+	nam = &#039;knife&#039;,
+	dsc = &#039;There is a {knife} on the table&#039;,
+	inv = &#039;Sharp!&#039;,
+	tak = &#039;I took the knife!&#039;,
+	use = &#039;You try to use the knife.&#039;,
+};
+
+tabl = obj {
+	nam = &#039;table&#039;,
+	dsc = &#039;There is a {table} in the room.&#039;,
+	act = &#039;Hm... Just a table...&#039;,
+	obj = { &#039;aple&#039;, &#039;knife&#039; },
+	used = &#039;You try to do something with the table...&#039;,
+};</pre>
+
+<p>
+If the player takes the knife and uses it on the table, he gets the text of “use” and “used” hanlers. “use” and “used” may be functions. Then the first parameter is the object itself. The second parameter for “use” is the object being subjected to the action and fot “used” is the object performing the action.
+</p>
+
+<p>
+If “use” returns “false” status, then “used” is not invoked (if there is one). The status of “used” is ignored.
+</p>
+
+<p>
+Example:
+</p>
+<pre class="code">knife = obj {
+	nam = &#039;knife&#039;,
+	dsc = &#039;There is a knife on the {table}&#039;,
+	inv = &#039;Sharp!&#039;,
+	tak = &#039;I took the knife!&#039;,
+	use = function(s, w)
+		if w ~= tabl then
+			p &#039;I don\&#039;t want to cut this.&#039;
+                        return false
+		else
+			p &#039;You incise your initials on the table.&#039;;
+		end
+};</pre>
+
+<p>
+You can use the knife only on the table.
+</p>
+
+</div>
+<!-- EDIT9 SECTION "8. Using an object on an object" [14199-15606] -->
+<h2 class="sectionedit10" id="player_object">9. Player object</h2>
+<div class="level2">
+
+<p>
+In STEAD the player is represented by the object “pl”. The object type is “player”. In the engine it&#039;s created thie way:
+</p>
+<pre class="code">pl = player {
+	nam = &quot;Incognito&quot;,
+	where = &#039;main&#039;,
+	obj = { }
+};</pre>
+
+<p>
+The “obj” attribute represents the player&#039;s inventory.
+</p>
+
+</div>
+<!-- EDIT10 SECTION "9. Player object" [15607-15905] -->
+<h2 class="sectionedit11" id="the_object_game">10. The object “game”</h2>
+<div class="level2">
+
+<p>
+The game is also represented by the object “game” of type “game”. In the engine it is defined this way:
+</p>
+<pre class="code">game = game {
+	nam = &quot;INSTEAD -- Simple Text Adventure interpreter v&quot;..version..&quot; &#039;2009 by Peter Kosyh&quot;,
+	dsc = [[
+Commands:^
+    look(or just enter), act &lt;on what&gt; (or just what), use &lt;what&gt; [on what], go &lt;where&gt;,^
+    back, inv, way, obj, quit, save &lt;fname&gt;, load &lt;fname&gt;.]],
+	pl =&#039;pl&#039;,
+	showlast = true,
+};</pre>
+
+<p>
+As we can see, the object keeps the reference to the current player (&#039;pl&#039;) and some parameters. For example at the start of your game you can set the encoding the following way:
+</p>
+<pre class="code">game.codepage=&quot;UTF-8&quot;; </pre>
+
+<p>
+The support of arbitrary encodings is present in every UNIX version of the interpreter and in windows versions from 0.7.7.
+</p>
+
+<p>
+Also the object “game” may contain the default handlers: “act”, “inv”, “use”. They will be invoked if no other handlers are found after the user&#039;s actions. For example you can write at the game start:
+</p>
+<pre class="code">game.act = &#039;You can\&#039;t.&#039;;
+game.inv = &#039;Hmm... Odd thing...&#039;;
+game.use = &#039;Won\&#039;t work...&#039;;</pre>
+
+</div>
+<!-- EDIT11 SECTION "10. The object “game”" [15906-17043] -->
+<h2 class="sectionedit12" id="attribute_lists">11. Attribute lists</h2>
+<div class="level2">
+
+<p>
+Attribute lists (such as “way” or “obj”) allow to work with themselves thus allowing to implement dynamically defined passages between scenes, live objects, etc.
+</p>
+
+<p>
+List methods are: “add”, “del”, “look”, “srch”, “purge”, “replace”. The most used are “add” and “del”.
+</p>
+
+<p>
+“add” adds to the list, “del” removes from the list, “purge” removes even disabled object, “srch” performs a search. “replace” replaces object. Note that “del”, “purge”, “replace” and “srch” may use as a parameter not only the object itself or its identifier, but also the object name.
+</p>
+
+<p>
+Starting from version 0.8 the object itself may be a parameter of “add”. Also from this version an optional second parameter is added — position in list. From 0.8 you also can modify the list by the index with the “set” method. For example:
+</p>
+<pre class="code">objs():set(&#039;knife&#039;,1);</pre>
+
+<p>
+You&#039;ve seen the above example with the eaten apple. It used inv():del(&#039;aple&#039;);
+</p>
+
+<p>
+“inv()” is a function, which returns the inventory list. “del” after “:” is a  method, that deletes an element of the inventory.
+</p>
+
+<p>
+Similarly, “tak” may be implemented this way:
+</p>
+<pre class="code">knife = obj {
+	nam = &#039;knife&#039;,
+	dsc = &#039;There is a {knife} on the table,
+	inv = &#039;Sharp!&#039;,
+	act = function(s)
+		objs():del(s);
+		inv():add(s);
+	end,
+};</pre>
+
+<p>
+Apart from adding and deleting objects from lists you may switch them on and off  with “enable()” and “disable()” methods. E.g. “knife:disable()”. This way the object “knife” will disappear from the scene description, but may be switched on later with “knife:enable()”.
+</p>
+
+<p>
+“enable_all()” and “disable_all()” methods works (from 0.9.1) with embedded objects (objects in object).
+</p>
+
+<p>
+From version 0.9.1 methods “zap” and “cat” can be used. zap() – delete all elements. cat(b, [pos]) – add all elements of list b to current list at position [pos].
+</p>
+
+<p>
+From version 1.8.0 methods “disabe” and “enable” can be used to disable/enable selected object in list (usually by name);
+</p>
+
+<p>
+Attention!!! Currently, it is recommended to use higher lever functions like: put/get/take/drop/remove/seen/have and so on, to work with objects and inventory.
+</p>
+
+</div>
+<!-- EDIT12 SECTION "11. Attribute lists" [17044-19305] -->
+<h2 class="sectionedit13" id="functions_that_return_objects">12. Functions, that return objects</h2>
+<div class="level2">
+
+<p>
+In STEAD several functions are defined, that return some frequently used objects. For example:
+</p>
+<ul>
+<li class="level1"><div class="li"> inv() returns the inventory list;</div>
+</li>
+<li class="level1"><div class="li"> objs() returns the list of objects of the current scene; (from 0.8.5 it has an optional paremeter — the scene for which to return objects;</div>
+</li>
+<li class="level1"><div class="li"> ways() returns the list of passages from the current scene; (from 0.8.5 has an optional paremeter — the scene for which to return the list);</div>
+</li>
+<li class="level1"><div class="li"> me() returns the player object;</div>
+</li>
+<li class="level1"><div class="li"> here() returns the current scene; (from 0.8.5 another function where(obj) returns the scene where is object placed. Works only if it was placed with put/drop/move).</div>
+</li>
+<li class="level1"><div class="li"> from() returns an object from a previous scene;</div>
+</li>
+<li class="level1"><div class="li"> seen(obj, [scene]) returns an object, if it exists in scene and not disabled;</div>
+</li>
+<li class="level1"><div class="li"> have(obj, [scene]) returns an object, if it exists in the inventory;</div>
+</li>
+<li class="level1"><div class="li"> exist(obj, [scene]) returns an object, if it is exists in scene;</div>
+</li>
+<li class="level1"><div class="li"> live(obj) returns an object, if it is exists in lifes;</div>
+</li>
+<li class="level1"><div class="li"> path(obj,[where]) – lookup in way, even for disabled items; </div>
+</li>
+</ul>
+
+<p>
+Combining those functions with “add” and “del” methods one can dynamically alter the scene, for example:
+</p>
+<pre class="code">ways():add(&#039;nexroom&#039;); — add a passage to a new scene;</pre>
+<pre class="code">objs():add(&#039;chair&#039;); — add an object to the current scene;</pre>
+
+<p>
+Another function gets an object by reference:
+ref(). 
+</p>
+
+<p>
+For example we can add an object to the &#039;home&#039; location like this:
+</p>
+<pre class="code">ref(&#039;home&#039;).obj:add(&#039;chair&#039;);</pre>
+
+<p>
+This shorter variant is also correct:
+</p>
+<pre class="code">home.obj:add(&#039;chair&#039;);</pre>
+
+<p>
+Or, for version &gt;=0.8.5:
+</p>
+<pre class="code">objs(&#039;home&#039;):add(&#039;chair&#039;);</pre>
+
+<p>
+and finally:
+</p>
+<pre class="code">put(&#039;chair&#039;, &#039;home&#039;);</pre>
+
+<p>
+or even:
+</p>
+<pre class="code">put(chair, home);</pre>
+
+<p>
+From 0.8.5 deref(o), returns the reference-string for an object;
+</p>
+
+</div>
+<!-- EDIT13 SECTION "12. Functions, that return objects" [19306-21119] -->
+<h2 class="sectionedit14" id="some_auxiliary_functions">13. Some auxiliary functions.</h2>
+<div class="level2">
+
+<p>
+STEAD has a number of high-level functions, that may come useful when writing games. 
+</p>
+
+<p>
+have() — checks if the object is in the inventory by object, it&#039;s reference or by object “nam” attribute. For example:
+</p>
+<pre class="code">...
+act = function(s)
+	if have(&#039;knife&#039;) then
+		return &#039;But I\&#039;ve got a knife!&#039;;
+	end
+end
+...</pre>
+
+<p>
+Next code examples must work to.
+</p>
+<pre class="code">...
+	if have &#039;knife&#039; then
+...
+	if have (knife) then
+...</pre>
+
+<p>
+In the next examples you may use all above address modes.
+</p>
+
+<p>
+move(o, w) — moves an object from the current scene to another:
+</p>
+<pre class="code">move(&#039;mycat&#039;,&#039;inmycar&#039;);</pre>
+
+<p>
+If you want to move an object from an arbitrary scene, you&#039;ll have to delete it from the original scene with the “del” method. To create objects, that move in complex ways, you&#039;ll have to write a method that would save the object&#039;s position in the object itself and delete it from the original scene. You can set the initial position (room) as the third parameter of “move”.
+</p>
+<pre class="code">move(&#039;mycat&#039;,&#039;inmycar&#039;, &#039;forest&#039;); </pre>
+
+<p>
+From version 0.8 there is a “movef” function similar to “move”, but adding the object to the start of the list.
+</p>
+
+<p>
+seen(o) — is object present in the current scene:
+</p>
+<pre class="code">	if seen(&#039;mycat&#039;) then
+		move(&#039;mycat&#039;,&#039;inmycar&#039;);
+	end</pre>
+
+<p>
+From 0.8.6 has an optional second parameter — the scene.
+</p>
+
+<p>
+drop(o) — drop an object from the inventory to the scene:
+</p>
+<pre class="code">drop(&#039;knife&#039;);</pre>
+
+<p>
+From 0.8 there&#039;s a function “dropf” similar to “drop”, but adding the object to the list start. From 0.8.5 there&#039;s an optional second parameter — a room where to place the object. Also from &gt;=0.8.5 there are “put/putf” functions which are not remove the object from the inventory.
+</p>
+
+<p>
+From version 0.8.9 there&#039;s a function remove(o, [from]), which deletes an object from the current scene or from the “from” scene.
+</p>
+
+<p>
+take(o) — take an object.
+</p>
+<pre class="code">take(&#039;knife&#039;);</pre>
+
+<p>
+From 0.8.5 has optional second parameter — a room where to take the object from.
+</p>
+
+<p>
+taken(o) — returns true if the object has already been taken (with “tak” or “take()”);
+</p>
+
+<p>
+rnd(m) — random number from 1 to m.
+</p>
+
+<p>
+walk(w) — go to scene w. If you are not using p/pn/pr output method, the handler has to return the “walk” return value. E.g:
+</p>
+<pre class="code">act = code [[
+        pn &quot;I am going to next room...&quot;
+        walk (nextroom);
+]]
+...
+act = code [[
+        return cat(&#039;I am going to next room...&#039;, walk (nextroom));
+]]</pre>
+
+<p>
+Attention!!!  After walk call, handler execution will continue until handler end or return.
+</p>
+
+<p>
+change_pl(p) — switch to another player (with one&#039;s own inventory and position). The function returns the scene description of the new player and the returned value has to be transferred from the handler (see “walk()”).
+</p>
+<pre class="code">mycar = obj {
+	nam = &#039;my car&#039;,
+	dsc = &#039;In front of the cabin there is my old Toyota {pickup}.&#039;,
+	act = function(s)
+		return walk(&#039;inmycar&#039;);
+	end
+};</pre>
+
+<p>
+walkback() – go to the previous scene.
+</p>
+
+<p>
+back() – go to the previous scene. In case of returning from dialog to room, dsc/enter/entered methods of room will not be called. Use in dialogs.
+</p>
+
+<p>
+walkin(room) – go to scene, do not call exit/left of current scene;
+</p>
+
+<p>
+walkout() – go to previous scene, do not call enter/entered of previous scene;
+</p>
+
+<p>
+time() — returns the current game time in player&#039;s moves.
+</p>
+
+<p>
+cat(…) — returns the string, concatenating argument strings. If the first argument is nil returns nil.
+</p>
+
+<p>
+par(…) — returns the string, concatenating argument strings split by the first argument string.
+</p>
+
+<p>
+disable/enable/disable_all/enable_all – disable/enable/disable_all/enable_all object
+</p>
+
+<p>
+visited([where]) – room visit counter (may be nil);
+</p>
+
+<p>
+path(obj,[where]) – lookup in way, even for disabled items;
+</p>
+
+<p>
+nameof(obj) – get object&#039;s name (nam attribute);
+</p>
+
+<p>
+purge (obj, [where]) – see remove, deletes even disabled object;
+</p>
+
+<p>
+replace (obj, onobj, [where]) – replaces object;
+</p>
+
+<p>
+disabled(obj) – returns true for disabled objects;
+</p>
+
+</div>
+<!-- EDIT14 SECTION "13. Some auxiliary functions." [21120-25101] -->
+<h2 class="sectionedit15" id="dialogs">14. Dialogs</h2>
+<div class="level2">
+
+<p>
+Dialogs are scenes with phrase objects. The simplest dialog may look like this:
+</p>
+<pre class="code">povardlg = dlg {
+	nam = &#039;in the kitchen&#039;,
+	dsc = &#039;I see a fat face of a lady cook wearing a white hat with a tired look...&#039;,
+	obj = {
+	[1] = phr(&#039;“Those green, please... Yeah, and beans too!”&#039;, &#039;“Enjoy!”&#039;),
+	[2] = phr(&#039;“Fried potato with lard, please!”&#039;, &#039;“Bon appetit!”&#039;),
+	[3] = phr(&#039;“Two helpings of garlic sooup!!!”&#039;, &#039;“Good choice!”&#039;),
+	[4] = phr(&#039;“Something light, please, I&#039;ve got an ulcer...”&#039;, &#039;“Oatmeal!”&#039;),
+	},
+};</pre>
+
+<p>
+“phr” creates a phrase. A phrase contains a question, an answer and a reaction (the example has no reaction). When the player picks one of the phrases, it is disabled. When all phrases are disabled, the dialog is over. Reaction is a line of lua code, which is executed when the phrase is disabled. E.g.:
+</p>
+<pre class="code">food = obj {
+	nam = &#039;food&#039;,
+	inv = function (s)
+		inv():del(&#039;food&#039;);
+		return &#039;I eat.&#039;;
+	end
+};
+
+gotfood = function(w)
+	inv():add(&#039;food&#039;);
+	food._num = w;
+	back();
+end
+
+povardlg = dlg {
+	nam = &#039;in the kitchen&#039;,
+	dsc = &#039;I see a fat face of a lady cook wearing a white hat with a tired look...&#039;,
+	obj = {
+	[1] = phr(&#039;“Those green, please... Yeah, and beans too!”&#039;, &#039;“Enjoy!”&#039;, [[pon(); gotfood(1);]]),
+	[2] = phr(&#039;“Fried potato with lard, please!”&#039;, &#039;“Bon appetit!”&#039;, [[pon(); gotfood(2);]]),
+	[3] = phr(&#039;“Two helpings of garlic sooup!!!”&#039;, &#039;“Good choice!”&#039;, [[pon(); gotfood(3);]]),
+	[4] = phr(&#039;“Something light, please, I&#039;ve got an ulcer...”&#039;, &#039;“Oatmeal!”&#039;, [[pon(); gotfood(4);]]),
+	},
+};</pre>
+
+<p>
+In the example the player chooses his dinner. After getting the food (recording the choice in the “food._num” variable) he returns back to the scene from where he got in the dialog.
+</p>
+
+<p>
+The reaction may have any lua code, but STEAD has some frequently used functions predefined:
+</p>
+<ul>
+<li class="level1"><div class="li"> pon(n..) — enable the phrases with numbers n… (in the example it allows to take the same food again).</div>
+</li>
+<li class="level1"><div class="li"> poff(n…) — disable the phrases with numbers n… </div>
+</li>
+<li class="level1"><div class="li"> prem(n…) — remove (block) phrases with numbers n… (blocked phrases won&#039;t be re-enabled with subsequent “pon”).</div>
+</li>
+<li class="level1"><div class="li"> pseen(n…) — returns true, if phrases n.. are visible;</div>
+</li>
+<li class="level1"><div class="li"> punseen(n..) — returns true, if phrases n… are not visible;</div>
+</li>
+</ul>
+
+<p>
+If argument n is not present, current phrase will be affected.
+</p>
+
+<p>
+Player enters a dialog the way he enters a scene:
+</p>
+<pre class="code">povar = obj {
+	nam = &#039;cook&#039;,
+	dsc = &#039;I see a {cook}.&#039;,
+	act = function()
+		return walk(&#039;povardlg&#039;);
+	end,
+};</pre>
+
+<p>
+You can pass from one dialog to another, organizing hierarchic dialogs.
+</p>
+
+<p>
+You can also hide some phrases when initializing the dialog and show them under certain conditions.
+</p>
+<pre class="code">facectrl = dlg {
+	nam = &#039;facecontrol&#039;,
+	dsc = &#039;I see an unpleasant face of a fat guard.&#039;,
+	obj = {
+		[1] = phr(&#039;“I came to the Belin&#039;s lecture...”&#039;, 
+		&#039;“I do not know who you are,” he smiles, “but I have orders to let in only decent people.”&#039;,
+		[[pon(2);]]),
+		[2] = _phr(&#039;“I\&#039;ve got an invitation!”&#039;, 
+		&#039;“And I don\&#039;t care! Look at yourself in a mirror!!! You\&#039;ve come to listen to Belin himself — the right hand of...” he made a respectful pause. “So get lost...”&#039;, [[pon(3,4)]]),
+		[3] = _phr(&#039; “I\&#039;m gonna kick your ass!”&#039;, &#039;“I\&#039;ve had enough...” Strong arms push me out to the corridor...&#039;,
+			[[poff(4)]]),
+		[4] = _phr(&#039;“You, boar! I\&#039;ve told you, I\&#039;ve got an invitation!”&#039;,
+			&#039;“Whaaat?” The guard\&#039;s eyes start getting bloodshot... A powerful kick sends me out to the corridor...&#039;,
+			[[poff(3)]]),
+	},
+	exit = function(s,w)
+		s:pon(1);
+	end,
+};</pre>
+
+<p>
+`_phr` — creates a disabled phrase, which can be enabled. The example also shows the use of “pon”, “poff”, “prem” methods for a dialog (see “exit”).
+</p>
+
+<p>
+You can enable/disable/remove/check phrases not only of the current put of any arbitrary dialog with the “pon”/“poff”/“prem”/“pseen”/“pusneen” methods of a dialog object. For example: shopman:pon(5);
+</p>
+
+</div>
+<!-- EDIT15 SECTION "14. Dialogs" [25102-29146] -->
+<h2 class="sectionedit16" id="lightweight_objects">15. Lightweight objects</h2>
+<div class="level2">
+
+<p>
+Sometimes a scene has to be filled with decorations with a limited functionality to add variety to the game. For that lightweight objects can be used. For example:
+</p>
+<pre class="code">sside = room {
+	nam = &#039;southern side&#039;,
+	dsc = [[I am near the southern wall of an institute building. ]],
+	act = function(s, w)
+		if w == &quot;porch&quot; then
+			ways():add(&#039;stolcorridor&#039;);
+			p &quot;I walked to the porch. The sign on the door read &#039;Canteen&#039;. Hm... should I get in?&quot;;
+		elseif w == &quot;people&quot; then
+			p &#039;The ones going out look happier...&#039;;
+		end
+	end,
+	obj = { vobj(&quot;porch&quot;, &quot;There is a small {porch} by the eastern corner.&quot;),
+		vobj(&quot;people&quot;, &quot;From time to time the porch door slams letting {people} in and out..&quot;)},
+};</pre>
+
+<p>
+As you see, “vobj” allows to create a lightweight version of a static object, with which it will still be possible to interact (defining an “act” handler in the scene an analyzing the object name). “vobj” also calls the “used” method with the third parameter being the object which acts on the virtual object.
+</p>
+
+<p>
+“vobj” syntax: vobj(name, descriptor); where key is a number to be transferred to the “act”/“used” handlers of the scene as a second parameter.
+</p>
+
+<p>
+There is a modification of “vobj” object — “vway”. It creates a reference.
+“vway” syntax: vway(name, descriptor, destination scene); for example:
+</p>
+<pre class="code">	obj = { vway(&quot;next&quot;, &quot;Press {here}.&quot;, &#039;nextroom&#039;) }</pre>
+
+<p>
+You can dynamically fill the scene with “vobj” and “vway” objects. Use methods “add” and “del”. For example:
+</p>
+<pre class="code">	objs(home):add(vway(&quot;next&quot;, &quot;{Next}.&quot;, &#039;next_room&#039;));
+-- some code here
+	home.obj:del(&quot;next&quot;);</pre>
+
+<p>
+Also a simplified scene “vroom” is defined. 
+Syntax: vroom(passage name, destination scene). For example:
+</p>
+<pre class="code">	home.way:add(vroom(&quot;go west&quot;, &#039;mountains&#039;);</pre>
+
+</div>
+<!-- EDIT16 SECTION "15. Lightweight objects" [29147-31011] -->
+<h2 class="sectionedit17" id="dynamic_events">16. Dynamic events</h2>
+<div class="level2">
+
+<p>
+You can define handlers, that would execute every time when the game time increments by 1. E.g.:
+</p>
+<pre class="code">mycat = obj {
+	nam = &#039;Barsik&#039;,
+	lf = {
+		[1] = &#039;Barsik is moving in my bosom.&#039;,
+		[2] = &#039;Barsik peers out of my bosom.&#039;,
+		[3] = &#039;Barsik purrs in my bosom.&#039;,
+		[4] = &#039;Barsik shivers in my bosom.&#039;,
+		[5] = &#039;I feel Barsik&#039;s warmth in my bosom.&#039;,
+		[6] = &#039;Barsik leans out of my bosom and looks around.&#039;,
+	},
+	life = function(s)
+		local r = rnd(6);
+		if r &gt; 2 then
+			return;
+		end
+		r = rnd(6);
+		return s.lf[r];
+	end,
+....
+
+profdlg2 = dlg {
+	nam = &#039;Belin&#039;,
+	dsc = &#039;Belin is pale. He absently looks at the shotgun.&#039;,
+	obj = {
+		[1] = phr(&#039;“I came for my cat.”&#039;,
+	&#039;I snatch Barsik from Belin&#039;s hand and put in my bosom.&#039;,
+		[[inv():add(&#039;mycat&#039;); lifeon(&#039;mycat&#039;)]]),
+....</pre>
+
+<p>
+Any object or scene may have their “life” handler, which is called every time the game time advances, if the object or the scene have been added to the list of living objects with “lifeon”. Don&#039;t forget to remofe living objects from the list with “lifeoff”, when you no longer need them. You can do this, for example, in the “exit” handler or some other way.
+</p>
+
+<p>
+life may return string, that will be printed after all text of scene.
+</p>
+
+<p>
+From 0.9.1 you can return second retval – importance. (true or false). For example:
+</p>
+<pre class="code">return &#039;Guard entered the room.&#039;, true -- The event will be printed before objects description.</pre>
+
+<p>
+Or:
+</p>
+<pre class="code">p &#039;Guard entered the room.&#039;
+return true -- The event will be printed before objects description.</pre>
+
+</div>
+<!-- EDIT17 SECTION "16. Dynamic events" [31012-32586] -->
+<h2 class="sectionedit18" id="graphics_and_music">17. Graphics and music</h2>
+<div class="level2">
+
+<p>
+Graphic interpreter analyzes the scene “pic” attribute and treats it as a path to the picture. For example:
+</p>
+<pre class="code">home = room {
+	pic = &#039;gfx/home.png&#039;,
+	nam = &#039;at home&#039;,
+	dsc = &#039;I am at home&#039;,
+};</pre>
+
+<p>
+Of couce, “pic” may be a function. This enhaces the developer&#039;s capabilities. 
+If the current scene has no “pic” attribute defined, the “game.pic” attribute is taken. If “game.pic” isn&#039;t defined, no picture is displayed.
+</p>
+
+<p>
+From version 0.9.2 you can use animated gif files. 
+</p>
+
+<p>
+From version 0.9.2 graphics can be embedded everywhere in text or inventory with img function. For example:
+</p>
+<pre class="code">knife = obj {
+	nam = &#039;Knife&#039;..img(&#039;img/knife.png&#039;),
+}</pre>
+
+<p>
+From version 1.3.0 text flow is supported. Using functions imgl/imgr, picture can be inserted at left/right. border. Those pictures can not be links.
+</p>
+
+<p>
+For padding, you can use &#039;pad:&#039;. For example:
+</p>
+<pre class="code lua">imgl <span class="st0">'pad:16,picture.png'</span> <span class="co1">-- padding 16px;</span>
+imgl <span class="st0">'pad:0 16 16 4,picture.png'</span> <span class="co1">-- padding: top 0, right 16, bottom 16, left 4</span>
+imgl <span class="st0">'pad:0 16,picture.png'</span> <span class="co1">-- padding: top 0, right 16, bottom 0, left 16</span></pre>
+
+<p>
+You can use pseudo-images for blank areas and boxes:
+</p>
+<pre class="code lua">dsc <span class="sy0">=</span> img <span class="st0">'blank:32x32'</span><span class="sy0">..</span><span class="co2">[[Line with blank image.]]</span><span class="sy0">;</span>
+dsc <span class="sy0">=</span> img <span class="st0">'box:32x32,red,128'</span><span class="sy0">..</span><span class="co2">[[Line with red semi-transparent square.]]</span><span class="sy0">;</span></pre>
+
+<p>
+In current version you can use disp attribute:
+</p>
+<pre class="code">knife = obj {
+	nam = &#039;Knife&#039;;
+        disp = &#039;Knife&#039;..img(&#039;img/knife.png&#039;),
+}</pre>
+
+<p>
+The interpreter cycles the current music defined by the function ”set_music(music file name)”.
+</p>
+
+<p>
+For example:
+</p>
+<pre class="code">street = room {
+	pic = &#039;gfx/street.png&#039;,
+	enter = function()
+		set_music(&#039;mus/rain.ogg&#039;);
+	end,
+	nam = &#039;on the street&#039;,
+	dsc = &#039;It is raining outside.&#039;,
+};</pre>
+
+<p>
+From version 1.0.0 the interpreter can compose picture from base image and overlays:
+</p>
+<pre class="code">pic = &#039;gfx/mycat.png;gfx/milk.png@120,25;gfx/fish.png@32,32&#039;</pre>
+
+<p>
+get_music() returns the current track name.
+</p>
+
+<p>
+From version 0.7.7 the set_music() function can get an additional parameter — the number of playbacks. You can get the current counter with “get_music_loop”. -1 means that the playback of the current track is over.
+</p>
+
+<p>
+From version 0.9.2 the set_sound() function lets to play sound file. get_sound() returns sound filename, that will be played.
+</p>
+
+<p>
+To stop music use stop_music() function (from version 1.0.0).
+</p>
+
+<p>
+Use is_music() to check if music is playing. (from version 1.0.0)
+</p>
+
+</div>
+<!-- EDIT18 SECTION "17. Graphics and music" [32587-35032] -->
+<h2 class="sectionedit19" id="advices">18. Advices</h2>
+<div class="level2">
+
+</div>
+<!-- EDIT19 SECTION "18. Advices" [35033-35057] -->
+<h3 class="sectionedit20" id="split_game_into_files">Split game into files</h3>
+<div class="level3">
+
+<p>
+You can use “dofile” to include source code fragments. You must use “dofile” in global context, to load all game fragments while parsing main.lua.
+</p>
+<pre class="code">-- main.lua
+dofile &quot;episode1.lua&quot;
+dofile &quot;npc.lau&quot;
+dofile &quot;start.lua&quot;</pre>
+
+<p>
+For dynamic including (with possibility to redefine current objects or/and rooms) you can use “gamefile”:
+</p>
+<pre class="code">...
+act = code [[ gamefile (&quot;episode2.lua&quot;); ]]
+...</pre>
+
+<p>
+You can also load new file and forget stack of previous loaded fragments, runnig new file like new game.
+</p>
+<pre class="code">...
+act = code [[ gamefile (&quot;episode3.lua&quot;, true); ]]
+...</pre>
+
+</div>
+<!-- EDIT20 SECTION "Split game into files" [35058-35679] -->
+<h3 class="sectionedit21" id="modules">Modules</h3>
+<div class="level3">
+
+<p>
+Starting from version 1.2.0 you can use modules via “require” function call. At the moment the following modules are available:
+</p>
+<ul>
+<li class="level1"><div class="li"> dbg — debug module (use <code>require “dbg”</code> to enable debugger);</div>
+</li>
+<li class="level2"><div class="li"> walk — improved implementation of passages;</div>
+</li>
+<li class="level2"><div class="li"> xact — multiple references to objects;</div>
+</li>
+<li class="level2"><div class="li"> input — keyboard input;</div>
+</li>
+<li class="level2"><div class="li"> click — capturing mouse clicks on the scene picture;</div>
+</li>
+<li class="level2"><div class="li"> vars — definition of variables;</div>
+</li>
+<li class="level2"><div class="li"> prefs — preferences;</div>
+</li>
+<li class="level2"><div class="li"> snapshots — snapshots;</div>
+</li>
+<li class="level2"><div class="li"> format — formats the output;</div>
+</li>
+<li class="level2"><div class="li"> object — improved objects;</div>
+</li>
+<li class="level2"><div class="li"> theme — theme manipulations;</div>
+</li>
+</ul>
+
+<p>
+Modules can be used like this:
+</p>
+<pre class="code">--$Name: My game!$
+instead_version &quot;1.2.0&quot;
+require &quot;para&quot;
+require &quot;dbg&quot;
+...</pre>
+
+<p>
+If version is &gt;= 1.2.0 then the following modules are used automatically: vars, object, walk.
+</p>
+
+<p>
+“prefs” object (included into “prefs” module) can store game preferences, e.g. player progress or attempt count…
+</p>
+<pre class="code">  require &quot;prefs&quot;
+...
+    prefs.counter = 0
+...
+    exit = function(s)
+        prefs.counter = prefs.counter + 1
+        prefs:store()
+    end
+...
+    enter = function(s)
+        return &#039;You passed the game &#039;..prefs.counter..&#039; times&#039;;
+    end
+...
+    act = function(s)
+        prefs:purge()
+        return &quot;Preferences has been cleared&quot;
+    end</pre>
+
+<p>
+“xact” module allows to make references to objects from other objects, reactions and life methods. These references have the form {object:string}, e.g.:
+</p>
+<pre class="code">...
+    act = [[ I noticed a {myknife:knife} under the table.]]
+...</pre>
+
+<p>
+“object” part of the reference can be object variable or object name.
+</p>
+
+<p>
+This module also defines “xact” and “xdsc” objects.
+</p>
+
+<p>
+“xact” is the simple reaction object. For example:
+</p>
+<pre class="code">main = room {
+    forcedsc = true;
+    dsc = [[Author&#039;s comment: I was writing this game for a very {note1:long} time.]];
+    obj = {
+        xact(&#039;note1&#039;, [[More than 10 years.]]);
+    }
+}</pre>
+
+<p>
+A reaction can contain a code:
+</p>
+<pre class="code">        xact(&#039;note1&#039;, code [[p &quot;More than 10 years.&quot;]]);</pre>
+
+<p>
+“xdsc” allows to insert multiple description to the object list:
+</p>
+<pre class="code">main = room {
+    forcedsc = true;
+    dsc = [[ I&#039;m in the room. ]];
+    xdsc = [[ I see an {anapple:apple} and a {aknife:knife}. ]];
+    other = [[ There are also {achain:chain} and {atool:handsaw} here.]];
+    obj = {
+        xdsc(), -- &#039;xdsc method by default&#039;
+        xdsc(&#039;other&#039;),
+        &#039;apple&#039;, &#039;knife&#039;, &#039;chain&#039;, &#039;tool&#039;,
+    }
+}</pre>
+
+<p>
+You may use xroom:
+</p>
+<pre class="code">main = xroom {
+    forcedsc = true;
+    dsc = [[ I&#039;m in the room. ]];
+    xdsc = [[ I see an {anapple:apple} and a {aknife:knife}. ]];
+    obj = {
+        &#039;apple&#039;, &#039;knife&#039;, &#039;chain&#039;, &#039;tool&#039;,
+    }
+}</pre>
+
+<p>
+“input” module allows to implement simple text entry fields. “click” module helps to handle mouse clicks on scene pictures.
+</p>
+
+<p>
+“para” module adds indentation to paragraphs.
+</p>
+
+<p>
+“format: module formats the output. By default all settings are disabled:
+</p>
+<pre class="code">format.para = false -- adds indentation to paragraphs;
+format.dash = false -- changes double - on dash;
+format.quotes = false -- changes quotes on &lt;&lt; &gt;&gt;;
+format.filter = nil -- user formatting function;</pre>
+
+<p>
+You may use modules para/dash/quotes to enable specific feature.
+</p>
+
+</div>
+<!-- EDIT21 SECTION "Modules" [35680-38937] -->
+<h3 class="sectionedit22" id="formatting">Formatting</h3>
+<div class="level3">
+
+<p>
+You can do simple text formatting with functions:
+</p>
+<ul>
+<li class="level1"><div class="li"> txtc() - center align;</div>
+</li>
+<li class="level1"><div class="li"> txtr() - right align;</div>
+</li>
+<li class="level1"><div class="li"> txtl() - left align;</div>
+</li>
+<li class="level1"><div class="li"> txttop() - top of line;</div>
+</li>
+<li class="level1"><div class="li"> txtbottom() - bottom of line;</div>
+</li>
+<li class="level1"><div class="li"> txtmiddle() - middle (by default);</div>
+</li>
+</ul>
+
+<p>
+For example:
+</p>
+<pre class="code">main = room {
+	nam = &#039;Intro&#039;,
+	dsc = txtc(&#039;Welcome!&#039;),
+}</pre>
+
+<p>
+You can define text style with functions:
+</p>
+<ul>
+<li class="level1"><div class="li"> txtb() - bold;</div>
+</li>
+<li class="level1"><div class="li"> txtem() - emboss;</div>
+</li>
+<li class="level1"><div class="li"> txtu() - underline;</div>
+</li>
+<li class="level1"><div class="li"> txtst() - strikesthrougth;</div>
+</li>
+</ul>
+
+<p>
+For example:
+</p>
+<pre class="code">main = room {
+	nam = &#039;Intro&#039;,
+	dsc = &#039;You are in the room: &#039;..txtb(&#039;main&#039;)..&#039;.&#039;,
+}</pre>
+
+<p>
+Since the version 1.1.0 you can create unwrapped strings by using txtnb();
+</p>
+
+<p>
+For example:
+</p>
+<pre class="code">main = room {
+	nam = &#039;Intro&#039;,
+	dsc = &#039;You are in the room &#039;..txtb(&#039;main&#039;)..&#039;.&#039;,
+}</pre>
+
+</div>
+<!-- EDIT22 SECTION "Formatting" [38938-39714] -->
+<h3 class="sectionedit23" id="menus">Menus</h3>
+<div class="level3">
+
+<p>
+You can do menus in the inventory area, using menu constructor. Menu handler will be called after single mouse click. If handler have no return string the state of game will no change. For example, here is pocket realisation:
+</p>
+<pre class="code">pocket = menu {
+	State = false,
+	nam = function(s)
+		if s.State then
+			return txtu(&#039;pocket&#039;);
+		end
+		return &#039;pocket&#039;;
+	end,
+	gen = function(s)
+		if s.State then
+			s:enable_all();
+		else
+			s:disable_all();
+		end 
+	end,
+	menu = function(s)
+		if s.State then
+			s.State = false;
+		else
+			s.State = true;
+		end 
+		s:gen();
+	end,
+};
+
+knife = obj {
+	nam = &#039;knife&#039;,
+	inv = &#039;This is knife&#039;,
+};
+
+function init()
+    inv():add(pocket);
+    put(knife, pocket);
+    pocket:gen();
+end
+
+main = room {
+	nam = &#039;test&#039;,
+};</pre>
+
+</div>
+<!-- EDIT23 SECTION "Menus" [39715-40482] -->
+<h3 class="sectionedit24" id="player_status">Player status</h3>
+<div class="level3">
+
+<p>
+Below is an implementation of player status as a text in the inventory, which cannot be picked.
+</p>
+<pre class="code">global {
+    life = 10;
+    power = 10;
+}
+
+status = stat {
+	nam = function(s)
+		p (&#039;Life: &#039;, life, &#039;Power: &#039;, power)
+	end
+};
+function init()
+    inv():add(&#039;status&#039;);
+end</pre>
+
+</div>
+<!-- EDIT24 SECTION "Player status" [40483-40789] -->
+<h3 class="sectionedit25" id="walk_from_the_exit_and_enter_handlers">“walk” from the “exit” and “enter” handlers</h3>
+<div class="level3">
+
+<p>
+You can do “walk” from the “enter” and “exit” handlers.
+</p>
+
+</div>
+<!-- EDIT25 SECTION "“walk” from the “exit” and “enter” handlers" [40790-40925] -->
+<h3 class="sectionedit26" id="dynamically_created_references">Dynamically created references.</h3>
+<div class="level3">
+
+<p>
+Dynamically created references can be implemented in various ways. The example below uses “vway” objects. To add a reference one can write:
+</p>
+<pre class="code">objs(home):add(vway(&#039;Road&#039;, &#039;I noticed a {road} going into the forest...&#039;, &#039;forest&#039;));</pre>
+
+<p>
+To delete a reference one can use “del” method.
+</p>
+<pre class="code">objs(home):del(&#039;Road&#039;);</pre>
+
+<p>
+The “srch” method can check if the reference is present in the scene.
+</p>
+<pre class="code">if not objs(home):srch(&#039;Road&#039;) then
+	objs(home):add(vway(&#039;Road&#039;, &#039;I noticed a {road} going into the forest...&#039;, &#039;forest&#039;));
+end</pre>
+
+<p>
+It&#039;s convenient to create dynamic references either in the “enter” handler, or in the arbitrary place in the game code, where they are required. If the reference is created in the current scene, the example can be simplified:
+</p>
+<pre class="code">if not seen(&#039;Road&#039;) then
+	objs():add(vway(&#039;Road&#039;, &#039;I noticed a {road} going into the forest...&#039;, &#039;forest&#039;));
+end</pre>
+
+<p>
+Or you can just enable and disable references with “enable()” and “disable()”, for example:
+</p>
+<pre class="code">	seen(&#039;Road&#039;, home):disable();
+        exist(&#039;Road&#039;, home):enable();</pre>
+
+<p>
+Creating disabled “vobj” and “vway”:
+</p>
+<pre class="code">	obj = {vway(&#039;Road&#039;, &#039;I noticed a {road} going into the forest...&#039;, &#039;forest&#039;):disable()},</pre>
+
+<p>
+And then enabling them by their index in the “obj” array or by looking them with srch or seen/exist:
+</p>
+<pre class="code">	objs()[1]:enable();</pre>
+
+</div>
+<!-- EDIT26 SECTION "Dynamically created references." [40926-42356] -->
+<h3 class="sectionedit27" id="encoding_game_sources_from_version_093">Encoding game sources (from version 0.9.3)</h3>
+<div class="level3">
+
+<p>
+If you want hide a game source code, you can encode it with command: “sdl-instead -encode &lt;lua file&gt; [encoded file]” and load encode file from lua with “doencfile”. It&#039;s neccessary to keep main.lua as plain text file. So, the recommended scheme is (game is a encoded game.lua ): 
+</p>
+
+<p>
+main.lua
+</p>
+<pre class="code">-- $Name: My closed source game!$
+doencfile(&quot;game&quot;);</pre>
+
+<p>
+WARNING about using luac compiler:
+Do not use lua compiler luac, it produces platform-dependent code!
+But game compilation is useful to find errors in the game code.
+</p>
+
+</div>
+<!-- EDIT27 SECTION "Encoding game sources (from version 0.9.3)" [42357-42943] -->
+<h3 class="sectionedit28" id="packing_resources_in_idf_file_from_version_140">Packing resources in .idf file (from version 1.4.0)</h3>
+<div class="level3">
+
+<p>
+You can pack all game&#039;s resources (graphics, sounds, theme) in one .idf file. Put all resources in &#039;data&#039; directory and run:
+</p>
+
+<p>
+instead -idf &lt;path to data&gt;
+</p>
+
+<p>
+The file data.idf will be created in the current directory. Put it in game&#039;s dir and remove resource files.
+</p>
+
+<p>
+You may pack whole game in .idf:
+</p>
+
+<p>
+instead -idf &lt;path to game&gt;
+</p>
+
+<p>
+Game in .idf format can be run like any other game (as it was directory) or directly from command line: 
+</p>
+
+<p>
+instead game.idf
+</p>
+
+</div>
+<!-- EDIT28 SECTION "Packing resources in .idf file (from version 1.4.0)" [42944-43455] -->
+<h3 class="sectionedit29" id="switching_between_players">Switching between players</h3>
+<div class="level3">
+
+<p>
+You can create a game with several characters and switch between them from time to time (see “change_pl”). But you can also use the same trick to switch between different types of inventory. 
+</p>
+
+</div>
+<!-- EDIT29 SECTION "Switching between players" [43456-43688] -->
+<h3 class="sectionedit30" id="using_the_first_parameter_of_a_handler">Using the first parameter of a handler</h3>
+<div class="level3">
+
+<p>
+Code example.
+</p>
+<pre class="code">stone = obj {
+	nam = &#039;stone&#039;,
+	dsc = &#039;There is a {stone} at the edge.&#039;,
+	act = function()
+		objs():del(&#039;stone&#039;);
+		return &#039;I pushed the stone, it fell and flew down...&#039;;
+	end</pre>
+
+<p>
+The “act” handler could look simpler:
+</p>
+<pre class="code">	act = function(s)
+		objs():del(s);
+		return &#039;I pushed the stone, it fell and flew down...&#039;;
+	end</pre>
+
+</div>
+<!-- EDIT30 SECTION "Using the first parameter of a handler" [43689-44098] -->
+<h3 class="sectionedit31" id="using_set_music">Using “set_music”</h3>
+<div class="level3">
+
+<p>
+You can use “set_music” to play sounds setting the second parameter — the cycle counter how many times to play the sound file.
+</p>
+
+<p>
+You can write your own music player, creating it from a live object, e.g:
+</p>
+<pre class="code">-- plays tracks in random order, starting from 2-nd
+tracks = {&quot;mus/astro2.mod&quot;, &quot;mus/aws_chas.xm&quot;, &quot;mus/dmageofd.xm&quot;, &quot;mus/doomsday.s3m&quot;}
+mplayer = obj {
+	nam = &#039;media player&#039;,
+	life = function(s)
+		local n = get_music();
+		local v = get_music_loop();
+		if not n or not v then
+			set_music(tracks[2], 1);
+		elseif v == -1 then
+			local n = get_music();
+			while get_music() == n do
+				n = tracks[rnd(4)]
+			end
+			set_music(n, 1);
+		end
+	end,
+};
+lifeon(&#039;mplayer&#039;);</pre>
+
+<p>
+You can use “get_music_loop” and “get_music” functions to remember the last melody and ren restore it, e.g:
+</p>
+<pre class="code">function save_music(s)
+	s._oldMusic = get_music();
+	s._oldMusicLoop = get_music_loop();
+end
+
+function restore_music(s)
+	set_music(s._oldMusic, s._oldMusicLoop);
+end
+
+-- ....
+enter = function(s)
+	save_music(s);
+end,
+exit = function(s)
+	restore_music(s);
+end,
+-- ....
+</pre>
+
+<p>
+From version 0.8.5 functions “save_music” and “restore_music” are already present in the library.
+</p>
+
+</div>
+<!-- EDIT31 SECTION "Using “set_music”" [44099-45327] -->
+<h3 class="sectionedit32" id="living_objects">Living objects</h3>
+<div class="level3">
+
+<p>
+If your hero needs a friend, one of the ways is the “life” method of that character, that would always bring the object to the player&#039;s location:
+</p>
+<pre class="code">horse = obj {
+	nam = &#039;horse&#039;,
+	dsc = &#039;A {horse} is standing next to me.&#039;,
+	life = function(s)
+		if not seen(&#039;horse&#039;) then
+			move(&#039;horse&#039;, here(), s.__where);
+			s.__where = pl.where;
+		end
+	end,
+};
+function init()
+    lifeon(&#039;horse&#039;);
+end</pre>
+
+</div>
+<!-- EDIT32 SECTION "Living objects" [45328-45758] -->
+<h3 class="sectionedit33" id="timer">Timer</h3>
+<div class="level3">
+
+<p>
+Since the version 1.1. &#039;instead&#039; has a <code>timer</code> object. (Only for sdl version.)
+</p>
+
+<p>
+Timer controls through the <code>timer</code> object.
+</p>
+<ul>
+<li class="level1"><div class="li"> timer:set(ms) – set timer interval (ms)</div>
+</li>
+<li class="level1"><div class="li"> timer:stop() – stop timer</div>
+</li>
+<li class="level1"><div class="li"> timer.callback(s) – callback for timer, calling in fixed time interval</div>
+</li>
+</ul>
+
+<p>
+Timer function can return a <code>stead</code> interface command that have to be invoked after the callback execution. For example:
+</p>
+<pre class="code">timer.callback = function(s)
+	main._time = main._time + 1;  
+	return &quot;look&quot;;
+end
+timer:set(100);
+main = room {
+	_time = 1,
+	forcedsc = true,
+	nam = &#039;Timer&#039;,
+	dsc = function(s)
+	return &#039;Example: &#039;..tostring(s._time);
+	end
+};</pre>
+
+</div>
+<!-- EDIT33 SECTION "Timer" [45759-46418] -->
+<h3 class="sectionedit34" id="keyboard">Keyboard</h3>
+<div class="level3">
+
+<p>
+Since version 1.1.0 <code>instead</code> supports keyboard input (works with SDL version only). This can be done using <code>input</code> object.
+</p>
+
+<p>
+input.key(s, pressed, key) – keyboard handler; pressed – press or release event; key – symbolic name of the key;
+</p>
+
+<p>
+Handler can return a <code>stead</code> interface command. In this case the interpreter doesn&#039;t handle a key.
+For example:
+</p>
+<pre class="code">input.key = function(s, pr, key)
+	if not pr or key == &quot;escape&quot;then 
+		return
+	elseif key == &#039;space&#039; then 
+		key = &#039; &#039;
+	elseif key == &#039;return&#039; then
+		key = &#039;^&#039;;
+	end
+	if key:len() &gt; 1 then return end 
+	main._txt = main._txt:gsub(&#039;_$&#039;,&#039;&#039;);
+	main._txt = main._txt..key..&#039;_&#039;;
+	return &quot;look&quot;;
+end
+
+main = room {
+	_txt = &#039;_&#039;,
+	forcedsc = true,
+	nam = &#039;Keyboard&#039;,
+	dsc = function(s)
+		return &#039;Example: &#039;..tostring(s._txt);
+	end 
+};</pre>
+
+</div>
+<!-- EDIT34 SECTION "Keyboard" [46419-47239] -->
+<h3 class="sectionedit35" id="mouse">Mouse</h3>
+<div class="level3">
+
+<p>
+Since version 1.1.5 <code>instead</code> supports mouse click handling (works with SDL version only). This can be done using <code>input</code> object.
+</p>
+
+<p>
+input.click(s, pressed, mb, x, y, px, py) – mouse click handler; pressed – press or release event. mb – mouse button index (1 is left button), x and y – mouse cursor coordinates relative to upper left corner of the window. px and py parameters exist if a picture have been clicked, they contain mouse cursor coordinates relative to upper left corner of this picture.
+</p>
+
+<p>
+Handler can return a <code>stead</code> interface command. In this case the interpreter doesn&#039;t handle a key.
+For example:
+</p>
+<pre class="code">input.click = function(s, press, mb, x, y, px, py)
+	if press and px then
+		click.x = px;
+		click.y = py;
+		click:enable();
+		return &quot;look&quot;
+	end
+end
+
+click = obj {
+	nam = &#039;click&#039;,
+	x = 0,
+	y = 0,
+	dsc = function(s)
+		return &quot;You clicked a picture at &quot;..s.x..&#039;,&#039;..s.y..&#039;.&#039;;
+	end
+}:disable();
+
+main = room {
+	nam = &#039;test&#039;,
+	pic =&#039;picture.png&#039;,
+	dsc = &#039;Example.&#039;,
+	obj = { &#039;click&#039; },
+};</pre>
+
+<p>
+Here is an example of a code layer that implements calling <code>click</code> method in the current room once the picture is clicked:
+</p>
+<pre class="code">input.click = function(s, press, mb, x, y, px, py)
+	if press and px then
+		return &quot;click &quot;..px..&#039;,&#039;..py;
+	end
+end
+
+game.action = function(s, cmd, x, y)
+	if cmd == &#039;click&#039; then
+		return call(here(), &#039;click&#039;, x, y);
+	end
+end
+----------------------------------------------------------------------
+main = room {
+	nam = &#039;test&#039;,
+	pic =&#039;picture.png&#039;,
+	dsc = &#039;Example.&#039;,
+	click = function(s, x, y)
+		return &quot;You clicked a picture at &quot;..x..&#039;,&#039;..y..&#039;.&#039;;
+	end
+};</pre>
+
+<p>
+Attention!!! From version 1.2.0 it is recommended to use module click.
+</p>
+
+</div>
+<!-- EDIT35 SECTION "Mouse" [47240-48941] -->
+<h3 class="sectionedit36" id="dynamic_object_creation">Dynamic object creation</h3>
+<div class="level3">
+
+<p>
+You can use <code>new</code> and <code>delete</code> functions to create and remove dynamic objects. An example follows.
+</p>
+<pre class="code">new (&quot;obj { nam = &#039;test&#039;, act = &#039;test&#039; }&quot;)
+put(new [[obj {nam = &#039;test&#039; } ]]);
+put(new(&#039;myconstructor()&#039;);
+n = new(&#039;myconstructor()&#039;);
+delete(n)</pre>
+
+<p>
+<code>new</code> treats its string argument as an object constructor. The constructor must return an object. Thus, the string argument usually contains a constructor function call. For example:
+</p>
+<pre class="code">function myconstructor()
+	local v = {}
+	v.nam = &#039;test object&#039;,
+	v.act = &#039;test feedback&#039;,
+	return obj(v);
+end</pre>
+
+<p>
+The object created will be saved every time the game is saved. <code>new()</code> returns a real object; to get its name you can use <code>deref</code> function:
+</p>
+<pre class="code">o_name = deref(new(&#039;myconstructor()&#039;));
+delete(o_name);</pre>
+
+</div>
+<!-- EDIT36 SECTION "Dynamic object creation" [48942-49763] -->
+<h3 class="sectionedit37" id="complex_output_from_event_handlers">Complex output from event handlers</h3>
+<div class="level3">
+
+<p>
+Sometimes the we need to form event handler output from several parts depending on some conditions. In this case <code>p()</code> and <code>pn()</code> functions can be useful. These functions add text to the internal buffer of the handler. The content of this buffer is returned from the handler.
+</p>
+<pre class="code">dsc = function(s)
+	p &quot;There is a {barrel} standing on the floor.&quot;
+	if s._opened then
+		p &quot;The barrel lid lies nearby.&quot;
+	end
+end</pre>
+
+<p>
+<code>pn()</code> function adds line feed to the text and outputs the result to the buffer. <code>p()</code> does almost the same thing but adds a space instead of line feed.
+</p>
+
+<p>
+There is a function <code>pr()</code> in versions 1.1.6 and later, that does not add anything at end of output. 
+</p>
+
+<p>
+To clear the buffer you can use <code>pclr()</code>. To return the status of the action along with the text, use <code>pget()</code> or just return.
+</p>
+<pre class="code">use = function(s, w)
+	if w == apple then
+		p &#039;I peeled the apple&#039;;
+		apple._peeled = true
+		return
+	end
+	p &#039;You cannot use it this way!&#039;
+	return false; -- or return pget(), false
+end</pre>
+
+</div>
+<!-- EDIT37 SECTION "Complex output from event handlers" [49764-50824] -->
+<h3 class="sectionedit38" id="debugging">Debugging</h3>
+<div class="level3">
+
+<p>
+To see lua call stack during an error, launch sdl-instead with “-debug” parameter. In Windows version debugging console will be created.
+</p>
+
+<p>
+You can debug your game without INSTEAD at all. For example, you can create the following “game.lus” file:
+</p>
+<pre class="code">dofile(&quot;/usr/share/games/stead/stead.lua&quot;); -- path to stead.lua
+dofile(&quot;main.lua&quot;); -- your game
+game:ini();
+iface:shell();</pre>
+
+<p>
+And launch the game in lua: lua game.lua.
+This way the game will work in a primitive shell environment. Useful commands: ls, go, act, use….
+</p>
+
+<p>
+For ingame simple debugger insert this: 
+</p>
+<pre class="code">require &quot;dbg&quot;</pre>
+
+<p>
+just after version line in main.lua. Then use F7 to call debugger.
+</p>
+
+</div>
+<!-- EDIT38 SECTION "Debugging" [50825-51517] -->
+<h2 class="sectionedit39" id="themes_for_sdl-instead">19. Themes for sdl-instead</h2>
+<div class="level2">
+
+<p>
+Graphic interpreter supports theme mechanism. A theme is a directory with the “theme.ini” file inside.
+</p>
+
+<p>
+The theme reqiured at the least is “default”. This theme is always the first to load. All other themes inherit from it and can partially or completely override its parameters. Themes are chosen by the user through the settings menu, but a game may contain its own theme. In the latter case the game directory contains its “theme.ini” file. However, the user may override custom game theme. If he does, the interpreter warns him that it disagrees with the game author&#039;s creative design.
+</p>
+
+<p>
+“theme.ini” has a very simple syntax: 
+</p>
+
+<p>
+&lt;parameter&gt; = &lt;value&gt; 
+</p>
+
+<p>
+or
+</p>
+
+<p>
+; comment
+</p>
+
+<p>
+Pussible types of values are: string, color, number.
+</p>
+
+<p>
+Colors are set in the #rgb form, where r g and b are color components in hexadecimal. Some colours are recognized by their names, e.g.: yellow, green, violet.
+</p>
+
+<p>
+Possible parameters are:
+</p>
+
+<p>
+scr.w = game area width in pixels (number)
+</p>
+
+<p>
+scr.h = game area height in pixels (number)
+</p>
+
+<p>
+scr.col.bg = background color
+</p>
+
+<p>
+scr.gfx.bg = path to the background image (string)
+</p>
+
+<p>
+scr.gfx.cursor.x = x coordinate of the cursor center (number) (version &gt;= 0.8.9)
+</p>
+
+<p>
+scr.gfx.cursor.y = y coordinate of the cursor center (number) (version &gt;= 0.8.9)
+</p>
+
+<p>
+scr.gfx.cursor.normal = path to the cursor picture file (string) (version &gt;= 0.8.9)
+</p>
+
+<p>
+scr.gfx.cursor.use = path to the cursor picture of the “use” indicator (string) (version &gt;= 0.8.9)
+</p>
+
+<p>
+scr.gfx.use = path to the cursor picture of the “use” indicator (string) (version &lt; 0.8.9)
+</p>
+
+<p>
+scr.gfx.pad = padding for scrollbars and menu edges (number)
+</p>
+
+<p>
+scr.gfx.x, scr.gfx.y, scr.gfx.w, scr.gfx.h = coordinates, width and height of the picture window — the area to display the scene picture. Interpreted depending on the layout mode (numbers)
+</p>
+
+<p>
+win.gfx.h - synonymous to scr.gfx.h (for compatibility)
+</p>
+
+<p>
+scr.gfx.mode = layout mode (string “fixed”, “embedded” or “float”). Sets the mode for the picture. If “embedded”, the picture is part of the main window, scr.gfx.x, scr.gfx.y and scr.gfx.w are ignored. If “float”, the picture is placed in the coordinates (scr.gfx.x, scr.gfx.y) and downscaled to scr.gfx.w by scr.gfx.h if larger. If “fixed”, the picture is part of the main window as in “embedded”, but stays above the text and is not scrolled with it.
+</p>
+
+<p>
+win.x, win.y, win.w, win.h = coordinates, width and height of the main wiindow. — the area with the scene description (numbers)
+</p>
+
+<p>
+win.fnt.name = path to the font file (string)
+</p>
+
+<p>
+win.fnt.size = font size for the main window (number)
+</p>
+
+<p>
+win.fnt.height = line height as float number (1.0 by default)
+</p>
+
+<p>
+win.gfx.up, win.gfx.down = paths to the pictures of up/down scrollers for the main window (string)
+</p>
+
+<p>
+win.up.x, win.up.y, win.down.x, win.down.y = coordinates of scrollers (position or -1)
+</p>
+
+<p>
+win.col.fg = font color for the main window (color)
+</p>
+
+<p>
+win.col.link = link color for the main window (color)
+</p>
+
+<p>
+win.col.alink = active link color for the main window (color)
+</p>
+
+<p>
+inv.x, inv.y, inv.w, inv.h = coordinates, width and height of the inventory window (numbers)
+</p>
+
+<p>
+inv.mode = inventory mode string (“horizontal” or “vertical”). In the horizontal mode several objects may fit in the same line, in the vertical — only 1 per line. (string)
+</p>
+
+<p>
+inv.col.fg = inventory text color (color)
+</p>
+
+<p>
+inv.col.link = inventory link color (color)
+</p>
+
+<p>
+inv.col.alink = inventory active link color (color)
+</p>
+
+<p>
+inv.fnt.name = path to the inventory font file (string)
+</p>
+
+<p>
+inv.fnt.size = inventory font size (number)
+</p>
+
+<p>
+inv.fnt.height = line height as float number (1.0 by default)
+</p>
+
+<p>
+inv.gfx.up, inv.gfx.down = paths to the pictures of inventory up/down scrollers (string)
+</p>
+
+<p>
+inv.up.x, inv.up.y, inv.down.x, inv.down.y = coordinates of scrollers (position or -1)
+</p>
+
+<p>
+menu.col.bg = menu background (color)
+</p>
+
+<p>
+menu.col.fg = menu text color (color)
+</p>
+
+<p>
+menu.col.link = menu link color (color)
+</p>
+
+<p>
+menu.col.alink = menu active link color (color)
+</p>
+
+<p>
+menu.col.alpha = menu transparency 0-255 (number)
+</p>
+
+<p>
+menu.col.border = menu border color (color)
+</p>
+
+<p>
+menu.bw = menu border width (number)
+</p>
+
+<p>
+menu.fnt.name = paths to menu font file (string)
+</p>
+
+<p>
+menu.fnt.size = menu font size (number)
+</p>
+
+<p>
+menu.fnt.height = line height as float number (1.0 by default)
+</p>
+
+<p>
+menu.gfx.button = path to the menu icon (string)
+</p>
+
+<p>
+menu.button.x, menu.button.y = menu button coordinates (number)
+</p>
+
+<p>
+snd.click = path to the click sound file (string)
+</p>
+
+<p>
+include = theme name (the last component in the directory path) (string)
+</p>
+
+<p>
+The theme header may include comments with tags. Right now there is only one tag: “$Name:”, it contains an UTF-8 line with the theme name. E.g.:
+</p>
+<pre class="code">; $Name:New theme$
+; modified &quot;book&quot; theme
+include = book
+scr.gfx.h = 500</pre>
+
+<p>
+The interpreter searches for themes in the “themes” directory. Unix version also checks ~/.instead/themes/ directory. Windows version (&gt;=0.8.7) checks “Documents and Settings/USER/Local Settings/Application Data/instead/themes”
+</p>
+
+<p>
+TODO 
+Full list of objects and methods.
+</p>
+
+<p>
+Translation: vopros@pochta.ru
+</p>
+
+</div>
+<!-- EDIT39 SECTION "19. Themes for sdl-instead" [51518-] --></div>
+</body>
+</html>
