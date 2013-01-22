@@ -1,0 +1,146 @@
+INSTEAD(6)                                                                                 GAMES                                                                                INSTEAD(6)
+
+
+
+NAME
+       INSTEAD - Simple Text Adventure Engine, The Interpreter
+
+
+DESCRIPTION
+       The interpreter of STEAD (Simple Text Adventures) allows one to play games that combine visual novels, text adventures and classic quests of 1990-s.  The STEAD games features are:
+
+        * very simple source code of the stories. (based on LUA);
+
+        * the ability to use graphical or textual (readline) game interface;
+
+        * graphic interface supports music and images;
+
+        * graphic interpreter theme support - a game may change the interface look;
+
+        * portability (originally written for Linux, depends on SDL and lua).
+
+
+SYNOPSIS
+       sdl-instead [options] [game.zip to run]
+
+
+OPTIONS
+       -debug Debug mode (for game developers).
+
+       -alsa  Force ALSA sound (Linux only).
+
+       -nosound
+              Run the game without sound.
+
+       -gamespath <path>
+              Add path with games.
+
+       -themespath <path>
+              Add path with themes.
+
+       -nostdgames
+              Do not use default games.
+
+       -nostdthemes
+              Do not use default themes.
+
+       -game <basename>
+              Select game in gamespath.
+
+       -theme <basename>
+              Select theme in themespath.
+
+       -fullscreen
+              Run the game in fullscreen mode.
+
+       -window
+              Run the game in windowed mode.
+
+       -noautosave
+              Disable autosave/autoload.
+
+       -encode <lua file> [encoded file]
+              Encode lua file. Encoded file can be executed with doencfile("encoded file").
+
+       -idf <path to resources directory or game>
+              Build idf file [INSTEAD data file] from directory.
+
+       -mode [WxH]
+              Use WxH resolution.
+
+       -nopause
+              Do not pause the game on window minimize.
+
+       -install [game in zip]
+              Install game from zip archive
+
+       -quit  Quit :)
+
+       -appdata [fullpath]
+              Store saves and settings in appdata path. Path must exist!
+
+       -chunksize [size in bytes]
+              Size for audio buffer. Try this if sound lags.
+
+       -version
+              Show version and exit.
+
+       Configuration file name is 'insteadrc' and it's located in ~/.instead/.
+
+       Games can be downloaded from http://instead.googlecode.com. Unzip them in ~/.instead/games.
+
+
+CONTROLS
+       Please, see tutorial.
+
+
+LICENCE
+       This is free software; you can redistribute it and/or modify it under the terms specified in the GNU Public Licence (GPL).
+
+
+WARRANTY
+       None.
+
+
+COPYRIGHT AND CREDITS
+       Peter Kosyh
+              INSTEAD author.
+
+       Ilya Ryndin
+              Initial port to Windows.
+
+       Mahno Aleksey
+              Port to Android.
+
+       .dm    Port to Mac OS X.
+
+       Andrey Afletdinov
+              Port to Windows CE.
+
+       Vadim Balashoff
+              Advices.
+
+       Vladimir Zhirov
+              Advices.
+
+       Alexander Yakovlev
+              manual.tex support.
+
+       Serj Kalichev
+              Advices and default theme correction.
+
+       Vladimir Podobaev, Oleg Gvozdev
+              Testers.
+
+       Alexander Soborov
+              Wiki support.
+
+       Many others for comments, bug reports, games and ideas.
+
+
+SEE ALSO
+       http://instead.googlecode.com
+
+
+
+Instead                                                                                Version 1.8.3                                                                            INSTEAD(6)
