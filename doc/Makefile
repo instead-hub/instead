@@ -17,6 +17,7 @@ all:
 install:
 	$(INSTALLD) $(DOCPATH)
 	$(INSTALL) *.html *.pdf $(DOCPATH)
+
 	$(INSTALLD) $(MANPATH)
 	$(INSTALL) *.6 $(MANPATH)
 
