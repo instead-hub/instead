@@ -3,10 +3,10 @@ include ../config.make
 
 pdf:
 	# try xetex here, and hope it works ;)
-	pdflatex manual.tex
-	makeindex manual.idx
-	pdflatex manual.tex
-	$(RM) -f manual.aux manual.log manual.toc manual.out manual.idx manual.ind manual.ilg
+	pdflatex reference.tex
+	makeindex reference.idx
+	pdflatex reference.tex
+	$(RM) -f reference.aux reference.log reference.toc reference.out reference.idx reference.ind reference.ilg
 #to-do: interpret $PATH
 
 wiki:
