@@ -16,8 +16,7 @@ clean:
 all:
 install:
 	$(INSTALLD) $(DOCPATH)
-	$(INSTALLD) $(DOCPATH)/modules
-	$(INSTALL) modules/*.txt $(DOCPATH)/modules
+	$(INSTALL) *.html *.pdf $(DOCPATH)
 	$(INSTALLD) $(MANPATH)
 	$(INSTALL) *.6 $(MANPATH)
 
