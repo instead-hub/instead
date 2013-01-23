@@ -5,7 +5,7 @@
   <title>ru:gamedev:documentation</title>
 <meta name="generator" content="DokuWiki"/>
 <meta name="robots" content="noindex,nofollow"/>
-<meta name="date" content="2013-01-22T14:11:05+0400"/>
+<meta name="date" content="2013-01-23T10:52:45+0400"/>
 <meta name="keywords" content="ru,gamedev,documentation"/>
 <link rel="search" type="application/opensearchdescription+xml" href="/wiki/lib/exe/opensearch.php" title="instead-wiki"/>
 <link rel="start" href="/wiki/"/>
@@ -1007,7 +1007,7 @@ r12 <span class="sy0">=</span> room <span class="br0">&#123;</span>
 <span class="br0">&#125;</span></pre>
 
 <p>
-В данном случае обработчик <code>act</code> нужен для того, чтобы поменять описание комнаты, и не нужно, чтобы он выводил результат действия. Если честно, это плохой пример, и его искусственность показывает, что вам вряд-ли понадобится делать обработчики без реакции. Действительно, почему-бы в приведенном примере не вывести в <code>act</code> что-то вроде: «Я нажал на кнопку»? Кроме того, нам пришлось еще включить режим <code>forcedsc</code>. Тем не менее, необходимость пустой реакции может возникнуть.
+В данном случае обработчик <code>act</code> нужен для того, чтобы поменять описание комнаты, и не нужно, чтобы он выводил результат действия. Если честно, это плохой пример, и его искусственность показывает, что вам вряд ли понадобится делать обработчики без реакции. Действительно, почему-бы в приведенном примере не вывести в <code>act</code> что-то вроде: «Я нажал на кнопку»? Кроме того, нам пришлось еще включить режим <code>forcedsc</code>. Тем не менее, необходимость пустой реакции может возникнуть.
 </p>
 
 <p>
@@ -1176,7 +1176,7 @@ main <span class="sy0">=</span> room <span class="br0">&#123;</span>
 <pre class="code lua">        <span class="kw1">return</span> <span class="st0">&quot;Я не хочу назад&quot;</span><span class="sy0">,</span> <span class="kw4">false</span></pre>
 
 <p>
-Если же вы используете функции <code>p</code>/<code>pn</code>/<code>pr</code>, то просто возвращайте статус операции с помощью завершающего<code>return</code>, как показано в примере выше.
+Если же вы используете функции <code>p</code>/<code>pn</code>/<code>pr</code>, то просто возвращайте статус операции с помощью завершающего <code>return</code>, как показано в примере выше.
 </p>
 <div class="wrap_center wrap_round wrap_important plugin_wrap">
 <p>
@@ -1200,11 +1200,11 @@ main <span class="sy0">=</span> room <span class="br0">&#123;</span>
 <span class="br0">&#125;</span><span class="sy0">;</span></pre>
 
 <p>
-На самом деле, функция <code>vroom</code> возвращает комнату с именем, который равен первому параметру, и стандартной функцией <code>enter</code>, которая перенаправляет игрока в комнату заданную вторым параметром.
+На самом деле, функция <code>vroom</code> возвращает комнату с именем, который равен первому параметру, и специальной функцией <code>enter</code>, которая перенаправляет игрока в комнату заданную вторым параметром <code>vroom</code>.
 </p>
 
 <p>
-Таким образом, <code>vroom</code> позволяет именовать переходы удобным способом. Обратите внимание, что в <code>room2</code> вторая комната задана через ссылку, так как на данный момент <code>main</code> еще не объявлена. Во второй комнате переход также описан в виде ссылки, для общности, хотя в этот момент комната <code>room2</code> уже объявлена, и мы можем убрать апострофы вокруг<code>room2</code> во втором параметре <code>vroom</code>.
+Таким образом, <code>vroom</code> позволяет именовать переходы удобным способом. Обратите внимание, что в <code>room2</code> вторая комната задана через ссылку, так как на данный момент <code>main</code> еще не объявлена. Во второй комнате переход также описан в виде ссылки, для общности, хотя в этот момент комната <code>room2</code> уже объявлена, и мы можем убрать апострофы вокруг <code>room2</code> во втором параметре <code>vroom</code>.
 </p>
 
 <p>
@@ -1220,7 +1220,7 @@ main <span class="sy0">=</span> room <span class="br0">&#123;</span>
 </p>
 
 <p>
-Тем не-менее бывают ситуации, когда переход не очевиден и он появляется в результате каких-то событий. Например, мы осмотрели часы и увидели там секретный лаз.
+Тем не менее, бывают ситуации, когда переход не очевиден и он появляется в результате каких-то событий. Например, мы осмотрели часы и увидели там секретный лаз.
 </p>
 <pre class="code lua"><span class="kw3">clock</span> <span class="sy0">=</span> obj <span class="br0">&#123;</span>
         nam <span class="sy0">=</span> <span class="st0">'часы'</span><span class="sy0">;</span>
@@ -1313,7 +1313,7 @@ hall <span class="sy0">=</span> room <span class="br0">&#123;</span>
 </p>
 
 </div>
-<!-- EDIT12 SECTION "7. Переходы между сценами" [56814-69241] -->
+<!-- EDIT12 SECTION "7. Переходы между сценами" [56814-69254] -->
 <h1 class="sectionedit13" id="действие_объектов_друг_на_друга">8. Действие объектов друг на друга</h1>
 <div class="level1">
 
@@ -1341,7 +1341,15 @@ tabl <span class="sy0">=</span> obj <span class="br0">&#123;</span>
 <span class="br0">&#125;</span><span class="sy0">;</span></pre>
 
 <p>
-Если игрок возьмет нож и использует его на стол – то он увидит текст обработчиков <code>use</code> и <code>used</code>. <code>use</code> и <code>used</code>, очевидно, могут быть функциями. Тогда <em>первый</em> параметр это как всегда <em>сам объект</em>, а <em>второй</em> – объект на который <em>направлено действие</em> в случае <code>use</code> и объект, которым действие <em>осуществляется</em> в случае <code>used</code>.
+Если игрок возьмет нож и использует его на стол – то он увидит текст обработчиков <code>use</code> (у объекта <code>knife</code>) и <code>used</code> (у объекта <code>tabl</code>). <code>use</code> и <code>used</code>, очевидно, могут быть функциями. 
+</p>
+
+<p>
+Тогда, в случае функции <code>use</code>, первый параметр к функции – сам объект, которым осуществляется действие, а второй параметр – объект, на который направлено действие. В случае функции <code>used</code>, первый параметр – сам объект, на который производится действие, а второй параметр – объект, которым осуществляется действие.
+</p>
+
+<p>
+То есть, <em>первый</em> параметр это как всегда <em>сам объект</em>, а <em>второй</em> – объект на который <em>направлено действие</em> в случае <code>use</code> и объект, которым действие <em>осуществляется</em> в случае <code>used</code>. 
 </p>
 
 <p>
@@ -1436,7 +1444,7 @@ knife <span class="sy0">=</span> obj <span class="br0">&#123;</span>
 </p>
 
 <p>
-На самом деле, в INSTEAD играх можно действовать не только предметом инвентаря на предмет сцены, но и предметом сцены на предмет сцены (и даже предметом сцены на инвентарь). Этот механизм вряд-ли действительно стоит использовать, но тем не менее, определив булевый атрибут <code>scene_use</code> в объекте или у игры (<code>game.scene_use</code>), вы можете управлять моментом, когда этот режим доступен.
+На самом деле, в INSTEAD играх можно действовать не только предметом инвентаря на предмет сцены, но и предметом сцены на предмет сцены (и даже предметом сцены на инвентарь). Этот механизм вряд ли действительно стоит использовать, но тем не менее, определив булевый атрибут <code>scene_use</code> в объекте или у игры (<code>game.scene_use</code>), вы можете управлять моментом, когда этот режим доступен.
 </p>
 
 <p>
@@ -1448,7 +1456,7 @@ knife <span class="sy0">=</span> obj <span class="br0">&#123;</span>
 </p>
 
 </div>
-<!-- EDIT13 SECTION "8. Действие объектов друг на друга" [69242-76049] -->
+<!-- EDIT13 SECTION "8. Действие объектов друг на друга" [69255-76694] -->
 <h1 class="sectionedit14" id="объект_player">9. Объект &quot;player&quot;</h1>
 <div class="level1">
 
@@ -1456,19 +1464,19 @@ knife <span class="sy0">=</span> obj <span class="br0">&#123;</span>
 Игрок в STEAD представлен объектом <code>pl</code>. Тип объекта – <code>player</code>. В движке объект создается следующим образом:
 </p>
 <pre class="code lua">pl <span class="sy0">=</span> player <span class="br0">&#123;</span>
-	nam <span class="sy0">=</span> <span class="st0">&quot;Incognito&quot;</span><span class="sy0">,</span>
-	where <span class="sy0">=</span> <span class="st0">'main'</span><span class="sy0">,</span>
-	obj <span class="sy0">=</span> <span class="br0">&#123;</span> <span class="br0">&#125;</span>
+        nam <span class="sy0">=</span> <span class="st0">&quot;Incognito&quot;</span><span class="sy0">;</span>
+        where <span class="sy0">=</span> <span class="st0">'main'</span><span class="sy0">;</span>
+        obj <span class="sy0">=</span> <span class="br0">&#123;</span> <span class="br0">&#125;</span><span class="sy0">;</span>
 <span class="br0">&#125;</span><span class="sy0">;</span></pre>
 
 <p>
 Атрибут <code>obj</code> представляет собой инвентарь игрока. Обычно, нет смысла переопределять объект типа player, однако, если вы хотите создать переменные, которые бы хранились в игроке, вы можете сделать это:
 </p>
 <pre class="code lua">pl <span class="sy0">=</span> player <span class="br0">&#123;</span>
-	nam <span class="sy0">=</span> <span class="st0">&quot;Василий&quot;</span><span class="sy0">;</span>
-	where <span class="sy0">=</span> <span class="st0">'main'</span><span class="sy0">;</span>
+        nam <span class="sy0">=</span> <span class="st0">&quot;Василий&quot;</span><span class="sy0">;</span>
+        where <span class="sy0">=</span> <span class="st0">'main'</span><span class="sy0">;</span>
         var <span class="br0">&#123;</span> power <span class="sy0">=</span> <span class="nu0">100</span> <span class="br0">&#125;</span><span class="sy0">;</span>
-	obj <span class="sy0">=</span> <span class="br0">&#123;</span> <span class="st0">'apple'</span> <span class="br0">&#125;</span><span class="sy0">;</span> <span class="co1">-- заодно добавим яблоко в инвентарь</span>
+        obj <span class="sy0">=</span> <span class="br0">&#123;</span> <span class="st0">'apple'</span> <span class="br0">&#125;</span><span class="sy0">;</span> <span class="co1">-- заодно добавим яблоко в инвентарь</span>
 <span class="br0">&#125;</span><span class="sy0">;</span></pre>
 
 <p>
@@ -1481,7 +1489,7 @@ knife <span class="sy0">=</span> obj <span class="br0">&#123;</span>
 </p>
 
 </div>
-<!-- EDIT14 SECTION "9. Объект player" [76050-77603] -->
+<!-- EDIT14 SECTION "9. Объект player" [76695-78291] -->
 <h1 class="sectionedit15" id="объект_game">10. Объект &#039;&#039;game&#039;&#039;</h1>
 <div class="level1">
 
@@ -1527,14 +1535,18 @@ game<span class="sy0">.</span>use <span class="sy0">=</span> <span class="st0">'
 </p>
 
 </div>
-<!-- EDIT15 SECTION "10. Объект ''game''" [77604-80095] -->
+<!-- EDIT15 SECTION "10. Объект ''game''" [78292-80783] -->
 <h1 class="sectionedit16" id="атрибуты-списки">11. Атрибуты-списки</h1>
 <div class="level1">
 
 <p>
-Атрибуты-списки (такие как <code>way</code> или <code>obj</code>) позволяют работать с своим содержимым с помощью набора методов. Атрибуты-списки призваны сохранять в себе списки объектов, и на самом деле, вы можете создавать свои списки для собственных нужд, при этом нет необходимости вставлять список в <code>var</code> или <code>global</code> например:
+Атрибуты-списки (такие как <code>way</code> или <code>obj</code>) позволяют работать со своим содержимым с помощью набора методов. Атрибуты-списки призваны сохранять в себе списки объектов. На самом деле, вы можете создавать списки для собственных нужд, при этом нет необходимости вставлять список в <code>var</code> или <code>global</code>, например:
 </p>
 <pre class="code lua">treasures <span class="sy0">=</span> list <span class="br0">&#123;</span> <span class="st0">'gold'</span><span class="sy0">,</span> <span class="st0">'silver'</span> <span class="br0">&#125;</span><span class="sy0">;</span></pre>
+
+<p>
+Хотя обычно, это не требуется.
+</p>
 
 <p>
 Методы списков: <code>add</code>, <code>del</code>, <code>look</code>, <code>srch</code>, <code>purge</code>, <code>replace</code>. Из них наиболее часто используемые: <code>add</code> и <code>del</code>.
@@ -1573,7 +1585,7 @@ game<span class="sy0">.</span>use <span class="sy0">=</span> <span class="st0">'
 </p>
 
 <p>
-<code>inv()</code> – это функция, которая возвращает список инвентаря. <code>del</code> после <code>:</code> – метод, удаляющий элемент инвентаря.
+<code>inv()</code> – это функция, которая возвращает список-инвентарь. <code>del</code> после <code>:</code> – метод, удаляющий элемент инвентаря.
 </p>
 
 <p>
@@ -1598,7 +1610,7 @@ game<span class="sy0">.</span>use <span class="sy0">=</span> <span class="st0">'
 </p>
 
 <p>
-Кроме добавления, удаления объектов из списков вы можете использовать <em>выключение/включение</em> объектов с помощью методов <em>объекта</em> <code>enable()</code> и <code>disable()</code>. Например: <code>knife:disable()</code>. При этом объект <code>knife</code> пропадает из описания сцены (предполагаем, что он находится в списке <code>obj</code> сцены), но в последствии может быть опять быть включен, с помощью <code>knife:enable()</code>. Для проверки того факта, что объект выключен, можно использовать метод <code>:disabled()</code>. Если вам привычней использовать синтаксис функций, вы можете пользоваться записью вида:
+Кроме удаления / добавления объектов из списков вы можете использовать <em>выключение / включение</em> объектов с помощью методов <em>объекта</em> <code>disable()</code> и <code>enable()</code>. Например: <code>knife:disable()</code>. При этом объект <code>knife</code> пропадает из описания сцены (предполагаем, что он находится в списке <code>obj</code> сцены), но в последствии может быть опять быть включен, с помощью <code>knife:enable()</code>. Для проверки того факта, что объект выключен, можно использовать метод <code>:disabled()</code>. Если вам привычней использовать синтаксис функций, вы можете пользоваться записью вида:
 </p>
 <pre class="code lua">disable<span class="br0">&#40;</span>knife<span class="br0">&#41;</span> <span class="co1">-- или knife:disable()</span>
 <span class="sy0">...</span>
@@ -1615,7 +1627,7 @@ game<span class="sy0">.</span>use <span class="sy0">=</span> <span class="st0">'
 </p>
 </div>
 </div>
-<!-- EDIT16 SECTION "11. Атрибуты-списки" [80096-85421] -->
+<!-- EDIT16 SECTION "11. Атрибуты-списки" [80784-86159] -->
 <h1 class="sectionedit17" id="функции_которые_возвращают_объекты">12. Функции, которые возвращают объекты</h1>
 <div class="level1">
 
@@ -1651,7 +1663,7 @@ game<span class="sy0">.</span>use <span class="sy0">=</span> <span class="st0">'
 </ul>
 
 <p>
-На самом деле, функции, которые возвращают списки редко бывают необходимы при написании игры, так как для работы с объектами и переходами существует набор специальных функций, которые описаны в следующей главе.
+На самом деле, функции, которые возвращают списки, редко бывают необходимы при написании игры, так как для работы с объектами и переходами существует набор специальных функций, которые описаны в следующей главе.
 </p>
 
 <p>
@@ -1728,7 +1740,7 @@ act <span class="sy0">=</span> <span class="kw1">function</span><span class="br0
 </p>
 
 <p>
-На самом деле, вам вряд-ли понадобится эта функция, по крайней мере для первой игры. Эта функция получает объект  по ссылке, другими словами:
+На самом деле, вам вряд ли понадобится эта функция, по крайней мере для первой игры. Эта функция получает объект  по ссылке, другими словами:
 </p>
 <pre class="code lua">stead<span class="sy0">.</span>ref <span class="st0">'apple'</span> <span class="sy0">==</span> apple</pre>
 
@@ -1744,7 +1756,7 @@ act <span class="sy0">=</span> <span class="kw1">function</span><span class="br0
 <span class="kw1">end</span></pre>
 
 </div>
-<!-- EDIT17 SECTION "12. Функции, которые возвращают объекты" [85422-91764] -->
+<!-- EDIT17 SECTION "12. Функции, которые возвращают объекты" [86160-92503] -->
 <h1 class="sectionedit18" id="другие_функции_instead">13. Другие функции INSTEAD</h1>
 <div class="level1">
 
@@ -1855,7 +1867,7 @@ act <span class="sy0">=</span> <span class="kw1">function</span><span class="br0
 Не забывайте также, что при вызове <code>walk</code> вызовутся обработчики <code>exit/enter/left/entered</code> и если они запрещают переход, то он не произойдет.
 </p>
 </div><ul>
-<li class="level1"><div class="li"> <code>change_pl(игрок)</code> – переключиться на другого игрока (со своим инвентарем и позицией). При этом функция переносит действие в сцену нового игрока без вызова <code>exit/enter/left/entered</code>. Для указания сцены, на которой находится игрок вы можете использовать атрибут <code>where</code>:</div>
+<li class="level1"><div class="li"> <code>change_pl(игрок)</code> – переключиться на другого игрока (со своим инвентарем и позицией). При этом функция переносит действие в сцену нового игрока без вызова <code>exit/enter/left/entered</code>. Для указания сцены, на которой находится игрок, вы можете использовать атрибут <code>where</code>:</div>
 </li>
 </ul>
 <pre class="code lua">pupkin<span class="sy0">.</span>where <span class="sy0">=</span> <span class="st0">'kitchen'</span></pre>
@@ -1899,7 +1911,7 @@ act <span class="sy0">=</span> <span class="kw1">function</span><span class="br0
 </ul>
 
 </div>
-<!-- EDIT18 SECTION "13. Другие функции INSTEAD" [91765-102678] -->
+<!-- EDIT18 SECTION "13. Другие функции INSTEAD" [92504-103418] -->
 <h1 class="sectionedit19" id="диалоги">14. Диалоги</h1>
 <div class="level1">
 
@@ -1961,7 +1973,7 @@ act <span class="sy0">=</span> <span class="kw1">function</span><span class="br0
 </div><div class="wrap_center wrap_round wrap_important plugin_wrap">
 <p>
 <strong>Внимание!!!</strong>
-Я настоятельно рекомендую использовать модуль <code>hideinv</code> и задавать свойство <code>hideinv</code> в диалогах, диалоги будут выглядеть красивей и вы обезопасите свою игру от ошибок и непредсказуемых реакций при использовании инвентаря внутри диалога (так как обычно автор не подразумевает такие вещи). Например:
+Я настоятельно рекомендую использовать модуль <code>hideinv</code> и задавать свойство <code>hideinv</code> в диалогах. Диалоги будут выглядеть красивей и вы обезопасите свою игру от ошибок и непредсказуемых реакций при использовании инвентаря внутри диалога (так как обычно автор не подразумевает такие вещи). Например:
 </p>
 <pre class="code lua">instead_version <span class="st0">&quot;1.8.2&quot;</span>
 <span class="kw3">require</span> <span class="st0">&quot;hideinv&quot;</span>
@@ -1974,7 +1986,7 @@ guarddlg <span class="sy0">=</span> dlg <span class="br0">&#123;</span>
 <span class="br0">&#125;</span></pre>
 </div>
 </div>
-<!-- EDIT19 SECTION "14. Диалоги" [102679-107081] -->
+<!-- EDIT19 SECTION "14. Диалоги" [103419-107821] -->
 <h2 class="sectionedit20" id="расширенные_диалоги">Расширенные диалоги</h2>
 <div class="level2">
 
@@ -2060,9 +2072,9 @@ INSTEAD предоставляет следующие функции по раб
             <span class="br0">&#123;</span> <span class="co2">[[А что у вас там, на полке?]]</span><span class="sy0">,</span> 
               <span class="co2">[[Это французские булки.]]</span><span class="sy0">,</span> 
               <span class="co2">[[ pon(1) ]]</span> <span class="br0">&#125;</span><span class="sy0">;</span> 
-	    <span class="br0">&#123;</span> always <span class="sy0">=</span> <span class="kw4">true</span><span class="sy0">,</span> <span class="st0">'Мне вот-этих зелененьких... Ага -- и бобов!'</span><span class="sy0">,</span> 
+            <span class="br0">&#123;</span> always <span class="sy0">=</span> <span class="kw4">true</span><span class="sy0">,</span> <span class="st0">'Мне вот-этих зелененьких... Ага -- и бобов!'</span><span class="sy0">,</span> 
                              <span class="st0">'На здоровье!'</span><span class="br0">&#125;</span><span class="sy0">;</span>
-	    <span class="br0">&#123;</span> always <span class="sy0">=</span> <span class="kw4">true</span><span class="sy0">,</span> <span class="st0">'Картошку с салом, пожалуйста!'</span><span class="sy0">,</span> 
+            <span class="br0">&#123;</span> always <span class="sy0">=</span> <span class="kw4">true</span><span class="sy0">,</span> <span class="st0">'Картошку с салом, пожалуйста!'</span><span class="sy0">,</span> 
                              <span class="st0">'Приятного аппетита!'</span><span class="br0">&#125;</span><span class="sy0">;</span>
             <span class="br0">&#123;</span> always <span class="sy0">=</span> <span class="kw4">true</span><span class="sy0">,</span> <span class="st0">'Спасибо, мне ничего не нужно.'</span><span class="sy0">,</span> 
                              <span class="st0">'Как пожелаете.'</span><span class="sy0">,</span> <span class="co2">[[ back() ]]</span> <span class="br0">&#125;</span><span class="sy0">;</span>
@@ -2085,7 +2097,7 @@ INSTEAD предоставляет следующие функции по раб
 <pre class="code lua"><span class="br0">&#123;</span> <span class="st0">&quot;Вопрос?&quot;</span><span class="sy0">,</span> <span class="st0">&quot;Ответ!&quot;</span> <span class="br0">&#125;</span><span class="sy0">;</span></pre>
 
 <p>
-Как видно, <code>тег</code> – это текстовая метка фразы. Как уже было замечено, вы можете делать <code>pon/poff/pseen/punseen</code> как с пронумерованными фразами, так и с фразами, имеющими тег. В случае, если один и тот-же тег стоит у нескольких фраз, то действие применяется на все фразы с одинаковым тегом. Для функции <code>pseen</code>, видимость тега означает наличие хотя бы одной фразы с таким тегом, для функции <code>punseen</code> – отсутствие включенных фраз с заданным тегом.
+Как видно, <code>тег</code> – это текстовая метка фразы. Как уже было замечено, вы можете делать <code>pon/poff/pseen/punseen</code> как с пронумерованными фразами, так и с фразами, имеющими тег. В случае, если один и тот же тег стоит у нескольких фраз, то действие применяется на все фразы с одинаковым тегом. Для функции <code>pseen</code>, видимость тега означает наличие хотя бы одной фразы с таким тегом, для функции <code>punseen</code> – отсутствие включенных фраз с заданным тегом.
 </p>
 
 <p>
@@ -2154,7 +2166,7 @@ INSTEAD предоставляет следующие функции по раб
 </ul>
 
 <p>
-В качестве аргумента <code>psub/pstart/pjump</code> может быть указан номер или тег. Вы можете использовать эти функции и извне диалога, аналогично <code>pon/poff</code> и т.д, с помощью звписи: <code>диалог:метод()</code>, например: <code>shopdlg:pstart(1)</code>
+В качестве аргумента <code>psub/pstart/pjump</code> может быть указан номер или тег. Вы можете использовать эти функции и извне диалога, аналогично <code>pon/poff</code> и т.д, с помощью записи: <code>диалог:метод()</code>, например: <code>shopdlg:pstart(1)</code>
 </p>
 
 <p>
@@ -2190,7 +2202,7 @@ INSTEAD предоставляет следующие функции по раб
 <span class="br0">&#123;</span> <span class="st0">'Какая влажность?'</span><span class="sy0">,</span> <span class="st0">'80%'</span> <span class="br0">&#125;</span><span class="sy0">,</span></pre>
 
 <p>
-фраза с тегом &#039;погода&#039; не содержит в себе реакцию, и выполняет роль заголовка ветки. При переходе на ветку &#039;погода&#039; с помощью psub будет выведен текст «Хорошо, что тебя интересует?».
+Фраза с тегом &#039;погода&#039; не содержит в себе реакцию, и выполняет роль заголовка ветки. При переходе на ветку &#039;погода&#039; с помощью psub будет выведен текст «Хорошо, что тебя интересует?».
 </p>
 
 <p>
@@ -2230,7 +2242,7 @@ INSTEAD предоставляет следующие функции по раб
 </p>
 
 </div>
-<!-- EDIT20 SECTION "Расширенные диалоги" [107082-123204] -->
+<!-- EDIT20 SECTION "Расширенные диалоги" [107822-123958] -->
 <h2 class="sectionedit21" id="простые_диалоги">Простые диалоги</h2>
 <div class="level2">
 
@@ -2295,7 +2307,7 @@ povardlg <span class="sy0">=</span> dlg <span class="br0">&#123;</span>
 </p>
 
 <p>
-Вы можете переходить из одного диалога в другой диалог – организовывая иерархические диалоги. 
+Вы можете переходить из одного диалога в другой диалог, организовывая иерархические диалоги. 
 </p>
 
 <p>
@@ -2331,7 +2343,7 @@ povardlg <span class="sy0">=</span> dlg <span class="br0">&#123;</span>
 </p>
 
 </div>
-<!-- EDIT21 SECTION "Простые диалоги" [123205-128843] -->
+<!-- EDIT21 SECTION "Простые диалоги" [123959-129595] -->
 <h1 class="sectionedit22" id="облегченные_объекты">15. Облегченные объекты</h1>
 <div class="level1">
 
@@ -2435,7 +2447,7 @@ obj <span class="sy0">=</span> <span class="br0">&#123;</span> vobj<span class="
 </p>
 
 </div>
-<!-- EDIT22 SECTION "15. Облегченные объекты" [128844-136047] -->
+<!-- EDIT22 SECTION "15. Облегченные объекты" [129596-136799] -->
 <h1 class="sectionedit23" id="динамические_события">16. Динамические события</h1>
 <div class="level1">
 
@@ -2630,7 +2642,7 @@ guarddlg <span class="sy0">=</span> dlg <span class="br0">&#123;</span>
 </p>
 
 </div>
-<!-- EDIT23 SECTION "16. Динамические события" [136048-145577] -->
+<!-- EDIT23 SECTION "16. Динамические события" [136800-146329] -->
 <h1 class="sectionedit24" id="графика">17. Графика</h1>
 <div class="level1">
 
@@ -2765,7 +2777,7 @@ INSTEAD может обрабатывать составные картинки,
 </p>
 
 </div>
-<!-- EDIT24 SECTION "17. Графика" [145578-153781] -->
+<!-- EDIT24 SECTION "17. Графика" [146330-154533] -->
 <h1 class="sectionedit25" id="музыка">18. Музыка</h1>
 <div class="level1">
 
@@ -2898,7 +2910,7 @@ INSTEAD может обрабатывать составные картинки,
 </p>
 
 </div>
-<!-- EDIT25 SECTION "18. Музыка" [153782-162163] -->
+<!-- EDIT25 SECTION "18. Музыка" [154534-162915] -->
 <h1 class="sectionedit26" id="форматирование_и_оформление_вывода">19. Форматирование и оформление вывода</h1>
 <div class="level1">
 
@@ -2932,7 +2944,7 @@ stead<span class="sy0">.</span>filter <span class="sy0">=</span> <span class="kw
 </p>
 
 </div>
-<!-- EDIT26 SECTION "19. Форматирование и оформление вывода" [162164-164210] -->
+<!-- EDIT26 SECTION "19. Форматирование и оформление вывода" [162916-164962] -->
 <h2 class="sectionedit27" id="форматирование">Форматирование</h2>
 <div class="level2">
 
@@ -3085,7 +3097,7 @@ stead<span class="sy0">.</span>scene_delim <span class="sy0">=</span> <span clas
 </p>
 
 </div>
-<!-- EDIT27 SECTION "Форматирование" [164211-172538] -->
+<!-- EDIT27 SECTION "Форматирование" [164963-173290] -->
 <h2 class="sectionedit28" id="оформление">Оформление</h2>
 <div class="level2">
 
@@ -3127,7 +3139,7 @@ stead<span class="sy0">.</span>scene_delim <span class="sy0">=</span> <span clas
 </ul>
 
 </div>
-<!-- EDIT28 SECTION "Оформление" [172539-173956] -->
+<!-- EDIT28 SECTION "Оформление" [173291-174708] -->
 <h1 class="sectionedit29" id="конструкторы_и_наследование">20. Конструкторы и наследование</h1>
 <div class="level1">
 <div class="wrap_center wrap_round wrap_important plugin_wrap">
@@ -3466,12 +3478,12 @@ cave <span class="sy0">=</span> room <span class="br0">&#123;</span>
 </p>
 
 </div>
-<!-- EDIT29 SECTION "20. Конструкторы и наследование" [173957-191236] -->
+<!-- EDIT29 SECTION "20. Конструкторы и наследование" [174709-191988] -->
 <h1 class="sectionedit30" id="полезные_советы">21. Полезные советы</h1>
 <div class="level1">
 
 </div>
-<!-- EDIT30 SECTION "21. Полезные советы" [191237-191285] -->
+<!-- EDIT30 SECTION "21. Полезные советы" [191989-192037] -->
 <h2 class="sectionedit31" id="разбиение_на_файлы">Разбиение на файлы</h2>
 <div class="level2">
 
@@ -3514,7 +3526,7 @@ act <span class="sy0">=</span> code <span class="co2">[[ gamefile (&quot;episode
 </p>
 
 </div>
-<!-- EDIT31 SECTION "Разбиение на файлы" [191286-193708] -->
+<!-- EDIT31 SECTION "Разбиение на файлы" [192038-194460] -->
 <h2 class="sectionedit32" id="модули">Модули</h2>
 <div class="level2">
 
@@ -3589,7 +3601,7 @@ instead_version <span class="st0">&quot;1.8.2&quot;</span>
 <span class="sy0">...</span></pre>
 
 </div>
-<!-- EDIT32 SECTION "Модули" [193709-196634] -->
+<!-- EDIT32 SECTION "Модули" [194461-197386] -->
 <h2 class="sectionedit33" id="меню">Меню</h2>
 <div class="level2">
 
@@ -3644,7 +3656,7 @@ main <span class="sy0">=</span> room <span class="br0">&#123;</span>
 <span class="br0">&#125;</span><span class="sy0">;</span></pre>
 
 </div>
-<!-- EDIT33 SECTION "Меню" [196635-199660] -->
+<!-- EDIT33 SECTION "Меню" [197387-200412] -->
 <h2 class="sectionedit34" id="статус_игрока">Статус игрока</h2>
 <div class="level2">
 
@@ -3670,7 +3682,7 @@ status <span class="sy0">=</span> stat <span class="br0">&#123;</span> <span cla
 take<span class="br0">&#40;</span>status<span class="br0">&#41;</span></pre>
 
 </div>
-<!-- EDIT34 SECTION "Статус игрока" [199661-200777] -->
+<!-- EDIT34 SECTION "Статус игрока" [200413-201529] -->
 <h2 class="sectionedit35" id="walk_из_обработчиков_exit_и_enter">walk из обработчиков exit и enter</h2>
 <div class="level2">
 
@@ -3688,7 +3700,7 @@ take<span class="br0">&#40;</span>status<span class="br0">&#41;</span></pre>
         <span class="br0">&#125;</span></pre>
 
 </div>
-<!-- EDIT35 SECTION "walk из обработчиков exit и enter" [200778-201506] -->
+<!-- EDIT35 SECTION "walk из обработчиков exit и enter" [201530-202258] -->
 <h2 class="sectionedit36" id="динамически_создаваемые_ссылки">Динамически создаваемые ссылки.</h2>
 <div class="level2">
 
@@ -3717,7 +3729,7 @@ take<span class="br0">&#40;</span>status<span class="br0">&#41;</span></pre>
 </p>
 
 </div>
-<!-- EDIT36 SECTION "Динамически создаваемые ссылки." [201507-202571] -->
+<!-- EDIT36 SECTION "Динамически создаваемые ссылки." [202259-203323] -->
 <h2 class="sectionedit37" id="кодирование_исходного_кода_игры">Кодирование исходного кода игры</h2>
 <div class="level2">
 
@@ -3746,7 +3758,7 @@ doencfile<span class="br0">&#40;</span><span class="st0">&quot;game&quot;</span>
 </p>
 </div>
 </div>
-<!-- EDIT37 SECTION "Кодирование исходного кода игры" [202572-203910] -->
+<!-- EDIT37 SECTION "Кодирование исходного кода игры" [203324-204662] -->
 <h2 class="sectionedit38" id="запаковка_ресурсов">Запаковка ресурсов</h2>
 <div class="level2">
 
@@ -3779,7 +3791,7 @@ doencfile<span class="br0">&#40;</span><span class="st0">&quot;game&quot;</span>
 </p>
 
 </div>
-<!-- EDIT38 SECTION "Запаковка ресурсов" [203911-204994] -->
+<!-- EDIT38 SECTION "Запаковка ресурсов" [204663-205746] -->
 <h2 class="sectionedit39" id="переключение_между_игроками">Переключение между игроками</h2>
 <div class="level2">
 
@@ -3788,7 +3800,7 @@ doencfile<span class="br0">&#40;</span><span class="st0">&quot;game&quot;</span>
 </p>
 
 </div>
-<!-- EDIT39 SECTION "Переключение между игроками" [204995-205481] -->
+<!-- EDIT39 SECTION "Переключение между игроками" [205747-206233] -->
 <h2 class="sectionedit40" id="использование_параметров_обработчика">Использование параметров обработчика</h2>
 <div class="level2">
 
@@ -3812,7 +3824,7 @@ doencfile<span class="br0">&#40;</span><span class="st0">&quot;game&quot;</span>
 	<span class="kw1">end</span></pre>
 
 </div>
-<!-- EDIT40 SECTION "Использование параметров обработчика" [205482-206041] -->
+<!-- EDIT40 SECTION "Использование параметров обработчика" [206234-206793] -->
 <h2 class="sectionedit41" id="таймер">Таймер</h2>
 <div class="level2">
 
@@ -3871,7 +3883,7 @@ doencfile<span class="br0">&#40;</span><span class="st0">&quot;game&quot;</span>
 </p>
 
 </div>
-<!-- EDIT41 SECTION "Таймер" [206042-208362] -->
+<!-- EDIT41 SECTION "Таймер" [206794-209114] -->
 <h2 class="sectionedit42" id="музыкальный_плеер">Музыкальный плеер</h2>
 <div class="level2">
 
@@ -3936,7 +3948,7 @@ game<span class="sy0">.</span>timer <span class="sy0">=</span> <span class="kw1"
 <span class="kw1">end</span></pre>
 
 </div>
-<!-- EDIT42 SECTION "Музыкальный плеер" [208363-210305] -->
+<!-- EDIT42 SECTION "Музыкальный плеер" [209115-211057] -->
 <h2 class="sectionedit43" id="живые_объекты">Живые объекты</h2>
 <div class="level2">
 
@@ -3959,7 +3971,7 @@ game<span class="sy0">.</span>timer <span class="sy0">=</span> <span class="kw1"
 <span class="kw1">end</span></pre>
 
 </div>
-<!-- EDIT43 SECTION "Живые объекты" [210306-211026] -->
+<!-- EDIT43 SECTION "Живые объекты" [211058-211778] -->
 <h2 class="sectionedit44" id="клавиатура">Клавиатура</h2>
 <div class="level2">
 
@@ -3976,7 +3988,7 @@ game<span class="sy0">.</span>timer <span class="sy0">=</span> <span class="kw1"
 </p>
 
 </div>
-<!-- EDIT44 SECTION "Клавиатура" [211027-211432] -->
+<!-- EDIT44 SECTION "Клавиатура" [211779-212184] -->
 <h2 class="sectionedit45" id="мышь">Мышь</h2>
 <div class="level2">
 
@@ -3985,7 +3997,7 @@ game<span class="sy0">.</span>timer <span class="sy0">=</span> <span class="kw1"
 </p>
 
 </div>
-<!-- EDIT45 SECTION "Мышь" [211433-211665] -->
+<!-- EDIT45 SECTION "Мышь" [212185-212417] -->
 <h2 class="sectionedit46" id="динамическое_создание_объектов">Динамическое создание объектов</h2>
 <div class="level2">
 
@@ -4025,7 +4037,7 @@ delete<span class="br0">&#40;</span>n<span class="br0">&#41;</span></pre>
 </p>
 
 </div>
-<!-- EDIT46 SECTION "Динамическое создание объектов" [211666-213364] -->
+<!-- EDIT46 SECTION "Динамическое создание объектов" [212418-214116] -->
 <h2 class="sectionedit47" id="запрет_на_сохранение_игры">Запрет на сохранение игры</h2>
 <div class="level2">
 
@@ -4062,7 +4074,7 @@ game<span class="sy0">.</span>enable_save <span class="sy0">=</span> <span class
 </p>
 
 </div>
-<!-- EDIT47 SECTION "Запрет на сохранение игры" [213365-215124] -->
+<!-- EDIT47 SECTION "Запрет на сохранение игры" [214117-215876] -->
 <h1 class="sectionedit48" id="темы_для_sdl-instead">22. Темы для sdl-instead</h1>
 <div class="level1">
 
@@ -4071,7 +4083,7 @@ game<span class="sy0">.</span>enable_save <span class="sy0">=</span> <span class
 </p>
 
 <p>
-Тема, которая является минимально необходимой – это тема <code>default</code>. Эта тема всегда загружается первой. Все остальные темы наследуются от нее и могут частично или полностью заменять ее параметры. Выбор темы осуществляется пользователем через меню настроек, однако конкретная игра может содержать собственную тему и таким образом влиять на свой внешний вид. В этом случае в каталоге с игрой должен находиться свой файл <code>theme.ini</code>. Тем не-менее пользователь свободен отключить данный механизм, при этом интерпретатор будет предупреждать о нарушении творческого замысла автора игры.
+Тема, которая является минимально необходимой – это тема <code>default</code>. Эта тема всегда загружается первой. Все остальные темы наследуются от нее и могут частично или полностью заменять ее параметры. Выбор темы осуществляется пользователем через меню настроек, однако конкретная игра может содержать собственную тему и таким образом влиять на свой внешний вид. В этом случае в каталоге с игрой должен находиться свой файл <code>theme.ini</code>. Тем не менее, пользователь свободен отключить данный механизм, при этом интерпретатор будет предупреждать о нарушении творческого замысла автора игры.
 </p>
 
 <p>
@@ -4206,6 +4218,6 @@ Windows версия: <code>Documents and Settings/USER/Local Settings/Applicati
 </p>
 </div>
 </div>
-<!-- EDIT48 SECTION "22. Темы для sdl-instead" [215125-] --></div>
+<!-- EDIT48 SECTION "22. Темы для sdl-instead" [215877-] --></div>
 </body>
 </html>
