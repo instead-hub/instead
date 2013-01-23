@@ -4,6 +4,10 @@
 \usepackage[russian,english]{babel}
 \usepackage{indentfirst}
 \usepackage{geometry}
+
+\usepackage{framed}
+\usepackage{color}
+\definecolor{shadecolor}{gray}{0.9}
 % \geometry{verbose,tmargin=1cm,bmargin=1cm,lmargin=1cm,rmargin=1cm,headheight=1cm,headsep=1cm,footskip=0.7cm}
 \usepackage{ifxetex,ifluatex}
 \usepackage{fixltx2e} % provides \textsubscript
@@ -129,6 +133,14 @@ $endif$
 $for(header-includes)$
 $header-includes$
 $endfor$
+
+\newenvironment{fshaded}{%
+\def\FrameCommand{\fcolorbox{framecolor}{shadecolor}}%
+\MakeFramed {\FrameRestore}}%
+{\endMakeFramed}
+
+\renewenvironment{Shaded}{\definecolor{shadecolor}{gray}{0.9}\definecolor{framecolor}{gray}{0.5}\begin{shaded}\noindent}{\end{shaded}}
+% \newenvironment{Info}{\definecolor{shadecolor}{rgb}{0.9,0.9,1}\definecolor{framecolor}{rgb}{.1,.0,.7}\begin{fshaded}\noindent}{\end{fshaded}}
 
 $if(title)$
 \title{$title$}
