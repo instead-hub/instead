@@ -10,8 +10,8 @@ pdf:
 #to-do: interpret $PATH
 
 wiki:
-	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:documentation&do=export_xhtml" -O writing_games.html
-	wget "http://instead.syscall.ru/wiki/doku.php?id=en:gamedev:documentation&do=export_xhtml" -O writing_games-en.html
+	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:documentation&do=export_xhtml" -O instead-manual.html
+	wget "http://instead.syscall.ru/wiki/doku.php?id=en:gamedev:documentation&do=export_xhtml" -O instead-manual-en.html
 clean:
 all:
 install:

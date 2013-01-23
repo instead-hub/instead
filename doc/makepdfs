@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 function build_html()
 {
 	wget "http://instead.syscall.ru/wiki/doku.php?id=$1&do=export_xhtml" -O "$2".html
@@ -19,14 +19,14 @@ function build_html()
 
 function build_manual()
 {
-	build_html "ru:gamedev:documentation" manual
+	build_html "ru:gamedev:documentation" instead-manual
 	local d=`date +%d.%m.%y`
-	pandoc --toc -f html manual.html -t latex --template=template.tex  | sed -e 's/\\date{}/\\date{'$d'}/' -e 's/\xc2\xa0//g' -e 's/\\title{.*}/\\title{Руководство INSTEAD}/' > modules.tex> "manual.tex"
-	rm -f manual.html
+	pandoc --toc -f html instead-manual.html -t latex --template=template.tex  | sed -e 's/\\date{}/\\date{'$d'}/' -e 's/\\author{}/\\author{Петр Косых}/' -e 's/{\\char13}/'"'"'/g' -e 's/ //g' -e 's/\\title{.*}/\\title{Руководство INSTEAD}/' > "instead-manual.tex"
+	rm -f instead-manual.html
 	rm -f *.toc *.aux *.out *.log
-	pdflatex manual.tex
-	pdflatex manual.tex
-	pdflatex manual.tex
+	pdflatex instead-manual.tex
+	pdflatex instead-manual.tex
+	pdflatex instead-manual.tex
 	rm -f *.toc *.aux *.out *.log
 }
 
@@ -39,27 +39,26 @@ function build_modules()
 		mod2="$mod2$m.html "
 	done
 	local d=`date +%d.%m.%y`
-	pandoc --toc -f html $mod2 -t latex --template=template.tex | sed -e 's/\xc2\xa0//g' | awk 'BEGIN {
+	pandoc --toc -f html $mod2 -t latex --template=template.tex | sed -e 's/ //g' | awk 'BEGIN {
 			scr = 0;
 		}
 		{
 			if ($0 ~ "\subsection{Скриншоты}") {
 				scr=1;
-			} else if (scr == 1 && $0 ~ "^\\\end{document}" ) {
+			} else if (scr == 1 && $0 ~ "\end{document}" ) {
 				scr=0
-				print
-			} else if (scr == 1 && $0 ~ "^\\\section" ) {
+			} else if (scr == 1 && ($0 ~ "\section" || $0 ~ "\subsection") ) {
 				scr=0;
-				print
-			} else if (scr == 0) {
+			}
+			if (scr == 0) {
 				print;
 			}
-		}' | sed -e 's/\\date{}/\\date{'$d'}/' -e 's/\\title{.*}/\\title{Модули INSTEAD}/' > modules.tex
+		}' | sed -e 's/\\date{}/\\date{'$d'}/' -e 's/\\title{.*}/\\title{Модули INSTEAD}/' -e 's/{\\char13}/'"'"'/g' > instead-modules.tex
 	rm -f $mod2
 	rm -f *.toc *.aux *.out *.log
-	pdflatex modules.tex
-	pdflatex modules.tex
-	pdflatex modules.tex
+	pdflatex instead-modules.tex
+	pdflatex instead-modules.tex
+	pdflatex instead-modules.tex
 	rm -f *.toc *.aux *.out *.log
 }
 build_manual
