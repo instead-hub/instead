@@ -884,7 +884,7 @@ void game_done(int err)
 //	cfg_save();
 
 	if (menu_shown)
-		menu_toggle();
+		menu_toggle(-1);
 	game_release_theme();
 	free_last();
 	game_theme_free();
@@ -2392,12 +2392,14 @@ void mouse_reset(int hl)
 }
 
 
-void menu_toggle(void)
+void menu_toggle(int menu)
 {
 	mouse_reset(1);
 	menu_shown ^= 1;
 	if (!menu_shown)
 		cur_menu = menu_main;
+	else if (menu != -1)
+		cur_menu = menu;
 	game_menu_box(menu_shown, game_menu_gen());
 }
 
@@ -2510,7 +2512,7 @@ int game_click(int x, int y, int action, int filter)
 	if (!xref) {
 		if (elem) {
 			if (elem->id == el_menu_button) {
-				menu_toggle();
+				menu_toggle(-1);
 			} else if (elem->id == el_sdown) {
 				scroll_pdown(el_scene);
 			} else if (elem->id == el_sup) {
@@ -3261,10 +3263,10 @@ int game_loop(void)
 				if (use_xref)
 					disable_use();
 				else	
-					menu_toggle();
+					menu_toggle(-1);
 			} else if (!is_key(&ev, "f1")) {
 				if (!menu_shown)
-					menu_toggle();
+					menu_toggle(-1);
 /*
 			} else if (!is_key(&ev, "f6")) {
 				mouse_reset(1);

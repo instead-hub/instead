@@ -8,6 +8,8 @@
   * now math. and os. moved to stead;
   * debian friendly release;
   * ctrl-r is alt-r, ctrl-q is alt-q alias;
+  * New documentation;
+  * stead.menu_toggle 'load/save/quit' parameters;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Sun, 06 Jan 2013 15:56:00 +0400
 
