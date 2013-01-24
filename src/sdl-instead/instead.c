@@ -1367,7 +1367,19 @@ static int luaB_free_sprite(lua_State *L) {
 }
 
 static int luaB_show_menu(lua_State *L) {
-	menu_toggle();
+	const char *menu = luaL_optstring(L, 1, NULL);
+	if (menu) {
+		if (!strcmp(menu, "save"))
+			menu_toggle(menu_save);
+		else if (!strcmp(menu, "load"))
+			menu_toggle(menu_load);
+		else if (!strcmp(menu, "quit"))
+			menu_toggle(menu_askquit);
+		else
+			menu_toggle(-1);
+		return 0;
+	}
+	menu_toggle(-1);
 	return 0;
 }
 
@@ -1387,7 +1399,7 @@ static int luaB_stead_busy(lua_State *L) {
 		return 0;
 	}
 	if (menu_visible() == menu_wait) {
-		menu_toggle();
+		menu_toggle(-1);
 	}
 	busy_time = 0;
 	return 0;
