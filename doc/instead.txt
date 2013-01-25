@@ -1,146 +1,152 @@
-INSTEAD(6)                                                                                 GAMES                                                                                INSTEAD(6)
+INSTEAD(6)			     GAMES			    INSTEAD(6)
 
 
 
-NAME
-       INSTEAD - Simple Text Adventure Engine, The Interpreter
+NNAAMMEE
+       INSTEAD - Simple	Text Adventure Engine, The Interpreter
 
 
-DESCRIPTION
-       The interpreter of STEAD (Simple Text Adventures) allows one to play games that combine visual novels, text adventures and classic quests of 1990-s.  The STEAD games features are:
+DDEESSCCRRIIPPTTIIOONN
+       The  interpreter	 of  STEAD (Simple Text	Adventures) allows one to play
+       games that combine visual novels, text adventures and classic quests of
+       1990-s.	The STEAD games	features are:
 
-        * very simple source code of the stories. (based on LUA);
+	* very simple source code of the stories. (based on LUA);
 
-        * the ability to use graphical or textual (readline) game interface;
+	* the ability to use graphical or textual (readline) game interface;
 
-        * graphic interface supports music and images;
+	* graphic interface supports music and images;
 
-        * graphic interpreter theme support - a game may change the interface look;
+	*  graphic interpreter theme support - a game may change the interface
+       look;
 
-        * portability (originally written for Linux, depends on SDL and lua).
-
-
-SYNOPSIS
-       sdl-instead [options] [game.zip to run]
+	*  portability (originally written for Linux, depends on SDL and lua).
 
 
-OPTIONS
-       -debug Debug mode (for game developers).
+SSYYNNOOPPSSIISS
+       ssddll--iinnsstteeaadd _[_o_p_t_i_o_n_s_] _[_g_a_m_e_._z_i_p _t_o _r_u_n_]
 
-       -alsa  Force ALSA sound (Linux only).
 
-       -nosound
-              Run the game without sound.
+OOPPTTIIOONNSS
+       --ddeebbuugg Debug mode (for game developers).
 
-       -gamespath <path>
-              Add path with games.
+       --aallssaa  Force ALSA sound (Linux only).
 
-       -themespath <path>
-              Add path with themes.
+       --nnoossoouunndd
+	      Run the game without sound.
 
-       -nostdgames
-              Do not use default games.
+       --ggaammeessppaatthh <<ppaatthh>>
+	      Add path with games.
 
-       -nostdthemes
-              Do not use default themes.
+       --tthheemmeessppaatthh <<ppaatthh>>
+	      Add path with themes.
 
-       -game <basename>
-              Select game in gamespath.
+       --nnoossttddggaammeess
+	      Do not use default games.
 
-       -theme <basename>
-              Select theme in themespath.
+       --nnoossttddtthheemmeess
+	      Do not use default themes.
 
-       -fullscreen
-              Run the game in fullscreen mode.
+       --ggaammee <<bbaasseennaammee>>
+	      Select game in gamespath.
 
-       -window
-              Run the game in windowed mode.
+       --tthheemmee <<bbaasseennaammee>>
+	      Select theme in themespath.
 
-       -noautosave
-              Disable autosave/autoload.
+       --ffuullllssccrreeeenn
+	      Run the game in fullscreen mode.
 
-       -encode <lua file> [encoded file]
-              Encode lua file. Encoded file can be executed with doencfile("encoded file").
+       --wwiinnddooww
+	      Run the game in windowed mode.
 
-       -idf <path to resources directory or game>
-              Build idf file [INSTEAD data file] from directory.
+       --nnooaauuttoossaavvee
+	      Disable autosave/autoload.
 
-       -mode [WxH]
-              Use WxH resolution.
+       --eennccooddee <<lluuaa ffiillee>> [[eennccooddeedd ffiillee]]
+	      Encode  lua  file.  Encoded  file	 can  be  executed with	doenc-
+	      file("encoded file").
 
-       -nopause
-              Do not pause the game on window minimize.
+       --iiddff <<ppaatthh ttoo rreessoouurrcceess ddiirreeccttoorryy oorr ggaammee>>
+	      Build idf	file [INSTEAD data file] from directory.
 
-       -install [game in zip]
-              Install game from zip archive
+       --mmooddee [[WWxxHH]]
+	      Use WxH resolution.
 
-       -quit  Quit :)
+       --nnooppaauussee
+	      Do not pause the game on window minimize.
 
-       -appdata [fullpath]
-              Store saves and settings in appdata path. Path must exist!
+       --iinnssttaallll	[[ggaammee iinn zziipp]]
+	      Install game from	zip archive
 
-       -chunksize [size in bytes]
-              Size for audio buffer. Try this if sound lags.
+       --qquuiitt  Quit :)
 
-       -version
-              Show version and exit.
+       --aappppddaattaa	[[ffuullllppaatthh]]
+	      Store saves and settings in appdata path.	Path must exist!
+
+       --cchhuunnkkssiizzee [[ssiizzee	iinn bbyytteess]]
+	      Size for audio buffer. Try this if sound lags.
+
+       --vveerrssiioonn
+	      Show version and exit.
 
        Configuration file name is 'insteadrc' and it's located in ~/.instead/.
 
-       Games can be downloaded from http://instead.googlecode.com. Unzip them in ~/.instead/games.
+       Games  can be downloaded	from http://instead.googlecode.com. Unzip them
+       in ~/.instead/games.
 
 
-CONTROLS
+CCOONNTTRROOLLSS
        Please, see tutorial.
 
 
-LICENCE
-       This is free software; you can redistribute it and/or modify it under the terms specified in the GNU Public Licence (GPL).
+LLIICCEENNCCEE
+       This is free software; you can redistribute it and/or modify  it	 under
+       the terms specified in the GNU Public Licence (GPL).
 
 
-WARRANTY
+WWAARRRRAANNTTYY
        None.
 
 
-COPYRIGHT AND CREDITS
-       Peter Kosyh
-              INSTEAD author.
+CCOOPPYYRRIIGGHHTT AANNDD CCRREEDDIITTSS
+       PPeetteerr KKoossyyhh
+	      INSTEAD author.
 
-       Ilya Ryndin
-              Initial port to Windows.
+       IIllyyaa RRyynnddiinn
+	      Initial port to Windows.
 
-       Mahno Aleksey
-              Port to Android.
+       MMaahhnnoo AAlleekksseeyy
+	      Port to Android.
 
-       .dm    Port to Mac OS X.
+       ..ddmm    Port to Mac OS X.
 
-       Andrey Afletdinov
-              Port to Windows CE.
+       AAnnddrreeyy AAfflleettddiinnoovv
+	      Port to Windows CE.
 
-       Vadim Balashoff
-              Advices.
+       VVaaddiimm BBaallaasshhooffff
+	      Advices.
 
-       Vladimir Zhirov
-              Advices.
+       VVllaaddiimmiirr	ZZhhiirroovv
+	      Advices.
 
-       Alexander Yakovlev
-              manual.tex support.
+       AAlleexxaannddeerr YYaakkoovvlleevv
+	      manual.tex support.
 
-       Serj Kalichev
-              Advices and default theme correction.
+       SSeerrjj KKaalliicchheevv
+	      Advices and default theme	correction.
 
-       Vladimir Podobaev, Oleg Gvozdev
-              Testers.
+       VVllaaddiimmiirr	PPooddoobbaaeevv,, OOlleegg GGvvoozzddeevv
+	      Testers.
 
-       Alexander Soborov
-              Wiki support.
+       AAlleexxaannddeerr SSoobboorroovv
+	      Wiki support.
 
-       Many others for comments, bug reports, games and ideas.
-
-
-SEE ALSO
-       http://instead.googlecode.com
+       Many others for comments, bug reports, games and	ideas.
 
 
+SSEEEE AALLSSOO
+       hhttttpp::////iinnsstteeaadd..ggoooogglleeccooddee..ccoomm
 
-Instead                                                                                Version 1.8.3                                                                            INSTEAD(6)
+
+
+Instead				 Version 1.8.3			    INSTEAD(6)

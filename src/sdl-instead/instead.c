@@ -1373,13 +1373,13 @@ static int luaB_show_menu(lua_State *L) {
 			menu_toggle(menu_save);
 		else if (!strcmp(menu, "load"))
 			menu_toggle(menu_load);
-		else if (!strcmp(menu, "quit"))
+		else if (!strcmp(menu, "quit") || !strcmp(menu, "exit"))
 			menu_toggle(menu_askquit);
 		else
 			menu_toggle(-1);
 		return 0;
 	}
-	menu_toggle(-1);
+	menu_toggle(menu_main);
 	return 0;
 }
 
