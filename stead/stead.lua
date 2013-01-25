@@ -2109,6 +2109,7 @@ stead.game_save = function(self, name, file)
 	h:flush();
 	h:close();
 	game.autosave = false; -- we have only one try for autosave
+	game.restart_game = false
 	return nil;
 end
 
@@ -2927,6 +2928,15 @@ end
 function autosave(slot)
 	game.autosave = true;
 	game.autosave_slot = slot;
+end
+stead.autosave = autosave;
+
+stead.get_restart = function()
+	return stead.restart_game
+end
+
+stead.restart = function()
+	stead.restart_game = true
 end
 
 stead.get_autosave = function()

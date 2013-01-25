@@ -208,7 +208,6 @@ end
 
 instead.isEnableSave = isEnableSave;
 instead.isEnableAutosave = isEnableAutosave;
-instead.autosave = autosave;
 
 -- here is gui staff only
 function stat(v)

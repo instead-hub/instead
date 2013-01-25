@@ -20,6 +20,7 @@ int game_own_theme = 0;
 int game_theme_changed = 0;
 int mouse_filter_delay = 400;
 
+static int need_restart = 0;
 static int game_pic_w = 0;
 static int game_pic_h = 0;
 
@@ -897,6 +898,7 @@ void game_done(int err)
 	curgame_dir = NULL;
 	game_own_theme = 0;
 	idf_done(game_idf); game_idf = NULL;
+	need_restart = 0;
 //	SDL_Quit();
 }	
 
@@ -1318,6 +1320,17 @@ static void game_autosave(void)
 		game_save(r);
 /*		instead_eval("game.autosave = false;"); instead_clear();*/
 	}
+}
+
+static void game_instead_restart(void)
+{
+	int b;
+	if (!curgame_dir)
+		return;
+	instead_function("instead.get_restart", NULL);
+	b = instead_bretval(0); 
+	instead_clear();
+	need_restart = b;
 }
 
 static void finish_music(void *data)
@@ -2215,8 +2228,9 @@ out:
 	gfx_flip();
 //	input_clear();
 err:
-	game_autosave();
 
+	game_autosave();
+	game_instead_restart();
 #if 0
 	if (err_msg) {
 		mouse_reset(1);
@@ -3224,7 +3238,7 @@ int game_loop(void)
 		int rc;
 		ev.x = -1;
 //		game_cursor(CURSOR_CLEAR); /* release bg */
-		while ((rc = input(&ev, 1)) == AGAIN);
+		while (((rc = input(&ev, 1)) == AGAIN) && !need_restart);
 		if (rc == -1) {/* close */
 			break;
 		} else if (curgame_dir && (ev.type == KEY_DOWN || ev.type == KEY_UP)
@@ -3444,6 +3458,11 @@ int game_loop(void)
 				motion_y = ev.y;
 			}
 		//	game_highlight(ev.x, ev.y, 1);
+		}
+
+		if (need_restart) {
+			need_restart = 0;
+			game_menu_act("/new");
 		}
 
 		if (!DIRECT_MODE || menu_shown) {
