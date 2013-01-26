@@ -1,6 +1,9 @@
 include ../Rules.make
 include ../config.make
 
+all:
+clean:
+
 pdf:
 	./makepdfs
 #	# try xetex here, and hope it works ;)
@@ -18,8 +21,6 @@ wiki:
 
 docs:	wiki man pdf
 
-clean:
-all:
 install:
 	$(INSTALLD) $(DOCPATH)
 	$(INSTALL) *.txt *.html *.pdf $(DOCPATH)
