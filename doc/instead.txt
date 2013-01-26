@@ -2,14 +2,14 @@ INSTEAD(6)			     GAMES			    INSTEAD(6)
 
 
 
-NNAAMMEE
-       INSTEAD - Simple	Text Adventure Engine, The Interpreter
+NAME
+       INSTEAD - Simple Text Adventure Engine, The Interpreter
 
 
-DDEESSCCRRIIPPTTIIOONN
-       The  interpreter	 of  STEAD (Simple Text	Adventures) allows one to play
+DESCRIPTION
+       The  interpreter  of  STEAD (Simple Text Adventures) allows one to play
        games that combine visual novels, text adventures and classic quests of
-       1990-s.	The STEAD games	features are:
+       1990-s.	The STEAD games features are:
 
 	* very simple source code of the stories. (based on LUA);
 
@@ -23,130 +23,130 @@ DDEESSCCRRIIPPTTIIOONN
 	*  portability (originally written for Linux, depends on SDL and lua).
 
 
-SSYYNNOOPPSSIISS
-       ssddll--iinnsstteeaadd _[_o_p_t_i_o_n_s_] _[_g_a_m_e_._z_i_p _t_o _r_u_n_]
+SYNOPSIS
+       sdl-instead [options] [game.zip to run]
 
 
-OOPPTTIIOONNSS
-       --ddeebbuugg Debug mode (for game developers).
+OPTIONS
+       -debug Debug mode (for game developers).
 
-       --aallssaa  Force ALSA sound (Linux only).
+       -alsa  Force ALSA sound (Linux only).
 
-       --nnoossoouunndd
+       -nosound
 	      Run the game without sound.
 
-       --ggaammeessppaatthh <<ppaatthh>>
+       -gamespath <path>
 	      Add path with games.
 
-       --tthheemmeessppaatthh <<ppaatthh>>
+       -themespath <path>
 	      Add path with themes.
 
-       --nnoossttddggaammeess
+       -nostdgames
 	      Do not use default games.
 
-       --nnoossttddtthheemmeess
+       -nostdthemes
 	      Do not use default themes.
 
-       --ggaammee <<bbaasseennaammee>>
+       -game <basename>
 	      Select game in gamespath.
 
-       --tthheemmee <<bbaasseennaammee>>
+       -theme <basename>
 	      Select theme in themespath.
 
-       --ffuullllssccrreeeenn
+       -fullscreen
 	      Run the game in fullscreen mode.
 
-       --wwiinnddooww
+       -window
 	      Run the game in windowed mode.
 
-       --nnooaauuttoossaavvee
+       -noautosave
 	      Disable autosave/autoload.
 
-       --eennccooddee <<lluuaa ffiillee>> [[eennccooddeedd ffiillee]]
-	      Encode  lua  file.  Encoded  file	 can  be  executed with	doenc-
+       -encode <lua file> [encoded file]
+	      Encode  lua  file.  Encoded  file  can  be  executed with doenc-
 	      file("encoded file").
 
-       --iiddff <<ppaatthh ttoo rreessoouurrcceess ddiirreeccttoorryy oorr ggaammee>>
-	      Build idf	file [INSTEAD data file] from directory.
+       -idf <path to resources directory or game>
+	      Build idf file [INSTEAD data file] from directory.
 
-       --mmooddee [[WWxxHH]]
+       -mode [WxH]
 	      Use WxH resolution.
 
-       --nnooppaauussee
+       -nopause
 	      Do not pause the game on window minimize.
 
-       --iinnssttaallll	[[ggaammee iinn zziipp]]
-	      Install game from	zip archive
+       -install [game in zip]
+	      Install game from zip archive
 
-       --qquuiitt  Quit :)
+       -quit  Quit :)
 
-       --aappppddaattaa	[[ffuullllppaatthh]]
-	      Store saves and settings in appdata path.	Path must exist!
+       -appdata [fullpath]
+	      Store saves and settings in appdata path. Path must exist!
 
-       --cchhuunnkkssiizzee [[ssiizzee	iinn bbyytteess]]
+       -chunksize [size in bytes]
 	      Size for audio buffer. Try this if sound lags.
 
-       --vveerrssiioonn
+       -version
 	      Show version and exit.
 
        Configuration file name is 'insteadrc' and it's located in ~/.instead/.
 
-       Games  can be downloaded	from http://instead.googlecode.com. Unzip them
+       Games  can be downloaded from http://instead.googlecode.com. Unzip them
        in ~/.instead/games.
 
 
-CCOONNTTRROOLLSS
+CONTROLS
        Please, see tutorial.
 
 
-LLIICCEENNCCEE
-       This is free software; you can redistribute it and/or modify  it	 under
+LICENCE
+       This is free software; you can redistribute it and/or modify  it  under
        the terms specified in the GNU Public Licence (GPL).
 
 
-WWAARRRRAANNTTYY
+WARRANTY
        None.
 
 
-CCOOPPYYRRIIGGHHTT AANNDD CCRREEDDIITTSS
-       PPeetteerr KKoossyyhh
+COPYRIGHT AND CREDITS
+       Peter Kosyh
 	      INSTEAD author.
 
-       IIllyyaa RRyynnddiinn
+       Ilya Ryndin
 	      Initial port to Windows.
 
-       MMaahhnnoo AAlleekksseeyy
+       Mahno Aleksey
 	      Port to Android.
 
-       ..ddmm    Port to Mac OS X.
+       .dm    Port to Mac OS X.
 
-       AAnnddrreeyy AAfflleettddiinnoovv
+       Andrey Afletdinov
 	      Port to Windows CE.
 
-       VVaaddiimm BBaallaasshhooffff
+       Vadim Balashoff
 	      Advices.
 
-       VVllaaddiimmiirr	ZZhhiirroovv
+       Vladimir Zhirov
 	      Advices.
 
-       AAlleexxaannddeerr YYaakkoovvlleevv
+       Alexander Yakovlev
 	      manual.tex support.
 
-       SSeerrjj KKaalliicchheevv
-	      Advices and default theme	correction.
+       Serj Kalichev
+	      Advices and default theme correction.
 
-       VVllaaddiimmiirr	PPooddoobbaaeevv,, OOlleegg GGvvoozzddeevv
+       Vladimir Podobaev, Oleg Gvozdev
 	      Testers.
 
-       AAlleexxaannddeerr SSoobboorroovv
+       Alexander Soborov
 	      Wiki support.
 
-       Many others for comments, bug reports, games and	ideas.
+       Many others for comments, bug reports, games and ideas.
 
 
-SSEEEE AALLSSOO
-       hhttttpp::////iinnsstteeaadd..ggoooogglleeccooddee..ccoomm
+SEE ALSO
+       http://instead.googlecode.com
 
 
 
-Instead				 Version 1.8.3			    INSTEAD(6)
+Instead 			 Version 1.8.3			    INSTEAD(6)

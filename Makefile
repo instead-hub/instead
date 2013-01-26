@@ -27,7 +27,7 @@ rules:
 docs: rules
 	make pdf -C doc/
 	make wiki -C doc/ 
-	man doc/instead.6 > doc/instead.txt
+	man doc/instead.6 | col -b > doc/instead.txt
 
 PKGBUILD: PKGBUILD.in tarball
 	cat PKGBUILD.in | sed -e s/MD5SUM/`md5sum $(ARCHIVE) | cut -f1 -d' '`/g > PKGBUILD
@@ -63,4 +63,3 @@ ifeq ($(SYSTEMSETUP), yes)
 else
 	echo No uninstall needed
 endif
-
