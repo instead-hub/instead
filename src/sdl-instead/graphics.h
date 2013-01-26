@@ -48,6 +48,7 @@ static inline color_t gfx_col(int r, int g, int b)
 	col.r = r;
 	col.g = g;
 	col.b = b;
+	col.a = 0;
 	return col;
 }
 
