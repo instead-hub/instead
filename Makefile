@@ -25,9 +25,7 @@ rules:
 	ln -sf Rules.make.standalone Rules.make
 
 docs: rules
-	make pdf -C doc/
-	make wiki -C doc/ 
-	man doc/instead.6 | col -b > doc/instead.txt
+#	make docs -C doc/
 
 PKGBUILD: PKGBUILD.in tarball
 	cat PKGBUILD.in | sed -e s/MD5SUM/`md5sum $(ARCHIVE) | cut -f1 -d' '`/g > PKGBUILD
