@@ -115,7 +115,7 @@ const char *dirname;
 }
 
 static int makedir(newdir)
-char *newdir;
+const char *newdir;
 {
 	char *buffer;
 	char *p;
