@@ -302,6 +302,7 @@ static void anigif_disposal(anigif_t g)
 	
 	dest.x = 0; //g->x;
 	dest.y = 0; //g->y; 
+	dest.w = dest.h = 0; /* to make happy compiler */
 
 	switch (frame->disposal) {
 	case AG_DISPOSE_NA:
