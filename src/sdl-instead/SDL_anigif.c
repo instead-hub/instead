@@ -19,6 +19,7 @@
 */
 
 #include <stdio.h>
+#include <stlib.h>
 #include <string.h>
 #include "SDL_anigif.h"
 #include "sdl_idf.h"
