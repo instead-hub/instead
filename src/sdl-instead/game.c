@@ -1027,7 +1027,8 @@ void box_update_scrollbar(int n)
 		x2 = game_theme.inv_a_down_x;
 		y2 = game_theme.inv_a_down_y;
 //		elslide = el(el_islide);
-	}
+	} else /* impossible case */
+		return; 
 	if (!elup || !eldown)
 		return;	
 

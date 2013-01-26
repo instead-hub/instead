@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <shlobj.h>
 #include <limits.h>
+#include <libgen.h>
 #include <sys/types.h>
 #include <dir.h>
 #include <stdio.h>

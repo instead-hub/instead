@@ -116,7 +116,9 @@ void wince_init(char *path)
 
 int main(int argc, char *argv[])
 {
+#ifdef _USE_UNPACK
 	int clean_tmp = 0;
+#endif
 	int err = 0;
 	int i;
 #ifdef __APPLE__
