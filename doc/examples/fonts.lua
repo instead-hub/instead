@@ -2,14 +2,17 @@
 require "sprites"
 require "theme"
 
-function font(name, size)
+function font(name, size, scale)
+	if scale == nil then
+		scale = true
+	end
 	local v = obj {
 		nam = 'styler';
 		fname = name;
 		size = size;
-		font = sprite.font(name, sprite.font_scaled_size(size));
 		cache = { };
 		list = { };
+		scaled = scale;
 		cache_get = function(s, w, color, t)
 			local k = w..color..tostring(t)
 			if s.cache[k].time ~= -1 then
@@ -90,13 +93,17 @@ function font(name, size)
 			end
 		end;
 		save = function(self, name, h, need)
-			h:write(stead.string.format("%s = font(%q, %d);\n", name, self.fname, self.size))
+			h:write(stead.string.format("%s = font(%q, %d, %s);\n", name, self.fname, self.size, stead.tostring(self.scaled)))
 			local k, v
 			for k,v in ipairs(self.list) do
 				h:write(stead.string.format("%s:cache_add(%q, %q, %d, %q, %d);\n", name, v.word, v.color, v.t, v.img, v.time))
 			end
 		end;
 	}
+	if v.scaled then
+		size = sprite.font_scaled_size(size)
+	end
+	v.font = sprite.font(name, size);
 	lifeon(v);
 	return v;
 end
