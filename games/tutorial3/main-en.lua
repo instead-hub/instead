@@ -7,7 +7,7 @@ game.use = 'Won\'t work...';
 
 game.pic = 'instead.png';
 
-set_music('sv_ttt.xm');
+set_music('instead.ogg');
 
 main = room {
 	nam = 'Tutorial',

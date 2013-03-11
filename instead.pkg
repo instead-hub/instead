@@ -47,7 +47,7 @@
 ".\symbian_gamedata\appdata\games\tutorial3\it.png" -"!:\data\instead\appdata\games\tutorial3\it.png"
 ".\symbian_gamedata\appdata\games\tutorial3\es.png" -"!:\data\instead\appdata\games\tutorial3\es.png"
 ".\symbian_gamedata\appdata\games\tutorial3\instead.png" -"!:\data\instead\appdata\games\tutorial3\instead.png"
-".\symbian_gamedata\appdata\games\tutorial3\sv_ttt.xm" -"!:\data\instead\appdata\games\tutorial3\sv_ttt.xm"
+".\symbian_gamedata\appdata\games\tutorial3\instead.ogg" -"!:\data\instead\appdata\games\tutorial3\instead.ogg"
 ".\symbian_gamedata\stead\vars.lua" -"!:\data\instead\stead\vars.lua"
 ".\symbian_gamedata\stead\timer.lua" -"!:\data\instead\stead\timer.lua"
 ".\symbian_gamedata\stead\kbd.lua" -"!:\data\instead\stead\kbd.lua"

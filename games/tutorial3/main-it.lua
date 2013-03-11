@@ -7,7 +7,7 @@ game.use = 'Non funziona...';
 
 game.pic = 'instead.png';
 
-set_music('sv_ttt.xm');
+set_music('instead.ogg');
 
 main = room {
 	nam = 'Tutorial',
@@ -202,7 +202,7 @@ theend = room {
 	dsc = [[Con l'aiuto del menu potete scegliere un gioco, salvare o caricare una partita, oltre a svariate altre cose. Per aprire il menu premete "Esc" o fate click sull'icona di menu in basso a destra.^^
 		Ora siete pronti a giocare. Buona Fortuna!!!^^
 		Scaricate i giochi per INSTEAD qui: ]]..txtu("http://instead.googlecode.com")..[[^^
-		Il tutorial si avvale del brano musicale The Titan Turrican di svenzzon.]],
+		Il tutorial si avvale del brano musicale Instead game-engine di svenzzon.]],
 	obj = { vway('keys', 'Vedi {lista delle scorciatoie da tastiera}.', 'help')},
 };
 
