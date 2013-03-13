@@ -4587,6 +4587,7 @@ int gfx_init(void)
 		gfx_done();
 		return -1;
 	}
+//	SDL_DisableScreenSaver();
 	return 0;
 }
 
