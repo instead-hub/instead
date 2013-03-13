@@ -583,19 +583,19 @@ static SDL_RendererInfo SDL_VideoRendererInfo;
 
 SDL_Surface *SDL_DisplayFormatAlpha(SDL_Surface * surface)
 {
-	SDL_PixelFormat *format;
+//	SDL_PixelFormat *format;
 	SDL_Surface *converted;
-//	if (!screen) {
-//		fprintf(stderr, "No video mode has been set.\n");
-//		return NULL;
-//	}
-	format = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB8888);
+	if (!screen) {
+		fprintf(stderr, "No video mode has been set.\n");
+		return NULL;
+	}
+//	format = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB8888);
 //	if (surface->format->Amask == 0 && surface->format->palette) /* hack! */
 //		SDL_SetColorKey(surface, SDL_TRUE, *(Uint8*)surface->pixels);
-	converted = SDL_ConvertSurface(surface, format, 0); //SDL_RLEACCEL);
+	converted = SDL_ConvertSurface(surface, screen->format, 0); //SDL_RLEACCEL);
 	if (converted)
 		SDL_SetSurfaceBlendMode(converted, SDL_BLENDMODE_BLEND);
-	SDL_FreeFormat(format);
+//	SDL_FreeFormat(format);
 	return converted;
 }
 
@@ -604,15 +604,15 @@ SDL_Surface *SDL_DisplayFormat(SDL_Surface * surface)
 	SDL_PixelFormat *format;
 	SDL_Surface *converted;
 
-//	if (!screen) {
-//		fprintf(stderr, "No video mode has been set.\n");
-//		return NULL;
-//	}
-//	format = screen->format;
-	format = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB8888);
+	if (!screen) {
+		fprintf(stderr, "No video mode has been set.\n");
+		return NULL;
+	}
+	format = screen->format;
+//	format = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB8888);
 	converted = SDL_ConvertSurface(surface, format, 0);//SDL_RLEACCEL);
 	/* Set the flags appropriate for copying to display surface */
-	SDL_FreeFormat(format);
+//	SDL_FreeFormat(format);
 	return converted;
 }
 #endif
