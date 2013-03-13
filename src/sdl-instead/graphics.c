@@ -1549,7 +1549,7 @@ int gfx_set_mode(int w, int h, int fs)
 			return -1;
 		}
 	}
-	SDL_GetRendererInfo(&SDL_VideoRendererInfo);
+	SDL_GetRendererInfo(Renderer, &SDL_VideoRendererInfo);
 	SDL_VideoTexture = SDL_CreateTexture(Renderer, SDL_PIXELFORMAT_ARGB8888/*/*desktop_mode.format*/, 
 		SDL_TEXTUREACCESS_STREAMING, w, h);
 	if (!SDL_VideoTexture) {
@@ -1682,7 +1682,7 @@ int SDL_Flip(SDL_Surface * screen)
 		pixels += pitch * queue_y1 + queue_x1 * psize;
 
 		SDL_UpdateTexture(SDL_VideoTexture, &rect, pixels, pitch);
-		if (SDL_VideoRendererInfo.flags & SDL_RENDERER_PRESENTCOPY)
+		if (0/*SDL_VideoRendererInfo.flags & SDL_RENDERER_PRESENTCOPY*/)
 			SDL_RenderCopy(Renderer, SDL_VideoTexture, &rect, &rect);
 		else
 			SDL_RenderCopy(Renderer, SDL_VideoTexture, NULL, NULL);
