@@ -20,7 +20,7 @@ DESCRIPTION
 	*  graphic interpreter theme support - a game may change the interface
        look;
 
-	*  portability (originally written for Linux, depends on SDL and lua).
+	* portability (originally written for Linux, depends on SDL and lua).
 
 
 SYNOPSIS
@@ -63,7 +63,7 @@ OPTIONS
 	      Disable autosave/autoload.
 
        -encode <lua file> [encoded file]
-	      Encode  lua  file.  Encoded  file  can  be  executed with doenc-
+	      Encode lua file.	Encoded  file  can  be	executed  with	doenc‐
 	      file("encoded file").
 
        -idf <path to resources directory or game>

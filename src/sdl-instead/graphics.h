@@ -57,6 +57,8 @@ extern void 	gfx_done(void);
 
 extern int	gfx_parse_color (const char *spec, color_t *def);
 extern void	gfx_flip(void);
+extern void	gfx_commit(void);
+
 extern cache_t	gfx_image_cache(void);
 extern img_t	gfx_screen(img_t nscreen);
 extern void 	gfx_bg(color_t col);

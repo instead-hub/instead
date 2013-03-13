@@ -73,15 +73,23 @@ fi
 
 
 echo -n "Checking sdl-config..."
-if ! sdl-config --version >/dev/null 2>&1; then
-	echo "error: no sdl-config in \$PATH."
-	echo "Please install sdl, sdl_ttf, sdl_mixer and sdl_image development packages."
-	exit 1
+if ! sdl2-config --version >/dev/null 2>&1; then
+	if ! sdl-config --version >/dev/null 2>&1; then
+		echo "error: no sdl-config in \$PATH."
+		echo "Please install sdl, sdl_ttf, sdl_mixer and sdl_image development packages."
+		exit 1
+	fi
+	echo "ok"
+	sdl_config="sdl-config"
+	sdl_libs="-lSDL_ttf -lSDL_mixer -lSDL_image"
+else
+	echo "SDL 2.0"
+	sdl_config="sdl2-config"
+	sdl_libs="-lSDL2_ttf -lSDL2_mixer -lSDL2_image"
 fi
-echo "ok"
 
 echo -n "Checking sdl-config --cflags..."
-if ! sdl-config --cflags  >/dev/null 2>&1; then
+if ! $sdl_config --cflags  >/dev/null 2>&1; then
 	echo "failed."
 	exit 1
 fi
@@ -119,8 +127,8 @@ int main(int argc, char **argv)
 EOF
 echo $cc
 echo -n "Checking test build...("
-echo -n $cc /tmp/sdl-test.c $ops `sdl-config --cflags` `sdl-config --libs` -lSDL_ttf -lSDL_mixer -lSDL_image -o /tmp/sdl-test ")..."
-if ! $cc /tmp/sdl-test.c $ops `sdl-config --cflags` `sdl-config --libs` -lSDL_ttf -lSDL_mixer -lSDL_image -o /tmp/sdl-test; then
+echo -n $cc /tmp/sdl-test.c $ops `$sdl_config --cflags` `$sdl_config --libs` $sdl_libs -o /tmp/sdl-test ")..."
+if ! $cc /tmp/sdl-test.c $ops `$sdl_config --cflags` `$sdl_config --libs` $sdl_libs -o /tmp/sdl-test; then
 	echo "failed".
 	echo "Please sure if these development packages are installed: sdl, sdl_ttf, sdl_mixer, sdl_image."
 	rm -f /tmp/sdl-test.c /tmp/sdl-test
@@ -189,8 +197,8 @@ else
 fi
 echo "LUA_CFLAGS=\$(shell $lua_cflags)" >> config.make
 echo "LUA_LFLAGS=\$(shell $lua_libs)" >> config.make
-echo "SDL_CFLAGS=\$(shell sdl-config --cflags)" >> config.make
-echo "SDL_LFLAGS=\$(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer -lSDL_image" >> config.make
+echo "SDL_CFLAGS=\$(shell $sdl_config --cflags)" >> config.make
+echo "SDL_LFLAGS=\$(shell $sdl_config --libs) $sdl_libs" >> config.make
 echo "ok"
 echo -n "Choose installation mode. Standalone(1) or system(2) [1]: "
 read ans

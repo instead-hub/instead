@@ -6,6 +6,30 @@
 static int m_focus = 0;
 static int m_minimized = 0;
 
+#if SDL_VERSION_ATLEAST(2,0,0)
+extern SDL_Window *SDL_VideoWindow;
+
+#define SDL_APPMOUSEFOCUS 1
+#define SDL_APPACTIVE 2
+#define SDL_APPINPUTFOCUS 4
+static Uint8 SDL_GetAppState(void)
+{
+	Uint8 state = 0;
+	Uint32 flags = 0;
+	flags = SDL_GetWindowFlags(SDL_VideoWindow);
+	if ((flags & SDL_WINDOW_SHOWN) && !(flags & SDL_WINDOW_MINIMIZED)) {
+		state |= SDL_APPACTIVE;
+	}
+	if (flags & SDL_WINDOW_INPUT_FOCUS) {
+		state |= SDL_APPINPUTFOCUS;
+    }
+    if (flags & SDL_WINDOW_MOUSE_FOCUS) {
+        state |= SDL_APPMOUSEFOCUS;
+    }
+    return state;
+}
+#endif
+
 int minimized(void)
 {
 	if (nopause_sw)
@@ -44,7 +68,11 @@ void push_user_event(void (*p) (void*), void *data)
 
 int input_init(void)
 {
+#if SDL_VERSION_ATLEAST(2,0,0)
+	// SDL_EnableKeyRepeat(500, 30); // TODO ?
+#else
 	SDL_EnableKeyRepeat(500, 30);
+#endif
 	m_focus = !!(SDL_GetAppState() & SDL_APPMOUSEFOCUS);
 	return 0;
 }
@@ -87,6 +115,33 @@ int input(struct inp_event *inp, int wait)
 	inp->type = 0;
 	inp->count = 1;
 	switch(event.type){
+#if SDL_VERSION_ATLEAST(2,0,0)
+	case SDL_WINDOWEVENT_MINIMIZED:
+	case SDL_WINDOWEVENT_RESTORED:
+	case SDL_WINDOWEVENT_ENTER:
+	case SDL_WINDOWEVENT_LEAVE:
+	case SDL_WINDOWEVENT_FOCUS_GAINED:
+	case SDL_WINDOWEVENT_FOCUS_LOST:
+		if (event.type == SDL_WINDOWEVENT_MINIMIZED ||
+			event.type == SDL_WINDOWEVENT_RESTORED) {
+			m_minimized = (event.type == SDL_WINDOWEVENT_MINIMIZED);
+			snd_pause(!nopause_sw && m_minimized);
+		} else {
+			if (event.type == SDL_WINDOWEVENT_ENTER ||
+				event.type == SDL_WINDOWEVENT_FOCUS_GAINED) {
+				m_focus = 1;
+				if (opt_fs)
+					mouse_cursor(0);
+			} else if (event.type == SDL_WINDOWEVENT_LEAVE) {
+				m_focus = 0;
+				if (opt_fs)
+					mouse_cursor(1); /* is it hack?*/
+			}
+		}
+		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_WINDOWEVENT_MINIMIZED, SDL_WINDOWEVENT_FOCUS_LOST) > 0)
+			return AGAIN; /* to avoid flickering */
+		return 0;
+#else
 	case SDL_ACTIVEEVENT:
 		if (event.active.state & SDL_APPACTIVE) {
 			m_minimized = !event.active.gain;
@@ -110,6 +165,7 @@ int input(struct inp_event *inp, int wait)
 #endif
 			return AGAIN; /* to avoid flickering */
 		return 0;
+#endif
 	case SDL_USEREVENT: {
 		void (*p) (void*) = event.user.data1;
 		p(event.user.data2);
@@ -156,6 +212,20 @@ int input(struct inp_event *inp, int wait)
 		else if (event.button.button == 5)
 			inp->type = 0;	
 		break;
+#if SDL_VERSION_ATLEAST(2,0,0)
+	case SDL_MOUSEWHEEL:
+		inp->type = (event.wheel.y > 0) ? MOUSE_WHEEL_UP : MOUSE_WHEEL_DOWN;
+
+		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_MOUSEWHEEL, SDL_MOUSEWHEEL) > 0) {
+			if (!((event.wheel.y > 0 &&
+				inp->type == MOUSE_WHEEL_UP) ||
+			    (event.wheel.y < 0 &&
+			    	inp->type == MOUSE_WHEEL_DOWN)))
+				break;
+			inp->count ++;
+		}
+		break;
+#endif
 	case SDL_MOUSEBUTTONDOWN:
 		m_focus = 1; /* ahhh */
 		inp->type = MOUSE_DOWN;

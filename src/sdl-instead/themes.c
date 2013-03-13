@@ -643,8 +643,10 @@ int game_theme_optimize(void)
 /* todo: check errors */
 	struct game_theme *t = &game_theme;
 
-	if (t->bg && cache_have(gfx_image_cache(), t->bg))
+	if (t->bg && cache_have(gfx_image_cache(), t->bg)) {
 		t->bg = gfx_display_alpha(t->bg);
+		gfx_unset_alpha(t->bg);
+	}
 	if (t->a_up && cache_have(gfx_image_cache(), t->a_up))
 		t->a_up = gfx_display_alpha(t->a_up);
 	if (t->a_down && cache_have(gfx_image_cache(), t->a_down))
