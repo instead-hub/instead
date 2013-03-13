@@ -118,11 +118,11 @@ int input(struct inp_event *inp, int wait)
 #if SDL_VERSION_ATLEAST(2,0,0)
 	case SDL_WINDOWEVENT:
 		switch (event.window.event) {
-		case SDL_WINDOWEVENT_SHOWN:
-		case SDL_WINDOWEVENT_EXPOSED:
-			gfx_flip();
-			gfx_commit();
-			break;
+//		case SDL_WINDOWEVENT_SHOWN:
+//		case SDL_WINDOWEVENT_EXPOSED:
+//			gfx_flip();
+//			gfx_commit();
+//			break;
 		case SDL_WINDOWEVENT_MINIMIZED:
 		case SDL_WINDOWEVENT_RESTORED:
 			m_minimized = (event.window.event == SDL_WINDOWEVENT_MINIMIZED);
