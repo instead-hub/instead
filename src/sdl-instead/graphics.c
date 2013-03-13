@@ -585,10 +585,10 @@ SDL_Surface *SDL_DisplayFormatAlpha(SDL_Surface * surface)
 {
 	SDL_PixelFormat *format;
 	SDL_Surface *converted;
-	if (!screen) {
-		fprintf(stderr, "No video mode has been set.\n");
-		return NULL;
-	}
+//	if (!screen) {
+//		fprintf(stderr, "No video mode has been set.\n");
+//		return NULL;
+//	}
 	format = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB8888);
 //	if (surface->format->Amask == 0 && surface->format->palette) /* hack! */
 //		SDL_SetColorKey(surface, SDL_TRUE, *(Uint8*)surface->pixels);
@@ -604,10 +604,10 @@ SDL_Surface *SDL_DisplayFormat(SDL_Surface * surface)
 	SDL_PixelFormat *format;
 	SDL_Surface *converted;
 
-	if (!screen) {
-		fprintf(stderr, "No video mode has been set.\n");
-		return NULL;
-	}
+//	if (!screen) {
+//		fprintf(stderr, "No video mode has been set.\n");
+//		return NULL;
+//	}
 //	format = screen->format;
 	format = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB8888);
 	converted = SDL_ConvertSurface(surface, format, 0);//SDL_RLEACCEL);
