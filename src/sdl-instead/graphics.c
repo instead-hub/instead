@@ -579,6 +579,8 @@ img_t	gfx_grab_screen(int x, int y, int w, int h)
 }
 
 #if SDL_VERSION_ATLEAST(2,0,0)
+static SDL_RendererInfo SDL_VideoRendererInfo;
+
 SDL_Surface *SDL_DisplayFormatAlpha(SDL_Surface * surface)
 {
 //	SDL_PixelFormat *format;
@@ -1547,7 +1549,7 @@ int gfx_set_mode(int w, int h, int fs)
 			return -1;
 		}
 	}
-//	SDL_GetRendererInfo(&SDL_VideoRendererInfo);
+	SDL_GetRendererInfo(&SDL_VideoRendererInfo);
 	SDL_VideoTexture = SDL_CreateTexture(Renderer, SDL_PIXELFORMAT_ARGB8888/*/*desktop_mode.format*/, 
 		SDL_TEXTUREACCESS_STREAMING, w, h);
 	if (!SDL_VideoTexture) {
@@ -1671,7 +1673,7 @@ int SDL_Flip(SDL_Surface * screen)
 	int psize = screen->format->BytesPerPixel;
 	void *pixels = screen->pixels;
 
-	if (queue_dirty) {
+	if (queue_dirty) { 
 		rect.x = queue_x1;
 		rect.y = queue_y1;
 		rect.w = queue_x2 - queue_x1;
@@ -1680,7 +1682,10 @@ int SDL_Flip(SDL_Surface * screen)
 		pixels += pitch * queue_y1 + queue_x1 * psize;
 
 		SDL_UpdateTexture(SDL_VideoTexture, &rect, pixels, pitch);
-		SDL_RenderCopy(Renderer, SDL_VideoTexture, &rect, &rect);
+		if (SDL_VideoRendererInfo.flags & SDL_RENDERER_PRESENTCOPY)
+			SDL_RenderCopy(Renderer, SDL_VideoTexture, &rect, &rect);
+		else
+			SDL_RenderCopy(Renderer, SDL_VideoTexture, NULL, NULL);
 		SDL_RenderPresent(Renderer);
 	}
 	queue_x1 = queue_y1 = queue_x2 = queue_y2 = -1;
