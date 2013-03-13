@@ -583,32 +583,37 @@ static SDL_RendererInfo SDL_VideoRendererInfo;
 
 SDL_Surface *SDL_DisplayFormatAlpha(SDL_Surface * surface)
 {
-//	SDL_PixelFormat *format;
+	SDL_PixelFormat *format;
 	SDL_Surface *converted;
 	if (!screen) {
 		fprintf(stderr, "No video mode has been set.\n");
 		return NULL;
 	}
-//    format = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB8888);
+	format = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB8888);
 //	if (surface->format->Amask == 0 && surface->format->palette) /* hack! */
 //		SDL_SetColorKey(surface, SDL_TRUE, *(Uint8*)surface->pixels);
-	converted = SDL_ConvertSurface(surface, screen->format, 0); //SDL_RLEACCEL);
+	converted = SDL_ConvertSurface(surface, format, 0); //SDL_RLEACCEL);
 	if (converted)
 		SDL_SetSurfaceBlendMode(converted, SDL_BLENDMODE_BLEND);
-//    SDL_FreeFormat(format);
+	SDL_FreeFormat(format);
 	return converted;
 }
 
 SDL_Surface *SDL_DisplayFormat(SDL_Surface * surface)
 {
 	SDL_PixelFormat *format;
+	SDL_Surface *converted;
+
 	if (!screen) {
 		fprintf(stderr, "No video mode has been set.\n");
 		return NULL;
 	}
-	format = screen->format;
+//	format = screen->format;
+	format = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB8888);
+	converted = SDL_ConvertSurface(surface, format, 0);//SDL_RLEACCEL);
 	/* Set the flags appropriate for copying to display surface */
-	return SDL_ConvertSurface(surface, format, 0);//SDL_RLEACCEL);
+	SDL_FreeFormat(format);
+	return converted;
 }
 #endif
 img_t gfx_display_alpha(img_t src)
@@ -1682,10 +1687,10 @@ int SDL_Flip(SDL_Surface * screen)
 		pixels += pitch * queue_y1 + queue_x1 * psize;
 
 		SDL_UpdateTexture(SDL_VideoTexture, &rect, pixels, pitch);
-		if (0/*SDL_VideoRendererInfo.flags & SDL_RENDERER_PRESENTCOPY*/)
-			SDL_RenderCopy(Renderer, SDL_VideoTexture, &rect, &rect);
-		else
+		if (SDL_VideoRendererInfo.flags & SDL_RENDERER_ACCELERATED)
 			SDL_RenderCopy(Renderer, SDL_VideoTexture, NULL, NULL);
+		else
+			SDL_RenderCopy(Renderer, SDL_VideoTexture, &rect, &rect);
 		SDL_RenderPresent(Renderer);
 	}
 	queue_x1 = queue_y1 = queue_x2 = queue_y2 = -1;
