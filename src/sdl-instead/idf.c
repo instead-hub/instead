@@ -371,8 +371,11 @@ int idf_seek(idff_t fil, int offset, int whence)
 		return fil->pos;
 	return -1;
 }
-
+#if SDL_VERSION_ATLEAST(2,0,0)
+static Sint64 idfrw_seek(struct SDL_RWops *context, Sint64 offset, int whence)
+#else
 static int idfrw_seek(struct SDL_RWops *context, int offset, int whence)
+#endif
 {
 	idff_t fil = (idff_t)context->hidden.unknown.data1;
 	return idf_seek(fil, offset, whence);
@@ -411,8 +414,11 @@ int idf_read(idff_t fil, void *ptr, int size, int maxnum)
 	fil->pos = pos - dir->offset;
 	return rc;
 }
-
+#if SDL_VERSION_ATLEAST(2,0,0)
+static size_t idfrw_read(struct SDL_RWops *context, void *ptr, size_t size, size_t maxnum)
+#else
 static int idfrw_read(struct SDL_RWops *context, void *ptr, int size, int maxnum)
+#endif
 {
 	idff_t fil = (idff_t)context->hidden.unknown.data1;
 	return idf_read(fil, ptr, size, maxnum);

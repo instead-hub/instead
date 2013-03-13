@@ -554,7 +554,6 @@ int game_apply_theme(void)
 	if (!DIRECT_MODE)
 		game_clear(0, 0, game_theme.w, game_theme.h);
 	gfx_flip();
-
 	if (opt_justify == JUST_NO && align == ALIGN_JUSTIFY)
 		align = ALIGN_LEFT;
 	else if (opt_justify == JUST_YES && align == ALIGN_LEFT)
@@ -701,6 +700,11 @@ unsigned long	timer_counter = 0;
 
 gtimer_t timer_han = NULL_TIMER;
 
+static void game_gfx_commit(void *data)
+{
+	gfx_commit();
+}
+
 static void anigif_do(void *data)
 {
 	void *v;
@@ -752,6 +756,7 @@ static void anigif_do(void *data)
 		}
 	}
 	game_cursor(CURSOR_ON);
+	push_user_event(game_gfx_commit, NULL);
 }
 
 int counter_fn(int interval, void *p)
@@ -2648,7 +2653,6 @@ void game_cursor(int on)
 
 	if (on != CURSOR_DRAW)
 		cur = (use_xref) ? game_theme.use:game_theme.cursor;
-	
 	if (!cur) 
 		goto out;
 
@@ -3226,6 +3230,8 @@ clean:
 #endif
 }
 #endif
+
+
 int game_loop(void)
 {
 	static int alt_pressed = 0;
@@ -3234,12 +3240,12 @@ int game_loop(void)
 	static int x = 0, y = 0;
 	struct inp_event ev;
 	memset(&ev, 0, sizeof(struct inp_event));
-
 	while (game_running) {
 		int rc;
 		ev.x = -1;
 //		game_cursor(CURSOR_CLEAR); /* release bg */
-		while (((rc = input(&ev, 1)) == AGAIN) && !need_restart);
+		while (((rc = input(&ev, 1)) == AGAIN) && !need_restart)
+			gfx_commit();
 		if (rc == -1) {/* close */
 			break;
 		} else if (curgame_dir && (ev.type == KEY_DOWN || ev.type == KEY_UP)
@@ -3475,12 +3481,12 @@ int game_loop(void)
 				game_highlight(x, y, 1);
 			}
 		}
-
 		game_cursor(CURSOR_ON);
 		if (err_msg) {
 			mouse_reset(1);
 			game_menu(menu_warning);
 		}
+		push_user_event(game_gfx_commit, NULL);
 	}
 	return 0;
 }
