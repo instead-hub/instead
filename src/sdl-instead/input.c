@@ -116,29 +116,24 @@ int input(struct inp_event *inp, int wait)
 	inp->count = 1;
 	switch(event.type){
 #if SDL_VERSION_ATLEAST(2,0,0)
-	case SDL_WINDOWEVENT_MINIMIZED:
-	case SDL_WINDOWEVENT_RESTORED:
-	case SDL_WINDOWEVENT_ENTER:
-	case SDL_WINDOWEVENT_LEAVE:
-	case SDL_WINDOWEVENT_FOCUS_GAINED:
-	case SDL_WINDOWEVENT_FOCUS_LOST:
-		if (event.type == SDL_WINDOWEVENT_MINIMIZED ||
-			event.type == SDL_WINDOWEVENT_RESTORED) {
-			m_minimized = (event.type == SDL_WINDOWEVENT_MINIMIZED);
+	case SDL_WINDOWEVENT:
+		if (event.window.event == SDL_WINDOWEVENT_MINIMIZED ||
+			event.window.event == SDL_WINDOWEVENT_RESTORED) {
+			m_minimized = (event.window.event == SDL_WINDOWEVENT_MINIMIZED);
 			snd_pause(!nopause_sw && m_minimized);
 		} else {
-			if (event.type == SDL_WINDOWEVENT_ENTER ||
-				event.type == SDL_WINDOWEVENT_FOCUS_GAINED) {
+			if (event.window.event == SDL_WINDOWEVENT_ENTER ||
+				event.window.event == SDL_WINDOWEVENT_FOCUS_GAINED) {
 				m_focus = 1;
 				if (opt_fs)
 					mouse_cursor(0);
-			} else if (event.type == SDL_WINDOWEVENT_LEAVE) {
+			} else if (event.window.event == SDL_WINDOWEVENT_LEAVE) {
 				m_focus = 0;
 				if (opt_fs)
 					mouse_cursor(1); /* is it hack?*/
 			}
 		}
-		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_WINDOWEVENT_MINIMIZED, SDL_WINDOWEVENT_FOCUS_LOST) > 0)
+		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_WINDOWEVENT, SDL_WINDOWEVENT) > 0)
 			return AGAIN; /* to avoid flickering */
 		return 0;
 #else
