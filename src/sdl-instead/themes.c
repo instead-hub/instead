@@ -657,8 +657,10 @@ int game_theme_optimize(void)
 		t->inv_a_down = gfx_display_alpha(t->inv_a_down);
 	if (t->use && cache_have(gfx_image_cache(), t->use))
 		t->use = gfx_display_alpha(t->use);
-	if (t->cursor && cache_have(gfx_image_cache(), t->cursor))
+	if (t->cursor && cache_have(gfx_image_cache(), t->cursor)) {
 		t->cursor = gfx_display_alpha(t->cursor);
+		gfx_set_cursor(t->cursor, t->cur_x, t->cur_y);
+	}
 	if (t->menu_button && cache_have(gfx_image_cache(), t->menu_button))
 		t->menu_button = gfx_display_alpha(t->menu_button);
 	return 0;
@@ -749,6 +751,7 @@ skip:
 			goto err;
 		if (theme_img_scale(&t->cursor))
 			goto err;
+		gfx_set_cursor(t->cursor, t->cur_x, t->cur_y);
 	}
 	
 	if (t->menu_button_name && (t->changed & CHANGED_BUTTON)) {

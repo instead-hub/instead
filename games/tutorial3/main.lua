@@ -5,7 +5,6 @@
 instead_version "1.6.0"
 require "xact"
 
-
 tut_lang = {
 	ru = 'Язык',
 	en = 'Language',
