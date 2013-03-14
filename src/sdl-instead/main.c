@@ -349,8 +349,8 @@ int main(int argc, char *argv[])
 			free(b);
 	}
 
-	if (noauto_sw)
-		opt_autosave = 0;
+	if (noauto_sw && opt_autosave)
+		opt_autosave = 2;
 	if (window_sw)
 		opt_fs = 0;
 	if (fullscreen_sw)

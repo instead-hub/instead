@@ -94,6 +94,7 @@ int cfg_load(void)
 int cfg_save(void)
 {
 	int save_owntheme = (opt_owntheme == 2)?0:opt_owntheme;
+	int save_autosave = (opt_autosave == 2)?1:opt_autosave;
 	FILE *fp;
 	char *p = game_cfg_path();
 	if (!p)
@@ -106,7 +107,7 @@ int cfg_save(void)
 game = %s\nfscale = %d\nmotion = %d\n\
 click = %d\nmusic = %d\ntheme = %s\n\
 filter = %d\nowntheme = %d\nlang = %s\nkbd = %d\nmode = %dx%d\njustify = %d\nfading = %d", 
-		opt_fs, opt_hl, opt_hz, opt_vol, opt_autosave, 
+		opt_fs, opt_hl, opt_hz, opt_vol, save_autosave, 
 		curgame_dir?curgame_dir:"", opt_fsize, opt_motion, 
 		opt_click, opt_music, curtheme_dir?curtheme_dir:DEFAULT_THEME, 
 		opt_filter, save_owntheme, opt_lang, opt_kbd, opt_mode[0], opt_mode[1], 

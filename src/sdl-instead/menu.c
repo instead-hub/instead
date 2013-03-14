@@ -365,7 +365,7 @@ char *game_menu_gen(void)
 		case 2:
 			snprintf(menu_buff, sizeof(menu_buff), SETTINGS_OTH_MENU, 
 			opt_motion?ON:OFF, opt_filter?ON:OFF, kbd[opt_kbd],
-			langs[cur_lang].name,  opt_autosave?ON:OFF);
+			langs[cur_lang].name,  (opt_autosave & 1)?ON:OFF);
 			break;
 		}
 	} else if (cur_menu == menu_askquit) {
@@ -406,7 +406,7 @@ int game_menu_act(const char *a)
 	static int old_vol = 0;
 
 	if (!strcmp(a, "/autosave")) {
-		opt_autosave ^= 1;
+		opt_autosave = !(opt_autosave & 1);
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/kbd")) {
 		opt_kbd += 1;
@@ -553,7 +553,7 @@ int game_menu_act(const char *a)
 
 /* remove autlosave */
 		s = game_save_path(0, 0);
-		if (s && !access(s, R_OK) && opt_autosave)
+		if (s && !access(s, R_OK) && (opt_autosave & 1))
 			unlink (s);
 		game_menu_box(0, NULL);
 		if (!game_reset()) {
