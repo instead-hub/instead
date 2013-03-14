@@ -193,5 +193,7 @@ extern void	gfx_update_gif(img_t img);
 extern void 	gfx_dispose_gif(img_t p);
 extern unsigned long gfx_ticks(void);
 
+extern void gfx_set_cursor(img_t *cur, int xc, int yc);
+
 #endif
 
