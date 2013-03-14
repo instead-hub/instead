@@ -18,13 +18,6 @@
 
 #define Surf(p) ((SDL_Surface *)p)
 
-#if SDL_VERSION_ATLEAST(2,0,0)
-SDL_Window *SDL_VideoWindow = NULL;
-static SDL_Texture *SDL_VideoTexture = NULL;
-static SDL_Surface *SDL_VideoSurface = NULL;
-static SDL_Renderer *Renderer = NULL;
-#endif
-
 static SDL_Surface *screen = NULL;
 static cache_t images = NULL;
 
@@ -503,26 +496,6 @@ void gfx_clip(int x, int y, int w, int h)
 
 img_t 	gfx_new(int w, int h)
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
-	SDL_Surface *surface;
-	Uint32 format;
-	int bpp;
-	Uint32 Rmask, Gmask, Bmask, Amask;
-
-	if (SDL_QueryTexture(SDL_VideoTexture, &format, NULL, NULL, NULL) < 0) {
-		return NULL;
-	}
-
-	if (!SDL_PixelFormatEnumToMasks(format, &bpp, &Rmask, &Gmask, &Bmask, &Amask)) {
-		fprintf(stderr, "Unknown texture format.\n");
-		return NULL;
-	}
-
-	surface =
-		SDL_CreateRGBSurface(0, w, h, bpp, Rmask, Gmask, Bmask, Amask);
-	SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE);
-	return surface;
-#else
 	SDL_Surface *dst;
 	if (!screen) {
 		Uint32 rmask, gmask, bmask, amask;
@@ -551,8 +524,11 @@ img_t 	gfx_new(int w, int h)
 			screen->format->Bmask, 
 			screen->format->Amask);
 	}
-	return dst;
+#if SDL_VERSION_ATLEAST(2,0,0)
+	if (dst)
+		SDL_SetSurfaceBlendMode(dst, SDL_BLENDMODE_NONE);
 #endif
+	return dst;
 }
 
 void	gfx_img_fill(img_t img, int x, int y, int w, int h, color_t col)
@@ -1459,6 +1435,10 @@ int gfx_get_max_mode(int *w, int *h)
 static SDL_Surface *icon = NULL;
 
 #if SDL_VERSION_ATLEAST(2,0,0)
+SDL_Window *SDL_VideoWindow = NULL;
+static SDL_Texture *SDL_VideoTexture = NULL;
+static SDL_Surface *SDL_VideoSurface = NULL;
+static SDL_Renderer *Renderer = NULL;
 static void GetEnvironmentWindowPosition(int w, int h, int *x, int *y)
 {
 	const char *window = SDL_getenv("SDL_VIDEO_WINDOW_POS");
