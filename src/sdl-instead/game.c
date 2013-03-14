@@ -820,11 +820,11 @@ int game_init(const char *name)
 	} else {
 		if (!game_load(-1)) /* tmp save */
 			goto out;
-		if (opt_autosave && !game_load(0))  /* autosave */
+		if ((opt_autosave & 1) && !game_load(0))  /* autosave */
 			goto out;
 		game_cmd("look", 0);
 		custom_theme_warn();
-		if (opt_autosave)
+		if (opt_autosave & 1)
 			game_save(0);
 	}
 out:
@@ -884,7 +884,7 @@ void game_done(int err)
 	gfx_del_timer(timer_han);
 	timer_han = NULL_TIMER;
 
-	if (opt_autosave && curgame_dir && !err)
+	if ((opt_autosave & 1) && curgame_dir && !err)
 		game_save(0);
 	setdir(game_cwd);
 //	cfg_save();
