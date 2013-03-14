@@ -4561,7 +4561,6 @@ void gfx_change_screen(img_t src, int steps)
 	}
 	fade_fg = NULL;
 	fade_bg = gfx_grab_screen(0, 0, gfx_width, gfx_height);
-	gfx_unset_alpha(fade_bg);
 	if (!fade_bg) /* ok, i like kernel logic. No memory, but we must work! */
 		return;
 //	fade_bg = gfx_display_alpha(fade_bg);
