@@ -254,6 +254,8 @@ int input(struct inp_event *inp, int wait)
 		}
 
 		break;
+	default:
+		break;
 	}
 	return 1;
 }

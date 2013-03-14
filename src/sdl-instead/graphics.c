@@ -4557,7 +4557,7 @@ void gfx_change_screen(img_t src, int steps)
 		gfx_draw(src, 0, 0);
 		game_cursor(CURSOR_ON);
 		gfx_flip();
-		gfx_commit();
+//		gfx_commit();
 		return;
 	}
 	fade_fg = NULL;
