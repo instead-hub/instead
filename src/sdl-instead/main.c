@@ -26,6 +26,7 @@ int noauto_sw = 0;
 int nostdgames_sw = 0;
 int nostdthemes_sw = 0;
 int version_sw = 0;
+int owntheme_sw = 0;
 int nopause_sw = 0;
 int chunksize_sw = 0;
 char *game_sw = NULL;
@@ -166,6 +167,8 @@ int main(int argc, char *argv[])
 			window_sw = 1;
 		else if (!strcmp(argv[i], "-debug"))
 			debug_sw = 1;
+		else if (!strcmp(argv[i], "-owntheme"))
+			owntheme_sw = 1;
 		else if (!strcmp(argv[i], "-noautosave"))
 			noauto_sw = 1;
 		else if (!strcmp(argv[i], "-game")) {
@@ -306,6 +309,10 @@ int main(int argc, char *argv[])
 	
 	if (games_sw)
 		games_lookup(games_sw);
+
+	if (owntheme_sw && !opt_owntheme) {
+		opt_owntheme = 2;
+	}
 
 	if (!nostdgames_sw && games_lookup(dirpath(GAMES_PATH)))
 		fprintf(stderr, "No games found in: %s.\n", GAMES_PATH);
