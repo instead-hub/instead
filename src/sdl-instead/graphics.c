@@ -4582,39 +4582,31 @@ static img_t	*fade_fg = NULL;
 #if SDL_VERSION_ATLEAST(2,0,0)
 static SDL_Texture *fade_bg_texture = NULL;
 static SDL_Texture *fade_fg_texture = NULL;
-
-static void update_gfx_accel(void *aux)
-{
-	fade_step_nr ++;
-	if (fade_step_nr == ALPHA_STEPS) {
-		game_cursor(CURSOR_CLEAR);
-		fade_step_nr = -1;
-		gfx_draw(fade_fg, 0, 0);
-		game_cursor(CURSOR_ON);
-		gfx_flip();
-		gfx_commit();
-	}
-}
 #endif
 static void update_gfx(void *aux)
 {
 	img_t img = fade_fg;
 	if (fade_step_nr == -1 || !img || !fade_bg || !fade_fg)
 		return;
-#if SDL_VERSION_ATLEAST(2,0,0)
-	update_gfx_accel(NULL);
-#else
-//	game_cursor(CURSOR_CLEAR);
-//	gfx_set_alpha(img, (255 * (fade_step_nr + 1)) / ALPHA_STEPS);
-//	gfx_draw(fade_bg, 0, 0);
-//	gfx_draw(img, 0, 0);
-//	game_cursor(CURSOR_DRAW);
-//	gfx_flip();
+#if !SDL_VERSION_ATLEAST(2,0,0)
+	game_cursor(CURSOR_CLEAR);
+	gfx_set_alpha(img, (255 * (fade_step_nr + 1)) / ALPHA_STEPS);
+	gfx_draw(fade_bg, 0, 0);
+	gfx_draw(img, 0, 0);
+	game_cursor(CURSOR_DRAW);
+	gfx_flip();
+#endif
 	fade_step_nr ++;
 	if (fade_step_nr == ALPHA_STEPS) {
+#if SDL_VERSION_ATLEAST(2,0,0)
+		game_cursor(CURSOR_CLEAR);
+		gfx_draw(fade_fg, 0, 0);
+		game_cursor(CURSOR_ON);
+		gfx_flip();
+		gfx_commit();
+#endif
 		fade_step_nr = -1;
 	}
-#endif
 }
 static Uint32 update(Uint32 interval, void *aux)
 {
@@ -4659,17 +4651,11 @@ void gfx_change_screen(img_t src, int steps)
 	han = SDL_AddTimer(60, update, NULL);
 	while (input(&ev, 1) >=0 && gfx_fading()) { /* just wait for change */
 #if !SDL_VERSION_ATLEAST(2,0,0)
-		game_cursor(CURSOR_CLEAR);
-		gfx_set_alpha(fade_fg, (255 * (fade_step_nr + 1)) / ALPHA_STEPS);
-		gfx_draw(fade_bg, 0, 0);
-		gfx_draw(fade_fg, 0, 0);
-		game_cursor(CURSOR_DRAW);
-		gfx_flip();
 		game_cursor(CURSOR_ON);
 		gfx_commit();
 #else
 		SDL_RenderCopy(Renderer, fade_bg_texture, NULL, NULL);
-		SDL_SetTextureAlphaMod(fade_fg_texture, (255 * (fade_step_nr + 1)) / ALPHA_STEPS);
+		SDL_SetTextureAlphaMod(fade_fg_texture, (255 * (fade_step_nr)) / ALPHA_STEPS);
 		SDL_RenderCopy(Renderer, fade_fg_texture, NULL, NULL);
 		gfx_draw_cursor();
 		SDL_RenderPresent(Renderer);
