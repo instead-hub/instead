@@ -93,6 +93,7 @@ int cfg_load(void)
 
 int cfg_save(void)
 {
+	int save_owntheme = (opt_owntheme == 2)?0:opt_owntheme;
 	FILE *fp;
 	char *p = game_cfg_path();
 	if (!p)
@@ -100,6 +101,7 @@ int cfg_save(void)
 	fp = fopen(p, "w");
 	if (!fp)
 		return -1;
+	
 	fprintf(fp, "fs = %d\nhl = %d\nhz = %d\nvol = %d\nautosave = %d\n\
 game = %s\nfscale = %d\nmotion = %d\n\
 click = %d\nmusic = %d\ntheme = %s\n\
@@ -107,7 +109,7 @@ filter = %d\nowntheme = %d\nlang = %s\nkbd = %d\nmode = %dx%d\njustify = %d\nfad
 		opt_fs, opt_hl, opt_hz, opt_vol, opt_autosave, 
 		curgame_dir?curgame_dir:"", opt_fsize, opt_motion, 
 		opt_click, opt_music, curtheme_dir?curtheme_dir:DEFAULT_THEME, 
-		opt_filter, opt_owntheme, opt_lang, opt_kbd, opt_mode[0], opt_mode[1], 
+		opt_filter, save_owntheme, opt_lang, opt_kbd, opt_mode[0], opt_mode[1], 
 		opt_justify, opt_fading);
 	fclose(fp);
 	return 0;

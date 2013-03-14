@@ -414,7 +414,7 @@ int game_menu_act(const char *a)
 			opt_kbd = 0;
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/owntheme")) {
-		opt_owntheme ^= 1;
+		opt_owntheme = !opt_owntheme;
 		if (game_own_theme)
 			restart_needed = 1;
 		game_menu_box(1, game_menu_gen());
