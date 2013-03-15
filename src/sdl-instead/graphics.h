@@ -15,7 +15,8 @@ typedef int		gtimer_t;
 typedef void*	gtimer_t;
 #define	NULL_TIMER	NULL
 #endif
-typedef void*	img_t;
+struct _img_t;
+typedef struct _img_t*	img_t;
 typedef void*	fnt_t;
 typedef void*	layout_t;
 typedef void*	textbox_t;
@@ -193,7 +194,7 @@ extern void	gfx_update_gif(img_t img);
 extern void 	gfx_dispose_gif(img_t p);
 extern unsigned long gfx_ticks(void);
 
-extern void gfx_set_cursor(img_t *cur, int xc, int yc);
+extern void gfx_set_cursor(img_t cur, int xc, int yc);
 
 #endif
 
