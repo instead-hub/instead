@@ -455,6 +455,7 @@ void gfx_free_image(img_t p)
 			anigif_drawn_nr --;
 		anigif_del(ag);
 		anigif_free(ag);
+		return;
 	}
 	gfx_free_img(p);
 }
