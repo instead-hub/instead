@@ -379,7 +379,7 @@ static void anigif_frame(anigif_t g)
 
 static anigif_t is_anigif(img_t img)
 {
-	if (img->flags & IMG_ANIGIF)
+	if (img && (img->flags & IMG_ANIGIF))
 		return (anigif_t)(img->aux);
 	return NULL;
 }
