@@ -258,6 +258,7 @@ struct _anigif_t {
 	int	active;
 	int	delay;
 	int	spawn_nr;
+	int	used;
 	struct	agspawn *spawn;
 	AG_Frame frames[0];
 };
@@ -451,11 +452,13 @@ void gfx_free_image(img_t p)
 	if (!cache_forget(images, p))
 		return; /* cached sprite */
 	if ((ag = is_anigif(p))) {
-		if (ag->drawn)
-			anigif_drawn_nr --;
-		anigif_del(ag);
-		anigif_free(ag);
-		return;
+		ag->used --;
+		if (ag <= 0) {
+			if (ag->drawn)
+				anigif_drawn_nr --;
+			anigif_del(ag);
+			anigif_free(ag);
+		}
 	}
 	gfx_free_img(p);
 }
@@ -972,6 +975,7 @@ static img_t _gfx_load_image(char *filename, int combined)
 		AG_NormalizeSurfacesToDisplayFormat( agif->frames, nr);
 		agif->loop = loop;
 		agif->nr_frames = nr;
+		agif->used = 1;
 		anigif_add(agif);
 //		fprintf(stderr, "anigif: %s %p\n", filename, agif->frames[0].surface);
 		return gfx_new_img(agif->frames[0].surface, IMG_ANIGIF, agif);
@@ -1873,7 +1877,8 @@ img_t gfx_scale(img_t src, float xscale, float yscale, int smooth)
 			ag->frames[i].x = (float)(ag->frames[i].x) * xscale;
 			ag->frames[i].y = (float)(ag->frames[i].y) * yscale;
 		}
-		return GFX_IMG(ag->frames[0].surface);
+		ag->used ++;
+		return gfx_new_img(ag->frames[0].surface, IMG_ANIGIF, ag);
 	}
 	return GFX_IMG(zoomSurface(Surf(src), xscale, yscale, smooth));
 }
