@@ -258,7 +258,6 @@ struct _anigif_t {
 	int	active;
 	int	delay;
 	int	spawn_nr;
-	int	used;
 	struct	agspawn *spawn;
 	AG_Frame frames[0];
 };
@@ -452,13 +451,10 @@ void gfx_free_image(img_t p)
 	if (!cache_forget(images, p))
 		return; /* cached sprite */
 	if ((ag = is_anigif(p))) {
-		ag->used --;
-		if (ag <= 0) {
-			if (ag->drawn)
-				anigif_drawn_nr --;
-			anigif_del(ag);
-			anigif_free(ag);
-		}
+		if (ag->drawn)
+			anigif_drawn_nr --;
+		anigif_del(ag);
+		anigif_free(ag);
 	}
 	gfx_free_img(p);
 }
@@ -954,6 +950,31 @@ cache_t gfx_image_cache(void)
 	return images;
 }
 
+static anigif_t ag_new(int nr)
+{
+	anigif_t agif = malloc(sizeof(struct _anigif_t) + nr * sizeof(AG_Frame));
+	if (!agif)
+		return NULL;
+	memset(agif, 0, sizeof(struct _anigif_t) + nr * sizeof(AG_Frame));
+	agif->nr_frames = nr;
+	return agif;
+}
+
+static anigif_t ag_dup(anigif_t ag)
+{
+	int i = 0;
+	anigif_t agif = malloc(sizeof(struct _anigif_t) + ag->nr_frames * sizeof(AG_Frame));
+	if (!agif)
+		return NULL;
+	memcpy(agif, ag, sizeof(struct _anigif_t) + ag->nr_frames * sizeof(AG_Frame));
+	for (i = 0; i < agif->nr_frames; i++) {
+		SDL_Surface *s = ag->frames[i].surface;
+		if (s)
+			ag->frames[i].surface = SDL_ConvertSurface(s, s->format, s->flags);
+	}
+	return agif;
+}
+
 static img_t _gfx_load_image(char *filename, int combined)
 {
 	SDL_RWops *rw;
@@ -967,15 +988,12 @@ static img_t _gfx_load_image(char *filename, int combined)
 		nr = AG_LoadGIF(filename, NULL, 0, NULL);
 	if (nr > 1) { /* anigif logic */
 		int loop = 0;
-		anigif_t agif = malloc(sizeof(struct _anigif_t) + nr * sizeof(AG_Frame));
+		anigif_t agif = ag_new(nr);
 		if (!agif)
 			return NULL;
-		memset(agif, 0, sizeof(struct _anigif_t) + nr * sizeof(AG_Frame));
 		AG_LoadGIF(filename, agif->frames, nr, &loop);
 		AG_NormalizeSurfacesToDisplayFormat( agif->frames, nr);
 		agif->loop = loop;
-		agif->nr_frames = nr;
-		agif->used = 1;
 		anigif_add(agif);
 //		fprintf(stderr, "anigif: %s %p\n", filename, agif->frames[0].surface);
 		return gfx_new_img(agif->frames[0].surface, IMG_ANIGIF, agif);
@@ -1869,16 +1887,19 @@ img_t gfx_scale(img_t src, float xscale, float yscale, int smooth)
 	anigif_t ag;
 	if ((ag = is_anigif(src))) {
 		int i;
+		anigif_t ag2;
+		ag2 = ag_dup(ag);
+		if (!ag2)
+			return NULL;
 		for (i = 0; i < ag->nr_frames; i ++) {
-			SDL_Surface *s = zoomSurface(ag->frames[i].surface, xscale, yscale, 1);
-			if (i)
-				SDL_FreeSurface(ag->frames[i].surface);
-			ag->frames[i].surface = s;
-			ag->frames[i].x = (float)(ag->frames[i].x) * xscale;
-			ag->frames[i].y = (float)(ag->frames[i].y) * yscale;
+			SDL_Surface *s = zoomSurface(ag2->frames[i].surface, xscale, yscale, 1);
+			SDL_FreeSurface(ag2->frames[i].surface);
+			ag2->frames[i].surface = s;
+			ag2->frames[i].x = (float)(ag2->frames[i].x) * xscale;
+			ag2->frames[i].y = (float)(ag2->frames[i].y) * yscale;
 		}
-		ag->used ++;
-		return gfx_new_img(ag->frames[0].surface, IMG_ANIGIF, ag);
+		anigif_add(ag2); /* scaled anigif added */
+		return gfx_new_img(ag2->frames[0].surface, IMG_ANIGIF, ag2);
 	}
 	return GFX_IMG(zoomSurface(Surf(src), xscale, yscale, smooth));
 }
