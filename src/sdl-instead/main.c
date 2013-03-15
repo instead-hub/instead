@@ -29,6 +29,8 @@ int version_sw = 0;
 int owntheme_sw = 0;
 int nopause_sw = 0;
 int chunksize_sw = 0;
+int software_sw = 0;
+
 char *game_sw = NULL;
 char *games_sw = NULL;
 char *theme_sw = NULL;
@@ -227,6 +229,8 @@ int main(int argc, char *argv[])
 			version_sw = 1;
 		} else if (!strcmp(argv[i], "-nopause")) {
 			nopause_sw = 1;
+		} else if (!strcmp(argv[i], "-software")) {
+			software_sw = 1;
 #ifdef _USE_UNPACK
 		} else if (!strcmp(argv[i], "-install")) {
 			if ((i + 1) < argc) {
