@@ -406,7 +406,10 @@ int game_theme_free(void)
 
 	if (game_theme.use)
 		gfx_free_image(game_theme.use);
-
+	if (game_theme.cursor) {
+		gfx_free_image(game_theme.cursor);
+		gfx_set_cursor(NULL, 0, 0);
+	}
 	if (game_theme.bg)
 		gfx_free_image(game_theme.bg);
 
@@ -423,6 +426,7 @@ int game_theme_free(void)
 	game_theme.bg = NULL;
 	game_theme.click = NULL;
 	game_theme.cur_x = game_theme.cur_y = 0;
+	game_theme.cursor = game_theme.use = NULL;
 	return 0;
 }
 
