@@ -93,8 +93,8 @@ static struct game *game_lookup(const char *name)
 
 int game_reset(void)
 {
+	free_last(); /* commit all user events */
 	game_release_theme();
-	free_last();
 	if (game_select(curgame_dir))
 		goto out;
 	if (game_apply_theme())
@@ -881,6 +881,7 @@ void game_release_theme(void)
 
 void game_done(int err)
 {
+	curgame_dir = NULL;
 	gfx_del_timer(timer_han);
 	timer_han = NULL_TIMER;
 
@@ -891,8 +892,8 @@ void game_done(int err)
 
 	if (menu_shown)
 		menu_toggle(-1);
+	free_last(); /* here all lost user callback are */
 	game_release_theme();
-	free_last();
 	game_theme_free();
 	input_clear();
 	snd_done();
@@ -900,7 +901,6 @@ void game_done(int err)
 //#ifndef ANDROID
 //	gfx_video_done();
 //#endif
-	curgame_dir = NULL;
 	game_own_theme = 0;
 	idf_done(game_idf); game_idf = NULL;
 	need_restart = 0;
