@@ -568,7 +568,7 @@ static int luaB_get_gamespath(lua_State *L) {
 static void instead_timer_do(void *data)
 {
 	char *p;
-	if (game_paused())
+	if (game_paused() || !curgame_dir)
 		goto out;
 	if (instead_function("stead.timer", NULL)) {
 		instead_clear();
