@@ -881,12 +881,11 @@ void game_release_theme(void)
 
 void game_done(int err)
 {
-	curgame_dir = NULL;
 	gfx_del_timer(timer_han);
 	timer_han = NULL_TIMER;
-
 	if ((opt_autosave & 1) && curgame_dir && !err)
 		game_save(0);
+	curgame_dir = NULL;
 	setdir(game_cwd);
 //	cfg_save();
 
