@@ -963,16 +963,10 @@ static anigif_t ag_new(int nr)
 
 static anigif_t ag_dup(anigif_t ag)
 {
-	int i = 0;
 	anigif_t agif = malloc(sizeof(struct _anigif_t) + ag->nr_frames * sizeof(AG_Frame));
 	if (!agif)
 		return NULL;
 	memcpy(agif, ag, sizeof(struct _anigif_t) + ag->nr_frames * sizeof(AG_Frame));
-	for (i = 0; i < agif->nr_frames; i++) {
-		SDL_Surface *s = ag->frames[i].surface;
-		if (s)
-			ag->frames[i].surface = SDL_ConvertSurface(s, s->format, s->flags);
-	}
 	return agif;
 }
 
@@ -1893,8 +1887,7 @@ img_t gfx_scale(img_t src, float xscale, float yscale, int smooth)
 		if (!ag2)
 			return NULL;
 		for (i = 0; i < ag->nr_frames; i ++) {
-			SDL_Surface *s = zoomSurface(ag2->frames[i].surface, xscale, yscale, 1);
-			SDL_FreeSurface(ag2->frames[i].surface);
+			SDL_Surface *s = zoomSurface(ag->frames[i].surface, xscale, yscale, 1);
 			ag2->frames[i].surface = s;
 			ag2->frames[i].x = (float)(ag2->frames[i].x) * xscale;
 			ag2->frames[i].y = (float)(ag2->frames[i].y) * yscale;
