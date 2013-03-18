@@ -192,10 +192,10 @@ stead.dialog_rescan = function(self, naming, from)
 				break
 			end
 			if isPhrase(ph) and not isDisabled(ph) and isValid(ph) then
+				k = k + 1;
 				if naming then
 					ph.nam = tostring(k)
 				end
-				k = k + 1;
 			end
 		end
 	end

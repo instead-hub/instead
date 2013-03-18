@@ -8,6 +8,7 @@
   * bug fux: segfault while change and restart game;
   * img_t refactoring for future architecture upgrade;
   * fix in anigif scale;
+  * fix in stead.dialog_rescan;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 11 Mar 2013 16:39:00 +0400
 
