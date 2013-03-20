@@ -4774,3 +4774,12 @@ unsigned long gfx_ticks(void)
 {
 	return SDL_GetTicks();
 }
+
+int gfx_pending(void)
+{
+#if SDL_VERSION_ATLEAST(2,0,0)
+	return queue_dirty;
+#else
+	return 0;
+#endif
+}
