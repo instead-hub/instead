@@ -1872,7 +1872,7 @@ static void game_pict_clip(void)
 {
 	int x, y, w, h;
 
-	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) {
+	if (GFX_MODE(game_theme.gfx_mode) == GFX_MODE_EMBEDDED) {
 		el_clip(el_scene);
 		return;
 	}
@@ -2034,14 +2034,14 @@ int game_cmd(char *cmd, int click)
 		txt_layout_set(el_layout(el_title), NULL);
 
 	if (new_pict || fading || game_pict_modify(NULL) ||
-		(new_place && (game_theme.gfx_mode == GFX_MODE_FIXED))) {
+		(new_place && (GFX_MODE(game_theme.gfx_mode) == GFX_MODE_FIXED))) {
 		redraw_pict = 1;
 	}
 	game_pict_clip();
 
 	if (redraw_pict) {
 		if (el_img(el_spic)) {
-			if (game_theme.gfx_mode == GFX_MODE_EMBEDDED)
+			if (GFX_MODE(game_theme.gfx_mode) == GFX_MODE_EMBEDDED)
 				el_clear_nobg(el_spic);
 			else
 				el_clear(el_spic);
@@ -2101,9 +2101,13 @@ int game_cmd(char *cmd, int click)
 	}
 	gfx_noclip();
 
-
 	/* clear area */
 	el_clear(el_ways);
+
+	if (GFX_MODE(game_theme.gfx_mode) == GFX_MODE_EMBEDDED && 
+		!el(el_spic)->p.p) /* clear embedded gfx */
+		txt_layout_add_img(txt_box_layout(el_box(el_scene)), "scene", NULL);
+
 	el_clear(el_scene);
 
 	instead_function("instead.get_ways", NULL); 
@@ -2121,7 +2125,7 @@ int game_cmd(char *cmd, int click)
 		txt_layout_size(el_layout(el_ways), NULL, &ways_h);
 	} 
 	old_off = txt_box_off(el_box(el_scene));
-	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) {
+	if (GFX_MODE(game_theme.gfx_mode) == GFX_MODE_EMBEDDED) {
 		char *p;
 		pict_h = 0; /* to fake code bellow */
 		txt_layout_set(txt_box_layout(el_box(el_scene)), ""); /* hack, to null layout, but not images */
