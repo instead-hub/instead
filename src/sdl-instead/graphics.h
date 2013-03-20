@@ -195,6 +195,7 @@ extern void 	gfx_dispose_gif(img_t p);
 extern unsigned long gfx_ticks(void);
 
 extern void gfx_set_cursor(img_t cur, int xc, int yc);
+extern int gfx_pending(void);
 
 #endif
 

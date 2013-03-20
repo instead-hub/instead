@@ -3486,7 +3486,8 @@ int game_loop(void)
 			mouse_reset(1);
 			game_menu(menu_warning);
 		}
-		push_user_event(game_gfx_commit, NULL);
+		if (gfx_pending())
+			push_user_event(game_gfx_commit, NULL);
 	}
 	return 0;
 }
