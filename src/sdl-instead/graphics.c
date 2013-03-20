@@ -1758,6 +1758,7 @@ void gfx_set_cursor(img_t cur, int xc, int yc)
 	cursor_h = gfx_img_h(cur);
 	cursor_xc = xc;
 	cursor_yc = yc;
+	SDL_SetTextureBlendMode(cursor, SDL_BLENDMODE_BLEND);
 }
 
 void gfx_show_cursor(int on)
@@ -1796,7 +1797,6 @@ int SDL_Flip(SDL_Surface * screen)
 		rect.h = queue_y2 - queue_y1;
 
 		pixels += pitch * queue_y1 + queue_x1 * psize;
-
 		SDL_UpdateTexture(SDL_VideoTexture, &rect, pixels, pitch);
 		if (SDL_VideoRendererInfo.flags & SDL_RENDERER_ACCELERATED)
 			SDL_RenderCopy(Renderer, SDL_VideoTexture, NULL, NULL);
@@ -1811,9 +1811,9 @@ int SDL_Flip(SDL_Surface * screen)
 
 static void SDL_UpdateRect(SDL_Surface * screen, Sint32 x, Sint32 y, Uint32 w, Uint32 h)
 {
-	if (queue_x1 == -1 || x < queue_x1)
+	if (queue_x1 < 0 || x < queue_x1)
 		queue_x1 = x;
-	if (queue_y1 == -1 || y < queue_y1)
+	if (queue_y1 < 0 || y < queue_y1)
 		queue_y1 = y;
 	if ((Sint32)(x + w) > queue_x2)
 		queue_x2 = (Sint32)(x + w);
@@ -1832,8 +1832,8 @@ void gfx_flip(void)
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
 	queue_x1 = queue_y1 = 0;
-	queue_x2 = gfx_width;
-	queue_y2 = gfx_height;
+	queue_x2 = gfx_width - 1;
+	queue_y2 = gfx_height - 1;
 	queue_dirty = 1;
 #else
 	SDL_Flip(Surf(screen));
