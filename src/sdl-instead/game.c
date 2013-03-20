@@ -2048,6 +2048,10 @@ int game_cmd(char *cmd, int click)
 			if (new_pict) {
 				gfx_free_image(el_img(el_spic));
 				el(el_spic)->p.p = NULL;
+				if (GFX_MODE(game_theme.gfx_mode) == GFX_MODE_EMBEDDED && 
+					!el(el_spic)->p.p) /* clear embedded gfx */
+				txt_layout_add_img(txt_box_layout(el_box(el_scene)), 
+					"scene", NULL);
 			}
 		}
 	}
@@ -2058,9 +2062,6 @@ int game_cmd(char *cmd, int click)
 
 		if (new_pict) {
 			img = gfx_load_image(pict);
-			if (el_img(el_spic))
-				gfx_free_image(el_img(el_spic));
-			el(el_spic)->p.p = NULL;
 			if (GFX_MODE(game_theme.gfx_mode) != GFX_MODE_FLOAT) 
 				img = game_pict_scale(img, game_theme.win_w, game_theme.max_scene_h);
 			else
@@ -2103,10 +2104,6 @@ int game_cmd(char *cmd, int click)
 
 	/* clear area */
 	el_clear(el_ways);
-
-	if (GFX_MODE(game_theme.gfx_mode) == GFX_MODE_EMBEDDED && 
-		!el(el_spic)->p.p) /* clear embedded gfx */
-		txt_layout_add_img(txt_box_layout(el_box(el_scene)), "scene", NULL);
 
 	el_clear(el_scene);
 
