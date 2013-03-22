@@ -700,9 +700,15 @@ unsigned long	timer_counter = 0;
 
 gtimer_t timer_han = NULL_TIMER;
 
-void game_gfx_commit(void *data)
+static void _game_gfx_commit(void *data)
 {
 	gfx_commit();
+}
+
+void game_gfx_commit(void)
+{
+	if (gfx_pending())
+		push_user_event(_game_gfx_commit, NULL);
 }
 
 static void anigif_do(void *data)
@@ -756,7 +762,7 @@ static void anigif_do(void *data)
 		}
 	}
 	game_cursor(CURSOR_ON);
-	push_user_event(game_gfx_commit, NULL);
+	game_gfx_commit();
 }
 
 int counter_fn(int interval, void *p)
@@ -3486,8 +3492,7 @@ int game_loop(void)
 			mouse_reset(1);
 			game_menu(menu_warning);
 		}
-		if (gfx_pending())
-			push_user_event(game_gfx_commit, NULL);
+		game_gfx_commit();
 	}
 	return 0;
 }

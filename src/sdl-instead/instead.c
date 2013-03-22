@@ -1396,8 +1396,7 @@ static int luaB_stead_busy(lua_State *L) {
 			busy_time = gfx_ticks();
 		if (gfx_ticks() - busy_time >= 750 && menu_visible() != menu_wait)
 			game_menu(menu_wait);
-		if (gfx_pending())
-			push_user_event(game_gfx_commit, NULL);
+		game_gfx_commit();
 		return 0;
 	}
 	if (menu_visible() == menu_wait) {
