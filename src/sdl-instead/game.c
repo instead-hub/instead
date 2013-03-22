@@ -700,7 +700,7 @@ unsigned long	timer_counter = 0;
 
 gtimer_t timer_han = NULL_TIMER;
 
-static void game_gfx_commit(void *data)
+void game_gfx_commit(void *data)
 {
 	gfx_commit();
 }
