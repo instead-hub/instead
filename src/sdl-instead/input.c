@@ -22,11 +22,11 @@ static Uint8 SDL_GetAppState(void)
 	}
 	if (flags & SDL_WINDOW_INPUT_FOCUS) {
 		state |= SDL_APPINPUTFOCUS;
-    }
-    if (flags & SDL_WINDOW_MOUSE_FOCUS) {
-        state |= SDL_APPMOUSEFOCUS;
-    }
-    return state;
+	}
+	if (flags & SDL_WINDOW_MOUSE_FOCUS) {
+		state |= SDL_APPMOUSEFOCUS;
+	}
+	return state;
 }
 #endif
 
@@ -96,6 +96,16 @@ void input_uevents(void)
 		p(peek.user.data2);
 	}
 }
+
+#if SDL_VERSION_ATLEAST(1,3,0)
+static void key_compat(struct inp_event *inp)
+{
+	if (!strcmp(inp->sym, "pageup"))
+		strcpy(inp->sym, "page up");
+	else if (!strcmp(inp->sym, "pagedown")) 
+		strcpy(inp->sym, "page down");
+}
+#endif
 
 int input(struct inp_event *inp, int wait)
 {	
@@ -184,6 +194,9 @@ int input(struct inp_event *inp, int wait)
 		strncpy(inp->sym, SDL_GetKeyName(event.key.keysym.sym), sizeof(inp->sym));
 		inp->sym[sizeof(inp->sym) - 1] = 0;
 		tolow(inp->sym);
+#if SDL_VERSION_ATLEAST(1,3,0)
+		key_compat(inp);
+#endif
 		break;
 	case SDL_KEYUP:
 		inp->type = KEY_UP; 
@@ -191,6 +204,9 @@ int input(struct inp_event *inp, int wait)
 		strncpy(inp->sym, SDL_GetKeyName(event.key.keysym.sym), sizeof(inp->sym));
 		inp->sym[sizeof(inp->sym) - 1] = 0;
 		tolow(inp->sym);
+#if SDL_VERSION_ATLEAST(1,3,0)
+		key_compat(inp);
+#endif
 		break;
 	case SDL_MOUSEMOTION:
 		m_focus = 1; /* ahhh */
@@ -252,7 +268,6 @@ int input(struct inp_event *inp, int wait)
 				break;
 			inp->count ++;
 		}
-
 		break;
 	default:
 		break;

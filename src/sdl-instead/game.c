@@ -2637,7 +2637,6 @@ void game_cursor(int on)
 	static img_t 	cur = NULL;
 	static int xc = 0, yc = 0, w = 0, h = 0; //, w, h;
 	int xx, yy, ww, hh;
-	
 	gfx_getclip(&xx, &yy, &ww, &hh);
 	gfx_noclip();
 	if (on == CURSOR_OFF)	

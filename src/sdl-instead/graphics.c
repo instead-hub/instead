@@ -1563,7 +1563,6 @@ int gfx_set_mode(int w, int h, int fs)
 		SDL_free(vid_modes);
 
 	vid_modes = NULL;
-	SDL_ShowCursor(SDL_DISABLE);
 
 	if (screen)
 		gfx_free_image(screen);
@@ -1637,6 +1636,8 @@ int gfx_set_mode(int w, int h, int fs)
 			SDL_VideoSurface->format->palette->ncolors);
 	}
 #endif
+	SDL_ShowCursor(SDL_DISABLE);
+
 	gfx_fs = fs;
 	gfx_width = w;
 	gfx_height = h;
@@ -1803,8 +1804,9 @@ int SDL_Flip(SDL_Surface * screen)
 	if (queue_dirty) { 
 		rect.x = queue_x1;
 		rect.y = queue_y1;
-		rect.w = queue_x2 - queue_x1 + 1;
-		rect.h = queue_y2 - queue_y1 + 1;
+		rect.w = queue_x2 - queue_x1;
+		rect.h = queue_y2 - queue_y1;
+
 		pixels += pitch * queue_y1 + queue_x1 * psize;
 		SDL_UpdateTexture(SDL_VideoTexture, &rect, pixels, pitch);
 		if (SDL_VideoRendererInfo.flags & SDL_RENDERER_ACCELERATED)
@@ -1841,8 +1843,8 @@ void gfx_flip(void)
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
 	queue_x1 = queue_y1 = 0;
-	queue_x2 = gfx_width - 1;
-	queue_y2 = gfx_height - 1;
+	queue_x2 = gfx_width;
+	queue_y2 = gfx_height;
 	queue_dirty = 1;
 #else
 	SDL_Flip(Surf(screen));
