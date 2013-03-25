@@ -1803,9 +1803,8 @@ int SDL_Flip(SDL_Surface * screen)
 	if (queue_dirty) { 
 		rect.x = queue_x1;
 		rect.y = queue_y1;
-		rect.w = queue_x2 - queue_x1;
-		rect.h = queue_y2 - queue_y1;
-
+		rect.w = queue_x2 - queue_x1 + 1;
+		rect.h = queue_y2 - queue_y1 + 1;
 		pixels += pitch * queue_y1 + queue_x1 * psize;
 		SDL_UpdateTexture(SDL_VideoTexture, &rect, pixels, pitch);
 		if (SDL_VideoRendererInfo.flags & SDL_RENDERER_ACCELERATED)
