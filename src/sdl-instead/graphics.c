@@ -1732,8 +1732,6 @@ static int queue_y2 = -1;
 static int queue_dirty = 0;
 static SDL_Texture *cursor = NULL;
 
-static int cursor_x = 0;
-static int cursor_y = 0;
 
 static int cursor_xc = 0;
 static int cursor_yc = 0;
@@ -1754,8 +1752,13 @@ void gfx_set_cursor(img_t cur, int xc, int yc)
 		return;
 	}
 	cursor = SDL_CreateTextureFromSurface(Renderer, Surf(cur));
+
+	if (!cursor)
+		return;
+
 	cursor_w = gfx_img_w(cur);
 	cursor_h = gfx_img_h(cur);
+
 	cursor_xc = xc;
 	cursor_yc = yc;
 	SDL_SetTextureBlendMode(cursor, SDL_BLENDMODE_BLEND);
@@ -1768,16 +1771,23 @@ void gfx_show_cursor(int on)
 
 void gfx_draw_cursor(void)
 {
+	int cursor_x = 0;
+	int cursor_y = 0;
+
 	SDL_Rect rect;
+
 	if (!cursor_on || !mouse_focus())
 		return;
+
 	gfx_cursor(&cursor_x, &cursor_y);
+
 	cursor_x -= cursor_xc;
 	cursor_y -= cursor_yc;
+
 	rect.x = cursor_x;
 	rect.y = cursor_y;
-	rect.w = cursor_w;
-	rect.h = cursor_h;
+	rect.w = cursor_w; // - 1; /* SDL 2.0 hack? */
+	rect.h = cursor_h; // - 1;
 	SDL_RenderCopy(Renderer, cursor, NULL, &rect);
 }
 
