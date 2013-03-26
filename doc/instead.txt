@@ -149,4 +149,4 @@ SEE ALSO
 
 
 
-Instead 			 Version 1.8.3			    INSTEAD(6)
+Instead 			 Version 1.9.0			    INSTEAD(6)
