@@ -305,7 +305,7 @@ char *sdl_path(char *p)
 	unix_path(p);
 	return p;
 }
-#if 1
+#ifndef ANDROID
 int setdir(const char *path)
 {
 	return chdir(path);
