@@ -24,6 +24,14 @@ struct _img_t {
 };
 #define Surf(p) (((p)?(((img_t)(p))->s):NULL))
 
+#ifndef SDL_malloc
+	#define SDL_malloc malloc
+#endif
+
+#ifndef SDL_free
+	#define SDL_free free
+#endif
+
 static img_t screen = NULL;
 static cache_t images = NULL;
 
