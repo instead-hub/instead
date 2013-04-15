@@ -1772,7 +1772,7 @@ static int instead_platform(void)
 static int instead_package(const char *path)
 {
 	char *p;
-#if definde(_WIN32_WCE) || defined(ANDROID)
+#if definded(_WIN32_WCE) || defined(ANDROID)
 	char stead_path[PATH_MAX * 4] = "package.path=\""; /* wince have not cwd :) */
 	if (path) {
 		strcat(stead_path, path);
