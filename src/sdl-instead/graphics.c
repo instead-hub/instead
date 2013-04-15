@@ -2013,6 +2013,8 @@ no:
 	return (files[0])?1:0;
 }
 
+extern int hinting_sw;
+
 fnt_t fnt_load(const char *fname, int size)
 {
 	TTF_Font *fn;
@@ -2037,8 +2039,24 @@ fnt_t fnt_load(const char *fname, int size)
 		if (!fn && i == 0) /* no regular */
 			goto err;
 #ifdef TTF_HINTING_LIGHT
-		if (fn) /* todo? */
-			TTF_SetFontHinting(fn, TTF_HINTING_LIGHT);
+		if (fn) {
+			switch (hinting_sw) {
+			case 0:
+				TTF_SetFontHinting(fn, TTF_HINTING_NORMAL);
+				break;
+			case 1:
+				TTF_SetFontHinting(fn, TTF_HINTING_LIGHT);
+				break;
+			case 2:
+				TTF_SetFontHinting(fn, TTF_HINTING_MONO);
+				break;
+			case 3:
+				TTF_SetFontHinting(fn, TTF_HINTING_NONE);
+				break;
+			default:
+				break;
+			}
+		}
 #endif
 		h->fonts[i] = fn;
 	}
