@@ -30,6 +30,7 @@ int owntheme_sw = 0;
 int nopause_sw = 0;
 int chunksize_sw = 0;
 int software_sw = 0;
+int hinting_sw = 1;
 
 char *game_sw = NULL;
 char *games_sw = NULL;
@@ -246,11 +247,15 @@ int main(int argc, char *argv[])
 #endif
 		} else if (!strcmp(argv[i], "-quit")) {
 			exit(0);
+		} else if (!strcmp(argv[i], "-hinting")) {
+			if ((i + 1) < argc)
+				hinting_sw = atoi(argv[++i]);
+			else
+				hinting_sw = 1;
 		} else if (argv[i][0] == '-') {
 			fprintf(stderr,"Unknown option: %s\n", argv[i]);
 			exit(1);
-		}
-		else if (!start_idf(argv[i])) {
+		} else if (!start_idf(argv[i])) {
 			fprintf(stderr, "Adding idf: %s\n", argv[i]);
 		}
 #ifdef _USE_UNPACK
