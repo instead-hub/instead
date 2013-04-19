@@ -33,7 +33,11 @@ function font(name, size, scale)
 					self.cache[key] = nil
 				else
 					table.insert(new_list, v)
-					self:cache_add(v.word, v.color, v.t, v.img, nil) -- renew time
+					if v.time ~= -1 then
+						self:cache_add(v.word, v.color, v.t, v.img, nil) -- renew time
+					else
+						self:cache_add(v.word, v.color, v.t, v.img, -1)
+					end
 				end
 			end
 			self.list = new_list
@@ -82,7 +86,7 @@ function font(name, size, scale)
 				s.cache[k].time = stead.time();
 				stead.table.insert(s.list, s.cache[k]);
 			end
-			if not stead.initialized and not time then
+			if not stead.started and not time then
 				time = -1
 			end
 			if time then
