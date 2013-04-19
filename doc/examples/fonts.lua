@@ -27,17 +27,16 @@ function font(name, size, scale)
 				age = 0 
 			end
 			for k,v in ipairs(self.list) do
+				local key = v.word..v.color..tostring(v.t)
 				if v.time ~= -1 and stead.time() - v.time >= age then
 					sprite.free(v.img);
+					self.cache[key] = nil
 				else
 					table.insert(new_list, v)
+					self:cache_add(v.word, v.color, v.t, v.img, nil) -- renew time
 				end
 			end
-			self.list = {}
-			self.cache = {}
-			for k, v in ipairs(new_list) do
-				self:cache_add(v.word, v.color, v.t, v.img, v.time)
-			end
+			self.list = new_list
 		end;
 		life = function(s)
 			if player_moved() then
