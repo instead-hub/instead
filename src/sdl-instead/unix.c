@@ -326,7 +326,7 @@ static char curdir[PATH_MAX];
 int setdir(const char *path)
 {
 	strncpy(curdir, path, sizeof(curdir) - 1);
-	return 0;
+	return chdir(path);
 }
 
 char *getdir(char *path, size_t size)
