@@ -201,7 +201,7 @@ theend = room {
 	nam = 'Gran Finale',
 	dsc = [[Con l'aiuto del menu potete scegliere un gioco, salvare o caricare una partita, oltre a svariate altre cose. Per aprire il menu premete "Esc" o fate click sull'icona di menu in basso a destra.^^
 		Ora siete pronti a giocare. Buona Fortuna!!!^^
-		Scaricate i giochi per INSTEAD qui: ]]..txtu("http://instead.googlecode.com")..[[^^
+		Scaricate i giochi per INSTEAD qui: ]]..txtu("http://instead.sourceforge.net")..[[^^
 		Il tutorial si avvale del brano musicale Instead game-engine di svenzzon.]],
 	obj = { vway('keys', 'Vedi {lista delle scorciatoie da tastiera}.', 'help')},
 };

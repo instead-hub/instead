@@ -91,7 +91,7 @@ OPTIONS
 
        Configuration file name is 'insteadrc' and it's located in ~/.instead/.
 
-       Games  can be downloaded from http://instead.googlecode.com. Unzip them
+       Games  can be downloaded from http://instead-games.sourceforge.net. Unzip them
        in ~/.instead/games.
 
 
@@ -145,7 +145,7 @@ COPYRIGHT AND CREDITS
 
 
 SEE ALSO
-       http://instead.googlecode.com
+       http://instead.sourceforge.net
 
 
 

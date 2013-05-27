@@ -3,7 +3,7 @@ Name:		instead
 Version:	1.9.0
 Release:	1%{?dist}
 License:	GPLv2
-URL:		http://instead.googlecode.com
+URL:		http://instead.sourceforge.net
 Source0:	%{name}_%{version}.tar.gz
 Group:		Amusements/Games
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n) 
