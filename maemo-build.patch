@@ -16,7 +16,7 @@ diff -Nur instead-1.4.1/debian/control instead-1.4.1-maemo/debian/control
 -Build-Depends: debhelper (>= 7), pkg-config, liblua5.1-dev, libsdl1.2-dev, libsdl-ttf2.0-dev, libsdl-image1.2-dev, libsdl-mixer1.2-dev, zlib1g-dev
 +Build-Depends: debhelper (>= 5), pkg-config, liblua5.1-dev, libsdl1.2-dev, libsdl-ttf2.0-dev, libsdl-image1.2-dev, libsdl-mixer1.2-dev, zlib1g-dev
  Standards-Version: 3.8.3
- Homepage: http://instead.googlecode.com
+ Homepage: http://instead.sourceforge.net
  
 @@ -11,4 +11,3 @@
  Depends: ${shlibs:Depends}, ${misc:Depends}

@@ -5,10 +5,10 @@ pkgver=1.9.0
 pkgrel=1
 pkgdesc="instead quest interpreter"
 arch=('i686' 'x86_64')
-url="http://instead.googlecode.com/"
+url="http://instead.sourceforge.net/"
 license=('GPL')
 depends=('sdl_image' 'sdl_mixer' 'sdl_ttf' 'lua')
-source=(http://instead.googlecode.com/files/instead_${pkgver}.tar.gz)
+source=(http://downloads.sourceforge.net/project/instead/instead/1.9.0/instead_${pkgver}.tar.gz)
 md5sums=(MD5SUM)
 
 optdepends=('instead-launcher: install and update INSTEAD games from net')

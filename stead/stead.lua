@@ -3100,7 +3100,7 @@ function stead_version(v)
 	end
 	if stead.version < v then
 		error ([[The game requires instead engine of version ]] ..v.. [[ or higher.
-		http://instead.googlecode.com]], 2)
+		http://instead.sourceforge.net]], 2)
 	end
 	stead.api_version = v
 	if v >= "1.2.0" then
