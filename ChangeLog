@@ -3,6 +3,8 @@
   * INSTEAD moved to sourceforge.net;
   * pt_BR language added;
   * example code fixes;
+  * -hinting option;
+  * fixes in Makefiles and configure script;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 27 May 2013 10:27:00 +0400
 
