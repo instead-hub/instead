@@ -802,7 +802,9 @@ stead.list_del = function(self, name)
 		return nil;
 	end
 	self.__modified__ = true
-	v = stead.table.remove(self, n);
+	if n <= #self then
+		v = stead.table.remove(self, n);
+	end
 	if not v then
 		v = self[n];
 		self[n] = nil -- for spare lists
