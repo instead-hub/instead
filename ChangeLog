@@ -5,6 +5,7 @@
   * example code fixes;
   * -hinting option;
   * fixes in Makefiles and configure script;
+  * lua5.2 fix;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 27 May 2013 10:27:00 +0400
 
