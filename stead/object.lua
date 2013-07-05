@@ -228,8 +228,12 @@ stead.list_add = function(self, name, pos)
 		nam._dynamic_type = true
 	end
 	if tonumber(pos) then
-		stead.table.insert(self, tonumber(pos), nam);
-		self[tonumber(pos)] = nam; -- for spare lists
+		pos = tonumber(pos)
+		if pos <= #self then
+			stead.table.insert(self, pos, nam);
+		else
+			self[pos] = nam; -- for spare lists
+		end
 	else
 		stead.table.insert(self, nam);
 	end
