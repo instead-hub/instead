@@ -2099,7 +2099,7 @@ stead.game_save = function(self, name, file)
 	if name == nil then
 		return nil, false
 	end
-	h = stead.io.open(name,"w");
+	h = stead.io.open(name,"wb");
 	if not h then
 		return nil, false
 	end
@@ -3213,8 +3213,9 @@ stead.objects = function(s)
 				s.objects[key] = v
 				v.key_name = stead.string.format('allocator["objects"][%s]', stead.tostring(key));
 			else
+				local nm = #s.objects + 1 -- here is new index
 				stead.table.insert(s.objects, v);
-				v.key_name = 'allocator["objects"]['..stead.table.maxn(s.objects)..']';
+				v.key_name = 'allocator["objects"]['..tostring(nm)..']';
 			end
 			if stead.api_version >= "1.3.0" then
 				stead.check_object(v.key_name, v)

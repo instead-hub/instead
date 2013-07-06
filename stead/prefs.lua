@@ -16,7 +16,7 @@ prefs = obj {
 	end,
 	save = function(s) -- save prefs on every save
 		local name = instead_savepath() .. '/prefs';
-		local h = stead.io.open(name,"w");
+		local h = stead.io.open(name,"wb");
 		if not h then return false end
 		stead.savemembers(h, s, 'prefs', true);
 		h:flush();
