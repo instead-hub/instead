@@ -116,6 +116,8 @@ int snd_volume_mus(int vol)
 	return Mix_VolumeMusic(vol);
 }
 
+#define MIXER_VERSION_ATLEAST(a,b,c)  (SDL_VERSIONNUM(SDL_MIXER_MAJOR_VERSION, SDL_MIXER_MINOR_VERSION,SDL_MIXER_PATCHLEVEL) >= SDL_VERSIONNUM(a, b, c))
+
 wav_t	snd_load_wav(const char *fname)
 {
 	SDL_RWops *rw;
@@ -161,7 +163,11 @@ mus_t snd_load_mus(const char *fname)
 	mus->rw = RWFromIdf(game_idf, fname);
 	if (!mus->rw) 
 		goto err;
+#if MIXER_VERSION_ATLEAST(2,0,0)
+	mus->mus = Mix_LoadMUS_RW(mus->rw, 0);
+#else
 	mus->mus = Mix_LoadMUS_RW(mus->rw);
+#endif
 	if (!mus->mus)
 		goto err1;
 	return mus;
@@ -249,7 +255,6 @@ int snd_panning(int channel, int left, int right)
 	return Mix_SetPanning(channel, left, right);
 }
 
-#define MIXER_VERSION_ATLEAST(a,b,c)  (SDL_VERSIONNUM(SDL_MIXER_MAJOR_VERSION, SDL_MIXER_MINOR_VERSION,SDL_MIXER_PATCHLEVEL) >= SDL_VERSIONNUM(a, b, c))
 
 void snd_free_mus(mus_t mus)
 {
