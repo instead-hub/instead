@@ -164,7 +164,7 @@ mus_t snd_load_mus(const char *fname)
 	if (!mus->rw) 
 		goto err;
 #if MIXER_VERSION_ATLEAST(2,0,0)
-	mus->mus = Mix_LoadMUS_RW(mus->rw, 0);
+	mus->mus = Mix_LoadMUS_RW(mus->rw, SDL_FALSE);
 #else
 	mus->mus = Mix_LoadMUS_RW(mus->rw);
 #endif
