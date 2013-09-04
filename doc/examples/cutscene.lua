@@ -152,6 +152,7 @@ cutscene = function(v)
 				n = n - 1
 				strip = true
 			elseif c == "pic" then
+				if a == '' then a = nil end
 				self._pic = a
 				strip = true
 			elseif c == "code" then
