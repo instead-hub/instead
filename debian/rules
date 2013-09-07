@@ -36,7 +36,7 @@ build-stamp: configure-stamp
 	rm -rf Rules.make
 	ln -s Rules.make.system Rules.make
 	echo "2" | ./configure.sh
-	LDFLAGS=-lm $(MAKE) PREFIX=/usr BIN=/usr/games DATAPATH=/usr/share/games/instead
+	$(MAKE) PREFIX=/usr BIN=/usr/games DATAPATH=/usr/share/games/instead
 	rm -rf Rules.make
 	#docbook-to-man debian/instead.sgml > instead.1
 	touch $@

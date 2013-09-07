@@ -28,7 +28,7 @@ LDFLAGS += -Wl,-Bstatic \
 	-lSDL_mixer -lSDL -lmad -lvorbisfile -lvorbis -logg \
 	-lSDL_ttf -liconv -lfreetype \
 	-lSDL_image -lz -ljpeg \
-	-lmmtimer -lwince 
+	-lmmtimer -lwince
 
 CC=arm-mingw32ce-gcc
 AR=arm-mingw32ce-ar rc
