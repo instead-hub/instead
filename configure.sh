@@ -95,7 +95,8 @@ if ! $sdl_config --cflags  >/dev/null 2>&1; then
 fi
 echo "ok"
 
-ops=`$lua_cflags`
+ops="$CPPFLAGS $CFLAGS $LDFLAGS"
+ops=$ops" "`$lua_cflags`
 ops=$ops" "`$lua_libs`
 
 echo -n "Looking for compiler..."
