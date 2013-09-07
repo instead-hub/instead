@@ -81,11 +81,11 @@ if ! sdl2-config --version >/dev/null 2>&1; then
 	fi
 	echo "ok"
 	sdl_config="sdl-config"
-	sdl_libs="-lSDL_ttf -lSDL_mixer -lSDL_image"
+	sdl_libs="-lSDL_ttf -lSDL_mixer -lSDL_image -lm"
 else
 	echo "SDL 2.0"
 	sdl_config="sdl2-config"
-	sdl_libs="-lSDL2_ttf -lSDL2_mixer -lSDL2_image"
+	sdl_libs="-lSDL2_ttf -lSDL2_mixer -lSDL2_image -lm"
 fi
 
 echo -n "Checking sdl-config --cflags..."
