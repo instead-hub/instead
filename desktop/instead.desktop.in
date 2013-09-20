@@ -1,6 +1,5 @@
 [Desktop Entry]
-Encoding=UTF-8
-Version=1.9.1
+Version=1.0
 Type=Application
 Name=INSTEAD
 Name[ru]=INSTEAD
@@ -8,7 +7,10 @@ Name[uk]=INSTEAD
 Comment=Simple Text Adventures Interpreter
 Comment[ru]=Интерпретатор простых приключений
 Comment[uk]=Iнтерпретатор простих пригод
+Keywords=game;adventure;quest;
+Keywords[ru]=игра;приключения;квест;
+Keywords[uk]=гра;пригоди;квест;
 Exec=@BIN/sdl-instead
-Icon=sdl_instead.png
+Icon=sdl_instead
 Terminal=false
 Categories=Game;LogicGame;
