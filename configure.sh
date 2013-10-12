@@ -44,29 +44,21 @@ fi
 
 
 
-echo -n "Checking pkg-config --cflags lua[5.1]..."
-if pkg-config --cflags lua5.1 >/dev/null 2>&1; then
-	echo "lua5.1"
-	lua_cflags="pkg-config --cflags lua5.1"	
-	lua_libs="pkg-config --libs lua5.1"	
-elif pkg-config --cflags lua5.2 >/dev/null 2>&1; then
-	echo "lua5.2"
-	lua_cflags="pkg-config --cflags lua5.2"
-	lua_libs="pkg-config --libs lua5.2"
-elif pkg-config --cflags lua >/dev/null 2>&1; then
-	echo "lua"
-	lua_cflags="pkg-config --cflags lua"
-	lua_libs="pkg-config --libs lua"
-elif pkg-config --cflags lua-5.1 >/dev/null 2>&1; then
-	echo "lua-5.1"
-	lua_cflags="pkg-config --cflags lua-5.1"
-	lua_libs="pkg-config --libs lua-5.1"
-elif pkg-config --cflags lua-5.2 >/dev/null 2>&1; then
-	echo "lua-5.2"
-	lua_cflags="pkg-config --cflags lua-5.2"
-	lua_libs="pkg-config --libs lua-5.2"
-else
-	echo "failed: no package lua/lua5.1/lua5.2/lua-5.1/lua-5.2"
+echo -n "Checking pkg-config --cflags lua[5.1|5.2|51|52]..."
+
+lua_ver="lua5.1 lua5.2 lua lua-5.1 lua-5.2 lua51 lua52"
+
+for v in $lua_ver; do
+	if pkg-config --cflags "$v" >/dev/null 2>&1; then
+		echo "$v"
+		lua_cflags="pkg-config --cflags $v"
+		lua_libs="pkg-config --libs $v"
+		break
+	fi
+done
+
+if test "x$lua_libs" = "x"; then
+	echo "failed: no package lua/lua5.1/lua5.2/lua-5.1/lua-5.2/lua51/lua52"
 	echo "Please install lua development package."
 	exit 1
 fi
