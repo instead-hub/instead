@@ -1,6 +1,8 @@
 namespace = function(v)
 	v.ini = function(s, load)
 		local kn = s.key_name
+		local NS = s
+		local obs = {}
 		local function call_key(k, o)
 			o.key_name = k;
 		end
@@ -11,19 +13,27 @@ namespace = function(v)
 			v = stead.par('', v, stead.call(o, 'ini', ...));
 		end
 		for_each(s, kn, function(k, s)
+			if s.key_name then
+				return
+			end
 			if tonumber(k) then
 				k = kn.."["..tonumber(k).."]"
 			else
+				if s.namespace_type then
+					s.namespace_nam = kn.."."..k
+				end
 				k = kn.."["..stead.string.format("%q", k).."]"
 			end
 			if isObject(s) then
 				if not load then
+					stead.table.insert(obs, s)
 					call_key(k, s)
 					stead.check_object(k, s)
 				end
 				call_ini(k, s, load)
 			elseif isCode(k, s) then
 				if not load then
+					stead.table.insert(obs, s)
 					call_codeblock(k, s)
 				end
 			end
@@ -31,6 +41,11 @@ namespace = function(v)
 		function(s)
 			return isObject(s) or isCode(s)
 		end)
+		for k,v in ipairs(obs) do
+			if not v.NS then
+				v.NS = NS
+			end
+		end
 	end
 	v.save = function(self, name, h, need)
 		if need then
@@ -39,6 +54,12 @@ namespace = function(v)
 		end
 		stead.savemembers(h, self, name, need);
 	end
-	v.nam = 'namespace';
+	v.nam = function(s)
+		if s.namespace_nam then
+			return s.namespace_nam
+		end
+		return 'namespace';
+	end;
+	v.namespace_type = true
 	return obj(v)
 end
