@@ -40,6 +40,6 @@ namespace = function(v)
 		stead.savemembers(h, self, name, need);
 	end
 	v.nam = 'namespace';
-	v.system = true
+	v.system_type = true
 	return obj(v)
 end
