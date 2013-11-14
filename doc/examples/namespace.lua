@@ -1,4 +1,5 @@
 namespace = function(v)
+	v.old_ini = v.ini
 	v.ini = function(s, load)
 		local kn = s.key_name
 		local NS = s
@@ -45,6 +46,9 @@ namespace = function(v)
 			if not v.NS then
 				v.NS = NS
 			end
+		end
+		if type(s.old_ini) == 'function' then
+			s:old_ini()
 		end
 	end
 
