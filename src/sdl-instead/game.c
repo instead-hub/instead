@@ -2547,7 +2547,7 @@ int game_click(int x, int y, int action, int filter)
 				scroll_pdown(el_inv);
 			} else if (elem->id == el_iup) {
 				scroll_pup(el_inv);
-			} else if (disable_use());
+			} else disable_use();
 //				el_update(el_inv);
 			motion_mode = 0;
 		} else if (!(was_motion && MOTION_TIME)) { 

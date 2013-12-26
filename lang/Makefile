@@ -4,11 +4,11 @@ include ../config.make
 clean:
 all:
 install:
-	$(INSTALLD) $(LANGPATH)
+	$(INSTALLD) $(DESTDIR)$(LANGPATH)
 	for f in *.ini; do \
-		$(INSTALL) $$f $(LANGPATH)/$$f;\
+		$(INSTALL) $$f $(DESTDIR)$(LANGPATH)/$$f;\
 	done
 
 uninstall:
-	$(RM) -rf $(LANGPATH)
+	$(RM) -rf $(DESTDIR)$(LANGPATH)
 

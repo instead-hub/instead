@@ -220,15 +220,15 @@ elif [ "x$ans" = "x2" ]; then
 	echo " * System version with prefix: $prefix"
 
 	echo "PREFIX=$prefix" >> config.make
-	echo "BIN=\$(DESTDIR)\$(PREFIX)/bin/" >> config.make 
-	echo "DATAPATH=\$(DESTDIR)\$(PREFIX)/share/instead" >> config.make
+	echo "BIN=\$(PREFIX)/bin/" >> config.make 
+	echo "DATAPATH=\$(PREFIX)/share/instead" >> config.make
 	echo "STEADPATH=\$(DATAPATH)/stead" >> config.make
 	echo "THEMESPATH=\$(DATAPATH)/themes" >> config.make
 	echo "GAMESPATH=\$(DATAPATH)/games" >> config.make
-	echo "ICONPATH=\$(DESTDIR)\$(PREFIX)/share/pixmaps" >> config.make
-	echo "DOCPATH=\$(DESTDIR)\$(PREFIX)/share/doc/instead" >> config.make
+	echo "ICONPATH=\$(PREFIX)/share/pixmaps" >> config.make
+	echo "DOCPATH=\$(PREFIX)/share/doc/instead" >> config.make
 	echo "LANGPATH=\$(DATAPATH)/lang" >> config.make
-	echo "MANPATH=\$(DESTDIR)\$(PREFIX)/share/man/man6" >> config.make
+	echo "MANPATH=\$(PREFIX)/share/man/man6" >> config.make
 
 	echo "Ok. We are ready to build and install. Use these commands:"
 	echo "    \$ make"
