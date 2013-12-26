@@ -2,15 +2,15 @@ VERSION := 1.9.1
 
 PREFIX=/usr/local
 DESTDIR=
-BIN=$(DESTDIR)$(PREFIX)/bin/
-DATAPATH=$(DESTDIR)$(PREFIX)/share/instead
+BIN=$(PREFIX)/bin/
+DATAPATH=$(PREFIX)/share/instead
 STEADPATH=$(DATAPATH)/stead
 THEMESPATH=$(DATAPATH)/themes
 GAMESPATH=$(DATAPATH)/games
-ICONPATH=$(DESTDIR)$(PREFIX)/share/pixmaps
-DOCPATH=$(DESTDIR)$(PREFIX)/share/doc/instead
+ICONPATH=$(PREFIX)/share/pixmaps
+DOCPATH=$(PREFIX)/share/doc/instead
 LANGPATH=$(DATAPATH)/lang
-MANPATH=$(DESTDIR)$(PREFIX)/share/man/man6
+MANPATH=$(PREFIX)/share/man/man6
 SYSTEMSETUP=yes
 
 ZLIB_CFLAGS=

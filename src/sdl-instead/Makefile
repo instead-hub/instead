@@ -20,13 +20,13 @@ sdl-instead$(EXE):  $(OBJ) $(RESOURCES)
 	$(CC) $(CFLAGS) $(^) $(LDFLAGS) -o $(@) 
 
 install:
-	$(INSTALLD) $(BIN)
-	$(INSTALLB) sdl-instead$(EXE) $(BIN)/sdl-instead$(EXE)
-	$(LN) sdl-instead$(EXE) $(BIN)/instead$(EXE)
+	$(INSTALLD) $(DESTDIR)$(BIN)
+	$(INSTALLB) sdl-instead$(EXE) $(DESTDIR)$(BIN)/sdl-instead$(EXE)
+	$(LN) sdl-instead$(EXE) $(DESTDIR)$(BIN)/instead$(EXE)
 
 uninstall:
-	$(RM) $(BIN)/sdl-instead$(EXE)
-	$(RM) $(BIN)/instead$(EXE)
+	$(RM) $(DESTDIR)$(BIN)/sdl-instead$(EXE)
+	$(RM) $(DESTDIR)$(BIN)/instead$(EXE)
 
 clean:
 	$(RM) -f *.o sdl-instead$(EXE)

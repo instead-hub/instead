@@ -22,12 +22,12 @@ wiki:
 docs:	wiki man pdf
 
 install:
-	$(INSTALLD) $(DOCPATH)
-	$(INSTALL) *.txt *.html *.pdf $(DOCPATH)
+	$(INSTALLD) $(DESTDIR)$(DOCPATH)
+	$(INSTALL) *.txt *.html *.pdf $(DESTDIR)$(DOCPATH)
 
-	$(INSTALLD) $(MANPATH)
-	$(INSTALL) *.6 $(MANPATH)
+	$(INSTALLD) $(DESTDIR)$(MANPATH)
+	$(INSTALL) *.6 $(DESTDIR)$(MANPATH)
 
 uninstall:
-	$(RM) -rf $(DOCPATH)
-	$(RM) $(MANPATH)/instead.*
+	$(RM) -rf $(DESTDIR)$(DOCPATH)
+	$(RM) $(DESTDIR)$(MANPATH)/instead.*

@@ -8,9 +8,9 @@ instead: instead.c rline.c
 clean:
 	$(RM) -rf *.o instead
 install:
-	$(INSTALLD) $(BIN)
-	$(INSTALLB) instead $(BIN)/instead
+	$(INSTALLD) $(DESTDIR)$(BIN)
+	$(INSTALLB) instead $(DESTDIR)$(BIN)/instead
 
 uninstall:
-	$(RM) $(BIN)/instead
+	$(RM) $(DESTDIR)$(BIN)/instead
 
