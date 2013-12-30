@@ -10,7 +10,6 @@
 #include "sdl_iconv.h"
 #include "internals.h"
 
-extern char *curgame;
 extern char *curgame_dir;
 
 static char local_games_path[PATH_MAX];
