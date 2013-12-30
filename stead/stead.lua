@@ -3251,6 +3251,34 @@ stead.init = function(s)
 		v();
 	end
 end
+
+-- sandbox --
+
+local build_sandbox_open = function(savepath)
+	return stead.hook(io.open, function(f, path, acc, ...)
+		if type(path) ~= 'string' or type(acc) ~= 'string' then -- only write access
+			return true
+		end
+		if not acc:find("w") then -- only write access
+			return true
+		end
+		path = path:gsub("[\\/]+", "/"); -- normalize
+		local spath = savepath:gsub("[\\/]+", "/");
+		local s = path:find(spath, 1, true)
+		if s ~= 1 or path:find("%.%.", 1, true) then
+			error ("Access denied: ".. path, 3);
+			return false
+		end
+		return f(path, acc, ...)
+	end)
+end
+
+io.open = build_sandbox_open(instead_savepath());
+os.execute = nil
+io.popen = nil
+
+-- end of sandbox --
+
 stead:init();
 
 -- those are sill in global space
