@@ -3301,12 +3301,18 @@ local build_sandbox_remove = function(savepath, gamepath)
 	end)
 end
 
-io.open = build_sandbox_open(instead_savepath(), instead_gamepath());
-os.remove = build_sandbox_remove(instead_savepath(), instead_gamepath());
+io.open = build_sandbox_open(instead_savepath()..'/', instead_gamepath()..'/');
+os.remove = build_sandbox_remove(instead_savepath()..'/', instead_gamepath()..'/');
 
 os.rename = nil
-os.execute = nil
-io.popen = nil
+
+os.execute = function(s)
+	print ("Warning: trying to do os.execute: "..s);
+end
+
+io.popen = function(s)
+	print ("Warning: trying to do io.popen: "..s);
+end
 
 end
 -- end of sandbox --
@@ -3367,5 +3373,4 @@ player_moved = stead.player_moved
 rnd = stead.rnd;
 gamefile = stead.gamefile
 time = stead.time
-
 -- vim:ts=4
