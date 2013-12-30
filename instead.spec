@@ -1,6 +1,6 @@
 Summary:	simple text adventures/visual novels engine and game
 Name:		instead
-Version:	1.9.1
+Version:	1.9.2
 Release:	1%{?dist}
 License:	GPLv2
 URL:		http://instead.sourceforge.net
