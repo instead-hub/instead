@@ -3263,10 +3263,17 @@ local build_sandbox_open = function(savepath)
 		if not acc:find("w") then -- only write access
 			return f(path, acc, ...)
 		end
+		if path:find("%.%.", 1, true) then
+			error ("Access denied (write): ".. path, 3);
+			return false
+		end
+		if not path:find("^[/\\]") then
+			return f(path, acc, ...)
+		end
 		path = path:gsub("[\\/]+", "/"); -- normalize
 		local spath = savepath:gsub("[\\/]+", "/");
 		local s = path:find(spath, 1, true)
-		if s ~= 1 or path:find("%.%.", 1, true) then
+		if s ~= 1 then
 			error ("Access denied (write): ".. path, 3);
 			return false
 		end
@@ -3279,10 +3286,17 @@ local build_sandbox_remove = function(savepath)
 		if type(path) ~= 'string' then
 			return f(path, ...)
 		end
+		if path:find("%.%.", 1, true) then
+			error ("Access denied (remove): ".. path, 3);
+			return false
+		end
+		if not path:find("^[/\\]") then
+			return f(path, ...)
+		end
 		path = path:gsub("[\\/]+", "/"); -- normalize
 		local spath = savepath:gsub("[\\/]+", "/");
 		local s = path:find(spath, 1, true)
-		if s ~= 1 or path:find("%.%.", 1, true) then
+		if s ~= 1 then
 			error ("Access denied (remove): ".. path, 3);
 			return false
 		end
