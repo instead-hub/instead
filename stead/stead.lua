@@ -3257,10 +3257,10 @@ end
 local build_sandbox_open = function(savepath)
 	return stead.hook(io.open, function(f, path, acc, ...)
 		if type(path) ~= 'string' or type(acc) ~= 'string' then -- only write access
-			return true
+			return f(path, acc, ...)
 		end
 		if not acc:find("w") then -- only write access
-			return true
+			return f(path, acc, ...)
 		end
 		path = path:gsub("[\\/]+", "/"); -- normalize
 		local spath = savepath:gsub("[\\/]+", "/");
