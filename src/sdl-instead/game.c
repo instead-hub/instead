@@ -159,6 +159,10 @@ int game_select(const char *name)
 			return -1;
 		}
 
+		rc = instead_function("stead:init", NULL); instead_clear();
+		if (rc)
+			return rc;
+
 		if (instead_load(MAIN_FILE)) {
 			curgame_dir = oldgame;
 			return -1;

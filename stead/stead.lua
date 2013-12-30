@@ -3241,21 +3241,10 @@ stead.objects = function(s)
 	};
 end
 
-stead.init = function(s)
-	stead.initialized = false
-	stead.started = false
-	stead:objects();
-	s.functions = {} -- code blocks
-	local k,v
-	for k,v in ipairs(s.modules_ini) do
-		v();
-	end
-end
 
+stead.sandbox = function()
 -- sandbox --
-if true then
-
-local build_sandbox_open = function(savepath)
+local build_sandbox_open = function(savepath, gamepath)
 	return stead.hook(io.open, function(f, path, acc, ...)
 		if type(path) ~= 'string' or type(acc) ~= 'string' then -- only write access
 			return f(path, acc, ...)
@@ -3274,6 +3263,10 @@ local build_sandbox_open = function(savepath)
 		local spath = savepath:gsub("[\\/]+", "/");
 		local s = path:find(spath, 1, true)
 		if s ~= 1 then
+			spath = gamepath:gsub("[\\/]+", "/");
+			s = path:find(spath, 1, true)
+		end
+		if s ~= 1 then
 			error ("Access denied (write): ".. path, 3);
 			return false
 		end
@@ -3281,7 +3274,7 @@ local build_sandbox_open = function(savepath)
 	end)
 end
 
-local build_sandbox_remove = function(savepath)
+local build_sandbox_remove = function(savepath, gamepath)
 	return stead.hook(os.remove, function(f, path, ...)
 		if type(path) ~= 'string' then
 			return f(path, ...)
@@ -3297,6 +3290,10 @@ local build_sandbox_remove = function(savepath)
 		local spath = savepath:gsub("[\\/]+", "/");
 		local s = path:find(spath, 1, true)
 		if s ~= 1 then
+			spath = gamepath:gsub("[\\/]+", "/");
+			s = path:find(spath, 1, true)
+		end
+		if s ~= 1 then
 			error ("Access denied (remove): ".. path, 3);
 			return false
 		end
@@ -3304,8 +3301,8 @@ local build_sandbox_remove = function(savepath)
 	end)
 end
 
-io.open = build_sandbox_open(instead_savepath());
-os.remove = build_sandbox_remove(instead_savepath());
+io.open = build_sandbox_open(instead_savepath(), instead_gamepath());
+os.remove = build_sandbox_remove(instead_savepath(), instead_gamepath());
 
 os.rename = nil
 os.execute = nil
@@ -3314,7 +3311,20 @@ io.popen = nil
 end
 -- end of sandbox --
 
-stead:init();
+stead.init = function(s)
+	stead.initialized = false
+	stead.started = false
+	stead:objects();
+	s.functions = {} -- code blocks
+	local k,v
+	for k,v in ipairs(s.modules_ini) do
+		v();
+	end
+	if type(stead.sandbox) == 'function' then
+		stead.sandbox()
+		stead.sandbox = nil
+	end
+end
 
 -- those are sill in global space
 add_sound = stead.add_sound
