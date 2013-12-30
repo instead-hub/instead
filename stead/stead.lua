@@ -3253,6 +3253,7 @@ stead.init = function(s)
 end
 
 -- sandbox --
+if true then
 
 local build_sandbox_open = function(savepath)
 	return stead.hook(io.open, function(f, path, acc, ...)
@@ -3266,17 +3267,37 @@ local build_sandbox_open = function(savepath)
 		local spath = savepath:gsub("[\\/]+", "/");
 		local s = path:find(spath, 1, true)
 		if s ~= 1 or path:find("%.%.", 1, true) then
-			error ("Access denied: ".. path, 3);
+			error ("Access denied (write): ".. path, 3);
 			return false
 		end
 		return f(path, acc, ...)
 	end)
 end
 
+local build_sandbox_remove = function(savepath)
+	return stead.hook(os.remove, function(f, path, ...)
+		if type(path) ~= 'string' then
+			return f(path, ...)
+		end
+		path = path:gsub("[\\/]+", "/"); -- normalize
+		local spath = savepath:gsub("[\\/]+", "/");
+		local s = path:find(spath, 1, true)
+		if s ~= 1 or path:find("%.%.", 1, true) then
+			error ("Access denied (remove): ".. path, 3);
+			return false
+		end
+		return f(path, ...)
+	end)
+end
+
 io.open = build_sandbox_open(instead_savepath());
+os.remove = build_sandbox_remove(instead_savepath());
+
+os.rename = nil
 os.execute = nil
 io.popen = nil
 
+end
 -- end of sandbox --
 
 stead:init();
