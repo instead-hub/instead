@@ -3244,27 +3244,27 @@ end
 
 stead.sandbox = function()
 -- sandbox --
-local build_sandbox_open = function(savepath, gamepath)
+local build_sandbox_open = function(type, find, gsub, savepath, gamepath)
 	return stead.hook(io.open, function(f, path, acc, ...)
 		if type(path) ~= 'string' or type(acc) ~= 'string' then -- only write access
 			return f(path, acc, ...)
 		end
-		if not acc:find("w") then -- only write access
+		if not find(acc, "w") then -- only write access
 			return f(path, acc, ...)
 		end
-		if path:find("%.%.", 1, true) then
+		if find(path, "%.%.", 1, true) then
 			error ("Access denied (write): ".. path, 3);
 			return false
 		end
-		if not path:find("^[/\\]") then
+		if not find(path, "^[/\\]") then
 			return f(path, acc, ...)
 		end
-		path = path:gsub("[\\/]+", "/"); -- normalize
-		local spath = savepath:gsub("[\\/]+", "/");
-		local s = path:find(spath, 1, true)
+		path = gsub(path, "[\\/]+", "/"); -- normalize
+		local spath = gsub(savepath, "[\\/]+", "/");
+		local s = find(path, spath, 1, true)
 		if s ~= 1 then
-			spath = gamepath:gsub("[\\/]+", "/");
-			s = path:find(spath, 1, true)
+			spath = gsub(gamepath, "[\\/]+", "/");
+			s = find(path, spath, 1, true)
 		end
 		if s ~= 1 then
 			error ("Access denied (write): ".. path, 3);
@@ -3274,24 +3274,24 @@ local build_sandbox_open = function(savepath, gamepath)
 	end)
 end
 
-local build_sandbox_remove = function(savepath, gamepath)
+local build_sandbox_remove = function(type, find, gsub, savepath, gamepath)
 	return stead.hook(os.remove, function(f, path, ...)
 		if type(path) ~= 'string' then
 			return f(path, ...)
 		end
-		if path:find("%.%.", 1, true) then
+		if find(path, "%.%.", 1, true) then
 			error ("Access denied (remove): ".. path, 3);
 			return false
 		end
-		if not path:find("^[/\\]") then
+		if not find(path, "^[/\\]") then
 			return f(path, ...)
 		end
-		path = path:gsub("[\\/]+", "/"); -- normalize
-		local spath = savepath:gsub("[\\/]+", "/");
-		local s = path:find(spath, 1, true)
+		path = gsub(path, "[\\/]+", "/"); -- normalize
+		local spath = gsub(savepath, "[\\/]+", "/");
+		local s = find(path, spath, 1, true)
 		if s ~= 1 then
-			spath = gamepath:gsub("[\\/]+", "/");
-			s = path:find(spath, 1, true)
+			spath = gsub(gamepath, "[\\/]+", "/");
+			s = find(path, spath, 1, true)
 		end
 		if s ~= 1 then
 			error ("Access denied (remove): ".. path, 3);
@@ -3301,8 +3301,10 @@ local build_sandbox_remove = function(savepath, gamepath)
 	end)
 end
 
-io.open = build_sandbox_open(instead_savepath()..'/', instead_gamepath()..'/');
-os.remove = build_sandbox_remove(instead_savepath()..'/', instead_gamepath()..'/');
+io.open = build_sandbox_open(type, string.find, string.gsub, 
+		instead_savepath()..'/', instead_gamepath()..'/');
+os.remove = build_sandbox_remove(type, string.find, string.gsub, 
+		instead_savepath()..'/', instead_gamepath()..'/');
 
 os.rename = nil
 
