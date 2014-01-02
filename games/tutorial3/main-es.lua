@@ -203,7 +203,7 @@ theend = room {
 	nam = 'Ultima lección',
 	dsc = [[Mediante el menú flotante, puedes elegir un juego, salvar o cargar un juego, y un par de cosas más. Para abrirlo presiona "Esc" o haz click en el icono de menú abajo a la derecha.^^
 		Ahora ya estás listo para jugar. Buena suerte!!!^^
-		Descarga nuevos juegos para INSTEAD aquí: ]]..txtu("http://instead.sourceforge.net")..[[^^
+		Descarga nuevos juegos para INSTEAD aquí: ]]..txtu("http://instead-games.sourceforge.net")..[[^^
 		Este tutorial usa el tema Instead game-engine de svenzzon.]],
 	obj = { vway('keys', 'Ver {lista de atajos de teclado}.', 'help')},
 };
