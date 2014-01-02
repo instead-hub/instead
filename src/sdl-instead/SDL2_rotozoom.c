@@ -105,7 +105,7 @@ Assumes dst surface was allocated with the correct dimensions.
 */
 int _shrinkSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int factorx, int factory)
 {
-	int x, y, dx, dy, sgap, dgap, ra, ga, ba, aa;
+	int x, y, dx, dy, dgap, ra, ga, ba, aa;
 	int n_average;
 	tColorRGBA *sp, *osp, *oosp;
 	tColorRGBA *dp;
@@ -121,8 +121,7 @@ int _shrinkSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int factorx, int fa
 	* Scan destination
 	*/
 	sp = (tColorRGBA *) src->pixels;
-	sgap = src->pitch - src->w * 4;
-
+	
 	dp = (tColorRGBA *) dst->pixels;
 	dgap = dst->pitch - dst->w * 4;
 
@@ -194,7 +193,7 @@ Assumes dst surface was allocated with the correct dimensions.
 */
 int _shrinkSurfaceY(SDL_Surface * src, SDL_Surface * dst, int factorx, int factory)
 {
-	int x, y, dx, dy, sgap, dgap, a;
+	int x, y, dx, dy, dgap, a;
 	int n_average;
 	Uint8 *sp, *osp, *oosp;
 	Uint8 *dp;
@@ -210,7 +209,6 @@ int _shrinkSurfaceY(SDL_Surface * src, SDL_Surface * dst, int factorx, int facto
 	* Scan destination
 	*/
 	sp = (Uint8 *) src->pixels;
-	sgap = src->pitch - src->w;
 
 	dp = (Uint8 *) dst->pixels;
 	dgap = dst->pitch - dst->w;
@@ -747,7 +745,7 @@ Assumes dst surface was allocated with the correct dimensions.
 */
 void transformSurfaceY(SDL_Surface * src, SDL_Surface * dst, int cx, int cy, int isin, int icos, int flipx, int flipy)
 {
-	int x, y, dx, dy, xd, yd, sdx, sdy, ax, ay, sw, sh;
+	int x, y, dx, dy, xd, yd, sdx, sdy, ax, ay;
 	tColorY *pc, *sp;
 	int gap;
 
@@ -758,8 +756,6 @@ void transformSurfaceY(SDL_Surface * src, SDL_Surface * dst, int cx, int cy, int
 	yd = ((src->h - dst->h) << 15);
 	ax = (cx << 16) - (icos * cx);
 	ay = (cy << 16) - (isin * cx);
-	sw = src->w - 1;
-	sh = src->h - 1;
 	pc = (tColorY*) dst->pixels;
 	gap = dst->pitch - dst->w;
 	/*
@@ -792,11 +788,11 @@ void transformSurfaceY(SDL_Surface * src, SDL_Surface * dst, int cx, int cy, int
 }
 
 /*!
-\brief Rotates a 32 bit surface in increments of 90 degrees.
+\brief Rotates a 8/16/24/32 bit surface in increments of 90 degrees.
 
 Specialized 90 degree rotator which rotates a 'src' surface in 90 degree 
 increments clockwise returning a new surface. Faster than rotozoomer since
-not scanning or interpolation takes place. Input surface must be 32 bit.
+no scanning or interpolation takes place. Input surface must be 8/16/24/32 bit.
 (code contributed by J. Schiller, improved by C. Allport and A. Schiffler)
 
 \param src Source surface to rotate.
@@ -807,13 +803,17 @@ not scanning or interpolation takes place. Input surface must be 32 bit.
 SDL_Surface* rotateSurface90Degrees(SDL_Surface* src, int numClockwiseTurns) 
 {
 	int row, col, newWidth, newHeight;
-	int bpp, src_ipr, dst_ipr;
+	int bpp;
 	SDL_Surface* dst;
-	Uint32* srcBuf;
-	Uint32* dstBuf;
+	Uint8* srcBuf;
+	Uint8* dstBuf;
 
-	/* Has to be a valid surface pointer and only 32-bit surfaces (for now) */
-	if (!src || src->format->BitsPerPixel != 32) { return NULL; }
+	/* Has to be a valid surface pointer and be a 8/16/24/32-bit surface */
+	if (!src || !src->format ||
+		 !(src->format->BitsPerPixel == 8) || 
+		  (src->format->BitsPerPixel == 16) ||
+		  (src->format->BitsPerPixel == 24) ||
+		  (src->format->BitsPerPixel == 32)) { return NULL; }
 
 	/* normalize numClockwiseTurns */
 	while(numClockwiseTurns < 0) { numClockwiseTurns += 4; }
@@ -831,17 +831,15 @@ SDL_Surface* rotateSurface90Degrees(SDL_Surface* src, int numClockwiseTurns)
 		return NULL;
 	}
 
-	if (SDL_MUSTLOCK(dst)) {
-		SDL_LockSurface(dst);
+	if (SDL_MUSTLOCK(src)) {
+		SDL_LockSurface(src);
 	}
 	if (SDL_MUSTLOCK(dst)) {
 		SDL_LockSurface(dst);
 	}
 
-	/* Calculate int-per-row */
+	/* Calculate byte-per-pixel */
 	bpp = src->format->BitsPerPixel / 8;
-	src_ipr = src->pitch / bpp;
-	dst_ipr = dst->pitch / bpp;
 
 	switch(numClockwiseTurns) {
 	case 0: /* Make a copy of the surface */
@@ -856,12 +854,12 @@ SDL_Surface* rotateSurface90Degrees(SDL_Surface* src, int numClockwiseTurns)
 			else
 			{
 				/* If the pitch differs, copy each row separately */
-				srcBuf = (Uint32*)(src->pixels); 
-				dstBuf = (Uint32*)(dst->pixels);
+				srcBuf = (Uint8*)(src->pixels);
+				dstBuf = (Uint8*)(dst->pixels);
 				for (row = 0; row < src->h; row++) {
 					memcpy(dstBuf, srcBuf, dst->w * bpp);
-					srcBuf += src_ipr;
-					dstBuf += dst_ipr;
+					srcBuf += src->pitch;
+					dstBuf += dst->pitch;
 				} /* end for(col) */
 			} /* end for(row) */
 		}
@@ -871,42 +869,40 @@ SDL_Surface* rotateSurface90Degrees(SDL_Surface* src, int numClockwiseTurns)
 	case 1: /* rotated 90 degrees clockwise */
 		{
 			for (row = 0; row < src->h; ++row) {
-				srcBuf = (Uint32*)(src->pixels) + (row * src_ipr);
-				dstBuf = (Uint32*)(dst->pixels) + (dst->w - row - 1);
+				srcBuf = (Uint8*)(src->pixels) + (row * src->pitch);
+				dstBuf = (Uint8*)(dst->pixels) + (dst->w - row - 1) * bpp;
 				for (col = 0; col < src->w; ++col) {
-					*dstBuf = *srcBuf;
-					++srcBuf;
-					dstBuf += dst_ipr;
+					memcpy (dstBuf, srcBuf, bpp);
+					srcBuf += bpp;
+					dstBuf += dst->pitch;
 				} 
-				/* end for(col) */
 			} 
-			/* end for(row) */
 		}
 		break;
 
 	case 2: /* rotated 180 degrees clockwise */
 		{
 			for (row = 0; row < src->h; ++row) {
-				srcBuf = (Uint32*)(src->pixels) + (row * src_ipr);
-				dstBuf = (Uint32*)(dst->pixels) + ((dst->h - row - 1) * dst_ipr) + (dst->w - 1);
+				srcBuf = (Uint8*)(src->pixels) + (row * src->pitch);
+				dstBuf = (Uint8*)(dst->pixels) + ((dst->h - row - 1) * dst->pitch) + (dst->w - 1) * bpp;
 				for (col = 0; col < src->w; ++col) {
-					*dstBuf = *srcBuf;
-					++srcBuf;
-					--dstBuf;
+					memcpy (dstBuf, srcBuf, bpp);
+					srcBuf += bpp;
+					dstBuf -= bpp;
 				} 
 			} 
 		}
 		break;
 
-	case 3:
+	case 3: /* rotated 270 degrees clockwise */
 		{
 			for (row = 0; row < src->h; ++row) {
-				srcBuf = (Uint32*)(src->pixels) + (row * src_ipr);
-				dstBuf = (Uint32*)(dst->pixels) + row + ((dst->h - 1) * dst_ipr);
+				srcBuf = (Uint8*)(src->pixels) + (row * src->pitch);
+				dstBuf = (Uint8*)(dst->pixels) + row + ((dst->h - 1) * dst->pitch);
 				for (col = 0; col < src->w; ++col) {
 					*dstBuf = *srcBuf;
-					++srcBuf;
-					dstBuf -= dst_ipr;
+					srcBuf += bpp;
+					dstBuf -= dst->pitch;
 				} 
 			} 
 		}
