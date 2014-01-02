@@ -8,6 +8,7 @@ game.gui = {
 	hinv_delim = ' | ';
 	hideways = false;
 	hideinv = false;
+	hidetitle = false;
 }
 
 iface.xref = function(self, str, obj, ...)
@@ -183,7 +184,13 @@ instead.get_ways = function()
 end
 
 instead.get_title = function()
+	local r = stead.call_value(game.gui, 'hidetitle');
+	if r then
+		return
+	end
+
 	local s
+
 	if stead.api_version >= "1.2.0" then
 		s = stead.dispof(stead.here());
 	else
