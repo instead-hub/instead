@@ -241,11 +241,14 @@ int debug_init(void)
 	SetConsoleTitle("Debug");
 	freopen("CON", "w", stdout); //Map stdout
 	freopen("CON", "w", stderr); //Map stderr
+	freopen("CON", "r", stdin); //Map stdin
 	return 0;
 }
 
 void debug_done()
 {
+	fprintf(stderr, "Press enter to close the console.\n");
+	fgetc(stdin);
 	FreeConsole();
 }
 #ifdef _USE_BROWSE
