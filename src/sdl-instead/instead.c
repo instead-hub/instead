@@ -394,7 +394,8 @@ int instead_load(char *game)
 int instead_loadscript(char *name, int argc, char **argv, int exec)
 {
 	int status;
-	instead_getargs(argv, argc);
+	if (exec)
+		instead_getargs(argv, argc);
 	status = luaL_loadfile(L, name);
 	if (!status) {
 		if (exec) {
