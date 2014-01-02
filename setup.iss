@@ -1,8 +1,8 @@
 [Setup]
 AppName=INSTEAD
 AppVerName=INSTEAD 1.9.2
-DefaultDirName={pf}\Pinebrush games\INSTEAD
-DefaultGroupName=Pinebrush games
+DefaultDirName={pf}\Games\INSTEAD
+DefaultGroupName=Games
 UninstallDisplayIcon={app}\sdl-instead.exe
 OutputDir=.
 OutputBaseFilename=instead-1.9.2
@@ -54,7 +54,7 @@ Name: {group}\{cm:UninstallMsg}; Filename: {uninstallexe}
 
 [UninstallDelete]
 Name: {app}; Type: dirifempty
-Name: {pf}\Pinebrush games; Type: dirifempty
+Name: {pf}\Games; Type: dirifempty
 
 [Registry]
 Root: HKCR; Subkey: ".idf"; ValueType: string; ValueName: ""; ValueData: "INSTEAD"; Flags: uninsdeletevalue
