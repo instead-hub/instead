@@ -193,8 +193,13 @@ echo "LUA_LFLAGS=\$(shell $lua_libs)" >> config.make
 echo "SDL_CFLAGS=\$(shell $sdl_config --cflags)" >> config.make
 echo "SDL_LFLAGS=\$(shell $sdl_config --libs) $sdl_libs" >> config.make
 echo "ok"
-echo -n "Choose installation mode. Standalone(1) or system(2) [1]: "
-read ans
+if [ "x$PREFIX" = "x" ]; then
+	echo -n "Choose installation mode. Standalone(1) or system(2) [1]: "
+	read ans
+else
+	ans="2"
+fi
+
 if [ "x$ans" = "x1" -o "x$ans" = "x" ]; then
 	echo " * Standalone version"
 	rm -f Rules.make
@@ -205,8 +210,12 @@ if [ "x$ans" = "x1" -o "x$ans" = "x" ]; then
 	echo "    \$ make"
 	echo "    \$ ./sdl-instead"
 elif [ "x$ans" = "x2" ]; then
-	echo -n "Enter prefix path [/usr/local]: "
-	read ans
+	if [ "x$PREFIX" = "x" ]; then
+		echo -n "Enter prefix path [/usr/local]: "
+		read ans
+	else
+		ans="$PREFIX"
+	fi
 
 	if [ "x$ans" = "x" ]; then
 		prefix="/usr/local"
