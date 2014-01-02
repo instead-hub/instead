@@ -72,17 +72,17 @@ static int traceback (lua_State *L)
 	return 1;
 }
 #endif
-static int docall (lua_State *L) 
+static int docall (lua_State *L, int narg) 
 {
 	int status;
 	int base = 0; 	
 	if (debug_sw) {
-		base = lua_gettop(L);  /* function index */
+		base = lua_gettop(L) - narg;  /* function index */
 		lua_pushcfunction(L, traceback);  /* push traceback function */
 		lua_insert(L, base);  /* put it under chunk and args */
 	}
 	busy ++;
-	status = lua_pcall(L, 0, LUA_MULTRET, base);
+	status = lua_pcall(L, narg, LUA_MULTRET, base);
 	busy --;
 	if (debug_sw)
 		lua_remove(L, base);  /* remove traceback function */
@@ -93,7 +93,7 @@ static int docall (lua_State *L)
 }
 
 static int dofile (lua_State *L, const char *name) {
-	int status = luaL_loadfile(L, name) || docall(L);
+	int status = luaL_loadfile(L, name) || docall(L, 0);
 	return report(L, status);
 }
 
@@ -110,15 +110,15 @@ static const char *idf_reader(lua_State *L, void *data, size_t *size)
 
 static int dofile_idf (lua_State *L, idff_t idf, const char *name) {
 #if LUA_VERSION_NUM >= 502
-	int status = lua_load(L, idf_reader, idf, name, "bt") || docall(L);
+	int status = lua_load(L, idf_reader, idf, name, "bt") || docall(L, 0);
 #else
-	int status = lua_load(L, idf_reader, idf, name) || docall(L);
+	int status = lua_load(L, idf_reader, idf, name) || docall(L, 0);
 #endif
 	return report(L, status);
 }
 
 static int dostring (lua_State *L, const char *s) {
-	int status = luaL_loadstring(L, s) || docall(L);
+	int status = luaL_loadstring(L, s) || docall(L, 0);
 	return report(L, status);
 }
 
@@ -353,6 +353,23 @@ char *togame(const char *s)
 }
 #endif
 
+static int instead_getargs (char **argv, int n)
+{
+	int i;
+
+	for (i = 0; i < n; i++) {
+		lua_pushstring(L, argv[i]);
+	}
+
+	lua_createtable(L, n, 0);
+	for (i = 0; i < n; i++) {
+		lua_pushstring(L, argv[i]);
+		lua_rawseti(L, -2, i + 1);
+	}
+	lua_setglobal(L, "arg");
+	return 0;
+}
+
 int instead_load(char *game)
 {
 	idff_t idf = idf_open(game_idf, game);
@@ -372,6 +389,22 @@ int instead_load(char *game)
 	instead_clear();
 #endif
 	return 0;
+}
+
+int instead_loadscript(char *name, int argc, char **argv, int exec)
+{
+	int status;
+	instead_getargs(argv, argc);
+	status = luaL_loadfile(L, name);
+	if (!status) {
+		if (exec) {
+			lua_insert(L, -(argc + 1));
+			status |= docall(L, argc);
+		}
+	}
+	status = report(L, status);
+	instead_clear();
+	return status;
 }
 
 typedef struct LoadF {

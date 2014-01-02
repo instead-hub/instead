@@ -32,6 +32,8 @@ int chunksize_sw = 0;
 int software_sw = 0;
 int hinting_sw = 1;
 
+static int opt_index = 0;
+
 char *game_sw = NULL;
 char *games_sw = NULL;
 char *theme_sw = NULL;
@@ -42,6 +44,9 @@ char *mode_sw = NULL;
 char *appdata_sw = NULL;
 char *idf_sw = NULL;
 char *start_idf_sw = NULL;
+char *lua_sw = NULL;
+static int lua_exec = 1;
+
 #ifdef _USE_UNPACK
 extern int unpack(const char *zipfilename, const char *where);
 extern char zip_game_dirname[];
@@ -252,6 +257,16 @@ int main(int argc, char *argv[])
 				hinting_sw = atoi(argv[++i]);
 			else
 				hinting_sw = 1;
+		} else if (!strcmp(argv[i], "-lua") || !strcmp(argv[i], "-luac")) {
+			if ((i + 1) < argc) {
+				lua_exec = !strcmp(argv[i], "-lua");
+				lua_sw = argv[++ i];
+				opt_index = i + 1;
+				break;
+			} else {
+				fprintf(stderr, "No lua script.\n");
+				exit(1);
+			}
 		} else if (argv[i][0] == '-') {
 			fprintf(stderr,"Unknown option: %s\n", argv[i]);
 			exit(1);
@@ -281,9 +296,23 @@ int main(int argc, char *argv[])
 		goto out;
 	}
 
+	if (lua_sw) {
+		err = instead_init(dirname(lua_sw));
+		if (err)
+			goto out;
+		err = instead_function("stead:init", NULL); instead_clear();
+		if (!err)
+			err = instead_loadscript(lua_sw,
+				argc - opt_index,
+				argv + opt_index,
+				lua_exec);
+		instead_done();
+		goto out;
+	}
+
 	if (encode_sw) {
 		err = instead_encode(encode_sw, encode_output);
-		goto out;		
+		goto out;
 	}
 
 	if (idf_sw) {

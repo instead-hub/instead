@@ -300,6 +300,8 @@ int cache_add(cache_t cache, const char *name, void *p)
 void cache_shrink(cache_t cache)
 {
 	__cache_t *c = cache;
+	if (!c)
+		return;
 	if (c->auto_grow && c->max_size > 2*c->used)
 		c->max_size = c->used + c->used / 2;
 	__cache_shrink(c);
