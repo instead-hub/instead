@@ -297,11 +297,9 @@ int main(int argc, char *argv[])
 	}
 
 	if (lua_sw) {
-		err = instead_init(dirname(lua_sw));
+		err = instead_init_lua(dirname(lua_sw));
 		if (err)
 			goto out;
-		setdir(dirname(lua_sw));
-		err = instead_function("stead:init", NULL); instead_clear();
 		if (!err)
 			err = instead_loadscript(lua_sw,
 				argc - opt_index,

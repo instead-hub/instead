@@ -1843,7 +1843,7 @@ static int instead_package(const char *path)
 	return 0;
 }
 
-int instead_init(const char *path)
+int instead_init_lua(const char *path)
 {
 	busy = 0;
 	setlocale(LC_ALL,"");
@@ -1874,6 +1874,13 @@ int instead_init(const char *path)
 	instead_package(path);
 	instead_platform();
 	instead_lang();
+	return 0;
+}
+
+int instead_init(const char *path)
+{
+	if (instead_init_lua(path))
+		return -1;
 
 	if (dofile(L, dirpath(STEAD_PATH"/stead.lua"))) {
 		return -1;
@@ -1886,7 +1893,6 @@ int instead_init(const char *path)
 	/* cleanup Lua */
 	instead_clear();
 	srand(time(NULL));
-	return 0;
 }
 
 void instead_done(void)
