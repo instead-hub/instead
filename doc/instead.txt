@@ -13,14 +13,13 @@ DESCRIPTION
 
 	* very simple source code of the stories. (based on LUA);
 
-	* the ability to use graphical or textual (readline) game interface;
+	* graphical game interface;
 
-	* graphic interface supports music and images;
+	* supports music and images;
 
-	*  graphic interpreter theme support - a game may change the interface
-       look;
+	* theme support - a game may change the interface look;
 
-	* portability (originally written for Linux, depends on SDL and lua).
+	*  portability (originally written for Linux, depends on SDL and lua).
 
 
 SYNOPSIS
@@ -53,6 +52,9 @@ OPTIONS
        -theme <basename>
 	      Select theme in themespath.
 
+       -owntheme
+	      Force game to use own theme.
+
        -fullscreen
 	      Run the game in fullscreen mode.
 
@@ -63,7 +65,7 @@ OPTIONS
 	      Disable autosave/autoload.
 
        -encode <lua file> [encoded file]
-	      Encode lua file.	Encoded  file  can  be	executed  with	doenc‐
+	      Encode  lua  file.  Encoded  file  can  be  executed with doenc-
 	      file("encoded file").
 
        -idf <path to resources directory or game>
@@ -72,8 +74,14 @@ OPTIONS
        -mode [WxH]
 	      Use WxH resolution.
 
+       -software
+	      Force software rendering
+
        -nopause
 	      Do not pause the game on window minimize.
+
+       -hinting 0|1|2|3
+	      Set the font hinting mode.
 
        -install [game in zip]
 	      Install game from zip archive
@@ -89,9 +97,16 @@ OPTIONS
        -version
 	      Show version and exit.
 
+       -lua <script.lua> [arguments]
+	      Exec lua script (for game developers).
+
+       -luac <script.lua>
+	      Check lua script (for game developers).
+
+
        Configuration file name is 'insteadrc' and it's located in ~/.instead/.
 
-       Games  can be downloaded from http://instead-games.sourceforge.net. Unzip them
+       Games can be downloaded from http://instead.sourceforge.net. Unzip them
        in ~/.instead/games.
 
 
