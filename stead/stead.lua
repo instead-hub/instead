@@ -1765,15 +1765,35 @@ stead.do_ini = function(self, load)
 	game.pl = stead.deref(game.pl);
 	stead.me().where = stead.deref(stead.me().where);
 --	game.where = stead.deref(game.where);
+
+	local objects = {}
+	local i, o
+
+	if not load then compat_api() end
+
+	for_everything(function(k, s)
+		if isObject(s) then
+			stead.table.insert(objects, {k, s})
+			if not load then
+				call_key(k, s)
+			end
+		elseif not load and isCode(s) then
+			call_codekey(k, s)
+		end
+	end)
+
 	if not load then
-		compat_api()
-		for_each_object(call_key);
-		for_each_codeblock(call_codekey);
-		for_each_object(stead.check_object);
 		call_key("game", game);
+		for i, o in ipairs(objects) do
+			stead.check_object(o[1], o[2]);
+		end
 		for_each(game, "game", stead.check_list, isList, stead.deref(game))
 	end
-	for_each_object(call_ini, load);
+
+	for i, o in ipairs(objects) do
+		call_ini(o[1], o[2], load);
+	end
+
 	stead.me():tag();
 	if not self.showlast then
 		self._lastdisp = nil;
@@ -2057,7 +2077,6 @@ stead.do_savegame = function(s, h)
 	local function save_object(key, value, h)
 		stead.busy(true)
 		stead.savevar(h, value, key, false);
-		return true;
 	end
 	local function save_var(key, value, h)
 		stead.busy(true)
@@ -2072,7 +2091,7 @@ stead.do_savegame = function(s, h)
 	end
 	save_object('allocator', allocator, h); -- always first!
 	for_each_object(save_object, h);
-	save_object('game', self, h);
+	save_object('game', s, h);
 	for_everything(save_var, h);
 --	save_object('_G', _G, h);
 	stead.clearvar(_G);
