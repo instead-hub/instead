@@ -3260,7 +3260,7 @@ local build_sandbox_open = function(type, find, gsub, savepath, gamepath)
 		if not find(acc, "w") then -- only write access
 			return f(path, acc, ...)
 		end
-		if find(path, "%.%.", 1, true) then
+		if find(path, "..", 1, true) then
 			error ("Access denied (write): ".. path, 3);
 			return false
 		end
@@ -3287,7 +3287,7 @@ local build_sandbox_remove = function(type, find, gsub, savepath, gamepath)
 		if type(path) ~= 'string' then
 			return f(path, ...)
 		end
-		if find(path, "%.%.", 1, true) then
+		if find(path, "..", 1, true) then
 			error ("Access denied (remove): ".. path, 3);
 			return false
 		end
