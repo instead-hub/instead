@@ -16,7 +16,15 @@ Change current dir to project's build dir:
 
 There are several ways to build package.
 
-1) On Debian based systems you can build deb package
+1) On Ubuntu
+============
+Install stable (old) version from repo:
+	$ apt-get install instead
+
+Or use ppa with latest version:
+	http://launchpad.net/~instead/+archive/ppa
+
+2) On Debian based systems you can build deb package
 ====================================================
 	$ sudo apt-get install liblua5.1-dev libreadline-dev libsdl1.2-dev libsdl-ttf2.0-dev libsdl-image1.2-dev libsdl-mixer1.2-dev
 	$ sudo apt-get install build-essential debhelper
@@ -24,10 +32,10 @@ There are several ways to build package.
 	$ cd ..
 	$ sudo dpkg -i instead_<version>.deb
 
-2) On gentoo or arch linux 
-==========================
-Install stable version from AUR:
-	$ yaourt -S instead
+3) On arch linux
+================
+Install stable version from community:
+	$ pacman -S instead
 
 Or build from svn:
 	$ make PKGBUILD
@@ -35,10 +43,10 @@ Or build from svn:
 
 And, I think, you have enough skills to build package yourself. ;)
 
-3) On FreeBSD
-==============
-Install instead from ports:
-	# pkg_add -r instead
+4) On FreeBSD
+=============
+Install instead from ports with pkgng:
+	# pkg install instead
 Or:
 	# cd /usr/ports/games/instead
 	# make install
@@ -47,14 +55,18 @@ Or build from tarball:
 	$ ./configure.sh
 	$ gmake
 
-4) For other distributions 
+5) On RPM based system
+======================
+There is .spec file in tarball.
+
+6) For other distributions 
 ==========================
 You have a two choices:
 	a) try run ./configure.sh and follow instructions
 or
 	b) do all things manually
 
-5) Manual build
+7) Manual build
 ===============
 
 To build game, that runs just from build dir use Rules.make.standalone
