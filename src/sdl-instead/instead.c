@@ -1893,6 +1893,7 @@ int instead_init(const char *path)
 	/* cleanup Lua */
 	instead_clear();
 	srand(time(NULL));
+	return 0;
 }
 
 void instead_done(void)
