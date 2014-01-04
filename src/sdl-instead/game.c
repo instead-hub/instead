@@ -477,7 +477,7 @@ int game_load(int nr)
 		char sav[PATH_MAX];
 		strcpy(sav, s);
 		snprintf(cmd, sizeof(cmd) - 1, "load %s", s);
-		game_cmd(cmd, 0);
+		game_cmd(cmd, GAME_CMD_FILE);
 		if (nr == -1)
 			unlink(sav);
 		return 0;
@@ -527,7 +527,7 @@ int game_save(int nr)
 			instead_clear();
 		}
 		snprintf(cmd, sizeof(cmd) - 1, "save %s", s);
-		p = instead_cmd(cmd);
+		p = instead_file_cmd(cmd);
 		if (p)
 			free(p);
 		if (!instead_bretval(1) || (!p && err_msg)) {
@@ -1927,7 +1927,7 @@ static void game_redraw_pic(void)
 static xref_t hl_xref = NULL;
 static struct el *hl_el = NULL;
 
-int game_cmd(char *cmd, int click)
+int game_cmd(char *cmd, int flags)
 {
 	int		old_off;
 	int		fading = 0;
@@ -1951,12 +1951,15 @@ int game_cmd(char *cmd, int click)
 
 //	if (dd)
 		game_cursor(CURSOR_CLEAR);
-
-	cmdstr = instead_cmd(cmd); rc = !instead_bretval(1); instead_clear();
+	if (flags & GAME_CMD_FILE) /* file command */
+		cmdstr = instead_file_cmd(cmd); 
+	else
+		cmdstr = instead_cmd(cmd);
+	rc = !instead_bretval(1); instead_clear();
 	game_music_player();
 	game_sound_player();
 
-	if (opt_click && click && !rc)
+	if (opt_click && (flags & GAME_CMD_CLICK) && !rc)
 		sound_play(game_theme.click, -1, 1);
 
 	if (DIRECT_MODE) {
@@ -1987,7 +1990,7 @@ int game_cmd(char *cmd, int click)
 			game_redraw_pic();
 		if (!rc) {
 			if (hl_el == el(el_inv)) {
-				m_restore = !click;
+				m_restore = !(flags & GAME_CMD_CLICK);
 				mouse_reset(0);
 			}
 			goto inv; /* hackish? ok, yes  it is... */
@@ -1995,7 +1998,7 @@ int game_cmd(char *cmd, int click)
 		goto err; /* really nothing to do */ 
 	}
 
-	m_restore = !click;
+	m_restore = !(flags & GAME_CMD_CLICK);
 	mouse_reset(0); /* redraw all, so, reset mouse */
 
 	fading = check_fading(&new_scene);
@@ -2603,7 +2606,7 @@ int game_click(int x, int y, int action, int filter)
 			snprintf(buf, sizeof(buf), "%s", xref_get_text(xref));
 		if (mouse_filter(filter))
 			return 0;
-		game_cmd(buf, 1);
+		game_cmd(buf, GAME_CMD_CLICK);
 		return 1;
 	}	
 
@@ -2623,7 +2626,7 @@ int game_click(int x, int y, int action, int filter)
 		
 	disable_use();
 
-	game_cmd(buf, 1);
+	game_cmd(buf, GAME_CMD_CLICK);
 	return 1;
 }
 
@@ -3159,7 +3162,7 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 	if (!p)
 		return -1;
 
-	rc = game_cmd(p, mb != -1); free(p);
+	rc = game_cmd(p, (mb != -1)?GAME_CMD_CLICK:0); free(p);
 
 	return (rc)?-1:0;
 }

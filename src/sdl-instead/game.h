@@ -60,7 +60,11 @@ extern int 	game_error(void);
 
 extern int	game_restart(void);
 extern int	game_select(const char *name);
-extern int	game_cmd(char *cmd, int click);
+
+#define GAME_CMD_CLICK 1
+#define GAME_CMD_FILE  2
+
+extern int	game_cmd(char *cmd, int flags);
 
 extern void	game_menu(int nr); /* select and show menu */
 extern void	game_menu_box(int show, const char *txt); /* show menu */

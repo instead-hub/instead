@@ -15,6 +15,7 @@ extern int  instead_init(const char *path);
 extern int  instead_load(char *game);
 extern void instead_done(void);
 extern char *instead_cmd(char *s);
+extern char *instead_file_cmd(char *s);
 extern int  instead_function(char *s, struct instead_args *args);
 extern int  instead_eval(char *s);
 extern int  instead_clear(void);
