@@ -8,8 +8,26 @@ Check the INSTALL file for install instructions.
 
 Web resources:
 	http://instead.syscall.ru/forum
-	http://instead.sourceforge.net/
-	http://instead-games.sourceforge.net/
+	http://instead.sourceforge.net
+	http://instead-launcher.googlecode.com
+
+Games:
+	http://instead-games.sourceforge.net
+	http://instead-games.ru
+
+To install games you may:
+	Unzip game archive into ~/.instead/games/
+or:
+	$ instead <game.zip>
+or:
+	Use instead-launcher
+or:
+	press [f4] to open file dialog (build with gtk)
+
+Documentaion for game developers:
+	See the doc/ directory or wiki: 
+		http://instead.syscall.ru/wiki
+	$ man instead
 
 XMPP conference:
 	instead@conference.jabber.ru
