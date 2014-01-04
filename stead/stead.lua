@@ -1766,33 +1766,22 @@ stead.do_ini = function(self, load)
 	stead.me().where = stead.deref(stead.me().where);
 --	game.where = stead.deref(game.where);
 
-	local objects = {}
-	local i, o
+	if not load then 
+		compat_api()
 
-	if not load then compat_api() end
-
-	for_everything(function(k, s)
-		if isObject(s) then
-			stead.table.insert(objects, {k, s})
-			if not load then
+		for_everything(function(k, s)
+			if isObject(s) then
 				call_key(k, s)
+			elseif isCode(s) then
+				call_codekey(k, s)
 			end
-		elseif not load and isCode(s) then
-			call_codekey(k, s)
-		end
-	end)
-
-	if not load then
+		end)
+		for_each_object(stead.check_object);
 		call_key("game", game);
-		for i, o in ipairs(objects) do
-			stead.check_object(o[1], o[2]);
-		end
 		for_each(game, "game", stead.check_list, isList, stead.deref(game))
 	end
 
-	for i, o in ipairs(objects) do
-		call_ini(o[1], o[2], load);
-	end
+	for_each_object(call_ini, load);
 
 	stead.me():tag();
 	if not self.showlast then
