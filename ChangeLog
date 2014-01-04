@@ -7,7 +7,7 @@
   * -lua and -luac parameters;
   * in windows do not close -debug console until press return;
   * game.gui.hidetitle;
-  
+
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 30 Dec 2013 18:56:00 +0400
 
 1.9.1
