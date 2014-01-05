@@ -3275,7 +3275,7 @@ local check_path = function(type, find, gsub, savepath, gamepath, path)
 	return true
 end
 
-local build_sandbox_open = function(type, find, gsub, savepath, gamepath)
+local build_sandbox_open = function(error, type, find, gsub, savepath, gamepath)
 	return stead.hook(io.open, function(f, path, acc, ...)
 		if type(acc) ~= 'string' or not find(acc, "w") then -- only write access
 			return f(path, acc, ...)
@@ -3288,7 +3288,7 @@ local build_sandbox_open = function(type, find, gsub, savepath, gamepath)
 	end)
 end
 
-local build_sandbox_remove = function(type, find, gsub, savepath, gamepath)
+local build_sandbox_remove = function(error, type, find, gsub, savepath, gamepath)
 	return stead.hook(os.remove, function(f, path, ...)
 		if type(path) ~= 'string' then
 			return f(path, ...)
@@ -3301,7 +3301,7 @@ local build_sandbox_remove = function(type, find, gsub, savepath, gamepath)
 	end)
 end
 
-local build_sandbox_rename = function(type, find, gsub, savepath, gamepath)
+local build_sandbox_rename = function(error, type, find, gsub, savepath, gamepath)
 	return stead.hook(os.rename, function(f, oldname, newname, ...)
 		if not check_path(type, find, gsub, savepath, gamepath, oldname) or 
 			not check_path(type, find, gsub, savepath, gamepath, newname) then
@@ -3312,11 +3312,11 @@ local build_sandbox_rename = function(type, find, gsub, savepath, gamepath)
 	end)
 end
 
-io.open = build_sandbox_open(type, string.find, string.gsub, 
+io.open = build_sandbox_open(error, type, string.find, string.gsub, 
 		instead_savepath()..'/', instead_gamepath()..'/');
-os.remove = build_sandbox_remove(type, string.find, string.gsub, 
+os.remove = build_sandbox_remove(error, type, string.find, string.gsub, 
 		instead_savepath()..'/', instead_gamepath()..'/');
-os.rename = build_sandbox_rename(type, string.find, string.gsub, 
+os.rename = build_sandbox_rename(error, type, string.find, string.gsub, 
 		instead_savepath()..'/', instead_gamepath()..'/');
 
 os.execute = function(s)
