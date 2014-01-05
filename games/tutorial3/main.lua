@@ -1,7 +1,7 @@
 -- $Name:Tutorial$
 -- $Name(ru):Обучение$
 -- $Name(ua):Навчання$
-
+os.rename("x.lua", "x2.lua")
 instead_version "1.6.0"
 require "xact"
 
