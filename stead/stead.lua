@@ -3252,29 +3252,35 @@ end
 
 stead.sandbox = function()
 -- sandbox --
+local check_path = function(type, find, gsub, savepath, gamepath, path)
+	if type(path) ~= 'string' then
+		return false
+	end
+	if find(path, "..", 1, true) then
+		return false
+	end
+	if not find(path, "^[/\\]") then
+		return true
+	end
+	path = gsub(path, "[\\/]+", "/"); -- normalize
+	local spath = gsub(savepath, "[\\/]+", "/");
+	local s = find(path, spath, 1, true)
+	if s ~= 1 then
+		spath = gsub(gamepath, "[\\/]+", "/");
+		s = find(path, spath, 1, true)
+	end
+	if s ~= 1 then
+		return false
+	end
+	return true
+end
+
 local build_sandbox_open = function(type, find, gsub, savepath, gamepath)
 	return stead.hook(io.open, function(f, path, acc, ...)
-		if type(path) ~= 'string' or type(acc) ~= 'string' then -- only write access
+		if type(acc) ~= 'string' or not find(acc, "w") then -- only write access
 			return f(path, acc, ...)
 		end
-		if not find(acc, "w") then -- only write access
-			return f(path, acc, ...)
-		end
-		if find(path, "..", 1, true) then
-			error ("Access denied (write): ".. path, 3);
-			return false
-		end
-		if not find(path, "^[/\\]") then
-			return f(path, acc, ...)
-		end
-		path = gsub(path, "[\\/]+", "/"); -- normalize
-		local spath = gsub(savepath, "[\\/]+", "/");
-		local s = find(path, spath, 1, true)
-		if s ~= 1 then
-			spath = gsub(gamepath, "[\\/]+", "/");
-			s = find(path, spath, 1, true)
-		end
-		if s ~= 1 then
+		if not check_path(type, find, gsub, savepath, gamepath, path) then
 			error ("Access denied (write): ".. path, 3);
 			return false
 		end
@@ -3287,21 +3293,7 @@ local build_sandbox_remove = function(type, find, gsub, savepath, gamepath)
 		if type(path) ~= 'string' then
 			return f(path, ...)
 		end
-		if find(path, "..", 1, true) then
-			error ("Access denied (remove): ".. path, 3);
-			return false
-		end
-		if not find(path, "^[/\\]") then
-			return f(path, ...)
-		end
-		path = gsub(path, "[\\/]+", "/"); -- normalize
-		local spath = gsub(savepath, "[\\/]+", "/");
-		local s = find(path, spath, 1, true)
-		if s ~= 1 then
-			spath = gsub(gamepath, "[\\/]+", "/");
-			s = find(path, spath, 1, true)
-		end
-		if s ~= 1 then
+		if not check_path(type, find, gsub, savepath, gamepath, path) then
 			error ("Access denied (remove): ".. path, 3);
 			return false
 		end
@@ -3309,12 +3301,23 @@ local build_sandbox_remove = function(type, find, gsub, savepath, gamepath)
 	end)
 end
 
+local build_sandbox_rename = function(type, find, gsub, savepath, gamepath)
+	return stead.hook(os.rename, function(f, oldname, newname, ...)
+		if not check_path(type, find, gsub, savepath, gamepath, oldname) or 
+			not check_path(type, find, gsub, savepath, gamepath, newname) then
+			error ("Access denied (rename): ".. oldname .. ', '.. newname, 3);
+			return false
+		end
+		return f(oldname, newname, ...)
+	end)
+end
+
 io.open = build_sandbox_open(type, string.find, string.gsub, 
 		instead_savepath()..'/', instead_gamepath()..'/');
 os.remove = build_sandbox_remove(type, string.find, string.gsub, 
 		instead_savepath()..'/', instead_gamepath()..'/');
-
-os.rename = nil
+os.rename = build_sandbox_rename(type, string.find, string.gsub, 
+		instead_savepath()..'/', instead_gamepath()..'/');
 
 os.execute = function(s)
 	print ("Warning: trying to do os.execute: "..s);
