@@ -10,6 +10,8 @@ Optionally you may use:
 	sdl2
 	lua5.2/luajit
 
+luajit is recommended for slow machines.
+
 0) Prepare for building
 =======================
 
