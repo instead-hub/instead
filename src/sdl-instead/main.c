@@ -122,7 +122,29 @@ void wince_init(char *path)
 	strcpy(game_cwd, getcurdir(path));
 }
 #endif
-
+static void usage(void)
+{
+	fprintf(stderr, 
+	"INSTEAD "VERSION" - Simple Text Adventure Engine, The Interpreter\n"
+	"SYNOPSIS\n"
+	"    sdl-instead [options] [game.zip to run]\n"
+	"SOME OPTIONS\n"
+	"    -debug Debug mode\n        (for game developers).\n"
+	"    -nosound\n        Run the game without sound.\n"
+	"    -gamespath\n        <path> Add path with games.\n"
+	"    -game <basename>\n        Select game in gamespath.\n"
+	"    -owntheme\n        Force game to use own theme.\n"
+	"    -fullscreen\n        Run the game in fullscreen mode.\n"
+	"    -window\n        Run the game in windowed mode.\n"
+	"    -noautosave\n        Disable autosave/autoload.\n"
+	"    -mode [WxH]\n        Use WxH resolution.\n"
+	"    -software\n        Force software rendering.\n"
+	"    -nopause\n        Do not pause the game on window minimize.\n"
+	"    -hinting 0|1|2|3\n        Set the font hinting mode (helpful with infinality)\n"
+	"    -install [game in zip]\n        Install game from zip archive\n"
+	"    -appdata [fullpath]\n        Store saves and settings in appdata path. Path must exist!\n"
+	"    -chunksize [size in bytes]\n        Size for audio buffer. Try this if sound lags.\n");
+}
 int main(int argc, char *argv[])
 {
 #ifdef _USE_UNPACK
@@ -267,8 +289,13 @@ int main(int argc, char *argv[])
 				fprintf(stderr, "No lua script.\n");
 				exit(1);
 			}
+		} else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "-help")
+			|| !strcmp(argv[i], "--help")) {
+			usage();
+			exit(0);
 		} else if (argv[i][0] == '-') {
 			fprintf(stderr,"Unknown option: %s\n", argv[i]);
+			usage();
 			exit(1);
 		} else if (!start_idf(argv[i])) {
 			fprintf(stderr, "Adding idf: %s\n", argv[i]);

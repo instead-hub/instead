@@ -81,7 +81,7 @@ OPTIONS
 	      Do not pause the game on window minimize.
 
        -hinting 0|1|2|3
-	      Set the font hinting mode.
+	      Set the font hinting mode (helpful with infinality).
 
        -install [game in zip]
 	      Install game from zip archive
