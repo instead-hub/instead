@@ -68,19 +68,19 @@ fi
 
 
 echo -n "Checking sdl-config..."
-if ! sdl2-config --version >/dev/null 2>&1; then
-	if ! sdl-config --version >/dev/null 2>&1; then
+if ! sdl-config --version >/dev/null 2>&1; then
+	if ! sdl2-config --version >/dev/null 2>&1; then
 		echo "error: no sdl-config in \$PATH."
 		echo "Please install sdl, sdl_ttf, sdl_mixer and sdl_image development packages."
 		exit 1
 	fi
-	echo "ok"
-	sdl_config="sdl-config"
-	sdl_libs="-lSDL_ttf -lSDL_mixer -lSDL_image -lm"
-else
 	echo "SDL 2.0"
 	sdl_config="sdl2-config"
 	sdl_libs="-lSDL2_ttf -lSDL2_mixer -lSDL2_image -lm"
+else
+	echo "ok"
+	sdl_config="sdl-config"
+	sdl_libs="-lSDL_ttf -lSDL_mixer -lSDL_image -lm"
 fi
 
 echo -n "Checking sdl-config --cflags..."
