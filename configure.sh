@@ -45,8 +45,11 @@ fi
 
 
 echo -n "Checking pkg-config --cflags lua[5.1|5.2|51|52|jit]..."
-
-lua_ver="luajit lua5.1 lua5.2 lua lua-5.1 lua-5.2 lua51 lua52"
+if [ "x$LUA" = "x" ]; then
+	lua_ver="lua5.1 lua5.2 lua lua-5.1 lua-5.2 lua51 lua52 luajit"
+else
+	lua_ver=$LUA
+fi
 
 for v in $lua_ver; do
 	if pkg-config --cflags "$v" >/dev/null 2>&1; then
