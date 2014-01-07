@@ -176,7 +176,9 @@ extern int	xref_get_active(xref_t x);
 
 extern xref_t	xref_next(xref_t x);
 extern xref_t	xref_prev(xref_t x);
+
 extern int 	xref_position(xref_t x, int *xc, int *yc);
+extern int 	xref_valid(xref_t x);
 
 extern xref_t	txt_layout_xrefs(layout_t lay);
 

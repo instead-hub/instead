@@ -4471,6 +4471,16 @@ xref_t	txt_layout_xrefs(layout_t lay)
 	return layout->xrefs;
 }
 
+int xref_valid(xref_t x)
+{
+	struct xref *xref = (struct xref*)x;
+	if (!xref)
+		return -1;
+	if (!xref->num)
+		return -1;
+	return 0;
+}
+
 int xref_position(xref_t x, int *xc, int *yc)
 {
 	int i;
@@ -4479,9 +4489,9 @@ int xref_position(xref_t x, int *xc, int *yc)
 	struct word *word = NULL;
 	struct xref *xref = (struct xref*)x;
 
-	if (!xref || !xref->num)
+	if (xref_valid(x))
 		return -1;
-		
+
 	for (i = 0; i < xref->num; i ++) {
 		word = xref->words[i];
 		if (!word->img_align)

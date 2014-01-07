@@ -2936,9 +2936,9 @@ static int select_ref(int prev, int last)
 	struct el 	 *elem = NULL;
 	xref_t		xref = NULL;
 	gfx_cursor(&x, &y);
-	
+
 	xref = look_xref(x, y, &elem);
-	
+
 	if (!elem) {
 		if (!sel_el)
 			select_frame(0);
@@ -2949,14 +2949,20 @@ static int select_ref(int prev, int last)
 			return -1;
 	} else if (xref) {
 		if (prev) {
-			if (!(xref = xref_prev(xref)) || xref_visible(xref, elem)) {
+			do {
+				xref = xref_prev(xref);
+			} while (xref && xref_valid(xref));
+			if (!xref || xref_visible(xref, elem)) {
 				if (!box_isscroll_up(elem->id) || !box_isscroll_down(elem->id))
 					return -1;
 				else
 					xref = get_xref(elem->id, 1);
 			}
 		} else {
-			if (!(xref = xref_next(xref)) || xref_visible(xref, elem)) {
+			do {
+				xref = xref_next(xref);
+			} while (xref && xref_valid(xref));
+			if (!xref || xref_visible(xref, elem)) {
 				if (!box_isscroll_down(elem->id) || !box_isscroll_up(elem->id))
 					return -1;
 				else
