@@ -109,9 +109,20 @@ out:
 	return -1;
 }
 
+int game_reset_name(void)
+{
+	struct game *g;
+	g = game_lookup(curgame_dir);
+	if (g)
+		gfx_set_title(g->name);
+	else
+		gfx_set_title(NULL);
+	return 0;
+}
+
 int game_select(const char *name)
 {
-	int rc;
+	int rc = -1;
 	struct game *g;
 	FREE(last_cmd);
 	game_stop_mus(500);
@@ -124,7 +135,6 @@ int game_select(const char *name)
 		return -1;
 	if (g) {
 		char *oldgame = curgame_dir;
-		rc = -1;
 		curgame_dir = g->dir;
 		instead_done();
 		if (instead_init(g->path)) {
@@ -167,20 +177,14 @@ int game_select(const char *name)
 			curgame_dir = oldgame;
 			goto err;
 		}
-
 		rc = instead_function("game:ini", NULL); instead_clear();
-		if (rc)
-			goto err;
-		gfx_set_title(g->name);
-		return rc;
 	} else {
 		game_use_theme();
 		game_theme_init();
-		gfx_set_title(NULL);
+		rc = 0;
 	}
-	return 0;
 err:
-	gfx_set_title(NULL);
+	game_reset_name();
 	return rc;
 }
 

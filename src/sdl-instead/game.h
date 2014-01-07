@@ -37,6 +37,7 @@ extern int 	game_init(const char *game);
 
 extern int 	game_loop(void);
 extern void 	game_done(int err);
+extern int	game_reset_name(void);
 
 extern int 	game_load_theme(const char *path);
 extern int 	game_apply_theme(void);
