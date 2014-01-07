@@ -8,6 +8,7 @@
   * in windows do not close -debug console until press return;
   * game.gui.hidetitle;
   * potential bug with non ascii save path and non UTF-8 game codepage;
+  * bug with language changing;
   * typo in Please, wait message;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 30 Dec 2013 18:56:00 +0400
