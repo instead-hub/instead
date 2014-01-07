@@ -124,12 +124,12 @@ int game_select(const char *name)
 		return -1;
 	if (g) {
 		char *oldgame = curgame_dir;
+		rc = -1;
 		curgame_dir = g->dir;
 		instead_done();
-
 		if (instead_init(g->path)) {
 			curgame_dir = oldgame;
-			return -1;
+			goto err;
 		}
 
 		if (g->idf) {
@@ -144,7 +144,7 @@ int game_select(const char *name)
 		
 		if ((!g->idf && setdir(g->path)) || (g->idf && !game_idf)) {
 			curgame_dir = oldgame;
-			return -1;
+			goto err;
 		}
 
 		if (oldgame != curgame_dir && !g->idf) {
@@ -156,26 +156,32 @@ int game_select(const char *name)
 
 		if (game_theme_init()) {
 			curgame_dir = oldgame;
-			return -1;
+			goto err;
 		}
 
 		rc = instead_function("stead:init", NULL); instead_clear();
 		if (rc)
-			return rc;
+			goto err;
 
 		if (instead_load(MAIN_FILE)) {
 			curgame_dir = oldgame;
-			return -1;
+			goto err;
 		}
 
 		rc = instead_function("game:ini", NULL); instead_clear();
-
+		if (rc)
+			goto err;
+		gfx_set_title(g->name);
 		return rc;
 	} else {
 		game_use_theme();
 		game_theme_init();
+		gfx_set_title(NULL);
 	}
 	return 0;
+err:
+	gfx_set_title(NULL);
+	return rc;
 }
 
 static char *game_name(const char *path, const char *d_name)

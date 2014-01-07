@@ -1550,6 +1550,7 @@ static SDL_Surface *CreateVideoSurface(SDL_Texture * texture)
 	return surface;
 }
 
+
 int gfx_set_mode(int w, int h, int fs)
 {
 	int window_x = SDL_WINDOWPOS_UNDEFINED;
@@ -4829,4 +4830,22 @@ int gfx_pending(void)
 #else
 	return 0;
 #endif
+}
+
+int gfx_set_title(const char *title)
+{
+	char stitle[4096];
+	if (!title) {
+		strcpy( stitle, "INSTEAD - " );
+		strcat( stitle, VERSION );
+		title = stitle;
+	}
+#if !SDL_VERSION_ATLEAST(2,0,0)
+	if (screen)
+		SDL_WM_SetCaption(title, title);
+#else
+	if (SDL_VideoWindow)
+		SDL_SetWindowTitle(SDL_VideoWindow, title);
+#endif
+	return 0;
 }
