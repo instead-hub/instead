@@ -281,14 +281,16 @@ int main(int argc, char *argv[])
 				idf_sw = argv[++i];
 			else {
 				fprintf(stderr,"No data directory specified.\n");
-				exit(1);
+				err = 1;
+				goto out;
 			}
 		} else if (!strcmp(argv[i], "-encode")) {	
 			if ((i + 1) < argc)
 				encode_sw = argv[++i];
 			else {
 				fprintf(stderr,"No lua file specified.\n");
-				exit(1);	
+				err = 1;
+				goto out;
 			}
 			if ((i + 1) < argc)
 				encode_output = argv[++i];
@@ -309,8 +311,10 @@ int main(int argc, char *argv[])
 					p = games_sw;
 				else
 					p = game_local_games_path(1);
-				if (setup_zip(file, p))
-					exit(1);
+				if (setup_zip(file, p)) {
+					err = 1;
+					goto out;
+				}
 			}
 #endif
 		} else if (!strcmp(argv[i], "-quit")) {
@@ -328,16 +332,18 @@ int main(int argc, char *argv[])
 				break;
 			} else {
 				fprintf(stderr, "No lua script.\n");
-				exit(1);
+				err = 1;
+				goto out;
 			}
 		} else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "-help")
 			|| !strcmp(argv[i], "--help")) {
 			usage();
-			exit(0);
+			goto out;
 		} else if (argv[i][0] == '-') {
 			fprintf(stderr,"Unknown option: %s\n", argv[i]);
 			usage();
-			exit(1);
+			err = 1;
+			goto out;
 		} else if (!start_idf(argv[i])) {
 			fprintf(stderr, "Adding idf: %s\n", argv[i]);
 		} else if (!run_game(argv[i])) {
@@ -350,8 +356,10 @@ int main(int argc, char *argv[])
 				p = games_sw;
 			else
 				p = game_tmp_path();
-			if (setup_zip(argv[i], p))
-				exit(1);
+			if (setup_zip(argv[i], p)) {
+				err = 1;
+				goto out;
+			}
 			clean_tmp = 1;
 		}
 #endif
@@ -397,7 +405,8 @@ int main(int argc, char *argv[])
 	
 	if (!langs_nr) {
 		fprintf(stderr, "No languages found in: %s.\n", dirpath(LANG_PATH));
-		exit(1);
+		err = 1;
+		goto out;
 	}
 	
 	cfg_load();
@@ -407,8 +416,9 @@ int main(int argc, char *argv[])
 	
 	if (menu_lang_select(opt_lang) && menu_lang_select(LANG_DEF)) {
 		fprintf(stderr, "Can not load default language.\n");
-		exit(1);
-	}	
+		err = 1;
+		goto out;
+	}
 	
 	if (games_sw)
 		games_lookup(games_sw);
