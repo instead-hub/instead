@@ -235,9 +235,10 @@ int main(int argc, char *argv[])
 				mode_sw = "-1x-1";
 		} else if (!strcmp(argv[i], "-window"))
 			window_sw = 1;
-		else if (!strcmp(argv[i], "-debug"))
+		else if (!strcmp(argv[i], "-debug")) {
+			debug_init();
 			debug_sw = 1;
-		else if (!strcmp(argv[i], "-owntheme"))
+		} else if (!strcmp(argv[i], "-owntheme"))
 			owntheme_sw = 1;
 		else if (!strcmp(argv[i], "-noautosave"))
 			noauto_sw = 1;
@@ -354,10 +355,6 @@ int main(int argc, char *argv[])
 			clean_tmp = 1;
 		}
 #endif
-	}
-
-	if (debug_sw) {
-		debug_init();
 	}
 
 	if (version_sw) {
