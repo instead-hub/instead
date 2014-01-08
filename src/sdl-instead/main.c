@@ -236,7 +236,8 @@ int main(int argc, char *argv[])
 		} else if (!strcmp(argv[i], "-window"))
 			window_sw = 1;
 		else if (!strcmp(argv[i], "-debug")) {
-			debug_init();
+			if (!debug_sw)
+				debug_init();
 			debug_sw = 1;
 		} else if (!strcmp(argv[i], "-owntheme"))
 			owntheme_sw = 1;
