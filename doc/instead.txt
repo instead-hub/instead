@@ -23,7 +23,7 @@ DESCRIPTION
 
 
 SYNOPSIS
-       sdl-instead [options] [game.zip to run]
+       sdl-instead [options] [game.zip or game.idf or path to game]
 
 
 OPTIONS
