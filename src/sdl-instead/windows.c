@@ -247,8 +247,10 @@ int debug_init(void)
 
 void debug_done()
 {
-	fprintf(stderr, "Press enter to close the console.\n");
-	fgetc(stdin);
+	if (game_running) {
+		fprintf(stderr, "Press enter to close the console.\n");
+		fgetc(stdin);
+	}
 	FreeConsole();
 }
 #ifdef _USE_BROWSE
