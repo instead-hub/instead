@@ -46,7 +46,7 @@ void game_err_msg(const char *s)
 }
 
 
-static int is_game(const char *path, const char *n)
+int is_game(const char *path, const char *n)
 {
 	int rc = 0;
 	char *p = getfilepath(path, n);

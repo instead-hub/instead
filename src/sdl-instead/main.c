@@ -122,13 +122,53 @@ void wince_init(char *path)
 	strcpy(game_cwd, getcurdir(path));
 }
 #endif
+static int run_game(const char *path)
+{
+	char *p, *ep, *d;
+	static char gp[PATH_MAX + 1];
+	static char *cd = "./";
+	if (!path)
+		return -1;
+	if (!path[0])
+		return -1;
+	if (strlen(path) >= PATH_MAX)
+		return -1;
+	strcpy(gp, path);
+	p = gp;
+	unix_path(p);
+	ep = p + strlen(p) - 1;
+	while (*ep == '/' && ep != p)
+		*ep-- = 0;
+	if (!p[0])
+		return -1;
+	ep = p + strlen(p) - 1;
+	while (ep != p) {
+		if (*ep == '/') {
+			*ep ++ = 0;
+			break;
+		}
+		ep --;
+	}
+	if (ep == p)
+		d = cd;
+	else
+		d = p;
+
+	if (!is_game(d, ep)) {
+		fprintf(stderr, "%s/%s is not a game path.\n", d, ep);
+		return -1;
+	}
+	game_sw = ep;
+	games_sw = d;
+	return 0;
+}
 static void usage(void)
 {
 	fprintf(stderr, 
 	"INSTEAD "VERSION" - Simple Text Adventure Engine, The Interpreter\n"
-	"SYNOPSIS\n"
-	"    sdl-instead [options] [game.zip to run]\n"
-	"SOME OPTIONS\n"
+	"Usage:\n"
+	"    sdl-instead [options] [game.zip or game.idf or path to game]\n"
+	"Some options:\n"
 	"    -debug Debug mode\n        (for game developers).\n"
 	"    -nosound\n        Run the game without sound.\n"
 	"    -gamespath\n        <path> Add path with games.\n"
@@ -299,6 +339,8 @@ int main(int argc, char *argv[])
 			exit(1);
 		} else if (!start_idf(argv[i])) {
 			fprintf(stderr, "Adding idf: %s\n", argv[i]);
+		} else if (!run_game(argv[i])) {
+			fprintf(stderr, "Opening game: %s\n", argv[i]);
 		}
 #ifdef _USE_UNPACK
 		else {
@@ -458,7 +500,6 @@ int main(int argc, char *argv[])
 #ifndef ANDROID
 	gfx_done();
 #endif
-
 out:
 	if (debug_sw)
 		debug_done();
