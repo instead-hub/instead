@@ -3356,6 +3356,7 @@ int game_loop(void)
 				game_menu(menu_askquit);
 #endif
 			} else if ((alt_pressed | control_pressed) && (!is_key(&ev, "q") || !is_key(&ev, "f4"))) {
+				game_running = 0;
 				break;
 			} else if (alt_pressed &&
 				(!is_key(&ev, "enter") || !is_key(&ev, "return"))) {
@@ -3388,8 +3389,10 @@ int game_loop(void)
 				game_highlight(x, y, 1); /* hl on/off */
 				game_highlight(x, y, 0);
 
-				if (game_click(x, y, 1, 0) == -1) 
+				if (game_click(x, y, 1, 0) == -1) {
+					game_running = 0;
 					break;
+				}
 			} else if (!is_key(&ev, "tab")) {
 				select_frame(shift_pressed);
 			} else if (!is_key(&ev, "up") || !is_key(&ev, "down") ||
