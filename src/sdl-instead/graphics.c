@@ -224,7 +224,7 @@ int gfx_parse_color (
 		    else return (0);
 		}
 	    } while (*spec != '\0');
-	    n <<= 2;
+//	    n <<= 2;
 //	    n = 16 - n;
 	    if (def) {
 		    def->r = r;
@@ -352,8 +352,10 @@ static void anigif_disposal(anigif_t g)
 		dst.y += g->spawn[i].y;
 		if (frame->disposal == AG_DISPOSE_RESTORE_BACKGROUND) {
 			img = Surf(g->spawn[i].bg);
-			dst.w = img->w; 
-			dst.h = img->h;
+			if (img) {
+				dst.w = img->w; 
+				dst.h = img->h;
+			}
 		}
 		if (img) { /* draw bg */
 			SDL_BlitSurface(img, NULL, Surf(screen), &dst);
@@ -577,6 +579,8 @@ img_t 	gfx_new(int w, int h)
 void	gfx_img_fill(img_t img, int x, int y, int w, int h, color_t col)
 {
 	SDL_Rect dest;
+	if (!img)
+		return;
 	dest.x = x;
 	dest.y = y; 
 	dest.w = w; 
@@ -603,7 +607,10 @@ img_t	gfx_screen(img_t nscreen)
 img_t	gfx_grab_screen(int x, int y, int w, int h)
 {
 	SDL_Rect dst, src;
-	SDL_Surface *img = SDL_CreateRGBSurface(Surf(screen)->flags, w, h, Surf(screen)->format->BitsPerPixel, 
+	SDL_Surface *img;
+	if (!screen)
+		return NULL;
+	img = SDL_CreateRGBSurface(Surf(screen)->flags, w, h, Surf(screen)->format->BitsPerPixel, 
 			Surf(screen)->format->Rmask, Surf(screen)->format->Gmask, Surf(screen)->format->Bmask, Surf(screen)->format->Amask);
 	if (!img)
 		return NULL;	
@@ -753,6 +760,8 @@ img_t gfx_alpha_img(img_t src, int alpha)
 	int bpp;
 
 	img_t img = NULL;
+	if (!src)
+		return NULL;
 	if (screen) {
 		SDL_Surface *s = SDL_DisplayFormatAlpha(Surf(src));
 		if (s)
@@ -1096,6 +1105,8 @@ void gfx_draw_bg(img_t p, int x, int y, int width, int height)
 {
 	SDL_Surface *pixbuf = Surf(p);
 	SDL_Rect dest, src;
+	if (!p)
+		return;
 	src.x = x;
 	src.y = y;
 	src.w = width;
@@ -1168,6 +1179,8 @@ void gfx_draw(img_t p, int x, int y)
 	anigif_t ag;
 	SDL_Surface *pixbuf = Surf(p);
 	SDL_Rect dest;
+	if (!p)
+		return;
 	dest.x = x;
 	dest.y = y; 
 	dest.w = pixbuf->w; 
@@ -1651,6 +1664,10 @@ int gfx_set_mode(int w, int h, int fs)
 	gfx_width = w;
 	gfx_height = h;
 	screen = GFX_IMG(SDL_VideoSurface);
+	if (!screen) {
+		fprintf(stderr, "Can't alloc screen!\n");
+		return -1;
+	}
 	fprintf(stderr,"Video mode: %dx%d@%dbpp\n", Surf(screen)->w, Surf(screen)->h, Surf(screen)->format->BitsPerPixel);
 	gfx_clear(0, 0, gfx_width, gfx_height);
 	return 0;
@@ -2136,6 +2153,8 @@ void fnt_free(fnt_t fnt)
 void txt_draw(fnt_t fnt, const char *txt, int x, int y, color_t col)
 {
 	img_t s = fnt_render(fnt, txt, col);
+	if (!s)
+		return;
 	gfx_draw(s, x, y);
 }
 
@@ -2709,7 +2728,7 @@ static int layout_find_margin(struct layout *layout, int y, int *w)
 
 struct image *_layout_lookup_image(struct layout *layout, const char *name)
 {
-	struct image *g = layout->images;
+	struct image *g;
 	for (g = layout->images; g; g = g->next) {
 		if (!strcmp(g->name, name))
 			return g;
@@ -4345,6 +4364,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 		word = word_new(p);
 		if (!word) {
 			line_free(line);
+			free(p);
 			goto err;
 		}
 		word->valign = layout->valign;

@@ -112,6 +112,7 @@ idf_t idf_init(const char *fname)
 	idf_t idf = malloc(sizeof(struct _idf_t));
 	if (!idf)
 		return NULL;
+	memset(idf, 0, sizeof(struct _idf_t));
 	idf->path = strdup(fname);
 	if (!idf->path)
 		goto err;

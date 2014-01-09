@@ -939,6 +939,12 @@ static void el_size(int i, int *w, int *h)
 			*w = gfx_img_w(el_img(i));
 		if (h)
 			*h = gfx_img_h(el_img(i));
+	} else {
+		/* impossible type */
+		if (w)
+			*w = 0;
+		if (h)
+			*h = 0;
 	} 
 }
 
@@ -1978,6 +1984,8 @@ int game_cmd(char *cmd, int flags)
 
 		if (game_theme_changed == 2) { /* cursor change only? */
 			img_t offscreen = gfx_new(game_theme.w, game_theme.h);
+			if (!offscreen)
+				goto fatal;
 			oldscreen = gfx_screen(offscreen);
 			gfx_draw(oldscreen, 0, 0);
 			game_theme_update();
@@ -2033,6 +2041,8 @@ int game_cmd(char *cmd, int flags)
 	if (fading) { /* take old screen */
 		game_cursor(CURSOR_CLEAR);
 		img_t offscreen = gfx_new(game_theme.w, game_theme.h);
+		if (!offscreen)
+			goto fatal;
 		oldscreen = gfx_screen(offscreen);
 		gfx_draw(oldscreen, 0, 0);
 	}
@@ -2268,6 +2278,9 @@ err:
 	}
 #endif
 	return rc;
+fatal:
+	fprintf(stderr, "Fatal error! (can't alloc offscreen)\n");
+	exit(1);
 }
 
 void game_update(int x, int y, int w, int h)

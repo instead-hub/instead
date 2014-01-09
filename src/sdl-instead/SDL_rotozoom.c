@@ -297,10 +297,10 @@ int _zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy,
 	/*
 	* Allocate memory for row/column increments 
 	*/
-	if ((sax = (int *) malloc((dst->w + 1) * sizeof(Uint32))) == NULL) {
+	if ((sax = (Sint32 *) malloc((dst->w + 1) * sizeof(Sint32))) == NULL) {
 		return (-1);
 	}
-	if ((say = (int *) malloc((dst->h + 1) * sizeof(Uint32))) == NULL) {
+	if ((say = (Sint32 *) malloc((dst->h + 1) * sizeof(Sint32))) == NULL) {
 		free(sax);
 		return (-1);
 	}
@@ -542,7 +542,7 @@ int _zoomSurfaceY(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy)
 	/*
 	* Pointer setup 
 	*/
-	sp = csp = (Uint8 *) src->pixels;
+	csp = (Uint8 *) src->pixels;
 	dp = (Uint8 *) dst->pixels;
 	dgap = dst->pitch - dst->w;
 
