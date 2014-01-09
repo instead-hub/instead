@@ -564,8 +564,9 @@ static int luaB_get_savepath(lua_State *L) {
 static int luaB_get_gamepath(lua_State *L) {
 	char path[PATH_MAX * 2];
 	char *p = getdir(path, sizeof(path));
-	if (p)
-		unix_path(p);
+	if (!p)
+		return 0;
+	unix_path(p);
 	if (game_idf) {
 		strcat(p, "/");
 		strcat(p, curgame_dir);

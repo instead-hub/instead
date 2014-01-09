@@ -482,7 +482,8 @@ static int DoExtension( gifdata* gd, int label )
 		return FALSE;
 
 	  case 0xf9:		/* Graphic Control Extension */
-		(void)GetDataBlock( gd, buf );
+		if (GetDataBlock( gd, buf ) <= 0)
+			return FALSE;
 		gd->g89.disposal	= (buf[0] >> 2) & 0x7;
 		gd->g89.inputFlag	= (buf[0] >> 1) & 0x1;
 		gd->g89.delayTime	= LM_to_uint(buf[1],buf[2]);
