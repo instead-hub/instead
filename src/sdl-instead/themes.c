@@ -805,7 +805,7 @@ int game_theme_update(void)
 
 int game_theme_init(void)
 {
-	color_t col = { .r = 0, .g = 0, .b = 0 };
+	color_t col = { .r = 0, .g = 0, .b = 0, .a = 0 };
 	int w  = opt_mode[0];
 	int h  = opt_mode[1];
 

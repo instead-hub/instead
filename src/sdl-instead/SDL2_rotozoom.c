@@ -1500,7 +1500,7 @@ SDL_Surface *shrinkSurface(SDL_Surface *src, int factorx, int factory)
 	SDL_Surface *rz_dst = NULL;
 	int dstwidth, dstheight;
 	int is32bit;
-	int i, src_converted;
+	int i, src_converted = 0;
 	int haveError = 0;
 
 	/*
