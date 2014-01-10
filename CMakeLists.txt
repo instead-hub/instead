@@ -1,6 +1,9 @@
 PROJECT(instead)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0)
+IF(EXISTS "INSTALL")
+	message(FATAL_ERROR "Builds from this dir are not allowed. Please read ./INSTALL")
+ENDIF()
 
 SET(INSTEAD_VERSION "1.9.2")
 
