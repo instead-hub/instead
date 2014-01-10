@@ -26,6 +26,7 @@ There are several ways to build package.
 
 1) On Ubuntu
 ============
+
 Install stable (old) version from repo:
 	$ apt-get install instead
 
@@ -34,6 +35,7 @@ Or use ppa with latest version:
 
 2) On Debian based systems you can build deb package
 ====================================================
+
 	$ sudo apt-get install liblua5.1-dev libreadline-dev libsdl1.2-dev libsdl-ttf2.0-dev libsdl-image1.2-dev libsdl-mixer1.2-dev
 	$ sudo apt-get install build-essential debhelper
 	$ debuild
@@ -42,6 +44,7 @@ Or use ppa with latest version:
 
 3) On arch linux
 ================
+
 Install stable version from community:
 	$ pacman -S instead
 
@@ -53,6 +56,7 @@ And, I think, you have enough skills to build package yourself. ;)
 
 4) On FreeBSD
 =============
+
 Install instead from ports with pkgng:
 	# pkg install instead
 Or:
@@ -65,18 +69,37 @@ Or build from tarball:
 
 5) On RPM based system
 ======================
+
 There is .spec file in tarball.
 
 6) For other distributions 
 ==========================
-You have a two choices:
+
+You have three choices:
 	a) try run ./configure.sh and follow instructions
 or
-	b) do all things manually
+	b) try to use experimental cmake rules
+	c) do all things manually
 
-7) Manual build
+7) Build using cmake
+====================
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make
+$ sudo make install
+
+Warning, in some systems (like Arch linux) you need to define LUA dir, to help cmake.
+For example (Arch linux):
+$ LUA_DIR=/usr/include/lua5.1/ cmake ..
+
+To build standalone version, use this:
+$ LUA_DIR=/usr/include/lua5.1/ cmake .. -DSTANDALONE=1
+$ make
+$ ./sdl-instead
+
+8) Manual build
 ===============
-
 To build game, that runs just from build dir use Rules.make.standalone
 ----------------------------------------------------------------------
 	$ rm -f Rules.make
