@@ -109,15 +109,17 @@ out:
 	return -1;
 }
 
-int game_reset_name(void)
+char *game_reset_name(void)
 {
 	struct game *g;
 	g = game_lookup(curgame_dir);
-	if (g)
+	if (g) {
 		gfx_set_title(g->name);
-	else
+		return g->name;
+	} else {
 		gfx_set_title(NULL);
-	return 0;
+		return NULL;
+	}
 }
 
 int game_select(const char *name)
