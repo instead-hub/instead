@@ -1571,12 +1571,15 @@ int gfx_set_mode(int w, int h, int fs)
 	SDL_DisplayMode desktop_mode;
 
 	char title[4096];
+	char *t;
 
 	strcpy( title, "INSTEAD - " );
 	strcat( title, VERSION );
 
-	if (gfx_width == w && gfx_height == h && gfx_fs == fs)
+	if (gfx_width == w && gfx_height == h && gfx_fs == fs) {
+		game_reset_name();
 		return 0; /* already done */
+	}
 
 	SelectVideoDisplay();
 	SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode);
@@ -1601,15 +1604,16 @@ int gfx_set_mode(int w, int h, int fs)
 		SDL_VideoWindow = NULL;
 	} else
 		GetEnvironmentWindowPosition(w, h, &window_x, &window_y);
-
-	SDL_VideoWindow = SDL_CreateWindow(title, window_x, window_y, w, h, 
+	t = game_reset_name();
+	if (!t)
+		t = title;
+	SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, w, h, 
 		SDL_WINDOW_SHOWN | ((fs)?SDL_WINDOW_FULLSCREEN:0));
 
 	if (SDL_VideoWindow == NULL) {
 		fprintf(stderr, "Unable to create %dx%d window: %s\n", w, h, SDL_GetError());
 		return -1;
 	}
-
 	if (icon)
 		SDL_SetWindowIcon(SDL_VideoWindow, icon);
 
@@ -1677,8 +1681,10 @@ int gfx_set_mode(int w, int h, int fs)
 {
 	int hw = (software_sw)?0:SDL_HWSURFACE;
 	SDL_Surface *scr;
-	if (gfx_width == w && gfx_height == h && gfx_fs == fs)
+	game_reset_name();
+	if (gfx_width == w && gfx_height == h && gfx_fs == fs) {
 		return 0; /* already done */
+	}
 	vid_modes = NULL;
 	gfx_fs = fs;
 	gfx_width = w;
