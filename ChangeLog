@@ -4,6 +4,7 @@
   * window title contains the game name;
   * sdl-instead <path to game> start variant;
   * fixes in Makefiles (PREFIX and DESTDIR);
+  * experimental cmake support;
   * doc/examples addons;
   * -lua and -luac parameters;
   * in windows do not close -debug console until press return;
