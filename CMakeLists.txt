@@ -1,10 +1,12 @@
 PROJECT(instead)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0)
-IF(EXISTS "INSTALL")
-	message(FATAL_ERROR "Builds from this dir are not allowed. Please read ./INSTALL")
-ENDIF()
 
+IF("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
+	MESSAGE(FATAL_ERROR "In-source builds are not allowed. Please read ./INSTALL")
+ENDIF("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
+
+# global constants
 SET(INSTEAD_VERSION "1.9.2")
 
 # options
