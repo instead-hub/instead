@@ -1,0 +1,5 @@
+IF(NOT STANDALONE)
+	FOREACH(THEME arctic bluesteel book clearlooks default fantasy original wide)
+		INSTALL(DIRECTORY ${THEME} DESTINATION ${THEMESDIR} PATTERN ".svn" EXCLUDE)
+	ENDFOREACH(THEME)
+ENDIF(NOT STANDALONE)
