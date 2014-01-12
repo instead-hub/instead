@@ -11,6 +11,7 @@ ENDIF("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 SET(INSTEAD_VERSION "1.9.2")
 
 # options
+OPTION(WITH_SDL2 "Use SDL2 instead of SDL 1" OFF)
 OPTION(WITH_GTK "Use GTK file open dialog" ON)
 OPTION(WITH_ICONV "Build with iconv support" ON)
 OPTION(STANDALONE "Build for standalone run" OFF)
