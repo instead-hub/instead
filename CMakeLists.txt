@@ -12,9 +12,14 @@ SET(INSTEAD_VERSION "1.9.2")
 
 # options
 OPTION(WITH_SDL2 "Use SDL2 instead of SDL 1" OFF)
-OPTION(WITH_GTK "Use GTK file open dialog" ON)
+OPTION(WITH_GTK2 "Use GTK2 file open dialog" ON)
+OPTION(WITH_GTK3 "Use GTK3 file open dialog" OFF)
 OPTION(WITH_ICONV "Build with iconv support" ON)
 OPTION(STANDALONE "Build for standalone run" OFF)
+
+IF(WITH_GTK2 AND WITH_GTK3)
+	MESSAGE(FATAL_ERROR "WITH_GTK2 and WITH_GTK3 are mutually exclusive")
+ENDIF(WITH_GTK2 AND WITH_GTK3)
 
 SET(BINDIR "bin" CACHE STRING "Where to install binaries")
 SET(DATADIR "share/instead" CACHE STRING "Where to install binaries")
