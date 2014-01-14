@@ -404,7 +404,7 @@ int idf_read(idff_t fil, void *ptr, int size, int maxnum)
 		if (fread(ptr, size, 1, fil->fd) != 1)
 			break;
 //		fil->pos += size;
-		ptr += size;
+		ptr = (char *)ptr + size;
 		maxnum --;
 		rc ++;
 	}

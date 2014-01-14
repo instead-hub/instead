@@ -60,7 +60,7 @@ void push_user_event(void (*p) (void*), void *data)
 	uevent.type = SDL_USEREVENT;
 	uevent.code = 0;
 	event.type = SDL_USEREVENT;
-	uevent.data1 = p;
+	uevent.data1 = (void*) p;
 	uevent.data2 = data;
 	event.user = uevent;
 	SDL_PushEvent(&event);
@@ -92,7 +92,7 @@ void input_uevents(void)
 #else
 	while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_EVENTMASK (SDL_USEREVENT)) > 0) {
 #endif
-		void (*p) (void*) = peek.user.data1;
+		void (*p) (void*) = (void (*)(void*)) peek.user.data1;
 		p(peek.user.data2);
 	}
 }
@@ -181,7 +181,7 @@ int input(struct inp_event *inp, int wait)
 		return 0;
 #endif
 	case SDL_USEREVENT: {
-		void (*p) (void*) = event.user.data1;
+		void (*p) (void*) = (void (*)(void*))event.user.data1;
 		p(event.user.data2);
 		return AGAIN;
 		}
