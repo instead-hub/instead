@@ -193,7 +193,7 @@ static int fcopy(FILE *to, const char *fname)
 				break;
 			goto err;
 		}
-		if (fwrite(buff, 1, s, to) != s)
+		if (fwrite(buff, 1, s, to) != (size_t)s)
 			goto err;
 	}
 	rc = 0;
@@ -350,7 +350,7 @@ int idf_seek(idff_t fil, int offset, int whence)
 	idfd_t *dir = fil->dir;
 	switch (whence) {
 	case SEEK_SET:
-		if (offset < 0 || offset > dir->size) {
+		if (offset < 0 || (unsigned int)offset > dir->size) {
 			return -1;
 		}
 		fil->pos = offset;

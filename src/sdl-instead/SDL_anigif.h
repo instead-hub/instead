@@ -33,7 +33,7 @@ typedef struct
 	SDL_Surface*	surface;				/* SDL surface for this frame */
 	int				x, y;					/* Frame offset position */
 	int				disposal;				/* Disposal code */
-	int				delay;					/* Frame delay in ms */
+	unsigned int			delay;					/* Frame delay in ms */
 	int				user;					/* User data (not used by aniGIF) */
 } AG_Frame;
 
