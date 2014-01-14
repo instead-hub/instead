@@ -57,6 +57,7 @@ IF(WNO_UNUSED_PARAMETER_FLAG_SUPPORTED)
 ENDIF(WNO_UNUSED_PARAMETER_FLAG_SUPPORTED)
 
 IF(SYSTEMWIDE)
+	# Systemwide installation, global data paths
 	ADD_DEFINITIONS(
 		-DLANG_PATH=\"${CMAKE_INSTALL_PREFIX}/${LANGDIR}/\"
 		-DSTEAD_PATH=\"${CMAKE_INSTALL_PREFIX}/${STEADDIR}/\"
@@ -65,14 +66,17 @@ IF(SYSTEMWIDE)
 		-DICON_PATH=\"${CMAKE_INSTALL_PREFIX}/${ICONDIR}/\"
 	)
 ELSEIF(STANDALONE)
+	# Standalone installation, local data paths
 	ADD_DEFINITIONS(
 		-DLANG_PATH=\"lang/\"
 		-DSTEAD_PATH=\"stead/\"
 		-DGAMES_PATH=\"games/\"
 		-DTHEMES_PATH=\"themes/\"
 		-DICON_PATH=\"icon/\"
+		-D_LOCAL_APPDATA
 	)
 ELSE(SYSTEMWIDE)
+	# Neither, data paths point to source tree
 	ADD_DEFINITIONS(
 		-DLANG_PATH=\"${CMAKE_SOURCE_DIR}/lang/\"
 		-DSTEAD_PATH=\"${CMAKE_SOURCE_DIR}/stead/\"
