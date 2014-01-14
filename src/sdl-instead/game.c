@@ -1589,7 +1589,7 @@ static _snd_t *sound_find(const char *fname)
 	return NULL;
 }
 
-static int sound_find_channel(int chan)
+static int sound_find_channel(void)
 {
 	int i;
 	for (i = 0; i < SND_CHANNELS; i ++) {
@@ -1605,7 +1605,7 @@ static void sound_play(_snd_t *sn, int chan, int loop)
 	if (!sn)
 		return;
 	if (chan == -1) {
-		c = sound_find_channel(chan);
+		c = sound_find_channel();
 		if (c == -1)
 			return; /* all channels are busy */
 	} else

@@ -431,7 +431,7 @@ typedef struct LoadF {
 } LoadF;
 
 static const char *getF (lua_State *L, void *ud, size_t *size) {
-	int i = 0;
+	unsigned int i = 0;
 	LoadF *lf = (LoadF *)ud;
 	(void)L;
 	if (lf->extraline) {
@@ -1851,7 +1851,6 @@ static int instead_package(const char *path)
 	strcat(stead_path, "/?.lua");
 	strcat(stead_path, "\"");
 
-
 	instead_eval(stead_path); instead_clear();
 /*	putenv(stead_path); */
 	return 0;
@@ -1932,7 +1931,7 @@ int  instead_encode(const char *s, const char *d)
 	FILE *src;
 	FILE *dst;
 	size_t size;
-	int i = 0;
+	unsigned int i = 0;
 	unsigned char byte = 0xcc;
 	unsigned char buff[4096];
 
