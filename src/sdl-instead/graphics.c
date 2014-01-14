@@ -267,8 +267,9 @@ struct _anigif_t {
 	int	delay;
 	int	spawn_nr;
 	struct	agspawn *spawn;
-	AG_Frame frames[0];
+	AG_Frame frames[1];
 };
+#define anigif_size(nr) (sizeof(struct _anigif_t) + (nr) * sizeof(AG_Frame) - sizeof(AG_Frame))
 
 typedef struct _anigif_t *anigif_t;
 
@@ -970,20 +971,20 @@ cache_t gfx_image_cache(void)
 
 static anigif_t ag_new(int nr)
 {
-	anigif_t agif = malloc(sizeof(struct _anigif_t) + nr * sizeof(AG_Frame));
+	anigif_t agif = malloc(anigif_size(nr));
 	if (!agif)
 		return NULL;
-	memset(agif, 0, sizeof(struct _anigif_t) + nr * sizeof(AG_Frame));
+	memset(agif, 0, anigif_size(nr));
 	agif->nr_frames = nr;
 	return agif;
 }
 
 static anigif_t ag_dup(anigif_t ag)
 {
-	anigif_t agif = malloc(sizeof(struct _anigif_t) + ag->nr_frames * sizeof(AG_Frame));
+	anigif_t agif = malloc(anigif_size(ag->nr_frames));
 	if (!agif)
 		return NULL;
-	memcpy(agif, ag, sizeof(struct _anigif_t) + ag->nr_frames * sizeof(AG_Frame));
+	memcpy(agif, ag, anigif_size(ag->nr_frames));
 	return agif;
 }
 
