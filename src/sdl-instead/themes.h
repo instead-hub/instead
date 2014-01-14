@@ -76,8 +76,8 @@ struct game_theme {
 	int	inv_a_up_x; int	inv_a_up_y;
 	int	inv_a_down_x; int	inv_a_down_y;
 	
-//	int	lstyle;
-//	int	ilstyle;
+/*	int	lstyle;
+	int	ilstyle; */
 
 	color_t menu_bg;
 	color_t menu_fg;

@@ -538,18 +538,18 @@ int game_menu_act(const char *a)
 		int nr = atoi(a + 5);
 		if (!curgame_dir)
 			return 0;
-//		free_last();
+/*		free_last(); */
 		game_menu_box(0, NULL);
 		if (!game_reset()) {
 			game_load(nr);
 			cur_menu = menu_main;
 		}
-//		game_menu_box(0, NULL);
+/*		game_menu_box(0, NULL); */
 	} else if (!strcmp(a, "/new")) {
 		char *s;
 		if (!curgame_dir)
 			return 0;
-//		free_last();
+/*		free_last(); */
 
 /* remove autlosave */
 		s = game_save_path(0, 0);

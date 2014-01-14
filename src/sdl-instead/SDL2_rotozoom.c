@@ -143,7 +143,7 @@ int _shrinkSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int factorx, int fa
 					sp++;
 				} 
 				/* src dx loop */
-				sp = (tColorRGBA *)((Uint8*)sp + (src->pitch - 4*factorx)); // next y
+				sp = (tColorRGBA *)((Uint8*)sp + (src->pitch - 4*factorx)); /* next y */
 			}
 			/* src dy loop */
 

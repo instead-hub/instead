@@ -182,8 +182,8 @@ static int parse_include(const char *v, void *data)
 	getdir(cwd, sizeof(cwd));
 	setdir(game_cwd);
 	rc = game_theme_load(v);
-//	if (!rc)
-//		game_theme_select(v);
+/*	if (!rc)
+		game_theme_select(v); */
 	setdir(cwd);
 	return rc;
 }
@@ -692,7 +692,7 @@ static int game_theme_update_data(void)
 			m = game_theme.h / MAX_MENU_LINES / game_theme.menu_font_height;
 		else if (m < t->menu_font_size)
 			m = t->menu_font_size;
-//		fprintf(stderr, "%d %d > %d? %d", (int)FONT_SZ(t->inv_font_size), (int)FONT_SZ(t->inv_font_size) * MAX_MENU_LINES, game_theme.h, m);
+/*		fprintf(stderr, "%d %d > %d? %d", (int)FONT_SZ(t->inv_font_size), (int)FONT_SZ(t->inv_font_size) * MAX_MENU_LINES, game_theme.h, m); */
 		fnt_free(t->menu_font);
 		if (!(t->menu_font = fnt_load(t->menu_font_name, m))) /* do not scale menu!!! */
 			goto err;
@@ -771,7 +771,7 @@ skip:
 		t->click = sound_get(t->click_name);
 	}
 
-//	free_theme_strings(); /* todo, font */
+/*	free_theme_strings(); */ /* todo, font */
 	t->changed = 0;
 	if (!t->cursor || !t->use || !t->inv_a_up || !t->inv_a_down || !t->a_down || !t->a_up ||
 		!t->font || !t->inv_font || !t->menu_font || !t->menu_button) {
@@ -862,7 +862,7 @@ static int theme_parse(const char *path)
 
 	if (parse_ini(dirpath(path), cmd_parser)) {
 		fprintf(stderr, "Theme parsed with errors!\n");
-//		game_theme_free();
+/*		game_theme_free(); */
 		return -1;
 	}
 	return 0;

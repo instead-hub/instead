@@ -721,7 +721,7 @@ typedef struct {
 
 static void sprites_free(void)
 {
-//	fprintf(stderr, "sprites free \n");
+/*	fprintf(stderr, "sprites free \n"); */
 	while (!list_empty(&sprites)) {
 		_spr_t *sp = (_spr_t*)(sprites.next);
 		free(sp->name);
@@ -747,7 +747,7 @@ static _spr_t *sprite_lookup(const char *name)
 	list_for_each(pos, &sprites) {
 		sp = (_spr_t*)pos;
 		if (!strcmp(name, sp->name)) {
-			list_move(&sp->list, &sprites); // move it on head
+			list_move(&sp->list, &sprites); /* move it on head */
 			return sp;
 		}
 	}
@@ -761,7 +761,7 @@ static _fnt_t *font_lookup(const char *name)
 	list_for_each(pos, &fonts) {
 		fn = (_fnt_t*)pos;
 		if (!strcmp(name, fn->name)) {
-			list_move(&fn->list, &fonts); // move it on head
+			list_move(&fn->list, &fonts); /* move it on head */
 			return fn;
 		}
 	}
@@ -786,7 +786,7 @@ static _spr_t *sprite_new(const char *name, img_t img)
 		free(sp);
 		return NULL;
 	}
-//	fprintf(stderr, "added: %s\n", name);
+/*	fprintf(stderr, "added: %s\n", name); */
 	list_add(&sp->list, &sprites);
 	return sp;
 }
@@ -1861,7 +1861,7 @@ int instead_init_lua(const char *path)
 	busy = 0;
 	setlocale(LC_ALL,"");
 	setlocale(LC_NUMERIC,"C"); /* to avoid . -> , in numbers */	
-//	strcpy(curcp, "UTF-8");
+/*	strcpy(curcp, "UTF-8"); */
 
 	/* initialize Lua */
 #if LUA_VERSION_NUM >= 502

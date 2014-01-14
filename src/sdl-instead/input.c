@@ -69,7 +69,7 @@ void push_user_event(void (*p) (void*), void *data)
 int input_init(void)
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
-	// SDL_EnableKeyRepeat(500, 30); // TODO ?
+	/* SDL_EnableKeyRepeat(500, 30); */ /* TODO ? */
 #else
 	SDL_EnableKeyRepeat(500, 30);
 #endif
@@ -128,7 +128,7 @@ int input(struct inp_event *inp, int wait)
 #if SDL_VERSION_ATLEAST(2,0,0)
 	case SDL_WINDOWEVENT:
 		switch (event.window.event) {
-//		case SDL_WINDOWEVENT_SHOWN:
+/*		case SDL_WINDOWEVENT_SHOWN: */
 		case SDL_WINDOWEVENT_EXPOSED:
 			gfx_flip();
 			gfx_commit();
@@ -188,7 +188,7 @@ int input(struct inp_event *inp, int wait)
 	case SDL_QUIT:
 		game_running = 0;
 		return -1;
-	case SDL_KEYDOWN:	//A key has been pressed
+	case SDL_KEYDOWN:	/* A key has been pressed */
 		inp->type = KEY_DOWN; 
 		inp->code = event.key.keysym.scancode;
 		strncpy(inp->sym, SDL_GetKeyName(event.key.keysym.sym), sizeof(inp->sym));

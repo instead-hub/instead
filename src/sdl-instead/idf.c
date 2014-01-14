@@ -163,7 +163,7 @@ idf_t idf_init(const char *fname)
 			goto err;
 		}
 		cache_forget(idf->dir, e); /* use like hash */
-//		fprintf(stderr,"Parsed: '%s' @ %ld, %ld\n", name, off, size);
+/*		fprintf(stderr,"Parsed: '%s' @ %ld, %ld\n", name, off, size); */
 		dir_size -= (1 + sz + 4 + 4);
 	}
 	return idf;
@@ -403,7 +403,7 @@ int idf_read(idff_t fil, void *ptr, int size, int maxnum)
 
 		if (fread(ptr, size, 1, fil->fd) != 1)
 			break;
-//		fil->pos += size;
+/*		fil->pos += size; */
 		ptr = (char *)ptr + size;
 		maxnum --;
 		rc ++;
