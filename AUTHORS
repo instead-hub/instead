@@ -14,7 +14,7 @@ Port to Mac OS X:
 Port to Windows CE:
 	Andrey Afletdinov
 
-FreeBSD port:
+FreeBSD port and cmake support:
 	Dmitry Marakasov (AMDmi3)
 
 Web resources:
