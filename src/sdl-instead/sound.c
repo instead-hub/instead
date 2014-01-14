@@ -138,7 +138,7 @@ void	snd_free_wav(wav_t w)
 {	
 	if (!w)
 		return;	
-//	Mix_HaltChannel(-1);
+/*	Mix_HaltChannel(-1); */
 	Mix_FreeChunk((Mix_Chunk*)w);
 }
 void snd_halt_chan(int han, int ms)
@@ -211,7 +211,7 @@ int snd_play_mus(char *fname, int ms, int loop)
 		Mix_FadeInMusic(mus->mus, loop, ms);
 	else
 		Mix_PlayMusic(mus->mus, loop);
-	snd_volume_mus(snd_volume_mus(-1)); // SDL hack?
+	snd_volume_mus(snd_volume_mus(-1)); /* SDL hack? */
 	return 0;
 }
 
@@ -291,7 +291,7 @@ int snd_play(void *chunk, int channel, int loop)
 		channel = -1;
 	if (channel != -1)
 		snd_halt_chan(channel, 0);
-	snd_volume_mus(snd_volume_mus(-1)); // SDL hack?
+	snd_volume_mus(snd_volume_mus(-1)); /* SDL hack? */
 	return Mix_PlayChannel(channel, (Mix_Chunk*)chunk, loop);
 }
 

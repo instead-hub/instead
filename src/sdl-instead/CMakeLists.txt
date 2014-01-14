@@ -19,17 +19,20 @@ SET(INSTEAD_SRCS
 	unpack.c
 	unzip.c
 	util.c
+	list.c
 )
 
 # platform-specific sources
 IF(APPLE)
 	SET(INSTEAD_SRCS ${INSTEAD_SRCS} macosx.m)
+	ADD_DEFINITIONS(-Dunix)
 ELSEIF(WIN32 AND WINCE)
 	SET(INSTEAD_SRCS ${INSTEAD_SRCS} wince.c iowin32.c)
 ELSEIF(WIN32 AND NOT WINCE)
 	SET(INSTEAD_SRCS ${INSTEAD_SRCS} windows.c iowin32.c)
 ELSEIF(UNIX)
 	SET(INSTEAD_SRCS ${INSTEAD_SRCS} unix.c)
+	ADD_DEFINITIONS(-Dunix)
 ELSE(APPLE)
 	MESSAGE(FATAL_ERROR "Your platform is not supported yet, sorry")
 ENDIF(APPLE)
