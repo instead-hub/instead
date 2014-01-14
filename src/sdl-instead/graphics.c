@@ -472,7 +472,7 @@ void gfx_free_image(img_t p)
 
 void gfx_cache_free_image(void *p)
 {
-	return gfx_free_image((img_t)p);
+	gfx_free_image((img_t)p);
 }
 
 int	gfx_img_w(img_t pixmap)
@@ -2453,14 +2453,19 @@ void line_align(struct line *line, int width, int style, int nl)
 	if (style == ALIGN_JUSTIFY) {
 		if (nl)
 			return;
-		return line_justify(line, width);
+		line_justify(line, width);
+		return;
 	}
-	if (style == ALIGN_CENTER) 
-		return line_center(line, width);
+	if (style == ALIGN_CENTER) {
+		line_center(line, width);
+		return;
+	}
 	if (style == ALIGN_LEFT) 
 		return;
-	if (style == ALIGN_RIGHT) 
-		return line_right(line, width);
+	if (style == ALIGN_RIGHT) {
+		line_right(line, width);
+		return;
+	}
 }
 
 void word_free(struct word *word);
@@ -3717,10 +3722,14 @@ void txt_box_scroll(textbox_t tbox, int disp)
 {
 	if (!tbox)
 		return;
-	if (disp >0)
-		return txt_box_scroll_next(tbox, disp);
-	else if (disp <0)
-		return txt_box_scroll_prev(tbox, -disp);
+	if (disp >0) {
+		txt_box_scroll_next(tbox, disp);
+		return;
+	}
+	else if (disp <0) {
+		txt_box_scroll_prev(tbox, -disp);
+		return;
+	}
 }
 
 void txt_box_next_line(textbox_t tbox)

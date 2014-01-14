@@ -1192,7 +1192,7 @@ int game_menu_box_wh(const char *txt, int *w, int *h)
 	return 0;
 }
 
-void game_menu_box_width(int show, const char *txt, int width)
+int game_menu_box_width(int show, const char *txt, int width)
 {	
 //	img_t	menu;
 	int w, h, mw, mh;
@@ -1231,7 +1231,7 @@ void game_menu_box_width(int show, const char *txt, int width)
 	if (!show) {
 		game_cursor(CURSOR_DRAW);
 		gfx_flip();
-		return;
+		return 0;
 	}
 	if (!lay) {
 		lay = txt_layout(game_theme.menu_font, ALIGN_CENTER, game_theme.w - 2 * (b + pad), 0);
@@ -1268,9 +1268,10 @@ void game_menu_box_width(int show, const char *txt, int width)
 	el_draw(el_menu);
 	game_cursor(CURSOR_DRAW);
 	gfx_flip();
+	return 0;
 }
 
-void game_menu_box(int show, const char *txt)
+int game_menu_box(int show, const char *txt)
 {
 	int w = 0;
 	if (cur_menu == menu_games) { /* hack a bit :( */
@@ -1453,8 +1454,8 @@ typedef struct {
 	int	loop;
 	int	channel;
 } _snd_req_t;
-static _snd_t *channels[SND_CHANNELS] = {};
-static _snd_req_t sound_reqs[SND_CHANNELS] = {};
+static _snd_t *channels[SND_CHANNELS];
+static _snd_req_t sound_reqs[SND_CHANNELS];
 static void sound_play(_snd_t *sn, int chan, int loop);
 
 static void sound_callback(void *aux)
