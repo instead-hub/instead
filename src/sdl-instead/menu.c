@@ -538,18 +538,18 @@ int game_menu_act(const char *a)
 		int nr = atoi(a + 5);
 		if (!curgame_dir)
 			return 0;
-//		free_last();
+/*		free_last(); */
 		game_menu_box(0, NULL);
 		if (!game_reset()) {
 			game_load(nr);
 			cur_menu = menu_main;
 		}
-//		game_menu_box(0, NULL);
+/*		game_menu_box(0, NULL); */
 	} else if (!strcmp(a, "/new")) {
 		char *s;
 		if (!curgame_dir)
 			return 0;
-//		free_last();
+/*		free_last(); */
 
 /* remove autlosave */
 		s = game_save_path(0, 0);
@@ -767,40 +767,40 @@ static int lang_ok(void)
 }	
 
 struct parser lang_parser[] = {
-	{ "UNKNOWN_ERROR", parse_esc_string, &UNKNOWN_ERROR },
-	{ "ERROR_MENU", parse_esc_string, &ERROR_MENU },
-	{ "WARNING_MENU", parse_esc_string, &WARNING_MENU },
-	{ "SAVE_SLOT_EMPTY", parse_esc_string, &SAVE_SLOT_EMPTY },
-	{ "SELECT_LOAD_MENU", parse_esc_string, &SELECT_LOAD_MENU },
-	{ "AUTOSAVE_SLOT", parse_esc_string, &AUTOSAVE_SLOT },
-	{ "BROKEN_SLOT", parse_esc_string, &BROKEN_SLOT },
-	{ "SELECT_SAVE_MENU", parse_esc_string, &SELECT_SAVE_MENU },
-	{ "MAIN_MENU", parse_esc_string, &MAIN_MENU },
-	{ "ABOUT_MENU", parse_esc_string, &ABOUT_MENU },
-	{ "BACK_MENU", parse_esc_string, &BACK_MENU },
-	{ "SETTINGS_GFX_MENU", parse_esc_string, &SETTINGS_GFX_MENU },
-	{ "SETTINGS_SND_MENU", parse_esc_string, &SETTINGS_SND_MENU },
-	{ "SETTINGS_OTH_MENU", parse_esc_string, &SETTINGS_OTH_MENU },
-	{ "CUSTOM_THEME_MENU", parse_esc_string, &CUSTOM_THEME_MENU },
-	{ "OWN_THEME_MENU", parse_esc_string, &OWN_THEME_MENU },
-	{ "WAIT_MENU", parse_esc_string, &WAIT_MENU },
-	{ "SELECT_GAME_MENU", parse_esc_string, &SELECT_GAME_MENU },
-	{ "SELECT_THEME_MENU", parse_esc_string, &SELECT_THEME_MENU },
-	{ "SAVED_MENU", parse_esc_string, &SAVED_MENU },
-	{ "NOGAMES_MENU", parse_esc_string, &NOGAMES_MENU },
-	{ "NOTHEMES_MENU", parse_esc_string, &NOTHEMES_MENU },
-	{ "QUIT_MENU", parse_esc_string, &QUIT_MENU },
-	{ "REMOVE_MENU", parse_esc_string, &REMOVE_MENU },
-	{ "ON", parse_esc_string, &ON },
-	{ "OFF", parse_esc_string, &OFF },
-	{ "KBD_MODE_LINKS", parse_esc_string, &KBD_MODE_LINKS },
-	{ "KBD_MODE_SMART", parse_esc_string, &KBD_MODE_SMART },
-	{ "KBD_MODE_SCROLL", parse_esc_string, &KBD_MODE_SCROLL },
-	{ "CANCEL_MENU", parse_esc_string, &CANCEL_MENU },
-	{ "FROM_THEME", parse_esc_string, &FROM_THEME },
-	{ "DISABLED_SAVE_MENU", parse_esc_string, &DISABLED_SAVE_MENU },
-	{ "BROWSE_MENU", parse_esc_string, &BROWSE_MENU },
-	{ NULL,  },
+	{ "UNKNOWN_ERROR", parse_esc_string, &UNKNOWN_ERROR, 0 },
+	{ "ERROR_MENU", parse_esc_string, &ERROR_MENU, 0 },
+	{ "WARNING_MENU", parse_esc_string, &WARNING_MENU, 0 },
+	{ "SAVE_SLOT_EMPTY", parse_esc_string, &SAVE_SLOT_EMPTY, 0 },
+	{ "SELECT_LOAD_MENU", parse_esc_string, &SELECT_LOAD_MENU, 0 },
+	{ "AUTOSAVE_SLOT", parse_esc_string, &AUTOSAVE_SLOT, 0 },
+	{ "BROKEN_SLOT", parse_esc_string, &BROKEN_SLOT, 0 },
+	{ "SELECT_SAVE_MENU", parse_esc_string, &SELECT_SAVE_MENU, 0 },
+	{ "MAIN_MENU", parse_esc_string, &MAIN_MENU, 0 },
+	{ "ABOUT_MENU", parse_esc_string, &ABOUT_MENU, 0 },
+	{ "BACK_MENU", parse_esc_string, &BACK_MENU, 0 },
+	{ "SETTINGS_GFX_MENU", parse_esc_string, &SETTINGS_GFX_MENU, 0 },
+	{ "SETTINGS_SND_MENU", parse_esc_string, &SETTINGS_SND_MENU, 0 },
+	{ "SETTINGS_OTH_MENU", parse_esc_string, &SETTINGS_OTH_MENU, 0 },
+	{ "CUSTOM_THEME_MENU", parse_esc_string, &CUSTOM_THEME_MENU, 0 },
+	{ "OWN_THEME_MENU", parse_esc_string, &OWN_THEME_MENU, 0 },
+	{ "WAIT_MENU", parse_esc_string, &WAIT_MENU, 0 },
+	{ "SELECT_GAME_MENU", parse_esc_string, &SELECT_GAME_MENU, 0 },
+	{ "SELECT_THEME_MENU", parse_esc_string, &SELECT_THEME_MENU, 0 },
+	{ "SAVED_MENU", parse_esc_string, &SAVED_MENU, 0 },
+	{ "NOGAMES_MENU", parse_esc_string, &NOGAMES_MENU, 0 },
+	{ "NOTHEMES_MENU", parse_esc_string, &NOTHEMES_MENU, 0 },
+	{ "QUIT_MENU", parse_esc_string, &QUIT_MENU, 0 },
+	{ "REMOVE_MENU", parse_esc_string, &REMOVE_MENU, 0 },
+	{ "ON", parse_esc_string, &ON, 0 },
+	{ "OFF", parse_esc_string, &OFF, 0 },
+	{ "KBD_MODE_LINKS", parse_esc_string, &KBD_MODE_LINKS, 0 },
+	{ "KBD_MODE_SMART", parse_esc_string, &KBD_MODE_SMART, 0 },
+	{ "KBD_MODE_SCROLL", parse_esc_string, &KBD_MODE_SCROLL, 0 },
+	{ "CANCEL_MENU", parse_esc_string, &CANCEL_MENU, 0 },
+	{ "FROM_THEME", parse_esc_string, &FROM_THEME, 0 },
+	{ "DISABLED_SAVE_MENU", parse_esc_string, &DISABLED_SAVE_MENU, 0 },
+	{ "BROWSE_MENU", parse_esc_string, &BROWSE_MENU, 0 },
+	{ NULL,  NULL, NULL, 0 },
 };
 
 static int lang_parse(const char *path)

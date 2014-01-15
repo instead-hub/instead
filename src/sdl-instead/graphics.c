@@ -18,7 +18,7 @@
 #define IMG_ANIGIF 1
 struct _img_t {
 	SDL_Surface *s;
-//	SDL_Texture *t;
+/*	SDL_Texture *t; */
 	int flags;
 	void	*aux;
 };
@@ -185,6 +185,16 @@ static struct {
 	{NULL, 0x0},
 };
 
+color_t gfx_col(int r, int g, int b)
+{
+	color_t col;
+	col.r = r;
+	col.g = g;
+	col.b = b;
+	col.a = 0;
+	return col;
+}
+
 int gfx_parse_color (
 	const char *spec,
 	color_t *def)
@@ -224,8 +234,6 @@ int gfx_parse_color (
 		    else return (0);
 		}
 	    } while (*spec != '\0');
-//	    n <<= 2;
-//	    n = 16 - n;
 	    if (def) {
 		    def->r = r;
 		    def->g = g;
@@ -267,8 +275,9 @@ struct _anigif_t {
 	int	delay;
 	int	spawn_nr;
 	struct	agspawn *spawn;
-	AG_Frame frames[0];
+	AG_Frame frames[1];
 };
+#define anigif_size(nr) (sizeof(struct _anigif_t) + (nr) * sizeof(AG_Frame) - sizeof(AG_Frame))
 
 typedef struct _anigif_t *anigif_t;
 
@@ -277,7 +286,7 @@ static int anigif_spawn(anigif_t ag, int x, int y, int w, int h)
 	int nr;
 	SDL_Rect clip;
 	SDL_GetClipRect(Surf(screen), &clip);
-	//gfx_free_image(ag->bg);
+	/* gfx_free_image(ag->bg); */
 	if (!ag->spawn && !(ag->spawn = malloc(AGSPAWN_BLOCK * sizeof(struct agspawn))))
 		return -1;
 	nr = ag->spawn_nr + 1;
@@ -320,8 +329,8 @@ static void anigif_disposal(anigif_t g)
 	frame = &g->frames[g->cur_frame];
 	SDL_GetClipRect(Surf(screen), &clip);
 	
-	dest.x = 0; //g->x;
-	dest.y = 0; //g->y; 
+	dest.x = 0; /* g->x; */
+	dest.y = 0; /* g->y; */
 	dest.w = dest.h = 0; /* to make happy compiler */
 
 	switch (frame->disposal) {
@@ -329,9 +338,9 @@ static void anigif_disposal(anigif_t g)
 	case AG_DISPOSE_NONE: /* just show next frame */
 		break;
 	case AG_DISPOSE_RESTORE_BACKGROUND:
-//		img = g->bg;
-//		dest.w = Surf(img)->w; 
-//		dest.h = Surf(img)->h;
+/*		img = g->bg;
+		dest.w = Surf(img)->w; 
+		dest.h = Surf(img)->h; */
 		break;
 	case AG_DISPOSE_RESTORE_PREVIOUS:
 		if (g->cur_frame) {
@@ -449,7 +458,7 @@ static void gfx_free_img(img_t p)
 	if (!p)
 		return;
 	SDL_FreeSurface(Surf(p));
-	// todo texture
+	/* todo texture */
 	SDL_free(p);
 }
 
@@ -472,7 +481,7 @@ void gfx_free_image(img_t p)
 
 void gfx_cache_free_image(void *p)
 {
-	return gfx_free_image((img_t)p);
+	gfx_free_image((img_t)p);
 }
 
 int	gfx_img_w(img_t pixmap)
@@ -530,7 +539,7 @@ static img_t	gfx_new_img(SDL_Surface *s, int fl, void *data)
 	i = SDL_malloc(sizeof(struct _img_t));
 	if (i) {
 		i->s = s;
-//		i->t = NULL;
+/*		i->t = NULL; */
 		i->flags = fl;
 		i->aux = data;
 	}
@@ -622,8 +631,8 @@ img_t	gfx_grab_screen(int x, int y, int w, int h)
 	dst.y = 0;
 	dst.w = w;
 	dst.h = h;	
-//	SDL_SetSurfaceBlendMode(screen, SDL_BLENDMODE_NONE);
-//	SDL_SetSurfaceBlendMode(img, SDL_BLENDMODE_NONE);
+/*	SDL_SetSurfaceBlendMode(screen, SDL_BLENDMODE_NONE);
+	SDL_SetSurfaceBlendMode(img, SDL_BLENDMODE_NONE); */
 	SDL_BlitSurface(Surf(screen), &src, img, &dst);
 	return GFX_IMG(img);
 }
@@ -633,19 +642,19 @@ static SDL_RendererInfo SDL_VideoRendererInfo;
 
 SDL_Surface *SDL_DisplayFormatAlpha(SDL_Surface * surface)
 {
-//	SDL_PixelFormat *format;
+/*	SDL_PixelFormat *format; */
 	SDL_Surface *converted;
 	if (!screen) {
 		fprintf(stderr, "No video mode has been set.\n");
 		return NULL;
 	}
-//	format = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB8888);
-//	if (surface->format->Amask == 0 && surface->format->palette) /* hack! */
-//		SDL_SetColorKey(surface, SDL_TRUE, *(Uint8*)surface->pixels);
-	converted = SDL_ConvertSurface(surface, Surf(screen)->format, 0); //SDL_RLEACCEL);
+/*	format = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB8888);
+	if (surface->format->Amask == 0 && surface->format->palette) /* hack! */
+		SDL_SetColorKey(surface, SDL_TRUE, *(Uint8*)surface->pixels); */
+	converted = SDL_ConvertSurface(surface, Surf(screen)->format, 0); /* SDL_RLEACCEL); */
 	if (converted)
 		SDL_SetSurfaceBlendMode(converted, SDL_BLENDMODE_BLEND);
-//	SDL_FreeFormat(format);
+/*	SDL_FreeFormat(format); */
 	return converted;
 }
 
@@ -659,10 +668,10 @@ SDL_Surface *SDL_DisplayFormat(SDL_Surface * surface)
 		return NULL;
 	}
 	format = Surf(screen)->format;
-//	format = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB8888);
-	converted = SDL_ConvertSurface(surface, format, 0);//SDL_RLEACCEL);
+/*	format = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB8888); */
+	converted = SDL_ConvertSurface(surface, format, 0);/* SDL_RLEACCEL); */
 	/* Set the flags appropriate for copying to display surface */
-//	SDL_FreeFormat(format);
+/*	SDL_FreeFormat(format); */
 	return converted;
 }
 #endif
@@ -804,11 +813,11 @@ img_t gfx_alpha_img(img_t src, int alpha)
 void	gfx_set_alpha(img_t src, int alpha)
 {
 #if SDL_VERSION_ATLEAST(1,3,0)
-//	if (Surf(src)->format->Amask)
-//		alpha = SDL_ALPHA_OPAQUE;
+/*	if (Surf(src)->format->Amask)
+		alpha = SDL_ALPHA_OPAQUE; */
 	SDL_SetSurfaceAlphaMod(Surf(src), alpha);
-//		SDL_SetSurfaceBlendMode((SDL_Surface *)src, SDL_BLENDMODE_NONE);
-//	else
+/*		SDL_SetSurfaceBlendMode((SDL_Surface *)src, SDL_BLENDMODE_NONE);
+	else */
 	SDL_SetSurfaceBlendMode(Surf(src), SDL_BLENDMODE_BLEND);
 #else
 	SDL_SetAlpha(Surf(src), SDL_SRCALPHA, alpha);
@@ -901,9 +910,9 @@ static img_t _gfx_load_special_image(char *f, int combined)
 		filename += 6;
 		blank = 1;
 	} else if (!strncmp(filename, "spr:", 4) && !combined) {
-//		filename += 4;
+/*		filename += 4; */
 		img2 = cache_get(images, filename);
-//		fprintf(stderr, "get:%s %p\n", filename, img2);
+/*		fprintf(stderr, "get:%s %p\n", filename, img2); */
 		goto out;
 	} else if (!strncmp(filename, "box:", 4)) {
 		filename += 4;
@@ -970,20 +979,20 @@ cache_t gfx_image_cache(void)
 
 static anigif_t ag_new(int nr)
 {
-	anigif_t agif = malloc(sizeof(struct _anigif_t) + nr * sizeof(AG_Frame));
+	anigif_t agif = malloc(anigif_size(nr));
 	if (!agif)
 		return NULL;
-	memset(agif, 0, sizeof(struct _anigif_t) + nr * sizeof(AG_Frame));
+	memset(agif, 0, anigif_size(nr));
 	agif->nr_frames = nr;
 	return agif;
 }
 
 static anigif_t ag_dup(anigif_t ag)
 {
-	anigif_t agif = malloc(sizeof(struct _anigif_t) + ag->nr_frames * sizeof(AG_Frame));
+	anigif_t agif = malloc(anigif_size(ag->nr_frames));
 	if (!agif)
 		return NULL;
-	memcpy(agif, ag, sizeof(struct _anigif_t) + ag->nr_frames * sizeof(AG_Frame));
+	memcpy(agif, ag, anigif_size(ag->nr_frames));
 	return agif;
 }
 
@@ -1007,7 +1016,7 @@ static img_t _gfx_load_image(char *filename, int combined)
 		AG_NormalizeSurfacesToDisplayFormat( agif->frames, nr);
 		agif->loop = loop;
 		anigif_add(agif);
-//		fprintf(stderr, "anigif: %s %p\n", filename, agif->frames[0].surface);
+/*		fprintf(stderr, "anigif: %s %p\n", filename, agif->frames[0].surface); */
 		return gfx_new_img(agif->frames[0].surface, IMG_ANIGIF, agif);
 	}
 	rw = RWFromIdf(game_idf, filename);
@@ -1020,7 +1029,7 @@ static img_t _gfx_load_image(char *filename, int combined)
 		rwop = RWFromIdf(game_idf, filename);
 		if (rwop) {
 			if (IMG_isBMP(rwop))
-//				SDL_SetAlpha(img, 0, SDL_ALPHA_OPAQUE);
+/*				SDL_SetAlpha(img, 0, SDL_ALPHA_OPAQUE); */
 				gfx_unset_alpha(img);
 			SDL_RWclose(rwop);
 		}
@@ -1370,7 +1379,7 @@ static SDL_Rect **SDL_ListModes(const SDL_PixelFormat * format, Uint32 flags)
 		if (!mode.w || !mode.h) {
 			return (SDL_Rect **) (-1);
 		}
-//		fprintf(stderr, "Mode: %d %d %d %d\n", bpp, SDL_BITSPERPIXEL(mode.format), mode.w, mode.h);
+/*		fprintf(stderr, "Mode: %d %d %d %d\n", bpp, SDL_BITSPERPIXEL(mode.format), mode.w, mode.h); */
 		if (bpp < SDL_BITSPERPIXEL(mode.format)) {
 			continue;
 		}
@@ -1545,8 +1554,8 @@ static SDL_Surface *CreateVideoSurface(SDL_Texture * texture)
 	int w, h;
 	int bpp;
 	Uint32 Rmask, Gmask, Bmask, Amask;
-//	void *pixels;
-//	int pitch;
+/*	void *pixels;
+	int pitch; */
 
 	if (SDL_QueryTexture(texture, &format, NULL, &w, &h) < 0) {
 		return NULL;
@@ -1623,7 +1632,7 @@ int gfx_set_mode(int w, int h, int fs)
 		mode.format = desktop_mode.format;
 		if (SDL_SetWindowDisplayMode(SDL_VideoWindow, &mode) < 0) {
 			fprintf(stderr, "Unable to set display mode: %s\n", SDL_GetError());
-//			return -1;
+/*			return -1; */
 		}
 	}
 
@@ -1643,7 +1652,7 @@ int gfx_set_mode(int w, int h, int fs)
 		fprintf(stderr, "Unable to create texture: %s\n", SDL_GetError());
 		return -1;
 	}
-//	SDL_SetTextureBlendMode(SDL_VideoTexture, SDL_BLENDMODE_NONE);
+/*	SDL_SetTextureBlendMode(SDL_VideoTexture, SDL_BLENDMODE_NONE); */
 	SDL_VideoSurface = CreateVideoSurface(SDL_VideoTexture);
 	if (!SDL_VideoSurface) {
 		fprintf(stderr, "Unable to create screen surface: %s\n", SDL_GetError());
@@ -1652,11 +1661,11 @@ int gfx_set_mode(int w, int h, int fs)
     /* Set a default screen palette */
 #if 0
 	if (SDL_VideoSurface->format->palette) {
-//		SDL_VideoSurface->flags |= SDL_HWPALETTE;
-//		SDL_DitherColors(SDL_VideoSurface->format->palette->colors,
-//			SDL_VideoSurface->format->BitsPerPixel);
-//		SDL_AddPaletteWatch(SDL_VideoSurface->format->palette,
-//			SDL_VideoPaletteChanged, SDL_VideoSurface);
+/*		SDL_VideoSurface->flags |= SDL_HWPALETTE;
+		SDL_DitherColors(SDL_VideoSurface->format->palette->colors,
+			SDL_VideoSurface->format->BitsPerPixel);
+		SDL_AddPaletteWatch(SDL_VideoSurface->format->palette,
+			SDL_VideoPaletteChanged, SDL_VideoSurface); */
 		SDL_SetPaletteColors(SDL_VideoSurface->format->palette,
 			SDL_VideoSurface->format->palette->colors, 0,
 			SDL_VideoSurface->format->palette->ncolors);
@@ -1819,8 +1828,8 @@ void gfx_draw_cursor(void)
 
 	rect.x = cursor_x;
 	rect.y = cursor_y;
-	rect.w = cursor_w; // - 1; /* SDL 2.0 hack? */
-	rect.h = cursor_h; // - 1;
+	rect.w = cursor_w; /* - 1; */ /* SDL 2.0 hack? */
+	rect.h = cursor_h; /* - 1; */
 	SDL_RenderCopy(Renderer, cursor, NULL, &rect);
 }
 
@@ -2176,7 +2185,7 @@ int txt_width(fnt_t fnt, const char *txt)
 		return 0;
 	while (*p) {
 		if (!c) {
-			if (! (*p & 0x80)) { // ascii
+			if (! (*p & 0x80)) { /* ascii */
 				c = 1;
 				u = *p & 0x7f;
 			} else {
@@ -2453,14 +2462,19 @@ void line_align(struct line *line, int width, int style, int nl)
 	if (style == ALIGN_JUSTIFY) {
 		if (nl)
 			return;
-		return line_justify(line, width);
+		line_justify(line, width);
+		return;
 	}
-	if (style == ALIGN_CENTER) 
-		return line_center(line, width);
+	if (style == ALIGN_CENTER) {
+		line_center(line, width);
+		return;
+	}
 	if (style == ALIGN_LEFT) 
 		return;
-	if (style == ALIGN_RIGHT) 
-		return line_right(line, width);
+	if (style == ALIGN_RIGHT) {
+		line_right(line, width);
+		return;
+	}
 }
 
 void word_free(struct word *word);
@@ -2606,19 +2620,19 @@ void word_free(struct word *word)
 {
 	if (!word)
 		return;
-//	if (word->img)
-//		gfx_free_image(word->img);
+/*	if (word->img)
+		gfx_free_image(word->img); */
 	if (word->word)
 		free(word->word);
 
 	if (word->prerend) {
 		cache_forget(word->line->layout->prerend_cache, word->prerend);
-//		SDL_FreeSurface(word->prerend);
+/*		SDL_FreeSurface(word->prerend); */
 	}
 
 	if (word->hlprerend) {
 		cache_forget(word->line->layout->hlprerend_cache, word->hlprerend);
-//		SDL_FreeSurface(word->hlprerend);
+/*		SDL_FreeSurface(word->hlprerend); */
 	}
 	word->hlprerend = word->prerend = NULL;
 	free(word);
@@ -3033,7 +3047,7 @@ int get_token(const char *ptr, char **eptr, char **val, int *sp)
 			return 0;
 		}
 		ptr += 2;
-//		ep = (char*)ptr + strcspn(ptr, ">");
+/*		ep = (char*)ptr + strcspn(ptr, ">"); */
 		ep = find_in_esc(ptr, "\\>");
 		if (*ep != '>') {
 			return 0;
@@ -3295,7 +3309,7 @@ static char *get_word(const char *ptr, char **eptr, int *sp)
 		return NULL;
 
 	ep = lookup_token_or_sp(ptr);
-//	ep += strcspn(ep, " \t\n");
+/*	ep += strcspn(ep, " \t\n"); */
 	sz = ep - ptr;
 	o = malloc(sz + 1);
 	memcpy(o, ptr, sz);
@@ -3544,8 +3558,8 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 	struct layout *layout = (struct layout*)lay;
 	struct margin *margin;
 	struct word *word;
-//	line = layout->lines;
-//	gfx_clip(x, y, layout->w, layout->h);
+/*	line = layout->lines;
+	gfx_clip(x, y, layout->w, layout->h); */
 	if (!lay)
 		return;
 	for (v = NULL; (img = txt_layout_images(lay, &v)); )
@@ -3573,7 +3587,7 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 	cache_shrink(layout->prerend_cache);
 	cache_shrink(layout->hlprerend_cache);
 	cache_shrink(layout->img_cache);
-//	gfx_noclip();
+/*	gfx_noclip(); */
 }
 
 void txt_layout_draw(layout_t lay, int x, int y)
@@ -3589,11 +3603,11 @@ textbox_t txt_box(int w, int h)
 	box = malloc(sizeof(struct textbox));
 	if (!box)
 		return NULL;
-	box->lay = NULL; //(struct layout*)lay;
+	box->lay = NULL; /* (struct layout*)lay; */
 	box->w = w;
 	box->h = h;
 	box->off = 0;
-	box->line = NULL; //(box->lay)->lines;
+	box->line = NULL; /* (box->lay)->lines; */
 	return box;
 }
 
@@ -3717,10 +3731,14 @@ void txt_box_scroll(textbox_t tbox, int disp)
 {
 	if (!tbox)
 		return;
-	if (disp >0)
-		return txt_box_scroll_next(tbox, disp);
-	else if (disp <0)
-		return txt_box_scroll_prev(tbox, -disp);
+	if (disp >0) {
+		txt_box_scroll_next(tbox, disp);
+		return;
+	}
+	else if (disp <0) {
+		txt_box_scroll_prev(tbox, -disp);
+		return;
+	}
 }
 
 void txt_box_next_line(textbox_t tbox)
@@ -3732,7 +3750,7 @@ void txt_box_next_line(textbox_t tbox)
 	line = box->line;
 	if (!line)
 		return;
-//	txt_box_norm(tbox);		
+/*	txt_box_norm(tbox);	*/
 	if (box->lay->h - box->off < box->h)
 		return;
 	line = line->next;
@@ -3903,10 +3921,10 @@ img_t txt_box_render(textbox_t tbox)
 	old_screen = screen;
 	screen = dst;
 	gfx_clear(0, 0, box->w, box->h);
-//	gfx_clip(0, 0, box->w, box->h);
-//	printf("line: %d\n", box->line->y);
+/*	gfx_clip(0, 0, box->w, box->h);
+	printf("line: %d\n", box->line->y); */
 	txt_layout_draw_ex(box->lay, box->line, 0, - box->off, box->off, box->h, NULL);
-//	gfx_noclip();
+/*	gfx_noclip(); */
 	screen = old_screen;
 	return dst;
 }
@@ -3917,7 +3935,7 @@ void txt_box_draw(textbox_t tbox, int x, int y)
 	if (!tbox)
 		return;
 	gfx_clip(x, y, box->w, box->h);
-//	printf("line: %d\n", box->line->y);
+/*	printf("line: %d\n", box->line->y); */
 	txt_layout_draw_ex(box->lay, box->line, x, y - box->off, box->off, box->h, NULL);
 	gfx_noclip();
 }
@@ -3928,7 +3946,7 @@ void txt_box_update_links(textbox_t tbox, int x, int y, clear_fn clear)
 	if (!tbox)
 		return;
 	gfx_clip(x, y, box->w, box->h);
-//	printf("line: %d\n", box->line->y);
+/*	printf("line: %d\n", box->line->y); */
 	txt_layout_draw_ex(box->lay, box->line, x, y - box->off, box->off, box->h, clear);
 	gfx_noclip();
 }
@@ -3937,10 +3955,10 @@ void txt_box_update_links(textbox_t tbox, int x, int y, clear_fn clear)
 void txt_layout_update_links(layout_t layout, int x, int y, clear_fn clear)
 {
 	struct layout *lay = (struct layout *)layout;
-//	gfx_clip(x, y, box->w, box->h);
-//	printf("line: %d\n", box->line->y);
+/*	gfx_clip(x, y, box->w, box->h);
+	printf("line: %d\n", box->line->y); */
 	txt_layout_draw_ex(lay, lay->lines, x, y, 0, lay->h, clear);
-//	gfx_noclip();
+/*	gfx_noclip(); */
 }
 
 img_t get_img(struct layout *layout, char *p, int *al)
@@ -3989,7 +4007,7 @@ img_t get_img(struct layout *layout, char *p, int *al)
 	} else {
 		layout_add_image(layout, image);
 		image->free_it = 1; /* free on layout destroy */
-//		if (gfx_img_w(img) <= GFX_MAX_CACHED_W && gfx_img_h(img) <= GFX_MAX_CACHED_H)
+/*		if (gfx_img_w(img) <= GFX_MAX_CACHED_W && gfx_img_h(img) <= GFX_MAX_CACHED_H) */
 			cache_add(layout->img_cache, p, img);
 	}
 out:
@@ -4208,7 +4226,7 @@ int txt_layout_pos2off(layout_t lay, int pos, int *hh)
 	if (!layout)
 		return 0;
 	for (line = layout->lines; line && (line->pos <= pos); line = line->next) {
-		off = line->y; // + line->h;
+		off = line->y; /* + line->h; */
 		if (hh)
 			*hh = line->h;
 	}
@@ -4225,7 +4243,7 @@ int txt_layout_anchor(layout_t lay, int *hh)
 	line = layout->anchor;
 	if (!line)
 		return -1;
-	off = line->y; // + line->h;
+	off = line->y; /* + line->h; */
 	if (hh)
 		*hh = line->h;
 	return off;
@@ -4278,9 +4296,9 @@ void _txt_layout_add(layout_t lay, char *txt)
 		if (eptr) {
 			ptr = eptr;
 			if (xref && layout->style == saved_style)
-				fnt_style(layout->fn, layout->lstyle); // & ~TTF_STYLE_ITALIC);
+				fnt_style(layout->fn, layout->lstyle); /* & ~TTF_STYLE_ITALIC); */
 			else
-				fnt_style(layout->fn, layout->style);// & ~TTF_STYLE_ITALIC);
+				fnt_style(layout->fn, layout->style);/* & ~TTF_STYLE_ITALIC); */
 
 			if (!ptr || !*ptr)
 				break;
@@ -4347,18 +4365,18 @@ void _txt_layout_add(layout_t lay, char *txt)
 				goto err;
 			}
 			line->align = layout->align;
-			line->h = 0;//h;
+			line->h = 0;/* h; */
 			line->y = ol->y + ol->h;
 
 
-//			line->x = 0;
+/*			line->x = 0; */
 			line->x = layout_find_margin(layout, line->y, &width);
-//			fprintf(stderr,"%d %d\n", line->x, width);
+/*			fprintf(stderr,"%d %d\n", line->x, width); */
 			if (nl) {
 				ptr = eptr + 1;
 			}
 			free(p);
-//			ptr = eptr;
+/*			ptr = eptr; */
 			line->pos = (int)(ptr - txt);
 			continue;
 		}
@@ -4414,7 +4432,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 			} 
 			else
 				m->w = layout->w - x2 - w2 + w;
-//			fprintf(stderr,"w: %d %d %d\n", width, w, width - w);
+/*			fprintf(stderr,"w: %d %d %d\n", width, w, width - w); */
 			width -= w;
 			m->h = h;
 			m->y = line->y;
@@ -4430,8 +4448,8 @@ void _txt_layout_add(layout_t lay, char *txt)
 			layout_add_margin(layout, m);
 		}
 
-//		if (line->w)
-//			w += spw;
+/*		if (line->w)
+			w += spw; */
 
 		line_add_word(line, word);
 
@@ -4448,12 +4466,12 @@ void _txt_layout_add(layout_t lay, char *txt)
 	if (layout->h == 0)
 		layout->h = line->y + line->h;
 
-//	if (line->num) {
+/*	if (line->num) { */
 		if (line != lastline) 
 			layout_add_line(layout, line);
 		line_align(line, width, line->align, nl);
-//	} else
-//		line_free(line);
+/*	} else
+		line_free(line); */
 	if (xref)
 		layout_add_xref(layout, xref);
 	layout->style = saved_style;
@@ -4622,7 +4640,7 @@ layout_t txt_layout(fnt_t fn, int align, int width, int height)
 	if (!layout)
 		return NULL;
 	layout->align = align;
-//	_txt_layout_add(layout, txt);
+/*	_txt_layout_add(layout, txt); */
 	return layout;
 }
 
@@ -4761,7 +4779,7 @@ void gfx_change_screen(img_t src, int steps)
 		gfx_draw(src, 0, 0);
 		game_cursor(CURSOR_ON);
 		gfx_flip();
-//		gfx_commit();
+/*		gfx_commit(); */
 		return;
 	}
 	fade_fg = NULL;
@@ -4818,7 +4836,7 @@ int gfx_init(void)
 		gfx_done();
 		return -1;
 	}
-//	SDL_DisableScreenSaver();
+/*	SDL_DisableScreenSaver(); */
 	return 0;
 }
 

@@ -18,7 +18,10 @@ config.make:
 	echo "# you can define own flags here" > config.make
 
 svnclean:
-	svn st | grep "^?" | awk '{ print $$2 }' | grep -v "config.make" | while read l; do $(RM) -rf $$l; done
+	{ test -d .svn && svn st; } | grep "^?" | awk '{ print $$2 }' | grep -v "config.make" | while read l; do $(RM) -rf $$l; done
+
+gitclean:
+	{ test -d .git && git status -s; } | grep "^??" | awk '{ print $$2 }' | grep -v "config.make" | while read l; do $(RM) -rf $$l; done
 
 rules:
 	$(RM) -f Rules.make
@@ -30,10 +33,10 @@ docs: rules
 PKGBUILD: PKGBUILD.in tarball
 	cat PKGBUILD.in | sed -e s/MD5SUM/`md5sum $(ARCHIVE) | cut -f1 -d' '`/g > PKGBUILD
 	
-tarball: clean svnclean docs rules
+tarball: clean svnclean gitclean docs rules
 	echo "# you can define own flags here" > config.make
 	ln -sf ./ $(VERTITLE)
-	tar -cz --exclude $(VERTITLE)/$(VERTITLE) --exclude CJK.zip --exclude .svn --exclude $(ARCHIVE) --exclude mingw32ce.tar.gz --exclude windows.tar.gz --exclude caanoo.tar.gz -f $(ARCHIVE) $(VERTITLE)/*
+	tar -cz --exclude $(VERTITLE)/$(VERTITLE) --exclude CJK.zip --exclude .git --exclude .svn --exclude $(ARCHIVE) --exclude mingw32ce.tar.gz --exclude windows.tar.gz --exclude caanoo.tar.gz -f $(ARCHIVE) $(VERTITLE)/*
 	$(RM) -f $(VERTITLE)
 
 clean:
