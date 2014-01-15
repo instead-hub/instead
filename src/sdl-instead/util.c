@@ -278,10 +278,10 @@ int parse_all(void *fp, char *(*getl)(void *p, char *s, int size), const char *p
 		val = p + len + 1;
 		len = strcspn(p, " \t");
 		p[len] = 0;
-//		printf("%s\n", p);
+/*		printf("%s\n", p); */
 		val += strspn(val, " \t");
 		comments_zap(val);
-//		val[strcspn(val, ";\n")] = 0;
+/*		val[strcspn(val, ";\n")] = 0; */
 		if (process_cmd(p, val, cmd_parser)) {
 			rc = -1;
 			fprintf(stderr, "Can't process cmd '%s' on line %d in '%s': %s\n", p, line_nr - nr, path, strerror(errno));

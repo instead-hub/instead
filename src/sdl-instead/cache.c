@@ -48,11 +48,11 @@ static unsigned long hash_long32(unsigned long a)
 
 static unsigned long hash_long64(unsigned long key)
 {
-	key = (~key) + (key << 21); // key = (key << 21) - key - 1;
+	key = (~key) + (key << 21); /* key = (key << 21) - key - 1; */
 	key = key ^ (key >> 24);
-	key = (key + (key << 3)) + (key << 8); // key * 265
+	key = (key + (key << 3)) + (key << 8); /* key * 265 */
 	key = key ^ (key >> 14);
-	key = (key + (key << 2)) + (key << 4); // key * 21
+	key = (key + (key << 2)) + (key << 4); /* key * 21 */
 	key = key ^ (key >> 28);
 	key = key + (key << 31);
 	return key;
@@ -175,8 +175,8 @@ int cache_forget(cache_t cache, void *p)
 {
 	__cache_t *c = cache;
 	__cache_e_t *cc = cache_data(cache, p);
-//	if (cc)
-//		fprintf(stderr, "Forget %p at %d\n", p, cc->used);
+/*	if (cc)
+		fprintf(stderr, "Forget %p at %d\n", p, cc->used); */
 	if (cc && cc->used) {
 		cc->used --;
 		if (!cc->used) {
@@ -201,7 +201,7 @@ void *cache_get(cache_t cache, const char *name)
 	if (cc->used == 1)
 		((__cache_t*)cache)->used ++;
 	list_move(&cc->list, &c->list); /* first place */
-//	printf("cache_get %s:%p %d\n", name, cc->data, cc->used);
+/*	printf("cache_get %s:%p %d\n", name, cc->data, cc->used); */
 	return cc->data;
 }
 
@@ -236,7 +236,7 @@ static void __cache_shrink(__cache_t *c)
 		c->size --;
 		cache_e_free(c, cc);
 	}
-//	fprintf(stderr,"%d/%d\n", c->size, c->used);
+/*	fprintf(stderr,"%d/%d\n", c->size, c->used); */
 }
 
 int cache_add(cache_t cache, const char *name, void *p)
@@ -292,8 +292,8 @@ int cache_add(cache_t cache, const char *name, void *p)
 	c->used ++;
 	if (c->auto_grow && c->used > c->max_size)
 		c->max_size = c->used;
-//	printf("cache_add %s:%p %d\n", name, cc->data, cc->used);
-//	__cache_shrink(c);
+/*	printf("cache_add %s:%p %d\n", name, cc->data, cc->used);
+	__cache_shrink(c); */
 	return 0;
 }
 
@@ -305,5 +305,5 @@ void cache_shrink(cache_t cache)
 	if (c->auto_grow && c->max_size > 2*c->used)
 		c->max_size = c->used + c->used / 2;
 	__cache_shrink(c);
-//	printf("size: %d:%d:%d\n", c->used, c->size, c->max_size);
+/*	printf("size: %d:%d:%d\n", c->used, c->size, c->max_size); */
 }

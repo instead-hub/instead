@@ -392,7 +392,7 @@ struct el {
 	int		my; /* coordinates */
 	int 		type;
 	int		drawn;
-//	int 		clone;
+/*	int 		clone; */
 	union {
 		layout_t	lay;
 		textbox_t	box;
@@ -415,10 +415,10 @@ enum {
 	el_scene,
 	el_sup, 
 	el_sdown,
-//	el_sslide, 
+/*	el_sslide, */
 	el_iup, 
 	el_idown,
-//	el_islide, 
+/*	el_islide, */
 	el_spic, 
 	el_menu_button,
 	el_max,
@@ -434,7 +434,7 @@ static void 	el_set(int i, int t, int x, int y, void *p)
 	objs[i].p.p = p;
 	objs[i].type = t;
 	objs[i].drawn = 0;
-//	objs[i].clone = 0;
+/*	objs[i].clone = 0; */
 }
 
 static struct el *el(int num)
@@ -583,7 +583,7 @@ int game_apply_theme(void)
 		return -1;
 	txt_layout_color(lay, game_theme.fgcol);
 	txt_layout_link_color(lay, game_theme.lcol);
-//	txt_layout_link_style(lay, 4);
+/*	txt_layout_link_style(lay, 4); */
 	txt_layout_active_color(lay, game_theme.acol);
 	txt_layout_font_height(lay, game_theme.font_height);
 	
@@ -909,7 +909,7 @@ void game_done(int err)
 		game_save(0);
 	curgame_dir = NULL;
 	setdir(game_cwd);
-//	cfg_save();
+/*	cfg_save(); */
 
 	if (menu_shown)
 		menu_toggle(-1);
@@ -919,13 +919,13 @@ void game_done(int err)
 	input_clear();
 	snd_done();
 	instead_done();
-//#ifndef ANDROID
-//	gfx_video_done();
-//#endif
+/* #ifndef ANDROID
+	gfx_video_done();
+#endif */
 	game_own_theme = 0;
 	idf_done(game_idf); game_idf = NULL;
 	need_restart = 0;
-//	SDL_Quit();
+/*	SDL_Quit(); */
 }	
 
 static void el_size(int i, int *w, int *h)
@@ -985,8 +985,8 @@ static void el_update(int n)
 	int x, y, w, h;
 	struct el *o;
 	o = el(n);
-//	if (!o->drawn)
-//		return;
+/*	if (!o->drawn)
+		return; */
 	x = o->x;
 	y = o->y;
 	el_size(n, &w, &h);
@@ -1035,7 +1035,7 @@ void box_update_scrollbar(int n)
 {
 	struct el *elup = NULL;
 	struct el *eldown = NULL;
-//	struct el *elslide;
+/*	struct el *elslide; */
 
 	int x1, y1;
 	int x2, y2;
@@ -1050,7 +1050,7 @@ void box_update_scrollbar(int n)
 		y1 = game_theme.a_up_y;
 		x2 = game_theme.a_down_x;
 		y2 = game_theme.a_down_y;
-//		elslide = el(el_sslide);
+/*		elslide = el(el_sslide); */
 	} else if (n == el_inv) {
 		elup = el(el_iup);
 		eldown = el(el_idown);
@@ -1058,13 +1058,13 @@ void box_update_scrollbar(int n)
 		y1 = game_theme.inv_a_up_y;
 		x2 = game_theme.inv_a_down_x;
 		y2 = game_theme.inv_a_down_y;
-//		elslide = el(el_islide);
+/*		elslide = el(el_islide); */
 	} else /* impossible case */
 		return; 
 	if (!elup || !eldown)
 		return;	
 
-//	if (x1 == -1 || y1 == -1 || x2 == -1 || y2 == -1)
+/*	if (x1 == -1 || y1 == -1 || x2 == -1 || y2 == -1) */
 	el_size(n, &w, &h);
 
 	if (x1 == -1)
@@ -1192,9 +1192,9 @@ int game_menu_box_wh(const char *txt, int *w, int *h)
 	return 0;
 }
 
-void game_menu_box_width(int show, const char *txt, int width)
+int game_menu_box_width(int show, const char *txt, int width)
 {	
-//	img_t	menu;
+/*	img_t	menu; */
 	int w, h, mw, mh;
 	int x, y;
 	int b = game_theme.border_w;
@@ -1231,7 +1231,7 @@ void game_menu_box_width(int show, const char *txt, int width)
 	if (!show) {
 		game_cursor(CURSOR_DRAW);
 		gfx_flip();
-		return;
+		return 0;
 	}
 	if (!lay) {
 		lay = txt_layout(game_theme.menu_font, ALIGN_CENTER, game_theme.w - 2 * (b + pad), 0);
@@ -1268,9 +1268,10 @@ void game_menu_box_width(int show, const char *txt, int width)
 	el_draw(el_menu);
 	game_cursor(CURSOR_DRAW);
 	gfx_flip();
+	return 0;
 }
 
-void game_menu_box(int show, const char *txt)
+int game_menu_box(int show, const char *txt)
 {
 	int w = 0;
 	if (cur_menu == menu_games) { /* hack a bit :( */
@@ -1453,8 +1454,8 @@ typedef struct {
 	int	loop;
 	int	channel;
 } _snd_req_t;
-static _snd_t *channels[SND_CHANNELS] = {};
-static _snd_req_t sound_reqs[SND_CHANNELS] = {};
+static _snd_t *channels[SND_CHANNELS];
+static _snd_req_t sound_reqs[SND_CHANNELS];
 static void sound_play(_snd_t *sn, int chan, int loop);
 
 static void sound_callback(void *aux)
@@ -1463,7 +1464,7 @@ static void sound_callback(void *aux)
 	int channel = *((int *)aux);
 	int c = channel % SND_CHANNELS;
 	free(aux);
-//	fprintf(stderr, "finished: %d\n", channel);
+/*	fprintf(stderr, "finished: %d\n", channel); */
 	channels[c] = NULL;
 	r = &sound_reqs[c];
 	if (r->snd) {
@@ -1535,7 +1536,7 @@ static void sounds_shrink(void)
 	struct list_head *pos, *pos2;
 	_snd_t *sn;
 	pos = sounds.next;
-//	fprintf(stderr,"shrink try\n");
+/*	fprintf(stderr,"shrink try\n"); */
 	while (pos != &sounds && sounds_nr > MAX_WAVS) {
 		sn = (_snd_t*)pos;
 		if (sound_playing(sn) != -1 || sn->loaded) {
@@ -1545,7 +1546,7 @@ static void sounds_shrink(void)
 		pos2 = pos->next;
 		sound_free(sn);
 		pos = pos2;
-//		fprintf(stderr,"shrink by 1\n");
+/*		fprintf(stderr,"shrink by 1\n"); */
 	}
 }
 
@@ -1570,8 +1571,8 @@ void sounds_free(void)
 		channels[i] = NULL;
 		sound_reqs[i].snd = NULL;
 	}
-//	sounds_nr = 0;
-//	fprintf(stderr, "%d\n", sounds_nr);
+/*	sounds_nr = 0;
+	fprintf(stderr, "%d\n", sounds_nr); */
 	input_uevents(); /* all callbacks */
 }
 
@@ -1582,14 +1583,14 @@ static _snd_t *sound_find(const char *fname)
 	list_for_each(pos, &sounds) {
 		sn = (_snd_t*)pos;
 		if (!strcmp(fname, sn->fname)) {
-			list_move(&sn->list, &sounds); // move it on head
+			list_move(&sn->list, &sounds); /* move it on head */
 			return sn;
 		}
 	}
 	return NULL;
 }
 
-static int sound_find_channel(int chan)
+static int sound_find_channel(void)
 {
 	int i;
 	for (i = 0; i < SND_CHANNELS; i ++) {
@@ -1605,7 +1606,7 @@ static void sound_play(_snd_t *sn, int chan, int loop)
 	if (!sn)
 		return;
 	if (chan == -1) {
-		c = sound_find_channel(chan);
+		c = sound_find_channel();
 		if (c == -1)
 			return; /* all channels are busy */
 	} else
@@ -1619,7 +1620,7 @@ static void sound_play(_snd_t *sn, int chan, int loop)
 		return;
 	}
 	c = snd_play(sn->wav, c, loop - 1);
-//	fprintf(stderr, "added: %d\n", c);
+/*	fprintf(stderr, "added: %d\n", c); */
 	if (c == -1)
 		return;
 	channels[c] = sn;
@@ -1967,7 +1968,7 @@ int game_cmd(char *cmd, int flags)
 	if (menu_shown)
 		return -1;
 
-//	if (dd)
+/*	if (dd) */
 		game_cursor(CURSOR_CLEAR);
 	if (flags & GAME_CMD_FILE) /* file command */
 		cmdstr = instead_file_cmd(cmd); 
@@ -2064,7 +2065,7 @@ int game_cmd(char *cmd, int flags)
 		snprintf(buf, sizeof(buf), "<a:look>%s</a>", title);
 		txt_layout_set(el_layout(el_title), buf);
 		txt_layout_size(el_layout(el_title), NULL, &title_h);
-		title_h += game_theme.font_size * game_theme.font_height / 2; // todo?	
+		title_h += game_theme.font_size * game_theme.font_height / 2; /* todo?	*/
 	} else
 		txt_layout_set(el_layout(el_title), NULL);
 
@@ -2251,7 +2252,7 @@ inv:
 		gfx_change_screen(offscreen, fading);
 		gfx_start_gif(el_img(el_spic));
 		gfx_free_image(offscreen);
-//		input_clear();
+/*		input_clear(); */
 	}
 	{
 		int x, y;
@@ -2267,7 +2268,7 @@ inv:
 out:
 	game_cursor(CURSOR_DRAW);
 	gfx_flip();
-//	input_clear();
+/*	input_clear(); */
 err:
 
 	game_autosave();
@@ -2406,7 +2407,7 @@ void menu_update(struct el *elem)
 	gfx_draw(menu, mx, my);
 	txt_layout_draw(elem->p.lay, elem->x, elem->y);
 	gfx_update(mx, my, gfx_img_w(menu), gfx_img_h(menu));
-//	gfx_fill(x, y, w, h, game_theme.menu_bg);
+/*	gfx_fill(x, y, w, h, game_theme.menu_bg); */
 }
 
 int game_highlight(int x, int y, int on)
@@ -2466,12 +2467,12 @@ static int scroll_pup(int id)
 	int hh;
 	if (box_isscroll_up(id))
 		return -1;		
-//	game_highlight(-1, -1, 0);
-//	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) {
+/*	game_highlight(-1, -1, 0);
+	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) { */
 		el_size(el_scene, NULL, &hh);
 		txt_box_scroll(el_box(id), -hh);
-//	} else
-//		txt_box_prev(el_box(id));
+/*	} else
+		txt_box_prev(el_box(id)); */
 	el_clear(id);
 	el_draw(id);
 	el_update(id);
@@ -2483,12 +2484,12 @@ static int scroll_pdown(int id)
 	int hh;
 	if (box_isscroll_down(id))
 		return -1;
-//	game_highlight(-1, -1, 0);
-//	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) {
+/*	game_highlight(-1, -1, 0);
+	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) { */
 		el_size(el_scene, NULL, &hh);
 		txt_box_scroll(el_box(id), hh);
-//	} else
-//		txt_box_next(el_box(id));
+/*	} else
+		txt_box_next(el_box(id)); */
 	el_clear(id);
 	el_draw(id);
 	el_update(id);
@@ -2580,24 +2581,24 @@ int game_click(int x, int y, int action, int filter)
 			} else if (elem->id == el_iup) {
 				scroll_pup(el_inv);
 			} else disable_use();
-//				el_update(el_inv);
+/*				el_update(el_inv); */
 			motion_mode = 0;
 		} else if (!(was_motion && MOTION_TIME)) { 
 			disable_use();
-//			el_update(el_inv);
-//			gfx_flip();
+/*			el_update(el_inv);
+			gfx_flip(); */
 		}
 		return 0;
 	}
 /* second xref */
 	if (elem->id == el_menu) {
-//		xref_set_active(xref, 0);
-//		txt_layout_update_links(elem->p.lay, elem->x, elem->y, game_clear);
+/*		xref_set_active(xref, 0);
+		txt_layout_update_links(elem->p.lay, elem->x, elem->y, game_clear); */
 		if (game_menu_act(xref_get_text(xref))) {
 			return -1;
 		}
-//		game_menu_box(menu_shown, game_menu_gen());
-//		gfx_flip();
+/*		game_menu_box(menu_shown, game_menu_gen());
+		gfx_flip(); */
 		return 1;
 	}
 	
@@ -2619,7 +2620,7 @@ int game_click(int x, int y, int action, int filter)
 	if (!use_xref) {
 		if (use_mode) {
 			enable_use(xref);
-//			el_update(el_inv);
+/*			el_update(el_inv); */
 			return 0;
 		}
 		if (menu_mode) {
@@ -2667,7 +2668,7 @@ void game_cursor(int on)
 {
 	static img_t	grab = NULL;
 	static img_t 	cur = NULL;
-	static int xc = 0, yc = 0, w = 0, h = 0; //, w, h;
+	static int xc = 0, yc = 0, w = 0, h = 0; /*, w, h; */
 	int xx, yy, ww, hh;
 	gfx_getclip(&xx, &yy, &ww, &hh);
 	gfx_noclip();
@@ -2725,15 +2726,15 @@ out:
 
 static void scroll_up(int id, int count)
 {
-//	int i;
+/*	int i; */
 	if (box_isscroll_up(id))
 		return;		
-//	game_highlight(-1, -1, 0);
-//	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED)
+/*	game_highlight(-1, -1, 0);
+	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) */
 		txt_box_scroll(el_box(id), -(FONT_SZ(game_theme.font_size)) * count);
-//	else
-//		for (i = 0; i < count; i++)
-//			txt_box_prev_line(el_box(id));
+/*	else
+		for (i = 0; i < count; i++)
+			txt_box_prev_line(el_box(id)); */
 	el_clear(id);
 	el_draw(id);
 	el_update(id);
@@ -2741,15 +2742,15 @@ static void scroll_up(int id, int count)
 
 static void scroll_down(int id, int count)
 {
-//	int i;
+/*	int i; */
 	if (box_isscroll_down(id))
 		return;		
-//	game_highlight(-1, -1, 0);
-//	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED)
+/*	game_highlight(-1, -1, 0);
+	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) */
 		txt_box_scroll(el_box(id), (FONT_SZ(game_theme.font_size)) * count);
-//	else
-//		for (i = 0; i < count; i++)
-//			txt_box_next_line(el_box(id));
+/*	else
+		for (i = 0; i < count; i++)
+			txt_box_next_line(el_box(id)); */
 	el_clear(id);
 	el_draw(id);
 	el_update(id);
@@ -2853,17 +2854,17 @@ static void select_frame(int prev)
 	if (menu_shown) {
 		sel_el = el_menu;
 	} else {
-//		int old_sel;
-//		if (!sel_el)
-//			frame_next();
-//		old_sel = sel_el;
-//		do {
+/*		int old_sel;
+		if (!sel_el)
+			frame_next();
+		old_sel = sel_el;
+		do { */
 			if (prev) {
 				frame_prev();
 			} else {
 				frame_next();
 			}
-//		} while (!get_xref(sel_el, 0) && sel_el != old_sel);
+/*		} while (!get_xref(sel_el, 0) && sel_el != old_sel); */
 	}
 	el_size(sel_el, &w, &h);
 	x = el(sel_el)->mx;
@@ -3076,7 +3077,7 @@ int game_pict_coord(int *x, int *y, int *w, int *h)
 			word = NULL;
 			/* first word is always pic */
 			break;
-//			continue;
+/*			continue; */
 		}
 		word_geom(word, &xx, &yy, &ww, &hh);
 		yy -= txt_box_off(el_box(el_scene));
@@ -3286,7 +3287,7 @@ int game_loop(void)
 	while (game_running) {
 		int rc;
 		ev.x = -1;
-//		game_cursor(CURSOR_CLEAR); /* release bg */
+/*		game_cursor(CURSOR_CLEAR); */ /* release bg */
 		while (((rc = input(&ev, 1)) == AGAIN) && !need_restart)
 			gfx_commit();
 		if (rc == -1) {/* close */
@@ -3391,7 +3392,7 @@ int game_loop(void)
 #endif
 #endif
 			} else if (DIRECT_MODE && !menu_shown) {
-				; // nothing todo
+				; /* nothing todo */
 			} else if (!alt_pressed && (!is_key(&ev, "return") || !is_key(&ev, "enter") 
 			#ifdef S60
 				|| !is_key(&ev, ".")
@@ -3478,7 +3479,7 @@ int game_loop(void)
 #endif
 			}
 		} else if (DIRECT_MODE && !menu_shown) {
-			; // nothing todo 
+			; /* nothing todo */
 		} else if (ev.type == MOUSE_DOWN) {
 			if (ev.code != 1)
 				disable_use();
@@ -3510,7 +3511,7 @@ int game_loop(void)
 				scroll_motion(motion_id, motion_y - ev.y);
 				motion_y = ev.y;
 			}
-		//	game_highlight(ev.x, ev.y, 1);
+		/*	game_highlight(ev.x, ev.y, 1); */
 		}
 
 		if (need_restart) {

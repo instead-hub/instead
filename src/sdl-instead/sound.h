@@ -6,7 +6,7 @@ typedef struct _mus_t *mus_t;
 
 #define DEFAULT_CHUNKSIZE 1024
 
-//extern mus_t	snd_load_mus(const char *path);
+/* extern mus_t	snd_load_mus(const char *path); */
 extern void	snd_free_mus(mus_t mus);
 extern int	snd_init(int hz);
 extern int	snd_hz(void);

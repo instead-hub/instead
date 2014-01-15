@@ -182,92 +182,92 @@ static int parse_include(const char *v, void *data)
 	getdir(cwd, sizeof(cwd));
 	setdir(game_cwd);
 	rc = game_theme_load(v);
-//	if (!rc)
-//		game_theme_select(v);
+/*	if (!rc)
+		game_theme_select(v); */
 	setdir(cwd);
 	return rc;
 }
 struct parser cmd_parser[] = {
-	{ "scr.w", parse_int, &game_theme.w },
-	{ "scr.h", parse_int, &game_theme.h },
-	{ "scr.gfx.scalable", parse_int, &game_theme.gfx_scalable },
-	{ "scr.col.bg", parse_color, &game_theme.bgcol },
+	{ "scr.w", parse_int, &game_theme.w, 0 },
+	{ "scr.h", parse_int, &game_theme.h, 0 },
+	{ "scr.gfx.scalable", parse_int, &game_theme.gfx_scalable, 0 },
+	{ "scr.col.bg", parse_color, &game_theme.bgcol, 0 },
 	{ "scr.gfx.bg", parse_full_path, &game_theme.bg_name, CHANGED_BG },
 	{ "scr.gfx.cursor.normal", parse_full_path, &game_theme.cursor_name, CHANGED_CURSOR },
-	{ "scr.gfx.cursor.x", parse_int, &game_theme.cur_x },
-	{ "scr.gfx.cursor.y", parse_int, &game_theme.cur_y },
+	{ "scr.gfx.cursor.x", parse_int, &game_theme.cur_x, 0 },
+	{ "scr.gfx.cursor.y", parse_int, &game_theme.cur_y, 0 },
 	{ "scr.gfx.use", parse_full_path, &game_theme.use_name, CHANGED_USE }, /* compat */
 	{ "scr.gfx.cursor.use", parse_full_path, &game_theme.use_name, CHANGED_USE },
-	{ "scr.gfx.pad", parse_int, &game_theme.pad }, 
-	{ "scr.gfx.x", parse_int, &game_theme.gfx_x },
-	{ "scr.gfx.y", parse_int, &game_theme.gfx_y },
-	{ "scr.gfx.w", parse_int, &game_theme.max_scene_w },
-	{ "scr.gfx.h", parse_int, &game_theme.max_scene_h },
-	{ "scr.gfx.mode", parse_gfx_mode, &game_theme.gfx_mode },
+	{ "scr.gfx.pad", parse_int, &game_theme.pad, 0 }, 
+	{ "scr.gfx.x", parse_int, &game_theme.gfx_x, 0 },
+	{ "scr.gfx.y", parse_int, &game_theme.gfx_y, 0 },
+	{ "scr.gfx.w", parse_int, &game_theme.max_scene_w, 0 },
+	{ "scr.gfx.h", parse_int, &game_theme.max_scene_h, 0 },
+	{ "scr.gfx.mode", parse_gfx_mode, &game_theme.gfx_mode, 0 },
 
-	{ "win.align", parse_win_align, &game_theme.win_align },
-	{ "win.x", parse_int, &game_theme.win_x },
-	{ "win.y", parse_int, &game_theme.win_y },
-	{ "win.w", parse_int, &game_theme.win_w },
-	{ "win.h", parse_int, &game_theme.win_h },
-	{ "win.scroll.mode", parse_int, &game_theme.win_scroll_mode },
+	{ "win.align", parse_win_align, &game_theme.win_align, 0 },
+	{ "win.x", parse_int, &game_theme.win_x, 0 },
+	{ "win.y", parse_int, &game_theme.win_y, 0 },
+	{ "win.w", parse_int, &game_theme.win_w, 0 },
+	{ "win.h", parse_int, &game_theme.win_h, 0 },
+	{ "win.scroll.mode", parse_int, &game_theme.win_scroll_mode, 0 },
 
 	{ "win.fnt.name", parse_full_path, &game_theme.font_name, CHANGED_FONT },
 	{ "win.fnt.size", parse_int, &game_theme.font_size, CHANGED_FONT },
-	{ "win.fnt.height", parse_float, &game_theme.font_height },
+	{ "win.fnt.height", parse_float, &game_theme.font_height, 0 },
 /* compat mode directive */
-	{ "win.gfx.h", parse_int, &game_theme.max_scene_h },
+	{ "win.gfx.h", parse_int, &game_theme.max_scene_h, 0 },
 /* here it was */
 	{ "win.gfx.up", parse_full_path, &game_theme.a_up_name, CHANGED_UP },
 	{ "win.gfx.down", parse_full_path, &game_theme.a_down_name, CHANGED_DOWN },
-	{ "win.up.x", parse_int, &game_theme.a_up_x },
-	{ "win.up.y", parse_int, &game_theme.a_up_y },
-	{ "win.down.x", parse_int, &game_theme.a_down_x },
-	{ "win.down.y", parse_int, &game_theme.a_down_y },
-	{ "win.col.fg", parse_color, &game_theme.fgcol }, 
-	{ "win.col.link", parse_color, &game_theme.lcol },
-	{ "win.col.alink", parse_color, &game_theme.acol }, 
+	{ "win.up.x", parse_int, &game_theme.a_up_x, 0 },
+	{ "win.up.y", parse_int, &game_theme.a_up_y, 0 },
+	{ "win.down.x", parse_int, &game_theme.a_down_x, 0 },
+	{ "win.down.y", parse_int, &game_theme.a_down_y, 0 },
+	{ "win.col.fg", parse_color, &game_theme.fgcol, 0 }, 
+	{ "win.col.link", parse_color, &game_theme.lcol, 0 },
+	{ "win.col.alink", parse_color, &game_theme.acol, 0 }, 
 
-	{ "inv.x", parse_int, &game_theme.inv_x },
-	{ "inv.y", parse_int, &game_theme.inv_y },
-	{ "inv.w", parse_int, &game_theme.inv_w },
-	{ "inv.h", parse_int, &game_theme.inv_h },
-	{ "inv.mode", parse_inv_mode, &game_theme.inv_mode },
-	{ "inv.horiz", parse_inv_mode, &game_theme.inv_mode },
+	{ "inv.x", parse_int, &game_theme.inv_x, 0 },
+	{ "inv.y", parse_int, &game_theme.inv_y, 0 },
+	{ "inv.w", parse_int, &game_theme.inv_w, 0 },
+	{ "inv.h", parse_int, &game_theme.inv_h, 0 },
+	{ "inv.mode", parse_inv_mode, &game_theme.inv_mode, 0 },
+	{ "inv.horiz", parse_inv_mode, &game_theme.inv_mode, 0 },
 
-	{ "inv.col.fg", parse_color, &game_theme.icol },
-	{ "inv.col.link", parse_color, &game_theme.ilcol },
-	{ "inv.col.alink", parse_color, &game_theme.iacol }, 
+	{ "inv.col.fg", parse_color, &game_theme.icol, 0 },
+	{ "inv.col.link", parse_color, &game_theme.ilcol, 0 },
+	{ "inv.col.alink", parse_color, &game_theme.iacol, 0 }, 
 	{ "inv.fnt.name", parse_full_path, &game_theme.inv_font_name, CHANGED_IFONT },
 	{ "inv.fnt.size", parse_int, &game_theme.inv_font_size, CHANGED_IFONT },
-	{ "inv.fnt.height", parse_float, &game_theme.inv_font_height },
+	{ "inv.fnt.height", parse_float, &game_theme.inv_font_height, 0 },
 	{ "inv.gfx.up", parse_full_path, &game_theme.inv_a_up_name, CHANGED_IUP },
 	{ "inv.gfx.down", parse_full_path, &game_theme.inv_a_down_name, CHANGED_IDOWN },
-	{ "inv.up.x", parse_int, &game_theme.inv_a_up_x },
-	{ "inv.up.y", parse_int, &game_theme.inv_a_up_y },
-	{ "inv.down.x", parse_int, &game_theme.inv_a_down_x },
-	{ "inv.down.y", parse_int, &game_theme.inv_a_down_y },
+	{ "inv.up.x", parse_int, &game_theme.inv_a_up_x, 0 },
+	{ "inv.up.y", parse_int, &game_theme.inv_a_up_y, 0 },
+	{ "inv.down.x", parse_int, &game_theme.inv_a_down_x, 0 },
+	{ "inv.down.y", parse_int, &game_theme.inv_a_down_y, 0 },
 
-	{ "menu.col.bg", parse_color, &game_theme.menu_bg },
-	{ "menu.col.fg", parse_color, &game_theme.menu_fg },
-	{ "menu.col.link", parse_color, &game_theme.menu_link },
-	{ "menu.col.alink", parse_color, &game_theme.menu_alink },
-	{ "menu.col.alpha", parse_int, &game_theme.menu_alpha },
-	{ "menu.col.border", parse_color, &game_theme.border_col },
-	{ "menu.bw", parse_int, &game_theme.border_w},
+	{ "menu.col.bg", parse_color, &game_theme.menu_bg, 0 },
+	{ "menu.col.fg", parse_color, &game_theme.menu_fg, 0 },
+	{ "menu.col.link", parse_color, &game_theme.menu_link, 0 },
+	{ "menu.col.alink", parse_color, &game_theme.menu_alink, 0 },
+	{ "menu.col.alpha", parse_int, &game_theme.menu_alpha, 0 },
+	{ "menu.col.border", parse_color, &game_theme.border_col, 0 },
+	{ "menu.bw", parse_int, &game_theme.border_w, 0 },
 	{ "menu.fnt.name", parse_full_path, &game_theme.menu_font_name, CHANGED_MFONT },
 	{ "menu.fnt.size", parse_int, &game_theme.menu_font_size, CHANGED_MFONT },
-	{ "menu.fnt.height", parse_float, &game_theme.menu_font_height },
+	{ "menu.fnt.height", parse_float, &game_theme.menu_font_height, 0 },
 	{ "menu.gfx.button", parse_full_path, &game_theme.menu_button_name, CHANGED_BUTTON },
-	{ "menu.button.x", parse_int, &game_theme.menu_button_x },
-	{ "menu.button.y", parse_int, &game_theme.menu_button_y },
+	{ "menu.button.x", parse_int, &game_theme.menu_button_x, 0 },
+	{ "menu.button.y", parse_int, &game_theme.menu_button_y, 0 },
 /* compat */
-	{ "menu.buttonx", parse_int, &game_theme.menu_button_x },
-	{ "menu.buttony", parse_int, &game_theme.menu_button_y },
+	{ "menu.buttonx", parse_int, &game_theme.menu_button_x, 0 },
+	{ "menu.buttony", parse_int, &game_theme.menu_button_y, 0 },
 
 	{ "snd.click", parse_full_path, &game_theme.click_name, CHANGED_CLICK },
-	{ "include", parse_include, NULL },
-	{ NULL,  },
+	{ "include", parse_include, NULL, 0 },
+	{ NULL, NULL, NULL, 0 },
 };
 
 #define TF_POSX	1
@@ -281,26 +281,26 @@ typedef struct {
 } theme_scalable_t;
 
 static theme_scalable_t theme_scalables[] = {
-	{ "scr.w", &game_theme.w },
-	{ "scr.h", &game_theme.h },
-	{ "scr.gfx.cursor.x", &game_theme.cur_x },
-	{ "scr.gfx.cursor.y", &game_theme.cur_y },
-	{ "scr.gfx.pad", &game_theme.pad }, 
+	{ "scr.w", &game_theme.w, 0 },
+	{ "scr.h", &game_theme.h, 0 },
+	{ "scr.gfx.cursor.x", &game_theme.cur_x, 0 },
+	{ "scr.gfx.cursor.y", &game_theme.cur_y, 0 },
+	{ "scr.gfx.pad", &game_theme.pad, 0 }, 
 	{ "scr.gfx.x", &game_theme.gfx_x, TF_POSX },
 	{ "scr.gfx.y", &game_theme.gfx_y, TF_POSY },
 	{ "scr.gfx.w", &game_theme.max_scene_w, TF_NEG },
 	{ "scr.gfx.h", &game_theme.max_scene_h, TF_NEG },
 	{ "win.x", &game_theme.win_x, TF_POSX },
 	{ "win.y", &game_theme.win_y, TF_POSY },
-	{ "win.w", &game_theme.win_w },
-	{ "win.h", &game_theme.win_h },
-	{ "win.fnt.size", &game_theme.font_size },
+	{ "win.w", &game_theme.win_w, 0 },
+	{ "win.h", &game_theme.win_h, 0 },
+	{ "win.fnt.size", &game_theme.font_size, 0 },
 	{ "inv.x", &game_theme.inv_x, TF_POSX },
 	{ "inv.y", &game_theme.inv_y, TF_POSY },
-	{ "inv.w", &game_theme.inv_w },
-	{ "inv.h", &game_theme.inv_h },
-	{ "inv.fnt.size", &game_theme.inv_font_size },
-	{ "menu.fnt.size", &game_theme.menu_font_size },
+	{ "inv.w", &game_theme.inv_w, 0 },
+	{ "inv.h", &game_theme.inv_h, 0 },
+	{ "inv.fnt.size", &game_theme.inv_font_size, 0 },
+	{ "menu.fnt.size", &game_theme.menu_font_size, 0 },
 	{ "menu.button.x", &game_theme.menu_button_x, TF_POSX },
 	{ "menu.button.y", &game_theme.menu_button_y, TF_POSY },
 	{ "win.up.x", &game_theme.a_up_x, TF_POSX | TF_NEG },
@@ -311,7 +311,7 @@ static theme_scalable_t theme_scalables[] = {
 	{ "inv.up.y", &game_theme.inv_a_up_y, TF_POSY | TF_NEG },
 	{ "inv.down.x", &game_theme.inv_a_down_x, TF_POSX | TF_NEG },
 	{ "inv.down.y", &game_theme.inv_a_down_y, TF_POSY | TF_NEG },
-	{ NULL,  },
+	{ NULL, NULL, 0 },
 };
 static int theme_scalables_unscaled[sizeof(theme_scalables)/sizeof(theme_scalable_t)];
 
@@ -692,7 +692,7 @@ static int game_theme_update_data(void)
 			m = game_theme.h / MAX_MENU_LINES / game_theme.menu_font_height;
 		else if (m < t->menu_font_size)
 			m = t->menu_font_size;
-//		fprintf(stderr, "%d %d > %d? %d", (int)FONT_SZ(t->inv_font_size), (int)FONT_SZ(t->inv_font_size) * MAX_MENU_LINES, game_theme.h, m);
+/*		fprintf(stderr, "%d %d > %d? %d", (int)FONT_SZ(t->inv_font_size), (int)FONT_SZ(t->inv_font_size) * MAX_MENU_LINES, game_theme.h, m); */
 		fnt_free(t->menu_font);
 		if (!(t->menu_font = fnt_load(t->menu_font_name, m))) /* do not scale menu!!! */
 			goto err;
@@ -771,7 +771,7 @@ skip:
 		t->click = sound_get(t->click_name);
 	}
 
-//	free_theme_strings(); /* todo, font */
+/*	free_theme_strings(); */ /* todo, font */
 	t->changed = 0;
 	if (!t->cursor || !t->use || !t->inv_a_up || !t->inv_a_down || !t->a_down || !t->a_up ||
 		!t->font || !t->inv_font || !t->menu_font || !t->menu_button) {
@@ -862,7 +862,7 @@ static int theme_parse(const char *path)
 
 	if (parse_ini(dirpath(path), cmd_parser)) {
 		fprintf(stderr, "Theme parsed with errors!\n");
-//		game_theme_free();
+/*		game_theme_free(); */
 		return -1;
 	}
 	return 0;

@@ -7,7 +7,7 @@ clean:
 all: instead.desktop
 
 instead.desktop: instead.desktop.in
-	cat instead.desktop.in | sed -e "s|@BIN|$(BIN)|g" > instead.desktop
+	cat instead.desktop.in | sed -e "s|@BIN@|$(BIN)|g" > instead.desktop
 
 install:
 	$(INSTALLD) $(DESTDIR)$(PREFIX)/share/applications
