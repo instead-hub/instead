@@ -1361,6 +1361,7 @@ static SDL_Rect **SDL_ListModes(const SDL_PixelFormat * format, Uint32 flags)
 	SDL_DisplayMode mode;    
 	int i, nmodes;
 	SDL_Rect **modes;
+	SDL_Rect **new_modes;
 	Uint32 Rmask, Gmask, Bmask, Amask;
 	int bpp;
 
@@ -1387,10 +1388,11 @@ static SDL_Rect **SDL_ListModes(const SDL_PixelFormat * format, Uint32 flags)
 			&& modes[nmodes - 1]->h == mode.h) {
 			continue;
 		}
-		modes = SDL_realloc(modes, (nmodes + 2) * sizeof(*modes));
-		if (!modes) {
+		new_modes = SDL_realloc(modes, (nmodes + 2) * sizeof(*modes));
+		if (!new_modes) {
 			return NULL;
 		}
+		modes = new_modes;
 		modes[nmodes] = (SDL_Rect *) SDL_malloc(sizeof(SDL_Rect));
 		if (!modes[nmodes]) {
 			return NULL;
@@ -2657,11 +2659,19 @@ struct xref *xref_new(char *link)
 	return p;
 }
 
-void xref_add_word(struct xref *xref, struct word *word)
+int xref_add_word(struct xref *xref, struct word *word)
 {
-	xref->words = realloc(xref->words, (xref->num + 1) * sizeof(struct word*));
+	struct word **new_words;
+
+	new_words = realloc(xref->words, (xref->num + 1) * sizeof(struct word*));
+	if (!new_words)
+		return -1;
+
+	xref->words = new_words;
 	xref->words[xref->num ++] = word;
 	word->xref = xref;
+
+	return 0;
 }
 
 void xref_free(struct xref *xref)
