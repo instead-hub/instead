@@ -860,6 +860,7 @@ int menu_langs_lookup(const char *path)
 	int n = 0, i = 0;
 	DIR *d;
 	struct dirent *de;
+	struct lang *new_langs;
 
 	if (!path)
 		return 0;
@@ -877,7 +878,12 @@ int menu_langs_lookup(const char *path)
 	if (!n)
 		goto out;
 
-	langs = realloc(langs, sizeof(struct lang) * (n + langs_nr));
+	new_langs = realloc(langs, sizeof(struct lang) * (n + langs_nr));
+	if (!new_langs) {
+		closedir(d);
+		return -1;
+	}
+	langs = new_langs;
 
 	while ((de = readdir(d)) && i < n) {
 		if (!is_lang(path, de->d_name))
