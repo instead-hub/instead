@@ -656,7 +656,7 @@ int game_restart(void)
 	}
 	return 0;
 }
-int static cur_vol = 0;
+static int cur_vol = 0;
 void free_last_music(void);
 
 void game_stop_mus(int ms)
