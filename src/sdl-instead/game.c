@@ -272,6 +272,7 @@ int games_replace(const char *path, const char *dir)
 	int rc;
 	char *p;
 	struct game *g;
+	struct game *new_games;
 	if (!is_game(path, dir))
 		return -1;
 	g = game_lookup(dir);
@@ -291,9 +292,10 @@ int games_replace(const char *path, const char *dir)
 		games_sort();
 		return 0;
 	}
-	games = realloc(games, sizeof(struct game) * (1 + games_nr));
-	if (!games)
+	new_games = realloc(games, sizeof(struct game) * (1 + games_nr));
+	if (!new_games)
 		return -1;
+	games = new_games;
 	rc = games_add(path, dir);
 	if (!rc)
 		games_sort();
@@ -305,6 +307,7 @@ int games_lookup(const char *path)
 	int n = 0, i = 0;
 	DIR *d;
 	struct dirent *de;
+	struct game *new_games;
 
 	if (!path)
 		return 0;
@@ -326,7 +329,12 @@ int games_lookup(const char *path)
 	rewinddir(d);
 	if (!n)
 		goto out;
-	games = realloc(games, sizeof(struct game) * (n + games_nr));
+	new_games = realloc(games, sizeof(struct game) * (n + games_nr));
+	if (!new_games) {
+		closedir(d);
+		return -1;
+	}
+	games = new_games;
 	while ((de = readdir(d)) && i < n) {
 		/*if (de->d_type != DT_DIR)
 			continue;*/
@@ -346,11 +354,14 @@ out:
 int games_remove(int gtr)
 {
 	int rc;
+	struct game *new_games;
 	rc = remove_dir(games[gtr].path);
 	free(games[gtr].name); free(games[gtr].dir); free(games[gtr].path);
 	games_nr --;
 	memmove(&games[gtr], &games[gtr + 1], (games_nr - gtr) * sizeof(struct game));
-	games = realloc(games, games_nr * sizeof(struct game));
+	new_games = realloc(games, games_nr * sizeof(struct game));
+	if (new_games) /* failure to shrink otherwise, and it's non-fatal */
+		games = new_games;
 	return rc;
 }
 
