@@ -931,6 +931,7 @@ int themes_lookup(const char *path)
 	int n = 0, i = 0;
 	DIR *d;
 	struct dirent *de;
+	struct theme *new_themes;
 
 	if (!path)
 		return 0;
@@ -949,7 +950,12 @@ int themes_lookup(const char *path)
 	rewinddir(d);
 	if (!n)
 		goto out;
-	themes = realloc(themes, sizeof(struct theme) * (n + themes_nr));
+	new_themes = realloc(themes, sizeof(struct theme) * (n + themes_nr));
+	if (!new_themes) {
+		closedir(d);
+		return -1;
+	}
+	themes = new_themes;
 	while ((de = readdir(d)) && i < n) {
 		/*if (de->d_type != DT_DIR)
 			continue;*/
