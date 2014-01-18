@@ -1,7 +1,7 @@
 #ifndef _SDL_ICONV_H
 #define _SDL_ICONV_H
 
-#ifdef _SDL_ICONV
+#ifdef _USE_SDL_ICONV
 #include <SDL_stdinc.h>
 #define iconv SDL_iconv
 #define iconv_t SDL_iconv_t

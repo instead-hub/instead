@@ -22,7 +22,7 @@ SDL_CFLAGS=-I../mingw32ce/SDL
 SDL_LFLAGS=-lmikmod -lpng -L../mingw32ce/SDL
 
 CFLAGS  += -Wall -march=armv4t -Os -static \
-	-D_HAVE_ICONV -D_USE_SDL_ICONV -D_LOCAL_APPDATA -D_SDL_MOD_BUG
+	-D_HAVE_ICONV -D_LOCAL_APPDATA -D_SDL_MOD_BUG
 
 LDFLAGS += -Wl,-Bstatic \
 	-lSDL_mixer -lSDL -lmad -lvorbisfile -lvorbis -logg \
