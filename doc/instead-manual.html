@@ -5,7 +5,7 @@
   <title>ru:gamedev:documentation</title>
 <meta name="generator" content="DokuWiki"/>
 <meta name="robots" content="noindex,nofollow"/>
-<meta name="date" content="2013-01-26T16:10:04+0400"/>
+<meta name="date" content="2014-01-15T22:07:56+0400"/>
 <meta name="keywords" content="ru,gamedev,documentation"/>
 <link rel="search" type="application/opensearchdescription+xml" href="/wiki/lib/exe/opensearch.php" title="instead-wiki"/>
 <link rel="start" href="/wiki/"/>
@@ -15,12 +15,12 @@
 <link rel="alternate" type="text/html" title="Plain HTML" href="/wiki/_export/xhtml/ru/gamedev/documentation"/>
 <link rel="alternate" type="text/plain" title="Wiki Markup" href="/wiki/_export/raw/ru/gamedev/documentation"/>
 <link rel="canonical" href="http://instead.syscall.ru/wiki/ru/gamedev/documentation"/>
-<link rel="stylesheet" type="text/css" href="/wiki/lib/exe/css.php?t=vector&amp;tseed=1358764403"/>
+<link rel="stylesheet" type="text/css" href="/wiki/lib/exe/css.php?t=vector-old&amp;tseed=d6cf059a6caab655681c43151c949788"/>
 <link rel="stylesheet" type="text/css" href="/wiki/lib/plugins/syntaxhighlighter3/sxh3/styles/shCore.css"/>
 <link rel="stylesheet" type="text/css" href="/wiki/lib/plugins/syntaxhighlighter3/sxh3/styles/shThemeDefault.css"/>
 <script type="text/javascript">/*<![CDATA[*/var NS='ru:gamedev';var JSINFO = {"id":"ru:gamedev:documentation","namespace":"ru:gamedev"};
 /*!]]>*/</script>
-<script type="text/javascript" charset="utf-8" src="/wiki/lib/exe/js.php?tseed=1358764403"></script>
+<script type="text/javascript" charset="utf-8" src="/wiki/lib/exe/js.php?tseed=d6cf059a6caab655681c43151c949788&amp;lang=ru"></script>
 <script type="text/javascript" src="/wiki/lib/plugins/syntaxhighlighter3/sxh3/scripts/shCore.js"></script>
 <script type="text/javascript" src="/wiki/lib/plugins/syntaxhighlighter3/sxh3/scripts/shAutoloader.js"></script>
 </head>
@@ -121,12 +121,9 @@
 
 <p>
 В формате pdf:
-</p>
+<a href="http://github.com/instead-hub/instead/raw/master/doc/instead-manual.pdf" class="urlextern" title="http://github.com/instead-hub/instead/raw/master/doc/instead-manual.pdf"  rel="nofollow">http://github.com/instead-hub/instead/raw/master/doc/instead-manual.pdf</a><br/>
 
-<p>
-<a href="http://sourceforge.net/p/instead/code/HEAD/tree/trunk/doc/instead-manual.pdf?format=raw" class="urlextern" title="http://sourceforge.net/p/instead/code/HEAD/tree/trunk/doc/instead-manual.pdf"  rel="nofollow">http://sourceforge.net/p/instead/code/HEAD/tree/trunk/doc/instead-manual.pdf</a><br/>
-
-<a href="http://sourceforge.net/p/instead/code/HEAD/tree/trunk/doc/instead-modules.pdf?format=raw" class="urlextern" title="http://sourceforge.net/p/instead/code/HEAD/tree/trunk/doc/instead-modules.pdf"  rel="nofollow">http://sourceforge.net/p/instead/code/HEAD/tree/trunk/doc/instead-modules.pdf</a>
+<a href="http://github.com/instead-hub/instead/raw/master/doc/instead-modules.pdf" class="urlextern" title="http://github.com/instead-hub/instead/raw/master/doc/instead-modules.pdf"  rel="nofollow">http://github.com/instead-hub/instead/raw/master/doc/instead-modules.pdf</a>
 </p>
 
 <p>
@@ -152,7 +149,7 @@
 </ul>
 </div>
 </div>
-<!-- EDIT1 SECTION "0. Общие сведения" [2-2497] -->
+<!-- EDIT1 SECTION "0. Общие сведения" [2-2514] -->
 <h2 class="sectionedit2" id="история_создания">История создания</h2>
 <div class="level2">
 
@@ -210,7 +207,7 @@
 </p>
 
 </div>
-<!-- EDIT2 SECTION "История создания" [2498-7207] -->
+<!-- EDIT2 SECTION "История создания" [2515-7224] -->
 <h2 class="sectionedit3" id="как_выглядит_классическая_instead_игра">Как выглядит классическая INSTEAD игра</h2>
 <div class="level2">
 
@@ -260,7 +257,7 @@
 </ul>
 
 </div>
-<!-- EDIT3 SECTION "Как выглядит классическая INSTEAD игра" [7208-9489] -->
+<!-- EDIT3 SECTION "Как выглядит классическая INSTEAD игра" [7225-9506] -->
 <h2 class="sectionedit4" id="как_создавать_игру">Как создавать игру</h2>
 <div class="level2">
 
@@ -292,9 +289,9 @@
 </p>
 
 <p>
-Сразу после заголовков вам необходимо указать версию STEAD <abbr title="Application Programming Interface">API</abbr>, которая требуется игре. На данный момент последняя версия <strong>1.8.2</strong>.
+Сразу после заголовков вам необходимо указать версию STEAD <abbr title="Application Programming Interface">API</abbr>, которая требуется игре. На данный момент последняя версия <strong>1.9.1</strong>.
 </p>
-<pre class="code lua">instead_version <span class="st0">&quot;1.8.2&quot;</span></pre>
+<pre class="code lua">instead_version <span class="st0">&quot;1.9.1&quot;</span></pre>
 <div class="wrap_center wrap_round wrap_important plugin_wrap">
 <p>
 <em class="u">Важно!</em>
@@ -396,7 +393,7 @@ Windows-версия: <code>Documents and Settings/USER/Local Settings/Applicati
 <span class="co1">-- $Version: 0.1$</span>
 <span class="co1">-- $Author: Анонимный автор$</span>
 &nbsp;
-instead_version <span class="st0">&quot;1.8.2&quot;</span>
+instead_version <span class="st0">&quot;1.9.1&quot;</span>
 &nbsp;
 <span class="kw3">require</span> <span class="st0">&quot;para&quot;</span> <span class="co1">-- для оформления</span>
 <span class="kw3">require</span> <span class="st0">&quot;dash&quot;</span>
@@ -413,7 +410,7 @@ game<span class="sy0">.</span>inv <span class="sy0">=</span> <span class="st0">'
 <span class="kw1">end</span></pre>
 
 </div>
-<!-- EDIT4 SECTION "Как создавать игру" [9490-17206] -->
+<!-- EDIT4 SECTION "Как создавать игру" [9507-17223] -->
 <h2 class="sectionedit5" id="основы_отладки">Основы отладки</h2>
 <div class="level2">
 
@@ -457,14 +454,19 @@ game<span class="sy0">.</span>inv <span class="sy0">=</span> <span class="st0">'
 <p>
 Возможно (особенно, если вы пользуетесь Unix системами) вам понравится идея проверки синтаксиса ваших скриптов через запуск компилятора <code>luac</code>. В Windows это тоже возможно, нужно только установить выполняемые файлы lua для Windows (<a href="http://luabinaries.sourceforge.net" class="urlextern" title="http://luabinaries.sourceforge.net"  rel="nofollow">http://luabinaries.sourceforge.net</a>)/ и воспользоваться luac52.exe.
 </p>
-
+<div class="wrap_center wrap_round wrap_info plugin_wrap">
+<p>
+Вы можете проверить синтаксис и с помощью INSTEAD (для версий не меньше 1.9.2), для этого воспользуйтесь параметром -luac:
+</p>
+<pre class="code lua">sdl<span class="sy0">-</span>instead <span class="sy0">-</span><span class="kw3">debug</span> <span class="sy0">-</span>luac <span class="sy0">&lt;</span>пусть к скрипту<span class="sy0">.</span>lua<span class="sy0">&gt;</span></pre>
 </div>
-<!-- EDIT5 SECTION "Основы отладки" [17207-20877] -->
+</div>
+<!-- EDIT5 SECTION "Основы отладки" [17224-21215] -->
 <h1 class="sectionedit6" id="сцена">1. Сцена</h1>
 <div class="level1">
 
 <p>
-<em>Сцена</em> (или комната) – это единица игры, в рамках которой игрок может изучать все объекты сцены и взаимодействовать с ними. Например, сценой может быть комната, в которой находится герой. Или участком леса, доступным для наблюдения.
+<em>Сцена</em> (или комната) – это единица игры, в рамках которой игрок может изучать все объекты сцены и взаимодействовать с ними. Например, сценой может быть комната, в которой находится герой. Или участок леса, доступный для наблюдения.
 </p>
 
 <p>
@@ -558,7 +560,7 @@ game<span class="sy0">.</span>inv <span class="sy0">=</span> <span class="st0">'
 <span class="br0">&#125;</span></pre>
 
 </div>
-<!-- EDIT6 SECTION "1. Сцена" [20878-26600] -->
+<!-- EDIT6 SECTION "1. Сцена" [21216-26936] -->
 <h1 class="sectionedit7" id="объекты">2. Объекты</h1>
 <div class="level1">
 
@@ -607,7 +609,7 @@ game<span class="sy0">.</span>inv <span class="sy0">=</span> <span class="st0">'
 </p>
 </div>
 </div>
-<!-- EDIT7 SECTION "2. Объекты" [26601-29772] -->
+<!-- EDIT7 SECTION "2. Объекты" [26937-30108] -->
 <h1 class="sectionedit8" id="добавляем_объекты_в_сцену">3. Добавляем объекты в сцену</h1>
 <div class="level1">
 
@@ -647,7 +649,7 @@ game<span class="sy0">.</span>inv <span class="sy0">=</span> <span class="st0">'
 <pre class="code lua">	obj <span class="sy0">=</span> <span class="br0">&#123;</span> 
                  <span class="st0">'tabl'</span><span class="sy0">,</span> 
                  <span class="st0">'apple'</span><span class="sy0">,</span>
-                 <span class="st0">'knofe'</span><span class="sy0">,</span> 
+                 <span class="st0">'knife'</span><span class="sy0">,</span> 
         <span class="br0">&#125;</span><span class="sy0">;</span></pre>
 
 <p>
@@ -655,7 +657,7 @@ game<span class="sy0">.</span>inv <span class="sy0">=</span> <span class="st0">'
 </p>
 
 </div>
-<!-- EDIT8 SECTION "3. Добавляем объекты в сцену" [29773-31939] -->
+<!-- EDIT8 SECTION "3. Добавляем объекты в сцену" [30109-32275] -->
 <h1 class="sectionedit9" id="объекты_связанные_с_другими_объектами">4. Объекты, связанные с другими объектами</h1>
 <div class="level1">
 
@@ -684,7 +686,7 @@ tabl <span class="sy0">=</span> obj <span class="br0">&#123;</span>
 </p>
 
 </div>
-<!-- EDIT9 SECTION "4. Объекты, связанные с другими объектами" [31940-33564] -->
+<!-- EDIT9 SECTION "4. Объекты, связанные с другими объектами" [32276-33900] -->
 <h1 class="sectionedit10" id="атрибуты_и_обработчики_как_функции">5. Атрибуты и обработчики как функции</h1>
 <div class="level1">
 
@@ -1085,7 +1087,7 @@ r12 <span class="sy0">=</span> room <span class="br0">&#123;</span>
 </p>
 </div>
 </div>
-<!-- EDIT10 SECTION "5. Атрибуты и обработчики как функции" [33565-55888] -->
+<!-- EDIT10 SECTION "5. Атрибуты и обработчики как функции" [33901-56224] -->
 <h1 class="sectionedit11" id="инвентарь">6. Инвентарь</h1>
 <div class="level1">
 
@@ -1135,7 +1137,7 @@ r12 <span class="sy0">=</span> room <span class="br0">&#123;</span>
 </p>
 
 </div>
-<!-- EDIT11 SECTION "6. Инвентарь" [55889-57720] -->
+<!-- EDIT11 SECTION "6. Инвентарь" [56225-58056] -->
 <h1 class="sectionedit12" id="переходы_между_сценами">7. Переходы между сценами</h1>
 <div class="level1">
 
@@ -1341,7 +1343,7 @@ hall <span class="sy0">=</span> room <span class="br0">&#123;</span>
 </p>
 
 </div>
-<!-- EDIT12 SECTION "7. Переходы между сценами" [57721-70178] -->
+<!-- EDIT12 SECTION "7. Переходы между сценами" [58057-70514] -->
 <h1 class="sectionedit13" id="действие_объектов_друг_на_друга">8. Действие объектов друг на друга</h1>
 <div class="level1">
 
@@ -1488,7 +1490,7 @@ knife <span class="sy0">=</span> obj <span class="br0">&#123;</span>
 </p>
 
 </div>
-<!-- EDIT13 SECTION "8. Действие объектов друг на друга" [70179-77635] -->
+<!-- EDIT13 SECTION "8. Действие объектов друг на друга" [70515-77971] -->
 <h1 class="sectionedit14" id="объект_player">9. Объект &quot;player&quot;</h1>
 <div class="level1">
 
@@ -1521,7 +1523,7 @@ knife <span class="sy0">=</span> obj <span class="br0">&#123;</span>
 </p>
 
 </div>
-<!-- EDIT14 SECTION "9. Объект player" [77636-79232] -->
+<!-- EDIT14 SECTION "9. Объект player" [77972-79568] -->
 <h1 class="sectionedit15" id="объект_game">10. Объект &#039;&#039;game&#039;&#039;</h1>
 <div class="level1">
 
@@ -1567,7 +1569,7 @@ game<span class="sy0">.</span>use <span class="sy0">=</span> <span class="st0">'
 </p>
 
 </div>
-<!-- EDIT15 SECTION "10. Объект ''game''" [79233-81724] -->
+<!-- EDIT15 SECTION "10. Объект ''game''" [79569-82060] -->
 <h1 class="sectionedit16" id="атрибуты-списки">11. Атрибуты-списки</h1>
 <div class="level1">
 
@@ -1663,7 +1665,7 @@ game<span class="sy0">.</span>use <span class="sy0">=</span> <span class="st0">'
 </p>
 </div>
 </div>
-<!-- EDIT16 SECTION "11. Атрибуты-списки" [81725-87117] -->
+<!-- EDIT16 SECTION "11. Атрибуты-списки" [82061-87453] -->
 <h1 class="sectionedit17" id="функции_которые_возвращают_объекты">12. Функции, которые возвращают объекты</h1>
 <div class="level1">
 
@@ -1792,7 +1794,7 @@ act <span class="sy0">=</span> <span class="kw1">function</span><span class="br0
 <span class="kw1">end</span></pre>
 
 </div>
-<!-- EDIT17 SECTION "12. Функции, которые возвращают объекты" [87118-93461] -->
+<!-- EDIT17 SECTION "12. Функции, которые возвращают объекты" [87454-93797] -->
 <h1 class="sectionedit18" id="другие_функции_instead">13. Другие функции INSTEAD</h1>
 <div class="level1">
 
@@ -1947,10 +1949,14 @@ act <span class="sy0">=</span> <span class="kw1">function</span><span class="br0
 </li>
 <li class="level1"><div class="li"> <code>stead.call(дескриптор, строка - имя атрибута/обработчика, параметры…)</code> – вызов обработчика или получение значения атрибута (описано далее);</div>
 </li>
+<li class="level1"><div class="li"> <code>instead_gamepath()</code> – возвращает полный путь к каталогу игры;</div>
+</li>
+<li class="level1"><div class="li"> <code>instead_savepath()</code> – возвращает полный путь к каталогу с сохранениями игры;</div>
+</li>
 </ul>
 
 </div>
-<!-- EDIT18 SECTION "13. Другие функции INSTEAD" [93462-104360] -->
+<!-- EDIT18 SECTION "13. Другие функции INSTEAD" [93798-104930] -->
 <h1 class="sectionedit19" id="диалоги">14. Диалоги</h1>
 <div class="level1">
 
@@ -2045,7 +2051,7 @@ guarddlg <span class="sy0">=</span> dlg <span class="br0">&#123;</span>
 <span class="br0">&#125;</span></pre>
 </div>
 </div>
-<!-- EDIT19 SECTION "14. Диалоги" [104361-109992] -->
+<!-- EDIT19 SECTION "14. Диалоги" [104931-110562] -->
 <h2 class="sectionedit20" id="расширенные_диалоги">Расширенные диалоги</h2>
 <div class="level2">
 
@@ -2297,11 +2303,11 @@ INSTEAD предоставляет следующие функции по раб
 </p>
 
 <p>
-Законченный пример реализации <em>сложного</em> диалога, вы можете посмотреть здесь: <a href="http://sourceforge.net/p/instead/code/HEAD/tree/trunk/doc/examples/dialog/main.lua" class="urlextern" title="http://sourceforge.net/p/instead/code/HEAD/tree/trunk/doc/examples/dialog/main.lua"  rel="nofollow">http://sourceforge.net/p/instead/code/HEAD/tree/trunk/doc/examples/dialog/main.lua</a>
+Законченный пример реализации <em>сложного</em> диалога, вы можете посмотреть здесь: <a href="http://raw2.github.com/instead-hub/instead/master/doc/examples/dialog/main.lua" class="urlextern" title="http://raw2.github.com/instead-hub/instead/master/doc/examples/dialog/main.lua"  rel="nofollow">http://raw2.github.com/instead-hub/instead/master/doc/examples/dialog/main.lua</a>
 </p>
 
 </div>
-<!-- EDIT20 SECTION "Расширенные диалоги" [109993-126129] -->
+<!-- EDIT20 SECTION "Расширенные диалоги" [110563-126709] -->
 <h2 class="sectionedit21" id="простые_диалоги">Простые диалоги</h2>
 <div class="level2">
 
@@ -2403,7 +2409,7 @@ povardlg <span class="sy0">=</span> dlg <span class="br0">&#123;</span>
 </p>
 
 </div>
-<!-- EDIT21 SECTION "Простые диалоги" [126130-131835] -->
+<!-- EDIT21 SECTION "Простые диалоги" [126710-132415] -->
 <h1 class="sectionedit22" id="облегченные_объекты">15. Облегченные объекты</h1>
 <div class="level1">
 
@@ -2507,7 +2513,7 @@ obj <span class="sy0">=</span> <span class="br0">&#123;</span> vobj<span class="
 </p>
 
 </div>
-<!-- EDIT22 SECTION "15. Облегченные объекты" [131836-139038] -->
+<!-- EDIT22 SECTION "15. Облегченные объекты" [132416-139618] -->
 <h1 class="sectionedit23" id="динамические_события">16. Динамические события</h1>
 <div class="level1">
 
@@ -2702,7 +2708,7 @@ guarddlg <span class="sy0">=</span> dlg <span class="br0">&#123;</span>
 </p>
 
 </div>
-<!-- EDIT23 SECTION "16. Динамические события" [139039-148566] -->
+<!-- EDIT23 SECTION "16. Динамические события" [139619-149146] -->
 <h1 class="sectionedit24" id="графика">17. Графика</h1>
 <div class="level1">
 
@@ -2837,7 +2843,7 @@ INSTEAD может обрабатывать составные картинки,
 </p>
 
 </div>
-<!-- EDIT24 SECTION "17. Графика" [148567-156823] -->
+<!-- EDIT24 SECTION "17. Графика" [149147-157403] -->
 <h1 class="sectionedit25" id="музыка">18. Музыка</h1>
 <div class="level1">
 
@@ -2930,6 +2936,15 @@ INSTEAD может обрабатывать составные картинки,
 </p>
 
 <p>
+Вы можете задавать время нарастания и затухания музыки, с помощью вызова:
+</p>
+<pre class="code lua">stead<span class="sy0">.</span>set_music_fading<span class="br0">&#40;</span>o<span class="sy0">,</span> <span class="br0">&#91;</span>i<span class="br0">&#93;</span><span class="br0">&#41;</span></pre>
+
+<p>
+Здесь o - время в мс. для затухания и i - время в мс. для нарастания музыки. Если задан только один параметр – оба времени считаются одинаковыми. После вызова, установленные параметры будут влиять на проигрывание всех музыкальных файлов.
+</p>
+
+<p>
 Для проигрывания звуков используйте <code>set_sound()</code>. Настоятельно рекомендуется использовать формат <code>ogg</code>, хотя большинство распространенных звуковых форматов также будет работать.
 </p>
 
@@ -2975,7 +2990,7 @@ INSTEAD может обрабатывать составные картинки,
 </p>
 
 </div>
-<!-- EDIT25 SECTION "18. Музыка" [156824-165216] -->
+<!-- EDIT25 SECTION "18. Музыка" [157404-166412] -->
 <h1 class="sectionedit26" id="форматирование_и_оформление_вывода">19. Форматирование и оформление вывода</h1>
 <div class="level1">
 
@@ -3009,7 +3024,7 @@ stead<span class="sy0">.</span>filter <span class="sy0">=</span> <span class="kw
 </p>
 
 </div>
-<!-- EDIT26 SECTION "19. Форматирование и оформление вывода" [165217-167228] -->
+<!-- EDIT26 SECTION "19. Форматирование и оформление вывода" [166413-168424] -->
 <h2 class="sectionedit27" id="форматирование">Форматирование</h2>
 <div class="level2">
 
@@ -3163,7 +3178,7 @@ stead<span class="sy0">.</span>scene_delim <span class="sy0">=</span> <span clas
 </p>
 
 </div>
-<!-- EDIT27 SECTION "Форматирование" [167229-175583] -->
+<!-- EDIT27 SECTION "Форматирование" [168425-176779] -->
 <h2 class="sectionedit28" id="оформление">Оформление</h2>
 <div class="level2">
 
@@ -3205,7 +3220,7 @@ stead<span class="sy0">.</span>scene_delim <span class="sy0">=</span> <span clas
 </ul>
 
 </div>
-<!-- EDIT28 SECTION "Оформление" [175584-177001] -->
+<!-- EDIT28 SECTION "Оформление" [176780-178197] -->
 <h1 class="sectionedit29" id="конструкторы_и_наследование">20. Конструкторы и наследование</h1>
 <div class="level1">
 <div class="wrap_center wrap_round wrap_important plugin_wrap">
@@ -3544,12 +3559,12 @@ cave <span class="sy0">=</span> room <span class="br0">&#123;</span>
 </p>
 
 </div>
-<!-- EDIT29 SECTION "20. Конструкторы и наследование" [177002-194281] -->
+<!-- EDIT29 SECTION "20. Конструкторы и наследование" [178198-195477] -->
 <h1 class="sectionedit30" id="полезные_советы">21. Полезные советы</h1>
 <div class="level1">
 
 </div>
-<!-- EDIT30 SECTION "21. Полезные советы" [194282-194330] -->
+<!-- EDIT30 SECTION "21. Полезные советы" [195478-195526] -->
 <h2 class="sectionedit31" id="разбиение_на_файлы">Разбиение на файлы</h2>
 <div class="level2">
 
@@ -3563,7 +3578,7 @@ cave <span class="sy0">=</span> room <span class="br0">&#123;</span>
 <pre class="code lua"><span class="co1">-- main.lua</span>
 instead_version <span class="st0">&quot;1.8.2&quot;</span>
 <span class="kw3">dofile</span> <span class="st0">&quot;episode1.lua&quot;</span>
-<span class="kw3">dofile</span> <span class="st0">&quot;npc.lau&quot;</span>
+<span class="kw3">dofile</span> <span class="st0">&quot;npc.lua&quot;</span>
 <span class="kw3">dofile</span> <span class="st0">&quot;start.lua&quot;</span>
 &nbsp;
 main <span class="sy0">=</span> room <span class="br0">&#123;</span>
@@ -3592,7 +3607,7 @@ act <span class="sy0">=</span> code <span class="co2">[[ gamefile (&quot;episode
 </p>
 
 </div>
-<!-- EDIT31 SECTION "Разбиение на файлы" [194331-196753] -->
+<!-- EDIT31 SECTION "Разбиение на файлы" [195527-197949] -->
 <h2 class="sectionedit32" id="модули">Модули</h2>
 <div class="level2">
 
@@ -3670,7 +3685,7 @@ instead_version <span class="st0">&quot;1.8.2&quot;</span>
 </p>
 
 </div>
-<!-- EDIT32 SECTION "Модули" [196754-199735] -->
+<!-- EDIT32 SECTION "Модули" [197950-200931] -->
 <h2 class="sectionedit33" id="меню">Меню</h2>
 <div class="level2">
 
@@ -3725,7 +3740,7 @@ main <span class="sy0">=</span> room <span class="br0">&#123;</span>
 <span class="br0">&#125;</span><span class="sy0">;</span></pre>
 
 </div>
-<!-- EDIT33 SECTION "Меню" [199736-202761] -->
+<!-- EDIT33 SECTION "Меню" [200932-203957] -->
 <h2 class="sectionedit34" id="статус_игрока">Статус игрока</h2>
 <div class="level2">
 
@@ -3751,7 +3766,7 @@ status <span class="sy0">=</span> stat <span class="br0">&#123;</span> <span cla
 take<span class="br0">&#40;</span>status<span class="br0">&#41;</span></pre>
 
 </div>
-<!-- EDIT34 SECTION "Статус игрока" [202762-203878] -->
+<!-- EDIT34 SECTION "Статус игрока" [203958-205074] -->
 <h2 class="sectionedit35" id="walk_из_обработчиков_exit_и_enter">walk из обработчиков exit и enter</h2>
 <div class="level2">
 
@@ -3769,7 +3784,7 @@ take<span class="br0">&#40;</span>status<span class="br0">&#41;</span></pre>
         <span class="br0">&#125;</span></pre>
 
 </div>
-<!-- EDIT35 SECTION "walk из обработчиков exit и enter" [203879-204607] -->
+<!-- EDIT35 SECTION "walk из обработчиков exit и enter" [205075-205803] -->
 <h2 class="sectionedit36" id="динамически_создаваемые_ссылки">Динамически создаваемые ссылки.</h2>
 <div class="level2">
 
@@ -3798,7 +3813,7 @@ take<span class="br0">&#40;</span>status<span class="br0">&#41;</span></pre>
 </p>
 
 </div>
-<!-- EDIT36 SECTION "Динамически создаваемые ссылки." [204608-205672] -->
+<!-- EDIT36 SECTION "Динамически создаваемые ссылки." [205804-206868] -->
 <h2 class="sectionedit37" id="кодирование_исходного_кода_игры">Кодирование исходного кода игры</h2>
 <div class="level2">
 
@@ -3827,7 +3842,7 @@ doencfile<span class="br0">&#40;</span><span class="st0">&quot;game&quot;</span>
 </p>
 </div>
 </div>
-<!-- EDIT37 SECTION "Кодирование исходного кода игры" [205673-206971] -->
+<!-- EDIT37 SECTION "Кодирование исходного кода игры" [206869-208167] -->
 <h2 class="sectionedit38" id="запаковка_ресурсов">Запаковка ресурсов</h2>
 <div class="level2">
 
@@ -3860,7 +3875,7 @@ doencfile<span class="br0">&#40;</span><span class="st0">&quot;game&quot;</span>
 </p>
 
 </div>
-<!-- EDIT38 SECTION "Запаковка ресурсов" [206972-208055] -->
+<!-- EDIT38 SECTION "Запаковка ресурсов" [208168-209251] -->
 <h2 class="sectionedit39" id="переключение_между_игроками">Переключение между игроками</h2>
 <div class="level2">
 
@@ -3869,7 +3884,7 @@ doencfile<span class="br0">&#40;</span><span class="st0">&quot;game&quot;</span>
 </p>
 
 </div>
-<!-- EDIT39 SECTION "Переключение между игроками" [208056-208542] -->
+<!-- EDIT39 SECTION "Переключение между игроками" [209252-209738] -->
 <h2 class="sectionedit40" id="использование_параметров_обработчика">Использование параметров обработчика</h2>
 <div class="level2">
 
@@ -3893,7 +3908,7 @@ doencfile<span class="br0">&#40;</span><span class="st0">&quot;game&quot;</span>
 	<span class="kw1">end</span></pre>
 
 </div>
-<!-- EDIT40 SECTION "Использование параметров обработчика" [208543-209102] -->
+<!-- EDIT40 SECTION "Использование параметров обработчика" [209739-210298] -->
 <h2 class="sectionedit41" id="таймер">Таймер</h2>
 <div class="level2">
 
@@ -3956,7 +3971,7 @@ doencfile<span class="br0">&#40;</span><span class="st0">&quot;game&quot;</span>
 </p>
 </div>
 </div>
-<!-- EDIT41 SECTION "Таймер" [209103-211823] -->
+<!-- EDIT41 SECTION "Таймер" [210299-213019] -->
 <h2 class="sectionedit42" id="музыкальный_плеер">Музыкальный плеер</h2>
 <div class="level2">
 
@@ -4000,7 +4015,7 @@ music_player <span class="sy0">=</span> obj <span class="br0">&#123;</span>
 		<span class="kw1">end</span>
 		track_time <span class="sy0">=</span> <span class="nu0">0</span>
                 <span class="kw1">if</span> s<span class="sy0">.</span>pos <span class="sy0">==</span> <span class="nu0">0</span> <span class="kw1">then</span>
-                        s<span class="sy0">.</span>pos <span class="sy0">==</span> <span class="nu0">1</span>
+                        s<span class="sy0">.</span>pos <span class="sy0">=</span> <span class="nu0">1</span>
                 <span class="kw1">else</span>
                         s<span class="sy0">.</span>pos <span class="sy0">=</span> s<span class="sy0">.</span>pos <span class="sy0">+</span> <span class="nu0">2</span>
                 <span class="kw1">end</span>
@@ -4021,7 +4036,7 @@ game<span class="sy0">.</span>timer <span class="sy0">=</span> <span class="kw1"
 <span class="kw1">end</span></pre>
 
 </div>
-<!-- EDIT42 SECTION "Музыкальный плеер" [211824-213766] -->
+<!-- EDIT42 SECTION "Музыкальный плеер" [213020-214961] -->
 <h2 class="sectionedit43" id="живые_объекты">Живые объекты</h2>
 <div class="level2">
 
@@ -4044,7 +4059,7 @@ game<span class="sy0">.</span>timer <span class="sy0">=</span> <span class="kw1"
 <span class="kw1">end</span></pre>
 
 </div>
-<!-- EDIT43 SECTION "Живые объекты" [213767-214487] -->
+<!-- EDIT43 SECTION "Живые объекты" [214962-215682] -->
 <h2 class="sectionedit44" id="клавиатура">Клавиатура</h2>
 <div class="level2">
 
@@ -4061,7 +4076,7 @@ game<span class="sy0">.</span>timer <span class="sy0">=</span> <span class="kw1"
 </p>
 
 </div>
-<!-- EDIT44 SECTION "Клавиатура" [214488-214893] -->
+<!-- EDIT44 SECTION "Клавиатура" [215683-216088] -->
 <h2 class="sectionedit45" id="мышь">Мышь</h2>
 <div class="level2">
 
@@ -4076,7 +4091,7 @@ game<span class="sy0">.</span>timer <span class="sy0">=</span> <span class="kw1"
 </p>
 
 </div>
-<!-- EDIT45 SECTION "Мышь" [214894-215638] -->
+<!-- EDIT45 SECTION "Мышь" [216089-216833] -->
 <h2 class="sectionedit46" id="вызов_меню">Вызов меню</h2>
 <div class="level2">
 
@@ -4085,7 +4100,7 @@ game<span class="sy0">.</span>timer <span class="sy0">=</span> <span class="kw1"
 </p>
 
 </div>
-<!-- EDIT46 SECTION "Вызов меню" [215639-216054] -->
+<!-- EDIT46 SECTION "Вызов меню" [216834-217249] -->
 <h2 class="sectionedit47" id="динамическое_создание_объектов">Динамическое создание объектов</h2>
 <div class="level2">
 
@@ -4125,7 +4140,7 @@ delete<span class="br0">&#40;</span>n<span class="br0">&#41;</span></pre>
 </p>
 
 </div>
-<!-- EDIT47 SECTION "Динамическое создание объектов" [216055-217753] -->
+<!-- EDIT47 SECTION "Динамическое создание объектов" [217250-218948] -->
 <h2 class="sectionedit48" id="запрет_на_сохранение_игры">Запрет на сохранение игры</h2>
 <div class="level2">
 
@@ -4162,7 +4177,7 @@ game<span class="sy0">.</span>enable_save <span class="sy0">=</span> <span class
 </p>
 </div>
 </div>
-<!-- EDIT48 SECTION "Запрет на сохранение игры" [217754-219694] -->
+<!-- EDIT48 SECTION "Запрет на сохранение игры" [218949-220889] -->
 <h1 class="sectionedit49" id="темы_для_sdl-instead">22. Темы для sdl-instead</h1>
 <div class="level1">
 
@@ -4310,6 +4325,6 @@ Windows версия – <code>Documents and Settings/USER/Local Settings/Applic
 </p>
 </div>
 </div>
-<!-- EDIT49 SECTION "22. Темы для sdl-instead" [219695-] --></div>
+<!-- EDIT49 SECTION "22. Темы для sdl-instead" [220890-] --></div>
 </body>
 </html>
