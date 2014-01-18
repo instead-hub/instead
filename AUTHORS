@@ -1,6 +1,5 @@
 INSTEAD was written by:
-	Peter Kosyh
-	p.kosyh[at]gmail.com
+	Peter Kosyh <p.kosyh at gmail.com>
 
 Initial port to Windows:
 	Ilya Ryndin
@@ -14,6 +13,9 @@ Port to Mac OS X:
 Port to Windows CE:
 	Andrey Afletdinov
 
+Debian package:
+	Sam Protsenko <joe.skb7 at gmail.com>
+
 FreeBSD port and cmake support:
 	Dmitry Marakasov (AMDmi3)
 
@@ -21,6 +23,7 @@ Web resources:
 	http://instead.syscall.ru/forum
 	http://instead.sourceforge.net
 	http://instead-games.sourceforge.net
+	http://github.com/instead-hub/instead
 
 XMPP conference:
 	instead@conference.jabber.ru
