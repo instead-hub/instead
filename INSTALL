@@ -93,9 +93,10 @@ Warning, in some systems (like Arch linux) you need to define LUA dir, to help c
 For example (Arch linux):
 $ LUA_DIR=/usr/include/lua5.1/ cmake ..
 
-To build standalone version, use this:
-$ LUA_DIR=/usr/include/lua5.1/ cmake .. -DSTANDALONE=1
-$ make
+To build standalone version, use this (in ./build/ directory):
+$ cmake .. -DSTANDALONE=1
+$ make && make install
+$ cd standalone
 $ ./sdl-instead
 
 8) Manual build
