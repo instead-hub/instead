@@ -2155,7 +2155,7 @@ end
 
 game = game {
 	codepage = "UTF-8",
-	nam = "INSTEAD -- Simple Text Adventure interpreter v"..stead.version.." '2009-2013 by Peter Kosyh",
+	nam = "INSTEAD -- Simple Text Adventure interpreter v"..stead.version.." '2009-2014 by Peter Kosyh",
 	dsc = [[
 Commands:^
     look(or just enter), act <on what> (or just what), use <what> [on what], go <where>,^
