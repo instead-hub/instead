@@ -32,7 +32,18 @@ docs: rules
 
 PKGBUILD: PKGBUILD.in tarball
 	cat PKGBUILD.in | sed -e s/MD5SUM/`md5sum $(ARCHIVE) | cut -f1 -d' '`/g > PKGBUILD
-	
+
+caanoo.tar.gz:
+	wget "http://sourceforge.net/projects/instead/files/instead/build-bin-data/$(@)/download" -O $(@)
+
+mingw32ce.tar.gz:
+	wget "http://sourceforge.net/projects/instead/files/instead/build-bin-data/$(@)/download" -O $(@)
+
+windows.tar.gz:
+	wget "http://sourceforge.net/projects/instead/files/instead/build-bin-data/$(@)/download" -O $(@)
+
+build-bin-data: caanoo.tar.gz mingw32ce.tar.gz windows.tar.gz
+
 tarball: clean svnclean gitclean docs rules
 	echo "# you can define own flags here" > config.make
 	ln -sf ./ $(VERTITLE)
