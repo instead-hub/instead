@@ -130,7 +130,7 @@ diff -Nur instead-1.9.2/src/sdl-instead/graphics.c instead-1.9.2-caanoo/src/sdl-
  	gfx_height = h;
  	SDL_ShowCursor(SDL_DISABLE);
 +#ifdef CAANOO
-+ 	screen = SDL_SetVideoMode(gfx_width, gfx_height, maxbpp, ((gfx_fs)?SDL_HWSURFACE:0) | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
++ 	scr = SDL_SetVideoMode(gfx_width, gfx_height, maxbpp, ((gfx_fs)?SDL_HWSURFACE:0) | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 +#else
  #ifdef S60
  	scr = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | hw | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
