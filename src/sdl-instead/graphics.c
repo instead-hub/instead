@@ -649,7 +649,7 @@ SDL_Surface *SDL_DisplayFormatAlpha(SDL_Surface * surface)
 		return NULL;
 	}
 /*	format = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB8888);
-	if (surface->format->Amask == 0 && surface->format->palette) */
+	if (surface->format->Amask == 0 && surface->format->palette)
 		SDL_SetColorKey(surface, SDL_TRUE, *(Uint8*)surface->pixels); */
 	converted = SDL_ConvertSurface(surface, Surf(screen)->format, 0); /* SDL_RLEACCEL); */
 	if (converted)
