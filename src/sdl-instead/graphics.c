@@ -529,9 +529,10 @@ void gfx_clip(int x, int y, int w, int h)
 	SDL_SetClipRect(Surf(screen), &src);
 }
 
-#define GFX_IMG(v) gfx_new_img(v, 0, NULL)
+#define GFX_IMG(v) gfx_new_img(v, 0, NULL, 0)
+#define GFX_IMG_REL(v) gfx_new_img(v, 0, NULL, 1)
 
-static img_t	gfx_new_img(SDL_Surface *s, int fl, void *data)
+static img_t	gfx_new_img(SDL_Surface *s, int fl, void *data, int release)
 {
 	img_t i;
 	if (!s)
@@ -542,6 +543,8 @@ static img_t	gfx_new_img(SDL_Surface *s, int fl, void *data)
 /*		i->t = NULL; */
 		i->flags = fl;
 		i->aux = data;
+	} else if (release && s) {
+		SDL_FreeSurface(s);
 	}
 	return i;
 }
@@ -581,7 +584,7 @@ img_t 	gfx_new(int w, int h)
 		SDL_SetSurfaceBlendMode(dst, SDL_BLENDMODE_NONE);
 #endif
 	if (dst)
-		return GFX_IMG(dst);
+		return GFX_IMG_REL(dst);
 	return NULL;
 }
 
@@ -635,7 +638,7 @@ img_t	gfx_grab_screen(int x, int y, int w, int h)
 /*	SDL_SetSurfaceBlendMode(screen, SDL_BLENDMODE_NONE);
 	SDL_SetSurfaceBlendMode(img, SDL_BLENDMODE_NONE); */
 	SDL_BlitSurface(Surf(screen), &src, s, &dst);
-	img = GFX_IMG(s);
+	img = GFX_IMG_REL(s);
 	if (!img)
 		return NULL;
 	gfx_unset_alpha(img);
@@ -693,7 +696,7 @@ img_t gfx_display_alpha(img_t src)
 	if (!res)
 		return src;
 	gfx_free_image(src);
-	return GFX_IMG(res);
+	return GFX_IMG_REL(res);
 }
 
 int gfx_get_pixel(img_t src, int x, int y,  color_t *color)
@@ -779,7 +782,7 @@ img_t gfx_alpha_img(img_t src, int alpha)
 	if (screen) {
 		SDL_Surface *s = SDL_DisplayFormatAlpha(Surf(src));
 		if (s)
-			img = GFX_IMG(s);
+			img = GFX_IMG_REL(s);
 	} else
 		img = gfx_new(Surf(src)->w, Surf(src)->h);
 	if (!img)
@@ -846,7 +849,7 @@ img_t gfx_combine(img_t src, img_t dst)
 	s = SDL_DisplayFormatAlpha(Surf(dst));
 	if (!s)
 		return NULL;
-	new = GFX_IMG(s);
+	new = GFX_IMG_REL(s);
 	if (new)
 		SDL_BlitSurface(Surf(src), NULL, Surf(new), NULL);
 	return new;
@@ -998,6 +1001,12 @@ static anigif_t ag_dup(anigif_t ag)
 	if (!agif)
 		return NULL;
 	memcpy(agif, ag, anigif_size(ag->nr_frames));
+	agif->cur_frame = 0;
+	agif->drawn = 0;
+	agif->active = 0;
+	agif->delay = 0;
+	agif->spawn_nr = 0;
+	agif->spawn = NULL;
 	return agif;
 }
 
@@ -1022,11 +1031,16 @@ static img_t _gfx_load_image(char *filename, int combined)
 		agif->loop = loop;
 		anigif_add(agif);
 /*		fprintf(stderr, "anigif: %s %p\n", filename, agif->frames[0].surface); */
-		return gfx_new_img(agif->frames[0].surface, IMG_ANIGIF, agif);
+		img = gfx_new_img(agif->frames[0].surface, IMG_ANIGIF, agif, 0);
+		if (!img) {
+			anigif_del(agif);
+			anigif_free(agif);
+		}
+		return img;
 	}
 	rw = RWFromIdf(game_idf, filename);
 
-	if (!rw || !(img = GFX_IMG(IMG_Load_RW(rw, 1))))
+	if (!rw || !(img = GFX_IMG_REL(IMG_Load_RW(rw, 1))))
 		return NULL;
 
 	if (Surf(img)->format->BitsPerPixel == 32) { /* hack for 32 bit BMP :( */
@@ -1683,7 +1697,7 @@ int gfx_set_mode(int w, int h, int fs)
 	gfx_fs = fs;
 	gfx_width = w;
 	gfx_height = h;
-	screen = GFX_IMG(SDL_VideoSurface);
+	screen = GFX_IMG_REL(SDL_VideoSurface);
 	if (!screen) {
 		fprintf(stderr, "Can't alloc screen!\n");
 		return -1;
@@ -1733,7 +1747,7 @@ int gfx_set_mode(int w, int h, int fs)
   #endif
  #endif
 #endif
-	screen = GFX_IMG(scr);
+	screen = GFX_IMG_REL(scr);
 	if (scr == NULL || screen == NULL) {
 		fprintf(stderr, "Unable to set %dx%d video: %s\n", w, h, SDL_GetError());
 		return -1;
@@ -1941,55 +1955,127 @@ img_t gfx_scale(img_t src, float xscale, float yscale, int smooth)
 	anigif_t ag;
 	if ((ag = is_anigif(src))) {
 		int i;
+		int err = 0;
+		img_t img = NULL;
 		anigif_t ag2;
 		ag2 = ag_dup(ag);
+
 		if (!ag2)
 			return NULL;
+
 		for (i = 0; i < ag->nr_frames; i ++) {
-			SDL_Surface *s = zoomSurface(ag->frames[i].surface, xscale, yscale, 1);
+			SDL_Surface *s;
+			s = (err) ? NULL : zoomSurface(ag->frames[i].surface, xscale, yscale, 1);
+
+			if (!s) {
+				err ++;
+				ag2->frames[i].surface = NULL;
+				continue;
+			}
+
 			ag2->frames[i].surface = s;
 			ag2->frames[i].x = (float)(ag2->frames[i].x) * xscale;
 			ag2->frames[i].y = (float)(ag2->frames[i].y) * yscale;
 		}
+		if (err) {
+			anigif_free(ag2);
+			return NULL;
+		}
 		anigif_add(ag2); /* scaled anigif added */
-		return gfx_new_img(ag2->frames[0].surface, IMG_ANIGIF, ag2);
+		img = gfx_new_img(ag2->frames[0].surface, IMG_ANIGIF, ag2, 0);
+		if (!img) {
+			anigif_del(ag2);
+			anigif_free(ag2);
+		}
+		return img;
 	}
-	return GFX_IMG(zoomSurface(Surf(src), xscale, yscale, smooth));
+	return GFX_IMG_REL(zoomSurface(Surf(src), xscale, yscale, smooth));
 }
 
 img_t gfx_rotate(img_t src, float angle, int smooth)
 {
 	anigif_t ag;
 
-	float rangle = angle * (M_PI / 180.0);
+	float rangle = (angle) * (M_PI / 180.0);
 
 	if ((ag = is_anigif(src))) {
 		int i;
 		int w,h;
-		float x, y, x1, y1;
+		int err = 0;
+		img_t img = NULL;
+
+		anigif_t ag2;
+
+		float x, y;
+
+		ag2 = ag_dup(ag);
+
+		if (!ag2)
+			return NULL;
 
 		w = gfx_img_w(src);
 		h = gfx_img_h(src);
 
 		for (i = 0; i < ag->nr_frames; i ++) {
-			SDL_Surface *s = rotozoomSurface(ag->frames[i].surface, angle, 1.0, smooth);
-			if (i)
-				SDL_FreeSurface(ag->frames[i].surface);
+			float x1, y1, x2, y2, x3, y3, x4, y4;
 
-			ag->frames[i].surface = s;
+			int w2, h2;
+			float rsin, rcos;
 
-			x = (float)(ag->frames[i].x) - w / 2;
-			y = (float)(ag->frames[i].y) - h / 2;
+			SDL_Surface *s;
+			s = (err) ? NULL : rotozoomSurface(ag->frames[i].surface, angle, 1.0, smooth);
 
-			x1 = x*cos(rangle) - y*sin(rangle);
-			y1 = y*cos(rangle) + x*sin(rangle);
-			
-			ag->frames[i].x = x1 + w / 2;
-			ag->frames[i].y = y1 + h / 2;
+			if (!s) {
+				err ++;
+				ag2->frames[i].surface = NULL;
+				continue;
+			}
+
+			rsin = sin(rangle);
+			rcos = cos(rangle);
+
+			x = (float)(ag->frames[i].x) - (float)w / 2;
+			y = (float)(ag->frames[i].y) - (float)h / 2;
+
+			w2 = ag->frames[i].surface->w;
+			h2 = ag->frames[i].surface->h;
+
+			ag2->frames[i].surface = s;
+
+			x1 = x * rcos - y * rsin;
+			y1 = y * rcos + x * rsin;
+
+			x2 = (x + (float)w2) * rcos - y * rsin;
+			y2 = y * rcos + (x + (float)w2) * rsin;
+
+			x3 = x * rcos - (y + (float)h2) * rsin;
+			y3 = (y + (float)h2) * rcos + x * rsin;
+
+			x4 = (x + (float)w2) * rcos - (y + (float)h2) * rsin;
+			y4 = (y + (float)h2) * rcos + (x + (float)w) * rsin;
+
+			if (x1 > x2) x1 = x2; if (x1 > x3) x1 = x3; if (x1 > x4) x1 = x4;
+			if (y1 > y2) y1 = y2; if (y1 > y3) y1 = y3; if (y1 > y4) y1 = y4;
+
+			w2 = s->w;
+			h2 = s->h;
+
+			ag2->frames[i].x = x1 + (float)w2 / 2;
+			ag2->frames[i].y = y1 + (float)h2 / 2;
 		}
-		return GFX_IMG(ag->frames[0].surface);
+		if (err) {
+			anigif_free(ag2);
+			return NULL;
+		}
+		anigif_add(ag2); /* rotated anigif added */
+		img = gfx_new_img(ag2->frames[0].surface, IMG_ANIGIF, ag2, 0);
+		if (!img) {
+			anigif_del(ag2);
+			anigif_free(ag2);
+		}
+		return img;
 	}
-	return GFX_IMG(rotozoomSurface(Surf(src), angle, 1.0, smooth));
+	return GFX_IMG_REL(rotozoomSurface(Surf(src), angle, 1.0, smooth));
 }
 
 #define FN_REG  0
@@ -2148,7 +2234,7 @@ img_t fnt_render(fnt_t fn, const char *p, color_t col)
 	struct fnt *h = (struct fnt*)fn;
 	if (!h)
 		return NULL;
-	return GFX_IMG(TTF_RenderUTF8_Blended((TTF_Font *)h->fn, p, scol));
+	return GFX_IMG_REL(TTF_RenderUTF8_Blended((TTF_Font *)h->fn, p, scol));
 }
 
 int fnt_height(fnt_t fn)
