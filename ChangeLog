@@ -11,6 +11,8 @@
   * game.gui.hidetitle;
   * potential bug with non ascii save path and non UTF-8 game codepage;
   * bug with language changing;
+  * bug with anigif rotate and scale;
+  * bug with anigif and cursor;
   * typo in Please, wait message;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 30 Dec 2013 18:56:00 +0400
