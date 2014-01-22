@@ -46,7 +46,7 @@ SET(GAMESDIR "${DATADIR}/games" CACHE STRING "Where to install games")
 SET(ICONDIR "share/pixmaps" CACHE STRING "Where to install icons")
 SET(DOCDIR "share/doc/instead" CACHE STRING "Where to install documentation")
 SET(LANGDIR "${DATADIR}/lang" CACHE STRING "Where to install language files")
-SET(MANDIR "share/man/man6" CACHE STRING "Where to install man pages")
+SET(MANDIR "share/man" CACHE STRING "Where to install man pages")
 SET(DESKTOPDIR "share/applications" CACHE STRING "Where to install .desktop files")
 
 SET(STANDALONEDIR "${PROJECT_BINARY_DIR}/standalone" CACHE STRING "Where to stage stanalone package")
