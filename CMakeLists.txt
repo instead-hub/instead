@@ -39,7 +39,7 @@ IF(SYSTEMWIDE AND STANDALONE)
 ENDIF(SYSTEMWIDE AND STANDALONE)
 
 SET(BINDIR "bin" CACHE STRING "Where to install binaries")
-SET(DATADIR "share/instead" CACHE STRING "Where to install binaries")
+SET(DATADIR "share/instead" CACHE STRING "Where to install data files")
 SET(STEADDIR "${DATADIR}/stead" CACHE STRING "Where to install stead files")
 SET(THEMESDIR "${DATADIR}/themes" CACHE STRING "Where to install themes")
 SET(GAMESDIR "${DATADIR}/games" CACHE STRING "Where to install games")
