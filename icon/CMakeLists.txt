@@ -1,11 +1,11 @@
 SET(ICON_FILES
 	sdl_instead.png
-	sdl_instead.ico
 	sdl_instead.svg
 )
 
 IF(WIN32)
 	SET(PLATFORM_ICON_FILE sdl_instead_1x32.png)
+	SET(ICON_FILES ${ICON_FILES} sdl_instead.ico)
 ELSE(WIN32)
 	SET(PLATFORM_ICON_FILE sdl_instead_1.png)
 ENDIF(WIN32)
