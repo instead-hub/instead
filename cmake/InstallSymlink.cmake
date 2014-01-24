@@ -1,0 +1,12 @@
+MACRO(INSTALL_SYMLINK linktarget linkname destination)
+	IF(UNIX)
+		IF(IS_ABSOLUTE ${destination})
+			SET(FULL_DESTINATION "\$ENV{DESTDIR}${destination}/${linkname}")
+		ELSE(IS_ABSOLUTE ${destination})
+			SET(FULL_DESTINATION "\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${destination}/${linkname}")
+		ENDIF(IS_ABSOLUTE ${destination})
+
+		INSTALL(CODE "MESSAGE(STATUS \"Symlink: ${FULL_DESTINATION} -> ${linktarget}\")
+		              EXECUTE_PROCESS(COMMAND \${CMAKE_COMMAND} -E create_symlink ${linktarget} ${FULL_DESTINATION})")
+	ENDIF()
+ENDMACRO()
