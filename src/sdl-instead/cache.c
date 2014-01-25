@@ -53,7 +53,7 @@ typedef struct {
 
 typedef struct {
 	struct list_node list;
-	struct list_node *data;
+	__cache_e_t *data;
 } __hash_item_t;
 
 /* #define GOLDEN_RATIO_PRIME_32 0x9e370001UL */
@@ -170,7 +170,7 @@ static __cache_e_t *_cache_lookup(cache_t cache, const char *name)
 		return NULL;	
 	list = &c->hash[hash_string(name) % HASH_SIZE];
 	list_for_each(list, pos, list) {
-		cc = (__cache_e_t*)(pos->data);
+		cc = pos->data;
 		if (!strcmp(cc->name, name))
 			return cc;
 	}
@@ -188,7 +188,7 @@ static __cache_e_t *cache_data(cache_t cache, void *p)
 		return NULL;
 	list = &c->vhash[hash_addr(p) % HASH_SIZE];
 	list_for_each(list, pos, list) {
-		cc = (__cache_e_t*)(pos->data);
+		cc = pos->data;
 		if (p == cc->data)
 			return cc;
 	}
@@ -307,11 +307,11 @@ int cache_add(cache_t cache, const char *name, void *p)
 
 	list_add(&c->list, &cc->list);
 	list = &c->hash[hash_string(name) % HASH_SIZE];
-	hh->data = &cc->list;
+	hh->data = cc;
 	list_add(list, &hh->list);
 
 	list = &c->vhash[hash_addr(p) % HASH_SIZE];
-	vh->data = &cc->list;
+	vh->data = cc;
 	list_add(list, &vh->list);
 
 	c->size ++;
