@@ -1,5 +1,6 @@
 1.9.2
 
+  * GPL2 code removed. Now INSTEAD is covered by MIT license;
   * sandbox (no write access from lua outside game);
   * window title contains the game name;
   * sdl-instead <path to game> start variant;
