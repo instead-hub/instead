@@ -1,6 +1,6 @@
-diff -Nur instead-code/Rules.make instead-code-maemo/Rules.make
---- instead-code/Rules.make	2013-12-26 12:13:24.000000000 +0400
-+++ instead-code-maemo/Rules.make	2013-12-26 12:25:58.000000000 +0400
+diff -Nur instead-1.9.2/Rules.make.system instead-1.9.2-maemo/Rules.make.system
+--- instead-1.9.2/Rules.make.system	2014-01-15 16:52:48.000000000 +0400
++++ instead-1.9.2-maemo/Rules.make.system	2014-01-25 18:44:12.000000000 +0400
 @@ -28,7 +28,7 @@
  SDL_CFLAGS=$(shell sdl-config --cflags)
  SDL_LFLAGS=$(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer -lSDL_image -lm
@@ -10,27 +10,15 @@ diff -Nur instead-code/Rules.make instead-code-maemo/Rules.make
  
  INSTALLD=install -d -m 0755
  INSTALLB=install -m 0755
-diff -Nur instead-code/Rules.make.system instead-code-maemo/Rules.make.system
---- instead-code/Rules.make.system	2013-12-26 12:13:24.000000000 +0400
-+++ instead-code-maemo/Rules.make.system	2013-12-26 12:25:58.000000000 +0400
-@@ -28,7 +28,7 @@
- SDL_CFLAGS=$(shell sdl-config --cflags)
- SDL_LFLAGS=$(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer -lSDL_image -lm
- 
--CFLAGS	+= -Wall -Dunix -D_USE_UNPACK # -D_SDL_MOD_BUG
-+CFLAGS	+= -Wall -Dunix -D_USE_UNPACK -DMAEMO # -D_SDL_MOD_BUG
- 
- INSTALLD=install -d -m 0755
- INSTALLB=install -m 0755
-diff -Nur instead-code/debian/compat instead-code-maemo/debian/compat
---- instead-code/debian/compat	2013-12-26 11:28:49.000000000 +0400
-+++ instead-code-maemo/debian/compat	2013-12-26 12:25:58.000000000 +0400
+diff -Nur instead-1.9.2/debian/compat instead-1.9.2-maemo/debian/compat
+--- instead-1.9.2/debian/compat	2014-01-15 16:52:48.000000000 +0400
++++ instead-1.9.2-maemo/debian/compat	2014-01-25 18:44:12.000000000 +0400
 @@ -1 +1 @@
 -7
 +4
-diff -Nur instead-code/debian/control instead-code-maemo/debian/control
---- instead-code/debian/control	2013-12-26 11:28:49.000000000 +0400
-+++ instead-code-maemo/debian/control	2013-12-26 12:25:58.000000000 +0400
+diff -Nur instead-1.9.2/debian/control instead-1.9.2-maemo/debian/control
+--- instead-1.9.2/debian/control	2014-01-15 16:52:48.000000000 +0400
++++ instead-1.9.2-maemo/debian/control	2014-01-25 18:44:12.000000000 +0400
 @@ -1,8 +1,8 @@
  Source: instead
 -Section: games
@@ -47,9 +35,9 @@ diff -Nur instead-code/debian/control instead-code-maemo/debian/control
  Description: simple text adventures/visual novels engine
   Visual novell/text quest-like engine.
 -
-diff -Nur instead-code/debian/rules instead-code-maemo/debian/rules
---- instead-code/debian/rules	2013-12-26 11:28:49.000000000 +0400
-+++ instead-code-maemo/debian/rules	2013-12-26 12:25:58.000000000 +0400
+diff -Nur instead-1.9.2/debian/rules instead-1.9.2-maemo/debian/rules
+--- instead-1.9.2/debian/rules	2014-01-15 16:52:48.000000000 +0400
++++ instead-1.9.2-maemo/debian/rules	2014-01-25 18:44:12.000000000 +0400
 @@ -61,7 +61,7 @@
  install: build
  	dh_testdir
@@ -59,11 +47,11 @@ diff -Nur instead-code/debian/rules instead-code-maemo/debian/rules
  	dh_installdirs
  
  	# Add here commands to install the package into debian/instead.
-diff -Nur instead-code/desktop/Makefile instead-code-maemo/desktop/Makefile
---- instead-code/desktop/Makefile	2013-12-26 11:29:01.000000000 +0400
-+++ instead-code-maemo/desktop/Makefile	2013-12-26 12:25:58.000000000 +0400
+diff -Nur instead-1.9.2/desktop/Makefile instead-1.9.2-maemo/desktop/Makefile
+--- instead-1.9.2/desktop/Makefile	2014-01-15 20:31:59.000000000 +0400
++++ instead-1.9.2-maemo/desktop/Makefile	2014-01-25 18:44:12.000000000 +0400
 @@ -10,9 +10,9 @@
- 	cat instead.desktop.in | sed -e "s|@BIN|$(BIN)|g" > instead.desktop
+ 	cat instead.desktop.in | sed -e "s|@BIN@|$(BIN)|g" > instead.desktop
  
  install:
 -	$(INSTALLD) $(DESTDIR)$(PREFIX)/share/applications
@@ -75,11 +63,11 @@ diff -Nur instead-code/desktop/Makefile instead-code-maemo/desktop/Makefile
 -	$(RM) $(DESTDIR)$(PREFIX)/share/applications/instead.desktop
 +	$(RM) $(DESTDIR)$(PREFIX)/share/applications/hildon/instead.desktop
  
-diff -Nur instead-code/desktop/instead.desktop.in instead-code-maemo/desktop/instead.desktop.in
---- instead-code/desktop/instead.desktop.in	2013-12-26 11:29:01.000000000 +0400
-+++ instead-code-maemo/desktop/instead.desktop.in	2013-12-26 12:26:32.000000000 +0400
+diff -Nur instead-1.9.2/desktop/instead.desktop.in instead-1.9.2-maemo/desktop/instead.desktop.in
+--- instead-1.9.2/desktop/instead.desktop.in	2014-01-15 20:31:59.000000000 +0400
++++ instead-1.9.2-maemo/desktop/instead.desktop.in	2014-01-25 18:44:12.000000000 +0400
 @@ -13,4 +13,8 @@
- Exec=@BIN/sdl-instead
+ Exec=@BIN@/sdl-instead
  Icon=sdl_instead
  Terminal=false
 +X-Window-Icon=sdl_instead
@@ -87,9 +75,9 @@ diff -Nur instead-code/desktop/instead.desktop.in instead-code-maemo/desktop/ins
 +X-HildonDesk-ShowInToolbar=true
 +StartupWMClass=instead
  Categories=Game;LogicGame;
-diff -Nur instead-code/themes/default/theme.ini instead-code-maemo/themes/default/theme.ini
---- instead-code/themes/default/theme.ini	2013-12-26 11:28:52.000000000 +0400
-+++ instead-code-maemo/themes/default/theme.ini	2013-12-26 12:25:58.000000000 +0400
+diff -Nur instead-1.9.2/themes/default/theme.ini instead-1.9.2-maemo/themes/default/theme.ini
+--- instead-1.9.2/themes/default/theme.ini	2014-01-15 16:52:48.000000000 +0400
++++ instead-1.9.2-maemo/themes/default/theme.ini	2014-01-25 18:44:12.000000000 +0400
 @@ -5,7 +5,7 @@
  ; $Name(it): Predefinito$
  
@@ -128,9 +116,9 @@ diff -Nur instead-code/themes/default/theme.ini instead-code-maemo/themes/defaul
  
  snd.click = click.wav ; click.ogg
  
-diff -Nur instead-code/themes/wide/theme.ini instead-code-maemo/themes/wide/theme.ini
---- instead-code/themes/wide/theme.ini	2013-12-26 11:28:53.000000000 +0400
-+++ instead-code-maemo/themes/wide/theme.ini	2013-12-26 12:25:58.000000000 +0400
+diff -Nur instead-1.9.2/themes/wide/theme.ini instead-1.9.2-maemo/themes/wide/theme.ini
+--- instead-1.9.2/themes/wide/theme.ini	2014-01-15 16:52:48.000000000 +0400
++++ instead-1.9.2-maemo/themes/wide/theme.ini	2014-01-25 18:44:12.000000000 +0400
 @@ -3,10 +3,3 @@
  ; $Name(ua):Широка$
  ; $Name(es):Amplio$

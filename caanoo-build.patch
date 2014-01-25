@@ -1,6 +1,6 @@
 diff -Nur instead-1.9.2/Rules.caanoo instead-1.9.2-caanoo/Rules.caanoo
 --- instead-1.9.2/Rules.caanoo	1970-01-01 03:00:00.000000000 +0300
-+++ instead-1.9.2-caanoo/Rules.caanoo	2014-01-18 15:40:40.000000000 +0400
++++ instead-1.9.2-caanoo/Rules.caanoo	2014-01-25 18:42:21.000000000 +0400
 @@ -0,0 +1,45 @@
 +VERSION := 1.9.2
 +
@@ -49,7 +49,7 @@ diff -Nur instead-1.9.2/Rules.caanoo instead-1.9.2-caanoo/Rules.caanoo
 +RANLIB=ranlib
 diff -Nur instead-1.9.2/instead/Rules.caanoo instead-1.9.2-caanoo/instead/Rules.caanoo
 --- instead-1.9.2/instead/Rules.caanoo	1970-01-01 03:00:00.000000000 +0300
-+++ instead-1.9.2-caanoo/instead/Rules.caanoo	2014-01-18 15:40:40.000000000 +0400
++++ instead-1.9.2-caanoo/instead/Rules.caanoo	2014-01-25 18:42:21.000000000 +0400
 @@ -0,0 +1,44 @@
 +VERSION := 1.9.2
 +
@@ -96,9 +96,9 @@ diff -Nur instead-1.9.2/instead/Rules.caanoo instead-1.9.2-caanoo/instead/Rules.
 +AR=ar rc
 +RANLIB=ranlib
 diff -Nur instead-1.9.2/src/sdl-instead/game.c instead-1.9.2-caanoo/src/sdl-instead/game.c
---- instead-1.9.2/src/sdl-instead/game.c	2014-01-18 15:09:44.000000000 +0400
-+++ instead-1.9.2-caanoo/src/sdl-instead/game.c	2014-01-18 15:42:08.000000000 +0400
-@@ -3382,7 +3382,7 @@
+--- instead-1.9.2/src/sdl-instead/game.c	2014-01-25 18:27:34.000000000 +0400
++++ instead-1.9.2-caanoo/src/sdl-instead/game.c	2014-01-25 18:42:21.000000000 +0400
+@@ -3411,7 +3411,7 @@
  				mouse_reset(1);
  				game_menu(menu_askquit);
  #endif
@@ -108,9 +108,9 @@ diff -Nur instead-1.9.2/src/sdl-instead/game.c instead-1.9.2-caanoo/src/sdl-inst
  				break;
  			} else if (alt_pressed &&
 diff -Nur instead-1.9.2/src/sdl-instead/graphics.c instead-1.9.2-caanoo/src/sdl-instead/graphics.c
---- instead-1.9.2/src/sdl-instead/graphics.c	2014-01-18 15:39:42.000000000 +0400
-+++ instead-1.9.2-caanoo/src/sdl-instead/graphics.c	2014-01-18 15:43:37.000000000 +0400
-@@ -1690,17 +1690,24 @@
+--- instead-1.9.2/src/sdl-instead/graphics.c	2014-01-25 18:27:34.000000000 +0400
++++ instead-1.9.2-caanoo/src/sdl-instead/graphics.c	2014-01-25 18:43:17.000000000 +0400
+@@ -1733,17 +1733,24 @@
  #else
  int gfx_set_mode(int w, int h, int fs)
  {
@@ -135,7 +135,7 @@ diff -Nur instead-1.9.2/src/sdl-instead/graphics.c instead-1.9.2-caanoo/src/sdl-
  #ifdef S60
  	scr = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | hw | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
  #else
-@@ -1711,15 +1718,15 @@
+@@ -1754,15 +1761,15 @@
  	scr = SDL_SetVideoMode(gfx_width, gfx_height, 16, SDL_DOUBLEBUF | hw | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
    #else
     #ifdef __APPLE__	
@@ -154,15 +154,15 @@ diff -Nur instead-1.9.2/src/sdl-instead/graphics.c instead-1.9.2-caanoo/src/sdl-
  	#endif
  	if (scr == NULL) /* ok, fallback to anyformat */
      #endif
-@@ -1728,6 +1735,7 @@
+@@ -1771,6 +1778,7 @@
    #endif
   #endif
  #endif
 +#endif
- 	screen = GFX_IMG(scr);
+ 	screen = GFX_IMG_REL(scr);
  	if (scr == NULL || screen == NULL) {
  		fprintf(stderr, "Unable to set %dx%d video: %s\n", w, h, SDL_GetError());
-@@ -4837,7 +4845,7 @@
+@@ -4952,7 +4960,7 @@
  
  int gfx_init(void)
  {
@@ -172,9 +172,9 @@ diff -Nur instead-1.9.2/src/sdl-instead/graphics.c instead-1.9.2-caanoo/src/sdl-
  		return -1;
  	}
 diff -Nur instead-1.9.2/src/sdl-instead/input.c instead-1.9.2-caanoo/src/sdl-instead/input.c
---- instead-1.9.2/src/sdl-instead/input.c	2014-01-15 20:31:59.000000000 +0400
-+++ instead-1.9.2-caanoo/src/sdl-instead/input.c	2014-01-18 15:44:18.000000000 +0400
-@@ -30,6 +30,41 @@
+--- instead-1.9.2/src/sdl-instead/input.c	2014-01-25 18:27:34.000000000 +0400
++++ instead-1.9.2-caanoo/src/sdl-instead/input.c	2014-01-25 18:42:21.000000000 +0400
+@@ -54,6 +54,41 @@
  }
  #endif
  
@@ -216,7 +216,7 @@ diff -Nur instead-1.9.2/src/sdl-instead/input.c instead-1.9.2-caanoo/src/sdl-ins
  int minimized(void)
  {
  	if (nopause_sw)
-@@ -74,6 +109,10 @@
+@@ -98,6 +133,10 @@
  	SDL_EnableKeyRepeat(500, 30);
  #endif
  	m_focus = !!(SDL_GetAppState() & SDL_APPMOUSEFOCUS);
@@ -227,7 +227,7 @@ diff -Nur instead-1.9.2/src/sdl-instead/input.c instead-1.9.2-caanoo/src/sdl-ins
  	return 0;
  }
  
-@@ -188,6 +227,20 @@
+@@ -212,6 +251,20 @@
  	case SDL_QUIT:
  		game_running = 0;
  		return -1;
@@ -249,9 +249,12 @@ diff -Nur instead-1.9.2/src/sdl-instead/input.c instead-1.9.2-caanoo/src/sdl-ins
  		inp->type = KEY_DOWN; 
  		inp->code = event.key.keysym.scancode;
 diff -Nur instead-1.9.2/src/sdl-instead/sound.c instead-1.9.2-caanoo/src/sdl-instead/sound.c
---- instead-1.9.2/src/sdl-instead/sound.c	2014-01-15 20:31:59.000000000 +0400
-+++ instead-1.9.2-caanoo/src/sdl-instead/sound.c	2014-01-18 15:40:40.000000000 +0400
-@@ -1,8 +1,9 @@
+--- instead-1.9.2/src/sdl-instead/sound.c	2014-01-25 18:27:34.000000000 +0400
++++ instead-1.9.2-caanoo/src/sdl-instead/sound.c	2014-01-25 18:42:21.000000000 +0400
+@@ -22,11 +22,12 @@
+  *
+  */
+ 
 +#include <SDL.h>
 +#include <SDL_mixer.h>
 +
