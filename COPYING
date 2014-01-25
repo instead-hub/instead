@@ -23,13 +23,14 @@ Please see each individual source file for a list of they copyright holders.
 
 INSTEAD binaries may contain code taken from the following projects:
 
+    Lua (MIT)
     SDL (LGPL)
     SDL_image (LGPL)
     SDL_ttf (LGPL)
     SDL_mixer (LGPL)
     SDL_gfx (Zlib)
     SDL_anigif.c (LGPL)
-    
+
     SDL2 (Zlib)
     SDL2_image (Zlib)
     SDL2_ttf (Zlib)
