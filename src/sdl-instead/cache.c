@@ -1,3 +1,27 @@
+/* 
+ * Copyright 2009-2014 Peter Kosyh <p.kosyh at gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation files
+ * (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge,
+ * publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 #include <stdlib.h>
 #include <string.h>
 #include "list.h"
@@ -19,17 +43,17 @@ typedef struct {
 } __cache_t;
 
 typedef struct {
-	struct list_head list;
-	struct list_head *hash;
-	struct list_head *vhash;
+	struct list_node list;
+	struct list_node *hash;
+	struct list_node *vhash;
 	char *name;
 	void *data;
 	int used;
 } __cache_e_t;
 
 typedef struct {
-	struct list_head list;
-	struct list_head *data;
+	struct list_node list;
+	struct list_node *data;
 } __hash_item_t;
 
 /* #define GOLDEN_RATIO_PRIME_32 0x9e370001UL */
@@ -80,8 +104,8 @@ cache_t cache_init(int size, cache_free_fn free_fn)
 	__cache_t *c = malloc(sizeof(__cache_t));
 	if (!c)
 		return NULL;
-	INIT_LIST_HEAD(&c->list);
-	INIT_LIST_HEAD(&c->unused);
+	list_head_init(&c->list);
+	list_head_init(&c->unused);
 	c->auto_grow = 0;
 	c->size = 0;
 	c->used = 0;
@@ -90,8 +114,8 @@ cache_t cache_init(int size, cache_free_fn free_fn)
 	c->max_size = size;
 	c->free_fn = free_fn;
 	for (i = 0; i < HASH_SIZE; i++) {
-			INIT_LIST_HEAD(&c->hash[i]);
-			INIT_LIST_HEAD(&c->vhash[i]);
+		list_head_init(&c->hash[i]);
+		list_head_init(&c->vhash[i]);
 	}
 	return (cache_t)c;
 }
@@ -121,9 +145,9 @@ void cache_zap(cache_t cache)
 	if (!c)
 		return;
 	while (!list_empty(&c->list))
-		cache_e_free(cache, (__cache_e_t *)(c->list.next));
+		cache_e_free(cache, list_top(&c->list, __cache_e_t, list));
 	while (!list_empty(&c->unused))
-		cache_e_free(cache, (__cache_e_t *)(c->unused.next));
+		cache_e_free(cache, list_top(&c->unused, __cache_e_t, list));
 	c->size = 0;
 	c->used = 0;
 }
@@ -138,15 +162,15 @@ void cache_free(cache_t cache)
 
 static __cache_e_t *_cache_lookup(cache_t cache, const char *name)
 {
-	struct list_head *pos;
+	__hash_item_t *pos = NULL;
 	struct list_head *list;
 	__cache_t *c = cache;
 	__cache_e_t *cc;
 	if (!c || !name)
 		return NULL;	
 	list = &c->hash[hash_string(name) % HASH_SIZE];
-	list_for_each(pos, list) {
-		cc = (__cache_e_t*)((__hash_item_t*)pos)->data;
+	list_for_each(list, pos, list) {
+		cc = (__cache_e_t*)(pos->data);
 		if (!strcmp(cc->name, name))
 			return cc;
 	}
@@ -155,7 +179,7 @@ static __cache_e_t *_cache_lookup(cache_t cache, const char *name)
 
 static __cache_e_t *cache_data(cache_t cache, void *p)
 {
-	struct list_head *pos;
+	__hash_item_t *pos = NULL;
 	struct list_head *list;
 
 	__cache_t *c = cache;
@@ -163,8 +187,8 @@ static __cache_e_t *cache_data(cache_t cache, void *p)
 	if (!c || !p)
 		return NULL;
 	list = &c->vhash[hash_addr(p) % HASH_SIZE];
-	list_for_each(pos, list) {
-		cc = (__cache_e_t*)((__hash_item_t*)pos)->data;
+	list_for_each(list, pos, list) {
+		cc = (__cache_e_t*)(pos->data);
 		if (p == cc->data)
 			return cc;
 	}
@@ -181,7 +205,8 @@ int cache_forget(cache_t cache, void *p)
 		cc->used --;
 		if (!cc->used) {
 			((__cache_t*)cache)->used --;
-			list_move_tail(&cc->list, &c->unused);
+			list_del(&cc->list);
+			list_add_tail(&c->unused, &cc->list);
 		}
 		return 0;
 	}
@@ -200,7 +225,8 @@ void *cache_get(cache_t cache, const char *name)
 	cc->used ++; /* need again! */
 	if (cc->used == 1)
 		((__cache_t*)cache)->used ++;
-	list_move(&cc->list, &c->list); /* first place */
+	list_del(&cc->list);
+	list_add(&c->list, &cc->list); /* first place */
 /*	printf("cache_get %s:%p %d\n", name, cc->data, cc->used); */
 	return cc->data;
 }
@@ -232,7 +258,7 @@ int cache_have(cache_t cache, void *p)
 static void __cache_shrink(__cache_t *c)
 {
 	while (c->size && c->size > c->max_size && !list_empty(&c->unused)) {
-		__cache_e_t *cc = (__cache_e_t *)(c->unused.next);
+		__cache_e_t *cc = list_top(&c->unused, __cache_e_t, list);
 		c->size --;
 		cache_e_free(c, cc);
 	}
@@ -276,17 +302,17 @@ int cache_add(cache_t cache, const char *name, void *p)
 	}
 	cc->data = p;
 	cc->used = 1;
-	cc->hash = (struct list_head*) hh;
-	cc->vhash = (struct list_head*) vh;
+	cc->hash = &hh->list;
+	cc->vhash = &vh->list;
 
-	list_add((struct list_head*)cc, &c->list);
+	list_add(&c->list, &cc->list);
 	list = &c->hash[hash_string(name) % HASH_SIZE];
-	hh->data = (struct list_head*)cc;
-	list_add((struct list_head*)hh, list);
+	hh->data = &cc->list;
+	list_add(list, &hh->list);
 
 	list = &c->vhash[hash_addr(p) % HASH_SIZE];
-	vh->data = (struct list_head*)cc;
-	list_add((struct list_head*)vh, list);
+	vh->data = &cc->list;
+	list_add(list, &vh->list);
 
 	c->size ++;
 	c->used ++;

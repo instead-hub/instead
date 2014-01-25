@@ -1,3 +1,27 @@
+/*
+ * Copyright 2009-2014 Peter Kosyh <p.kosyh at gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation files
+ * (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge,
+ * publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 #include "externals.h"
 #include "internals.h"
 #include "list.h"
@@ -1458,7 +1482,7 @@ static LIST_HEAD(sounds);
 static int sounds_nr = 0;
 
 typedef struct {
-	struct list_head list;
+	struct list_node list;
 	char	*fname;
 	wav_t	wav;
 	int	loaded;
@@ -1548,17 +1572,17 @@ static void sound_free(_snd_t *sn)
 
 static void sounds_shrink(void)
 {
-	struct list_head *pos, *pos2;
+	_snd_t *pos, *pos2;
 	_snd_t *sn;
-	pos = sounds.next;
+	pos = list_top(&sounds, _snd_t, list);
 /*	fprintf(stderr,"shrink try\n"); */
-	while (pos != &sounds && sounds_nr > MAX_WAVS) {
+	while (pos && sounds_nr > MAX_WAVS) {
 		sn = (_snd_t*)pos;
 		if (sound_playing(sn) != -1 || sn->loaded) {
-			pos = pos->next;
+			pos = list_next(&sounds, pos, list);
 			continue;
 		}
-		pos2 = pos->next;
+		pos2 = list_next(&sounds, pos, list);
 		sound_free(sn);
 		pos = pos2;
 /*		fprintf(stderr,"shrink by 1\n"); */
@@ -1568,14 +1592,14 @@ static void sounds_shrink(void)
 void sounds_free(void)
 {
 	int i = 0;
-	struct list_head *pos, *pos2;
+	_snd_t *pos, *pos2;
 	_snd_t *sn;
-	pos = sounds.next;
+	pos = list_top(&sounds, _snd_t, list);
 
 	snd_halt_chan(-1, 0); /* halt sounds */
-	while (pos != &sounds) {
+	while (pos) {
 		sn = (_snd_t*)pos;
-		pos2 = pos->next;
+		pos2 = list_next(&sounds, pos, list);
 		if (sn->system)
 			sn->loaded = 1; /* ref by system only */
 		else
@@ -1593,12 +1617,13 @@ void sounds_free(void)
 
 static _snd_t *sound_find(const char *fname)
 {
-	struct list_head *pos;
+	_snd_t *pos = NULL;
 	_snd_t *sn;
-	list_for_each(pos, &sounds) {
+	list_for_each(&sounds, pos, list) {
 		sn = (_snd_t*)pos;
 		if (!strcmp(fname, sn->fname)) {
-			list_move(&sn->list, &sounds); /* move it on head */
+			list_del(&sn->list);
+			list_add(&sounds, &sn->list); /* move it on head */
 			return sn;
 		}
 	}
@@ -1650,7 +1675,7 @@ static _snd_t *sound_add(const char *fname)
 	sn = malloc(sizeof(_snd_t));
 	if (!sn)
 		return NULL;
-	INIT_LIST_HEAD(&sn->list);
+/*	LIST_HEAD_INIT(&sn->list); */
 	sn->fname = strdup(fname);
 	sn->loaded = 0;
 	sn->system = 0;
@@ -1665,7 +1690,7 @@ static _snd_t *sound_add(const char *fname)
 
 	sounds_shrink();
 
-	list_add(&sn->list, &sounds);
+	list_add(&sounds, &sn->list);
 	sounds_nr ++;
 	return sn;
 err:
@@ -1676,11 +1701,11 @@ err:
 
 static void sounds_reload(void)
 {
-	struct list_head *pos;
+	_snd_t *pos = NULL;
 	_snd_t *sn;
 	int i;
 	snd_halt_chan(-1, 0); /* stop all sound */
-	list_for_each(pos, &sounds) {
+	list_for_each(&sounds, pos, list) {
 		sn = (_snd_t*)pos;
 		snd_free_wav(sn->wav);
 		sn->wav = snd_load_wav(sn->fname);

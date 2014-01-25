@@ -1,3 +1,27 @@
+/*
+ * Copyright 2009-2014 Peter Kosyh <p.kosyh at gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation files
+ * (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge,
+ * publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 #include "externals.h"
 #include "internals.h"
 #include "idf.h"
@@ -13,7 +37,7 @@ typedef struct _idfd_t {
 
 
 struct _idff_t {
-	struct list_head list;
+	struct list_node list;
 	idfd_t		*dir;
 	unsigned long pos;
 	FILE		*fd;
@@ -27,7 +51,7 @@ static void free_idfd(void *p)
 
 	while (!list_empty(&dir->list)) {
 		idff_t idff;
-		idff = (idff_t)(dir->list.next);
+		idff = list_top(&dir->list, struct _idff_t, list);
 		idf_close(idff);
 	}
 
@@ -157,7 +181,7 @@ idf_t idf_init(const char *fname)
 		e->offset = off;
 		e->size = size;
 		e->idf = idf;
-		INIT_LIST_HEAD(&e->list);
+		list_head_init(&e->list);
 		if (cache_add(idf->dir, name, e)) {
 			free(e);
 			goto err;
@@ -173,7 +197,7 @@ err:
 }
 
 typedef struct {
-	struct list_head list;
+	struct list_node list;
 	char *path;
 	long size;
 } idf_item_t;
@@ -216,7 +240,7 @@ static int idf_tree(const char *path, struct list_head *list, const char *fname)
 			i = malloc(sizeof(idf_item_t));
 			if (!i)
 				return -1;
-			INIT_LIST_HEAD(&i->list);
+			/* list_head_init(&i->list); */
 			if (!(i->path = strdup(fname)))
 				goto err;
 			if (fseek(fd, 0, SEEK_END) < 0)
@@ -225,7 +249,7 @@ static int idf_tree(const char *path, struct list_head *list, const char *fname)
 				goto err;
 			fclose(fd);
 			fprintf(stderr, "Added file: '%s' size: %ld\n", path, i->size);
-			list_add(&i->list, list);
+			list_add(list, &i->list);
 			return 0;
 		err:
 			if (i->path)
@@ -260,7 +284,7 @@ int idf_create(const char *file, const char *path)
 	char *p;
 	unsigned long off = 0;
 	long dict_size = 0;
-	struct list_head *pos;
+	idf_item_t *pos = NULL;
 
 	LIST_HEAD(items);
 	p = strdup(path);
@@ -279,8 +303,8 @@ int idf_create(const char *file, const char *path)
 
 	free(p);
 
-	list_for_each(pos, &items) {
-		idf_item_t *it = (idf_item_t *)pos;
+	list_for_each(&items, pos, list) {
+		idf_item_t *it = pos;
 		dict_size += (1 + strlen(it->path) + 4 + 4);
 	}
 
@@ -293,9 +317,9 @@ int idf_create(const char *file, const char *path)
 		goto err;
 	off = 4 + 4 + dict_size;
 
-	list_for_each(pos, &items) {
+	list_for_each(&items, pos, list) {
 		unsigned char s;
-		idf_item_t *it = (idf_item_t *)pos;
+		idf_item_t *it = pos;
 		s = strlen(it->path);
 		if (fwrite(&s, 1, 1, fd) != 1)
 			goto err;
@@ -315,8 +339,8 @@ int idf_create(const char *file, const char *path)
 		off += it->size;
 	}
 
-	list_for_each(pos, &items) {
-		idf_item_t *it = (idf_item_t *)pos;
+	list_for_each(&items, pos, list) {
+		idf_item_t *it = pos;
 		char *p;
 		p = getfilepath(path, it->path);
 		if (p) {
@@ -334,7 +358,7 @@ err:
 		fprintf(stderr, "Error creating idf file...\n");
 
 	while (!list_empty(&items)) {
-		idf_item_t *it = (idf_item_t *)items.next;
+		idf_item_t *it = list_top(&items, idf_item_t, list);
 		free(it->path);
 		list_del(&it->list);
 		free(it);
@@ -520,14 +544,14 @@ idff_t idf_open(idf_t idf, const char *fname)
 	fil = malloc(sizeof(struct _idff_t));
 	if (!fil)
 		return NULL;
-	INIT_LIST_HEAD(&fil->list);
+/*	list_head_init(&fil->list); */
 
 	fil->dir = dir;
 	fil->pos = 0;
 	fil->fd = fopen(dirpath(idf->path), "rb");
 	if (!fil->fd)
 		goto err;
-	list_add(&fil->list, &dir->list);
+	list_add(&dir->list, &fil->list);
 	return fil;
 err:
 	free(fil);

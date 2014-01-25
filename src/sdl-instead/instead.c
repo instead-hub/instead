@@ -1,3 +1,27 @@
+/*
+ * Copyright 2009-2014 Peter Kosyh <p.kosyh at gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation files
+ * (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge,
+ * publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 #include "externals.h"
 #include "internals.h"
 #include "list.h"
@@ -708,13 +732,13 @@ static LIST_HEAD(sprites);
 static LIST_HEAD(fonts);
 
 typedef struct {
-	struct list_head list;
+	struct list_node list;
 	char	*name;
 	fnt_t	fnt;
 } _fnt_t;
 
 typedef struct {
-	struct list_head list;
+	struct list_node list;
 	char	*name;
 	img_t	img;
 } _spr_t;
@@ -723,14 +747,14 @@ static void sprites_free(void)
 {
 /*	fprintf(stderr, "sprites free \n"); */
 	while (!list_empty(&sprites)) {
-		_spr_t *sp = (_spr_t*)(sprites.next);
+		_spr_t *sp = list_top(&sprites, _spr_t, list);
 		free(sp->name);
 		cache_forget(gfx_image_cache(), sp->img);
 		list_del(&sp->list);
 		free(sp);
 	}
 	while (!list_empty(&fonts)) {
-		_fnt_t *fn = (_fnt_t*)(fonts.next);
+		_fnt_t *fn = list_top(&fonts, _fnt_t, list);
 		fnt_free(fn->fnt);
 		free(fn->name);
 		list_del(&fn->list);
@@ -742,12 +766,13 @@ static void sprites_free(void)
 
 static _spr_t *sprite_lookup(const char *name)
 {
-	struct list_head *pos;
+	_spr_t *pos = NULL;
 	_spr_t *sp;
-	list_for_each(pos, &sprites) {
+	list_for_each(&sprites, pos, list) {
 		sp = (_spr_t*)pos;
 		if (!strcmp(name, sp->name)) {
-			list_move(&sp->list, &sprites); /* move it on head */
+			list_del(&sp->list);
+			list_add(&sprites, &sp->list); /* move it on head */
 			return sp;
 		}
 	}
@@ -756,12 +781,13 @@ static _spr_t *sprite_lookup(const char *name)
 
 static _fnt_t *font_lookup(const char *name)
 {
-	struct list_head *pos;
+	_fnt_t *pos = NULL;
 	_fnt_t *fn;
-	list_for_each(pos, &fonts) {
+	list_for_each(&fonts, pos, list) {
 		fn = (_fnt_t*)pos;
 		if (!strcmp(name, fn->name)) {
-			list_move(&fn->list, &fonts); /* move it on head */
+			list_del(&fn->list);
+			list_add(&fonts, &fn->list); /* move it on head */
 			return fn;
 		}
 	}
@@ -774,7 +800,7 @@ static _spr_t *sprite_new(const char *name, img_t img)
 	sp = malloc(sizeof(_spr_t));
 	if (!sp)
 		return NULL;
-	INIT_LIST_HEAD(&sp->list);
+/*	INIT_LIST_HEAD(&sp->list); */
 	sp->name = strdup(name);
 	if (!sp->name) {
 		free(sp);
@@ -787,7 +813,7 @@ static _spr_t *sprite_new(const char *name, img_t img)
 		return NULL;
 	}
 /*	fprintf(stderr, "added: %s\n", name); */
-	list_add(&sp->list, &sprites);
+	list_add(&sprites, &sp->list);
 	return sp;
 }
 
@@ -797,14 +823,14 @@ static _fnt_t *font_new(const char *name, fnt_t fnt)
 	fn = malloc(sizeof(_fnt_t));
 	if (!fn)
 		return NULL;
-	INIT_LIST_HEAD(&fn->list);
+/*	INIT_LIST_HEAD(&fn->list); */
 	fn->name = strdup(name);
 	if (!fn->name) {
 		free(fn);
 		return NULL;
 	}
 	fn->fnt = fnt;
-	list_add(&fn->list, &fonts);
+	list_add(&fonts, &fn->list);
 	return fn;
 }
 
