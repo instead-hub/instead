@@ -40,7 +40,7 @@ function build_manual()
 	pdflatex instead-manual.tex
 	pdflatex instead-manual.tex
 	pdflatex instead-manual.tex
-	rm -f *.toc *.aux *.out *.log
+	rm -f *.toc *.aux *.out *.log instead-manual.tex
 }
 
 function build_modules()
@@ -72,7 +72,7 @@ function build_modules()
 	pdflatex instead-modules.tex
 	pdflatex instead-modules.tex
 	pdflatex instead-modules.tex
-	rm -f *.toc *.aux *.out *.log
+	rm -f *.toc *.aux *.out *.log instead-modules.tex
 }
 build_manual
 build_modules

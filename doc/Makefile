@@ -23,7 +23,7 @@ docs:	wiki man pdf
 
 install:
 	$(INSTALLD) $(DESTDIR)$(DOCPATH)
-	$(INSTALL) *.txt *.html *.pdf $(DESTDIR)$(DOCPATH)
+	-$(INSTALL) instead.txt *.html *.pdf $(DESTDIR)$(DOCPATH)
 
 	$(INSTALLD) $(DESTDIR)$(MANPATH)
 	$(INSTALL) *.6 $(DESTDIR)$(MANPATH)
