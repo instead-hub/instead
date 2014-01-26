@@ -1,10 +1,10 @@
-SET(DOC_FILES
+FILE(GLOB DOC_FILES 
+	instead.txt
 	index.html
-	instead-manual-en.html
+	instead-manual-en.html 
 	instead-manual.html
 	instead-manual.pdf
 	instead-modules.pdf
-	instead.txt
 )
 
 IF(SYSTEMWIDE)
