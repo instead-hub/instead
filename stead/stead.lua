@@ -4,7 +4,7 @@ stead = {
 		local v
 		for k, v in ipairs {...} do
 			if stead.type(k) ~= 'number' then
-				return
+				return false
 			end
 			if not stead.api_version_table[k] or v > stead.api_version_table[k] then
 				return false
