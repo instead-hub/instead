@@ -1,4 +1,4 @@
-1.9.2
+2.0.0
 
   * GPL2 code removed. Now INSTEAD is covered by MIT license;
   * code in now hosted on github (fixes in Makefiles);

@@ -1,4 +1,6 @@
 stead = {
+	version = "2.0.0",
+	api_version = "1.1.6", -- last version before 1.2.0
 	api_atleast = function(...)
 		local k
 		local v
@@ -15,8 +17,6 @@ stead = {
 		end
 		return true
 	end;
-	version = "1.9.2",
-	api_version = "1.1.6", -- last version before 1.2.0
 	table = table,
 	delim = ',',
 	busy = instead_busy,
