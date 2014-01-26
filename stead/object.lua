@@ -1,6 +1,6 @@
 local function onevent(ev, ...)
 	local vv, r
-	if stead.api_version >= "1.6.3" then
+	if stead.api_atleast(1, 6, 3) then
 		vv, r = stead.call(game, ev, ...);
 		if r == false then
 			return vv, false
@@ -36,13 +36,13 @@ stead.player_action = function(self, what, ...)
 	v, r = stead.player_take(self, what, ...);
 	if not v and not r then
 		v, r = stead.call(obj, 'act', ...);
-		if type(vv) == 'string' then
+		if stead.type(vv) == 'string' then
 			v = stead.par(stead.space_delim, vv, v);
 		end
 		if not v and not r then
 			v, r = stead.call(game, 'act', obj, ...);
 		end
-	elseif type(vv) == 'string' then
+	elseif stead.type(vv) == 'string' then
 		v = stead.par(stead.space_delim, vv, v);
 	end
 	return v, r;
@@ -82,7 +82,7 @@ stead.player_use = function(self, what, onwhat, ...)
 			return vv
 		end
 		v, r = stead.call(obj, 'inv', ...); -- call inv
-		if type(vv) == 'string' then
+		if stead.type(vv) == 'string' then
 			v = stead.par(stead.space_delim, vv, v);
 		end
 		if not v and not r then
@@ -109,17 +109,17 @@ stead.player_use = function(self, what, onwhat, ...)
 			return vv 
 		end
 		v, r = stead.call(obj, 'use', obj2, ...);
-		if type(vv) == 'string' then
+		if stead.type(vv) == 'string' then
 			v = stead.par(stead.space_delim, vv, v);
 		end
 		if r ~= false then
 			vv = stead.call(obj2, 'used', obj, ...);
-			if type(vv) == 'string' then
+			if stead.type(vv) == 'string' then
 				v = stead.par(stead.space_delim, v, vv);
 			end
 		end
 	end
-	if v == nil and vv == true and stead.api_version >= "1.7.1" then
+	if v == nil and vv == true and stead.api_atleast(1, 7, 1) then
 		v = true
 	end
 	if not v then
@@ -164,7 +164,7 @@ stead.vobj_use = function(self, ...)
 end
 
 function vobj(name, dsc, w)
-	return obj{ nam = tostring(name), 
+	return obj{ nam = stead.tostr(name), 
 		vobject_type = true,
 		dsc = dsc, 
 		where = stead.deref(w), 
@@ -176,7 +176,7 @@ end
 
 function vway(name, dsc, w)
 --	o.object_type = true;
-	return  obj{ nam = tostring(name), 
+	return  obj{ nam = stead.tostr(name), 
 		vobject_type = true,
 		dsc = dsc, 
 		act = stead.vobj_act, 
@@ -187,15 +187,15 @@ function vway(name, dsc, w)
 end
 
 function isVobject(v)
-	return (type(v) == 'table') and (v.vobject_type)
+	return (stead.type(v) == 'table') and (v.vobject_type)
 end
 
 stead.list_check = function(self, name) -- force using of objects, instead refs
 	local i, v, ii;
-	for i,v,ii in opairs(self) do
+	for i,v,ii in stead.opairs(self) do
 		local o = stead.ref(v);
 		if not isObject(o) then 
-			error ("No object: "..name.."["..tostring(ii).."]".." ("..tostring(type(v))..")")
+			error ("No object: "..name.."["..stead.tostr(ii).."]".." ("..stead.tostr(stead.type(v))..")")
 			return false
 		end
 		if (v.auto_allocated and not stead.ref(v.key_name)) -- renew
@@ -218,7 +218,7 @@ stead.list_add = function(self, name, pos)
 		nam = stead.ref(name);
 	end
 	if not nam then
-		error ("Add wrong object to list: "..tostring(name), 2);
+		error ("Add wrong object to list: "..stead.tostr(name), 2);
 	end
 	if self:look(nam) then
 		return nil
@@ -227,8 +227,8 @@ stead.list_add = function(self, name, pos)
 	if isObject(stead.deref(nam)) then
 		nam._dynamic_type = true
 	end
-	if tonumber(pos) then
-		pos = tonumber(pos)
+	if stead.tonum(pos) then
+		pos = stead.tonum(pos)
 		if pos <= #self then
 			stead.table.insert(self, pos, nam);
 		else
@@ -242,7 +242,7 @@ end
 
 stead.list_set = function(self, name, pos)
 	local nam = name
-	local i = tonumber(pos);
+	local i = stead.tonum(pos);
 	if not i then
 		return nil
 	end
@@ -250,7 +250,7 @@ stead.list_set = function(self, name, pos)
 		nam = stead.ref(name);
 	end
 	if not nam then
-		error ("Set wrong object in list: "..tostring(name), 2);
+		error ("Set wrong object in list: "..stead.tostr(name), 2);
 	end
 	if isObject(stead.deref(nam)) then
 		nam._dynamic_type = true
@@ -262,7 +262,7 @@ end
 
 stead.list_concat = function(self, other, pos)
 	local n,o,ii
-	for n,o,ii in opairs(other) do
+	for n,o,ii in stead.opairs(other) do
 		o = stead.ref(o);
 		if pos == nil then
 			self:add(o);
@@ -277,7 +277,7 @@ stead.delim = '|'
 
 stead.list_str = function(self)
 	local i, v, vv, o;
-	for i,o in opairs(self) do
+	for i,o in stead.opairs(self) do
 		o = stead.ref(o);
 		if isObject(o) and not isDisabled(o) then
 			vv = stead.dispof(o)
@@ -296,7 +296,7 @@ stead.obj_str = function(self)
 	if isDisabled(self) then
 		return 
 	end
-	for i,o in opairs(self.obj) do
+	for i,o in stead.opairs(self.obj) do
 		o = stead.ref(o);
 		if isObject(o) and not isDisabled(o) then
 			vv = stead.dispof(o)

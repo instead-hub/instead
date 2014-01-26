@@ -1,17 +1,17 @@
 xact = function(n, f) -- just simple action!
 	local v = {};
 
-	if f == nil and type(n) == 'table' then
+	if f == nil and stead.type(n) == 'table' then
 		f = n[2];
 		n = n[1];
 	end
 
-	if type(n) ~= 'string' then
+	if stead.type(n) ~= 'string' then
 		error ("Wrong parameter to xact.", 2)
 	end
 	v.xaction_type = true
 	v.nam = n
-	if stead.api_version >= "1.6.3" then
+	if stead.api_atleast(1, 6, 3) then
 		v.disp = false
 	end
 	v.act = f;
@@ -41,7 +41,7 @@ local __do_xact = function(str, self)
 		local o,d,a, oo;
 		local delim = ':'
 
-		if stead.api_version >= "1.2.2" then
+		if stead.api_atleast(1, 2, 2) then
 			delim = stead.delim;
 		end
 		s = s:gsub('\\?[\\'..delim..']', { [ delim ] = '\001', [ '\\'..delim ] = delim });
@@ -63,7 +63,7 @@ local __do_xact = function(str, self)
 					error("Empty link: "..s, 3);
 				end
 			else
-				if stead.api_version >= "1.6.3" then
+				if stead.api_atleast(1, 6, 3) then
 					oo = stead.here():srch(o)
 				else
 					oo = objs():srch(o)
@@ -81,7 +81,7 @@ local __do_xact = function(str, self)
 		d = d:gsub("\001", delim);
 		return stead.xref(d, stead.ref(oo, true), stead.unpack(aarg));
 	end
-	if type(str) ~= 'string' then return end
+	if stead.type(str) ~= 'string' then return end
 	local s = stead.string.gsub(str, '\\?[\\{}]', 
 		{ ['{'] = '\001', ['}'] = '\002' }):gsub('\001([^\002]+)\002', xrefrep):gsub('[\001\002]', { ['\001'] = '{', ['\002'] = '}' });	
 	return s;
@@ -91,7 +91,7 @@ stead.fmt = stead.hook(stead.fmt, function(f, ...)
 	local i, res, s
 	local a = {...}
 	for i=1,stead.table.maxn(a) do
-		if type(a[i]) == 'string' then
+		if stead.type(a[i]) == 'string' then
 			s = __do_xact(a[i]);
 			res = stead.par('', res, s):gsub('\\?[\\{}]', { [ '\\{' ] = '{', [ '\\}' ] = '}' });
 		end
@@ -111,7 +111,7 @@ function xdsc(n)
 	v.nam = true
 	if n == nil then
 		v.disp = 'xdsc'
-	elseif type(n) == 'string' then
+	elseif stead.type(n) == 'string' then
 		v.disp = n;
 	else
 		error("Wrong parameter to xdsc.", 2);
@@ -136,7 +136,7 @@ xroom = stead.inherit(room, function(v)
 	return v
 end)
 
-if stead.api_version >= "1.6.3" then
+if stead.api_atleast(1, 6, 3) then
 	xwalk = xact('xwalk', code [[ stead.walk(arg1) ]]);
 	xwalk.system_type = true
 end

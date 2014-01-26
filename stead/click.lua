@@ -23,7 +23,7 @@ stead.module_init(function()
 		local cmd = 'click '
 		local act = false
 		if ( press or click.press ) and ( mb == 1 or click.button ) then
-			cmd = cmd..tostring(press)..','..tostring(mb);
+			cmd = cmd..stead.tostr(press)..','..stead.tostr(mb);
 
 			if click.bg or theme.get 'scr.gfx.mode' == 'direct' then
 				act = true
@@ -50,16 +50,16 @@ function(f, s, cmd, press, mb, x, y, px, py, ...)
 		local x2 = px
 		local y2 = py
 
-		if tonumber(mb) then
-			mb = tonumber(mb)
+		if stead.tonum(mb) then
+			mb = stead.tonum(mb)
 		end
 
-		if tonumber(px) then
-			x2 = tonumber(px)
+		if stead.tonum(px) then
+			x2 = stead.tonum(px)
 		end
 
-		if tonumber(py) then
-			y2 = tonumber(py)
+		if stead.tonum(py) then
+			y2 = stead.tonum(py)
 		end
 
 		if stead.here().click then
@@ -75,19 +75,19 @@ function(f, s, cmd, press, mb, x, y, px, py, ...)
 		if s.click then
 			if click.press then
 				if click.button then
-					r,v = stead.call(s, 'click', press, mb, tonumber(x), tonumber(y), x2, y2, ...);
+					r,v = stead.call(s, 'click', press, mb, stead.tonum(x), stead.tonum(y), x2, y2, ...);
 				else
-					r,v = stead.call(s, 'click', press, tonumber(x), tonumber(y), x2, y2, ...);
+					r,v = stead.call(s, 'click', press, stead.tonum(x), stead.tonum(y), x2, y2, ...);
 				end
 			else
 				if click.button then
-					r,v = stead.call(s, 'click', mb, tonumber(x), tonumber(y), x2, y2, ...);
+					r,v = stead.call(s, 'click', mb, stead.tonum(x), stead.tonum(y), x2, y2, ...);
 				else
-					r,v = stead.call(s, 'click', tonumber(x), tonumber(y), x2, y2, ...);
+					r,v = stead.call(s, 'click', stead.tonum(x), stead.tonum(y), x2, y2, ...);
 				end
 			end
 		end
-		if r == nil and v == nil and stead.api_version < "1.3.5" then
+		if r == nil and v == nil and not stead.api_atleast(1, 3, 5) then
 			return nil, true
 		end
 		return r,v

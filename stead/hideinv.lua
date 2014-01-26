@@ -1,5 +1,5 @@
 local attr = "hideinv"
-if stead.api_version >= "1.6.3" then
+if stead.api_atleast(1, 6, 3) then
 	game.gui.hideinv = function(s)
 		if stead.call_bool(stead.here(), 'hideinv') then
 			return true

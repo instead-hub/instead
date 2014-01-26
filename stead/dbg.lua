@@ -5,7 +5,7 @@ require "input"
 
 local function _xref_escape(n)
 	local delim = ':'
-	if stead.api_version >= "1.2.2" then
+	if stead.api_atleast(1, 2, 2) then
 		delim = stead.delim;
 	end
 	if xact then
@@ -18,7 +18,7 @@ local function ordered_n(t)
 	local ordered = {};
 	local i,v, max;
 	max = 0;
-	for i,v in pairs(t) do
+	for i,v in stead.pairs(t) do
 		local o = { k = i; v = v };
 		stead.table.insert(ordered, o);
 		max = max + 1;
@@ -33,20 +33,20 @@ local function ordered_n(t)
 		if isObject(a.v) and isObject(b.v) then
 			local n = stead.call(a.v, 'nam');
 			local m = stead.call(b.v, 'nam');
-			if type(n) ~= 'string' and type(m) ~= 'string' then
+			if stead.type(n) ~= 'string' and stead.type(m) ~= 'string' then
 				return false
 			end
-			if type(n) ~= 'string' then
+			if stead.type(n) ~= 'string' then
 				return true
 			end
-			if type(m) ~= 'string' then
+			if stead.type(m) ~= 'string' then
 				return false
 			end
 			if n == m then
 				local o1, o2
 				o1 = stead.deref(a.v)
 				o2 = stead.deref(b.v)
-				if type(o1) == 'string' and type(o2) == 'string' then
+				if stead.type(o1) == 'string' and stead.type(o2) == 'string' then
 					return o1 < o2
 				end
 			end
@@ -98,25 +98,25 @@ end
 dbg_dump_obj = function(w)
 	w = stead.ref(w)
 
-	if type(w) ~= 'table' then
+	if stead.type(w) ~= 'table' then
 		seen('disp')._txt = '^^No such object.';
 		return true
 	end
 	local i,o,n
 	local rc = ''
-	for i,o in pairs(w) do
+	for i,o in stead.pairs(w) do
 		local t = stead.tostring(o);
 		if t == i then
-			t = tostring(o);
+			t = stead.tostr(o);
 		end
 		if t then
 			if rc ~='' then rc = rc..'^' end
 			local n = '';
 			if isObject(o) then
 				n = stead.call(o, 'nam');
-				if type(n) ~= 'string' then n = '' else n = ' : '..n; end
+				if stead.type(n) ~= 'string' then n = '' else n = ' : '..n; end
 			end
-			rc = stead.cat(rc, stead.par(' ', tostring(i)..' : '..t..n));
+			rc = stead.cat(rc, stead.par(' ', stead.tostr(i)..' : '..t..n));
 		end
 	end
 	seen('disp')._txt = stead.cat('^^', rc)
@@ -126,15 +126,15 @@ end
 dbg_dump_globals = function()
 	local i,o
 	local rc=''
-	if type(variables) ~= 'table' then
+	if stead.type(variables) ~= 'table' then
 		return
 	end
-	for i,o in ipairs(variables) do
+	for i,o in stead.ipairs(variables) do
 		local v = _G[o];
 		local t = stead.tostring(v);
 		if t then
 			if rc ~='' then rc = rc..'^' end
-			rc = stead.cat(rc, stead.par(' ', tostring(o)..' : '..t));
+			rc = stead.cat(rc, stead.par(' ', stead.tostr(o)..' : '..t));
 		end
 	end
 	seen('disp')._txt = stead.cat('^^', rc)
@@ -153,13 +153,13 @@ dbg_list_objects = function()
 		end
 		return ''
 	end
-	local rc = stead.par(' ', 'Room:'..tostring(stead.deref(dbg_here())), 
-			'Nam:'..tostring(stead.call(dbg_here(),'nam')));
-	for i,o in opairs(objs(dbg_here())) do
+	local rc = stead.par(' ', 'Room:'..stead.tostr(stead.deref(dbg_here())), 
+			'Nam:'..stead.tostr(stead.call(dbg_here(),'nam')));
+	for i,o in stead.opairs(objs(dbg_here())) do
 		rc = rc..'^';
 		o = stead.ref(o)
-		rc = stead.cat(rc, stead.par(' ', 'Id: '..tostring(o.id)..', '..
-			tostring(stead.deref(o))..': '..tostring(stead.call(o, 'nam'))..dis(o)));
+		rc = stead.cat(rc, stead.par(' ', 'Id: '..stead.tostr(o.id)..', '..
+			stead.tostr(stead.deref(o))..': '..stead.tostr(stead.call(o, 'nam'))..dis(o)));
 	end
 --	seen('disp')._txt = rc
 	return rc
@@ -182,11 +182,11 @@ dbg_list_inv = function()
 		return ''
 	end
 
-	for i,o in opairs(inv()) do
+	for i,o in stead.opairs(inv()) do
 		if rc ~='' then rc = rc..'^' end
 		o = stead.ref(o)
-		rc = stead.cat(rc, stead.par(' ', 'Id: '..tostring(o.id)..', '..
-			tostring(stead.deref(o))..': '..tostring(stead.call(o, 'nam'))..dis(o)..tak(o)));
+		rc = stead.cat(rc, stead.par(' ', 'Id: '..stead.tostr(o.id)..', '..
+			stead.tost(stead.deref(o))..': '..stead.tostr(stead.call(o, 'nam'))..dis(o)..tak(o)));
 	end
 	if rc == '' then return end
 --	seen('disp')._txt = rc
@@ -201,7 +201,7 @@ dbg_execute_cmd = room {
 	forcedsc = true,
 	dsc = "Enter Lua code here to exec.",
 	inp_enter = function(s)
-		if type(s.obj[1]._txt) == 'string' then
+		if stead.type(s.obj[1]._txt) == 'string' then
 			local f = stead.eval(s.obj[1]._txt);
 			if f then
 				seen('disp')._txt = stead.cat('^^', f());
@@ -230,7 +230,7 @@ dbg_dump_object = room {
 	dsc = "Enter object name here to dump.",
 	inp_enter = function(s)
 		local w = s.obj[1]._txt
-		if type(w) == 'string' then
+		if stead.type(w) == 'string' then
 			if not stead.ref(w) then w = objs(dbg_here()):srch(w); end
 			return dbg_dump_obj(w);
 		end
@@ -261,9 +261,9 @@ dbg_choose_location = dlg {
 		objs(s):zap();
 		for k,v,kk in spairs(_G) do
 			if isRoom(v) and not v.debug then
-				local n = tostring(stead.call(v, 'nam'));
+				local n = stead.tostr(stead.call(v, 'nam'));
 				local o = kk;
-				if type(o) == 'string' then
+				if stead.type(o) == 'string' then
 					n = n..' : '..o;
 					n = _xref_escape(n);
 					put(phr(n, true, [[timer:set(debug_tool._timer); game.lifes:cat(debug_tool.lifes); return stead.walk(]]..o..[[)]]), s);
@@ -286,9 +286,9 @@ dbg_choose_object = dlg {
 		objs(s):zap();
 		for k,v,kk in spairs(_G) do
 			if isObject(v) and not isPhrase(v) and not isRoom(v) and not isPlayer(v) and not v.debug and not have(v) and not isStatus(v) then
-				local n = tostring(stead.call(v, 'nam'));
+				local n = stead.tostr(stead.call(v, 'nam'));
 				local o = kk;
-				if type(o) == 'string' then
+				if stead.type(o) == 'string' then
 					n = n..' : '..o;
 					n = _xref_escape(n);
 					put(phr(n, true, o..':enable(); return take('..o..')'), s);
@@ -309,12 +309,12 @@ dbg_drop_object = dlg {
 	gen = function(s)
 		local k,v
 		objs(s):zap();
-		for k,v in ipairs(inv()) do
+		for k,v in stead.ipairs(inv()) do
 			v = stead.ref(v);
 			if not v.debug then
-				local n = tostring(stead.call(v, 'nam'));
+				local n = stead.tostr(stead.call(v, 'nam'));
 				local o = stead.deref(v);
-				if type(o) == 'string' then
+				if stead.type(o) == 'string' then
 					n = n..' : '..o;
 					n = _xref_escape(n);
 					put (phr(n, true, o..':enable(); drop('..o..','..stead.deref(dbg_here())..')'), s)
@@ -327,7 +327,7 @@ dbg_drop_object = dlg {
 
 function dbg_exit()
 	local r
-	if stead.api_version < "1.2.0" then
+	if not stead.api_atleast(1, 2, 0) then
 		r = stead.call(dbg_here(), 'dsc');
 	end
 	game.lifes:cat(debug_tool.lifes);

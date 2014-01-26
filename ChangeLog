@@ -11,6 +11,8 @@
   * -lua and -luac parameters;
   * in windows do not close -debug console until press return;
   * game.gui.hidetitle;
+  * stead.api_atleast();
+  * stead.tonum, stead.tostr, stead.type, stead.ipairs, stead.pairs, stead.opairs;
   * potential bug with non ascii save path and non UTF-8 game codepage;
   * bug with language changing;
   * bug with anigif rotate and scale;

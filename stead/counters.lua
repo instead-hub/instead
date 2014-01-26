@@ -1,4 +1,4 @@
-if stead.api_version < "1.6.3" then
+if not stead.api_atleast(1, 6, 3) then
 	error ("Counters module can not run with api version < 1.6.3", 3)
 end
 
@@ -13,15 +13,15 @@ end
 local function read_nr(v, n, set)
 	local name = '__'..n..'_nr'
 	v = stead.ref(v)
-	if type(v) ~= 'table' then
+	if stead.type(v) ~= 'table' then
 		return v
 	end
 	if not v[name] then
-		if type(set) == 'number' then v[name] = set end
+		if stead.type(set) == 'number' then v[name] = set end
 		return 0
 	end
 	n = v[name]
-	if type(set) == 'number' then v[name] = set end
+	if stead.type(set) == 'number' then v[name] = set end
 	return n
 end
 
@@ -56,7 +56,7 @@ function act_count(s, v)
 	if not s and not v then
 		s = game
 		v = nil
-	elseif tonumber(s) then
+	elseif stead.tonum(s) then
 		v = s
 		s = game
 	end
@@ -67,7 +67,7 @@ function inv_count(s, v)
 	if not s and not v then
 		s = game
 		v = nil
-	elseif tonumber(s) then
+	elseif stead.tonum(s) then
 		v = s
 		s = game
 	end
@@ -78,7 +78,7 @@ function use_count(s, v)
 	if not s and not v then
 		s = game
 		v = nil
-	elseif tonumber(s) then
+	elseif stead.tonum(s) then
 		v = s
 		s = game
 	end
@@ -89,7 +89,7 @@ function walk_count(s, v)
 	if not s and not v then
 		s = game
 		v = nil
-	elseif tonumber(s) then
+	elseif stead.tonum(s) then
 		v = s
 		s = game
 	end

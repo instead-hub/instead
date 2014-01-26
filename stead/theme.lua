@@ -4,7 +4,7 @@ theme = {
 	system_type = true;
 	save = function(self, name, h, need)
 		local k,v
-		for k,v in pairs(self.vars) do
+		for k,v in stead.pairs(self.vars) do
 			h:write(stead.string.format("theme.set(%q, %q);\n", k, v))
 		end
 	end;
@@ -29,8 +29,8 @@ theme = {
 			if not theme.reset_vars[name] then
 				theme.reset_vars[name] = instead_theme_var(name)
 			end
-			instead_theme_var(name, tostring(val));
-			theme.vars[name] = tostring(val);
+			instead_theme_var(name, stead.tostr(val));
+			theme.vars[name] = stead.tostr(val);
 		end
 	end;
 	name = function()

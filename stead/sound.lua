@@ -22,7 +22,7 @@ sound = {
 		stead.stop_sound(...);
 	end;
 	playing = function(s,...)
-		if type(s) ~= 'number' then
+		if stead.type(s) ~= 'number' then
 			return stead.is_sound()
 		end
 		return stead.sound_channel(s,...)

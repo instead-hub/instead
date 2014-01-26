@@ -1,6 +1,6 @@
 stead.wroom_enter = function(self, ...)
 	local w = self.where
-	if type(w) ~= 'table' then
+	if stead.type(w) ~= 'table' then
 		w = stead.call(self, 'where')
 	end
 	local r, v = stead.walk(w);

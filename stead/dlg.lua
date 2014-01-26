@@ -12,14 +12,14 @@ local tagpnext = function(a, k)
 		if isPhrase(a.tag) then
 			return 1, a.tag
 		end
-		if type(a.tag) == 'number' then
+		if stead.type(a.tag) == 'number' then
 			local r = a.s:phrase(a.tag)
 			if r then return 1, r end
 			return
 		end
 		k = {}
 		local r,v 
-		for r,v in opairs(a.s.obj) do
+		for r,v in stead.opairs(a.s.obj) do
 			v = stead.ref(v)
 			if isPhrase(v) and v.tag == a.tag then
 				stead.table.insert(k, v)
@@ -123,7 +123,7 @@ local function call_empty(self)
 		return
 	end
 	r = stead.call(ph, "empty")
-	if type(r) == 'string' then
+	if stead.type(r) == 'string' then
 		stead.p(r)
 	end
 	return r
@@ -138,14 +138,14 @@ local function call_enter(ph)
 		return
 	end
 	r = stead.call(ph, 'dsc')
-	if type(r) == 'string' then
+	if stead.type(r) == 'string' then
 		stead.p(r)
 	end
 end
 
 local function dialog_reset(self)
 	local i,ph
-	for i,ph in pairs(self.obj) do
+	for i,ph in stead.pairs(self.obj) do
 		if isPhrase(ph) then
 			ph.nam = ''
 		end
@@ -157,14 +157,14 @@ stead.dialog_look = function(self)
 	n = 1
 	local start = phr_get(self)
 	dialog_reset(self)
-	for i,ph,ii in opairs(self.obj) do
+	for i,ph,ii in stead.opairs(self.obj) do
 		if ii >= start then
 			if ii ~= start and isDelimiter(ph) then
 				break
 			end
 			if isPhrase(ph) and not isDisabled(ph) and isValid(ph) then
-				ph.nam = tostring(n)
-				if type(stead.phrase_prefix) == 'string' then
+				ph.nam = stead.tostr(n)
+				if stead.type(stead.phrase_prefix) == 'string' then
 					v = stead.par('^', v, stead.cat(stead.phrase_prefix, ph:look()));
 				else
 					v = stead.par('^', v, txtnm(n, ph:look()))
@@ -179,14 +179,14 @@ end
 stead.dialog_rescan = function(self, naming, from)
 	local i,k,ph,ii, start
 	k = 0
-	if type(from) == 'number' then
+	if stead.type(from) == 'number' then
 		start = from
-	elseif type(from) == 'string' then
+	elseif stead.type(from) == 'string' then
 		ph, start = self:phrase(from)
 	else
 		start = phr_get(self)
 	end
-	for i,ph,ii in opairs(self.obj) do
+	for i,ph,ii in stead.opairs(self.obj) do
 		if ii >= start then
 			if ii ~= start and isDelimiter(ph) then
 				break
@@ -194,7 +194,7 @@ stead.dialog_rescan = function(self, naming, from)
 			if isPhrase(ph) and not isDisabled(ph) and isValid(ph) then
 				k = k + 1;
 				if naming then
-					ph.nam = tostring(k)
+					ph.nam = stead.tostr(k)
 				end
 			end
 		end
@@ -329,18 +329,18 @@ function phr(ask, answ, act)
 	local i = 1
 	local dis = false
 	
-	if type(ask) ~= 'table' then -- old style
+	if stead.type(ask) ~= 'table' then -- old style
 		local p = phrase ( { dsc = ask, ans = answ, code = act });
 		return p
 	end
 
 	local v = ask
 
-	if type(v[1]) == 'number' then -- just skip number
+	if stead.type(v[1]) == 'number' then -- just skip number
 		i = i + 1
 	end
 
-	if type(v[i]) == 'boolean' then
+	if stead.type(v[i]) == 'boolean' then
 		dis = not v[i]
 		i = i + 1
 	end
@@ -353,7 +353,7 @@ function phr(ask, answ, act)
 		v.ans = v[i];
 		i = i + 1
 	end
-	if v.code == nil and (type(v[i]) == 'function' or type(v[i]) == 'string') then
+	if v.code == nil and (stead.type(v[i]) == 'function' or stead.type(v[i]) == 'string') then
 		v.code = v[i];
 	end
 	v = phrase(v)
@@ -411,13 +411,13 @@ end
 local function dialog_phr2obj(self)
 	local k, v, n
 	local aliases = {}
-	if type(self.phr) ~= 'table' then
+	if stead.type(self.phr) ~= 'table' then
 		return
 	end
 	n = 0
 	for k, v in ipairs(self.phr) do
-		if type(v) == 'table' then
-			if type(v[1]) == 'number' then
+		if stead.type(v) == 'table' then
+			if stead.type(v[1]) == 'number' then
 				n = v[1]
 			else
 				n = n + 1
@@ -451,9 +451,9 @@ stead.dialog_phrase = function(self, num)
 	if isPhrase(num) then
 		return num
 	end
-	if type(num) ~= 'number' then
+	if stead.type(num) ~= 'number' then
 		local k,v,i
-		for k,v,i in opairs(self.obj) do
+		for k,v,i in stead.opairs(self.obj) do
 			v = stead.ref(v)
 			if isPhrase(v) and v.tag == num then
 				return v, i
@@ -478,14 +478,14 @@ stead.phrase_action = function(self)
 	end
 	local last = stead.call(ph, 'ans');
 
-	if type(ph.code) == 'string' then
+	if stead.type(ph.code) == 'string' then
 		local f = stead.eval(ph.code);
 		if f ~= nil then
 			ret = f();
 		else
 			error ("Error while eval phrase action:"..ph.code);
 		end
-	elseif type(ph.code) == 'function' then
+	elseif stead.type(ph.code) == 'function' then
 		ret = ph.code(self);
 	end
 
@@ -584,7 +584,7 @@ function dlg(v) --constructor
 		v.dsc = function(s)
 			if stead.player_moved() then
 				stead.last_act(false)
-			elseif type(ACTION_TEXT) ~= 'string' and stead.last_act() then
+			elseif stead.type(ACTION_TEXT) ~= 'string' and stead.last_act() then
 				stead.p(stead.last_act())
 			end
 		end

@@ -1,13 +1,13 @@
 game._snapshots = {}
 stead.make_snapshot = function(nr)
-	if not tonumber(nr) then nr = 0 end
+	if not stead.tonum(nr) then nr = 0 end
 	local h = { };
 	h.txt = ''
 	h.write = function(s, ...)
 		local i
 		local a = {...};
 		for i = 1, stead.table.maxn(a) do
-			s.txt = s.txt .. tostring(a[i]);
+			s.txt = s.txt .. stead.tostr(a[i]);
 		end
 	end
 	local old = game._snapshots; game._snapshots = nil
@@ -17,17 +17,17 @@ stead.make_snapshot = function(nr)
 end
 
 function isSnapshot(nr)
-	if not tonumber(nr) then nr = 0 end
+	if not stead.tonum(nr) then nr = 0 end
 	return (game._snapshots[nr] ~= nil)
 end
 
 stead.restore_snapshot = function (nr)
-	if not tonumber(nr) then nr = 0 end
+	if not stead.tonum(nr) then nr = 0 end
 	local ss = game._snapshots
 	if not ss[nr] then return nil, true end -- nothing todo
 	local i,v
 
-	if stead.api_version >= "1.7.1" then
+	if stead.api_atleast(1, 7, 1) then
 		stead.gamereset("main.lua", true);
 	else
 		stead.gamefile("main.lua", true);
@@ -43,7 +43,7 @@ stead.restore_snapshot = function (nr)
 
 	i = stead.do_ini(game, true);
 
-	if stead.api_version >= "1.7.1" then
+	if stead.api_atleast(1, 7, 1) then
 		game:start()
 		stead.started = true
 		PLAYER_MOVED = true -- force fading
@@ -58,12 +58,12 @@ stead.restore_snapshot = function (nr)
 end
 
 stead.delete_snapshot = function(nr)
-	if not tonumber(nr) then nr = 0 end
+	if not stead.tonum(nr) then nr = 0 end
 	game._snapshots[nr] = nil
 end
 
 function make_snapshot(nr)
-	if type(nr) ~= 'number' then
+	if stead.type(nr) ~= 'number' then
 		nr = 0
 	end
 	MAKE_SNAPSHOT = nr

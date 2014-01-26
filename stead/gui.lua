@@ -37,7 +37,7 @@ iface.xref = function(self, str, obj, ...)
 	if isXaction(o) and not o.id then
 		return stead.cat('<a:'..cmd..stead.deref(obj)..a..'>',str,'</a>');
 	end
-	return stead.cat('<a:'..cmd..'0'..tostring(o.id)..a..'>',str,'</a>');
+	return stead.cat('<a:'..cmd..'0'..stead.tostr(o.id)..a..'>',str,'</a>');
 end;
 iface.anchor = function(self)
 	return '<a:#>'
@@ -67,7 +67,7 @@ iface.imgr = function(self, str)
 end;
 
 iface.nb = function(self, str)
-	if type(str) ~= 'string' then return nil end
+	if stead.type(str) ~= 'string' then return nil end
 	return "<w:"..str:gsub("\\", "\\\\\\"):gsub(">","\\>"):gsub("%^","\\^")..">";
 end;
 
@@ -107,10 +107,10 @@ iface.just = function(self, str)
 end;
 
 iface.tab = function(self, str, al)
-	if tonumber(str) then
-		str = tostring(str)
+	if stead.tonum(str) then
+		str = stead.tostr(str)
 	end
-	if type(str) ~= 'string' then
+	if stead.type(str) ~= 'string' then
 		return nil;
 	end
 	if al == 'right' then
@@ -191,12 +191,12 @@ instead.get_title = function()
 
 	local s
 
-	if stead.api_version >= "1.2.0" then
+	if stead.api_atleast(1, 2, 0) then
 		s = stead.dispof(stead.here());
 	else
 		s = stead.call(stead.here(), 'nam');
 	end
-	if type(s) == 'string' and s ~= '' then
+	if stead.type(s) == 'string' and s ~= '' then
 		stead.state = false
 		s = "<c><b>"..stead.fmt(s).."</b></c>";
 		s = stead.string.gsub(s, '\\'..stead.delim, stead.delim);
@@ -223,7 +223,7 @@ function stat(v)
 end
 
 function isStatus(v)
-	if type(v) ~= 'table' then
+	if stead.type(v) ~= 'table' then
 		return false
 	end
 	if v.status_type then
@@ -274,7 +274,7 @@ function menu(v)
 end
 
 function isMenu(v)
-	if type(v) ~= 'table' then
+	if stead.type(v) ~= 'table' then
 		return false
 	end
 	if v.menu_type then
@@ -288,7 +288,7 @@ stead.fmt = function(...)
 	local a={...}
 
 	for i=1,stead.table.maxn(a) do
-		if type(a[i]) == 'string' then
+		if stead.type(a[i]) == 'string' then
 			local s = stead.string.gsub(a[i],'\t', stead.space_delim):gsub('[\n]+', stead.space_delim);
 			s = stead.string.gsub(s, '\\?[\\^]', { ['^'] = '\n', ['\\^'] = '^',
 				['\\\\'] = '\\' });
@@ -327,14 +327,14 @@ game.gui.is_fading = function() --to check fading from sdl gui
 	end
 	r,v = stead.call_value(h, 'fading');
 	if r then
-		if tonumber(r) and v == nil then
-			return true, tonumber(r)
+		if stead.tonum(r) and v == nil then
+			return true, stead.tonum(r)
 		end
 		return r, v
 	end
 	g,v = stead.call_value(game, 'fading');
-	if tonumber(g) and v == nil then
-		return true, tonumber(g)
+	if stead.tonum(g) and v == nil then
+		return true, stead.tonum(g)
 	end
 	return g, v
 end

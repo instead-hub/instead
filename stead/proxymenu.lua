@@ -1,7 +1,7 @@
 stead.menu_prefix = '   '
 
 local mpar = function(v, vv, rc) 		
-	if type(v) == 'string' or type(vv) == 'string' then
+	if stead.type(v) == 'string' or stead.type(vv) == 'string' then
 		return stead.par(stead.space_delim, v, vv);
 	elseif v == true or vv == true then
 		return true
@@ -26,7 +26,7 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 
 	local d = stead.dispof(o);
 
-	if type(d) == 'string' then
+	if stead.type(d) == 'string' then
 		v.nam = stead.menu_prefix..d;
 	end
 
@@ -74,7 +74,7 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 					return v, false
 				end
 
-				if type(s.used_act) == 'string' 
+				if stead.type(s.used_act) == 'string' 
 					and ri == nil then -- used only if use did nothing
 					vv, r, ri = call(w.pobj, s.used_act, s.pobj);
 					rc = ri or rc
@@ -109,7 +109,7 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 		local act = s.pact
 		if s.use_mode then
 			act = s.useit_act
-			if type(act) ~= 'string' then
+			if stead.type(act) ~= 'string' then
 				return nil
 			end
 		end
@@ -149,7 +149,7 @@ end
 stead.proxy_fill_objs = function(s, w, act, use_mode, used_act, useit_act)
 	local ii,i,o
 	local rc = false
-	for i,o,ii in opairs(w) do
+	for i,o,ii in stead.opairs(w) do
 		o = stead.ref(o);
 		if isObject(o) and not isDisabled(o) and o ~= s and not isPhrase(o) 
 			and not o.proxy_type and not isStatus(o) then
@@ -166,7 +166,7 @@ end
 
 local select_only = function(s)
 	local k, o, i
-	for k,o in opairs(stead.me().obj) do
+	for k,o in stead.opairs(stead.me().obj) do
 		o = stead.ref(o)
 		if o.action_type and o._state and o ~= s then
 			o:inv();
@@ -178,7 +178,7 @@ end
 
 local proxy_menu = function(nam, act, _scene, _inv, _way, use_mode, used_act, useit_act, _ifhave)
 	local v = { };
-	if type(act) ~= 'string' then
+	if stead.type(act) ~= 'string' then
 		error("Wrong parameter to proxy_menu.", 3)
 	end
 	if null[act] then
@@ -242,7 +242,7 @@ end
 
 local function gen_actions(s)
 	local k, o
-	for k, o in opairs(stead.me().obj) do
+	for k, o in stead.opairs(stead.me().obj) do
 		o = stead.ref(o)
 		if o.action_type and o._state then
 			o:gen();

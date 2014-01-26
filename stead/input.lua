@@ -150,7 +150,7 @@ local function tolow(s)
 	local xlat = kbdlower
 	if xlat then
 		local k,v
-		for k,v in pairs(xlat) do
+		for k,v in stead.pairs(xlat) do
 			s = s:gsub(k,v);
 		end
 	end
@@ -205,7 +205,7 @@ end)
 
 local lookup_inp = function()
 	local i,o 
-	for i,o in opairs(objs()) do
+	for i,o in stead.opairs(objs()) do
 		o = stead.ref(o)
 		if o._edit then
 			return o
@@ -254,7 +254,7 @@ local input_kbd = function(s, down, key)
 		end
 		local c = kbdxlat(key);
 		if not c then return end
-		if o and type(o.filter) == 'function' then
+		if o and stead.type(o.filter) == 'function' then
 			c = o:filter(c);
 			if not c then return end
 		end
@@ -285,7 +285,7 @@ local function input_esc(s)
 end
 
 function inp(n, info, txt)
-	if type(n) ~= 'string' or type(info) ~= 'string' then
+	if stead.type(n) ~= 'string' or stead.type(info) ~= 'string' then
 		error ("Wrong parameter to inp.", 2);
 	end
 	local v = { nam = n, _txt = '', info = info }

@@ -27,8 +27,8 @@ prefs = obj {
 	purge = function(s)
 		local name = instead_savepath() .. '/prefs';
 		local k,v
-		for k,v in pairs(s) do
-			if type(v) ~= 'function' and k ~= 'nam' and k ~= 'system_type' then
+		for k,v in stead.pairs(s) do
+			if stead.type(v) ~= 'function' and k ~= 'nam' and k ~= 'system_type' then
 				s[k] = nil
 			end
 		end

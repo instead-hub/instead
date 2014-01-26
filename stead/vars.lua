@@ -1,16 +1,16 @@
 function isForSave(k, v, s) -- k - key, v - value, s -- parent table
 	local i,o
-	if type(s.variables_save) == 'table' and 
+	if stead.type(s.variables_save) == 'table' and 
 		s.variables_save[k] then
 			return true
 	end
-	if type(k) == 'function' then
+	if stead.type(k) == 'function' then
 		return false
 	end
-	if type(v) == 'function' or type(v) == 'userdata' then
+	if stead.type(v) == 'function' or stead.type(v) == 'userdata' then
 		return false
 	end
-	if type(k) ~= 'string' then
+	if stead.type(k) ~= 'string' then
 		return false
 	end
 	return stead.string.find(k, '_') ==  1
@@ -18,19 +18,19 @@ end
 
 local function __vars_add(s, v, set)
 	local k, o
-	if type(s.variables) ~= 'table' then s.variables = {} end
-	for k,o in pairs(v) do
-		if tonumber(k) then
+	if stead.type(s.variables) ~= 'table' then s.variables = {} end
+	for k,o in stead.pairs(v) do
+		if stead.tonum(k) then
 			stead.table.insert(s.variables, o);
 		elseif s.variables[k] then
-			error ("Variable overwrites variables object: "..tostring(k))
+			error ("Variable overwrites variables object: "..stead.tostr(k))
 		elseif k ~= 'variable_type' then
 			if set and not isObject(o) then 
 				if s[k] then
 					if s == _G then
-						print ("Global variable '"..tostring(k).."' conflicts with "..type(s[k]));
+						print ("Global variable '"..stead.tostr(k).."' conflicts with "..stead.type(s[k]));
 					else
-						error ("Variable conflict: "..tostring(k));
+						error ("Variable conflict: "..stead.tostr(k));
 					end
 				end
 				stead.table.insert(s.variables, k);
@@ -44,31 +44,31 @@ end
 
 local function __vars_fill(v)
 	local k,o
-	if type(v) ~= 'table' then
+	if stead.type(v) ~= 'table' then
 		return
 	end
-	for k,o in ipairs(v) do
-		if type(o) == 'table' and o.variable_type then
+	for k,o in stead.ipairs(v) do
+		if stead.type(o) == 'table' and o.variable_type then
 			__vars_add(v, o);
 			v[k] = false
 		end
 	end
-	if type(v.variables) == 'table' then
+	if stead.type(v.variables) == 'table' then
 		local k,o
 		local vars = {}
 		v.variables_save = {}
-		for k,o in pairs(v.variables) do
-			if tonumber(k) and type(o) == 'string' then
+		for k,o in stead.pairs(v.variables) do
+			if stead.tonum(k) and stead.type(o) == 'string' then
 				stead.table.insert(vars, o)
 			else
 				if v[k] then
-					error ("Variable overwrites object property: "..tostring(k));
+					error ("Variable overwrites object property: "..stead.tostr(k));
 				end
 				v[k] = o
 				stead.table.insert(vars, k);
 			end
 		end
-		for k,o in ipairs(vars) do
+		for k,o in stead.ipairs(vars) do
 			v.variables_save[o] = true
 		end
 		v.variables = vars;
@@ -96,7 +96,7 @@ stead.add_var = function(s, v)
 		v = s 
 		s = _G 
 	end
-	if type(v) ~= 'table' then
+	if stead.type(v) ~= 'table' then
 		error("Wrong parameter to stead.add_var.");
 	end
 	if not v.variable_type then
@@ -108,14 +108,14 @@ end
 
 stead.module_init(function()
 	local k,v
-	if type(variables) == 'nil' then
+	if stead.type(variables) == 'nil' then
 		variables = {}
 		return
 	end 
-	if type(variables) ~= 'table' then
+	if stead.type(variables) ~= 'table' then
 		return
 	end
-	for k,v in ipairs(variables) do
+	for k,v in stead.ipairs(variables) do
 		_G[v] = nil
 	end
 	variables = {}
@@ -127,7 +127,7 @@ function var(v)
 end
 
 function global(v)
-	if type(v) ~= 'table' then
+	if stead.type(v) ~= 'table' then
 		error("Wrong parameter to global.", 2);
 	end
 	__vars_add(_G, v, true);

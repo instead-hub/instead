@@ -10,7 +10,7 @@ format = {
 	nopara = '_';
 	save = function(self, name, h, need)
 		local k,v
-		for k,v in pairs(self) do
+		for k,v in stead.pairs(self) do
 			if k == 'para' or k == 'para_space' or k == 'quotes' or
 			    k == 'dash' or k == 'nopara' then
 				local s = stead.tostring(v)
@@ -26,8 +26,8 @@ stead.fmt = stead.hook(stead.fmt, function(f, ...)
 	if game.codepage == 'UTF-8' or game.codepage == 'utf-8' then
 		utf8 = true
 	end
-	if type(r) == 'string' and stead.state then
-		if type(format.filter) == 'function' and stead.state then
+	if stead.type(r) == 'string' and stead.state then
+		if stead.type(format.filter) == 'function' and stead.state then
 			r = format.filter(r);
 		end
 		if stead.call_bool(format, 'dash') and utf8 then

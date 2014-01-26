@@ -1,6 +1,6 @@
 local function onevent(ev, ...)
 	local vv, r
-	if stead.api_version >= "1.6.3" then
+	if stead.api_atleast(1, 6, 3) then
 		vv, r = stead.call(game, ev, ...);
 		if r == false then
 			return vv, false
@@ -47,7 +47,7 @@ local go = function (self, where, back, noenter, noexit, nodsc)
 		stead.in_exit_call = true -- to break recurse
 		v,r = stead.call(stead.ref(self.where), 'exit', stead.ref(where));
 		stead.in_exit_call = nil
-		if r == false or (stead.api_version >= "1.3.0" and v == false and r == nil) then
+		if r == false or (stead.api_atleast(1, 3, 0) and v == false and r == nil) then
 			return v, ret(r)
 		end
 		if self.where ~= was then
@@ -65,7 +65,7 @@ local go = function (self, where, back, noenter, noexit, nodsc)
 
 	if not jump and not noenter then
 		v, r = stead.call(stead.ref(where), 'enter', stead.ref(was));
-		if r == false or (stead.api_version >= "1.3.0" and v == false and r == nil) then
+		if r == false or (stead.api_atleast(1, 3, 0) and v == false and r == nil) then
 			self.where = was;
 			return stead.par(stead.scene_delim, res, v), ret(r)
 		end
@@ -108,12 +108,12 @@ local go = function (self, where, back, noenter, noexit, nodsc)
 			res = stead.par(stead.scene_delim, res, v);
 		end
 
-		if tonumber(stead.ref(to).__visited) then
+		if stead.tonum(stead.ref(to).__visited) then
 			stead.ref(to).__visited = stead.ref(to).__visited + 1;
 		elseif stead.here().__visited == nil then
 			stead.ref(to).__visited = 1
 		end
-		if stead.api_version < "1.6.3" and isDialog(stead.ref(to)) then
+		if not stead.api_atleast(1, 6, 3) and isDialog(stead.ref(to)) then
 			stead.dialog_rescan(stead.ref(to))
 		end
 	end
@@ -138,7 +138,7 @@ stead.player_walk = function(self, where, ...) -- real work
 		return vv 
 	end
 	v, r = stead.go(self, where, ...);
-	if type(vv) == 'string' then
+	if stead.type(vv) == 'string' then
 		v = stead.par(stead.space_delim, vv, v);
 	end
 	return v, r;
@@ -222,7 +222,7 @@ end
 
 stead.go = function(...)
 	local r,v = go(...)
-	if type(r) == 'string' and stead.cctx() then 
+	if stead.type(r) == 'string' and stead.cctx() then 
 		stead.pr (r)
 	end
 --	if stead.in_life_call then
@@ -253,7 +253,7 @@ player  = stead.inherit(player, function(v)
 			return stead.walk(stead.here(), false, false, true);
 		end
 		NEED_SCENE = true
-		if stead.api_version >= "1.3.5" then
+		if stead.api_atleast(1, 3, 5) then
 			return true -- force action
 		end
 	end

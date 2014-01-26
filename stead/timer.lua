@@ -6,7 +6,7 @@ game.action = stead.hook(game.action, function(f, s, cmd, ...)
 		elseif s.timer then
 			r,v = stead.call(s, 'timer');
 		end
-		if r == nil and v == nil and stead.api_version < "1.3.5" then
+		if r == nil and v == nil and not stead.api_atleast(1, 3, 5) then
 			return nil, true
 		end
 		return r,v

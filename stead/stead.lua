@@ -1,4 +1,20 @@
 stead = {
+	api_atleast = function(...)
+		local k
+		local v
+		for k, v in ipairs {...} do
+			if stead.type(k) ~= 'number' then
+				return
+			end
+			if not stead.api_version_table[k] or v > stead.api_version_table[k] then
+				return false
+			end
+			if v < stead.api_version_table[k] then
+				return true
+			end
+		end
+		return true
+	end;
 	version = "1.9.2",
 	api_version = "1.1.6", -- last version before 1.2.0
 	table = table,
@@ -7,6 +23,11 @@ stead = {
 	scene_delim = "^^",
 	space_delim = ' ',
 	string = string,
+	tostr = tostring,
+	tonum = tonumber,
+	type = type,
+	ipairs = ipairs,
+	pairs = pairs, 
 	math = math,
 	ticks = instead_ticks,
 	mouse_pos = instead_mouse_pos,
@@ -22,21 +43,21 @@ stead = {
 	call_ctx = { txt = nil, self = nil },
 --	functions = {}, -- code blocks
 	timer = function()
-		if type(timer) == 'table' and type(timer.callback) == 'function' then
+		if stead.type(timer) == 'table' and stead.type(timer.callback) == 'function' then
 			return timer:callback();
 		end
 		return
 	end,
 	input = function(event, ...)
-		if type(input) ~= 'table' then
+		if stead.type(input) ~= 'table' then
 			return
 		end
 		if event == 'kbd' then
-			if type(input.key) == 'function' then
+			if stead.type(input.key) == 'function' then
 				return input:key(...); -- pressed, event
 			end
 		elseif event == 'mouse' then
-			if type(input.click) == 'function' then
+			if stead.type(input.click) == 'function' then
 				return input:click(...); -- pressed, x, y, mb
 			end
 		end
@@ -44,7 +65,7 @@ stead = {
 	end,
 	modules_ini = {},
 	module_init = function(f, ...)
-		if type(f) ~= 'function' then
+		if stead.type(f) ~= 'function' then
 			error ("Wrong parameter to mod_init.", 2);
 		end
 		stead.table.insert(stead.modules_ini, f);
@@ -118,11 +139,11 @@ end
 stead.tostring = function(v)
 	if isCode(v) then
 		v = stead.string.format("code %q", stead.functions[v].code);
-	elseif type(v) == 'string' then
+	elseif stead.type(v) == 'string' then
 		v = stead.string.format("%q", v);
-	elseif v == nil or type(v) == 'boolean' or type(v) == 'number' then
-		v = tostring(v);
-	elseif type(v) == 'table' and type(stead.deref(v)) == 'string' then
+	elseif v == nil or stead.type(v) == 'boolean' or stead.type(v) == 'number' then
+		v = stead.tostr(v);
+	elseif stead.type(v) == 'table' and stead.type(stead.deref(v)) == 'string' then
 		v = stead.deref(v);
 	else
 		v = nil
@@ -188,7 +209,7 @@ stead.p = function(...)
 		error ("Call from global context.", 2);
 	end
 	for i = 1, stead.table.maxn(a) do
-		stead.cctx().txt = stead.par('', stead.cctx().txt, tostring(a[i]));
+		stead.cctx().txt = stead.par('', stead.cctx().txt, stead.tostr(a[i]));
 	end
 	stead.cctx().txt = stead.cat(stead.cctx().txt, stead.space_delim);
 end
@@ -200,7 +221,7 @@ stead.pr = function(...)
 		error ("Call from global context.", 2);
 	end
 	for i = 1, stead.table.maxn(a) do
-		stead.cctx().txt = stead.par('', stead.cctx().txt, tostring(a[i]));
+		stead.cctx().txt = stead.par('', stead.cctx().txt, stead.tostr(a[i]));
 	end
 end
 
@@ -217,7 +238,7 @@ stead.par = function(space,...)
 	local i, res
 	local a = {...};
 	for i = 1, stead.table.maxn(a) do
-		if type(a[i]) == 'string' then
+		if stead.type(a[i]) == 'string' then
 			if res == nil then
 				res = ""
 			else
@@ -237,7 +258,7 @@ stead.cat = function(v,...)
 	res = v;
 	local a = {...}
 	for i = 1, stead.table.maxn(a) do
-		if type(a[i]) == 'string' then
+		if stead.type(a[i]) == 'string' then
 			res = res..a[i];
 		end 
 	end
@@ -245,47 +266,47 @@ stead.cat = function(v,...)
 end
 
 function txtnb(v)
-	if type(v) ~= 'string' then return nil; end
+	if stead.type(v) ~= 'string' then return nil; end
 	return iface:nb(v);
 end
 
 function img(v)
-	if type(v) ~= 'string' then return nil; end; 
+	if stead.type(v) ~= 'string' then return nil; end; 
 	return iface:img(v);
 end
 
 function imgl(v)
-	if type(v) ~= 'string' then return nil; end; 
+	if stead.type(v) ~= 'string' then return nil; end; 
 	return iface:imgl(v);
 end
 
 function imgr(v)
-	if type(v) ~= 'string' then return nil; end; 
+	if stead.type(v) ~= 'string' then return nil; end; 
 	return iface:imgr(v);
 end
 
 function txtem(v)
-	if type(v) ~= 'string' then return nil; end; 
+	if stead.type(v) ~= 'string' then return nil; end; 
 	return iface:em(v)
 end
 
 function txtst(v)
-	if type(v) ~= 'string' then return nil; end; 
+	if stead.type(v) ~= 'string' then return nil; end; 
 	return iface:st(v)
 end
 
 function txtr(v)
-	if type(v) ~= 'string' then return nil; end; 
+	if stead.type(v) ~= 'string' then return nil; end; 
 	return iface:right(v)
 end
 
 function txtl(v)
-	if type(v) ~= 'string' then return nil; end; 
+	if stead.type(v) ~= 'string' then return nil; end; 
 	return iface:left(v)
 end
 
 function txtc(v)
-	if type(v) ~= 'string' then return nil; end; 
+	if stead.type(v) ~= 'string' then return nil; end; 
 	return iface:center(v)
 end
 
@@ -294,37 +315,37 @@ function txttab(v,a)
 end
 
 function txtj(v)
-	if type(v) ~= 'string' then return nil; end; 
+	if stead.type(v) ~= 'string' then return nil; end; 
 	return iface:just(v)
 end
 
 function txtb(v)
-	if type(v) ~= 'string' then return nil; end; 
+	if stead.type(v) ~= 'string' then return nil; end; 
 	return iface:bold(v)
 end
 
 function txtu(v)
-	if type(v) ~= 'string' then return nil; end; 
+	if stead.type(v) ~= 'string' then return nil; end; 
 	return iface:under(v)
 end
 
 function txtnm(n, v)
-	if type(v) ~= 'string' or not tonumber(n) then return nil; end
+	if stead.type(v) ~= 'string' or not stead.tonum(n) then return nil; end
 	return iface:enum(n, v);
 end
 
 function txttop(v)
-	if type(v) ~= 'string' then return nil; end; 
+	if stead.type(v) ~= 'string' then return nil; end; 
 	return iface:top(v)
 end
 
 function txtbottom(v)
-	if type(v) ~= 'string' then return nil; end; 
+	if stead.type(v) ~= 'string' then return nil; end; 
 	return iface:bottom(v)
 end
 
 function txtmiddle(v)
-	if type(v) ~= 'string' then return nil; end; 
+	if stead.type(v) ~= 'string' then return nil; end; 
 	return iface:middle(v)
 end
 
@@ -333,7 +354,7 @@ stead.fmt = function(...)
 	local a = {...};
 
 	for i=1,stead.table.maxn(a) do
-		if type(a[i]) == 'string' then
+		if stead.type(a[i]) == 'string' then
 			local s = stead.string.gsub(a[i],'[\t ]+', stead.space_delim);
 			s = stead.string.gsub(s, '[\n]+', stead.space_delim);
 			s = stead.string.gsub(s, '\\?[\\^]', { ['^'] = '\n', ['\\^'] = '^', ['\\\\'] = '\\'} );
@@ -347,10 +368,10 @@ end
 local inext = function(t, k)
 	local v
 	k, v = stead.next(t, k);
-	while k and not tonumber(k) do
+	while k and not stead.tonum(k) do
 		k, v = stead.next(t, k);
 	end
-	if not tonumber(k) then
+	if not stead.tonum(k) then
 		return nil
 	end
 	return k, v
@@ -390,37 +411,38 @@ end
 function opairs(s)
 	return onext, s, nil;
 end
+stead.opairs = opairs
 
 function isPlayer(v)
-	return (type(v) == 'table') and (v.player_type)
+	return (stead.type(v) == 'table') and (v.player_type)
 end
 
 function isRoom(v)
-	return (type(v) == 'table') and (v.location_type)
+	return (stead.type(v) == 'table') and (v.location_type)
 end
 
 function isPhrase(v)
-	return (type(v) == 'table') and (v.phrase_type)
+	return (stead.type(v) == 'table') and (v.phrase_type)
 end
 
 function isDialog(v)
-	return (type(v) == 'table') and (v.dialog_type)
+	return (stead.type(v) == 'table') and (v.dialog_type)
 end
 
 function isDisabled(v)
-	return (type(v) == 'table') and (v._disabled)
+	return (stead.type(v) == 'table') and (v._disabled)
 end
 
 function isRemoved(v)
-	return (type(v) == 'table') and (v._disabled == -1)
+	return (stead.type(v) == 'table') and (v._disabled == -1)
 end
 
 function isObject(v)
-	return (type(v) == 'table') and (v.object_type)
+	return (stead.type(v) == 'table') and (v.object_type)
 end
 
 function isXaction(v)
-	return (type(v) == 'table') and (v.xaction_type)
+	return (stead.type(v) == 'table') and (v.xaction_type)
 end
 
 
@@ -451,7 +473,7 @@ stead.obj_look = function(self)
 	elseif v then
 		v = stead.string.gsub(v, '[{}]','');
 	end
-	for i,o in opairs(self.obj) do
+	for i,o in stead.opairs(self.obj) do
 		o = stead.ref(o);
 		if isObject(o) then
 			vv = stead.obj_look(o);
@@ -512,7 +534,7 @@ stead.obj_str = function(self)
 	if isDisabled(self) then
 		return 
 	end
-	for i,o in opairs(self.obj) do
+	for i,o in stead.opairs(self.obj) do
 		o = stead.ref(o);
 		if o~= nil and not isDisabled(o) then -- isObject is better, but compat layer must be ok
 			vv = stead.call(o, 'nam');
@@ -578,8 +600,8 @@ end
 
 
 function stead.ref(n, nofunc) -- ref object by name
-	if type(n) == 'string' then
-		if type(_G[n]) == 'table' then -- fastest path
+	if stead.type(n) == 'string' then
+		if stead.type(_G[n]) == 'table' then -- fastest path
 			return _G[n];
 		end
 		local f = stead.eval('return '..n);
@@ -588,10 +610,10 @@ function stead.ref(n, nofunc) -- ref object by name
 		end
 		return nil;
 	end
-	if type(n) == 'table' then
+	if stead.type(n) == 'table' then
 		return n;
 	end
-	if type(n) == 'function' and not nofunc then
+	if stead.type(n) == 'function' and not nofunc then
 		local r,v = pcall(n);
 		if not r then
 			return nil
@@ -602,11 +624,11 @@ function stead.ref(n, nofunc) -- ref object by name
 end
 
 function stead.deref(n)
-	if type(n) == 'string' then
+	if stead.type(n) == 'string' then
 		return n
 	end
 	
-	if type(n) == 'table' and type(n.key_name) == 'string' then
+	if stead.type(n) == 'table' and stead.type(n.key_name) == 'string' then
 		return n.key_name
 	end
 	return n
@@ -614,10 +636,10 @@ end
 
 stead.list_check = function(self, name)
 	local i, v, ii;
-	for i,v,ii in opairs(self) do
+	for i,v,ii in stead.opairs(self) do
 		local o = stead.ref(v);
 		if not o then -- isObject(o) then -- compat
-			error ("No object: "..name.."["..tostring(ii).."]".." ("..tostring(type(v))..")")
+			error ("No object: "..name.."["..stead.tostr(ii).."]".." ("..stead.tostr(stead.type(v))..")")
 			return false
 		end
 		if stead.deref(v) then
@@ -629,7 +651,7 @@ end
 
 stead.list_str = function(self)
 	local i, v, vv, o;
-	for i,o in opairs(self) do
+	for i,o in stead.opairs(self) do
 		o = stead.ref(o);
 		if o~= nil and not isDisabled(o) then
 			vv = stead.call(o, 'nam');
@@ -648,8 +670,8 @@ stead.list_add = function(self, name, pos)
 		return nil
 	end
 	self.__modified__ = true;
-	if tonumber(pos) then
-		pos = tonumber(pos)
+	if stead.tonum(pos) then
+		pos = stead.tonum(pos)
 		if pos <= #self then
 			stead.table.insert(self, pos, nam);
 		else
@@ -663,7 +685,7 @@ end
 
 stead.list_set = function(self, name, pos)
 	local nam
-	local i = tonumber(pos);
+	local i = stead.tonum(pos);
 	if not i then
 		return nil
 	end
@@ -676,7 +698,7 @@ end
 stead.list_find = function(self, name)
 	local n, v, ii
 	local o = stead.ref(name, true)
-	for n,v,ii in opairs(self) do 
+	for n,v,ii in stead.opairs(self) do 
 		if stead.ref(v) == o then -- do not call func while search
 			return ii; 
 		end	
@@ -686,7 +708,7 @@ end
 
 stead.list_disable_all = function(s)
 	local k,v
-	for k,v in opairs(s) do
+	for k,v in stead.opairs(s) do
 		local o = stead.ref(v);
 		if isObject(o) then
 			o:disable()
@@ -696,7 +718,7 @@ end
 
 stead.list_enable_all = function(s)
 	local k,v
-	for k,v in opairs(s) do
+	for k,v in stead.opairs(s) do
 		local o = stead.ref(v);
 		if isObject(o) then
 			o:enable()
@@ -732,11 +754,11 @@ end
 
 stead.list_name = function(self, name, dis)
 	local n, o, ii
-	for n,o,ii in opairs(self) do
+	for n,o,ii in stead.opairs(self) do
 		o = stead.ref(o);
 		if isObject(o) then
 			local nam = stead.call(o,'nam') ;
-			if ( not isDisabled(o) or dis ) and name == tostring(nam) then
+			if ( not isDisabled(o) or dis ) and name == stead.tostr(nam) then
 				return ii;
 			end
 		end
@@ -745,7 +767,7 @@ stead.list_name = function(self, name, dis)
 end
 stead.list_id = function(self, id, dis)
 	local n,o,ii
-	for n,o,ii in opairs(self) do
+	for n,o,ii in stead.opairs(self) do
 		o = stead.ref(o);
 		if dis or not isDisabled(o) then
 			if isObject(o) and id == o.id then
@@ -761,8 +783,8 @@ stead.list_search = function(self, n, dis)
 	if not i then
 		i = self:name(n, dis);
 	end
-	if not i and tonumber(n) then
-		i = self:byid(tonumber(n), dis);
+	if not i and stead.tonum(n) then
+		i = self:byid(stead.tonum(n), dis);
 		if not i then
 			return nil
 		end
@@ -775,7 +797,7 @@ end
 
 stead.list_zap = function(self)
 	local n,o,ii
-	for n,o,ii in opairs(self) do
+	for n,o,ii in stead.opairs(self) do
 		self[ii] = nil;
 	end
 	self.__modified__ = true
@@ -784,7 +806,7 @@ end
 
 stead.list_concat = function(self, other, pos)
 	local n,o,ii
-	for n,o,ii in opairs(other) do
+	for n,o,ii in stead.opairs(other) do
 		o = stead.ref(o);
 		if pos == nil then
 			self:add(stead.deref(o));
@@ -861,24 +883,24 @@ function list(v)
 end
 
 function isList(v)
-	return (type(v) == 'table') and (v.list_type == true)
+	return (stead.type(v) == 'table') and (v.list_type == true)
 end
 
 stead.call = function(v, n, ...)
-	if type(v) ~= 'table' then
-		error ("Call on non table object:"..tostring(n), 2);
+	if stead.type(v) ~= 'table' then
+		error ("Call on non table object:"..stead.tostr(n), 2);
 	end
 	if v[n] == nil then
 		return nil,nil;
 	end
-	if type(v[n]) == 'string' then
+	if stead.type(v[n]) == 'string' then
 		return v[n];
 	end
-	if type(v[n]) == 'function' then
+	if stead.type(v[n]) == 'function' then
 		stead.callpush(v, ...)
 		local a,b = v[n](v, ...);
 		-- boolean, nil
-		if type(a) == 'boolean' and b == nil then
+		if stead.type(a) == 'boolean' and b == nil then
 			b, a = a, stead.pget()
 			if a == nil then
 				if stead.cctx().action then
@@ -898,14 +920,14 @@ stead.call = function(v, n, ...)
 		stead.callpop()
 		return a,b
 	end
-	if type(v[n]) == 'boolean' then
+	if stead.type(v[n]) == 'boolean' then
 		return v[n]
 	end
-	error ("Method not string nor function:"..tostring(n), 2);
+	error ("Method not string nor function:"..stead.tostr(n), 2);
 end
 
 stead.call_bool = function(v, n, ...)
-	if type(v) ~= 'table' then
+	if stead.type(v) ~= 'table' then
 		error ("Call bool on non table object:"..n, 2);
 	end
 	
@@ -917,7 +939,7 @@ stead.call_bool = function(v, n, ...)
 		return false;
 	end
 	
-	if type(v[n]) == 'function' then
+	if stead.type(v[n]) == 'function' then
 		stead.callpush(v, ...)
 		local r,v = v[n](v, ...);
 		stead.callpop();
@@ -927,7 +949,7 @@ stead.call_bool = function(v, n, ...)
 end
 
 stead.call_value = function(v, n, ...)
-	if type(v) ~= 'table' then
+	if stead.type(v) ~= 'table' then
 		error ("Call value on non table object:"..n, 2);
 	end
 	
@@ -935,7 +957,7 @@ stead.call_value = function(v, n, ...)
 		return nil
 	end	
 	
-	if type(v[n]) ~= 'function' then
+	if stead.type(v[n]) ~= 'function' then
 		return v[n];
 	end
 	stead.callpush(v, ...)
@@ -953,7 +975,7 @@ end
 
 stead.room_look = function(self)
 	local i, vv, o;
-	for i,o in opairs(self.obj) do
+	for i,o in stead.opairs(self.obj) do
 		o = stead.ref(o);
 		if isObject(o) then
 			vv = stead.par(stead.space_delim, vv, o:look());
@@ -972,7 +994,7 @@ stead.obj_search = function(v, n, dis)
 	if o then
 		return o, v;
 	end
-	for i,o in opairs(v.obj) do
+	for i,o in stead.opairs(v.obj) do
 		o = stead.ref(o);
 		if isObject(o) then
 			local r,rr = stead.obj_search(o, n, dis);
@@ -1032,7 +1054,7 @@ end
 stead.dialog_look = function(self)
 	local i,n,v,ph
 	n = 1
-	for i,ph in opairs(self.obj) do
+	for i,ph in stead.opairs(self.obj) do
 		ph = stead.ref(ph);
 		if isPhrase(ph) and not isDisabled(ph) then
 			v = stead.par('^', v, txtnm(n, ph:look()));
@@ -1045,10 +1067,10 @@ end
 stead.dialog_rescan = function(self)
 	local i,k,ph
 	k = 1
-	for i,ph in opairs(self.obj) do
+	for i,ph in stead.opairs(self.obj) do
 		ph = stead.ref(ph);
 		if isPhrase(ph) and not isDisabled(ph) then
-			ph.nam = tostring(k);
+			ph.nam = stead.tostr(k);
 			k = k + 1;
 		end
 	end
@@ -1063,13 +1085,13 @@ stead.dialog_empty = function(self)
 end
 
 stead.dialog_phrase = function(self, num)
-	if not tonumber(num) then
+	if not stead.tonum(num) then
 		if isPhrase(stead.ref(num)) then
 			return stead.ref(num);
 		end
 		return nil
 	end
-	return stead.ref(self.obj[tonumber(num)]);
+	return stead.ref(self.obj[stead.tonum(num)]);
 end
 
 stead.phrase_seen = function(s, enb, ...)
@@ -1183,14 +1205,14 @@ stead.phrase_action = function(self)
 
 	local last = stead.call(ph, 'ans');
 
-	if type(ph.do_act) == 'string' then
+	if stead.type(ph.do_act) == 'string' then
 		local f = stead.eval(ph.do_act);
 		if f ~= nil then
 			ret = f();
 		else
 			error ("Error while eval phrase action.");
 		end
-	elseif type(ph.do_act) == 'function' then
+	elseif stead.type(ph.do_act) == 'function' then
 		ret = ph.do_act(self);
 	end
 
@@ -1238,7 +1260,7 @@ stead.phrase_look = function(self, n)
 		return
 	end
 	local v = stead.call(self, 'dsc');
-	if type(v) ~= 'string' then return; end
+	if stead.type(v) ~= 'string' then return; end
 	if game.hinting then
 		return self:xref('{'..v..'}');
 	end
@@ -1291,7 +1313,7 @@ stead.obj_tag = function(self, id)
 		return id
 	end
 	
-	for k,v in opairs(self.obj) do
+	for k,v in stead.opairs(self.obj) do
 		v = stead.ref(v);
 		if isObject(v) and not isDisabled(v) then
 			id = id + 1;
@@ -1309,7 +1331,7 @@ stead.player_tagall = function(self)
 	id = stead.obj_tag(stead.here(), id);
 	id = stead.obj_tag(stead.me(), id);
 
-	for k,v in opairs(ways()) do
+	for k,v in stead.opairs(ways()) do
 		v = stead.ref(v);
 		if isRoom(v) and not isDisabled(v) then
 			id = id + 1;
@@ -1535,7 +1557,7 @@ stead.game_life = function(self)
 	stead.in_life_call = true;
 	stead.lifes_op = {}; -- lifes to on/off
 	stead.PLAYER_MOVED = PLAYER_MOVED
-	for i,o in opairs(self.lifes) do
+	for i,o in stead.opairs(self.lifes) do
 		local vv
 		local pre
 		o = stead.ref(o);
@@ -1558,7 +1580,7 @@ stead.game_life = function(self)
 	if not PLAYER_MOVED then PLAYER_MOVED = stead.PLAYER_MOVED end
 	stead.PLAYER_MOVED = nil
 	stead.in_life_call = false;
-	for i,o in ipairs(stead.lifes_op) do
+	for i,o in stead.ipairs(stead.lifes_op) do
 		if o[1] then
 			stead.lifeon(o[2], o[3]);
 		else
@@ -1617,7 +1639,7 @@ local compat_api = function()
 		return
 	end
 
-	if stead.api_version < "1.6.0" then
+	if not stead.api_atleast(1, 6, 0) then
 		if not go then
 			go = stead.go
 		end
@@ -1637,7 +1659,7 @@ local compat_api = function()
 		end
 	end
 
-	if stead.api_version < "1.7.1" then
+	if not stead.api_atleast(1, 7, 1) then
 		if not goin then
 			goin = function() error ("Please use 'walkin' instead 'goin'.", 2) end
 		end
@@ -1718,7 +1740,7 @@ local compat_api = function()
 		dialog_enter = stead.dialog_enter
 	end
 
-	if stead.api_version < "1.4.5" then
+	if not stead.api_atleast(1, 4, 5) then
 		stead.xref = function(...)
 			return xref(...);
 		end
@@ -1753,7 +1775,7 @@ stead.do_ini = function(self, load)
 	end
 	stead.math.randomseed(stead.os.time(stead.os.date("*t")))
 	stead.rnd(1); stead.rnd(2); stead.rnd(3); -- Lua bug?
-	if type(game) ~= 'table' then
+	if stead.type(game) ~= 'table' then
 		error ("No valid 'game' object.");
 	end
 	if not isPlayer(stead.me()) then
@@ -1796,17 +1818,17 @@ stead.game_ini = function(self)
 	v = stead.do_ini(self);
 	vv = iface:title(stead.call(self,'nam'));
 	vv = stead.par(stead.scene_delim, vv, stead.call(self,'dsc'));
-	if type(init) == 'function' then
+	if stead.type(init) == 'function' then
 		init();
 	end
---	if type(hooks) == 'function' then
+--	if stead.type(hooks) == 'function' then
 --		hooks();
 --	end
 	return stead.par(stead.scene_delim, vv, v);
 end
 
 stead.game_start = function(s)
-	if type(start) == 'function' then
+	if stead.type(start) == 'function' then
 		start() -- start function
 	end
 end
@@ -1867,24 +1889,24 @@ end
 function for_each(o, n, f, fv, ...)
 	local call_list = {}
 	local k,v
-	if type(o) ~= 'table' then
+	if stead.type(o) ~= 'table' then
 		return
 	end
 	stead.object = n;
 
-	for k,v in pairs(o) do
+	for k,v in stead.pairs(o) do
 		if fv(v) then
 			stead.table.insert(call_list, { k = k, v = v });
 		end
 	end
 
-	for k, v in ipairs(call_list) do
+	for k, v in stead.ipairs(call_list) do
 		f(v.k, v.v, ...);
 	end
 end
 
 function isCode(s)
-	return type(s) == 'function' and type(stead.functions[s]) == 'table'
+	return stead.type(s) == 'function' and stead.type(stead.functions[s]) == 'table'
 end
 function for_each_codeblock(f,...)
 	for_each(_G, '_G', f, isCode, ...)
@@ -1908,8 +1930,8 @@ end
 
 stead.clearvar = function(v)
 	local k,o
-	for k,o in pairs(v) do
-		if type(o) == 'table' and o.__visited__ ~= nil then
+	for k,o in stead.pairs(v) do
+		if stead.type(o) == 'table' and o.__visited__ ~= nil then
 			o.__visited__ = nil
 			o.auto_saved = nil
 			stead.clearvar(o)
@@ -1919,7 +1941,7 @@ end
 
 stead.savemembers = function(h, self, name, need)
 	local k,v
-	for k,v in pairs(self) do
+	for k,v in stead.pairs(self) do
 		local need2
 		if k ~= "__visited__" then
 			need2 = false
@@ -1927,11 +1949,11 @@ stead.savemembers = function(h, self, name, need)
 				need2 = true;
 			end
 
-			if type(k) == 'string' then
+			if stead.type(k) == 'string' then
 				stead.savevar(h, v, name..'['..stead.string.format("%q",k)..']', need or need2);
-			elseif type(k) == 'number' then
+			elseif stead.type(k) == 'number' then
 				stead.savevar(h, v, name.."["..k.."]", need or need2)
-			elseif type(k) == 'table' and type(k.key_name) == 'string' then
+			elseif stead.type(k) == 'table' and stead.type(k.key_name) == 'string' then
 				stead.savevar(h, v, name.."["..k.key_name.."]", need or need2)
 			end
 		end
@@ -1942,10 +1964,10 @@ end
 stead.savevar = function(h, v, n, need)
 	local r,f
 
-	if v == nil or type(v) == "userdata" or
-			 type(v) == "function" then
+	if v == nil or stead.type(v) == "userdata" or
+			 stead.type(v) == "function" then
 		if isCode(v) and need then
-			if type(stead.functions[v].key_name) == 'string' 
+			if stead.type(stead.functions[v].key_name) == 'string' 
 				and stead.functions[v].key_name ~= n then
 				h:write(stead.string.format("%s=%s\n", n, stead.functions[v].key_name))
 			else
@@ -1962,7 +1984,7 @@ stead.savevar = function(h, v, n, need)
 --		need = true;
 --	end
 
-	if type(v) == "string" then
+	if stead.type(v) == "string" then
 		if not need then 
 			return
 		end
@@ -1970,9 +1992,9 @@ stead.savevar = function(h, v, n, need)
 		return;
 	end
  	
-	if type(v) == "table" then
+	if stead.type(v) == "table" then
 		if v == _G then return end
-		if type(v.key_name) == 'string' and v.key_name ~= n then -- just xref
+		if stead.type(v.key_name) == 'string' and v.key_name ~= n then -- just xref
 			if v.auto_allocated and not v.auto_saved then
 				v:save(v.key_name, h, false, true); -- here todo
 			end
@@ -1990,7 +2012,7 @@ stead.savevar = function(h, v, n, need)
 
 		v.__visited__ = n;
 
-		if type(v.save) == 'function' then
+		if stead.type(v.save) == 'function' then
 			v:save(n, h, need);
 			return;
 		end
@@ -2017,9 +2039,9 @@ stead.gamereset = function(file, forget)
 		stead.stop_music();
 		stead.stop_sound();
 		timer:stop();
-		if type(variables) == 'table' then
+		if stead.type(variables) == 'table' then
 			local k,v
-			for k,v in ipairs(variables) do
+			for k,v in stead.ipairs(variables) do
 				_G[v] = nil
 			end
 			variables = nil
@@ -2073,9 +2095,9 @@ stead.do_savegame = function(s, h)
 	end
 	local forget = game.scriptsforget
 	local i,v
-	for i,v in ipairs(s._scripts) do
+	for i,v in stead.ipairs(s._scripts) do
 		h:write(stead.string.format("stead.gamereset(%q,%s)\n", 
-			v, tostring(forget)))
+			v, stead.tostr(forget)))
 		forget = nil
 	end
 	save_object('allocator', allocator, h); -- always first!
@@ -2112,10 +2134,10 @@ stead.game_save = function(self, name, file)
 		return nil, false
 	end
 	local n
-	if type(stead.savename) == 'function' then
+	if stead.type(stead.savename) == 'function' then
 		n = stead.savename()
 	end
-	if type(n) == 'string' and n ~= "" then
+	if stead.type(n) == 'string' and n ~= "" then
 		h:write("-- $Name: "..n:gsub("\n","\\n").."$\n");
 	end
 	stead.do_savegame(self, h);
@@ -2166,7 +2188,7 @@ Commands:^
 };
 
 stead.strip = function(s)
-	local s = tostring(s);
+	local s = stead.tostr(s);
 	s = stead.string.gsub(s, '^[ \t]*', '');
 	s = stead.string.gsub(s, '[ \t]*$', '');
 	return s;
@@ -2252,7 +2274,7 @@ iface = {
 		if not o or not o.id then
 			return str;
 		end
-		return stead.cat(str,"("..tostring(o.id)..")");
+		return stead.cat(str,"("..stead.tostr(o.id)..")");
 	end,
 	title = function(self, str)
 		return "["..str.."]";
@@ -2348,7 +2370,7 @@ iface = {
 			return nil, true; -- menu
 		end
 
-		if stead.state and r == nil and v == nil and stead.api_version >= "1.3.5" then -- new goto
+		if stead.state and r == nil and v == nil and stead.api_atleast(1, 3, 5) then -- new goto
 			return nil, false -- really nothing
 		end
 
@@ -2427,7 +2449,7 @@ stead.from = from
 
 stead.time = function(s)
 	local n = game._time;
-	if type(s) == 'number' then
+	if stead.type(s) == 'number' then
 		game._time = s
 	end
 	return n
@@ -2454,7 +2476,7 @@ function ways(w)
 end
 
 stead.xref = function(str, obj, ...)
-	if type(str) ~= 'string' then return nil; end; 
+	if stead.type(str) ~= 'string' then return nil; end; 
 	return iface:xref(str, obj, ...);
 end
 xref = stead.xref
@@ -2527,7 +2549,7 @@ stead.allocator_save = function(s, name, h, need, auto)
 				stead.tostring(name),
 				stead.tostring(s.constructor));
 			h:write(name..m);
-			if stead.api_version >= "1.3.0" then
+			if stead.api_atleast(1, 3, 0) then
 				m = stead.string.format("stead.check_object(%s, %s)\n",
 					stead.tostring(name),
 					name);
@@ -2542,7 +2564,7 @@ stead.allocator_save = function(s, name, h, need, auto)
 end
 
 function new(str)
-	if type(str) ~= 'string' then
+	if stead.type(str) ~= 'string' then
 		error("Non string constructor in new.", 2);
 	end
 	return allocator:new(str);
@@ -2582,7 +2604,7 @@ stead.vobj_used = function(self, ...)
 end
 
 function vobj(key, name, dsc, w)
-	if not tonumber(key) then
+	if not stead.tonum(key) then
 		error ("vobj key must be number!", 2);
 	end
 	return obj{ key = key, nam = name, dsc = dsc, where = stead.deref(w), act = stead.vobj_act, used = stead.vobj_used, save = stead.vobj_save, obj = list({}) };
@@ -2607,7 +2629,7 @@ stead.vroom_enter = function(self, ...)
 end
 
 function isVroom(v)
-	return (type(v) == 'table') and (v.vroom_type)
+	return (stead.type(v) == 'table') and (v.vroom_type)
 end
 
 function vroom(name, w)
@@ -2701,7 +2723,7 @@ function taketo(obj, wh, pos)
 	inv():add(obj, pos);
 	o._taken = true
 	wh = stead.deref(stead.me())
-	if type(wh) == 'string' then
+	if stead.type(wh) == 'string' then
 		o.__where__ = wh;
 	end
 	return o
@@ -2733,7 +2755,7 @@ function putto(obj, w, pos)
 	else
 		w.obj:add(obj, pos);
 	end
-	if type(wh) == 'string' then
+	if stead.type(wh) == 'string' then
 		o.__where__ = wh;
 	end
 	return o;
@@ -2894,10 +2916,10 @@ end
 
 stead.set_music = function(s, count)
 	game._music = s;
-	if not tonumber(count) then
+	if not stead.tonum(count) then
 		game._music_loop = 0;
 	else
-		game._music_loop = tonumber(count);
+		game._music_loop = stead.tonum(count);
 	end
 end
 
@@ -2969,23 +2991,23 @@ stead.get_sound_loop = function()
 end
 
 stead.stop_sound = function(chan)
-	if not tonumber(chan) then
+	if not stead.tonum(chan) then
 		stead.set_sound('@');
 		return
 	end
-	stead.add_sound('@'..tostring(chan));
+	stead.add_sound('@'..stead.tostr(chan));
 end
 
 stead.add_sound = function(s, chan, loop)
-	if type(s) ~= 'string' then
+	if stead.type(s) ~= 'string' then
 		return
 	end
-	if type(game._sound) == 'string' then
-		if tonumber(chan) then
-			s = s..'@'..tostring(chan);
+	if stead.type(game._sound) == 'string' then
+		if stead.tonum(chan) then
+			s = s..'@'..stead.tostr(chan);
 		end
-		if tonumber(loop) then
-			s = s..','..tostring(loop)
+		if stead.tonum(loop) then
+			s = s..','..stead.tostr(loop)
 		end
 		stead.set_sound(game._sound..';'..s, stead.get_sound_chan(), stead.get_sound_loop());
 	else
@@ -2995,22 +3017,22 @@ end
 
 stead.set_sound = function(s, chan, loop)
 	game._sound = s;	
-	if not tonumber(loop) then
+	if not stead.tonum(loop) then
 		game._sound_loop = 1;
 	else
-		game._sound_loop = tonumber(loop);
+		game._sound_loop = stead.tonum(loop);
 	end
 
-	if not tonumber(chan) then
+	if not stead.tonum(chan) then
 		game._sound_channel = -1;
 	else
-		game._sound_channel = tonumber(chan);
+		game._sound_channel = stead.tonum(chan);
 	end
 end
 
 function change_pl(p)
 	local o = stead.ref(p);
-	if type(stead.deref(p)) ~= 'string' or not o then
+	if stead.type(stead.deref(p)) ~= 'string' or not o then
 		error ("Wrong player name in change_pl...", 2);
 	end
 	game.pl = stead.deref(p);
@@ -3054,10 +3076,10 @@ function enable_all(o)
 end
 
 function isForSave(k, v, s) -- k - key, v - value, s -- parent table
-	if type(k) == 'function' then
+	if stead.type(k) == 'function' then
 		return false
 	end
-	if type(v) == 'function' or type(v) == 'userdata' then
+	if stead.type(v) == 'function' or stead.type(v) == 'userdata' then
 		return false
 	end
 	return stead.string.find(k, '_') ==  1 or stead.string.match(k,'^%u')
@@ -3073,7 +3095,7 @@ inherit = stead.inherit
 stead.hook = function(o, f)
 	return function(...)
 		local ff
-		if type(o) ~= 'function' then
+		if stead.type(o) ~= 'function' then
 			ff = function(s)
 				return o;
 			end
@@ -3108,14 +3130,31 @@ stead.dispof = function(v)
 end
 
 function stead_version(v)
-	if not tostring(v) then
+	if not stead.tostr(v) then
 		return
 	end
-	if stead.version < v then
+	local n
+	local ver = {}
+
+	stead.version_table = {}
+	for n in stead.string.gfind(stead.version, "[0-9]+") do
+		stead.table.insert(stead.version_table, stead.tonum(n))
+	end
+
+	for n in stead.string.gfind(v, "[0-9]+") do
+		stead.table.insert(ver, stead.tonum(n))
+	end
+
+	stead.api_version_table = stead.version_table
+	
+	if not stead.api_atleast(stead.unpack(ver)) then
 		error ([[The game requires instead engine of version ]] ..v.. [[ or higher.
 		http://instead.sourceforge.net]], 2)
 	end
+
 	stead.api_version = v
+	stead.api_version_table = ver
+
 	if v >= "1.2.0" then
 		require ("walk")
 		require ("vars")
@@ -3130,7 +3169,7 @@ instead_version = stead_version
 function code(v)
 	local f = stead.eval(v)
 	if not f then
-		error ("Wrong script: "..tostring(v), 2);
+		error ("Wrong script: "..stead.tostr(v), 2);
 	end
 	stead.functions[f] = { f = f, code = v };
 	return f;
@@ -3157,15 +3196,15 @@ stead.objects = function(s)
 	timer = obj { -- timer calls stead.timer callback 
 		nam = 'timer',
 		ini = function(s)
-			if tonumber(s._timer) ~= nil and type(stead.set_timer) == 'function' then
+			if stead.tonum(s._timer) ~= nil and stead.type(stead.set_timer) == 'function' then
 				stead.set_timer(s._timer);
 			end
 		end,
 		get = function(s)
-			if tonumber(s._timer) == nil then
+			if stead.tonum(s._timer) == nil then
 				return 0
 			end
-			return tonumber(s._timer);
+			return stead.tonum(s._timer);
 		end,
 		stop = function(s)
 			return s:set(0);
@@ -3174,8 +3213,8 @@ stead.objects = function(s)
 			return s:set(0);
 		end,
 		set = function(s, v)
-			s._timer = tonumber(v);
-			if type(stead.set_timer) ~= 'function' then
+			s._timer = stead.tonum(v);
+			if stead.type(stead.set_timer) ~= 'function' then
 				return false
 			end
 			stead.set_timer(v)
@@ -3188,12 +3227,12 @@ stead.objects = function(s)
 	allocator = obj {
 		nam = 'allocator',
 		get = function(s, n, c)
-			if isObject(stead.ref(n)) and stead.api_version >= "1.3.0" then -- static?
+			if isObject(stead.ref(n)) and stead.api_atleast(1, 3, 0) then -- static?
 				return stead.ref(n);
 			end
 			local v = stead.ref(c);
 			if not v then
-				error ("Null object in allocator: "..tostring(c));
+				error ("Null object in allocator: "..stead.tostr(c));
 			end
 			v.key_name = n;
 			v.save = stead.allocator_save;
@@ -3202,7 +3241,7 @@ stead.objects = function(s)
 		end,
 		delete = function(s, w)
 			w = stead.ref(w);
-			if type(w.key_name) ~= 'string' then
+			if stead.type(w.key_name) ~= 'string' then
 				return
 			end
 			local f = stead.eval(w.key_name..'= nil;');
@@ -3212,7 +3251,7 @@ stead.objects = function(s)
 		end,
 		new = function(s, n, key)
 			local v = stead.ref(n);
-			if type(v) ~= 'table' or type(n) ~= 'string' then
+			if stead.type(v) ~= 'table' or stead.type(n) ~= 'string' then
 				error ("Error in new.", 2);
 			end
 			v.save = stead.allocator_save;
@@ -3223,9 +3262,9 @@ stead.objects = function(s)
 			else
 				local nm = #s.objects + 1 -- here is new index
 				stead.table.insert(s.objects, v);
-				v.key_name = 'allocator["objects"]['..tostring(nm)..']';
+				v.key_name = 'allocator["objects"]['..stead.tostr(nm)..']';
 			end
-			if stead.api_version >= "1.3.0" then
+			if stead.api_atleast(1, 3, 0) then
 				stead.check_object(v.key_name, v)
 			end
 			return v
@@ -3253,7 +3292,7 @@ end
 stead.sandbox = function()
 -- sandbox --
 local check_path = function(type, find, gsub, savepath, gamepath, path)
-	if type(path) ~= 'string' then
+	if stead.type(path) ~= 'string' then
 		return false
 	end
 	if find(path, "..", 1, true) then
@@ -3277,7 +3316,7 @@ end
 
 local build_sandbox_open = function(error, type, find, gsub, savepath, gamepath)
 	return stead.hook(io.open, function(f, path, acc, ...)
-		if type(acc) ~= 'string' or not find(acc, "w") then -- only write access
+		if stead.type(acc) ~= 'string' or not find(acc, "w") then -- only write access
 			return f(path, acc, ...)
 		end
 		if not check_path(type, find, gsub, savepath, gamepath, path) then
@@ -3290,7 +3329,7 @@ end
 
 local build_sandbox_remove = function(error, type, find, gsub, savepath, gamepath)
 	return stead.hook(os.remove, function(f, path, ...)
-		if type(path) ~= 'string' then
+		if stead.type(path) ~= 'string' then
 			return f(path, ...)
 		end
 		if not check_path(type, find, gsub, savepath, gamepath, path) then
@@ -3336,10 +3375,10 @@ stead.init = function(s)
 	stead:objects();
 	s.functions = {} -- code blocks
 	local k,v
-	for k,v in ipairs(s.modules_ini) do
+	for k,v in stead.ipairs(s.modules_ini) do
 		v();
 	end
-	if type(stead.sandbox) == 'function' then
+	if stead.type(stead.sandbox) == 'function' then
 		stead.sandbox()
 		stead.sandbox = nil
 	end
@@ -3386,4 +3425,6 @@ player_moved = stead.player_moved
 rnd = stead.rnd;
 gamefile = stead.gamefile
 time = stead.time
+
+instead_version(stead.api_version)
 -- vim:ts=4
