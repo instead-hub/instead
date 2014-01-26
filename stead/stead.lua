@@ -1,22 +1,6 @@
 stead = {
 	version = "2.0.0",
 	api_version = "1.1.6", -- last version before 1.2.0
-	api_atleast = function(...)
-		local k
-		local v
-		for k, v in ipairs {...} do
-			if stead.type(k) ~= 'number' then
-				return false
-			end
-			if not stead.api_version_table[k] or v > stead.api_version_table[k] then
-				return false
-			end
-			if v < stead.api_version_table[k] then
-				return true
-			end
-		end
-		return true
-	end;
 	table = table,
 	delim = ',',
 	busy = instead_busy,
@@ -72,6 +56,40 @@ stead = {
 		f();
 	end
 }
+
+stead.api_atleast = function(...)
+	local k
+	local v
+	for k, v in stead.ipairs {...} do
+		if stead.type(k) ~= 'number' then
+			return false
+		end
+		if not stead.api_version_table[k] or v > stead.api_version_table[k] then
+			return false
+		end
+		if v < stead.api_version_table[k] then
+			return true
+		end
+	end
+	return true
+end;
+
+stead.atleast = function(...)
+	local k
+	local v
+	for k, v in stead.ipairs {...} do
+		if stead.type(k) ~= 'number' then
+			return false
+		end
+		if not stead.version_table[k] or v > stead.version_table[k] then
+			return false
+		end
+		if v < stead.version_table[k] then
+			return true
+		end
+	end
+	return true
+end;
 
 stead.last_act = function(s)
 	local r = game.__last_act
@@ -3134,33 +3152,31 @@ function stead_version(v)
 		return
 	end
 	local n
-	local ver = {}
 
 	stead.version_table = {}
+	stead.api_version_table = {}
+
 	for n in stead.string.gfind(stead.version, "[0-9]+") do
 		stead.table.insert(stead.version_table, stead.tonum(n))
 	end
 
 	for n in stead.string.gfind(v, "[0-9]+") do
-		stead.table.insert(ver, stead.tonum(n))
+		stead.table.insert(stead.api_version_table, stead.tonum(n))
 	end
 
-	stead.api_version_table = stead.version_table
-	
-	if not stead.api_atleast(stead.unpack(ver)) then
+	if not stead.atleast(stead.unpack(stead.api_version_table)) then
 		error ([[The game requires instead engine of version ]] ..v.. [[ or higher.
 		http://instead.sourceforge.net]], 2)
 	end
 
 	stead.api_version = v
-	stead.api_version_table = ver
 
-	if v >= "1.2.0" then
+	if stead.api_atleast(1, 2, 0) then
 		require ("walk")
 		require ("vars")
 		require ("object")
 	end
-	if v >= "1.6.3" then
+	if stead.api_atleast(1, 6, 3) then
 		require ("dlg")
 	end
 end

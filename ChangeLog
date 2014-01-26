@@ -11,7 +11,7 @@
   * -lua and -luac parameters;
   * in windows do not close -debug console until press return;
   * game.gui.hidetitle;
-  * stead.api_atleast();
+  * stead.api_atleast() and stead.atleast();
   * stead.tonum, stead.tostr, stead.type, stead.ipairs, stead.pairs, stead.opairs;
   * potential bug with non ascii save path and non UTF-8 game codepage;
   * bug with language changing;
@@ -19,7 +19,7 @@
   * bug with anigif and cursor;
   * typo in Please, wait message;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 25 Jan 2014 21:38:00 +0400
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sun, 26 Jan 2014 13:12:00 +0400
 
 1.9.1
 
