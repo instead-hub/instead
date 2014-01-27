@@ -1,3 +1,9 @@
+2.0.1
+
+  * lua5.2 compatible;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 27 Jan 2014 19:40:00 +0400
+
 2.0.0
 
   * GPL2 code removed. Now INSTEAD is covered by MIT license;

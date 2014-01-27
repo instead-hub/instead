@@ -1,5 +1,5 @@
 stead = {
-	version = "2.0.0",
+	version = "2.0.1",
 	api_version = "1.1.6", -- last version before 1.2.0
 	table = table,
 	delim = ',',
@@ -3156,11 +3156,11 @@ function stead_version(v)
 	stead.version_table = {}
 	stead.api_version_table = {}
 
-	for n in stead.string.gfind(stead.version, "[0-9]+") do
+	for n in stead.string.gmatch(stead.version, "[0-9]+") do
 		stead.table.insert(stead.version_table, stead.tonum(n))
 	end
 
-	for n in stead.string.gfind(v, "[0-9]+") do
+	for n in stead.string.gmatch(v, "[0-9]+") do
 		stead.table.insert(stead.api_version_table, stead.tonum(n))
 	end
 
