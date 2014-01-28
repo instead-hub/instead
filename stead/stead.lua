@@ -3399,6 +3399,10 @@ io.popen = function(s)
 	print ("Warning: trying to do io.popen: "..s);
 end
 
+os.tmpname = function(s)
+	print ("Warning: trying to do os.tmpname");
+end
+
 debug = nil
 package.cpath = {}
 package.preload = {}
