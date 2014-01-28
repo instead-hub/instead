@@ -3407,7 +3407,7 @@ os.tmpname = function(s)
 end
 
 debug = nil
-package.cpath = {}
+package.cpath = ""
 package.preload = {}
 package = nil
 
