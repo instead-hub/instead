@@ -121,6 +121,8 @@ else
 	stead.eval = load
 	stead.unpack = table.unpack
 	stead.table.maxn = table_get_maxn
+	string.gfind = string.gmatch
+	math.mod = math.fmod
 end
 
 instead = stead;
