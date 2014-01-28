@@ -3334,7 +3334,7 @@ end
 
 local build_sandbox_open = function(error, type, find, gsub, savepath, gamepath)
 	return stead.hook(io.open, function(f, path, acc, ...)
-		if stead.type(acc) ~= 'string' or not find(acc, "aw") then -- only write access
+		if stead.type(acc) ~= 'string' or not find(acc, "[aw+]") then -- only write access
 			return f(path, acc, ...)
 		end
 		if not check_path(type, find, gsub, savepath, gamepath, path) then
@@ -3371,8 +3371,10 @@ end
 
 io.open = build_sandbox_open(error, type, string.find, string.gsub, 
 		instead_savepath()..'/', instead_gamepath()..'/');
+
 os.remove = build_sandbox_remove(error, type, string.find, string.gsub, 
 		instead_savepath()..'/', instead_gamepath()..'/');
+
 os.rename = build_sandbox_rename(error, type, string.find, string.gsub, 
 		instead_savepath()..'/', instead_gamepath()..'/');
 
@@ -3383,8 +3385,9 @@ end
 io.popen = function(s)
 	print ("Warning: trying to do io.popen: "..s);
 end
+
 debug = nil
-package.loadlib = nil
+package = nil
 end
 -- end of sandbox --
 
