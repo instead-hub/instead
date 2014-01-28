@@ -3369,6 +3369,16 @@ local build_sandbox_rename = function(error, type, find, gsub, savepath, gamepat
 	end)
 end
 
+local build_sandbox_output = function(error, type, find, gsub, savepath, gamepath)
+	return stead.hook(io.output, function(f, path, ...)
+		if not check_path(type, find, gsub, savepath, gamepath, path) then
+			error ("Access denied (output): ".. path, 3);
+			return false
+		end
+		return f(path, ...)
+	end)
+end
+
 io.open = build_sandbox_open(error, type, string.find, string.gsub, 
 		instead_savepath()..'/', instead_gamepath()..'/');
 
@@ -3376,6 +3386,9 @@ os.remove = build_sandbox_remove(error, type, string.find, string.gsub,
 		instead_savepath()..'/', instead_gamepath()..'/');
 
 os.rename = build_sandbox_rename(error, type, string.find, string.gsub, 
+		instead_savepath()..'/', instead_gamepath()..'/');
+
+io.output = build_sandbox_output(error, type, string.find, string.gsub, 
 		instead_savepath()..'/', instead_gamepath()..'/');
 
 os.execute = function(s)
@@ -3390,6 +3403,7 @@ debug = nil
 package.cpath = {}
 package.preload = {}
 package = nil
+
 end
 -- end of sandbox --
 
