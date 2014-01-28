@@ -163,7 +163,7 @@ int game_select(const char *name)
 		char *oldgame = curgame_dir;
 		curgame_dir = g->dir;
 		instead_done();
-		if (instead_init(g->path)) {
+		if (instead_init((g->idf) ? NULL : g->path)) {
 			curgame_dir = oldgame;
 			goto err;
 		}

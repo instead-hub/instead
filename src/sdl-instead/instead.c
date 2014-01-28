@@ -1854,17 +1854,17 @@ static int instead_package(const char *path)
 	char stead_path[PATH_MAX * 4] = "package.path=\""; /* wince have not cwd :) */
 	if (path) {
 		strcat(stead_path, path);
-		strcat(stead_path, "/?.lua");
-		strcat(stead_path, ";");
+		strcat(stead_path, "/?.lua;");
 	}
 #else
-	char stead_path[PATH_MAX] = "package.path=\"./?.lua;";
+	char stead_path[PATH_MAX] = "package.path=\"";
+	if (path)
+		strcat(stead_path, "./?.lua;");
 #endif
 	p = game_local_stead_path();
 	if (p) {
 		strcat(stead_path, p);
-		strcat(stead_path, "/?.lua");
-		strcat(stead_path, ";");
+		strcat(stead_path, "/?.lua;");
 	}
 
 	if (STEAD_PATH[0] != '/') {
