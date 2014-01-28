@@ -123,6 +123,9 @@ else
 	stead.table.maxn = table_get_maxn
 	string.gfind = string.gmatch
 	math.mod = math.fmod
+	math.log10 = function(a)
+		return stead.math.log(a, 10)
+	end
 end
 
 instead = stead;
