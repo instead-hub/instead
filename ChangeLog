@@ -1,3 +1,10 @@
+2.0.2
+
+  * sandbox fixes;
+  * be more compatible with lua 5.2;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 28 Jan 2014 08:17:00 +0400
+
 2.0.1
 
   * lua5.2 compatible;
