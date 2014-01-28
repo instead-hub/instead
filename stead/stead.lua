@@ -3387,6 +3387,8 @@ io.popen = function(s)
 end
 
 debug = nil
+package.cpath = {}
+package.preload = {}
 package = nil
 end
 -- end of sandbox --
