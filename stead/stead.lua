@@ -3312,21 +3312,18 @@ end
 
 stead.sandbox = function()
 -- sandbox --
-local check_path = function(type, find, gsub, savepath, gamepath, path)
-	if stead.type(path) ~= 'string' then
+local check_path = function(realpath, type, find, gsub, savepath, gamepath, path)
+	path = realpath(path)
+	if not path then
 		return false
 	end
-	if find(path, "..", 1, true) then
+	local spath = realpath(savepath)
+	if not spath then
 		return false
 	end
-	if not find(path, "^[/\\]") then
-		return true
-	end
-	path = gsub(path, "[\\/]+", "/"); -- normalize
-	local spath = gsub(savepath, "[\\/]+", "/");
 	local s = find(path, spath, 1, true)
 	if s ~= 1 then
-		spath = gsub(gamepath, "[\\/]+", "/");
+		spath = realpath(gamepath);
 		s = find(path, spath, 1, true)
 	end
 	if s ~= 1 then
@@ -3335,12 +3332,12 @@ local check_path = function(type, find, gsub, savepath, gamepath, path)
 	return true
 end
 
-local build_sandbox_open = function(error, type, find, gsub, savepath, gamepath)
+local build_sandbox_open = function(realpath, error, type, find, gsub, savepath, gamepath)
 	return stead.hook(io.open, function(f, path, acc, ...)
 		if stead.type(acc) ~= 'string' or not find(acc, "[aw+]") then -- only write access
 			return f(path, acc, ...)
 		end
-		if not check_path(type, find, gsub, savepath, gamepath, path) then
+		if not check_path(realpath, type, find, gsub, savepath, gamepath, path) then
 			error ("Access denied (write): ".. path, 3);
 			return false
 		end
@@ -3348,12 +3345,12 @@ local build_sandbox_open = function(error, type, find, gsub, savepath, gamepath)
 	end)
 end
 
-local build_sandbox_remove = function(error, type, find, gsub, savepath, gamepath)
+local build_sandbox_remove = function(realpath, error, type, find, gsub, savepath, gamepath)
 	return stead.hook(os.remove, function(f, path, ...)
 		if stead.type(path) ~= 'string' then
 			return f(path, ...)
 		end
-		if not check_path(type, find, gsub, savepath, gamepath, path) then
+		if not check_path(realpath, type, find, gsub, savepath, gamepath, path) then
 			error ("Access denied (remove): ".. path, 3);
 			return false
 		end
@@ -3361,9 +3358,9 @@ local build_sandbox_remove = function(error, type, find, gsub, savepath, gamepat
 	end)
 end
 
-local build_sandbox_rename = function(error, type, find, gsub, savepath, gamepath)
+local build_sandbox_rename = function(realpath, error, type, find, gsub, savepath, gamepath)
 	return stead.hook(os.rename, function(f, oldname, newname, ...)
-		if not check_path(type, find, gsub, savepath, gamepath, oldname) or 
+		if not check_path(realpath, type, find, gsub, savepath, gamepath, oldname) or 
 			not check_path(type, find, gsub, savepath, gamepath, newname) then
 			error ("Access denied (rename): ".. oldname .. ', '.. newname, 3);
 			return false
@@ -3372,9 +3369,9 @@ local build_sandbox_rename = function(error, type, find, gsub, savepath, gamepat
 	end)
 end
 
-local build_sandbox_output = function(error, type, find, gsub, savepath, gamepath)
+local build_sandbox_output = function(realpath, error, type, find, gsub, savepath, gamepath)
 	return stead.hook(io.output, function(f, path, ...)
-		if not check_path(type, find, gsub, savepath, gamepath, path) then
+		if not check_path(realpath, type, find, gsub, savepath, gamepath, path) then
 			error ("Access denied (output): ".. path, 3);
 			return false
 		end
@@ -3382,16 +3379,16 @@ local build_sandbox_output = function(error, type, find, gsub, savepath, gamepat
 	end)
 end
 
-io.open = build_sandbox_open(error, type, string.find, string.gsub, 
+io.open = build_sandbox_open(instead_realpath, error, type, string.find, string.gsub, 
 		instead_savepath()..'/', instead_gamepath()..'/');
 
-os.remove = build_sandbox_remove(error, type, string.find, string.gsub, 
+os.remove = build_sandbox_remove(instead_realpath, error, type, string.find, string.gsub, 
 		instead_savepath()..'/', instead_gamepath()..'/');
 
-os.rename = build_sandbox_rename(error, type, string.find, string.gsub, 
+os.rename = build_sandbox_rename(instead_realpath, error, type, string.find, string.gsub, 
 		instead_savepath()..'/', instead_gamepath()..'/');
 
-io.output = build_sandbox_output(error, type, string.find, string.gsub, 
+io.output = build_sandbox_output(instead_realpath, error, type, string.find, string.gsub, 
 		instead_savepath()..'/', instead_gamepath()..'/');
 
 os.execute = function(s)
