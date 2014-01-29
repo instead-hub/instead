@@ -3327,7 +3327,9 @@ local check_path = function(realpath, type, find, gsub, savepath, gamepath, path
 	local s = find(path, spath..'/', 1, true)
 	if s ~= 1 then
 		spath = realpath(gamepath);
-		s = find(path, spath..'/', 1, true)
+		if spath then
+			s = find(path, spath..'/', 1, true)
+		end
 	end
 	if s ~= 1 then
 		return false
@@ -3383,16 +3385,16 @@ local build_sandbox_output = function(realpath, error, type, find, gsub, savepat
 end
 
 io.open = build_sandbox_open(instead_realpath, error, type, string.find, string.gsub, 
-		instead_savepath()..'/', instead_gamepath()..'/');
+		instead_savepath(), instead_gamepath());
 
 os.remove = build_sandbox_remove(instead_realpath, error, type, string.find, string.gsub, 
-		instead_savepath()..'/', instead_gamepath()..'/');
+		instead_savepath(), instead_gamepath());
 
 os.rename = build_sandbox_rename(instead_realpath, error, type, string.find, string.gsub, 
-		instead_savepath()..'/', instead_gamepath()..'/');
+		instead_savepath(), instead_gamepath());
 
 io.output = build_sandbox_output(instead_realpath, error, type, string.find, string.gsub, 
-		instead_savepath()..'/', instead_gamepath()..'/');
+		instead_savepath(), instead_gamepath());
 
 os.execute = function(s)
 	print ("Warning: trying to do os.execute: "..s);
