@@ -761,7 +761,7 @@ loop:
 	    /* LINTED We know q > path. */
 	    q - path);
 	p[1 + q - path] = '\0';
-#ifdef unix
+#if defined(unix) && !defined(S60)
 	/*
 	 * If this component is a symlink, toss it and prepend link
 	 * target to unresolved path.
