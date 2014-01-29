@@ -2,7 +2,6 @@
 #ifndef CCAN_LIST_H
 #define CCAN_LIST_H
 
-#include <stdbool.h>
 #include <assert.h>
 #include <stddef.h>
 
@@ -369,7 +368,7 @@ void list_add_tail(struct list_head *h, struct list_node *n);
  *	assert(list_empty(&parent->children) == (parent->num_children == 0));
  */
 
-bool list_empty(const struct list_head *h);
+int list_empty(const struct list_head *h);
 
 /**
  * list_del - delete an entry from an (unknown) linked list.

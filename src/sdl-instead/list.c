@@ -26,7 +26,7 @@ void list_add_tail(struct list_head *h, struct list_node *n)
 	(void)list_debug(h);
 }
 
-bool list_empty(const struct list_head *h)
+int list_empty(const struct list_head *h)
 {
 	(void)list_debug(h);
 	return h->n.next == &h->n;
