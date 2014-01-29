@@ -3324,10 +3324,10 @@ local check_path = function(realpath, type, find, gsub, savepath, gamepath, path
 	if not spath then
 		return false
 	end
-	local s = find(path, spath, 1, true)
+	local s = find(path, spath..'/', 1, true)
 	if s ~= 1 then
 		spath = realpath(gamepath);
-		s = find(path, spath, 1, true)
+		s = find(path, spath..'/', 1, true)
 	end
 	if s ~= 1 then
 		return false
