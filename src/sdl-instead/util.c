@@ -664,13 +664,15 @@ int remove_dir(const char *path)
 
 char *getrealpath(const char *path, char *resolved)
 {
-	struct stat sb;
-	int idx = 0, nlnk = 0;
 	const char *q;
-	char *p, wbuf[2][PATH_MAX], *fres;
+	char *p, *fres;
 	size_t len;
+#ifdef unix
+	struct stat sb;
 	ssize_t n;
-
+	int idx = 0, nlnk = 0;
+	char wbuf[2][PATH_MAX];
+#endif
 	/* POSIX sez we must test for this */
 	if (path == NULL) {
 		return NULL;
