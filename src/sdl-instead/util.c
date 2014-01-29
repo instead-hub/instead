@@ -667,7 +667,7 @@ char *getrealpath(const char *path, char *resolved)
 	const char *q;
 	char *p, *fres;
 	size_t len;
-#ifdef unix
+#if defined(unix) && !defined(S60)
 	struct stat sb;
 	ssize_t n;
 	int idx = 0, nlnk = 0;
