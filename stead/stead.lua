@@ -3313,6 +3313,9 @@ end
 stead.sandbox = function()
 -- sandbox --
 local check_path = function(realpath, type, find, gsub, savepath, gamepath, path)
+	if not path then
+		return false
+	end
 	path = realpath(path)
 	if not path then
 		return false
@@ -3361,7 +3364,7 @@ end
 local build_sandbox_rename = function(realpath, error, type, find, gsub, savepath, gamepath)
 	return stead.hook(os.rename, function(f, oldname, newname, ...)
 		if not check_path(realpath, type, find, gsub, savepath, gamepath, oldname) or 
-			not check_path(type, find, gsub, savepath, gamepath, newname) then
+			not check_path(realpath, type, find, gsub, savepath, gamepath, newname) then
 			error ("Access denied (rename): ".. oldname .. ', '.. newname, 3);
 			return false
 		end
