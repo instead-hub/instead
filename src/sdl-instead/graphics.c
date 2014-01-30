@@ -1681,9 +1681,11 @@ int gfx_set_mode(int w, int h, int fs)
 		}
 	}
 
-	if (software_sw || !(Renderer = SDL_CreateRenderer(SDL_VideoWindow, -1, 
-		SDL_RENDERER_ACCELERATED | 
-		SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE))) {
+	if (software_sw || 
+		(!(Renderer = SDL_CreateRenderer(SDL_VideoWindow, -1, 
+		SDL_RENDERER_ACCELERATED | /*SDL_RENDERER_PRESENTVSYNC |*/ SDL_RENDERER_TARGETTEXTURE)) &&
+		!(Renderer = SDL_CreateRenderer(SDL_VideoWindow, -1, 
+		SDL_RENDERER_ACCELERATED)))) {
 		fprintf(stderr, "Fallback to software renderer.\n");
 		if (!(Renderer = SDL_CreateRenderer(SDL_VideoWindow, -1, SDL_RENDERER_SOFTWARE))) {
 			fprintf(stderr, "Unable to create renderer: %s\n", SDL_GetError());

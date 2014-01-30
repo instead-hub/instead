@@ -2,8 +2,9 @@
 
   * sandbox fixes;
   * be more compatible with lua 5.2;
+  * SDL2.0 gfx mode initialization;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 29 Jan 2014 19:42:00 +0400
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 30 Jan 2014 08:30:00 +0400
 
 2.0.1
 
