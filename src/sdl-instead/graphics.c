@@ -1424,7 +1424,7 @@ static SDL_Rect **SDL_ListModes(const SDL_PixelFormat * format, Uint32 flags)
 			return (SDL_Rect **) (-1);
 		}
 /*		fprintf(stderr, "Mode: %d %d %d %d\n", bpp, SDL_BITSPERPIXEL(mode.format), mode.w, mode.h); */
-		if (bpp < SDL_BITSPERPIXEL(mode.format)) {
+		if ((unsigned int)bpp < SDL_BITSPERPIXEL(mode.format)) {
 			continue;
 		}
 		if (nmodes > 0 && modes[nmodes - 1]->w == mode.w
