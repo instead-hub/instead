@@ -1714,7 +1714,7 @@ static void sounds_reload(void)
 		channels[i] = NULL;
 		sound_reqs[i].snd = NULL;
 	}
-	input_clear(); /* all callbacks */
+	input_uevents(); /* all callbacks */
 }
 
 static void *_sound_get(const char *fname)
