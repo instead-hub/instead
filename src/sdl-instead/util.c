@@ -742,7 +742,7 @@ loop:
 		if (path[1] == '.' && q - path == 2) {
 			/* Trim the last component. */
 			if (p != resolved)
-				while (*--p != '/')
+				while (*--p != '/' && p != resolved)
 					continue;
 			path = q;
 			goto loop;
