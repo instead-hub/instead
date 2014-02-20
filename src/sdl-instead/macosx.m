@@ -207,3 +207,10 @@ char *dirpath(const char *path)
 {
 	return (char*)path;
 }
+
+int is_absolute_path(const char *path)
+{
+	if (!path || !*path)
+		return 0;
+	return (*path == '/');
+}

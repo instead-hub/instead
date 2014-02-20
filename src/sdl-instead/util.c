@@ -703,7 +703,7 @@ char *getrealpath(const char *path, char *resolved)
 	}
 
 	/* If relative path, start from current working directory. */
-	if (*path != '/') {
+	if (!is_absolute_path(path)) {
 		/* check for resolved pointer to appease coverity */
 		if (resolved && getdir(resolved, PATH_MAX) == NULL) {
 			p[0] = '.';

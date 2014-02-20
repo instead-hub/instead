@@ -320,3 +320,10 @@ char *dirpath(const char *path)
 	unix_path(fp);
 	return fp;
 }
+
+int is_absolute_path(const char *path)
+{
+	if (!path || !*path)
+		return 0;
+	return (*path == '/' || *path == '\\');
+}
