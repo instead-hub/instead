@@ -756,11 +756,20 @@ loop:
 		*p = '\0';
 		goto out;
 	}
-	p[0] = '/';
-	memcpy(&p[1], path,
-	    /* LINTED We know q > path. */
-	    q - path);
-	p[1 + q - path] = '\0';
+	if (p == resolved && is_absolute_path(path) && path[0] != '/') { /* win? */
+		memcpy(&p[0], path,
+		    q - path);
+		p[q - path] = '\0';
+		p += q - path;
+		path = q;
+		goto loop;
+	} else {
+		p[0] = '/';
+		memcpy(&p[1], path,
+		    /* LINTED We know q > path. */
+		    q - path);
+		p[1 + q - path] = '\0';
+	}
 #if defined(unix) && !defined(S60)
 	/*
 	 * If this component is a symlink, toss it and prepend link
