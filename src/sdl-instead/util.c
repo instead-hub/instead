@@ -710,6 +710,7 @@ char *getrealpath(const char *path, char *resolved)
 			p[1] = '\0';
 			goto out;
 		}
+		unix_path(resolved);
 		len = strlen(resolved);
 		if (len > 1)
 			p += len;
