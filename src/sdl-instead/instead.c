@@ -652,7 +652,6 @@ static int luaB_get_realpath(lua_State *L) {
 	path = getrealpath(realpath, outpath);
 	if (!path)
 		return 0;
-	unix_path(outpath);
 	lua_pushstring(L, outpath);
 	return 1;
 }
