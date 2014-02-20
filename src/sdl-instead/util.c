@@ -759,7 +759,7 @@ loop:
 	}
 	if (p == resolved 
 		&& is_absolute_path(path) 
-			&& path[0] != '/' && path[0] != '\\') { /* win? */
+			&& path[0] != '/') { /* win? */
 		memcpy(&p[0], path,
 		    q - path);
 		p[q - path] = '\0';
