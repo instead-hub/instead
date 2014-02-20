@@ -234,3 +234,10 @@ char* basename (char* path)
 		ptr += l + 1;
 	return ptr;
 }
+
+int is_absolute_path(const char *path)
+{
+	if (!path || !path[0] || !path[1])
+		return 0;
+	return (path[1] == ':');
+}

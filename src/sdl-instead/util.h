@@ -77,6 +77,7 @@ extern int remove_dir(const char *path);
 extern void tolow(char *p);
 extern int strlowcmp(const char *s, const char *d);
 extern char *getrealpath(const char *path, char *resolved);
+extern int is_absolute_path(const char *p);
 
 #ifndef PATH_MAX
 #define PATH_MAX 	4096
