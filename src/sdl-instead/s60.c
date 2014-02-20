@@ -237,7 +237,11 @@ char* basename (char* path)
 
 int is_absolute_path(const char *path)
 {
-	if (!path || !path[0] || !path[1])
+	if (!path || !path[0])
+		return 0;
+	if (path[0] == '/' || path[0] == '\\')
+		return 1;
+	if (!path[1])
 		return 0;
 	return (path[1] == ':');
 }
