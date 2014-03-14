@@ -495,6 +495,7 @@ char *game_menu_gen(void);
 
 void game_menu(int nr)
 {
+	mouse_reset(1);
 	cur_menu = nr;
 	game_menu_box(1, game_menu_gen());
 }
@@ -2315,7 +2316,6 @@ err:
 	game_instead_restart();
 #if 0
 	if (err_msg) {
-		mouse_reset(1);
 		game_menu(menu_warning);
 		return -1;
 	}
@@ -3378,10 +3378,8 @@ int game_loop(void)
 				game_menu(menu_games);
 */
 			} else if (!is_key(&ev, "f2") && curgame_dir) {
-				mouse_reset(1);
 				game_menu(menu_save);
 			} else if (!is_key(&ev, "f3") && curgame_dir) {
-				mouse_reset(1);
 				game_menu(menu_load);
 			} else if (!is_key(&ev, "f8") && curgame_dir && !menu_shown) {
 				if (game_saves_enabled())
@@ -3408,7 +3406,6 @@ int game_loop(void)
 #ifdef ANDROID
 				break;
 #else
-				mouse_reset(1);
 				game_menu(menu_askquit);
 #endif
 			} else if ((alt_pressed | control_pressed) && (!is_key(&ev, "q") || !is_key(&ev, "f4"))) {
@@ -3570,7 +3567,6 @@ int game_loop(void)
 		}
 		game_cursor(CURSOR_ON);
 		if (err_msg) {
-			mouse_reset(1);
 			game_menu(menu_warning);
 		}
 		game_gfx_commit();
