@@ -205,7 +205,7 @@ theend = room {
 	dsc = [[Com a ajuda do menu você pode escolher um jogo, salvar ou carregar o seu estado, ou fazer outras coisas. Para abrir o menu tecle "Esc" ou clique no ícone do menu à direita no fundo da página.^^
 		Agora você está pronto para jogar. Boa sorte!!!^^
 		Baixe jogos aqui: ]]..txtu("http://instead-games.sourceforge.net/")..[[^^
-		O tutorial usa o tema "The Titan Turrican" de svenzzon.]],
+		O tutorial usa o tema "Instead game-engine" de svenzzon.]],
 	obj = { vway('keys', 'Ver {lista de atalhos de teclado}.', 'help')},
 };
 

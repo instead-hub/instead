@@ -41,7 +41,8 @@ main = room {
 		img('ua.png')..' '..[[{ua|Українська}^]]..
 		img('es.png')..' '..[[{es|Español}^]]..
 		img('br.png')..' '..[[{pt|Português}^]]..
-		img('it.png')..' '..[[{it|Italiano}]]);
+		img('it.png')..' '..[[{it|Italiano}^]]..
+		img('fr.png')..' '..[[{fr|français}]]);
 	obj = {
 		xact("ru", code [[ gamefile('main-ru.lua', true) ]]);
 		xact("en", code [[ gamefile('main-en.lua', true) ]]);
@@ -49,5 +50,6 @@ main = room {
 		xact("es", code [[ gamefile('main-es.lua', true) ]]);
 		xact("it", code [[ gamefile('main-it.lua', true) ]]);
 		xact("pt", code [[ gamefile('main-pt.lua', true) ]]);
+		xact("fr", code [[ gamefile('main-fr.lua', true) ]]);
 	}
 }
