@@ -233,7 +233,7 @@ theend = room {
 		натисніть мишею на символ меню (справа знизу).^^
 		Тепер Ви готові до гри. Хай щастить!!!^^
 		Ігри для INSTEAD можно завантажити тут: ]]..txtu("http://instead.syscall.ru")..[[^^
-		Для навчання використан трек Instead game-engine вiд svenzzon.]],
+		Для навчання використан трек "Instead game-engine" вiд svenzzon.]],
 	obj = { vway('keys', 'Подивитись {список клавіш}.', 'help')},
 };
 
