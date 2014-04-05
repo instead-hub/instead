@@ -1212,6 +1212,28 @@ err:
 	return 0;
 }
 
+static int luaB_colorkey_sprite(lua_State *L) {
+	img_t s;
+	color_t  col;
+
+	const char *src = luaL_optstring(L, 1, NULL);
+	const char *color = luaL_optstring(L, 2, NULL);
+
+	if (color)
+		gfx_parse_color(color, &col);
+
+	if (!src)
+		return 0;
+	s = cache_lookup(gfx_image_cache(), src);
+	if (!s)
+		return 0;
+	if (color)
+		gfx_set_colorkey(s, col);
+	else 
+		gfx_unset_colorkey(s);
+	return 0;
+}
+
 static int luaB_dup_sprite(lua_State *L) {
 	_spr_t *sp;
 	img_t s;
@@ -1788,6 +1810,7 @@ static const luaL_Reg base_funcs[] = {
 	{"instead_sprite_fill", luaB_fill_sprite},
 	{"instead_sprite_dup", luaB_dup_sprite},
 	{"instead_sprite_alpha", luaB_alpha_sprite},
+	{"instead_sprite_colorkey", luaB_colorkey_sprite},
 	{"instead_sprite_size", luaB_sprite_size},
 	{"instead_sprite_scale", luaB_scale_sprite},
 	{"instead_sprite_rotate", luaB_rotate_sprite},
