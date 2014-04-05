@@ -842,6 +842,27 @@ img_t gfx_alpha_img(img_t src, int alpha)
 	return img;
 }
 
+void gfx_set_colorkey(img_t src, color_t col)
+{
+	Uint32 c = SDL_MapRGB(Surf(src)->format, col.r, col.g, col.b);
+#if SDL_VERSION_ATLEAST(2,0,0)
+	SDL_SetColorKey(Surf(src), SDL_TRUE, c);
+#else
+	SDL_SetColorKey(Surf(src), SDL_SRCCOLORKEY, c);
+#endif
+/*	gfx_unset_alpha(src); */
+}
+
+void gfx_unset_colorkey(img_t src)
+{
+#if SDL_VERSION_ATLEAST(2,0,0)
+	SDL_SetColorKey(Surf(src), SDL_FALSE, 0);
+#else
+	SDL_SetColorKey(Surf(src), 0, 0);
+#endif
+/*	gfx_set_alpha(src, SDL_ALPHA_OPAQUE); */
+}
+
 void	gfx_set_alpha(img_t src, int alpha)
 {
 #if SDL_VERSION_ATLEAST(1,3,0)

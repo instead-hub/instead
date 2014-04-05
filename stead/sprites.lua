@@ -18,6 +18,7 @@ stead.sprite_load = instead_sprite_load
 stead.sprite_free = instead_sprite_free
 stead.sprite_size = instead_sprite_size
 stead.sprites_free = instead_sprites_free
+stead.sprite_colorkey = instead_sprite_colorkey
 
 sprite = {
 	nam = 'sprites';
@@ -46,6 +47,9 @@ sprite = {
 	end;
 	alpha = function(name, alpha, ...)
 		return stead.sprite_alpha(name, alpha, ...);
+	end;
+	colorkey = function(name, color, ...)
+		return stead.sprite_colorkey(name, color, ...);
 	end;
 	dup = function(name, ...)
 		return stead.sprite_dup(name, ...);
