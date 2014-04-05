@@ -12,6 +12,7 @@ install:
 	$(INSTALL) xact.lua $(DESTDIR)$(STEADPATH)/xact.lua
 	$(INSTALL) input.lua $(DESTDIR)$(STEADPATH)/input.lua
 	$(INSTALL) click.lua $(DESTDIR)$(STEADPATH)/click.lua
+	$(INSTALL) events.lua $(DESTDIR)$(STEADPATH)/events.lua
 	$(INSTALL) dbg.lua $(DESTDIR)$(STEADPATH)/dbg.lua
 	$(INSTALL) vars.lua $(DESTDIR)$(STEADPATH)/vars.lua
 	$(INSTALL) prefs.lua $(DESTDIR)$(STEADPATH)/prefs.lua
