@@ -940,9 +940,11 @@ void game_release_theme(void)
 	menu = menubg = NULL;
 	gfx_update(0, 0, game_theme.w, game_theme.h);
 }
+static int game_event(const char *ev);
 
 void game_done(int err)
 {
+	game_event("quit");
 	gfx_del_timer(timer_han);
 	timer_han = NULL_TIMER;
 	if ((opt_autosave & 1) && curgame_dir && !err)
@@ -1313,7 +1315,9 @@ int game_menu_box_width(int show, const char *txt, int width)
 
 int game_menu_box(int show, const char *txt)
 {
-	int w = 0;
+	int w = 0, rc;
+	if (show)
+		game_event("pause");
 	if (cur_menu == menu_games) { /* hack a bit :( */
 		w = games_menu_maxw();
 		game_menu_gen();
@@ -1321,7 +1325,10 @@ int game_menu_box(int show, const char *txt)
 		w = themes_menu_maxw();
 		game_menu_gen();
 	}
-	return game_menu_box_width(show, txt, w);
+	rc = game_menu_box_width(show, txt, w);
+	if (!show)
+		game_event("resume");
+	return rc;
 }
 
 int check_new_place(char *title)
@@ -2493,13 +2500,15 @@ void mouse_reset(int hl)
 
 void menu_toggle(int menu)
 {
+	int on = menu_shown;
 	mouse_reset(1);
-	menu_shown ^= 1;
-	if (!menu_shown)
+	on ^= 1;
+	if (!on)
 		cur_menu = menu_main;
 	else if (menu != -1)
 		cur_menu = menu;
-	game_menu_box(menu_shown, game_menu_gen());
+	game_menu_box(on, game_menu_gen());
+	menu_shown = on;
 }
 
 static int scroll_pup(int id)
@@ -3180,6 +3189,28 @@ static int game_bg_click(int x, int y, int *ox, int *oy)
 	return 0;
 }
 
+static int game_event(const char *ev)
+{
+	char *p; int rc;
+	struct instead_args args[8];
+	if (!curgame_dir)
+		return -1;
+	if (game_paused())
+		return -1;
+	args[0].val = "event"; args[0].type = INSTEAD_STR;
+	args[1].val = ev; args[1].type = INSTEAD_STR;
+	args[2].val = NULL;
+	if (instead_function("stead.input", args)) {
+		instead_clear();
+		return -1;
+	}
+	p = instead_retval(0); instead_clear();
+	if (!p)
+		return -1;
+	rc = game_cmd(p, 0); free(p);
+	return (rc)?-1:0;
+}
+
 static int game_input(int down, const char *key, int x, int y, int mb)
 {
 	char *p;
@@ -3367,16 +3398,11 @@ int game_loop(void)
 			) {
 				if (use_xref)
 					disable_use();
-				else	
+				else
 					menu_toggle(-1);
 			} else if (!is_key(&ev, "f1")) {
 				if (!menu_shown)
 					menu_toggle(-1);
-/*
-			} else if (!is_key(&ev, "f6")) {
-				mouse_reset(1);
-				game_menu(menu_games);
-*/
 			} else if (!is_key(&ev, "f2") && curgame_dir) {
 				game_menu(menu_save);
 			} else if (!is_key(&ev, "f3") && curgame_dir) {
