@@ -9,6 +9,7 @@ install:
 	copy xact.lua ..\bin\stead
 	copy input.lua ..\bin\stead
 	copy click.lua ..\bin\stead
+	copy events.lua ..\bin\stead
 	copy dbg.lua ..\bin\stead
 	copy vars.lua ..\bin\stead
 	copy prefs.lua ..\bin\stead
