@@ -3017,12 +3017,20 @@ stead.get_sound_loop = function()
 	return game._sound_loop
 end
 
-stead.stop_sound = function(chan)
+stead.stop_sound = function(chan, fo)
 	if not stead.tonum(chan) then
-		stead.set_sound('@');
+		if stead.tonum(fo) then
+			stead.set_sound('@-1,'..stead.tostr(fo));
+		else
+			stead.set_sound('@-1');
+		end
 		return
 	end
-	stead.add_sound('@'..stead.tostr(chan));
+	if stead.tonum(fo) then
+		stead.add_sound('@'..stead.tostr(chan)..','..stead.tostr(fo));
+	else
+		stead.add_sound('@'..stead.tostr(chan));
+	end
 end
 
 stead.add_sound = function(s, chan, loop)
