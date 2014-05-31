@@ -4,8 +4,9 @@
   * fix in highlighting links;
   * sprites colorkey function;
   * events module (pause, resume, quit events);
+  * stead.stop_sound/sound.stop second [fadeout] parameter;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 14 Mar 2014 23:31:00 +0400
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 31 May 2014 13:53:00 +0400
 
 2.0.3
 
