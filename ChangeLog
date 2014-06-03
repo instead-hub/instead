@@ -6,7 +6,7 @@
   * events module (pause, resume, quit events);
   * stead.stop_sound/sound.stop second [fadeout] parameter;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 31 May 2014 13:53:00 +0400
+ -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 10 Jun 2014 17:28:00 +0400
 
 2.0.3
 
