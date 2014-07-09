@@ -1952,6 +1952,8 @@ int instead_init_lua(const char *path)
 	instead_package(path);
 	instead_platform();
 	instead_lang();
+	if (debug_sw)
+		instead_eval("DEBUG=true"); instead_clear();
 	return 0;
 }
 
