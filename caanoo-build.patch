@@ -2,7 +2,7 @@ diff -Nur instead-1.9.2/Rules.caanoo instead-1.9.2-caanoo/Rules.caanoo
 --- instead-1.9.2/Rules.caanoo	1970-01-01 03:00:00.000000000 +0300
 +++ instead-1.9.2-caanoo/Rules.caanoo	2014-01-25 18:42:21.000000000 +0400
 @@ -0,0 +1,45 @@
-+VERSION := 2.1.0
++VERSION := 2.1.1
 +
 +PREFIX  = /home/peter/Devel/GPH_SDK/tools/gcc-4.2.4-glibc-2.7-eabi
 +CC        = $(PREFIX)/bin/arm-gph-linux-gnueabi-gcc
@@ -51,7 +51,7 @@ diff -Nur instead-1.9.2/instead/Rules.caanoo instead-1.9.2-caanoo/instead/Rules.
 --- instead-1.9.2/instead/Rules.caanoo	1970-01-01 03:00:00.000000000 +0300
 +++ instead-1.9.2-caanoo/instead/Rules.caanoo	2014-01-25 18:42:21.000000000 +0400
 @@ -0,0 +1,44 @@
-+VERSION := 2.1.0
++VERSION := 2.1.1
 +
 +PREFIX  = /home/peter/Devel/GPH_SDK/tools/gcc-4.2.4-glibc-2.7-eabi
 +CC        = $(PREFIX)/bin/arm-gph-linux-gnueabi-gcc
