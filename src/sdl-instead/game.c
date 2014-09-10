@@ -2306,7 +2306,8 @@ inv:
 	}
 	{
 		int x, y;
-		if (!m_restore || mouse_restore()) {
+		if (!(flags & GAME_CMD_NOHL) && 
+			(!m_restore || mouse_restore())) {
 			gfx_cursor(&x, &y);
 			game_highlight(x, y, 1); /* highlight new scene, to avoid flickering */
 		}
@@ -3209,7 +3210,7 @@ static int game_event(const char *ev)
 	p = instead_retval(0); instead_clear();
 	if (!p)
 		return -1;
-	rc = game_cmd(p, 0); free(p);
+	rc = game_cmd(p, GAME_CMD_NOHL); free(p);
 	return (rc)?-1:0;
 }
 

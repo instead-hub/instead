@@ -89,6 +89,7 @@ extern int	game_select(const char *name);
 
 #define GAME_CMD_CLICK 1
 #define GAME_CMD_FILE  2
+#define GAME_CMD_NOHL  4
 
 extern int	game_cmd(char *cmd, int flags);
 
