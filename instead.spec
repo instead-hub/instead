@@ -1,6 +1,6 @@
 Summary:	simple text adventures/visual novels engine and game
 Name:		instead
-Version:	2.1.1
+Version:	2.1.2
 Release:	1%{?dist}
 License:	MIT
 URL:		http://instead.sourceforge.net
