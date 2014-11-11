@@ -186,7 +186,7 @@ dbg_list_inv = function()
 		if rc ~='' then rc = rc..'^' end
 		o = stead.ref(o)
 		rc = stead.cat(rc, stead.par(' ', 'Id: '..stead.tostr(o.id)..', '..
-			stead.tost(stead.deref(o))..': '..stead.tostr(stead.call(o, 'nam'))..dis(o)..tak(o)));
+			stead.tostr(stead.deref(o))..': '..stead.tostr(stead.call(o, 'nam'))..dis(o)..tak(o)));
 	end
 	if rc == '' then return end
 --	seen('disp')._txt = rc
