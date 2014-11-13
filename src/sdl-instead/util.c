@@ -223,6 +223,14 @@ int process_cmd(char *n, char *v, struct parser *cmd_parser)
 	return -1;
 }
 
+static size_t reduce_size_by_line(size_t size, char *line)
+{
+	size_t len = strlen(line);
+	if (size <= len)
+		return 0;
+	return size - len;
+}
+
 static int fgetsesc(char *oline, size_t size, char *(*getl)(void *p, char *s, int size), void *fp)
 {
 	int nr = 0;
@@ -239,9 +247,9 @@ static int fgetsesc(char *oline, size_t size, char *(*getl)(void *p, char *s, in
 		if (line[i - 1] == '\\') {
 			line[i - 1] = 0;
 			strncat(oline, line, size);
+			size = reduce_size_by_line(size, line);
 			line[0] = 0;
-			size -= strlen(line);
-			if (size <= 0)
+			if (size == 0)
 				return nr;
 		} else {
 			break;
