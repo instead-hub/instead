@@ -227,6 +227,7 @@ static int fgetsesc(char *oline, size_t size, char *(*getl)(void *p, char *s, in
 {
 	int nr = 0;
 	char line[4096];
+	size_t len;
 	*oline = 0;
 	*line = 0;
 	while (getl(fp, line, sizeof(line))) {
@@ -239,10 +240,11 @@ static int fgetsesc(char *oline, size_t size, char *(*getl)(void *p, char *s, in
 		if (line[i - 1] == '\\') {
 			line[i - 1] = 0;
 			strncat(oline, line, size);
-			line[0] = 0;
-			size -= strlen(line);
-			if (size <= 0)
+			len = strlen(line);
+			if (len >= size)
 				return nr;
+			size -= len;
+			line[0] = 0;
 		} else {
 			break;
 		}
