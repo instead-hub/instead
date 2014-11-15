@@ -1,13 +1,13 @@
 2.2.0
 
   * fix in debugger;
-  * fix in event module;
+  * fix in links hl with events module;
   * fix in fr language;
   * fix segfault in fgetsesc;
+  * rnd is now Tiny Mersenne Twister algo;
   * scr.fx.scalable & 4 -> disable font scaling;
   * stead.life_moved() to detect moves in life;
-  * stead.last_disp() function;
-  * rnd is now Tiny Mersenne Twister algo;
+  * stead.last_disp() added;
   * stead.rndseed() added;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 11 Nov 2014 09:30:00 +0300
