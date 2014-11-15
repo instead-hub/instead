@@ -105,6 +105,19 @@ stead.last_act = function(s)
 	return r
 end
 
+stead.last_disp = function(s)
+	local r = game._lastdisp
+
+	if s ~= nil then
+		if not s then
+			game._lastdisp = nil
+		else
+			game._lastdisp = s
+		end
+	end
+	return r
+end
+
 stead.need_scene = function(s)
 	if s == nil then
 		NEED_SCENE = true
@@ -1838,10 +1851,10 @@ stead.do_ini = function(self, load)
 
 	stead.me():tag();
 	if not self.showlast then
-		self._lastdisp = nil;
+		stead.last_disp(false)
 	end
 	stead.initialized = true
-	return stead.par('',v, self._lastdisp); --stead.par('^^',v);
+	return stead.par('',v, stead.last_disp()); --stead.par('^^',v);
 end
 
 stead.game_ini = function(self)
@@ -2428,7 +2441,7 @@ iface = {
 			ACTION_TEXT, av, vv, pv);
 
 		if stead.state then
-			game._lastdisp = vv
+			stead.last_disp(vv)
 			stead.last_act(ACTION_TEXT)
 		end
 		if vv == nil then -- nil is error
