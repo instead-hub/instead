@@ -188,7 +188,9 @@ extern int theme_relative;
 #define INV_ALIGN_SET(v) ((v)<<8)
 
 #define DIRECT_MODE (game_theme.gfx_mode == GFX_MODE_DIRECT)
-#define SCALABLE_THEME (game_theme.gfx_scalable)
+
+#define SCALABLE_FONT (!(game_theme.gfx_scalable & 4))
+#define SCALABLE_THEME (game_theme.gfx_scalable & 3)
 #define SCALABLE_THEME_SMOOTH (game_theme.gfx_scalable & 1)
 
 #endif

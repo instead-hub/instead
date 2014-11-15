@@ -2,7 +2,8 @@
 
   * fix in debugger;
   * fix in event module;
-  * fr language;
+  * fix in fr language;
+  * scr.fx.scalable & 4 -> disable font scaling
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 11 Nov 2014 09:30:00 +0300
 

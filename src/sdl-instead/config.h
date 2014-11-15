@@ -25,9 +25,7 @@
 #ifndef __CONFIG_H_INCLUDED
 #define __CONFIG_H_INCLUDED
 
-#define FONT_SZ(v) ((v) * (1.0f + ((0.1f * opt_fsize))))
-
-
+#define FONT_SZ(v) (SCALABLE_FONT?((v) * (1.0f + ((0.1f * opt_fsize)))):(v))
 
 #define KBD_SMART	0
 #define KBD_NORMAL	1
