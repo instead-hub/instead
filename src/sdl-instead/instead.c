@@ -518,11 +518,11 @@ static int loadfile (lua_State *L, const char *filename, int enc) {
 	else
 		readstatus = idf_error(lf.idff);
 
-	if (filename) {
-		if (lf.f)
-			fclose(lf.f);  /* close file (even in case of errors) */
+	if (lf.f)
+		fclose(lf.f);  /* close file (even in case of errors) */
+	else
 		idf_close(lf.idff);
-	}
+
 	if (readstatus) {
 		lua_settop(L, fnameindex);  /* ignore results from `lua_load' */
 		return errfile(L, "read", fnameindex);

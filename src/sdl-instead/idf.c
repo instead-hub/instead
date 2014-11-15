@@ -237,9 +237,15 @@ static int idf_tree(const char *path, struct list_head *list, const char *fname)
 		if (!access(dirpath(path), R_OK) && fname) {
 			FILE *fd; idf_item_t *i; 
 			fd = fopen(dirpath(path), "rb");
-			i = malloc(sizeof(idf_item_t));
-			if (!i)
+			if (!fd) {
+				fprintf(stderr, "Can not open file: '%s'\n", path);
 				return -1;
+			}
+			i = malloc(sizeof(idf_item_t));
+			if (!i) {
+				fclose(fd);
+				return -1;
+			}
 			/* list_head_init(&i->list); */
 			if (!(i->path = strdup(fname)))
 				goto err;
