@@ -1580,8 +1580,8 @@ end
 stead.game_life = function(self)
 	local i,o
 	local av,v
-	local was_moved
 	stead.in_life_call = true;
+	stead.in_life_move = false
 	stead.lifes_op = {}; -- lifes to on/off
 	stead.PLAYER_MOVED = PLAYER_MOVED
 	for i,o in stead.opairs(self.lifes) do
@@ -1594,7 +1594,7 @@ stead.game_life = function(self)
 			if PLAYER_MOVED then -- clear life output, but not current
 				av = nil
 				v = nil
-				was_moved = true
+				stead.in_life_move = true
 				ACTION_TEXT = vv;
 			elseif pre then
 				av = stead.par(stead.space_delim, av, vv);
@@ -1603,7 +1603,7 @@ stead.game_life = function(self)
 			end
 		end
 	end
-	PLAYER_MOVED = was_moved
+	PLAYER_MOVED = stead.in_life_move
 	if not PLAYER_MOVED then PLAYER_MOVED = stead.PLAYER_MOVED end
 	stead.PLAYER_MOVED = nil
 	stead.in_life_call = false;
@@ -1620,6 +1620,10 @@ end
 
 stead.player_moved = function()
 	return PLAYER_MOVED or stead.PLAYER_MOVED
+end
+
+stead.life_moved = function()
+	return stead.in_life_move
 end
 
 stead.check_list = function(k, v, p)
