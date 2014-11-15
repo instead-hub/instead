@@ -3,6 +3,7 @@
   * fix in debugger;
   * fix in event module;
   * fix in fr language;
+  * fix segfault in fgetsesc;
   * scr.fx.scalable & 4 -> disable font scaling
   * stead.life_moved() to detect moves in life
   * stead.last_disp() function
