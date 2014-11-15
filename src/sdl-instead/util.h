@@ -25,6 +25,7 @@
 #ifndef __UTIL_H_INCLUDED
 #define __UTIL_H_INCLUDED
 #include "idf.h"
+#include "tinymt32.h"
 
 typedef int (*parser_fn)(const char *v, void *data);
 
@@ -78,6 +79,11 @@ extern void tolow(char *p);
 extern int strlowcmp(const char *s, const char *d);
 extern char *getrealpath(const char *path, char *resolved);
 extern int is_absolute_path(const char *p);
+
+extern void mt_random_init(void);
+extern void mt_random_seed(unsigned long seed);
+extern unsigned long mt_random(void);
+extern double mt_random_double(void);
 
 #ifndef PATH_MAX
 #define PATH_MAX 	4096

@@ -1767,11 +1767,35 @@ static int luaB_maxn (lua_State *L) {
 	return 1;
 }
 
+static int luaB_srandom(lua_State *L) {
+	mt_random_seed(luaL_optnumber(L, 1, time(NULL)));
+	return 0;
+}
+
+static int luaB_random(lua_State *L) {
+	lua_Number rt;
+	unsigned long r = 0;
+	long a = luaL_optnumber(L, 1, -1);
+	long b = luaL_optnumber(L, 2, -1);
+	r = mt_random();
+	if (a >=0 && b >= a) {
+		rt = a + (r % (b - a + 1));
+	} else if (a >=0 && b == -1) {
+		rt = (r % a) + 1;
+	} else {
+		rt = mt_random_double();
+	}
+	lua_pushnumber(L, rt);
+	return 1;
+}
+
 static const luaL_Reg base_funcs[] = {
 	{"doencfile", luaB_doencfile},
 	{"dofile", luaB_dofile},
 	{"print", luaB_print}, /* for some mystic, it is needed in win version (with -debug) */
 	{"table_get_maxn", luaB_maxn},
+	{"instead_random", luaB_random},
+	{"instead_srandom", luaB_srandom},
 
 	{"instead_readdir", dir_iter_factory},
 	{"instead_sound", luaB_is_sound},
@@ -1973,6 +1997,7 @@ int instead_init(const char *path)
 	/* cleanup Lua */
 	instead_clear();
 	srand(time(NULL));
+	mt_random_init();
 	return 0;
 }
 

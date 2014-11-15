@@ -16,6 +16,7 @@ SET(INSTEAD_SRCS
 	menu.c
 	sound.c
 	themes.c
+	tinymt32.c
 	unpack.c
 	unzip.c
 	util.c

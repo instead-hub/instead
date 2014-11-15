@@ -813,3 +813,25 @@ out:
 	free(fres);
 	return NULL;
 }
+
+static tinymt32_t trandom;
+
+void mt_random_init(void) 
+{
+	tinymt32_init(&trandom, time(NULL));
+}
+
+void mt_random_seed(unsigned long seed) 
+{
+	tinymt32_init(&trandom, seed);
+}
+
+unsigned long mt_random(void) 
+{
+	return tinymt32_generate_uint32(&trandom);
+}
+
+double mt_random_double(void)
+{
+	return tinymt32_generate_32double(&trandom);
+}

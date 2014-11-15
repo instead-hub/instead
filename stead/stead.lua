@@ -18,6 +18,8 @@ stead = {
 	mouse_filter = instead_mouse_filter, 
 	menu_toggle = instead_menu_toggle,
 	set_timer = instead_timer,
+	random = instead_random,
+	randomseed = instead_srandom,
 	next = next,
 	math = math,
 	io = io,
@@ -2695,11 +2697,18 @@ function back()
 end
 stead.back = back;
 
-stead.rnd = function(m)
-	if not m then
-		return stead.math.random();
+stead.rnd = function(...)
+	if stead.random then
+		return stead.random(...)
 	end
-	return stead.math.random(m);
+	return stead.math.random(...);
+end
+
+stead.rndseed = function(...)
+	if stead.randomseed then
+		return stead.randomseed(...)
+	end
+	stead.math.randomseed(...)
 end
 
 function taken(obj)
