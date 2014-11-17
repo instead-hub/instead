@@ -58,21 +58,33 @@ function font(name, size, scale)
 				t = 0
 			end
 			while true do
-				s, e = txt:find("[ \t\n^]+", ss);
-				local w = txt:sub(ss, s);
+				local start = ss
+				while true do
+					s, e = txt:find("[ \\\t\n^]+", ss);
+					if s and txt:sub(s, s) == '\\' then
+						ss = s + 2
+					else
+						break
+					end
+				end
+				ss = start
+				local w
+				if s then s = s - 1 end
+				w = txt:sub(ss, s);
 				local c
 				if w then
 					if s then
-						c = txt:sub(s, s)
+						c = txt:sub(s + 1, e)
 					end
-					w = w:gsub("[ \t%^\n]+$", "");
+					w = w:gsub("\\([^\\])", "%1")
+					w = w:gsub("[ \t\n]+$", "");
 				end
 				if w and w ~= '' and w ~= '\n' then
 					st:cache_add(w, color, t)
 					res = res .. img(st:cache_get(w, color, t).img);
 				end
 				if not e then break end
-				ss = s + 1
+				ss = e + 1
 				if not c then c = '' end
 				res = res .. c;
 			end
