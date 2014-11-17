@@ -2206,8 +2206,8 @@ int game_cmd(char *cmd, int flags)
 	if (game_theme.gfx_mode != GFX_MODE_EMBEDDED) {
 		txt_layout_set(el_layout(el_ways), waystr);
 		txt_layout_size(el_layout(el_ways), NULL, &ways_h);
-		if (ways_h == 0)
-			ways_h = game_theme.font_size * game_theme.font_height / 2;
+		if (ways_h == 0 && pict_h != 0)
+			pict_h += game_theme.font_size * game_theme.font_height / 2;
 	} 
 	old_off = txt_box_off(el_box(el_scene));
 	if (GFX_MODE(game_theme.gfx_mode) == GFX_MODE_EMBEDDED) {
