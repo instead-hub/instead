@@ -46,3 +46,4 @@ INSTEAD binaries may contain code taken from the following projects:
     zlib (Zlib License)
     list routines (MIT) (http://ccodearchive.net/info/list.html)
     LuaFileSystem (http://keplerproject.github.io/luafilesystem/license.html)
+    tinymt32 (The 3-clause BSD License)
