@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+function do_pandoc()
+{
+	pandoc --toc --highlight-style=tango -f html $@ -t latex --latex-engine=xelatex  -V sansfont="Verdana" -V mainfont="Verdana" -V monofont="Liberation Mono" --variable fontsize=12pt --template=template.tex -V documentclass=extarticle
+}
+
 function build_html()
 {
 	wget "http://instead.syscall.ru/wiki/doku.php?id=$1&do=export_xhtml" -O "$2".html.1
@@ -34,12 +39,12 @@ function build_manual()
 {
 	build_html "ru:gamedev:documentation" instead-manual
 	local d=`date +%d.%m.%y`
-	pandoc --toc --highlight-style=tango -f html instead-manual.html.1 -t latex --template=template.tex  | sed -e 's/\\date{}/\\date{'$d'}/' -e 's/\\author{}/\\author{Петр Косых}/' -e 's/{\\char13}/'"'"'/g' -e 's/ //g' -e 's/\\title{.*}/\\title{Руководство INSTEAD}/' -e 's/WRAPCENTERMAGICSTART/\\begin{Info}/g' -e 's/WRAPCENTERMAGICEND/\\end{Info}/g' > "instead-manual.tex"
+	do_pandoc "instead-manual.html.1" | sed -e 's/\\date{}/\\date{'$d'}/' -e 's/\\author{}/\\author{Петр Косых}/' -e 's/{\\char13}/'"'"'/g' -e 's/ //g' -e 's/\\title{.*}/\\title{Руководство INSTEAD}/' -e 's/WRAPCENTERMAGICSTART/\\begin{Info}/g' -e 's/WRAPCENTERMAGICEND/\\end{Info}/g' > "instead-manual.tex"
 	rm -f instead-manual.html.1
 	rm -f *.toc *.aux *.out *.log
-	pdflatex instead-manual.tex
-	pdflatex instead-manual.tex
-	pdflatex instead-manual.tex
+	xelatex instead-manual.tex -o instead-manual.pdf
+	xelatex instead-manual.tex -o instead-manual.pdf
+	xelatex instead-manual.tex -o instead-manual.pdf
 	rm -f *.toc *.aux *.out *.log instead-manual.tex
 }
 
@@ -52,7 +57,7 @@ function build_modules()
 		mod2="$mod2$m.html.1 "
 	done
 	local d=`date +%d.%m.%y`
-	pandoc --toc --highlight-style=tango -f html $mod2 -t latex --template=template.tex | sed -e 's/ //g' | awk 'BEGIN {
+	do_pandoc $mod2 | sed -e 's/ //g' | awk 'BEGIN {
 			scr = 0;
 		}
 		{
@@ -69,11 +74,10 @@ function build_modules()
 		}' | sed -e 's/\\date{}/\\date{'$d'}/' -e 's/\\title{.*}/\\title{Модули INSTEAD}/' -e 's/{\\char13}/'"'"'/g'  -e 's/WRAPCENTERMAGICSTART/\\begin{Info}/g' -e 's/WRAPCENTERMAGICEND/\\end{Info}/g' > instead-modules.tex
 	rm -f $mod2
 	rm -f *.toc *.aux *.out *.log
-	pdflatex instead-modules.tex
-	pdflatex instead-modules.tex
-	pdflatex instead-modules.tex
+	xelatex instead-modules.tex -o instead-manual.pdf
+	xelatex instead-modules.tex -o instead-manual.pdf
+	xelatex instead-modules.tex -o instead-modules.pdf
 	rm -f *.toc *.aux *.out *.log instead-modules.tex
 }
 build_manual
 build_modules
-

@@ -1,15 +1,18 @@
 \documentclass[$if(fontsize)$$fontsize$,$endif$$if(lang)$$lang$,$endif$]{$documentclass$}
 \usepackage[utf8]{inputenc}
+\usepackage{cmap}
 \usepackage[T2A]{fontenc}
-\usepackage[russian,english]{babel}
+\usepackage[english,russian]{babel}
 \usepackage{indentfirst}
 \usepackage{geometry}
 \usepackage{longtable}
+\usepackage[russian]{datetime}
 
 \usepackage{framed}
 \usepackage{color}
 \definecolor{shadecolor}{gray}{0.9}
 % \geometry{verbose,tmargin=1cm,bmargin=1cm,lmargin=1cm,rmargin=1cm,headheight=1cm,headsep=1cm,footskip=0.7cm}
+\geometry{verbose,tmargin=2cm,bmargin=3cm,lmargin=2.5cm,rmargin=2.5cm,headheight=1cm,headsep=1cm,footskip=0.7cm}
 \usepackage{ifxetex,ifluatex}
 \usepackage{fixltx2e} % provides \textsubscript
 % use microtype if available
@@ -147,8 +150,8 @@ $if(title)$
 \title{$title$}
 $endif$
 \author{$for(author)$$author$$sep$ \and $endfor$}
-\date{$date$}
-
+\date{}
+\sloppy
 \begin{document}
 $if(title)$
 \maketitle
