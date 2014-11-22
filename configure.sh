@@ -145,7 +145,7 @@ echo -n "Checking iconv...("
 echo -n "$cc /tmp/iconv-test.c -o iconv-test)..."
 
 if $cc /tmp/iconv-test.c -o /tmp/iconv-test >/dev/null 2>&1; then
-	CFLAGS="$CFLAGS -D_HAVE_ICONV"
+	CFLAGS="$CFLAGS -D_HAVE_ICONV -DLIBICONV_PLUG" # force FreeBSD to use iconv.h from base
 	echo "ok"
 elif $cc /tmp/iconv-test.c -liconv -o /tmp/iconv-test  >/dev/null 2>&1; then
 	CFLAGS="$CFLAGS -D_HAVE_ICONV"
