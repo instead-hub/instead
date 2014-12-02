@@ -213,6 +213,10 @@ int input(struct inp_event *inp, int wait)
 		game_running = 0;
 		return -1;
 	case SDL_KEYDOWN:	/* A key has been pressed */
+#if SDL_VERSION_ATLEAST(2,0,0)
+		if (event.key.repeat)
+			break;
+#endif
 		inp->type = KEY_DOWN; 
 		inp->code = event.key.keysym.scancode;
 		strncpy(inp->sym, SDL_GetKeyName(event.key.keysym.sym), sizeof(inp->sym));
