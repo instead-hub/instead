@@ -90,12 +90,20 @@ void push_user_event(void (*p) (void*), void *data)
 	SDL_PushEvent(&event);
 }
 
+#if SDL_VERSION_ATLEAST(2,0,0)
+static unsigned long last_press_ms = 0;
+static unsigned long last_repeat_ms = 0;
+#endif
+#define INPUT_REP_DELAY_MS 500
+#define INPUT_REP_INTERVAL_MS 30
 int input_init(void)
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
 	/* SDL_EnableKeyRepeat(500, 30); */ /* TODO ? */
+	last_press_ms = 0;
+	last_repeat_ms = 0;
 #else
-	SDL_EnableKeyRepeat(500, 30);
+	SDL_EnableKeyRepeat(INPUT_REP_DELAY_MS, INPUT_REP_INTERVAL_MS);
 #endif
 	m_focus = !!(SDL_GetAppState() & SDL_APPMOUSEFOCUS);
 	return 0;
@@ -214,8 +222,16 @@ int input(struct inp_event *inp, int wait)
 		return -1;
 	case SDL_KEYDOWN:	/* A key has been pressed */
 #if SDL_VERSION_ATLEAST(2,0,0)
-		if (event.key.repeat)
-			break;
+		if (event.key.repeat) {
+			if (gfx_ticks() - last_press_ms < INPUT_REP_DELAY_MS)
+				break;
+			if ((gfx_ticks() - last_repeat_ms) < INPUT_REP_INTERVAL_MS)
+				break;
+			last_repeat_ms = gfx_ticks();
+		} else {
+			last_press_ms = gfx_ticks();
+			last_repeat_ms = gfx_ticks();
+		}
 #endif
 		inp->type = KEY_DOWN; 
 		inp->code = event.key.keysym.scancode;
