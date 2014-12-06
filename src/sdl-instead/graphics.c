@@ -1830,6 +1830,9 @@ int gfx_video_init(void)
 		SDL_WM_SetIcon( icon, NULL );
 	}
 #endif
+#ifdef IOS
+	gfx_get_max_mode(&opt_mode[0], &opt_mode[1]);
+#endif
 	return 0;
 }
 

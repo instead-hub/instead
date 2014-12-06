@@ -96,6 +96,51 @@ static unsigned long last_repeat_ms = 0;
 #endif
 #define INPUT_REP_DELAY_MS 500
 #define INPUT_REP_INTERVAL_MS 30
+
+#ifdef IOS
+int HandleAppEvents(void *userdata, SDL_Event *event)
+{
+	switch (event->type) {
+	case SDL_APP_LOWMEMORY:
+		return 0;
+	case SDL_APP_WILLENTERBACKGROUND:
+		/* Prepare your app to go into the background.  Stop loops, etc.
+		This gets called when the user hits the home button, or gets a call.
+		*/
+		return 0;
+	case SDL_APP_DIDENTERBACKGROUND:
+		/* This will get called if the user accepted whatever sent your app to the background.
+		If the user got a phone call and canceled it, you'll instead get an SDL_APP_DIDENTERFOREGROUND event and restart your loops.
+		When you get this, you have 5 seconds to save all your state or the app will be terminated.
+		Your app is NOT active at this point.
+		*/
+		snd_pause(1);
+		m_minimized = 1;
+		return 0;
+	case SDL_APP_WILLENTERFOREGROUND:
+		/* This call happens when your app is coming back to the foreground.
+			Restore all your state here.
+		*/
+		return 0;
+	case SDL_APP_DIDENTERFOREGROUND:
+		/* Restart your loops here.
+		Your app is interactive and getting CPU again.
+		*/
+		snd_pause(0);
+		m_minimized = 0;
+		return 0;
+	case SDL_APP_TERMINATING:
+		cfg_save();
+		game_done(0);
+		gfx_video_done();
+		gfx_done();
+		return 0;
+	default:
+		/* No special processing, add it to the event queue */
+		return 1;
+	}
+}
+#endif
 int input_init(void)
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
@@ -106,6 +151,9 @@ int input_init(void)
 	SDL_EnableKeyRepeat(INPUT_REP_DELAY_MS, INPUT_REP_INTERVAL_MS);
 #endif
 	m_focus = !!(SDL_GetAppState() & SDL_APPMOUSEFOCUS);
+#ifdef IOS
+	SDL_SetEventFilter(HandleAppEvents, NULL);
+#endif
 	return 0;
 }
 

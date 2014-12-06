@@ -452,14 +452,14 @@ int game_menu_act(const char *a)
 		opt_click ^= 1;
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/mode++")) {
-#ifndef ANDROID
+#if !defined(ANDROID) && !defined(IOS)
 		if (gfx_next_mode(&opt_mode[0], &opt_mode[1]))
 			opt_mode[0] = opt_mode[1] = -1;
 		restart_needed = 1;
 		game_menu_box(1, game_menu_gen());
 #endif
 	} else if (!strcmp(a, "/mode--")) {	
-#ifndef ANDROID
+#if !defined(ANDROID) && !defined(IOS)
 		if (gfx_prev_mode(&opt_mode[0], &opt_mode[1]))
 			opt_mode[0] = opt_mode[1] = -1;
 		restart_needed = 1;
@@ -498,7 +498,7 @@ int game_menu_act(const char *a)
 		opt_fading ^= 1;
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/fs")) {
-#ifndef ANDROID
+#if !defined(ANDROID) && !defined(IOS)
 		restart_needed = 1;
 		opt_fs ^= 1;
 		game_menu_box(1, game_menu_gen());

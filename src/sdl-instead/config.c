@@ -27,23 +27,28 @@
 
 #if defined(ANDROID) || defined(S60) || defined(_WIN32_WCE) || defined(MAEMO)
 int opt_fsize = 12;
+#elif defined(IOS)
+int opt_fsize = 5;
 #else
 int opt_fsize = 0;
 #endif
+
 #if defined(MAEMO) || defined(ANDROID)
 int opt_fs = 1;
 int opt_owntheme = 0;
 int opt_hl = 0;
+#elif defined(IOS)
+int opt_fs = 1;
+int opt_owntheme = 1;
+int opt_hl = 0;
+#elif defined(_WIN32_WCE)
+int opt_fs = 1;
+int opt_owntheme = 1;
+int opt_hl = 0;
 #else
-	#ifndef _WIN32_WCE
-	int opt_fs = 0;
-	int opt_owntheme = 1;
-	int opt_hl = 1;
-	#else
-	int opt_fs = 1;
-	int opt_owntheme = 1;
-	int opt_hl = 0;
-	#endif
+int opt_fs = 0;
+int opt_owntheme = 1;
+int opt_hl = 1;
 #endif
 int opt_fading = 1;
 int opt_hz = 22050;

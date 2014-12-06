@@ -542,7 +542,7 @@ out:
 	if (clean_tmp)
 		remove_dir(game_tmp_path());
 #endif
-#ifdef ANDROID
+#if defined(ANDROID) || defined(IOS)
 	exit(err);
 #endif
 	return err;

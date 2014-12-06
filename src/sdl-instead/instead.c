@@ -1892,7 +1892,9 @@ static int instead_platform(void)
 #ifdef _WIN32_WCE
 	snprintf(plat, sizeof(plat) - 1, "PLATFORM='WINCE'");
 #endif
-
+#ifdef IOS
+	snprintf(plat, sizeof(plat) - 1, "PLATFORM='IOS'");
+#endif
 #ifdef S60
 	snprintf(plat, sizeof(plat) - 1, "PLATFORM='S60'");
 #endif
