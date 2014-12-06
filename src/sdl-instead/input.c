@@ -186,7 +186,10 @@ static void key_compat(struct inp_event *inp)
 		strcpy(inp->sym, "page down");
 }
 #endif
-
+#ifdef IOS
+static unsigned long touch_stamp = 0;
+static int touch_num = 0;
+#endif
 int input(struct inp_event *inp, int wait)
 {	
 	int rc;
@@ -206,6 +209,22 @@ int input(struct inp_event *inp, int wait)
 	inp->count = 1;
 	switch(event.type){
 #if SDL_VERSION_ATLEAST(2,0,0)
+#ifdef IOS
+	case SDL_FINGERDOWN:
+		if  (gfx_ticks() - touch_stamp > 100) {
+			touch_num = 0;
+			touch_stamp = gfx_ticks();
+		}
+		touch_num ++;
+		if (touch_num >= 3) {
+			inp->type = KEY_DOWN; 
+			inp->code = 0;
+			strncpy(inp->sym, "escape", sizeof(inp->sym));
+		}
+		break;
+	case SDL_FINGERUP:
+		touch_num = 0;
+#endif
 	case SDL_WINDOWEVENT:
 		switch (event.window.event) {
 /*		case SDL_WINDOWEVENT_SHOWN: */
