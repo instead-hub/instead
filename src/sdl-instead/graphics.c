@@ -1661,6 +1661,12 @@ static int mouse_watcher(void *userdata, SDL_Event *event)
 }
 #endif
 
+#ifdef IOS 
+/* may be is good for Android too? */
+static int max_mode_w = 0;
+static int max_mode_h = 0;
+#endif
+
 int gfx_set_mode(int w, int h, int fs)
 {
 	int window_x = SDL_WINDOWPOS_UNDEFINED;
@@ -1705,7 +1711,7 @@ int gfx_set_mode(int w, int h, int fs)
 	if (!t)
 		t = title;
 #if IOS
-	SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, w, h, 
+	SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, max_mode_w, max_mode_h, 
 		SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS);
 #else
 	SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, w, h, 
@@ -1835,7 +1841,6 @@ int gfx_set_mode(int w, int h, int fs)
 	return 0;
 }
 #endif
-
 int gfx_video_init(void)
 {
 #if !SDL_VERSION_ATLEAST(2,0,0)
@@ -1862,8 +1867,7 @@ int gfx_video_init(void)
 	}
 #endif
 #ifdef IOS
-	if (opt_mode[0] == -1 || opt_mode[1] == -1)
-		gfx_get_max_mode(&opt_mode[0], &opt_mode[1]);
+	gfx_get_max_mode(&max_mode_w, &max_mode_h);
 #endif
 	return 0;
 }
