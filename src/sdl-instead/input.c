@@ -191,6 +191,38 @@ static void key_compat(struct inp_event *inp)
 static unsigned long touch_stamp = 0;
 static int touch_num = 0;
 #endif
+int finger_pos(const char *finger, int *x, int *y)
+{
+#if SDL_VERSION_ATLEAST(2,0,0)
+	SDL_TouchID tid;
+	SDL_FingerID fid;
+	SDL_Finger *f;
+	int i, n;
+#ifndef PRIx64
+	if (sscanf(finger, "%llx,%llx", &fid, &tid) != 2)
+		return -1;
+#else
+	if (sscanf(finger, "%"PRIx64",%"PRIx64, &fid, &tid) != 2)
+		return -1;
+#endif
+	n = SDL_GetNumTouchFingers(tid);
+	if (n <= 0)
+		return -1;
+	for (i = 0; i < n; i++) {
+		f = SDL_GetTouchFinger(tid, i);
+		if (f->id == fid) {
+			if (x)
+				*x = (int)(f->x * gfx_width);
+			if (y)
+				*y = (int)(f->y * gfx_height);
+			return 0;
+		}
+	}
+	return -1;
+#else
+	return -1;
+#endif
+}
 int input(struct inp_event *inp, int wait)
 {	
 	int rc;
@@ -233,9 +265,13 @@ int input(struct inp_event *inp, int wait)
 		inp->y = (int)(event.tfinger.y * gfx_height);
 		inp->type = (event.type == SDL_FINGERDOWN) ? FINGER_DOWN : FINGER_UP;
 #ifndef PRIx64
-		snprintf(inp->sym, sizeof(inp->sym), "%xll", event.tfinger.fingerId);
+		snprintf(inp->sym, sizeof(inp->sym), "%llx,%llx", 
+			event.tfinger.fingerId,
+			event.tfinger.touchId);
 #else
-		snprintf(inp->sym, sizeof(inp->sym), "%"PRIx64, event.tfinger.fingerId);
+		snprintf(inp->sym, sizeof(inp->sym), "%"PRIx64",%"PRIx64, 
+			event.tfinger.fingerId,
+			event.tfinger.touchId);
 #endif
 		break;
 	case SDL_WINDOWEVENT:

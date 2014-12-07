@@ -57,5 +57,6 @@ void push_user_event(void (*p) (void*), void *data);
 int mouse_focus(void);
 extern int minimized(void);
 extern int mouse_cursor(int on);
+extern int finger_pos(const char *finger, int *x, int *y);
 
 #endif

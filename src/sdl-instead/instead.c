@@ -1609,6 +1609,21 @@ static int luaB_mouse_pos(lua_State *L) {
 	return 2;
 }
 
+static int luaB_finger_pos(lua_State *L) {
+	int x, y;
+	float v = game_theme.scale;
+	const char *finger = luaL_optstring(L, 1, NULL);
+	if (!finger)
+		return 0;
+	if (finger_pos(finger, &x, &y)) /* no finger */
+		return 0;
+	x = (x - game_theme.xoff) / v;
+	y = (y - game_theme.yoff) / v;
+	lua_pushnumber(L, x);
+	lua_pushnumber(L, y);
+	return 2;
+}
+
 extern int mouse_filter_delay;
 
 static int luaB_mouse_filter(lua_State *L) {
@@ -1819,6 +1834,7 @@ static const luaL_Reg base_funcs[] = {
 
 	{"instead_mouse_pos", luaB_mouse_pos},
 	{"instead_mouse_filter", luaB_mouse_filter},
+	{"instead_finger_pos", luaB_finger_pos},
 
 	{"instead_font_load", luaB_load_font},
 	{"instead_font_free", luaB_free_font},
