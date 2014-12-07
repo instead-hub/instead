@@ -191,7 +191,7 @@ static void key_compat(struct inp_event *inp)
 static unsigned long touch_stamp = 0;
 static int touch_num = 0;
 #endif
-int finger_pos(const char *finger, int *x, int *y)
+int finger_pos(const char *finger, int *x, int *y, float *pressure)
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
 	SDL_TouchID tid;
@@ -215,6 +215,8 @@ int finger_pos(const char *finger, int *x, int *y)
 				*x = (int)(f->x * gfx_width);
 			if (y)
 				*y = (int)(f->y * gfx_height);
+			if (pressure)
+				*pressure = f->pressure;
 			return 0;
 		}
 	}

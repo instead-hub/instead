@@ -1611,17 +1611,19 @@ static int luaB_mouse_pos(lua_State *L) {
 
 static int luaB_finger_pos(lua_State *L) {
 	int x, y;
+	float pressure;
 	float v = game_theme.scale;
 	const char *finger = luaL_optstring(L, 1, NULL);
 	if (!finger)
 		return 0;
-	if (finger_pos(finger, &x, &y)) /* no finger */
+	if (finger_pos(finger, &x, &y, &pressure)) /* no finger */
 		return 0;
 	x = (x - game_theme.xoff) / v;
 	y = (y - game_theme.yoff) / v;
 	lua_pushnumber(L, x);
 	lua_pushnumber(L, y);
-	return 2;
+	lua_pushnumber(L, pressure);
+	return 3;
 }
 
 extern int mouse_filter_delay;
