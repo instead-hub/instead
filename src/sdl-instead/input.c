@@ -232,7 +232,11 @@ int input(struct inp_event *inp, int wait)
 		inp->x = (int)(event.tfinger.x * gfx_width);
 		inp->y = (int)(event.tfinger.y * gfx_height);
 		inp->type = (event.type == SDL_FINGERDOWN) ? FINGER_DOWN : FINGER_UP;
-		snprintf(inp->sym, sizeof(inp->sym), "%llx", event.tfinger.fingerId);
+#ifndef PRIx64
+		snprintf(inp->sym, sizeof(inp->sym), "%xll", event.tfinger.fingerId);
+#else
+		snprintf(inp->sym, sizeof(inp->sym), "%"PRIx64, event.tfinger.fingerId);
+#endif
 		break;
 	case SDL_WINDOWEVENT:
 		switch (event.window.event) {
