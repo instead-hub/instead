@@ -46,6 +46,10 @@ stead = {
 			if stead.type(input.click) == 'function' then
 				return input:click(...); -- pressed, x, y, mb
 			end
+		elseif event == 'finger' then
+			if stead.type(input.finger) == 'function' then
+				return input:finger(...); -- pressed, x, y, finger
+			end
 		elseif event == 'event' then
 			if stead.type(input.event) == 'function' then
 				return input:event(...);

@@ -33,6 +33,11 @@
 #define MOUSE_WHEEL_DOWN 6
 #define MOUSE_MOTION	7
 #define USER_EVENT	8
+#define FINGER_UP	9
+#define FINGER_DOWN	10
+
+#define EV_CODE_KBD -1
+#define EV_CODE_FINGER -2
 
 #define AGAIN 2
 struct inp_event {

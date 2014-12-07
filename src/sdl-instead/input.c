@@ -114,9 +114,9 @@ int HandleAppEvents(void *userdata, SDL_Event *event)
 		When you get this, you have 5 seconds to save all your state or the app will be terminated.
 		Your app is NOT active at this point.
 		*/
-		snd_pause(1);
+		/* snd_pause(1); */
 		m_minimized = 1;
-		return 0;
+            return 0;
 	case SDL_APP_WILLENTERFOREGROUND:
 		/* This call happens when your app is coming back to the foreground.
 			Restore all your state here.
@@ -126,7 +126,7 @@ int HandleAppEvents(void *userdata, SDL_Event *event)
 		/* Restart your loops here.
 		Your app is interactive and getting CPU again.
 		*/
-		snd_pause(0);
+		/* snd_pause(0); */
 		m_minimized = 0;
 		return 0;
 	case SDL_APP_TERMINATING:
@@ -141,6 +141,7 @@ int HandleAppEvents(void *userdata, SDL_Event *event)
 	}
 }
 #endif
+
 int input_init(void)
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
@@ -195,7 +196,6 @@ int input(struct inp_event *inp, int wait)
 	int rc;
 	SDL_Event event;
 	SDL_Event peek;
-
 	memset(&event, 0, sizeof(event));
 	memset(&peek, 0, sizeof(peek));
 	if (wait) {
@@ -209,22 +209,31 @@ int input(struct inp_event *inp, int wait)
 	inp->count = 1;
 	switch(event.type){
 #if SDL_VERSION_ATLEAST(2,0,0)
-#ifdef IOS
-	case SDL_FINGERDOWN:
-		if  (gfx_ticks() - touch_stamp > 100) {
-			touch_num = 0;
-			touch_stamp = gfx_ticks();
-		}
-		touch_num ++;
-		if (touch_num >= 3) {
-			inp->type = KEY_DOWN; 
-			inp->code = 0;
-			strncpy(inp->sym, "escape", sizeof(inp->sym));
-		}
-		break;
 	case SDL_FINGERUP:
+#ifdef IOS
 		touch_num = 0;
 #endif
+	case SDL_FINGERDOWN:
+#ifdef IOS
+		if (event.type == SDL_FINGERDOWN) {
+			if (gfx_ticks() - touch_stamp > 100) {
+				touch_num = 0;
+				touch_stamp = gfx_ticks();
+			}
+			touch_num ++;
+			if (touch_num >= 3) {
+				inp->type = KEY_DOWN; 
+				inp->code = 0;
+				strncpy(inp->sym, "escape", sizeof(inp->sym));
+				break;
+			}
+		}
+#endif
+		inp->x = (int)(event.tfinger.x * gfx_width);
+		inp->y = (int)(event.tfinger.y * gfx_height);
+		inp->type = (event.type == SDL_FINGERDOWN) ? FINGER_DOWN : FINGER_UP;
+		snprintf(inp->sym, sizeof(inp->sym), "%llx", event.tfinger.fingerId);
+		break;
 	case SDL_WINDOWEVENT:
 		switch (event.window.event) {
 /*		case SDL_WINDOWEVENT_SHOWN: */
@@ -321,6 +330,8 @@ int input(struct inp_event *inp, int wait)
 		break;
 	case SDL_MOUSEMOTION:
 		m_focus = 1; /* ahhh */
+		if (DIRECT_MODE && !game_paused())
+			return AGAIN;
 		inp->type = MOUSE_MOTION;
 		inp->x = event.button.x;
 		inp->y = event.button.y;
@@ -381,7 +392,7 @@ int input(struct inp_event *inp, int wait)
 		}
 		break;
 	default:
-		break;
+		return AGAIN;
 	}
 	return 1;
 }

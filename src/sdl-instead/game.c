@@ -3231,7 +3231,7 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 	if (game_paused())
 		return -1;
 
-	if (mb == -1) {
+	if (mb == EV_CODE_KBD) {
 		const char *k;
 		args[0].val = "kbd"; args[0].type = INSTEAD_STR;
 		args[1].val = (down)?"true":"false"; args[1].type = INSTEAD_BOOL;
@@ -3239,6 +3239,7 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 		args[2].val = (char*)k; args[2].type = INSTEAD_STR;
 		args[3].val = NULL;
 	} else {
+		const char *k;
 		int px = -1;
 		int py = -1;
 		game_pic_click(x, y, &px, &py); /* got picture coord */
@@ -3247,9 +3248,18 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 		snprintf(tx, sizeof(tx), "%d", x);
 		snprintf(ty, sizeof(ty), "%d", y);
 		snprintf(tmb, sizeof(tmb), "%d", mb);
-		args[0].val = "mouse"; args[0].type = INSTEAD_STR;
+		if (mb == EV_CODE_FINGER) {
+			args[0].val = "finger"; args[0].type = INSTEAD_STR;
+		} else {
+			args[0].val = "mouse"; args[0].type = INSTEAD_STR;
+		}
 		args[1].val = (down)?"true":"false"; args[1].type = INSTEAD_BOOL;
-		args[2].val = tmb; args[2].type = INSTEAD_NUM;
+		if (mb == EV_CODE_FINGER) {
+			k = (key)?key:"unknown";
+			args[2].val = k; args[2].type = INSTEAD_STR;
+		} else {
+			args[2].val = tmb; args[2].type = INSTEAD_NUM;
+		}
 		args[3].val = tx; args[3].type = INSTEAD_NUM;
 		args[4].val = ty; args[4].type = INSTEAD_NUM;
 		args[5].val = NULL;
@@ -3369,7 +3379,10 @@ int game_loop(void)
 		if (rc == -1) {/* close */
 			break;
 		} else if (curgame_dir && (ev.type == KEY_DOWN || ev.type == KEY_UP)
-				&& !game_input((ev.type == KEY_DOWN), ev.sym, -1, -1, -1)) {
+				&& !game_input((ev.type == KEY_DOWN), ev.sym, -1, -1, EV_CODE_KBD)) {
+			; /* all is done in game_input */
+		} else if (curgame_dir && (ev.type == FINGER_DOWN || ev.type == FINGER_UP)
+				&& !game_input((ev.type == FINGER_DOWN), ev.sym, ev.x, ev.y, EV_CODE_FINGER)) {
 			; /* all is done in game_input */
 		} else if (curgame_dir && (ev.type == MOUSE_DOWN || ev.type == MOUSE_UP)
 				&& !game_input((ev.type == MOUSE_DOWN), "mouse", ev.x, ev.y, ev.code)) {

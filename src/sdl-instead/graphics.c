@@ -1638,6 +1638,28 @@ static SDL_Surface *CreateVideoSurface(SDL_Texture * texture)
 	return surface;
 }
 
+#if SDL_VERSION_ATLEAST(2,0,3)
+static int mouse_x = -1;
+static int mouse_y = -1;
+
+static int mouse_watcher(void *userdata, SDL_Event *event)
+{
+	switch (event->type) {
+	case SDL_MOUSEBUTTONUP:
+	case SDL_MOUSEBUTTONDOWN:
+		mouse_x = event->button.x;
+		mouse_y = event->button.y;
+		break;
+	case SDL_MOUSEMOTION:
+		mouse_x = event->motion.x;
+		mouse_y = event->motion.y;
+		break;
+	default:
+		break;
+	}
+	return 0;
+}
+#endif
 
 int gfx_set_mode(int w, int h, int fs)
 {
@@ -1682,9 +1704,13 @@ int gfx_set_mode(int w, int h, int fs)
 	t = game_reset_name();
 	if (!t)
 		t = title;
+#if IOS
+	SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, w, h, 
+		SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS);
+#else
 	SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, w, h, 
 		SDL_WINDOW_SHOWN | ((fs)?SDL_WINDOW_FULLSCREEN:0));
-
+#endif
 	if (SDL_VideoWindow == NULL) {
 		fprintf(stderr, "Unable to create %dx%d window: %s\n", w, h, SDL_GetError());
 		return -1;
@@ -1749,6 +1775,11 @@ int gfx_set_mode(int w, int h, int fs)
 		fprintf(stderr, "Can't alloc screen!\n");
 		return -1;
 	}
+	SDL_RenderSetLogicalSize(Renderer, gfx_width, gfx_height);
+#if SDL_VERSION_ATLEAST(2,0,3)
+	SDL_DelEventWatch(mouse_watcher, NULL);
+	SDL_AddEventWatch(mouse_watcher, NULL);
+#endif
 	fprintf(stderr,"Video mode: %dx%d@%dbpp\n", Surf(screen)->w, Surf(screen)->h, Surf(screen)->format->BitsPerPixel);
 	gfx_clear(0, 0, gfx_width, gfx_height);
 	return 0;
@@ -1831,7 +1862,8 @@ int gfx_video_init(void)
 	}
 #endif
 #ifdef IOS
-	gfx_get_max_mode(&opt_mode[0], &opt_mode[1]);
+	if (opt_mode[0] == -1 || opt_mode[1] == -1)
+		gfx_get_max_mode(&opt_mode[0], &opt_mode[1]);
 #endif
 	return 0;
 }
@@ -4859,7 +4891,12 @@ void txt_box_real_size(textbox_t box, int *pw, int *ph)
 void gfx_cursor(int *xp, int *yp)
 {
 	int x, y;
+#if SDL_VERSION_ATLEAST(2,0,3)
+	x = mouse_x;
+	y = mouse_y;
+#else
 	SDL_GetMouseState(&x, &y);
+#endif
 	if (xp)
 		*xp = x;
 	if (yp)
