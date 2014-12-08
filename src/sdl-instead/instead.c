@@ -1593,6 +1593,7 @@ static int luaB_channel_sound(lua_State *L) {
 static int luaB_mouse_pos(lua_State *L) {
 	int x = luaL_optnumber(L, 1, -1);
 	int y = luaL_optnumber(L, 2, -1);
+	int m;
 	float v = game_theme.scale;
 	if (x != -1 && y != -1) {
 		x *= v;
@@ -1601,12 +1602,13 @@ static int luaB_mouse_pos(lua_State *L) {
 		x = -1;
 		y = -1;
 	}
-	gfx_cursor(&x, &y);
+	m = gfx_cursor(&x, &y);
 	x = (x - game_theme.xoff) / v;
 	y = (y - game_theme.yoff) / v;
 	lua_pushnumber(L, x);
 	lua_pushnumber(L, y);
-	return 2;
+	lua_pushnumber(L, m);
+	return 3;
 }
 
 static int luaB_finger_pos(lua_State *L) {

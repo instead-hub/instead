@@ -4892,7 +4892,7 @@ void txt_box_real_size(textbox_t box, int *pw, int *ph)
 	}
 }
 
-void gfx_cursor(int *xp, int *yp)
+int gfx_cursor(int *xp, int *yp)
 {
 	int x, y;
 #if SDL_VERSION_ATLEAST(2,0,3)
@@ -4905,6 +4905,7 @@ void gfx_cursor(int *xp, int *yp)
 		*xp = x;
 	if (yp)
 		*yp = y;
+	return SDL_GetMouseState(NULL, NULL);
 }
 
 void gfx_warp_cursor(int x, int y)
