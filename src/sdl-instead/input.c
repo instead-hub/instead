@@ -342,9 +342,9 @@ int input(struct inp_event *inp, int wait)
 #if SDL_VERSION_ATLEAST(2,0,0)
 		if (event.key.repeat) {
 			if (gfx_ticks() - last_press_ms < INPUT_REP_DELAY_MS)
-				break;
+				return AGAIN;
 			if ((gfx_ticks() - last_repeat_ms) < INPUT_REP_INTERVAL_MS)
-				break;
+				return AGAIN;
 			last_repeat_ms = gfx_ticks();
 		} else {
 			last_press_ms = gfx_ticks();
