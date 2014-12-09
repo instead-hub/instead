@@ -353,7 +353,11 @@ int input(struct inp_event *inp, int wait)
 #endif
 		inp->type = KEY_DOWN; 
 		inp->code = event.key.keysym.scancode;
+#if SDL_VERSION_ATLEAST(1,3,0)
+		strncpy(inp->sym, SDL_GetScancodeName(inp->code), sizeof(inp->sym));
+#else
 		strncpy(inp->sym, SDL_GetKeyName(event.key.keysym.sym), sizeof(inp->sym));
+#endif
 		inp->sym[sizeof(inp->sym) - 1] = 0;
 		tolow(inp->sym);
 #if SDL_VERSION_ATLEAST(1,3,0)
@@ -363,7 +367,11 @@ int input(struct inp_event *inp, int wait)
 	case SDL_KEYUP:
 		inp->type = KEY_UP; 
 		inp->code = event.key.keysym.scancode;
+#if SDL_VERSION_ATLEAST(1,3,0)
+		strncpy(inp->sym, SDL_GetScancodeName(inp->code), sizeof(inp->sym));
+#else
 		strncpy(inp->sym, SDL_GetKeyName(event.key.keysym.sym), sizeof(inp->sym));
+#endif
 		inp->sym[sizeof(inp->sym) - 1] = 0;
 		tolow(inp->sym);
 #if SDL_VERSION_ATLEAST(1,3,0)
