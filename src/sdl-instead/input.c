@@ -330,6 +330,12 @@ int input(struct inp_event *inp, int wait)
 			return AGAIN; /* to avoid flickering */
 		return 0;
 #endif
+#if SDL_VERSION_ATLEAST(1,3,0)
+	case SDL_FINGERMOTION:
+		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_FINGERMOTION, SDL_FINGERMOTION) > 0)
+			return AGAIN;
+		break;
+#endif
 	case SDL_USEREVENT: {
 		void (*p) (void*) = (void (*)(void*))event.user.data1;
 		p(event.user.data2);
