@@ -199,10 +199,10 @@ int finger_pos(const char *finger, int *x, int *y, float *pressure)
 	SDL_Finger *f;
 	int i, n;
 #ifndef PRIx64
-	if (sscanf(finger, "%llx,%llx", &fid, &tid) != 2)
+	if (sscanf(finger, "%llx:%llx", &fid, &tid) != 2)
 		return -1;
 #else
-	if (sscanf(finger, "%"PRIx64",%"PRIx64, &fid, &tid) != 2)
+	if (sscanf(finger, "%"PRIx64":%"PRIx64, &fid, &tid) != 2)
 		return -1;
 #endif
 	n = SDL_GetNumTouchFingers(tid);
@@ -267,11 +267,11 @@ int input(struct inp_event *inp, int wait)
 		inp->y = (int)(event.tfinger.y * gfx_height);
 		inp->type = (event.type == SDL_FINGERDOWN) ? FINGER_DOWN : FINGER_UP;
 #ifndef PRIx64
-		snprintf(inp->sym, sizeof(inp->sym), "%llx,%llx", 
+		snprintf(inp->sym, sizeof(inp->sym), "%llx:%llx", 
 			event.tfinger.fingerId,
 			event.tfinger.touchId);
 #else
-		snprintf(inp->sym, sizeof(inp->sym), "%"PRIx64",%"PRIx64, 
+		snprintf(inp->sym, sizeof(inp->sym), "%"PRIx64":%"PRIx64, 
 			event.tfinger.fingerId,
 			event.tfinger.touchId);
 #endif
@@ -437,8 +437,8 @@ int input(struct inp_event *inp, int wait)
 #endif
 			if (!((event.button.button == 4 &&
 				inp->type == MOUSE_WHEEL_UP) ||
-			    (event.button.button == 5 &&
-			    	inp->type == MOUSE_WHEEL_DOWN)))
+				(event.button.button == 5 &&
+				inp->type == MOUSE_WHEEL_DOWN)))
 				break;
 			inp->count ++;
 		}

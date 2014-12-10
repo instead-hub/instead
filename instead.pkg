@@ -60,6 +60,7 @@
 ".\symbian_gamedata\stead\quotes.lua" -"!:\data\instead\stead\quotes.lua"
 ".\symbian_gamedata\stead\format.lua" -"!:\data\instead\stead\format.lua"
 ".\symbian_gamedata\stead\click.lua" -"!:\data\instead\stead\click.lua"
+".\symbian_gamedata\stead\finger.lua" -"!:\data\instead\stead\finger.lua"
 ".\symbian_gamedata\stead\events.lua" -"!:\data\instead\stead\events.lua"
 ".\symbian_gamedata\stead\dbg.lua" -"!:\data\instead\stead\dbg.lua"
 ".\symbian_gamedata\stead\xact.lua" -"!:\data\instead\stead\xact.lua"

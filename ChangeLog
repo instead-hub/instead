@@ -10,7 +10,7 @@
   * stead.last_disp() added;
   * stead.rndseed() added;
   * ready for IOS build;
-  * touch events via input.finger;
+  * touch events via input.finger (finger module);
   * stead.mouse_pos now returns buttons mask;
   * do gfx sync in direct mode only after timer event (speedup);
   * SDL2: do not send key repeats in direct mode (speedup);
