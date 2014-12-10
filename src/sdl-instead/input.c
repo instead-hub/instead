@@ -341,6 +341,8 @@ int input(struct inp_event *inp, int wait)
 	case SDL_KEYDOWN:	/* A key has been pressed */
 #if SDL_VERSION_ATLEAST(2,0,0)
 		if (event.key.repeat) {
+			if (DIRECT_MODE && !game_paused()) /* do not send key repeats */
+				return AGAIN;
 			if (gfx_ticks() - last_press_ms < INPUT_REP_DELAY_MS)
 				return AGAIN;
 			if ((gfx_ticks() - last_repeat_ms) < INPUT_REP_INTERVAL_MS)
