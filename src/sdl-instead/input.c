@@ -247,7 +247,7 @@ int input(struct inp_event *inp, int wait)
 	case SDL_FINGERMOTION:
 		if (DIRECT_MODE && !game_paused())
 			return AGAIN;
-		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_FINGERMOTION, SDL_FINGERMOTION) > 0)
+		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, event.type, event.type) > 0)
 			return AGAIN; /* to avoid flickering */
 		break;
 	case SDL_FINGERUP:
