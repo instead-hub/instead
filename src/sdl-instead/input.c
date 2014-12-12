@@ -243,6 +243,13 @@ int input(struct inp_event *inp, int wait)
 	inp->count = 1;
 	switch(event.type){
 #if SDL_VERSION_ATLEAST(2,0,0)
+	case SDL_MULTIGESTURE:
+	case SDL_FINGERMOTION:
+		if (DIRECT_MODE && !game_paused())
+			return AGAIN;
+		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_FINGERMOTION, SDL_FINGERMOTION) > 0)
+			return AGAIN; /* to avoid flickering */
+		break;
 	case SDL_FINGERUP:
 #ifdef IOS
 		touch_num = 0;
@@ -408,6 +415,9 @@ int input(struct inp_event *inp, int wait)
 		break;
 #if SDL_VERSION_ATLEAST(2,0,0)
 	case SDL_MOUSEWHEEL:
+		if (DIRECT_MODE && !game_paused())
+			return AGAIN;
+
 		inp->type = (event.wheel.y > 0) ? MOUSE_WHEEL_UP : MOUSE_WHEEL_DOWN;
 
 		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_MOUSEWHEEL, SDL_MOUSEWHEEL) > 0) {
@@ -444,7 +454,7 @@ int input(struct inp_event *inp, int wait)
 		}
 		break;
 	default:
-		return AGAIN;
+		break;
 	}
 	return 1;
 }
