@@ -62,6 +62,7 @@ finger = {
 
 stead.module_init(function()
 	input.finger = function(s, press, fid, x, y, px, py, ...)
+		finger:add(press, fid, x, y, px, py, ...)
 		local cmd = 'finger '
 		cmd = cmd..stead.tostr(press)..','..stead.tostr(fid)..',' .. x .. ','.. y;
 		if px then
