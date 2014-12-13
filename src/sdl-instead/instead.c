@@ -1899,32 +1899,22 @@ static int instead_platform(void)
 	if (!L)
 		return 0;
 
-	snprintf(plat, sizeof(plat) - 1, "PLATFORM='UNIX'");
-
-#ifdef __APPLE__
-	snprintf(plat, sizeof(plat) - 1, "PLATFORM='MACOSX'");
-#endif
-
-#ifdef _WIN32
-	snprintf(plat, sizeof(plat) - 1, "PLATFORM='WIN32'");
-#endif
-
-#ifdef _WIN32_WCE
-	snprintf(plat, sizeof(plat) - 1, "PLATFORM='WINCE'");
-#endif
-#ifdef IOS
+#if defined(IOS)
 	snprintf(plat, sizeof(plat) - 1, "PLATFORM='IOS'");
-#endif
-#ifdef S60
+#elif defined(__APPLE__)
+	snprintf(plat, sizeof(plat) - 1, "PLATFORM='MACOSX'");
+#elif defined(_WIN32_WCE)
+	snprintf(plat, sizeof(plat) - 1, "PLATFORM='WINCE'");
+#elif defined(S60)
 	snprintf(plat, sizeof(plat) - 1, "PLATFORM='S60'");
-#endif
-
-#ifdef ANDROID
+#elif defined(ANDROID)
 	snprintf(plat, sizeof(plat) - 1, "PLATFORM='ANDROID'");
-#endif
-
-#ifdef MAEMO
+#elif defined(_WIN32)
+	snprintf(plat, sizeof(plat) - 1, "PLATFORM='WIN32'");
+#elif defined(MAEMO)
 	snprintf(plat, sizeof(plat) - 1, "PLATFORM='MAEMO'");
+#else
+	snprintf(plat, sizeof(plat) - 1, "PLATFORM='UNIX'");
 #endif
 
 	plat[sizeof(plat) - 1] = 0;
