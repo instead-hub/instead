@@ -1,15 +1,3 @@
-# ==============================================================================
-#  Name        : Icons_scalable_dc.mk
-#  Part of     : Helloworldbasic
-#  Description : This is file for creating .mif file (scalable icon)
-#  Version     : 
-#
-#  Copyright (c) 2002-2006 Nokia Corporation.
-#  This material, including documentation and any related 
-#  computer programs, is protected by copyright controlled by 
-#  Nokia Corporation.
-# ==============================================================================
-
 ZDIR=$(EPOCROOT)epoc32\data\z
 
 TARGETDIR=$(ZDIR)\resource\apps
