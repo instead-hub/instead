@@ -1,6 +1,6 @@
-diff -Nur instead-1.9.2/Rules.caanoo instead-1.9.2-caanoo/Rules.caanoo
---- instead-1.9.2/Rules.caanoo	1970-01-01 03:00:00.000000000 +0300
-+++ instead-1.9.2-caanoo/Rules.caanoo	2014-01-25 18:42:21.000000000 +0400
+diff -Nur vanilla/Rules.caanoo caanoo/Rules.caanoo
+--- vanilla/Rules.caanoo	1970-01-01 03:00:00.000000000 +0300
++++ caanoo/Rules.caanoo	2014-12-13 15:36:23.000000000 +0300
 @@ -0,0 +1,45 @@
 +VERSION := 2.2.0
 +
@@ -47,9 +47,9 @@ diff -Nur instead-1.9.2/Rules.caanoo instead-1.9.2-caanoo/Rules.caanoo
 +RM=rm
 +AR=ar rc
 +RANLIB=ranlib
-diff -Nur instead-1.9.2/instead/Rules.caanoo instead-1.9.2-caanoo/instead/Rules.caanoo
---- instead-1.9.2/instead/Rules.caanoo	1970-01-01 03:00:00.000000000 +0300
-+++ instead-1.9.2-caanoo/instead/Rules.caanoo	2014-01-25 18:42:21.000000000 +0400
+diff -Nur vanilla/instead/Rules.caanoo caanoo/instead/Rules.caanoo
+--- vanilla/instead/Rules.caanoo	1970-01-01 03:00:00.000000000 +0300
++++ caanoo/instead/Rules.caanoo	2014-12-13 15:36:23.000000000 +0300
 @@ -0,0 +1,44 @@
 +VERSION := 2.2.0
 +
@@ -95,11 +95,11 @@ diff -Nur instead-1.9.2/instead/Rules.caanoo instead-1.9.2-caanoo/instead/Rules.
 +RM=rm
 +AR=ar rc
 +RANLIB=ranlib
-diff -Nur instead-1.9.2/src/sdl-instead/game.c instead-1.9.2-caanoo/src/sdl-instead/game.c
---- instead-1.9.2/src/sdl-instead/game.c	2014-01-25 18:27:34.000000000 +0400
-+++ instead-1.9.2-caanoo/src/sdl-instead/game.c	2014-01-25 18:42:21.000000000 +0400
-@@ -3411,7 +3411,7 @@
- 				mouse_reset(1);
+diff -Nur vanilla/src/sdl-instead/game.c caanoo/src/sdl-instead/game.c
+--- vanilla/src/sdl-instead/game.c	2014-12-09 07:56:53.000000000 +0300
++++ caanoo/src/sdl-instead/game.c	2014-12-13 15:36:23.000000000 +0300
+@@ -3452,7 +3452,7 @@
+ #else
  				game_menu(menu_askquit);
  #endif
 -			} else if ((alt_pressed | control_pressed) && (!is_key(&ev, "q") || !is_key(&ev, "f4"))) {
@@ -107,10 +107,10 @@ diff -Nur instead-1.9.2/src/sdl-instead/game.c instead-1.9.2-caanoo/src/sdl-inst
  				game_running = 0;
  				break;
  			} else if (alt_pressed &&
-diff -Nur instead-1.9.2/src/sdl-instead/graphics.c instead-1.9.2-caanoo/src/sdl-instead/graphics.c
---- instead-1.9.2/src/sdl-instead/graphics.c	2014-01-25 18:27:34.000000000 +0400
-+++ instead-1.9.2-caanoo/src/sdl-instead/graphics.c	2014-01-25 18:43:17.000000000 +0400
-@@ -1733,17 +1733,24 @@
+diff -Nur vanilla/src/sdl-instead/graphics.c caanoo/src/sdl-instead/graphics.c
+--- vanilla/src/sdl-instead/graphics.c	2014-12-12 20:16:36.000000000 +0300
++++ caanoo/src/sdl-instead/graphics.c	2014-12-13 15:36:23.000000000 +0300
+@@ -1802,17 +1802,24 @@
  #else
  int gfx_set_mode(int w, int h, int fs)
  {
@@ -135,7 +135,7 @@ diff -Nur instead-1.9.2/src/sdl-instead/graphics.c instead-1.9.2-caanoo/src/sdl-
  #ifdef S60
  	scr = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | hw | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
  #else
-@@ -1754,15 +1761,15 @@
+@@ -1823,15 +1830,15 @@
  	scr = SDL_SetVideoMode(gfx_width, gfx_height, 16, SDL_DOUBLEBUF | hw | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
    #else
     #ifdef __APPLE__	
@@ -154,7 +154,7 @@ diff -Nur instead-1.9.2/src/sdl-instead/graphics.c instead-1.9.2-caanoo/src/sdl-
  	#endif
  	if (scr == NULL) /* ok, fallback to anyformat */
      #endif
-@@ -1771,6 +1778,7 @@
+@@ -1840,6 +1847,7 @@
    #endif
   #endif
  #endif
@@ -162,7 +162,7 @@ diff -Nur instead-1.9.2/src/sdl-instead/graphics.c instead-1.9.2-caanoo/src/sdl-
  	screen = GFX_IMG_REL(scr);
  	if (scr == NULL || screen == NULL) {
  		fprintf(stderr, "Unable to set %dx%d video: %s\n", w, h, SDL_GetError());
-@@ -4952,7 +4960,7 @@
+@@ -5029,7 +5037,7 @@
  
  int gfx_init(void)
  {
@@ -171,9 +171,9 @@ diff -Nur instead-1.9.2/src/sdl-instead/graphics.c instead-1.9.2-caanoo/src/sdl-
  		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
  		return -1;
  	}
-diff -Nur instead-1.9.2/src/sdl-instead/input.c instead-1.9.2-caanoo/src/sdl-instead/input.c
---- instead-1.9.2/src/sdl-instead/input.c	2014-01-25 18:27:34.000000000 +0400
-+++ instead-1.9.2-caanoo/src/sdl-instead/input.c	2014-01-25 18:42:21.000000000 +0400
+diff -Nur vanilla/src/sdl-instead/input.c caanoo/src/sdl-instead/input.c
+--- vanilla/src/sdl-instead/input.c	2014-12-12 21:33:29.000000000 +0300
++++ caanoo/src/sdl-instead/input.c	2014-12-13 15:42:21.000000000 +0300
 @@ -54,6 +54,41 @@
  }
  #endif
@@ -216,10 +216,10 @@ diff -Nur instead-1.9.2/src/sdl-instead/input.c instead-1.9.2-caanoo/src/sdl-ins
  int minimized(void)
  {
  	if (nopause_sw)
-@@ -98,6 +133,10 @@
- 	SDL_EnableKeyRepeat(500, 30);
+@@ -155,6 +190,10 @@
+ #ifdef IOS
+ 	SDL_SetEventFilter(HandleAppEvents, NULL);
  #endif
- 	m_focus = !!(SDL_GetAppState() & SDL_APPMOUSEFOCUS);
 +	if(SDL_NumJoysticks() > 0) {
 +		SDL_JoystickOpen(0);
 +		SDL_JoystickEventState(SDL_ENABLE);
@@ -227,7 +227,7 @@ diff -Nur instead-1.9.2/src/sdl-instead/input.c instead-1.9.2-caanoo/src/sdl-ins
  	return 0;
  }
  
-@@ -212,6 +251,20 @@
+@@ -345,6 +384,20 @@
  	case SDL_QUIT:
  		game_running = 0;
  		return -1;
@@ -246,11 +246,11 @@ diff -Nur instead-1.9.2/src/sdl-instead/input.c instead-1.9.2-caanoo/src/sdl-ins
 +		break;
 +#endif
  	case SDL_KEYDOWN:	/* A key has been pressed */
- 		inp->type = KEY_DOWN; 
- 		inp->code = event.key.keysym.scancode;
-diff -Nur instead-1.9.2/src/sdl-instead/sound.c instead-1.9.2-caanoo/src/sdl-instead/sound.c
---- instead-1.9.2/src/sdl-instead/sound.c	2014-01-25 18:27:34.000000000 +0400
-+++ instead-1.9.2-caanoo/src/sdl-instead/sound.c	2014-01-25 18:42:21.000000000 +0400
+ #if SDL_VERSION_ATLEAST(2,0,0)
+ 		if (event.key.repeat) {
+diff -Nur vanilla/src/sdl-instead/sound.c caanoo/src/sdl-instead/sound.c
+--- vanilla/src/sdl-instead/sound.c	2014-12-09 07:56:53.000000000 +0300
++++ caanoo/src/sdl-instead/sound.c	2014-12-13 15:36:23.000000000 +0300
 @@ -22,11 +22,12 @@
   *
   */
