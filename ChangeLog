@@ -17,6 +17,8 @@
   * SDL2: do not send key repeats in direct mode (speedup);
   * SDL2: use scancodes instead keycodes (dvorak fixed);
   * updated doc/examples/fonts.lua;
+  * fix dropf with 2nd parameter;
+  * added forgotten function dropto;
  
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 11 Nov 2014 09:30:00 +0300
 

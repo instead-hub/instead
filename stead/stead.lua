@@ -2874,10 +2874,20 @@ function drop(obj, w)
 	return o;
 end
 
-function dropf(obj)
-	local o = putf(obj);
+function dropf(obj, w)
+	local o = putf(obj, w);
 	if not isObject(o) then
 		error ("Trying to dropf wrong object.", 2);
+	end
+	inv():del(obj);
+	o._taken = false
+	return o;
+end
+
+function dropto(obj, w, pos)
+	local o = putto(obj, w, pos);
+	if not isObject(o) then
+		error ("Trying to dropto wrong object.", 2);
 	end
 	inv():del(obj);
 	o._taken = false
