@@ -9,6 +9,7 @@
   * scr.fx.scalable & 4 -> disable font scaling;
   * stead.life_moved() to detect moves in life;
   * stead.last_disp() added;
+  * stead.nop() added;
   * stead.rndseed() added;
   * ready for IOS build;
   * touch events via input.finger (finger module);

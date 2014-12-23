@@ -125,6 +125,11 @@ stead.last_disp = function(s)
 	return r
 end
 
+stead.nop = function(s) -- to refresh entry scene w/o time tick
+	RAW_TEXT = true
+	return stead.last_disp() or ''
+end
+
 stead.need_scene = function(s)
 	if s == nil then
 		NEED_SCENE = true
