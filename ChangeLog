@@ -6,7 +6,7 @@
   * fix segfault in fgetsesc;
   * space added in fixed gfx theme mode when ways are empty;
   * rnd is now Tiny Mersenne Twister algo;
-  * scr.fx.scalable & 4 -> disable font scaling;
+  * scr.gfx.scalable & 4 -> disable font scaling;
   * stead.life_moved() to detect moves in life;
   * stead.last_disp() added;
   * stead.nop() added;
