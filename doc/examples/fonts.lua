@@ -32,7 +32,7 @@ function font(name, size, scale)
 					sprite.free(v.img);
 					self.cache[key] = nil
 				else
-					table.insert(new_list, v)
+					stead.table.insert(new_list, v)
 					if v.time ~= -1 then
 						self:cache_add(v.word, v.color, v.t, v.img, nil) -- renew time
 					else
