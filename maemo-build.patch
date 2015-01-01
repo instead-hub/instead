@@ -1,6 +1,6 @@
-diff -Nur vanilla/Rules.make.system maemo/Rules.make.system
---- vanilla/Rules.make.system	2014-12-09 07:56:53.000000000 +0300
-+++ maemo/Rules.make.system	2014-12-13 15:47:22.000000000 +0300
+diff -Nur instead-2.2.0/Rules.make.system instead-2.2.0-maemo/Rules.make.system
+--- instead-2.2.0/Rules.make.system	2015-01-01 10:53:50.000000000 +0300
++++ instead-2.2.0-maemo/Rules.make.system	2015-01-01 11:04:20.000000000 +0300
 @@ -28,7 +28,7 @@
  SDL_CFLAGS=$(shell sdl-config --cflags)
  SDL_LFLAGS=$(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer -lSDL_image -lm
@@ -10,15 +10,15 @@ diff -Nur vanilla/Rules.make.system maemo/Rules.make.system
  
  INSTALLD=install -d -m 0755
  INSTALLB=install -m 0755
-diff -Nur vanilla/debian/compat maemo/debian/compat
---- vanilla/debian/compat	2014-12-09 07:56:53.000000000 +0300
-+++ maemo/debian/compat	2014-12-13 15:47:22.000000000 +0300
+diff -Nur instead-2.2.0/debian/compat instead-2.2.0-maemo/debian/compat
+--- instead-2.2.0/debian/compat	2015-01-01 10:53:50.000000000 +0300
++++ instead-2.2.0-maemo/debian/compat	2015-01-01 11:04:20.000000000 +0300
 @@ -1 +1 @@
 -7
 +4
-diff -Nur vanilla/debian/control maemo/debian/control
---- vanilla/debian/control	2014-12-09 07:56:53.000000000 +0300
-+++ maemo/debian/control	2014-12-13 15:47:22.000000000 +0300
+diff -Nur instead-2.2.0/debian/control instead-2.2.0-maemo/debian/control
+--- instead-2.2.0/debian/control	2015-01-01 10:53:50.000000000 +0300
++++ instead-2.2.0-maemo/debian/control	2015-01-01 11:04:20.000000000 +0300
 @@ -1,8 +1,8 @@
  Source: instead
 -Section: games
@@ -35,9 +35,9 @@ diff -Nur vanilla/debian/control maemo/debian/control
  Description: simple text adventures/visual novels engine
   Visual novell/text quest-like engine.
 -
-diff -Nur vanilla/debian/rules maemo/debian/rules
---- vanilla/debian/rules	2014-12-09 07:56:53.000000000 +0300
-+++ maemo/debian/rules	2014-12-13 15:47:22.000000000 +0300
+diff -Nur instead-2.2.0/debian/rules instead-2.2.0-maemo/debian/rules
+--- instead-2.2.0/debian/rules	2015-01-01 10:53:50.000000000 +0300
++++ instead-2.2.0-maemo/debian/rules	2015-01-01 11:04:20.000000000 +0300
 @@ -61,7 +61,7 @@
  install: build
  	dh_testdir
@@ -47,9 +47,9 @@ diff -Nur vanilla/debian/rules maemo/debian/rules
  	dh_installdirs
  
  	# Add here commands to install the package into debian/instead.
-diff -Nur vanilla/desktop/Makefile maemo/desktop/Makefile
---- vanilla/desktop/Makefile	2014-12-09 07:56:53.000000000 +0300
-+++ maemo/desktop/Makefile	2014-12-13 15:47:22.000000000 +0300
+diff -Nur instead-2.2.0/desktop/Makefile instead-2.2.0-maemo/desktop/Makefile
+--- instead-2.2.0/desktop/Makefile	2015-01-01 10:53:50.000000000 +0300
++++ instead-2.2.0-maemo/desktop/Makefile	2015-01-01 11:04:20.000000000 +0300
 @@ -10,9 +10,9 @@
  	cat instead.desktop.in | sed -e "s|@BIN@|$(BIN)|g" > instead.desktop
  
@@ -63,9 +63,9 @@ diff -Nur vanilla/desktop/Makefile maemo/desktop/Makefile
 -	$(RM) $(DESTDIR)$(PREFIX)/share/applications/instead.desktop
 +	$(RM) $(DESTDIR)$(PREFIX)/share/applications/hildon/instead.desktop
  
-diff -Nur vanilla/desktop/instead.desktop.in maemo/desktop/instead.desktop.in
---- vanilla/desktop/instead.desktop.in	2014-12-09 07:56:53.000000000 +0300
-+++ maemo/desktop/instead.desktop.in	2014-12-13 15:47:22.000000000 +0300
+diff -Nur instead-2.2.0/desktop/instead.desktop.in instead-2.2.0-maemo/desktop/instead.desktop.in
+--- instead-2.2.0/desktop/instead.desktop.in	2015-01-01 10:53:50.000000000 +0300
++++ instead-2.2.0-maemo/desktop/instead.desktop.in	2015-01-01 11:04:20.000000000 +0300
 @@ -13,4 +13,8 @@
  Exec=@BIN@/sdl-instead
  Icon=sdl_instead
@@ -75,9 +75,18 @@ diff -Nur vanilla/desktop/instead.desktop.in maemo/desktop/instead.desktop.in
 +X-HildonDesk-ShowInToolbar=true
 +StartupWMClass=instead
  Categories=Game;LogicGame;
-diff -Nur vanilla/themes/default/theme.ini maemo/themes/default/theme.ini
---- vanilla/themes/default/theme.ini	2014-12-09 07:56:54.000000000 +0300
-+++ maemo/themes/default/theme.ini	2014-12-13 15:47:22.000000000 +0300
+diff -Nur instead-2.2.0/src/sdl-instead/externals.h instead-2.2.0-maemo/src/sdl-instead/externals.h
+--- instead-2.2.0/src/sdl-instead/externals.h	2015-01-01 10:53:52.000000000 +0300
++++ instead-2.2.0-maemo/src/sdl-instead/externals.h	2015-01-01 11:04:29.000000000 +0300
+@@ -1,4 +1,4 @@
+-#include <SDL_config.h>
++/* #include <SDL_config.h> */
+ #ifdef _WIN32_WCE
+ #include "wince.h"
+ #endif
+diff -Nur instead-2.2.0/themes/default/theme.ini instead-2.2.0-maemo/themes/default/theme.ini
+--- instead-2.2.0/themes/default/theme.ini	2015-01-01 10:53:54.000000000 +0300
++++ instead-2.2.0-maemo/themes/default/theme.ini	2015-01-01 11:04:20.000000000 +0300
 @@ -5,7 +5,7 @@
  ; $Name(it): Predefinito$
  
@@ -116,9 +125,9 @@ diff -Nur vanilla/themes/default/theme.ini maemo/themes/default/theme.ini
  
  snd.click = click.wav ; click.ogg
  
-diff -Nur vanilla/themes/wide/theme.ini maemo/themes/wide/theme.ini
---- vanilla/themes/wide/theme.ini	2014-12-09 07:56:54.000000000 +0300
-+++ maemo/themes/wide/theme.ini	2014-12-13 15:47:22.000000000 +0300
+diff -Nur instead-2.2.0/themes/wide/theme.ini instead-2.2.0-maemo/themes/wide/theme.ini
+--- instead-2.2.0/themes/wide/theme.ini	2015-01-01 10:53:54.000000000 +0300
++++ instead-2.2.0-maemo/themes/wide/theme.ini	2015-01-01 11:04:20.000000000 +0300
 @@ -3,10 +3,3 @@
  ; $Name(ua):Широка$
  ; $Name(es):Amplio$
