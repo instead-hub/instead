@@ -20,8 +20,9 @@
   * updated doc/examples/fonts.lua;
   * fix dropf with 2nd parameter;
   * added forgotten function dropto;
+  * updated documentation (en/ru);
  
- -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 11 Nov 2014 09:30:00 +0300
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 1 Jan 2015 10:52:00 +0300
 
 2.1.1
 
