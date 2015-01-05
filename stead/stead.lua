@@ -3397,7 +3397,7 @@ end
 
 local build_sandbox_open = function(realpath, error, type, find, gsub, savepath, gamepath)
 	return stead.hook(io.open, function(f, path, acc, ...)
-		if stead.type(acc) ~= 'string' or not find(acc, "[aw+]") then -- only write access
+		if type(acc) ~= 'string' or not find(acc, "[aw+]") then -- only write access
 			return f(path, acc, ...)
 		end
 		if not check_path(realpath, type, find, gsub, savepath, gamepath, path) then
@@ -3410,7 +3410,7 @@ end
 
 local build_sandbox_remove = function(realpath, error, type, find, gsub, savepath, gamepath)
 	return stead.hook(os.remove, function(f, path, ...)
-		if stead.type(path) ~= 'string' then
+		if type(path) ~= 'string' then
 			return f(path, ...)
 		end
 		if not check_path(realpath, type, find, gsub, savepath, gamepath, path) then
