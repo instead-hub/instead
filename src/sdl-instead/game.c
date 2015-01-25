@@ -1942,7 +1942,7 @@ int game_pict_modify(img_t p)
 	int last = modify;
 	if (p && ((el_img(el_spic) == p) || p == gfx_screen(NULL)))
 		modify = 1;
-	else
+	else if (!p) /* use NULL to reset modify flag */
 		modify = 0;
 	return last;
 }
