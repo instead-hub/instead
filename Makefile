@@ -39,15 +39,15 @@ caanoo.tar.gz:
 mingw32ce.tar.gz:
 	wget "http://sourceforge.net/projects/instead/files/instead/build-bin-data/$(@)/download" -O $(@)
 
-windows.tar.gz:
+windows-sdl2.tar.gz:
 	wget "http://sourceforge.net/projects/instead/files/instead/build-bin-data/$(@)/download" -O $(@)
 
-build-bin-data: caanoo.tar.gz mingw32ce.tar.gz windows.tar.gz
+build-bin-data: caanoo.tar.gz mingw32ce.tar.gz windows-sdl2.tar.gz
 
 tarball: clean svnclean gitclean docs rules
 	echo "# you can define own flags here" > config.make
 	ln -sf ./ $(VERTITLE)
-	tar -cz --exclude $(VERTITLE)/$(VERTITLE) --exclude CJK.zip --exclude .git --exclude .svn --exclude $(ARCHIVE) --exclude mingw32ce.tar.gz --exclude windows.tar.gz --exclude caanoo.tar.gz -f $(ARCHIVE) $(VERTITLE)/*
+	tar -cz --exclude $(VERTITLE)/$(VERTITLE) --exclude CJK.zip --exclude .git --exclude .svn --exclude $(ARCHIVE) --exclude mingw32ce.tar.gz --exclude windows-sdl2.tar.gz --exclude caanoo.tar.gz -f $(ARCHIVE) $(VERTITLE)/*
 	$(RM) -f $(VERTITLE)
 
 clean:

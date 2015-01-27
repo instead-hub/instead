@@ -7,7 +7,7 @@ all: config.make src/windows
 	$(MAKE) -C themes all
 
 src/windows:
-	tar xzvf windows.tar.gz
+	tar xzvf windows-sdl2.tar.gz
 
 config.make:
 	echo "# you can define own flags here" > config.make
