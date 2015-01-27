@@ -1,6 +1,6 @@
 #ifndef _IOS_H_INCLUDED
 #define _IOS_H_INCLUDED
-#define VERSION "2.2.0"
+#define VERSION "2.2.1"
 #define STEAD_PATH "stead"
 #define THEMES_PATH "themes"
 #define GAMES_PATH "games"
