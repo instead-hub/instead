@@ -208,7 +208,8 @@ static void usage(void)
 	"    -hinting 0|1|2|3\n        Set the font hinting mode (helpful with infinality)\n"
 	"    -install [game in zip]\n        Install game from zip archive\n"
 	"    -appdata [fullpath]\n        Store saves and settings in appdata path. Path must exist!\n"
-	"    -chunksize [size in bytes]\n        Size for audio buffer. Try this if sound lags.\n");
+	"    -chunksize [size in bytes]\n        Size for audio buffer. Try this if sound lags.\n"
+	"    -vsync\n        Enable vsync display output (SDL2 only)\n");
 }
 int main(int argc, char *argv[])
 {
