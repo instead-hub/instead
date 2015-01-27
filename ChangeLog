@@ -5,6 +5,7 @@
   * gray and grey are both valid;
   * fix in sandbox with stead.type;
   * fix in sprites dirty screen logic;
+  * no 48000 hz sound anymore;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 27 Jan 2015 10:44:00 +0300
 

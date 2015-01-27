@@ -641,14 +641,14 @@ int game_menu_act(const char *a)
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/hz-")) {
 		int hz = snd_hz();
-		if (hz == 48000)
-			hz = 44100;
-		else if (hz == 44100)
+		if (hz == 44100)
 			hz = 22050;
 		else if (hz == 22050)
 			hz = 11025;
-		else
+		else if (hz == 11025)
 			hz = 0;
+		else
+			hz = 22050;
 		game_change_hz(hz);
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/hz+")) {
@@ -658,9 +658,9 @@ int game_menu_act(const char *a)
 		else if (hz == 22050)
 			hz = 44100;
 		else if (hz == 44100)
-			hz = 48000;	
-		else
 			hz = 0;
+		else
+			hz = 22050;
 		game_change_hz(hz);
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/lang++")) {
