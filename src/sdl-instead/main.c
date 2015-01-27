@@ -55,6 +55,7 @@ int nopause_sw = 0;
 int chunksize_sw = 0;
 int software_sw = 0;
 int hinting_sw = 1;
+int vsync_sw = 0;
 
 static int opt_index = 0;
 
@@ -246,7 +247,9 @@ int main(int argc, char *argv[])
 	setdir(game_cwd);
 
 	for (i = 1; i < argc; i++) {
-		if (!strcmp(argv[i], "-nosound"))
+		if (!strcmp(argv[i], "-vsync"))
+			vsync_sw = 1;
+		else if (!strcmp(argv[i], "-nosound"))
 			nosound_sw = 1;
 		else if (!strcmp(argv[i], "-fullscreen"))
 			fullscreen_sw = 1;

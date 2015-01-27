@@ -1,6 +1,7 @@
 2.2.0
 
   * -alsa flag remove, use SDL_AUDIODRIVER env instead;
+  * -vsync added for SDL2 vsync feature;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 27 Jan 2015 10:44:00 +0300
 

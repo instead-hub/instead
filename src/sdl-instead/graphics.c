@@ -1676,6 +1676,7 @@ static int max_mode_h = 0;
 
 int gfx_set_mode(int w, int h, int fs)
 {
+	int vsync = SDL_RENDERER_PRESENTVSYNC;
 	int window_x = SDL_WINDOWPOS_UNDEFINED;
 	int window_y = SDL_WINDOWPOS_UNDEFINED;
 	int win_w = w;
@@ -1749,10 +1750,11 @@ int gfx_set_mode(int w, int h, int fs)
 /*			return -1; */
 		}
 	}
-
+	if (!vsync_sw)
+		vsync = 0;
 	if (software_sw || 
 		(!(Renderer = SDL_CreateRenderer(SDL_VideoWindow, -1, 
-		SDL_RENDERER_ACCELERATED | /*SDL_RENDERER_PRESENTVSYNC |*/ SDL_RENDERER_TARGETTEXTURE)) &&
+		SDL_RENDERER_ACCELERATED | vsync | SDL_RENDERER_TARGETTEXTURE)) &&
 		!(Renderer = SDL_CreateRenderer(SDL_VideoWindow, -1, 
 		SDL_RENDERER_ACCELERATED)))) {
 		fprintf(stderr, "Fallback to software renderer.\n");
