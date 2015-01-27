@@ -19,7 +19,7 @@ LUA_CFLAGS=
 LUA_LFLAGS=-llua5.1
 
 SDL_CFLAGS=-IC:\MinGW\include\SDL
-SDL_LFLAGS=-lSDL -lSDLmain -lSDL_ttf -lSDL_mixer -lSDL_image
+SDL_LFLAGS=-lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image
 
 CFLAGS	+= -Wall -mwindows -D_HAVE_ICONV -D_USE_UNPACK -D_USE_BROWSE -D_LOCAL_APPDATA
 LDFLAGS += -liconv
