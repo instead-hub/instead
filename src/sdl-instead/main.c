@@ -246,9 +246,7 @@ int main(int argc, char *argv[])
 	setdir(game_cwd);
 
 	for (i = 1; i < argc; i++) {
-		if (!strcmp(argv[i],"-alsa")) 
-			alsa_sw = 1;
-		else if (!strcmp(argv[i], "-nosound"))
+		if (!strcmp(argv[i], "-nosound"))
 			nosound_sw = 1;
 		else if (!strcmp(argv[i], "-fullscreen"))
 			fullscreen_sw = 1;

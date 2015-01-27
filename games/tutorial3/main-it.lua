@@ -242,7 +242,6 @@ help2 = room {
 	nam = 'Parametri della linea di comando',
 	dsc = [[
 	-nosound - lancia il gioco senza suono;^
-	-alsa - forza l'uso di ALSA (solo per Linux);^
 	-debug - modalità di debug per sviluppatori di giochi;^
 	-theme <theme> - scegli un tema;^
 	-game <game> - scegli un gioco;^

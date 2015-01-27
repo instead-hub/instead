@@ -84,7 +84,6 @@ int snd_hz(void)
 	return freq;
 }
 
-int alsa_sw = 0;
 int nosound_sw = 0;
 void snd_pause(int on)
 {
@@ -118,11 +117,7 @@ int snd_init(int hz)
 		fprintf(stderr, "Unable to init audio!\n");
 		return -1;
 	}
-	
-	if (alsa_sw) {
-		SDL_AudioInit("alsa");
-	}
-	
+
 	if (Mix_OpenAudio(hz, audio_format, audio_channels, audio_buffers)) {
 		fprintf(stderr, "Unable to open audio!\n");
 		return -1;

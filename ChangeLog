@@ -1,5 +1,11 @@
 2.2.0
 
+  * -alsa flag remove, use SDL_AUDIODRIVER env instead;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 27 Jan 2015 10:44:00 +0300
+
+2.2.0
+
   * fix in debugger;
   * fix in links hl with events module;
   * fix in fr language;

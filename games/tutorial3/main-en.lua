@@ -245,7 +245,6 @@ help2 = room {
 	nam = 'Command line parameters',
 	dsc = [[
 	-nosound - launch without sound;^
-	-alsa - force ALSA use (Linux only);^
 	-debug - debug mode for game developers;^
 	-theme <theme> - pick a theme;^
 	-game <game> - pick a game;^
