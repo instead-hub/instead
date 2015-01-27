@@ -2,6 +2,9 @@
 
   * -alsa flag remove, use SDL_AUDIODRIVER env instead;
   * -vsync added for SDL2 vsync feature;
+  * gray and grey are both valid;
+  * fix in sandbox with stead.type;
+  * fix in sprites dirty screen logic;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 27 Jan 2015 10:44:00 +0300
 
