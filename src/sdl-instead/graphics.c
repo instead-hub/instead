@@ -1722,6 +1722,10 @@ int gfx_set_mode(int w, int h, int fs)
 		SDL_GetWindowPosition(SDL_VideoWindow, &window_x, &window_y);
 		SDL_DestroyWindow(SDL_VideoWindow);
 		SDL_VideoWindow = NULL;
+		if (gfx_fs == 1 && !fs) { /* return from fullscreen */
+			window_x = SDL_WINDOWPOS_CENTERED;
+			window_y = SDL_WINDOWPOS_CENTERED;
+		}
 	} else
 		GetEnvironmentWindowPosition(win_w, win_h, &window_x, &window_y);
 	t = game_reset_name();
