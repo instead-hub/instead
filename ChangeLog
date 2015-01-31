@@ -1,8 +1,8 @@
 2.2.1
 
-  * -alsa flag remove, use SDL_AUDIODRIVER env instead;
+  * -alsa option removed, use SDL_AUDIODRIVER env instead;
   * -vsync added for SDL2 vsync feature;
-  * gray and grey are both valid;
+  * *gray* and *grey* colors are both valid;
   * fix in sandbox with stead.type;
   * fix in sprites dirty screen logic;
   * no 48000 hz sound anymore;
