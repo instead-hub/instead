@@ -757,10 +757,14 @@ static void _game_gfx_commit(void *data)
 	gfx_commit();
 }
 
-void game_gfx_commit(void)
+void game_gfx_commit(int sync)
 {
-	if (gfx_pending())
-		push_user_event(_game_gfx_commit, NULL);
+	if (gfx_pending()) {
+		if (sync)
+			gfx_commit();
+		else
+			push_user_event(_game_gfx_commit, NULL);
+	}
 }
 
 static void anigif_do(void *data)
@@ -818,7 +822,7 @@ static void anigif_do(void *data)
 		}
 	}
 	game_cursor(CURSOR_ON);
-	game_gfx_commit();
+	game_gfx_commit(0);
 }
 
 int counter_fn(int interval, void *p)
@@ -3375,7 +3379,7 @@ int game_loop(void)
 		ev.x = -1;
 /*		game_cursor(CURSOR_CLEAR); */ /* release bg */
 		while (((rc = input(&ev, 1)) == AGAIN) && !need_restart)
-			gfx_commit();
+			game_gfx_commit(1);
 		if (rc == -1) {/* close */
 			break;
 		} else if (curgame_dir && (ev.type == KEY_DOWN || ev.type == KEY_UP)
@@ -3613,7 +3617,7 @@ int game_loop(void)
 		if (err_msg) {
 			game_menu(menu_warning);
 		}
-		game_gfx_commit();
+		game_gfx_commit(0);
 	}
 	return 0;
 }
