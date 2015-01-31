@@ -129,7 +129,7 @@ extern const char *sound_channel(int i);
 extern void *sound_get(const char *fname);
 extern void sound_put(void *sn);
 
-void game_gfx_commit(void);
+void game_gfx_commit(int sync);
 
 #define CURSOR_CLEAR -1
 #define CURSOR_OFF    0
