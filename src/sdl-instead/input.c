@@ -226,7 +226,7 @@ int finger_pos(const char *finger, int *x, int *y, float *pressure)
 #endif
 }
 int input(struct inp_event *inp, int wait)
-{	
+{
 	int rc;
 	SDL_Event event;
 	SDL_Event peek;
@@ -372,6 +372,12 @@ int input(struct inp_event *inp, int wait)
 #if SDL_VERSION_ATLEAST(1,3,0)
 		key_compat(inp);
 #endif
+#if SDL_VERSION_ATLEAST(1,3,0) /* strange bug in some SDL2 env, with up/down events storm */
+		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_KEYUP, SDL_KEYUP) > 0) {
+			if (event.key.keysym.scancode == peek.key.keysym.scancode) 
+				return AGAIN;
+		}
+#endif
 		break;
 	case SDL_KEYUP:
 		inp->type = KEY_UP; 
@@ -385,6 +391,12 @@ int input(struct inp_event *inp, int wait)
 		tolow(inp->sym);
 #if SDL_VERSION_ATLEAST(1,3,0)
 		key_compat(inp);
+#endif
+#if SDL_VERSION_ATLEAST(1,3,0) /* strange bug in some SDL2 env, with up/down events storm */
+		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_KEYDOWN, SDL_KEYDOWN) > 0) {
+			if (event.key.keysym.scancode == peek.key.keysym.scancode) 
+				return AGAIN;
+		}
 #endif
 		break;
 	case SDL_MOUSEMOTION:
@@ -458,4 +470,3 @@ int input(struct inp_event *inp, int wait)
 	}
 	return 1;
 }
-
