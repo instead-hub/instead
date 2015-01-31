@@ -60,6 +60,8 @@ int opt_autosave = 1;
 int opt_filter = 1;
 int opt_kbd = KBD_SMART;
 int opt_justify = 0;
+int opt_vsync = -1;
+int opt_debug = -1;
 
 char *opt_game = NULL;
 char *opt_theme = NULL;
@@ -102,6 +104,8 @@ static struct parser cfg_parser[] = {
 	{ "mode", parse_mode, opt_mode, 0 },
 	{ "justify", parse_int, &opt_justify, 0 },
 	{ "fading", parse_int, &opt_fading, 0 },
+	{ "vsync", parse_int, &opt_vsync, 0 },
+	{ "debug", parse_int, &opt_debug, 0 },
 	{ NULL, NULL, NULL, 0 },
 };
 
@@ -135,12 +139,16 @@ int cfg_save(void)
 	fprintf(fp, "fs = %d\nhl = %d\nhz = %d\nvol = %d\nautosave = %d\n\
 game = %s\nfscale = %d\nmotion = %d\n\
 click = %d\nmusic = %d\ntheme = %s\n\
-filter = %d\nowntheme = %d\nlang = %s\nkbd = %d\nmode = %dx%d\njustify = %d\nfading = %d", 
+filter = %d\nowntheme = %d\nlang = %s\nkbd = %d\nmode = %dx%d\njustify = %d\nfading = %d\n", 
 		opt_fs, opt_hl, opt_hz, opt_vol, save_autosave, 
 		curgame_dir?curgame_dir:"", opt_fsize, opt_motion, 
 		opt_click, opt_music, curtheme_dir?curtheme_dir:DEFAULT_THEME, 
 		opt_filter, save_owntheme, opt_lang, opt_kbd, opt_mode[0], opt_mode[1], 
 		opt_justify, opt_fading);
+	if (opt_vsync != -1)
+		fprintf(fp, "vsync = %d\n", opt_vsync);
+	if (opt_debug != -1)
+		fprintf(fp, "debug = %d\n", opt_debug);
 	fclose(fp);
 	return 0;
 }

@@ -54,6 +54,8 @@ extern int opt_autosave;
 extern int opt_filter;
 extern int opt_kbd;
 extern int opt_justify;
+extern int opt_vsync;
+extern int opt_debug;
 
 extern int opt_mode[2];
 extern char *opt_game;

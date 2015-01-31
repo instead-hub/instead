@@ -391,6 +391,15 @@ int main(int argc, char *argv[])
 		}
 #endif
 	}
+	cfg_load();
+
+	if (opt_debug == 1 && debug_sw == 0) {
+		debug_sw = 1;
+		debug_init();
+	}
+
+	if (opt_vsync == 1 && vsync_sw == 0)
+		vsync_sw = 1;
 
 	if (version_sw) {
 		fprintf(stdout, VERSION"\n");
@@ -435,9 +444,6 @@ int main(int argc, char *argv[])
 		err = 1;
 		goto out;
 	}
-	
-	cfg_load();
-	
 	if (!opt_lang || !opt_lang[0])
 		opt_lang = game_locale();
 	

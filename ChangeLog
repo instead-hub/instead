@@ -7,8 +7,9 @@
   * fix in sprites dirty screen logic;
   * no 48000 hz sound anymore;
   * windows build uses SDL2 and luajit;
+  * debug and vsync options in rc file;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 31 Jan 2015 10:42:00 +0300
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 31 Jan 2015 16:27:00 +0300
 
 2.2.0
 
