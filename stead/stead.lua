@@ -2453,7 +2453,7 @@ iface = {
 			ACTION_TEXT, av, vv, pv);
 
 		if stead.state then
-			stead.last_disp(vv)
+			stead.last_disp(vv or false)
 			stead.last_act(ACTION_TEXT)
 		end
 		if vv == nil then -- nil is error
