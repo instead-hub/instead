@@ -1,3 +1,9 @@
+2.2.2
+
+  * last_disp regression fixed;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 6 Feb 2015 19:17:00 +0300
+
 2.2.1
 
   * -alsa option removed, use SDL_AUDIODRIVER env instead;

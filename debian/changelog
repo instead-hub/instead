@@ -1,3 +1,9 @@
+instead (2.2.2) unstable; urgency=low
+
+  * last_disp regression fixed;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 6 Feb 2015 19:17:00 +0300
+
 instead (2.2.1) unstable; urgency=low
   * 2.2.1 release;
 
