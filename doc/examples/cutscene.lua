@@ -147,10 +147,12 @@ cutscene = function(v)
 				break
 			end
 			local strip = false
+			local para = false
 			c, a = parse_token(txt:sub(s, e))
 			if c == "pause" or c == "cut" or c == "fading" then
 				n = n - 1
 				strip = true
+				para = true
 			elseif c == "pic" then
 				if a == '' then a = nil end
 				self._pic = a
@@ -181,7 +183,13 @@ cutscene = function(v)
 			else
 				out = out..txt:sub(oe)
 			end
+			if para and n == 1 and stead.cut_delim then
+				out = out .. stead.cut_delim
+			end
 			e = e + 1
+		end
+		if stead.cut_scroll then
+			out = out..iface.anchor()
 		end
 		v._dsc = out
 		if c == 'pause' then
