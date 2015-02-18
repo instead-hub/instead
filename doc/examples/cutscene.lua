@@ -179,7 +179,7 @@ cutscene = function(v)
 			elseif c then
 				out = out..txt:sub(oe, e)
 			else
-				out = put..txt:sub(oe)
+				out = out..txt:sub(oe)
 			end
 			e = e + 1
 		end
