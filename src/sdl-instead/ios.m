@@ -11,6 +11,7 @@
 #include <sys/fcntl.h>
 #include <string.h>
 #include <stdlib.h>
+#include <dirent.h>
 
 #include "sdl_iconv.h"
 #include "internals.h"
@@ -25,6 +26,7 @@ static char local_games_path[PATH_MAX];
 static char local_themes_path[PATH_MAX];
 static char local_stead_path[PATH_MAX];
 
+extern int setup_zip(const char *file, char *p);
 
 void	nsleep(int u)
 {
@@ -46,6 +48,42 @@ char *game_tmp_path(void)
 	if (mkdir(tmp, S_IRWXU) && errno != EEXIST)
 		return NULL;
 	return tmp;
+}
+
+static char *inbox(void)
+{
+	static char dir[PATH_MAX];
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
+	snprintf(dir, sizeof(dir) - 1 , "%s/Inbox", [basePath UTF8String]);
+	return dir;
+}
+
+int setup_inbox(void)
+{
+	char path[PATH_MAX];
+	DIR *d;
+	struct dirent *de;
+    char *p;
+
+	if (!path)
+		return 0;
+
+	d = opendir(inbox());
+	if (!d)
+		return -1;
+	while ((de = readdir(d))) {
+		if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, ".."))
+			continue;
+		snprintf(path, sizeof(path), "%s/%s", inbox(), de->d_name);
+		path[sizeof(path) - 1] = 0;
+		p = game_local_games_path(1);
+		fprintf(stderr, "Install zip: %s\n", path);
+		setup_zip(path, game_local_games_path(1));
+		unlink(path);
+	}
+	closedir(d);
+	return 0;
 }
 
 char *appdir(void)

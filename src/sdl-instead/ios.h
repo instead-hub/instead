@@ -6,4 +6,5 @@
 #define GAMES_PATH "games"
 #define ICON_PATH "icon"
 #define LANG_PATH "lang"
+extern int setup_inbox(void);
 #endif

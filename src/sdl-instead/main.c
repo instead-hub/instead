@@ -76,7 +76,7 @@ static int lua_exec = 1;
 extern int unpack(const char *zipfilename, const char *where);
 extern char zip_game_dirname[];
 
-static int setup_zip(const char *file, char *p)
+int setup_zip(const char *file, char *p)
 {
 	if (!p)
 		return -1;
@@ -121,6 +121,9 @@ void macosx_init(void) {
 	CFURLGetFileSystemRepresentation(resourcesDirectoryURL, true, (UInt8 *) resourcePath, PATH_MAX);
 	CFRelease(resourcesDirectoryURL);
 	chdir(resourcePath);
+#ifdef IOS
+	setup_inbox();
+#endif
 	return;
 }
 #endif
