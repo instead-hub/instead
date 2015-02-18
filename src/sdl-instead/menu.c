@@ -419,7 +419,11 @@ char *game_menu_gen(void)
 		WARNING_MENU, err_msg?err_msg:UNKNOWN_ERROR);
 		game_err_msg(NULL);
 	} else if (cur_menu == menu_remove) {
-		snprintf(menu_buff, sizeof(menu_buff), REMOVE_MENU, games[gtr].path);
+		const char *sname = games[gtr].path;
+		if (strlen(games[gtr].path) >= 48) {
+			sname = games[gtr].name;
+		}
+		snprintf(menu_buff, sizeof(menu_buff), REMOVE_MENU, sname);
 	}
 	return menu_buff;
 }
