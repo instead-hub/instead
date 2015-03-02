@@ -1680,7 +1680,7 @@ int gfx_set_mode(int w, int h, int fs)
 	int window_x = SDL_WINDOWPOS_UNDEFINED;
 	int window_y = SDL_WINDOWPOS_UNDEFINED;
 	int win_w = w;
-	int win_h = h;
+	int win_h = h; int sw_fallback = 0;
 	SDL_DisplayMode desktop_mode;
 
 	char title[4096];
@@ -1756,12 +1756,14 @@ int gfx_set_mode(int w, int h, int fs)
 	}
 	if (!vsync_sw)
 		vsync = 0;
+retry:
 	if (software_sw || 
 		(!(Renderer = SDL_CreateRenderer(SDL_VideoWindow, -1, 
 		SDL_RENDERER_ACCELERATED | vsync | SDL_RENDERER_TARGETTEXTURE)) &&
 		!(Renderer = SDL_CreateRenderer(SDL_VideoWindow, -1, 
 		SDL_RENDERER_ACCELERATED)))) {
 		fprintf(stderr, "Fallback to software renderer.\n");
+		sw_fallback = 1;
 		if (!(Renderer = SDL_CreateRenderer(SDL_VideoWindow, -1, SDL_RENDERER_SOFTWARE))) {
 			fprintf(stderr, "Unable to create renderer: %s\n", SDL_GetError());
 			return -1;
@@ -1772,6 +1774,11 @@ int gfx_set_mode(int w, int h, int fs)
 		SDL_TEXTUREACCESS_STREAMING, w, h);
 	if (!SDL_VideoTexture) {
 		fprintf(stderr, "Unable to create texture: %s\n", SDL_GetError());
+		if (!sw_fallback) { /* one more chance */
+			SDL_DestroyRenderer(Renderer);
+			software_sw = 1;
+			goto retry;
+		}
 		return -1;
 	}
 /*	SDL_SetTextureBlendMode(SDL_VideoTexture, SDL_BLENDMODE_NONE); */
