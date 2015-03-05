@@ -1962,6 +1962,7 @@ int instead_init_lua(const char *path)
 	busy = 0;
 	setlocale(LC_ALL,"");
 	setlocale(LC_NUMERIC,"C"); /* to avoid . -> , in numbers */	
+	setlocale(LC_CTYPE,"C"); /* to avoid lower/upper problems */	
 /*	strcpy(curcp, "UTF-8"); */
 
 	/* initialize Lua */
