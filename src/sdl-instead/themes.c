@@ -25,6 +25,8 @@
 #include "externals.h"
 #include "internals.h"
 
+#include <SDL_hints.h>
+
 int theme_relative = 0;
 
 char	*curtheme_dir = NULL;
@@ -855,6 +857,15 @@ int game_theme_init(void)
 		h = game_theme.h;
 	}
 #endif
+
+#ifdef IOS /* setting the correct screen resolution from theme settings */
+    if (game_theme.h > game_theme.w) {
+        gfx_get_max_mode(&h, &w);
+    } else {
+        gfx_get_max_mode(&w, &h);
+    }
+#endif
+    
 	game_theme_scale(w, h);
 
 	if (gfx_set_mode(game_theme.w, game_theme.h, opt_fs)) {
@@ -868,6 +879,17 @@ int game_theme_init(void)
 		game_theme_select(DEFAULT_THEME);
 		return -1;
 	}
+    
+#ifdef IOS /* setting the correct orientation of the screen from theme settings*/
+    if (game_theme.h > game_theme.w) {
+        SDL_SetHint(SDL_HINT_ORIENTATIONS, "Portrait PortraitUpsideDown");
+        set_portrait(1);
+    } else {
+        SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight");
+        set_portrait(0);
+    }
+#endif
+    
 	return 0;
 }
 
