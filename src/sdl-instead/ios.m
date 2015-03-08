@@ -59,6 +59,25 @@ static char *inbox(void)
 	return dir;
 }
 
+void set_portrait(int isPortrait)
+{
+    if (isPortrait && UIDeviceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)) {
+        [[UIDevice currentDevice] setValue:@(UIDeviceOrientationPortrait) forKey:@"orientation"];
+    }
+    
+    if (!isPortrait && UIDeviceOrientationIsPortrait([UIApplication sharedApplication].statusBarOrientation)) {
+        [[UIDevice currentDevice] setValue:@(UIDeviceOrientationLandscapeRight) forKey:@"orientation"];
+    }
+    
+    return;
+}
+
+void correct_font_size (void)
+{
+    BOOL is_iPhone = [UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone;
+    opt_fsize = (is_iPhone) ? opt_fsize + 10 : opt_fsize - 2;
+}
+
 int setup_inbox(void)
 {
 	char path[PATH_MAX];
