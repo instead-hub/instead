@@ -544,10 +544,7 @@ int main(int argc, char *argv[])
 		game_theme_select(opt_theme);
 	if (!curtheme_dir)
 		game_theme_select(DEFAULT_THEME);
-	
-#ifdef IOS
-    correct_font_size();
-#endif
+
     
 	/* Initialize SDL */
 	if (gfx_init() < 0)
@@ -556,6 +553,10 @@ int main(int argc, char *argv[])
 	if (gfx_video_init() || input_init())
 		return -1;
 
+#ifdef IOS
+    correct_iOS_font_size_if_need();
+#endif
+    
 	if (game_init(opt_game)) {
 		game_error();
 	}

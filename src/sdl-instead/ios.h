@@ -10,6 +10,6 @@
 extern int setup_inbox(void);
 
 void set_portrait(int isPortrait);
-void correct_font_size (void);
-    
+void correct_iOS_font_size_if_need (void);
+
 #endif

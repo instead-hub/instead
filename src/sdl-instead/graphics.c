@@ -1895,8 +1895,12 @@ int gfx_video_init(void)
 		SDL_WM_SetIcon( icon, NULL );
 	}
 #endif
-#ifdef IOS
-	gfx_get_max_mode(&max_mode_w, &max_mode_h);
+#ifdef IOS /* default max resolution on iOS */
+    char *p = game_cfg_path();
+    if (p && access(p, R_OK)) {
+        gfx_get_max_mode(&opt_mode[0], &opt_mode[1]);
+    }
+    gfx_get_max_mode(&max_mode_w, &max_mode_h);
 #endif
 	return 0;
 }
