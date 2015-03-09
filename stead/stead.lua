@@ -1554,7 +1554,7 @@ stead.player_go = function(self, where)
 end
 
 stead.player_save = function(self, name, h)
-	h:write(tostring(name)..".where = '"..stead.deref(self.where).."';\n");
+	h:write(stead.string.format('%s.where = %q;\n', tostring(name), stead.deref(self.where)));
 	stead.savemembers(h, self, name, false);
 end
 
