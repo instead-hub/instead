@@ -1,3 +1,12 @@
+2.2.3
+
+  * fix in player_save;
+  * always reset LC_CTYPE to C;
+  * fallback to software renderer if can not create texture;
+  * remove game dialog cleanup;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 9 Mar 2015 20:20:00 +0300
+
 2.2.2
 
   * last_disp regression fixed;
