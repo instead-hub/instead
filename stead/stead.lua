@@ -2173,7 +2173,7 @@ stead.game_save = function(self, name, file)
 	local h;
 
 	if file ~= nil then
-		file:write(name..".pl = '"..stead.deref(self.pl).."'\n");
+		file:write(stead.string.format("%s.pl = %q\n", name, stead.deref(self.pl)));
 		stead.savemembers(file, self, name, false);
 		return nil, true
 	end
