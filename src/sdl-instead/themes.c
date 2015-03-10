@@ -25,6 +25,8 @@
 #include "externals.h"
 #include "internals.h"
 
+#include <SDL_hints.h>
+
 int theme_relative = 0;
 
 char	*curtheme_dir = NULL;
@@ -830,8 +832,19 @@ int game_theme_update(void)
 int game_theme_init(void)
 {
 	color_t col = { .r = 0, .g = 0, .b = 0, .a = 0 };
+    
 	int w  = opt_mode[0];
 	int h  = opt_mode[1];
+    
+#ifdef IOS /* setting the correct screen resolution & orientation from theme settings */
+    if (game_theme.h > game_theme.w || h > w) {
+        w  = opt_mode[1];
+        h  = opt_mode[0];
+    } else {
+        w  = opt_mode[0];
+        h  = opt_mode[1];
+    }
+#endif
 
 	if (w == -1) { /* as theme */
 #ifndef IOS /* IOS always hardware accelerated */
@@ -855,6 +868,7 @@ int game_theme_init(void)
 		h = game_theme.h;
 	}
 #endif
+    
 	game_theme_scale(w, h);
 
 	if (gfx_set_mode(game_theme.w, game_theme.h, opt_fs)) {
@@ -868,6 +882,17 @@ int game_theme_init(void)
 		game_theme_select(DEFAULT_THEME);
 		return -1;
 	}
+    
+#ifdef IOS /* setting the correct orientation of the screen from theme settings*/
+    if (game_theme.h > game_theme.w) {
+        SDL_SetHint(SDL_HINT_ORIENTATIONS, "Portrait PortraitUpsideDown");
+        set_portrait(1);
+    } else {
+        SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight");
+        set_portrait(0);
+    }
+#endif
+    
 	return 0;
 }
 

@@ -59,6 +59,26 @@ static char *inbox(void)
 	return dir;
 }
 
+void set_portrait(int isPortrait)
+{
+    if (isPortrait && UIDeviceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)) {
+        [[UIDevice currentDevice] setValue:@(UIDeviceOrientationPortrait) forKey:@"orientation"];
+    }
+    if (!isPortrait && UIDeviceOrientationIsPortrait([UIApplication sharedApplication].statusBarOrientation)) {
+        [[UIDevice currentDevice] setValue:@(UIDeviceOrientationLandscapeRight) forKey:@"orientation"];
+    }
+    return;
+}
+
+void correct_iOS_font_size_if_need (void)
+{
+    char *p = game_cfg_path();
+    if (p && access(p, R_OK)) {
+        BOOL is_iPhone = [UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone;
+        opt_fsize = (is_iPhone) ? opt_fsize + 10 : opt_fsize - 2;
+    }
+}
+
 int setup_inbox(void)
 {
 	char path[PATH_MAX];

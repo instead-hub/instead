@@ -405,8 +405,30 @@ int main(int argc, char *argv[])
 		vsync_sw = 1;
 
 	if (version_sw) {
-		fprintf(stdout, VERSION"\n");
-		goto out;
+#ifdef IOS
+        printf("INSTEAD v%s\n", VERSION);
+        
+        printf("%s\n", LUA_RELEASE);
+        
+        SDL_version ver;
+        SDL_VERSION(&ver);
+        printf("SDL v%u.%u.%u\n", ver.major, ver.minor, ver.patch);
+        
+        #include <SDL_image.h>
+        SDL_IMAGE_VERSION(&ver)
+        printf("SDL_image v%u.%u.%u\n", ver.major, ver.minor, ver.patch);
+        
+        #include <SDL_mixer.h>
+        SDL_MIXER_VERSION(&ver)
+        printf("SDL_mixer v%u.%u.%u\n", ver.major, ver.minor, ver.patch);
+        
+        #include <SDL_ttf.h>
+        SDL_TTF_VERSION(&ver)
+        printf("SDL_ttf v%u.%u.%u\n", ver.major, ver.minor, ver.patch);
+#else
+        fprintf(stdout, VERSION"\n");
+        goto out;
+#endif
 	}
 
 	if (lua_sw) {
@@ -522,7 +544,8 @@ int main(int argc, char *argv[])
 		game_theme_select(opt_theme);
 	if (!curtheme_dir)
 		game_theme_select(DEFAULT_THEME);
-	
+
+    
 	/* Initialize SDL */
 	if (gfx_init() < 0)
 		return -1;
@@ -530,6 +553,10 @@ int main(int argc, char *argv[])
 	if (gfx_video_init() || input_init())
 		return -1;
 
+#ifdef IOS
+    correct_iOS_font_size_if_need();
+#endif
+    
 	if (game_init(opt_game)) {
 		game_error();
 	}
