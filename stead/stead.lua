@@ -2091,6 +2091,10 @@ end
 
 stead.gamereset = function(file, forget)
 	stead.clearargs()
+	if stead.api_atleast(2, 2, 0) then
+		init = function() -- init called only once
+		end
+	end
 	if forget then
 		stead.stop_music();
 		stead.stop_sound();
