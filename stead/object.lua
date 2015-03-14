@@ -195,7 +195,9 @@ stead.list_check = function(self, name) -- force using of objects, instead refs
 	for i,v,ii in stead.opairs(self) do
 		local o = stead.ref(v);
 		if not isObject(o) then 
-			error ("No object: "..name.."["..stead.tostr(ii).."]".." ("..stead.tostr(stead.type(v))..")")
+			error (stead.string.format("Wrong object: %q (%s) at %s", 
+				stead.tostr(v), stead.tostr(stead.type(v)),
+				name .."["..stead.tostr(ii).."]"));
 			return false
 		end
 		if (v.auto_allocated and not stead.ref(v.key_name)) -- renew
