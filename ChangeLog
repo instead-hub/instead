@@ -5,6 +5,7 @@
   * fallback to software renderer if can not create texture;
   * remove game dialog cleanup;
   * fix in gamereset() and init() call;
+  * fix with gtk dialog open and SDL2;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 9 Mar 2015 20:20:00 +0300
 

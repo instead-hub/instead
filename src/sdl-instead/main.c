@@ -224,9 +224,6 @@ int main(int argc, char *argv[])
 #ifdef __APPLE__
 	macosx_init();
 #endif
-#ifdef _USE_GTK
-	gtk_init(&argc, &argv);
-#endif
 #ifndef S60
 	putenv("SDL_MOUSE_RELATIVE=0"); /* test this! */
 #endif
@@ -526,7 +523,9 @@ int main(int argc, char *argv[])
 	/* Initialize SDL */
 	if (gfx_init() < 0)
 		return -1;
-
+#ifdef _USE_GTK
+	gtk_init(&argc, &argv); /* must be called AFTER SDL_Init when using SDL2 */
+#endif
 	if (gfx_video_init() || input_init())
 		return -1;
 
