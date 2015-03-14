@@ -195,7 +195,10 @@ stead.list_check = function(self, name) -- force using of objects, instead refs
 	for i,v,ii in stead.opairs(self) do
 		local o = stead.ref(v);
 		if not isObject(o) then 
-			error ("No object: "..name.."["..stead.tostr(ii).."]".." ("..stead.tostr(stead.type(v))..")")
+			local start_field, finish_field = stead.string.find( name, '%[".*"%]' )	-- 'name' come in format: <obj>["<field>"]
+			local field = stead.string.sub( name, start_field+1, finish_field-1 )
+			name = stead.string.sub( name, 1, start_field-1 )
+			error ("Wrong element \""..stead.tostr(v).."\"(type: "..stead.tostr(stead.type(v))..") in \""..name.."\" [field: "..field..", position: "..stead.tostr(ii).."]. Check correctness of element's name.", 0 )
 			return false
 		end
 		if (v.auto_allocated and not stead.ref(v.key_name)) -- renew
