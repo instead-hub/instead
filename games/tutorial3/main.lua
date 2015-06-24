@@ -13,6 +13,7 @@ tut_lang = {
 	es = 'Idioma',
 	pt = 'Linguagem',
 	fr = 'Langue',
+	de = 'Sprache',
 }
 
 tut_title = {
@@ -23,6 +24,7 @@ tut_title = {
 	es = 'Tutorial',
 	pt = 'Tutorial',
 	fr = 'Tutoriel',
+	de = 'Einführung',
 }
 
 if not LANG or not tut_lang[LANG] then
@@ -44,7 +46,8 @@ main = room {
 		img('es.png')..' '..[[{es|Español}^]]..
 		img('br.png')..' '..[[{pt|Português}^]]..
 		img('it.png')..' '..[[{it|Italiano}^]]..
-		img('fr.png')..' '..[[{fr|Français}]]);
+		img('fr.png')..' '..[[{fr|Français}^]]..
+		--[[img('de.png')..' '..]][[{de|Deutsch}]]);
 	obj = {
 		xact("ru", code [[ gamefile('main-ru.lua', true) ]]);
 		xact("en", code [[ gamefile('main-en.lua', true) ]]);
@@ -53,6 +56,7 @@ main = room {
 		xact("it", code [[ gamefile('main-it.lua', true) ]]);
 		xact("pt", code [[ gamefile('main-pt.lua', true) ]]);
 		xact("fr", code [[ gamefile('main-fr.lua', true) ]]);
+		xact("de", code [[ gamefile('main-de.lua', true) ]]);
 	}
 }
 
