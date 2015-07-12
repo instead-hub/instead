@@ -23,8 +23,12 @@
  * c) url to LICENSE
  */
 
+#ifdef S60
+#define	UINT32_C(c)	(c ## U)
+#else
 #include <stdint.h>
 #include <inttypes.h>
+#endif
 
 #define TINYMT32_MEXP 127
 #define TINYMT32_SH0 1
