@@ -22,7 +22,8 @@ prefs = obj {
 		stead.savemembers(h, s, 'prefs', true);
 		h:flush();
 		h:close();
-		os.rename(name_tmp, name);
+		stead.os.remove(name);
+		stead.os.rename(name_tmp, name);
 	end,
 	purge = function(s)
 		local name = instead_savepath() .. '/prefs';
