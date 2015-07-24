@@ -47,7 +47,7 @@ main = room {
 		img('br.png')..' '..[[{pt|Português}^]]..
 		img('it.png')..' '..[[{it|Italiano}^]]..
 		img('fr.png')..' '..[[{fr|Français}^]]..
-		--[[img('de.png')..' '..]][[{de|Deutsch}]]);
+		img('de.png')..' '..[[{de|Deutsch}]]);
 	obj = {
 		xact("ru", code [[ gamefile('main-ru.lua', true) ]]);
 		xact("en", code [[ gamefile('main-en.lua', true) ]]);
