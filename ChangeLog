@@ -1,3 +1,10 @@
+2.2.4
+
+  * fix in prefs module (Windows);
+  * German language and tutorial;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sun, 2 Aug 2015 11:22:00 +0300
+
 2.2.3
 
   * fix in player_save;
