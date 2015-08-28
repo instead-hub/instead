@@ -474,7 +474,12 @@ static 	int idfrw_close(struct SDL_RWops *context)
 	}
 	return 0;
 }
-
+#if SDL_VERSION_ATLEAST(2,0,0)
+static Sint64 idfrw_size(struct SDL_RWops *context)
+{
+	return -1;
+}
+#endif
 #if 0
 int idf_extract(idf_t idf, const char *fname)
 {
@@ -613,6 +618,9 @@ SDL_RWops *RWFromIdf(idf_t idf, const char *fname)
 	n = SDL_AllocRW();
 	if (!n)
 		goto err;
+#if SDL_VERSION_ATLEAST(2,0,0)
+	n->size = idfrw_size;
+#endif
 	n->seek = idfrw_seek;
 	n->read = idfrw_read;
 	n->close = idfrw_close;
