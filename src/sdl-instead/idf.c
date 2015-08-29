@@ -477,7 +477,10 @@ static 	int idfrw_close(struct SDL_RWops *context)
 #if SDL_VERSION_ATLEAST(2,0,0)
 static Sint64 idfrw_size(struct SDL_RWops *context)
 {
-	return -1;
+	idff_t fil = (idff_t)context->hidden.unknown.data1;
+	if (!fil || !fil->dir)
+		return -1;
+	return fil->dir->size;
 }
 #endif
 #if 0
