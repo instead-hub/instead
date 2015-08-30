@@ -1645,7 +1645,7 @@ static SDL_Surface *CreateVideoSurface(SDL_Texture * texture)
 	return surface;
 }
 
-#if SDL_VERSION_ATLEAST(2,0,3)
+#if SDL_VERSION_ATLEAST(2,0,0)
 static int mouse_x = -1;
 static int mouse_y = -1;
 
@@ -1811,7 +1811,7 @@ retry:
 		return -1;
 	}
 	SDL_RenderSetLogicalSize(Renderer, gfx_width, gfx_height);
-#if SDL_VERSION_ATLEAST(2,0,3)
+#if SDL_VERSION_ATLEAST(2,0,0)
 	SDL_DelEventWatch(mouse_watcher, NULL);
 	SDL_AddEventWatch(mouse_watcher, NULL);
 #endif
@@ -4924,7 +4924,7 @@ void txt_box_real_size(textbox_t box, int *pw, int *ph)
 int gfx_cursor(int *xp, int *yp)
 {
 	int x, y;
-#if SDL_VERSION_ATLEAST(2,0,3)
+#if SDL_VERSION_ATLEAST(2,0,0)
 	x = mouse_x;
 	y = mouse_y;
 #else
@@ -4940,6 +4940,12 @@ int gfx_cursor(int *xp, int *yp)
 void gfx_warp_cursor(int x, int y)
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
+	float sx, sy;
+	SDL_Rect rect;
+	SDL_RenderGetViewport(Renderer, &rect);
+	SDL_RenderGetScale(Renderer, &sx, &sy);
+	x = x * sx + rect.x;
+	y = y * sy + rect.y;
 	SDL_WarpMouseInWindow(SDL_VideoWindow, x, y);
 #else
 	SDL_WarpMouse(x, y);
