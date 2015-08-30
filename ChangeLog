@@ -1,3 +1,12 @@
+2.2.5
+
+  * fix bug with SDL2 and idf format (segfault);
+  * fix bug with SDL2 windows build (cursor coordinates);
+  * fix some bugs with SDL2;
+  * fix bug with music paused while run fullscreen mode;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sun, 30 Aug 2015 16:15:00 +0400
+
 2.2.4
 
   * fix in prefs module (Windows);

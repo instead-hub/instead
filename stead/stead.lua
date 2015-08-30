@@ -1,5 +1,5 @@
 stead = {
-	version = "2.2.4",
+	version = "2.2.5",
 	api_version = "1.1.6", -- last version before 1.2.0
 	table = table,
 	delim = ',',
