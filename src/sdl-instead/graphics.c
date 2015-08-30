@@ -1725,6 +1725,10 @@ int gfx_set_mode(int w, int h, int fs)
 		if (gfx_fs == 1 && !fs) { /* return from fullscreen */
 			window_x = SDL_WINDOWPOS_CENTERED;
 			window_y = SDL_WINDOWPOS_CENTERED;
+			if (desktop_mode.w <= win_w)
+				window_x = 0;
+			if (desktop_mode.h <= win_h)
+				window_y = 0;
 		}
 	} else
 		GetEnvironmentWindowPosition(win_w, win_h, &window_x, &window_y);
