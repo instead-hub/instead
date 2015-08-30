@@ -292,7 +292,7 @@ int input(struct inp_event *inp, int wait)
 			break;
 		case SDL_WINDOWEVENT_MINIMIZED:
 		case SDL_WINDOWEVENT_RESTORED:
-			m_minimized = (event.window.event == SDL_WINDOWEVENT_MINIMIZED);
+			m_minimized = (event.window.event == SDL_WINDOWEVENT_MINIMIZED && !opt_fs);
 			snd_pause(!nopause_sw && m_minimized);
 			break;
 		case SDL_WINDOWEVENT_ENTER:
