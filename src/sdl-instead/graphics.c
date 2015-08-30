@@ -1429,7 +1429,7 @@ static void SelectVideoDisplay()
 
 static SDL_Rect **SDL_ListModes(const SDL_PixelFormat * format, Uint32 flags)
 {
-	SDL_DisplayMode mode;    
+	SDL_DisplayMode disp_mode;
 	int i, nmodes;
 	SDL_Rect **modes;
 	SDL_Rect **new_modes;
@@ -1438,8 +1438,8 @@ static SDL_Rect **SDL_ListModes(const SDL_PixelFormat * format, Uint32 flags)
 
 	SelectVideoDisplay();
 
-	SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &mode);
-	SDL_PixelFormatEnumToMasks(mode.format, &bpp, &Rmask, &Gmask, &Bmask,
+	SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &disp_mode);
+	SDL_PixelFormatEnumToMasks(disp_mode.format, &bpp, &Rmask, &Gmask, &Bmask,
                                    &Amask);
 	if (format)
 		bpp = format->BitsPerPixel;
@@ -1455,6 +1455,12 @@ static SDL_Rect **SDL_ListModes(const SDL_PixelFormat * format, Uint32 flags)
 		if ((unsigned int)bpp < SDL_BITSPERPIXEL(mode.format)) {
 			continue;
 		}
+
+		if (mode.w > disp_mode.w || mode.h > disp_mode.h) {  /* skip large modes */
+			if (mode.w > disp_mode.h || mode.h > disp_mode.w) /* landscape ? */
+				continue;
+		}
+
 		if (nmodes > 0 && modes[nmodes - 1]->w == mode.w
 			&& modes[nmodes - 1]->h == mode.h) {
 			continue;
@@ -1722,7 +1728,7 @@ int gfx_set_mode(int w, int h, int fs)
 		SDL_GetWindowPosition(SDL_VideoWindow, &window_x, &window_y);
 		SDL_DestroyWindow(SDL_VideoWindow);
 		SDL_VideoWindow = NULL;
-		if (gfx_fs == 1 && !fs) { /* return from fullscreen */
+		if ((gfx_fs == 1 && !fs) || (window_x == 0 || window_y == 0)) { /* return from fullscreen */
 			window_x = SDL_WINDOWPOS_CENTERED;
 			window_y = SDL_WINDOWPOS_CENTERED;
 		}
