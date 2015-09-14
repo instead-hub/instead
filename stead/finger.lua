@@ -107,6 +107,6 @@ function(f, s, cmd, press, fid, x, y, px, py, ...)
 		r,v = stead.call(s, 'finger', press, fid, stead.tonum(x), stead.tonum(y), x2, y2, ...);
 		return r,v
 	end
-	return f(s, cmd, x, y, px, py, ...)
+	return f(s, cmd, press, fid, x, y, px, py, ...)
 end)
 -- vim:ts=4
