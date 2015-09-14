@@ -92,6 +92,6 @@ function(f, s, cmd, press, mb, x, y, px, py, ...)
 		end
 		return r,v
 	end
-	return f(s, cmd, x, y, px, py, ...)
+	return f(s, cmd, press, mb, x, y, px, py, ...)
 end)
 -- vim:ts=4
