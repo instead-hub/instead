@@ -657,7 +657,7 @@ img_t	gfx_grab_screen(int x, int y, int w, int h)
 	s = SDL_CreateRGBSurface(Surf(screen)->flags, w, h, Surf(screen)->format->BitsPerPixel, 
 			Surf(screen)->format->Rmask, Surf(screen)->format->Gmask, Surf(screen)->format->Bmask, Surf(screen)->format->Amask);
 	if (!s)
-		return NULL;	
+		return NULL;
 	src.x = x;
 	src.y = y;
 	src.w = w;
@@ -668,6 +668,7 @@ img_t	gfx_grab_screen(int x, int y, int w, int h)
 	dst.h = h;	
 /*	SDL_SetSurfaceBlendMode(screen, SDL_BLENDMODE_NONE);
 	SDL_SetSurfaceBlendMode(img, SDL_BLENDMODE_NONE); */
+	gfx_unset_alpha(screen);
 	SDL_BlitSurface(Surf(screen), &src, s, &dst);
 	img = GFX_IMG_REL(s);
 	if (!img)
