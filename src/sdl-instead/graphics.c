@@ -834,7 +834,7 @@ img_t gfx_alpha_img(img_t src, int alpha)
 			Uint8 r, g, b, a;
 			memcpy(&col, ptr, bpp);
 			SDL_GetRGBA(col, Surf(img)->format, &r, &g, &b, &a);
-			col = SDL_MapRGBA(Surf(img)->format, r, g, b, a * alpha / 255);
+			col = SDL_MapRGBA(Surf(img)->format, r, g, b, a * alpha /  SDL_ALPHA_OPAQUE);
 			memcpy(ptr, &col, bpp);
 			ptr += bpp;
 			w --;
@@ -976,7 +976,7 @@ static img_t _gfx_load_special_image(char *f, int combined)
 		goto out;
 	} else if (!strncmp(filename, "box:", 4)) {
 		filename += 4;
-		alpha = 255;
+		alpha =  SDL_ALPHA_OPAQUE;
 	} else if (!strncmp(filename, "pad:", 4)) {
 		filename += 4;
 		img2 = img_pad(filename);
@@ -1236,6 +1236,9 @@ void gfx_compose_from(img_t p, int x, int y, int width, int height, img_t to, in
 
 void gfx_copy_from(img_t p, int x, int y, int width, int height, img_t to, int xx, int yy)
 {
+#if SDL_VERSION_ATLEAST(2,0,0)
+	SDL_BlendMode blendmode = SDL_BLENDMODE_BLEND;
+#endif
 	SDL_Surface *pixbuf = Surf(p);
 	SDL_Surface *scr = Surf(to);
 	SDL_Rect dest, src;
@@ -1249,9 +1252,15 @@ void gfx_copy_from(img_t p, int x, int y, int width, int height, img_t to, int x
 	dest.y = yy; 
 	dest.w = width; 
 	dest.h = height;
+#if SDL_VERSION_ATLEAST(2,0,0)
+	SDL_GetSurfaceBlendMode(pixbuf, &blendmode);
+#endif
 	gfx_unset_alpha(p);
 	SDL_BlitSurface(pixbuf, &src, scr, &dest);
-	gfx_set_alpha(p, 255);
+	gfx_set_alpha(p, SDL_ALPHA_OPAQUE);
+#if SDL_VERSION_ATLEAST(2,0,0)
+	SDL_SetSurfaceBlendMode(pixbuf, blendmode);
+#endif
 }
 
 void gfx_draw(img_t p, int x, int y)
@@ -4983,7 +4992,7 @@ static void update_gfx(void *aux)
 		return;
 #if !SDL_VERSION_ATLEAST(2,0,0)
 	game_cursor(CURSOR_CLEAR);
-	gfx_set_alpha(img, (255 * (fade_step_nr + 1)) / ALPHA_STEPS);
+	gfx_set_alpha(img, (SDL_ALPHA_OPAQUE * (fade_step_nr + 1)) / ALPHA_STEPS);
 	gfx_draw(fade_bg, 0, 0);
 	gfx_draw(img, 0, 0);
 	game_cursor(CURSOR_DRAW);
@@ -5031,7 +5040,7 @@ void gfx_change_screen(img_t src, int steps)
 	fade_bg_texture = SDL_CreateTextureFromSurface(Renderer, Surf(fade_bg));
 	if (!fade_bg_texture)
 		return;
-	SDL_SetTextureAlphaMod(fade_bg_texture, 255);
+	SDL_SetTextureAlphaMod(fade_bg_texture, SDL_ALPHA_OPAQUE);
 	SDL_SetTextureBlendMode(fade_bg_texture, SDL_BLENDMODE_NONE);
 	fade_fg_texture = SDL_CreateTextureFromSurface(Renderer, Surf(src));
 	if (!fade_fg_texture)
@@ -5048,7 +5057,7 @@ void gfx_change_screen(img_t src, int steps)
 		gfx_commit();
 #else
 		SDL_RenderCopy(Renderer, fade_bg_texture, NULL, NULL);
-		SDL_SetTextureAlphaMod(fade_fg_texture, (255 * (fade_step_nr)) / ALPHA_STEPS);
+		SDL_SetTextureAlphaMod(fade_fg_texture, (SDL_ALPHA_OPAQUE * (fade_step_nr)) / ALPHA_STEPS);
 		SDL_RenderCopy(Renderer, fade_fg_texture, NULL, NULL);
 		gfx_draw_cursor();
 		SDL_RenderPresent(Renderer);
