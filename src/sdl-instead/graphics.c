@@ -670,6 +670,7 @@ img_t	gfx_grab_screen(int x, int y, int w, int h)
 	SDL_SetSurfaceBlendMode(img, SDL_BLENDMODE_NONE); */
 	gfx_unset_alpha(screen);
 	SDL_BlitSurface(Surf(screen), &src, s, &dst);
+	gfx_set_alpha(screen, SDL_ALPHA_OPAQUE);
 	img = GFX_IMG_REL(s);
 	if (!img)
 		return NULL;
@@ -1237,9 +1238,6 @@ void gfx_compose_from(img_t p, int x, int y, int width, int height, img_t to, in
 
 void gfx_copy_from(img_t p, int x, int y, int width, int height, img_t to, int xx, int yy)
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
-	SDL_BlendMode blendmode = SDL_BLENDMODE_BLEND;
-#endif
 	SDL_Surface *pixbuf = Surf(p);
 	SDL_Surface *scr = Surf(to);
 	SDL_Rect dest, src;
@@ -1253,15 +1251,9 @@ void gfx_copy_from(img_t p, int x, int y, int width, int height, img_t to, int x
 	dest.y = yy; 
 	dest.w = width; 
 	dest.h = height;
-#if SDL_VERSION_ATLEAST(2,0,0)
-	SDL_GetSurfaceBlendMode(pixbuf, &blendmode);
-#endif
 	gfx_unset_alpha(p);
 	SDL_BlitSurface(pixbuf, &src, scr, &dest);
 	gfx_set_alpha(p, SDL_ALPHA_OPAQUE);
-#if SDL_VERSION_ATLEAST(2,0,0)
-	SDL_SetSurfaceBlendMode(pixbuf, blendmode);
-#endif
 }
 
 void gfx_draw(img_t p, int x, int y)
