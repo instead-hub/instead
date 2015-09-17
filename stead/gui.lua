@@ -241,7 +241,7 @@ stead.menu_save = function(self, name, h, need)
 	stead.savemembers(h, self, name, need);
 end
 
-MENU_TAG_ID = 100000000
+MENU_TAG_ID = 1000000
 
 function menu(v)
 	v.menu_type = true
