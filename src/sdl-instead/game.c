@@ -3180,23 +3180,25 @@ static int game_pic_click(int x, int y, int *ox, int *oy)
 	return -1;
 }
 
-static int game_bg_click(int x, int y, int *ox, int *oy)
+static int game_bg_click(int mb, int x, int y, int *ox, int *oy)
 {
-	struct el *o;
+	struct el *o = NULL;
 	struct game_theme *t = &game_theme;
 	int bg = 1;
 	if (x < t->xoff || y < t->yoff || x >= (t->w - t->xoff) || y >= (t->h - t->yoff))
 		bg = 0;
+	else
+		o = look_obj(x, y);
 	*ox = (int)((float)(x - t->xoff) / (float)t->scale);
 	*oy = (int)((float)(y - t->yoff) / (float)t->scale);
-	if (bg) {
-		o = look_obj(x, y);
-		if (o && (o->id == el_sup || o->id == el_sdown ||
-			o->id == el_iup || o->id == el_idown ||
-			o->id == el_menu_button))
-			return -1; /* ask Odyssey for that ;) */
+	if (o && (o->id == el_sup || o->id == el_sdown ||
+		o->id == el_iup || o->id == el_idown ||
+		o->id == el_menu_button))
+		return -1; /* ask Odyssey for that ;) */
+
+	if (bg || mb == EV_CODE_FINGER) /* fingers area may be larger */
 		return 0;
-	}
+
 	return -1;
 }
 
@@ -3249,9 +3251,8 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 		int px = -1;
 		int py = -1;
 		game_pic_click(x, y, &px, &py); /* got picture coord */
-		if (game_bg_click(x, y, &x, &y)) { /* no click on bg */
-			if (mb != EV_CODE_FINGER) /* fingers area may be larger */
-				return -1;
+		if (game_bg_click(mb, x, y, &x, &y)) { /* no click on bg */
+			return -1;
 		}
 		snprintf(tx, sizeof(tx), "%d", x);
 		snprintf(ty, sizeof(ty), "%d", y);
