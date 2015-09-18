@@ -93,6 +93,7 @@ void push_user_event(void (*p) (void*), void *data)
 #if SDL_VERSION_ATLEAST(2,0,0)
 static unsigned long last_press_ms = 0;
 static unsigned long last_repeat_ms = 0;
+extern void gfx_finger_pos_scale(int *x, int *y);
 #endif
 #define INPUT_REP_DELAY_MS 500
 #define INPUT_REP_INTERVAL_MS 30
@@ -217,6 +218,7 @@ int finger_pos(const char *finger, int *x, int *y, float *pressure)
 				*y = (int)(f->y * gfx_height);
 			if (pressure)
 				*pressure = f->pressure;
+			gfx_finger_pos_scale(x, y);
 			return 0;
 		}
 	}
@@ -272,6 +274,7 @@ int input(struct inp_event *inp, int wait)
 #endif
 		inp->x = (int)(event.tfinger.x * gfx_width);
 		inp->y = (int)(event.tfinger.y * gfx_height);
+		gfx_finger_pos_scale(&inp->x, &inp->y);
 		inp->type = (event.type == SDL_FINGERDOWN) ? FINGER_DOWN : FINGER_UP;
 #ifndef PRIx64
 		snprintf(inp->sym, sizeof(inp->sym), "%llx:%llx", 
