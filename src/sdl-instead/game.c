@@ -3184,7 +3184,7 @@ static int game_bg_click(int x, int y, int *ox, int *oy)
 {
 	struct el *o;
 	struct game_theme *t = &game_theme;
-	if (x < t->xoff || y < t->yoff || x >= (t->w - t->xoff) || y >= (t->h - t->yoff))
+	if (x < t->xoff || y < t->yoff || x >= (t->w + t->xoff) || y >= (t->h + t->yoff))
 		return -1;
 	o = look_obj(x, y);
 
@@ -3247,8 +3247,10 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 		int px = -1;
 		int py = -1;
 		game_pic_click(x, y, &px, &py); /* got picture coord */
-		if (game_bg_click(x, y, &x, &y)) /* no click on bg */
-			return -1;
+		if (game_bg_click(x, y, &x, &y)) { /* no click on bg */
+			if (mb != EV_CODE_FINGER) /* fingers area may be larger */
+				return -1;
+		}
 		snprintf(tx, sizeof(tx), "%d", x);
 		snprintf(ty, sizeof(ty), "%d", y);
 		snprintf(tmb, sizeof(tmb), "%d", mb);
