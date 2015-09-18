@@ -3184,7 +3184,7 @@ static int game_bg_click(int x, int y, int *ox, int *oy)
 {
 	struct el *o;
 	struct game_theme *t = &game_theme;
-	if (x < t->xoff || y < t->yoff || x >= (t->w + t->xoff) || y >= (t->h + t->yoff))
+	if (x < t->xoff || y < t->yoff || x >= (t->w - t->xoff) || y >= (t->h - t->yoff))
 		return -1;
 	o = look_obj(x, y);
 
