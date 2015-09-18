@@ -3184,18 +3184,20 @@ static int game_bg_click(int x, int y, int *ox, int *oy)
 {
 	struct el *o;
 	struct game_theme *t = &game_theme;
+	int bg = 1;
 	if (x < t->xoff || y < t->yoff || x >= (t->w - t->xoff) || y >= (t->h - t->yoff))
-		return -1;
-	o = look_obj(x, y);
-
-	if (o && (o->id == el_sup || o->id == el_sdown ||
-		o->id == el_iup || o->id == el_idown ||
-		o->id == el_menu_button))
-		return -1; /* ask Odyssey for that ;) */
-
+		bg = 0;
 	*ox = (int)((float)(x - t->xoff) / (float)t->scale);
 	*oy = (int)((float)(y - t->yoff) / (float)t->scale);
-	return 0;
+	if (bg) {
+		o = look_obj(x, y);
+		if (o && (o->id == el_sup || o->id == el_sdown ||
+			o->id == el_iup || o->id == el_idown ||
+			o->id == el_menu_button))
+			return -1; /* ask Odyssey for that ;) */
+		return 0;
+	}
+	return -1;
 }
 
 static int game_event(const char *ev)

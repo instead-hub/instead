@@ -1675,24 +1675,23 @@ static int mouse_watcher(void *userdata, SDL_Event *event)
 	return 0;
 }
 
-void gfx_finger_pos_scale(int *ox, int *oy)
+void gfx_finger_pos_scale(float x, float y, int *ox, int *oy)
 {
-	int x, y;
-	float sx, sy;
+	int w, h;
+	float sx, sy, ssx, ssy;
+	SDL_GetWindowSize(SDL_VideoWindow, &w, &h);
 	SDL_Rect rect;
 	SDL_RenderGetViewport(Renderer, &rect);
 	SDL_RenderGetScale(Renderer, &sx, &sy);
 	if (ox && sx != 0) {
-		x = *ox;
-		x = sx * x;
-		x -= rect.x;
-		*ox = (int)(x / sx);
+		x = x * w;
+		x -= rect.x * sx;
+		*ox = x / sx;
 	}
 	if (oy && sy != 0) {
-		y = *oy;
-		y = sy * y;
-		y -= rect.y;
-		*oy = (int)(y / sy);
+		y = y * h;
+		y -= rect.y * sy;
+		*oy = y / sy;
 	}
 	return;
 }
