@@ -1678,7 +1678,7 @@ static int mouse_watcher(void *userdata, SDL_Event *event)
 void gfx_finger_pos_scale(float x, float y, int *ox, int *oy)
 {
 	int w, h;
-	float sx, sy, ssx, ssy;
+	float sx, sy;
 	SDL_GetWindowSize(SDL_VideoWindow, &w, &h);
 	SDL_Rect rect;
 	SDL_RenderGetViewport(Renderer, &rect);
@@ -4977,8 +4977,8 @@ void gfx_warp_cursor(int x, int y)
 	SDL_Rect rect;
 	SDL_RenderGetViewport(Renderer, &rect);
 	SDL_RenderGetScale(Renderer, &sx, &sy);
-	x = x * sx + rect.x;
-	y = y * sy + rect.y;
+	x = (x + rect.x) * sx;
+	y = (y + rect.y) * sy;
 	SDL_WarpMouseInWindow(SDL_VideoWindow, x, y);
 #else
 	SDL_WarpMouse(x, y);
