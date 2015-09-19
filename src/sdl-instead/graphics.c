@@ -1685,13 +1685,11 @@ void gfx_finger_pos_scale(float x, float y, int *ox, int *oy)
 	SDL_RenderGetScale(Renderer, &sx, &sy);
 	if (ox && sx != 0) {
 		x = x * w;
-		x -= rect.x * sx;
-		*ox = x / sx;
+		*ox = x / sx - rect.x;
 	}
 	if (oy && sy != 0) {
 		y = y * h;
-		y -= rect.y * sy;
-		*oy = y / sy;
+		*oy = y / sy - rect.y;
 	}
 	return;
 }
