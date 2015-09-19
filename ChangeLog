@@ -1,3 +1,13 @@
+2.2.6
+
+  * fix bug with SDL2 and cursor draw;
+  * fix bug with fingers and click modules;
+  * fix bug with fingers positions (SDL2);
+  * fix bug with cursor positions (SDL2);
+  * fix bug with menu and 32 bit float (S60);
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 19 Sep 2015 11:21:00 +0400
+
 2.2.5
 
   * fix bug with SDL2 and idf format (segfault);
