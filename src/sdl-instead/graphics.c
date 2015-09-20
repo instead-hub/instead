@@ -5138,11 +5138,15 @@ int gfx_pending(void)
 int gfx_set_title(const char *title)
 {
 	char stitle[4096];
+#if !defined(S60)
 	if (!title) {
+#endif
 		strcpy( stitle, "INSTEAD - " );
 		strcat( stitle, VERSION );
 		title = stitle;
+#if !defined(S60)
 	}
+#endif
 #if !SDL_VERSION_ATLEAST(2,0,0)
 	if (screen)
 		SDL_WM_SetCaption(title, title);
