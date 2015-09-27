@@ -670,7 +670,7 @@ img_t	gfx_grab_screen(int x, int y, int w, int h)
 	SDL_SetSurfaceBlendMode(img, SDL_BLENDMODE_NONE); */
 	gfx_unset_alpha(screen);
 	SDL_BlitSurface(Surf(screen), &src, s, &dst);
-	gfx_set_alpha(screen, SDL_ALPHA_OPAQUE);
+/*	gfx_set_alpha(screen, SDL_ALPHA_OPAQUE); */
 	img = GFX_IMG_REL(s);
 	if (!img)
 		return NULL;
