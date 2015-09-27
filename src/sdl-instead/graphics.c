@@ -670,7 +670,7 @@ img_t	gfx_grab_screen(int x, int y, int w, int h)
 	SDL_SetSurfaceBlendMode(img, SDL_BLENDMODE_NONE); */
 	gfx_unset_alpha(screen);
 	SDL_BlitSurface(Surf(screen), &src, s, &dst);
-/*	gfx_set_alpha(screen, SDL_ALPHA_OPAQUE); */
+	gfx_set_alpha(screen, SDL_ALPHA_OPAQUE);
 	img = GFX_IMG_REL(s);
 	if (!img)
 		return NULL;
@@ -1197,7 +1197,9 @@ void gfx_draw_bg(img_t p, int x, int y, int width, int height)
 	dest.y = y; 
 	dest.w = width; 
 	dest.h = height;
+	gfx_unset_alpha(p);
 	SDL_BlitSurface(pixbuf, &src, Surf(screen), &dest);
+	gfx_set_alpha(p, SDL_ALPHA_OPAQUE);
 }
 
 void gfx_draw_from(img_t p, int x, int y, int width, int height, img_t to, int xx, int yy)
@@ -1234,6 +1236,19 @@ void gfx_compose_from(img_t p, int x, int y, int width, int height, img_t to, in
 	dest.w = width; 
 	dest.h = height;
 	SDL_gfxBlitRGBA(pixbuf, &src, scr, &dest);
+}
+
+void gfx_copy(img_t p, int x, int y)
+{
+	SDL_Surface *pixbuf = Surf(p);
+	SDL_Rect dest;
+	dest.x = x;
+	dest.y = y; 
+	dest.w = pixbuf->h;
+	dest.h = pixbuf->h;
+	gfx_unset_alpha(p);
+	SDL_BlitSurface(pixbuf, NULL, Surf(screen), &dest);
+	gfx_set_alpha(p, SDL_ALPHA_OPAQUE);
 }
 
 void gfx_copy_from(img_t p, int x, int y, int width, int height, img_t to, int xx, int yy)
@@ -5014,7 +5029,7 @@ static void update_gfx(void *aux)
 	if (fade_step_nr == ALPHA_STEPS) {
 #if SDL_VERSION_ATLEAST(2,0,0)
 		game_cursor(CURSOR_CLEAR);
-		gfx_draw(fade_fg, 0, 0);
+		gfx_copy(fade_fg, 0, 0);
 		game_cursor(CURSOR_ON);
 		gfx_flip();
 		gfx_commit();
@@ -5035,7 +5050,7 @@ void gfx_change_screen(img_t src, int steps)
 	struct inp_event ev;
 	SDL_TimerID han;
 	if (steps <= 1 || !opt_fading) {
-		gfx_draw(src, 0, 0);
+		gfx_copy(src, 0, 0);
 		game_cursor(CURSOR_ON);
 		gfx_flip();
 /*		gfx_commit(); */

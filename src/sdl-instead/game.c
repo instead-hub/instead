@@ -2044,7 +2044,7 @@ int game_cmd(char *cmd, int flags)
 			if (!offscreen)
 				goto fatal;
 			oldscreen = gfx_screen(offscreen);
-			gfx_draw(oldscreen, 0, 0);
+			gfx_copy(oldscreen, 0, 0);
 			game_theme_update();
 			game_theme_changed = 1;
 			offscreen = gfx_screen(oldscreen);
@@ -2101,7 +2101,7 @@ int game_cmd(char *cmd, int flags)
 		if (!offscreen)
 			goto fatal;
 		oldscreen = gfx_screen(offscreen);
-		gfx_draw(oldscreen, 0, 0);
+		gfx_copy(oldscreen, 0, 0);
 	}
 
 	if (game_theme_changed == 2 && opt_owntheme) {
@@ -2734,7 +2734,7 @@ void game_cursor(int on)
 		cur = NULL;
 
 	if (grab) {
-		gfx_draw(grab, xc, yc);
+		gfx_copy(grab, xc, yc);
 		gfx_free_image(grab);
 		grab = NULL;
 	}
