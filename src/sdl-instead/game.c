@@ -412,7 +412,7 @@ void game_clear(int x, int y, int w, int h)
 	if (menu_shown) {
 		int xx = x - mx;
 		int yy = y - my;
-		gfx_draw_from(menubg, xx, yy, w, h, NULL, x, y); 
+		gfx_copy_from(menubg, xx, yy, w, h, NULL, x, y); 
 		gfx_draw_from(menu, xx, yy, w, h, NULL, x, y);
 	}
 }
@@ -1257,7 +1257,7 @@ int game_menu_box_width(int show, const char *txt, int width)
 
 	if (menubg) {
 		game_cursor(CURSOR_CLEAR);
-		gfx_draw(menubg, mx, my);
+		gfx_copy(menubg, mx, my);
 		gfx_free_image(menubg);
 		menubg = NULL;
 	}
@@ -2459,7 +2459,7 @@ int game_paused(void)
 
 void menu_update(struct el *elem)
 {
-	gfx_draw(menubg, mx, my);
+	gfx_copy(menubg, mx, my);
 	gfx_draw(menu, mx, my);
 	txt_layout_draw(elem->p.lay, elem->x, elem->y);
 	gfx_update(mx, my, gfx_img_w(menu), gfx_img_h(menu));

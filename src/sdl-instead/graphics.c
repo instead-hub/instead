@@ -651,6 +651,7 @@ img_t	gfx_grab_screen(int x, int y, int w, int h)
 {
 	SDL_Rect dst, src;
 	SDL_Surface *s;
+	int a;
 	img_t img;
 	if (!screen)
 		return NULL;
@@ -668,9 +669,9 @@ img_t	gfx_grab_screen(int x, int y, int w, int h)
 	dst.h = h;	
 /*	SDL_SetSurfaceBlendMode(screen, SDL_BLENDMODE_NONE);
 	SDL_SetSurfaceBlendMode(img, SDL_BLENDMODE_NONE); */
-	gfx_unset_alpha(screen);
+	a = gfx_unset_alpha(screen);
 	SDL_BlitSurface(Surf(screen), &src, s, &dst);
-	gfx_set_alpha(screen, SDL_ALPHA_OPAQUE);
+	gfx_set_alpha(screen, a);
 	img = GFX_IMG_REL(s);
 	if (!img)
 		return NULL;
@@ -874,6 +875,8 @@ void gfx_unset_colorkey(img_t src)
 
 void	gfx_set_alpha(img_t src, int alpha)
 {
+	if (alpha < 0)
+		return;
 #if SDL_VERSION_ATLEAST(1,3,0)
 /*	if (Surf(src)->format->Amask)
 		alpha = SDL_ALPHA_OPAQUE; */
@@ -886,14 +889,25 @@ void	gfx_set_alpha(img_t src, int alpha)
 #endif
 }
 
-void	gfx_unset_alpha(img_t src)
+int	gfx_unset_alpha(img_t src)
 {
+	int alpha = -1;
 #if SDL_VERSION_ATLEAST(1,3,0)
+	SDL_BlendMode  blendMode;
+	Uint8	sdl_alpha = SDL_ALPHA_OPAQUE;
+	alpha = SDL_GetSurfaceBlendMode(Surf(src), &blendMode);
+	if (blendMode == SDL_BLENDMODE_BLEND) {
+		SDL_GetSurfaceAlphaMod(Surf(src), &sdl_alpha);
+		alpha = sdl_alpha;
+	}
 	SDL_SetSurfaceAlphaMod(Surf(src), SDL_ALPHA_OPAQUE);
 	SDL_SetSurfaceBlendMode(Surf(src), SDL_BLENDMODE_NONE);
 #else
+	if ((Surf(src)->flags) & SDL_SRCALPHA)
+		alpha = Surf(src)->format->alpha;
 	SDL_SetAlpha(Surf(src), 0, SDL_ALPHA_OPAQUE);
 #endif
+	return alpha;
 }
 
 img_t gfx_combine(img_t src, img_t dst)
@@ -1185,6 +1199,7 @@ img_t gfx_load_image(char *filename)
 
 void gfx_draw_bg(img_t p, int x, int y, int width, int height)
 {
+	int a;
 	SDL_Surface *pixbuf = Surf(p);
 	SDL_Rect dest, src;
 	if (!p)
@@ -1197,9 +1212,9 @@ void gfx_draw_bg(img_t p, int x, int y, int width, int height)
 	dest.y = y; 
 	dest.w = width; 
 	dest.h = height;
-	gfx_unset_alpha(p);
+	a = gfx_unset_alpha(p);
 	SDL_BlitSurface(pixbuf, &src, Surf(screen), &dest);
-	gfx_set_alpha(p, SDL_ALPHA_OPAQUE);
+	gfx_set_alpha(p, a);
 }
 
 void gfx_draw_from(img_t p, int x, int y, int width, int height, img_t to, int xx, int yy)
@@ -1207,6 +1222,8 @@ void gfx_draw_from(img_t p, int x, int y, int width, int height, img_t to, int x
 	SDL_Surface *pixbuf = Surf(p);
 	SDL_Surface *scr = Surf(to);
 	SDL_Rect dest, src;
+	if (!p)
+		return;
 	if (!scr)
 		scr = Surf(screen);
 	src.x = x;
@@ -1240,22 +1257,28 @@ void gfx_compose_from(img_t p, int x, int y, int width, int height, img_t to, in
 
 void gfx_copy(img_t p, int x, int y)
 {
+	int a;
 	SDL_Surface *pixbuf = Surf(p);
 	SDL_Rect dest;
+	if (!p)
+		return;
 	dest.x = x;
 	dest.y = y; 
-	dest.w = pixbuf->h;
+	dest.w = pixbuf->w;
 	dest.h = pixbuf->h;
-	gfx_unset_alpha(p);
+	a = gfx_unset_alpha(p);
 	SDL_BlitSurface(pixbuf, NULL, Surf(screen), &dest);
-	gfx_set_alpha(p, SDL_ALPHA_OPAQUE);
+	gfx_set_alpha(p, a);
 }
 
 void gfx_copy_from(img_t p, int x, int y, int width, int height, img_t to, int xx, int yy)
 {
+	int a;
 	SDL_Surface *pixbuf = Surf(p);
 	SDL_Surface *scr = Surf(to);
 	SDL_Rect dest, src;
+	if (!p)
+		return;
 	if (!scr)
 		scr = Surf(screen);
 	src.x = x;
@@ -1266,9 +1289,9 @@ void gfx_copy_from(img_t p, int x, int y, int width, int height, img_t to, int x
 	dest.y = yy; 
 	dest.w = width; 
 	dest.h = height;
-	gfx_unset_alpha(p);
+	a = gfx_unset_alpha(p);
 	SDL_BlitSurface(pixbuf, &src, scr, &dest);
-	gfx_set_alpha(p, SDL_ALPHA_OPAQUE);
+	gfx_set_alpha(p, a);
 }
 
 void gfx_draw(img_t p, int x, int y)

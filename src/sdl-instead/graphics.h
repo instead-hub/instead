@@ -107,7 +107,7 @@ extern int	gfx_img_w(img_t pixmap);
 extern int	gfx_img_h(img_t pixmap);
 extern img_t	gfx_combine(img_t src, img_t dst);
 extern void	gfx_set_alpha(img_t src, int alpha);
-extern void	gfx_unset_alpha(img_t src);
+extern int	gfx_unset_alpha(img_t src);
 extern void	gfx_set_colorkey(img_t src, color_t col);
 extern void	gfx_unset_colorkey(img_t src);
 
