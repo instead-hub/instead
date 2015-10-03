@@ -1925,14 +1925,17 @@ static int instead_platform(void)
 static int instead_package(const char *path)
 {
 	char *p;
+	char *stead_path;
+	stead_path = malloc(PATH_MAX * 5); /* game_cwd + STEAD_PATH and so on... */
+	if (!stead_path)
+		return -1;
+	strcpy(stead_path, "package.path=\"");
 #if defined(_WIN32_WCE)
-	char stead_path[PATH_MAX * 4] = "package.path=\""; /* wince have not cwd :) */
 	if (path) {
-		strcat(stead_path, path);
+		strcat(stead_path, path); /* wince have not cwd :) */
 		strcat(stead_path, "/?.lua;");
 	}
 #else
-	char stead_path[PATH_MAX] = "package.path=\"";
 	if (path)
 		strcat(stead_path, "./?.lua;");
 #endif
@@ -1953,6 +1956,7 @@ static int instead_package(const char *path)
 	strcat(stead_path, "\"");
 
 	instead_eval(stead_path); instead_clear();
+	free(stead_path);
 /*	putenv(stead_path); */
 	return 0;
 }
