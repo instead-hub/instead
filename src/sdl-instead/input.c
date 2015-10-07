@@ -199,13 +199,13 @@ int finger_pos(const char *finger, int *x, int *y, float *pressure)
 	SDL_FingerID fid;
 	SDL_Finger *f;
 	int i, n;
-#ifndef PRIx64
-	if (sscanf(finger, "%llx:%llx", &fid, &tid) != 2)
+	i = hex2data(finger, &fid, sizeof(fid));
+
+	if (i != sizeof(fid) * 2 || finger[i] != ':')
 		return -1;
-#else
-	if (sscanf(finger, "%"PRIx64":%"PRIx64, &fid, &tid) != 2)
+	if (hex2data(finger + i + 1, &tid, sizeof(tid)) != sizeof(tid) * 2)
 		return -1;
-#endif
+
 	n = SDL_GetNumTouchFingers(tid);
 	if (n <= 0)
 		return -1;
@@ -270,15 +270,14 @@ int input(struct inp_event *inp, int wait)
 #endif
 		gfx_finger_pos_scale(event.tfinger.x, event.tfinger.y, &inp->x, &inp->y);
 		inp->type = (event.type == SDL_FINGERDOWN) ? FINGER_DOWN : FINGER_UP;
-#ifndef PRIx64
-		snprintf(inp->sym, sizeof(inp->sym), "%llx:%llx", 
-			event.tfinger.fingerId,
-			event.tfinger.touchId);
-#else
-		snprintf(inp->sym, sizeof(inp->sym), "%"PRIx64":%"PRIx64, 
-			event.tfinger.fingerId,
-			event.tfinger.touchId);
-#endif
+		data2hex(&event.tfinger.fingerId, 
+			sizeof(event.tfinger.fingerId), 
+			inp->sym);
+		inp->sym[sizeof(event.tfinger.fingerId) * 2] = ':';
+		data2hex(&event.tfinger.touchId, 
+			sizeof(event.tfinger.touchId), 
+			inp->sym + sizeof(event.tfinger.fingerId) * 2 + 1);
+		inp->sym[sizeof(event.tfinger.fingerId) * 2 + 1 + sizeof(event.tfinger.touchId) * 2] = 0;
 		break;
 	case SDL_WINDOWEVENT:
 		switch (event.window.event) {

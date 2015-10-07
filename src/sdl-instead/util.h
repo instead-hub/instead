@@ -85,6 +85,9 @@ extern void mt_random_seed(unsigned long seed);
 extern unsigned long mt_random(void);
 extern double mt_random_double(void);
 
+extern void data2hex(const void *d, int len, void *o);
+extern int hex2data(const void *d, void *o, int len);
+
 #ifndef PATH_MAX
 #define PATH_MAX 	4096
 #endif

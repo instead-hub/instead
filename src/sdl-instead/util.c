@@ -835,3 +835,43 @@ double mt_random_double(void)
 {
 	return tinymt32_generate_32double(&trandom);
 }
+
+void data2hex(const void *d, int len, void *o)
+{
+	unsigned char *data = (unsigned char *)d;
+	unsigned char *out = (unsigned char *)o;
+
+	static char map[16] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
+		'a', 'b', 'c', 'd', 'e', 'f' };
+
+	while (len --) {
+		unsigned char a = *data ++;
+		*out ++ = map[a & 0xf];
+		*out ++ = map[a >> 4];
+	}
+}
+
+int hex2data(const void *d, void *o, int len)
+{
+	unsigned char *data = (unsigned char *)d;
+	unsigned char *out = (unsigned char *)o;
+	unsigned char b;
+	int rc = 0;
+	len *= 2;
+
+	while (len --) {
+		unsigned char c = *data ++;
+		if ((c < '0' || c > '9') && (c < 'a' || c > 'f'))
+			break;
+		if (c >= 'a')
+			c -= ('a' - 10);
+		else
+			c -= '0';
+		if (len & 1)
+			b = c;
+		else
+			*out ++ = b + (c << 4);
+		rc ++;
+	}
+	return rc;
+}
