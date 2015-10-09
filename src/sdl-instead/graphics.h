@@ -88,6 +88,8 @@ extern int	gfx_video_init(void);
 extern int 	gfx_set_mode(int w, int h, int fs);
 extern int 	gfx_get_mode(int n, int *w, int *h);
 extern int	gfx_get_max_mode(int *w, int *h);
+extern int	gfx_check_mode(int w, int h);
+
 extern int	gfx_set_title(const char *title);
 
 extern int	gfx_next_mode(int *w, int *h);

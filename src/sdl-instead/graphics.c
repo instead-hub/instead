@@ -1638,6 +1638,24 @@ int gfx_get_max_mode(int *w, int *h)
 	return 0;
 }
 
+int gfx_check_mode(int w, int h)
+{
+	int ww = 0, hh = 0;
+	int i = 0;
+	if (!vid_modes)
+		gfx_modes();
+
+	if (!vid_modes)
+		return -1;
+
+	while (!gfx_get_mode(i, &ww, &hh)) {
+		if (ww == w && hh == h)
+			return 0;
+		i ++;
+	}
+	return -1;
+}
+
 static SDL_Surface *icon = NULL;
 extern int software_sw;
 
@@ -1761,7 +1779,7 @@ int gfx_set_mode(int w, int h, int fs)
 	if (fs && !software_sw) {
 		win_w = max_mode_w;
 		win_h = max_mode_h;
-		if (w < h) { /* portrait mode */
+		if (w < h && !gfx_check_mode(max_mode_h, max_mode_w)) { /* portrait mode */
 			win_w = max_mode_h;
 			win_h = max_mode_w;
 		}
