@@ -1733,11 +1733,8 @@ void gfx_finger_pos_scale(float x, float y, int *ox, int *oy)
 }
 #endif
 
-#ifdef IOS 
-/* may be is good for Android too? */
 static int max_mode_w = 0;
 static int max_mode_h = 0;
-#endif
 
 int gfx_set_mode(int w, int h, int fs)
 {
@@ -1758,14 +1755,17 @@ int gfx_set_mode(int w, int h, int fs)
 		game_reset_name();
 		return 0; /* already done */
 	}
-#ifdef IOS
-	win_w = max_mode_w;
-	win_h = max_mode_h;
-	if (w < h) { /* portrait mode */
-		win_w = max_mode_h;
-		win_h = max_mode_w;
-	}
+#if defined(IOS) || defined(ANDROID) || defined(MAEMO) || defined(_WIN32_WCE) || defined(S60)
+	fs = 1; /* always fs for mobiles */
 #endif
+	if (fs) {
+		win_w = max_mode_w;
+		win_h = max_mode_h;
+		if (w < h) { /* portrait mode */
+			win_w = max_mode_h;
+			win_h = max_mode_w;
+		}
+	}
 	SelectVideoDisplay();
 	SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode);
 
@@ -1800,12 +1800,19 @@ int gfx_set_mode(int w, int h, int fs)
 	t = game_reset_name();
 	if (!t)
 		t = title;
-#ifdef IOS
+#if defined(IOS) || defined(ANDROID)
 	SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h, 
 			SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE);
+	if (!SDL_VideoWindow)
+		SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h, 
+			SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE);
 #else
-	SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h, 
-		SDL_WINDOW_SHOWN | ((fs)?SDL_WINDOW_FULLSCREEN:0));
+	if (!software_sw) /* try to using scale */
+		SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h, 
+			SDL_WINDOW_SHOWN | ((fs)?SDL_WINDOW_FULLSCREEN:SDL_WINDOW_RESIZABLE) | SDL_WINDOW_OPENGL);
+	if (!SDL_VideoWindow) /* try simple window */
+		SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h, 
+			SDL_WINDOW_SHOWN | ((fs)?SDL_WINDOW_FULLSCREEN:0));
 #endif
 	if (SDL_VideoWindow == NULL) {
 		fprintf(stderr, "Unable to create %dx%d window: %s\n", win_w, win_h, SDL_GetError());
@@ -1964,9 +1971,7 @@ int gfx_video_init(void)
 		SDL_WM_SetIcon( icon, NULL );
 	}
 #endif
-#ifdef IOS
 	gfx_get_max_mode(&max_mode_w, &max_mode_h);
-#endif
 	return 0;
 }
 

@@ -834,7 +834,7 @@ int game_theme_init(void)
 	int h  = opt_mode[1];
 
 	if (w == -1) { /* as theme */
-#ifndef IOS /* IOS always hardware accelerated */
+#if !defined(IOS) && !defined(ANDROID) /* IOS always hardware accelerated */
 		if (gfx_get_max_mode(&w, &h) || (game_theme.w <= w && game_theme.h <= h)) {
 			w = opt_mode[0];
 			h = opt_mode[1];

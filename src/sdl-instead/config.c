@@ -33,11 +33,11 @@ int opt_fsize = 5;
 int opt_fsize = 0;
 #endif
 
-#if defined(MAEMO) || defined(ANDROID)
+#if defined(MAEMO)
 int opt_fs = 1;
 int opt_owntheme = 0;
 int opt_hl = 0;
-#elif defined(IOS)
+#elif defined(IOS) || defined(ANDROID)
 int opt_fs = 1;
 int opt_owntheme = 1;
 int opt_hl = 0;

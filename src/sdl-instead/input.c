@@ -117,7 +117,7 @@ int HandleAppEvents(void *userdata, SDL_Event *event)
 		*/
 		/* snd_pause(1); */
 		m_minimized = 1;
-            return 0;
+		return 0;
 	case SDL_APP_WILLENTERFOREGROUND:
 		/* This call happens when your app is coming back to the foreground.
 			Restore all your state here.
@@ -282,6 +282,7 @@ int input(struct inp_event *inp, int wait)
 	case SDL_WINDOWEVENT:
 		switch (event.window.event) {
 /*		case SDL_WINDOWEVENT_SHOWN: */
+		case SDL_WINDOWEVENT_RESIZED:
 		case SDL_WINDOWEVENT_EXPOSED:
 			gfx_flip();
 			gfx_commit();
