@@ -2107,6 +2107,13 @@ void gfx_flip(void)
 #endif
 }
 
+void gfx_resize(void)
+{
+#if SDL_VERSION_ATLEAST(2,0,0)
+	SDL_RenderClear(Renderer);
+#endif
+}
+
 void gfx_commit(void)
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
