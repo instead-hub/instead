@@ -1758,7 +1758,7 @@ int gfx_set_mode(int w, int h, int fs)
 #if defined(IOS) || defined(ANDROID) || defined(MAEMO) || defined(_WIN32_WCE) || defined(S60)
 	fs = 1; /* always fs for mobiles */
 #endif
-	if (fs) {
+	if (fs && !software_sw) {
 		win_w = max_mode_w;
 		win_h = max_mode_h;
 		if (w < h) { /* portrait mode */
@@ -1793,9 +1793,9 @@ int gfx_set_mode(int w, int h, int fs)
 		}
 	} else
 		GetEnvironmentWindowPosition(win_w, win_h, &window_x, &window_y);
-	if (desktop_mode.w <= win_w)
+	if (desktop_mode.w <= win_w || fs)
 		window_x = 0;
-	if (desktop_mode.h <= win_h)
+	if (desktop_mode.h <= win_h || fs)
 		window_y = 0;
 	t = game_reset_name();
 	if (!t)
@@ -1803,16 +1803,21 @@ int gfx_set_mode(int w, int h, int fs)
 #if defined(IOS) || defined(ANDROID)
 	SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h, 
 			SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE);
-	if (!SDL_VideoWindow)
+	if (!SDL_VideoWindow) {
+		fprintf(stderr, "Fallback to software window.\n");
 		SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h, 
 			SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE);
+	}
 #else
 	if (!software_sw) /* try to using scale */
 		SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h, 
 			SDL_WINDOW_SHOWN | ((fs)?SDL_WINDOW_FULLSCREEN:SDL_WINDOW_RESIZABLE) | SDL_WINDOW_OPENGL);
-	if (!SDL_VideoWindow) /* try simple window */
+	if (!SDL_VideoWindow) { /* try simple window */
+		fprintf(stderr, "Fallback to software window.\n");
+		win_w = w; win_h = h;
 		SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h, 
 			SDL_WINDOW_SHOWN | ((fs)?SDL_WINDOW_FULLSCREEN:0));
+	}
 #endif
 	if (SDL_VideoWindow == NULL) {
 		fprintf(stderr, "Unable to create %dx%d window: %s\n", win_w, win_h, SDL_GetError());
