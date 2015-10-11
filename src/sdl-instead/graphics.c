@@ -1770,9 +1770,6 @@ void gfx_finger_pos_scale(float x, float y, int *ox, int *oy)
 }
 #endif
 
-static int max_mode_w = 0;
-static int max_mode_h = 0;
-
 int gfx_set_mode(int w, int h, int fs)
 {
 	int vsync = SDL_RENDERER_PRESENTVSYNC;
@@ -1780,6 +1777,9 @@ int gfx_set_mode(int w, int h, int fs)
 	int window_y = SDL_WINDOWPOS_UNDEFINED;
 	int win_w = w;
 	int win_h = h; int sw_fallback = 0;
+	int max_mode_w = 0;
+	int max_mode_h = 0;
+
 	SDL_DisplayMode desktop_mode;
 
 	char title[4096];
@@ -1792,6 +1792,7 @@ int gfx_set_mode(int w, int h, int fs)
 		game_reset_name();
 		return 0; /* already done */
 	}
+	gfx_get_max_mode(&max_mode_w, &max_mode_h);
 #if defined(IOS) || defined(ANDROID) || defined(MAEMO) || defined(_WIN32_WCE) || defined(S60)
 	fs = 1; /* always fs for mobiles */
 #endif
@@ -2014,9 +2015,6 @@ int gfx_video_init(void)
 	if ( icon ) {
 		SDL_WM_SetIcon( icon, NULL );
 	}
-#endif
-#if SDL_VERSION_ATLEAST(2,0,0)
-	gfx_get_max_mode(&max_mode_w, &max_mode_h);
 #endif
 	return 0;
 }
