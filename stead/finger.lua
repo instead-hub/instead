@@ -87,10 +87,6 @@ function(f, s, cmd, press, fid, x, y, px, py, ...)
 			return
 		end
 
-		if stead.tonum(fid) then
-			fid = stead.tonum(mb)
-		end
-
 		if stead.tonum(px) then
 			x2 = stead.tonum(px)
 		end
