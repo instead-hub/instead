@@ -2015,7 +2015,9 @@ int gfx_video_init(void)
 		SDL_WM_SetIcon( icon, NULL );
 	}
 #endif
+#if SDL_VERSION_ATLEAST(2,0,0)
 	gfx_get_max_mode(&max_mode_w, &max_mode_h);
+#endif
 	return 0;
 }
 
