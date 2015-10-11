@@ -1526,6 +1526,21 @@ static SDL_Rect **SDL_ListModes(const SDL_PixelFormat * format, Uint32 flags)
 	return modes;
 }
 #endif
+
+#if SDL_VERSION_ATLEAST(2,0,0)
+static void gfx_modes_free(void)
+{
+	int i = 0;
+	if (vid_modes) {
+		while (vid_modes[i]) {
+			SDL_free(vid_modes[i ++]);
+		}
+		SDL_free(vid_modes);
+	}
+	vid_modes = NULL;
+}
+#endif
+
 int gfx_modes(void)
 {
 	int i = 0;
@@ -1640,6 +1655,9 @@ int gfx_get_max_mode(int *w, int *h)
 
 int gfx_check_mode(int w, int h)
 {
+#if defined(IOS) || defined(ANDROID)
+	return 0;
+#else
 	int ww = 0, hh = 0;
 	int i = 0;
 	if (!vid_modes)
@@ -1654,6 +1672,7 @@ int gfx_check_mode(int w, int h)
 		i ++;
 	}
 	return -1;
+#endif
 }
 
 static SDL_Surface *icon = NULL;
@@ -1779,9 +1798,11 @@ int gfx_set_mode(int w, int h, int fs)
 	if (fs && !software_sw) {
 		win_w = max_mode_w;
 		win_h = max_mode_h;
-		if (w < h && !gfx_check_mode(max_mode_h, max_mode_w)) { /* portrait mode */
-			win_w = max_mode_h;
-			win_h = max_mode_w;
+		if ((w < h && win_w > win_h) || (w > h && win_w < win_h)) { /* orientation */
+			if (!gfx_check_mode(max_mode_h, max_mode_w)) {
+				win_w = max_mode_h;
+				win_h = max_mode_w;
+			}
 		}
 	}
 	SelectVideoDisplay();
@@ -2128,6 +2149,7 @@ void gfx_flip(void)
 void gfx_resize(void)
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
+	gfx_modes_free();
 	SDL_RenderClear(Renderer);
 #endif
 }
