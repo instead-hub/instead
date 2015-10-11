@@ -1527,20 +1527,6 @@ static SDL_Rect **SDL_ListModes(const SDL_PixelFormat * format, Uint32 flags)
 }
 #endif
 
-#if SDL_VERSION_ATLEAST(2,0,0)
-static void gfx_modes_free(void)
-{
-	int i = 0;
-	if (vid_modes) {
-		while (vid_modes[i]) {
-			SDL_free(vid_modes[i ++]);
-		}
-		SDL_free(vid_modes);
-	}
-	vid_modes = NULL;
-}
-#endif
-
 int gfx_modes(void)
 {
 	int i = 0;
@@ -2149,7 +2135,6 @@ void gfx_flip(void)
 void gfx_resize(void)
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
-	gfx_modes_free();
 	SDL_RenderClear(Renderer);
 #endif
 }
