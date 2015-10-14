@@ -5131,12 +5131,12 @@ void gfx_change_screen(img_t src, int steps)
 #if SDL_VERSION_ATLEAST(2,0,0)
 	fade_bg_texture = SDL_CreateTextureFromSurface(Renderer, Surf(fade_bg));
 	if (!fade_bg_texture)
-		return;
+		goto err;
 	SDL_SetTextureAlphaMod(fade_bg_texture, SDL_ALPHA_OPAQUE);
 	SDL_SetTextureBlendMode(fade_bg_texture, SDL_BLENDMODE_NONE);
 	fade_fg_texture = SDL_CreateTextureFromSurface(Renderer, Surf(src));
 	if (!fade_fg_texture)
-		return;
+		goto err2;
 	SDL_SetTextureBlendMode(fade_fg_texture, SDL_BLENDMODE_BLEND);
 #endif
 	memset(&ev, 0, sizeof(ev));
@@ -5158,7 +5158,9 @@ void gfx_change_screen(img_t src, int steps)
 	SDL_RemoveTimer(han);
 #if SDL_VERSION_ATLEAST(2,0,0)
 	SDL_DestroyTexture(fade_fg_texture);
+err2:
 	SDL_DestroyTexture(fade_bg_texture);
+err:
 #endif
 	gfx_free_image(fade_bg);
 	fade_bg = NULL;
