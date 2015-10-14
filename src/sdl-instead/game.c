@@ -728,7 +728,8 @@ int game_change_vol(int d, int val)
 		game_music_player();
 	}
 	cur_vol = snd_volume_mus(-1);
-	opt_vol = cur_vol;
+	if (!nosound_sw)
+		opt_vol = cur_vol;
 	return 0;
 }
 
@@ -868,7 +869,9 @@ int game_init(const char *name)
 		game_err_msg(NULL);
 
 	snd_init(opt_hz);
-	game_change_vol(0, opt_vol);
+
+	if (!nosound_sw)
+		game_change_vol(0, opt_vol);
 
 	if (game_select(name))
 		return -1;
