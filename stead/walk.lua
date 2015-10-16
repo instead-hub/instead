@@ -193,12 +193,14 @@ function visited(w)
 	end
 	return w.__visited
 end
+stead.visited = visited
 
 function visits(w)
-	local n = visited(w)
+	local n = stead.visited(w)
 	if not n then n = 0 end
 	return n
 end
+stead.visits = visits
 
 iface.fmt = function(self, cmd, st, moved, r, av, objs, pv) -- st -- changed state (main win), move -- loc changed
 	local l, vv
