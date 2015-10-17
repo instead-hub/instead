@@ -50,6 +50,7 @@ extern char 	*err_msg; /* last error message */
 extern char 	game_cwd[PATH_MAX]; /* current game cwd */
 extern char 	*curgame_dir;
 extern int	vsync_sw;
+extern int	resizable_sw;
 
 extern char	*game_local_stead_path(void);
 

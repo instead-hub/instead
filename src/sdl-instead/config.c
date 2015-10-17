@@ -62,6 +62,7 @@ int opt_kbd = KBD_SMART;
 int opt_justify = 0;
 int opt_vsync = -1;
 int opt_debug = -1;
+int opt_resizable = -1;
 
 char *opt_game = NULL;
 char *opt_theme = NULL;
@@ -106,6 +107,7 @@ static struct parser cfg_parser[] = {
 	{ "fading", parse_int, &opt_fading, 0 },
 	{ "vsync", parse_int, &opt_vsync, 0 },
 	{ "debug", parse_int, &opt_debug, 0 },
+	{ "resizable", parse_int, &opt_resizable, 0 },
 	{ NULL, NULL, NULL, 0 },
 };
 
@@ -149,6 +151,8 @@ filter = %d\nowntheme = %d\nlang = %s\nkbd = %d\nmode = %dx%d\njustify = %d\nfad
 		fprintf(fp, "vsync = %d\n", opt_vsync);
 	if (opt_debug != -1)
 		fprintf(fp, "debug = %d\n", opt_debug);
+	if (opt_resizable != -1)
+		fprintf(fp, "resizable = %d\n", opt_resizable);
 	fclose(fp);
 	return 0;
 }

@@ -56,6 +56,7 @@ int chunksize_sw = 0;
 int software_sw = 0;
 int hinting_sw = 1;
 int vsync_sw = 0;
+int resizable_sw = 0;
 
 static int opt_index = 0;
 
@@ -329,6 +330,8 @@ int main(int argc, char *argv[])
 			nopause_sw = 1;
 		} else if (!strcmp(argv[i], "-software")) {
 			software_sw = 1;
+		} else if (!strcmp(argv[i], "-resizable")) {
+			resizable_sw = 1;
 #ifdef _USE_UNPACK
 		} else if (!strcmp(argv[i], "-install")) {
 			if ((i + 1) < argc) {
@@ -400,6 +403,9 @@ int main(int argc, char *argv[])
 
 	if (opt_vsync == 1 && vsync_sw == 0)
 		vsync_sw = 1;
+
+	if (opt_resizable == 1 && resizable_sw == 0)
+		resizable_sw = 1;
 
 	if (version_sw) {
 		fprintf(stdout, VERSION"\n");

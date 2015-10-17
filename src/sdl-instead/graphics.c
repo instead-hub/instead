@@ -1714,7 +1714,6 @@ static SDL_Surface *CreateVideoSurface(SDL_Texture * texture)
 	return surface;
 }
 
-#if SDL_VERSION_ATLEAST(2,0,0)
 static int mouse_x = -1;
 static int mouse_y = -1;
 
@@ -1754,15 +1753,14 @@ void gfx_finger_pos_scale(float x, float y, int *ox, int *oy)
 	}
 	return;
 }
-#endif
 
 int gfx_set_mode(int w, int h, int fs)
 {
 	int vsync = SDL_RENDERER_PRESENTVSYNC;
 	int window_x = SDL_WINDOWPOS_UNDEFINED;
 	int window_y = SDL_WINDOWPOS_UNDEFINED;
-	int win_w = w;
-	int win_h = h; int sw_fallback = 0;
+	static int win_w;
+	static int win_h; int sw_fallback = 0;
 	int max_mode_w = 0;
 	int max_mode_h = 0;
 
@@ -1776,8 +1774,11 @@ int gfx_set_mode(int w, int h, int fs)
 
 	if (gfx_width == w && gfx_height == h && gfx_fs == fs) {
 		game_reset_name();
+		if (SDL_VideoWindow)
+			SDL_SetWindowSize(SDL_VideoWindow, win_w, win_h);
 		return 0; /* already done */
 	}
+	win_w = w; win_h = h;
 	gfx_get_max_mode(&max_mode_w, &max_mode_h);
 #if defined(IOS) || defined(ANDROID) || defined(MAEMO) || defined(_WIN32_WCE) || defined(S60)
 	fs = 1; /* always fs for mobiles */
@@ -1837,7 +1838,7 @@ int gfx_set_mode(int w, int h, int fs)
 #else
 	if (!software_sw) /* try to using scale */
 		SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h, 
-			SDL_WINDOW_SHOWN | ((fs)?SDL_WINDOW_FULLSCREEN:SDL_WINDOW_RESIZABLE) | SDL_WINDOW_OPENGL);
+			SDL_WINDOW_SHOWN | ((fs)?SDL_WINDOW_FULLSCREEN:(resizable_sw?SDL_WINDOW_RESIZABLE:0)) | SDL_WINDOW_OPENGL);
 	if (!SDL_VideoWindow) { /* try simple window */
 		fprintf(stderr, "Fallback to software window.\n");
 		win_w = w; win_h = h;
