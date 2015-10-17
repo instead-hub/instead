@@ -1,3 +1,15 @@
+2.3.0
+
+  * fix segfault in windows version;
+  * visits/visited -> stead.visits, stead.visited;
+  * -nosound fix (volume 0 problem);
+  * fix bug ingers module;
+  * fixes in Android version;
+  * SDL2: graphics rewrite (better full screen handling, resize, etc.)
+  * SDL2: fix with alpha blended bg;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 17 Oct 2015 11:58:00 +0400
+
 2.2.7
 
   * fix bug with fingers positions (forgotten patch) (SDL2);
