@@ -1775,7 +1775,6 @@ int gfx_set_mode(int w, int h, int fs)
 	int max_mode_h = 0;
 
 	SDL_DisplayMode desktop_mode;
-	SDL_DisplayMode current_mode;
 
 	char title[4096];
 	char *t;
@@ -1866,18 +1865,9 @@ int gfx_set_mode(int w, int h, int fs)
 	if (icon)
 		SDL_SetWindowIcon(SDL_VideoWindow, icon);
 
-	if (fs) {
-		if (SDL_GetCurrentDisplayMode(SDL_CurrentDisplay, &current_mode) ||
-			win_w != current_mode.w || win_h != current_mode.h) {
-			if (SDL_SetWindowDisplayMode(SDL_VideoWindow, NULL) < 0) {
-				fprintf(stderr, "Unable to set display mode: %s\n", SDL_GetError());
-	/*			return -1; */
-			}
-		}
-	} else if (gfx_fs) { /* return from fs */
-		if (SDL_SetWindowDisplayMode(SDL_VideoWindow, &desktop_mode) < 0) {
-			fprintf(stderr, "Unable to set display mode: %s\n", SDL_GetError());
-		}
+	if (SDL_SetWindowDisplayMode(SDL_VideoWindow, (fs)?NULL:&desktop_mode) < 0) {
+		fprintf(stderr, "Unable to set display mode: %s\n", SDL_GetError());
+		/* return -1; */
 	}
 	if (!vsync_sw)
 		vsync = 0;
