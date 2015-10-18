@@ -51,7 +51,11 @@ int opt_owntheme = 1;
 int opt_hl = 1;
 #endif
 int opt_fading = 1;
+#if defined(S60) || defined(MAEMO) || defined(_WIN32_WCE)
 int opt_hz = 22050;
+#else
+int opt_hz = 44100;
+#endif
 int opt_vol = 127;
 int opt_motion = 1;
 int opt_click = 1;
@@ -83,7 +87,7 @@ int parse_mode(const char *v, void *data)
 		return -1;
 	p[0] = w;
 	p[1] = h;
-	return 0;	
+	return 0;
 }
 
 static struct parser cfg_parser[] = {

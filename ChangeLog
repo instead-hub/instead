@@ -1,5 +1,6 @@
 2.3.0
 
+  * audio default is 44100 hz;
   * fix segfault in windows version;
   * visits/visited -> stead.visits, stead.visited;
   * -nosound fix (volume 0 problem);
