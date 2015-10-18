@@ -1765,6 +1765,7 @@ void gfx_finger_pos_scale(float x, float y, int *ox, int *oy)
 
 int gfx_set_mode(int w, int h, int fs)
 {
+	int i;
 	int vsync = SDL_RENDERER_PRESENTVSYNC;
 	int window_x = SDL_WINDOWPOS_UNDEFINED;
 	int window_y = SDL_WINDOWPOS_UNDEFINED;
@@ -1806,9 +1807,11 @@ int gfx_set_mode(int w, int h, int fs)
 	SelectVideoDisplay();
 	SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode);
 
-	if (vid_modes && vid_modes != std_modes)
+	if (vid_modes && vid_modes != std_modes) {
+		for (i = 0; vid_modes[i]; i++)
+			SDL_free(vid_modes[i]);
 		SDL_free(vid_modes);
-
+	}
 	vid_modes = NULL;
 
 	if (screen)
@@ -1870,6 +1873,10 @@ int gfx_set_mode(int w, int h, int fs)
 				fprintf(stderr, "Unable to set display mode: %s\n", SDL_GetError());
 	/*			return -1; */
 			}
+		}
+	} else if (gfx_fs) { /* return from fs */
+		if (SDL_SetWindowDisplayMode(SDL_VideoWindow, &desktop_mode) < 0) {
+			fprintf(stderr, "Unable to set display mode: %s\n", SDL_GetError());
 		}
 	}
 	if (!vsync_sw)
