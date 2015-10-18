@@ -4,7 +4,7 @@
   * fix segfault in windows version;
   * visits/visited -> stead.visits, stead.visited;
   * -nosound fix (volume 0 problem);
-  * fix bug ingers module;
+  * fix bug in fingers module;
   * fixes in Android version;
   * -resizable parameter and config option (resizable window mode);
   * SDL2: graphics rewrite (better full screen handling, resize, etc.)
