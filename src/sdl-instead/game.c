@@ -349,10 +349,11 @@ int games_lookup(const char *path)
 			continue;
 		n ++;
 	}
-		
-	rewinddir(d);
 	if (!n)
 		goto out;
+	closedir(d); d = opendir(path);
+	if (!d)
+		return -1;
 	new_games = realloc(games, sizeof(struct game) * (n + games_nr));
 	if (!new_games) {
 		closedir(d);

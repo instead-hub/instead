@@ -894,11 +894,11 @@ int menu_langs_lookup(const char *path)
 			continue;
 		n ++;
 	}
-		
-	rewinddir(d);
 	if (!n)
 		goto out;
-
+	closedir(d); d = opendir(path);
+	if (!d)
+		return -1;
 	new_langs = realloc(langs, sizeof(struct lang) * (n + langs_nr));
 	if (!new_langs) {
 		closedir(d);
@@ -916,7 +916,7 @@ int menu_langs_lookup(const char *path)
 		langs_nr ++;
 		i ++;
 	}
-out:	
+out:
 	langs_sort();
 	closedir(d);
 	return 0;

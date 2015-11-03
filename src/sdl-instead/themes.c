@@ -972,10 +972,11 @@ int themes_lookup(const char *path)
 			continue;
 		n ++;
 	}
-		
-	rewinddir(d);
 	if (!n)
 		goto out;
+	closedir(d); d = opendir(path);
+	if (!d)
+		return -1;
 	new_themes = realloc(themes, sizeof(struct theme) * (n + themes_nr));
 	if (!new_themes) {
 		closedir(d);
