@@ -1192,8 +1192,17 @@ img_t gfx_load_image(char *filename)
 		img = _gfx_load_image(filename, 0);
 	if (!img)
 		img = _gfx_load_combined_image(filename);
-	if (!img)
+	if (!img){
+		const char preambule[] = "Can not load image: ";
+		const size_t pr_len = strlen(preambule);
+		const size_t fn_len = strlen(filename);
+		char* msg = calloc(pr_len + fn_len + 1, sizeof(char));
+		strcat(msg, preambule);
+		strcat(msg, filename);
 		fprintf(stderr, "Can not load image: '%s'\n", filename);
+		game_err_msg(msg);
+		free(msg);
+	}
 	return img;
 }
 
