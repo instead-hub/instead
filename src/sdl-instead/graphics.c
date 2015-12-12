@@ -1193,7 +1193,7 @@ img_t gfx_load_image(char *filename)
 	if (!img)
 		img = _gfx_load_combined_image(filename);
 	if (!img)
-		res_not_found_err_msg(filename);
+		game_res_err_msg(filename);
 	
 	return img;
 }

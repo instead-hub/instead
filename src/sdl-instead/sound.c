@@ -147,7 +147,7 @@ wav_t	snd_load_wav(const char *fname)
 		return NULL;
 	rw = RWFromIdf(game_idf, fname);
 	if (!rw || !(r = (wav_t)Mix_LoadWAV_RW(rw, 1))) {
-		res_not_found_err_msg(fname);
+		game_res_err_msg(fname);
 		return NULL;
 	}
 	return r;
@@ -219,7 +219,7 @@ int snd_play_mus(char *fname, int ms, int loop)
 
 	mus = snd_load_mus(fname);
 	if (!mus) {
-		res_not_found_err_msg(fname);
+		game_res_err_msg(fname);
 		return 0;
 	}
 	if (loop >= 0)

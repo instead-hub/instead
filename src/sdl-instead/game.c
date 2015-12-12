@@ -69,7 +69,7 @@ void game_err_msg(const char *s)
 		err_msg = NULL;
 }
 
-void res_not_found_err_msg(const char *filename)
+void game_res_err_msg(const char *filename)
 {
 	static const char preambule[] = "Can't load: ";
 	char *msg;
