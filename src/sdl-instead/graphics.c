@@ -1193,7 +1193,8 @@ img_t gfx_load_image(char *filename)
 	if (!img)
 		img = _gfx_load_combined_image(filename);
 	if (!img)
-		fprintf(stderr, "Can not load image: '%s'\n", filename);
+		res_not_found_err_msg(filename);
+	
 	return img;
 }
 
