@@ -69,6 +69,20 @@ void game_err_msg(const char *s)
 		err_msg = NULL;
 }
 
+void res_not_found_err_msg(const char *filename)
+{
+	if (debug_sw) {
+		const char preambule[] = "Can't load: ";
+		const size_t pr_len = strlen(preambule);
+		const size_t fn_len = strlen(filename);
+		char* msg = calloc(pr_len + fn_len + 1, sizeof(char));
+		strcat(msg, preambule);
+		strcat(msg, filename);
+		game_err_msg(msg);
+		free(msg);
+	} else
+		fprintf(stderr, "Can't load: %s\n", filename);
+}
 
 int is_game(const char *path, const char *n)
 {
