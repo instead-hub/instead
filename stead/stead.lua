@@ -75,10 +75,10 @@ stead.api_atleast = function(...)
 		if stead.type(k) ~= 'number' then
 			return false
 		end
-		if not stead.api_version_table[k] or v > stead.api_version_table[k] then
+		if v > (stead.api_version_table[k] or 0) then
 			return false
 		end
-		if v < stead.api_version_table[k] then
+		if v < (stead.api_version_table[k] or 0) then
 			return true
 		end
 	end
@@ -92,10 +92,10 @@ stead.atleast = function(...)
 		if stead.type(k) ~= 'number' then
 			return false
 		end
-		if not stead.version_table[k] or v > stead.version_table[k] then
+		if v > (stead.version_table[k] or 0) then
 			return false
 		end
-		if v < stead.version_table[k] then
+		if v < (stead.version_table[k] or 0) then
 			return true
 		end
 	end
