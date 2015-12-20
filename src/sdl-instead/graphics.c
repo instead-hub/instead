@@ -1163,16 +1163,16 @@ static img_t _gfx_load_combined_image(char *filename)
 			goto err;
 		}
 		img = _gfx_load_image(strip(p), 1);
-		if (img) {
-			to.x = x; to.y = y;
-			if (c) {
-				to.x -= gfx_img_w(img) / 2;
-				to.y -= gfx_img_h(img) / 2;
-			}
-			to.w = to.h = 0;
-			SDL_gfxBlitRGBA(Surf(img), NULL, Surf(base), &to);
-			gfx_free_image(img);
+		if (!img)
+			goto err;
+		to.x = x; to.y = y;
+		if (c) {
+			to.x -= gfx_img_w(img) / 2;
+			to.y -= gfx_img_h(img) / 2;
 		}
+		to.w = to.h = 0;
+		SDL_gfxBlitRGBA(Surf(img), NULL, Surf(base), &to);
+		gfx_free_image(img);
 		p = ep;
 	}
 	free(str);
