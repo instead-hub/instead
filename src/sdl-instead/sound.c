@@ -147,7 +147,6 @@ wav_t	snd_load_wav(const char *fname)
 		return NULL;
 	rw = RWFromIdf(game_idf, fname);
 	if (!rw || !(r = (wav_t)Mix_LoadWAV_RW(rw, 1))) {
-		game_res_err_msg(fname);
 		return NULL;
 	}
 	return r;
@@ -218,10 +217,8 @@ int snd_play_mus(char *fname, int ms, int loop)
 		snd_free_mus(mus);
 
 	mus = snd_load_mus(fname);
-	if (!mus) {
-		game_res_err_msg(fname);
-		return 0;
-	}
+	if (!mus)
+		return -1;
 	if (loop >= 0)
 		Mix_HookMusicFinished(game_music_finished);
 	else

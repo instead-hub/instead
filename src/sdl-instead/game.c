@@ -73,6 +73,8 @@ void game_res_err_msg(const char *filename)
 {
 	static const char preambule[] = "Can't load: ";
 	char *msg;
+	if (!filename)
+		return;
 	if (debug_sw) {
 		msg = malloc(sizeof(preambule) + strlen(filename));
 		if (msg) {
@@ -1502,7 +1504,8 @@ void game_music_player(void)
 	} else if (!last_music || strcmp(last_music, mus)) {
 		game_stop_mus(cf_out);
 		last_music = mus;
-		snd_play_mus(mus, cf_in, loop);
+		if (snd_play_mus(mus, cf_in, loop) < 0)
+			game_res_err_msg(mus);
 	} else
 		free(mus);
 }
@@ -1715,8 +1718,10 @@ static _snd_t *sound_add(const char *fname)
 		return NULL;
 	}
 	w = snd_load_wav(fname);
-	if (!w)
+	if (!w) {
+		game_res_err_msg(fname);
 		goto err;
+	}
 	sn->wav = w;
 
 	sounds_shrink();
@@ -2171,6 +2176,8 @@ int game_cmd(char *cmd, int flags)
 
 		if (new_pict) {
 			img = gfx_load_image(pict);
+			if (!img)
+				game_res_err_msg(pict);
 			if (GFX_MODE(game_theme.gfx_mode) != GFX_MODE_FLOAT) 
 				img = game_pict_scale(img, game_theme.win_w, game_theme.max_scene_h);
 			else

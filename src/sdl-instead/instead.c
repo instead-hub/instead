@@ -915,6 +915,7 @@ static int luaB_load_sprite(lua_State *L) {
 	lua_pushstring(L, key);
 	return 1;
 err:
+	game_res_err_msg(fname);
 	gfx_free_image(img);
 	return 0;
 }

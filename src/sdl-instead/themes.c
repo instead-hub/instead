@@ -697,17 +697,22 @@ int game_theme_optimize(void)
 static int game_theme_update_data(void)
 {
 	struct game_theme *t = &game_theme;
+	const char *res = NULL;
 	int idf = idf_only(game_idf, 0);
 	if (t->font_name && (t->changed & CHANGED_FONT)) {
 		fnt_free(t->font);
-		if (!(t->font = fnt_load(t->font_name, FONT_SZ(t->font_size))))
+		if (!(t->font = fnt_load(t->font_name, FONT_SZ(t->font_size)))) {
+			res = t->font_name;
 			goto err;
+		}
 	}
 	
 	if (t->inv_font_name && (t->changed & CHANGED_IFONT)) {
 		fnt_free(t->inv_font);
-		if (!(t->inv_font = fnt_load(t->inv_font_name, FONT_SZ(t->inv_font_size))))
+		if (!(t->inv_font = fnt_load(t->inv_font_name, FONT_SZ(t->inv_font_size)))) {
+			res = t->inv_font_name;
 			goto err;
+		}
 	}
 
 	if (t->menu_font_name && (t->changed & CHANGED_MFONT)) {
@@ -718,38 +723,48 @@ static int game_theme_update_data(void)
 			m = t->menu_font_size;
 /*		fprintf(stderr, "%d %d > %d? %d", (int)FONT_SZ(t->inv_font_size), (int)FONT_SZ(t->inv_font_size) * MAX_MENU_LINES, game_theme.h, m); */
 		fnt_free(t->menu_font);
-		if (!(t->menu_font = fnt_load(t->menu_font_name, m))) /* do not scale menu!!! */
+		if (!(t->menu_font = fnt_load(t->menu_font_name, m))) { /* do not scale menu!!! */
+			res = t->menu_font_name;
 			goto err;
+		}
 	}
 
 	if (t->a_up_name && (t->changed & CHANGED_UP)) {
 		gfx_free_image(t->a_up);
-		if (!(t->a_up = gfx_load_image(t->a_up_name)))
+		if (!(t->a_up = gfx_load_image(t->a_up_name))) {
+			res = t->a_up_name;
 			goto err;
+		}
 		if (theme_img_scale(&t->a_up))
 			goto err;
 	}
 	
 	if (t->a_down_name && (t->changed & CHANGED_DOWN)) {
 		gfx_free_image(t->a_down);
-		if (!(t->a_down = gfx_load_image(t->a_down_name)))
+		if (!(t->a_down = gfx_load_image(t->a_down_name))) {
+			res = t->a_down_name;
 			goto err;
+		}
 		if (theme_img_scale(&t->a_down))
 			goto err;
 	}
 
 	if (t->inv_a_up_name && (t->changed & CHANGED_IUP)) {
 		gfx_free_image(t->inv_a_up);
-		if (!(t->inv_a_up = gfx_load_image(t->inv_a_up_name)))
+		if (!(t->inv_a_up = gfx_load_image(t->inv_a_up_name))) {
+			res = t->inv_a_up_name;
 			goto err;
+		}
 		if (theme_img_scale(&t->inv_a_up))
 			goto err;
 	}
 
 	if (t->inv_a_down_name && (t->changed & CHANGED_IDOWN)) {
 		gfx_free_image(t->inv_a_down);
-		if (!(t->inv_a_down = gfx_load_image(t->inv_a_down_name)))
+		if (!(t->inv_a_down = gfx_load_image(t->inv_a_down_name))) {
+			res = t->inv_a_down_name;
 			goto err;
+		}
 		if (theme_img_scale(&t->inv_a_down))
 			goto err;
 	}
@@ -757,8 +772,10 @@ static int game_theme_update_data(void)
 	if (t->bg_name && (t->changed & CHANGED_BG)) {
 		gfx_free_image(t->bg);
 		t->bg = NULL;
-		if (t->bg_name[0] && !(t->bg = gfx_load_image(t->bg_name)))
+		if (t->bg_name[0] && !(t->bg = gfx_load_image(t->bg_name))) {
+			res = t->bg_name;
 			goto skip; /* not fatal */
+		}
 		if (theme_img_scale(&t->bg))
 			goto err;
 		if (theme_bg_scale())
@@ -767,16 +784,20 @@ static int game_theme_update_data(void)
 skip:
 	if (t->use_name && (t->changed & CHANGED_USE)) {
 		gfx_free_image(t->use);	
-		if (!(t->use = gfx_load_image(t->use_name)))
+		if (!(t->use = gfx_load_image(t->use_name))) {
+			res = t->use_name;
 			goto err;
+		}
 		if (theme_img_scale(&t->use))
 			goto err;
 	}
 
 	if (t->cursor_name && (t->changed & CHANGED_CURSOR)) {
 		gfx_free_image(t->cursor);	
-		if (!(t->cursor = gfx_load_image(t->cursor_name)))
+		if (!(t->cursor = gfx_load_image(t->cursor_name))) {
+			res = t->cursor_name;
 			goto err;
+		}
 		if (theme_img_scale(&t->cursor))
 			goto err;
 		gfx_set_cursor(t->cursor, t->cur_x, t->cur_y);
@@ -784,8 +805,10 @@ skip:
 	
 	if (t->menu_button_name && (t->changed & CHANGED_BUTTON)) {
 		gfx_free_image(t->menu_button);
-		if (!(t->menu_button = gfx_load_image(t->menu_button_name)))
+		if (!(t->menu_button = gfx_load_image(t->menu_button_name))) {
+			res = t->menu_button_name;
 			goto err;
+		}
 		if (theme_img_scale(&t->menu_button))
 			goto err;
 	}
@@ -807,6 +830,7 @@ skip:
 err:
 	idf_only(game_idf, idf);
 	t->changed = 0;
+	game_res_err_msg(res);
 	return -1;
 }
 

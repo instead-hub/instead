@@ -1192,9 +1192,6 @@ img_t gfx_load_image(char *filename)
 		img = _gfx_load_image(filename, 0);
 	if (!img)
 		img = _gfx_load_combined_image(filename);
-	if (!img)
-		game_res_err_msg(filename);
-	
 	return img;
 }
 
@@ -4332,10 +4329,12 @@ img_t get_img(struct layout *layout, char *p, int *al)
 	img = cache_get(layout->img_cache, p);
 	if (!img) {
 		unix_path(p);
-		if (!(img = gfx_load_image(p)))
+		if (!(img = gfx_load_image(p))) {
+			game_res_err_msg(p);
 			goto out;
+		}
 		theme_img_scale(&img); /* bad style, no gfx layer :( */
-	}	
+	}
 	image = image_new(p, img);
 	if (!image) {
 		gfx_free_image(img);
