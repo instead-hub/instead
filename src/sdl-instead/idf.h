@@ -44,6 +44,11 @@ extern int idf_close(idff_t fil);
 extern int idf_eof(idff_t idf);
 extern int idf_error(idff_t idf);
 extern int idf_access(idf_t idf, const char *fname);
+
+extern idff_t idf_opendir(idf_t idf, const char *dname);
+extern int idf_closedir(idff_t d);
+extern char *idf_readdir(idff_t d);
+
 extern char *idf_gets(idff_t idf, char *b, int size);
 extern int idf_magic(const char *fname);
 extern int idf_only(idf_t idf, int fl);

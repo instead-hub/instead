@@ -200,7 +200,13 @@ typedef struct {
 	struct list_node list;
 	char *path;
 	long size;
+	struct list_head dir;
 } idf_item_t;
+
+typedef struct {
+	struct list_node list;
+	char *dname;
+} idf_dir_item_t;
 
 static int fcopy(FILE *to, const char *fname)
 {
@@ -228,6 +234,7 @@ err:
 
 static int idf_tree(const char *path, struct list_head *list, const char *fname)
 {
+	idf_item_t *dir; 
 	DIR *d;
 	struct dirent *de;
 	if (!path)
@@ -253,6 +260,7 @@ static int idf_tree(const char *path, struct list_head *list, const char *fname)
 				goto err;
 			if ((i->size = ftell(fd)) < 0)
 				goto err;
+			list_head_init(&i->dir);
 			fclose(fd);
 			fprintf(stderr, "Added file: '%s' size: %ld\n", path, i->size);
 			list_add(list, &i->list);
@@ -265,10 +273,34 @@ static int idf_tree(const char *path, struct list_head *list, const char *fname)
 		}
 		return 0;
 	}
+
+	dir = malloc(sizeof(idf_item_t));
+	if (!dir)
+		goto err1;
+	if (fname) {
+		char *d = malloc(strlen(fname) + 2);
+		if (!d)
+			goto err2;
+		strcpy(d, fname); strcat(d, "/");
+		dir->path = d;
+	} else {
+		dir->path = strdup("/");
+	}
+	dir->size = 0;
+	list_head_init(&dir->dir);
+
 	while ((de = readdir(d))) {
 		char *p;
+		idf_dir_item_t *di;
+
 		if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, ".."))
 			continue;
+		di = malloc(sizeof(idf_dir_item_t));
+		if (di) {
+			di->dname = strdup(de->d_name);
+			list_add(&dir->dir, &di->list);
+			dir->size += strlen(de->d_name) + 1;
+		}
 		p = getfilepath(path, de->d_name);
 		if (p) {
 			char *pp = getfilepath(fname, de->d_name);
@@ -279,8 +311,15 @@ static int idf_tree(const char *path, struct list_head *list, const char *fname)
 			free(p);
 		}
 	}
+	list_add(list, &dir->list);
+	fprintf(stderr, "Added dir: '%s' size: %ld\n", dir->path, dir->size);
 	closedir(d);
 	return 0;
+err2:
+	free(dir);
+err1:
+	closedir(d);
+	return -1;
 }
 
 int idf_create(const char *file, const char *path)
@@ -348,6 +387,15 @@ int idf_create(const char *file, const char *path)
 	list_for_each(&items, pos, list) {
 		idf_item_t *it = pos;
 		char *p;
+
+		if (!list_empty(&it->dir)) { /* directory-file */
+			idf_dir_item_t *d = NULL;
+			list_for_each(&it->dir, d, list) {
+				fprintf(fd, "%s\n", d->dname);
+			}
+			continue;
+		}
+
 		p = getfilepath(path, it->path);
 		if (p) {
 			int rc = fcopy(fd, p);
@@ -365,6 +413,12 @@ err:
 
 	while (!list_empty(&items)) {
 		idf_item_t *it = list_top(&items, idf_item_t, list);
+		while (!list_empty(&it->dir)) {
+			idf_dir_item_t *di = list_top(&it->dir, idf_dir_item_t, list);
+			free(di->dname);
+			list_del(&di->list);
+			free(di);
+		}
 		free(it->path);
 		list_del(&it->list);
 		free(it);
@@ -580,6 +634,25 @@ int idf_access(idf_t idf, const char *fname)
 	if (!dir)
 		return -1;
 	return 0;
+}
+
+idff_t  idf_opendir(idf_t idf, const char *dname)
+{
+	return idf_open(idf, dname);
+}
+
+int idf_closedir(idff_t d)
+{
+	return idf_close(d);
+}
+
+char *idf_readdir(idff_t d)
+{
+	char buff[256];
+	char *p = idf_gets(d, buff, sizeof(buff) - 1);
+	if (!p)
+		return p;
+	return strdup(p);
 }
 
 char *idf_gets(idff_t idf, char *b, int size)
