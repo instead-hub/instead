@@ -27,7 +27,7 @@
 
 int theme_relative = 0;
 
-char	*curtheme_dir = NULL;
+char	*curtheme_dir[2] = { NULL, NULL };
 
 static int parse_win_align(const char *v, void *data)
 {
@@ -205,7 +205,7 @@ static int parse_include(const char *v, void *data)
 		return 0;
 	getdir(cwd, sizeof(cwd));
 	setdir(game_cwd);
-	rc = game_theme_load(v);
+	rc = game_theme_load(v, THEME_GLOBAL);
 /*	if (!rc)
 		game_theme_select(v); */
 	setdir(cwd);
@@ -926,7 +926,7 @@ int theme_load(const char *name)
 }
 
 struct	theme *themes = NULL;
-int	themes_nr = 0;
+int themes_nr = 0;
 
 static int is_theme(const char *path, const char *n)
 {
@@ -965,6 +965,8 @@ static int cmp_theme(const void *p1, const void *p2)
 {
 	const struct theme *t1 = (const struct theme*)p1;
 	const struct theme *t2 = (const struct theme*)p2;
+	if (t1->type != t2->type)
+		return t1->type - t2->type;
 	return strcmp(t1->name, t2->name);
 }
 
@@ -973,9 +975,49 @@ static void themes_sort()
 	qsort(themes, themes_nr, sizeof(struct theme), cmp_theme);
 }
 
-static struct theme *theme_lookup(const char *name);
+struct theme *theme_lookup(const char *name, int type);
 
-int themes_lookup(const char *path)
+int themes_count(int type)
+{
+	int rc = 0;
+	int i;
+	for (i = 0; i < themes_nr; i++)
+		rc = rc + (themes[i].type == type);
+	return rc;
+}
+
+void themes_drop(int type)
+{
+	int new_size;
+	struct theme *new_themes = NULL;
+	int rc, i, k = 0;
+	rc  = themes_count(type);
+	if (!rc)
+		return;
+	new_size = (themes_nr - rc) * sizeof(struct theme);
+	if (new_size)
+		new_themes = malloc( new_size);
+
+	for (i = 0; i < themes_nr; i ++) {
+		if (themes[i].type == type) {
+			free(themes[i].path);
+			free(themes[i].dir);
+			free(themes[i].name);
+		} else {
+			char *p = curtheme_dir[themes[i].type];
+			new_themes[k++] = themes[i];
+			if (p && !strcmp(p, themes[i].dir))
+				curtheme_dir[themes[i].type] = p;
+		}
+	}
+	themes_nr = k;
+	curtheme_dir[type] = NULL;
+
+	free(themes);
+	themes = new_themes;
+}
+
+int themes_lookup(const char *path, int type)
 {
 	char *p;
 	int n = 0, i = 0;
@@ -990,7 +1032,7 @@ int themes_lookup(const char *path)
 	if (!d)
 		return -1;
 	while ((de = readdir(d))) {
-		if (theme_lookup(de->d_name))
+		if (theme_lookup(de->d_name, type))
 			continue;
 		if (!is_theme(path, de->d_name))
 			continue;
@@ -1010,7 +1052,7 @@ int themes_lookup(const char *path)
 	while ((de = readdir(d)) && i < n) {
 		/*if (de->d_type != DT_DIR)
 			continue;*/
-		if (theme_lookup(de->d_name))
+		if (theme_lookup(de->d_name, type))
 			continue;
 		if (!is_theme(path, de->d_name))
 			continue;
@@ -1018,6 +1060,7 @@ int themes_lookup(const char *path)
 		themes[themes_nr].path = p;
 		themes[themes_nr].dir = strdup(de->d_name);
 		themes[themes_nr].name = theme_name(p, de->d_name);
+		themes[themes_nr].type = type;
 		themes_nr ++;
 		i ++;
 	}
@@ -1041,7 +1084,7 @@ int themes_rename(void)
 	return 0;
 }
 
-static struct theme *theme_lookup(const char *name)
+struct theme *theme_lookup(const char *name, int type)
 {
 	int i;
 	if (!name || !*name) {
@@ -1050,22 +1093,27 @@ static struct theme *theme_lookup(const char *name)
 		return NULL;
 	}
 	for (i = 0; i<themes_nr; i ++) {
-		if (!strlowcmp(themes[i].dir, name)) {
+		if (!strlowcmp(themes[i].dir, name) && themes[i].type == type) {
 			return &themes[i];
 		}
 	}
 	return NULL;
 }
 
-int game_theme_load(const char *name)
+int game_theme_load(const char *name, int type)
 {
 	struct theme *theme;
 	char cwd[PATH_MAX];
 	int rc = -1;
 	int rel = theme_relative;
 	getdir(cwd, sizeof(cwd));
-	setdir(game_cwd);
-	theme = theme_lookup(name);
+	if (type == THEME_GLOBAL) {
+		setdir(game_cwd);
+/*		theme_relative = 0; */
+	} else {
+/*		theme_relative = 1; */
+	}
+	theme = theme_lookup(name, type);
 	theme_relative = 0;
 	if (!theme || setdir(theme->path) || theme_load(THEME_FILE))
 		goto err;
@@ -1079,14 +1127,28 @@ err:
 int game_theme_select(const char *name)
 {
 	struct theme *theme;
-	theme = theme_lookup(name);
+	theme = theme_lookup(name, THEME_GAME);
+	if (theme) {
+		char *p = getfilepath(dirname(game_save_path(1, 0)), "theme.ini");
+		curtheme_dir[THEME_GAME] = theme->dir;
+		if (p) {
+			FILE *fp = fopen(p, "wb");
+			if (fp) {
+				fprintf(fp, "current = %s\n", theme->dir);
+				fclose(fp);
+			}
+			free(p);
+		}
+		return 0;
+	}
+	theme = theme_lookup(name, THEME_GLOBAL);
 	if (!theme)
 		return -1;
-	curtheme_dir = theme->dir;
+	curtheme_dir[THEME_GLOBAL] = theme->dir;
 	return 0;
 }
 
 int game_default_theme(void)
 {
-	return game_theme_load(DEFAULT_THEME);
+	return game_theme_load(DEFAULT_THEME, THEME_GLOBAL);
 }

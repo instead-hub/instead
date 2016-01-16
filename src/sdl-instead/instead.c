@@ -735,7 +735,7 @@ static int luaB_theme_name(lua_State *L) {
 	if (game_own_theme && opt_owntheme)
 		lua_pushstring(L, ".");
 	else
-		lua_pushstring(L, curtheme_dir);
+		lua_pushstring(L, curtheme_dir[THEME_GLOBAL]);
 	return 1;
 }
 

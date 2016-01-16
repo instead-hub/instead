@@ -470,11 +470,11 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "No games found in: %s.\n", GAMES_PATH);
 
 	if (themes_sw)
-		themes_lookup(themes_sw);
+		themes_lookup(themes_sw, THEME_GLOBAL);
 
 	if (!nostdthemes_sw) {
-		themes_lookup(dirpath(THEMES_PATH));
-		themes_lookup(game_local_themes_path());
+		themes_lookup(dirpath(THEMES_PATH), THEME_GLOBAL);
+		themes_lookup(game_local_themes_path(), THEME_GLOBAL);
 	}
 	
 	if (!nostdgames_sw)
@@ -523,7 +523,7 @@ int main(int argc, char *argv[])
 	
 	if (opt_theme)
 		game_theme_select(opt_theme);
-	if (!curtheme_dir)
+	if (!curtheme_dir[THEME_GLOBAL])
 		game_theme_select(DEFAULT_THEME);
 	
 	/* Initialize SDL */

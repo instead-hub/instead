@@ -852,6 +852,22 @@ int counter_fn(int interval, void *p)
 	return interval;
 }
 
+static int parse_curtheme(const char *v, void *data)
+{
+	char **p = ((char **)data);
+	struct theme *theme;
+	theme = theme_lookup(v, THEME_GAME);
+	if (theme)
+		*p = theme->dir;
+	else
+		*p = NULL;
+	return 0;
+}
+
+static struct parser cmd_parser[] = {
+	{ "current", parse_curtheme, &curtheme_dir[THEME_GAME], 0 },
+};
+
 int game_use_theme(void)
 {
 	int rc = 0;
@@ -859,21 +875,41 @@ int game_use_theme(void)
 	game_own_theme = 0;
 
 	game_theme.changed = CHANGED_ALL;
-	
+
+	themes_drop(THEME_GAME);
+
 	if (game_default_theme()) {
 		fprintf(stderr, "Can't load default theme.\n");
 		return -1;
 	}
 
-	if (curgame_dir && (!idf_access(game_idf, THEME_FILE) || !access(dirpath(THEME_FILE), R_OK))) {
+	themes_lookup(dirpath("themes"), THEME_GAME);
+
+	if (themes_count(THEME_GAME) > 0) { /* new scheme with own themes? */
+		curtheme_dir[THEME_GAME] = DEFAULT_THEME;
+		char *p = getfilepath(dirname(game_save_path(1, 0)), "theme.ini");
+		if (p) {
+			parse_ini(p, cmd_parser);
+			free(p);
+		}
 		game_own_theme = 1;
+		if (opt_owntheme) {
+			fprintf(stderr, "Using own themes directory...\n");
+			rc = game_theme_load(curtheme_dir[THEME_GAME], THEME_GAME);
+			return rc;
+		}
+	} else if (curgame_dir && (!idf_access(game_idf, THEME_FILE) || !access(dirpath(THEME_FILE), R_OK))) {
+		game_own_theme = 1;
+		if (opt_owntheme) {
+			fprintf(stderr, "Using own theme file...\n");
+			theme_relative = 1;
+			rc = theme_load(THEME_FILE);
+			theme_relative = 0;
+			return rc;
+		}
 	}
-	if (game_own_theme && opt_owntheme) {
-		theme_relative = 1;
-		rc = theme_load(THEME_FILE);
-		theme_relative = 0;
-	} else if (curtheme_dir && strlowcmp(DEFAULT_THEME, curtheme_dir)) {
-		rc = game_theme_load(curtheme_dir);
+	if (curtheme_dir[THEME_GLOBAL] && strlowcmp(DEFAULT_THEME, curtheme_dir[THEME_GLOBAL])) {
+		rc = game_theme_load(curtheme_dir[THEME_GLOBAL], THEME_GLOBAL);
 	}
 	return rc;
 }
@@ -901,7 +937,7 @@ int game_init(const char *name)
 		game_theme_select(DEFAULT_THEME);
 		return -1;
 	}
-	timer_han =  gfx_add_timer(HZ, counter_fn, NULL); 
+	timer_han = gfx_add_timer(HZ, counter_fn, NULL); 
 	if (!curgame_dir) {
 		game_menu(menu_games);
 	} else {

@@ -148,7 +148,7 @@ click = %d\nmusic = %d\ntheme = %s\n\
 filter = %d\nowntheme = %d\nlang = %s\nkbd = %d\nmode = %dx%d\njustify = %d\nfading = %d\n", 
 		opt_fs, opt_hl, opt_hz, opt_vol, save_autosave, 
 		curgame_dir?curgame_dir:"", opt_fsize, opt_motion, 
-		opt_click, opt_music, curtheme_dir?curtheme_dir:DEFAULT_THEME, 
+		opt_click, opt_music, curtheme_dir[THEME_GLOBAL]?curtheme_dir[THEME_GLOBAL]:DEFAULT_THEME, 
 		opt_filter, save_owntheme, opt_lang, opt_kbd, opt_mode[0], opt_mode[1], 
 		opt_justify, opt_fading);
 	if (opt_vsync != -1)
