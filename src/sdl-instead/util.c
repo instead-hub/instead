@@ -163,9 +163,10 @@ char *getfilepath(const char *d, const char *n)
 	char *p = malloc(i);
 	if (p) {
 		p[0] = 0;
-		if (d) {
+		if (d && d[0]) { /* non empty string */
 			strcpy(p, d);
-			strcat(p, "/");
+			if (p[strlen(d) - 1] != '/')
+				strcat(p, "/");
 		}
 		if (n)
 			strcat(p, n);
@@ -551,18 +552,23 @@ char *lookup_lang_tag(const char *fname, const char *tag, const char *comm)
 	return l;
 }
 
-char *lookup_lang_tag_idf(idff_t idf, const char *tag, const char *comm)
+char *lookup_lang_tag_idf(idf_t idf, const char *fname, const char *tag, const char *comm)
 {
 	char lang_tag[1024];
 	char *l;
+	idff_t idff;
 	if (!idf)
 		return NULL;
+	idff = idf_open(idf, fname);
+	if (!idff)
+		return NULL;
 	snprintf(lang_tag, sizeof(lang_tag), "%s(%s)", tag, opt_lang);
-	l = lookup_tag_all(lang_tag, comm, idff_gets, idf);
+	l = lookup_tag_all(lang_tag, comm, idff_gets, idff);
 	if (!l) {
-		idf_seek(idf, 0, SEEK_SET);
-		l = lookup_tag_all(tag, comm, idff_gets, idf);
+		idf_seek(idff, 0, SEEK_SET);
+		l = lookup_tag_all(tag, comm, idff_gets, idff);
 	}
+	idf_close(idff);
 	return l;
 }
 

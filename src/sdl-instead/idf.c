@@ -62,6 +62,7 @@ struct _idf_t {
 	unsigned long size;
 	FILE	*fd;
 	char 	*path;
+	char	cwd[PATH_MAX];
 	cache_t	dir;
 	int		idfonly;
 };
@@ -127,6 +128,12 @@ int	idf_magic(const char *fname)
 		return 1;
 	return 0;
 }
+int idf_setdir(idf_t idf, const char *path)
+{
+	if (idf && path)
+		strcpy(idf->cwd, path);
+	return 0;
+}
 
 idf_t idf_init(const char *fname)
 {
@@ -143,6 +150,7 @@ idf_t idf_init(const char *fname)
 	idf->idfonly = 0;
 	idf->fd = fopen(fp, "rb");
 	idf->dir = cache_init(-1, free_idfd);
+	idf->cwd[0] = 0;
 	if (!idf->fd || !idf->dir)
 		goto err;
 	if (fseek(idf->fd, 0, SEEK_END))
@@ -594,6 +602,7 @@ int idf_only(idf_t idf, int fl)
 
 idff_t idf_open(idf_t idf, const char *fname)
 {
+	char *rp;
 	idfd_t *dir = NULL;
 	idff_t fil = NULL;
 	char *p;
@@ -603,8 +612,13 @@ idff_t idf_open(idf_t idf, const char *fname)
 	if (!p)
 		return NULL;
 	tolow(p);
-	if (idf)
-		dir = cache_lookup(idf->dir, p);
+	if (idf) {
+		rp = getfilepath(idf->cwd, p);
+		if (rp) {
+			dir = cache_lookup(idf->dir, rp);
+			free(rp);
+		}
+	}
 	free(p);
 	if (!dir)
 		return NULL;
@@ -628,9 +642,15 @@ err:
 
 int idf_access(idf_t idf, const char *fname)
 {
+	char *rp;
 	idfd_t *dir = NULL;
-	if (idf)
-		dir = cache_lookup(idf->dir, fname);
+	if (idf) {
+		rp = getfilepath(idf->cwd, fname);
+		if (rp) {
+			dir = cache_lookup(idf->dir, rp);
+			free(rp);
+		}
+	}
 	if (!dir)
 		return -1;
 	return 0;

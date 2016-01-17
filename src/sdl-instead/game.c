@@ -162,6 +162,7 @@ char *game_reset_name(void)
 		return NULL;
 	}
 }
+static int game_cfg_load(void);
 
 int game_select(const char *name)
 {
@@ -205,6 +206,12 @@ int game_select(const char *name)
 			game_idf = idf_init(DATA_IDF);
 		}
 
+		themes_lookup_idf(game_idf, "themes/", THEME_GAME);
+		if (idf_only(game_idf, -1) != 1)
+			themes_lookup(dirpath("themes"), THEME_GAME);
+
+		game_cfg_load();
+
 		game_use_theme();
 
 		if (game_theme_init()) {
@@ -233,15 +240,15 @@ err:
 
 static char *game_name(const char *path, const char *d_name)
 {
-	char *l;
+	char *l = NULL;
 	char *p;
 
 	if (idf_magic(path)) {
 		idf_t idf = idf_init(path);
-		idff_t idff = idf_open(idf, MAIN_FILE);
-		l = lookup_lang_tag_idf(idff, "Name", "--");
-		idf_close(idff);
-		idf_done(idf);
+		if (idf) {
+			l = lookup_lang_tag_idf(idf, MAIN_FILE, "Name", "--");
+			idf_done(idf);
+		}
 		if (l)
 			return l;
 		goto err;
@@ -864,9 +871,40 @@ static int parse_curtheme(const char *v, void *data)
 	return 0;
 }
 
-static struct parser cmd_parser[] = {
-	{ "current", parse_curtheme, &curtheme_dir[THEME_GAME], 0 },
+static struct parser cmd_game_parser[] = {
+	{ "theme", parse_curtheme, &curtheme_dir[THEME_GAME], 0 },
 };
+
+static int game_cfg_load(void)
+{
+	char *p = getfilepath(dirname(game_save_path(1, 0)), "config.ini");
+	curtheme_dir[THEME_GAME] = DEFAULT_THEME;
+	if (!p)
+		return -1;
+	parse_ini(p, cmd_game_parser);
+	free(p);
+	return 0;
+}
+
+static int game_cfg_save(void)
+{
+	FILE *fp;
+	char *p;
+	if (!curtheme_dir[THEME_GAME]) /* nothing todo */
+		return 0;
+	p  = getfilepath(dirname(game_save_path(1, 0)), "config.ini");
+	if (!p)
+		return -1;
+	fp = fopen(p, "wb");
+	if (fp) {
+		if (curtheme_dir[THEME_GAME]) {
+			fprintf(fp, "theme = %s\n", curtheme_dir[THEME_GAME]);
+		}
+		fclose(fp);
+	}
+	free(p);
+	return 0;
+}
 
 int game_use_theme(void)
 {
@@ -876,22 +914,12 @@ int game_use_theme(void)
 
 	game_theme.changed = CHANGED_ALL;
 
-	themes_drop(THEME_GAME);
-
 	if (game_default_theme()) {
 		fprintf(stderr, "Can't load default theme.\n");
 		return -1;
 	}
 
-	themes_lookup(dirpath("themes"), THEME_GAME);
-
 	if (themes_count(THEME_GAME) > 0) { /* new scheme with own themes? */
-		curtheme_dir[THEME_GAME] = DEFAULT_THEME;
-		char *p = getfilepath(dirname(game_save_path(1, 0)), "theme.ini");
-		if (p) {
-			parse_ini(p, cmd_parser);
-			free(p);
-		}
 		game_own_theme = 1;
 		if (opt_owntheme) {
 			fprintf(stderr, "Using own themes directory...\n");
@@ -1010,6 +1038,7 @@ void game_done(int err)
 	timer_han = NULL_TIMER;
 	if ((opt_autosave & 1) && curgame_dir && !err)
 		game_save(0);
+	game_cfg_save();
 	curgame_dir = NULL;
 	setdir(game_cwd);
 /*	cfg_save(); */
@@ -1019,6 +1048,7 @@ void game_done(int err)
 	free_last(); /* here all lost user callback are */
 	game_release_theme();
 	game_theme_free();
+	themes_drop(THEME_GAME);
 	input_clear();
 	snd_done();
 	instead_done();

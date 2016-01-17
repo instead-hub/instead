@@ -36,6 +36,7 @@ extern void	idf_done(idf_t idf);
 
 extern int idf_create(const char *file, const char *path);
 extern idff_t idf_open(idf_t idf, const char *fname);
+extern int idf_setdir(idf_t idf, const char *path);
 
 extern int idf_seek(idff_t fil, int offset, int whence);
 extern int idf_read(idff_t fil, void *ptr, int size, int maxnum);
