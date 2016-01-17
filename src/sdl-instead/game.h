@@ -64,11 +64,12 @@ extern int 	game_loop(void);
 extern void 	game_done(int err);
 extern char	*game_reset_name(void);
 
-extern int 	game_load_theme(const char *path);
-extern int 	game_apply_theme(void);
-extern int game_use_theme(void);
-extern void game_release_theme(void);
-extern int game_reset(void);
+extern int	game_load_theme(const char *path);
+extern int	game_apply_theme(void);
+extern int	game_use_theme(void);
+extern void	game_release_theme(void);
+extern int	game_reset(void);
+extern int	game_cfg_save(void);
 
 extern void 	game_music_player(void);
 extern void	game_stop_mus(int ms);

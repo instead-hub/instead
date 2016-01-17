@@ -886,7 +886,7 @@ static int game_cfg_load(void)
 	return 0;
 }
 
-static int game_cfg_save(void)
+int game_cfg_save(void)
 {
 	FILE *fp;
 	char *p;

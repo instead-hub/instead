@@ -1229,6 +1229,7 @@ int game_theme_select(const char *name)
 	theme = theme_lookup(name, THEME_GAME);
 	if (theme) {
 		curtheme_dir[THEME_GAME] = theme->dir;
+		game_cfg_save();
 		return 0;
 	}
 	theme = theme_lookup(name, THEME_GLOBAL);
