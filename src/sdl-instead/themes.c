@@ -204,6 +204,8 @@ static int parse_include(const char *v, void *data)
 	char cwd[PATH_MAX];
 	if (!strlowcmp(v, DEFAULT_THEME))
 		return 0;
+	if (curtheme_loading && theme_lookup(v, curtheme_loading->type)) /* internal theme? */
+		return game_theme_load(v, THEME_GAME);
 	getdir(cwd, sizeof(cwd));
 	setdir(game_cwd);
 	rc = game_theme_load(v, THEME_GLOBAL);
@@ -935,7 +937,6 @@ static int theme_parse_idf(idf_t idf, const char *path)
 			fprintf(stderr, "Theme parsed with errors!\n");
 		return rc;
 	}
-
 	if (parse_ini(dirpath(path), cmd_parser)) {
 		fprintf(stderr, "Theme parsed with errors!\n");
 /*		game_theme_free(); */
@@ -1212,6 +1213,7 @@ struct theme *theme_lookup(const char *name, int type)
 
 int game_theme_load(const char *name, int type)
 {
+	struct theme *otheme = curtheme_loading;
 	struct theme *theme;
 	char cwd[PATH_MAX];
 	int rc = -1;
@@ -1224,7 +1226,6 @@ int game_theme_load(const char *name, int type)
 	} else {
 		theme_relative = 1;
 	}
-
 	theme = theme_lookup(name, type);
 
 	if (!theme)
@@ -1246,7 +1247,7 @@ int game_theme_load(const char *name, int type)
 	rc = 0;
 err:
 	setdir(cwd);
-	curtheme_loading = NULL;
+	curtheme_loading = otheme;
 	idf_setdir(game_idf, "");
 	theme_relative = rel;
 	return rc;
