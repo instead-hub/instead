@@ -78,6 +78,8 @@ extern int 	game_change_vol(int d, int val);
 extern int 	game_change_hz(int hz);
 
 extern int 	games_lookup(const char *path);
+extern struct game *game_lookup(const char *name);
+
 extern int	is_game(const char *games, const char *name);
 extern int	games_remove(int nr);
 extern int	games_replace(const char *path, const char *dir);

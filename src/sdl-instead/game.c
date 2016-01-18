@@ -116,7 +116,7 @@ int	games_nr = 0;
 
 void free_last(void);
 
-static struct game *game_lookup(const char *name)
+struct game *game_lookup(const char *name)
 {
 	int i;
 	if (!name || !*name) {

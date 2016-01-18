@@ -135,6 +135,13 @@ int idf_setdir(idf_t idf, const char *path)
 	return 0;
 }
 
+char *idf_getdir(idf_t idf)
+{
+	if (!idf)
+		return NULL;
+	return idf->cwd;
+}
+
 idf_t idf_init(const char *fname)
 {
 	char sign[4];
