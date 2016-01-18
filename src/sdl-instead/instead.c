@@ -732,9 +732,19 @@ static int luaB_theme_var(lua_State *L) {
 }
 
 static int luaB_theme_name(lua_State *L) {
-	if (game_own_theme && opt_owntheme)
-		lua_pushstring(L, ".");
-	else
+	char *name;
+	if (game_own_theme && opt_owntheme) {
+		if (curtheme_dir[THEME_GAME]) {
+			name = malloc(strlen(curtheme_dir[THEME_GAME]) + 2);
+			if (!name)
+				return 0;
+			sprintf(name, ".%s", curtheme_dir[THEME_GAME]);
+			lua_pushstring(L, name);
+			free(name);
+		} else {
+			lua_pushstring(L, ".");
+		}
+	} else
 		lua_pushstring(L, curtheme_dir[THEME_GLOBAL]);
 	return 1;
 }
