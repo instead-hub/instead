@@ -923,7 +923,9 @@ int game_use_theme(void)
 		game_own_theme = 1;
 		if (opt_owntheme) {
 			fprintf(stderr, "Using own themes directory...\n");
-			rc = game_theme_load(curtheme_dir[THEME_GAME], THEME_GAME);
+			if (curtheme_dir[THEME_GAME] && strlowcmp(DEFAULT_THEME, curtheme_dir[THEME_GAME])) {
+				rc = game_theme_load(curtheme_dir[THEME_GAME], THEME_GAME);
+			}
 			return rc;
 		}
 	} else if (curgame_dir && (!idf_access(game_idf, THEME_FILE) || !access(dirpath(THEME_FILE), R_OK))) {

@@ -460,7 +460,7 @@ int parse_float(const char *v, void *data)
 	return 0;	
 }
 
-static int parse_path(const char *v, void *data)
+int parse_path(const char *v, void *data)
 {
 	char **p = ((char **)data);
 	if (*p)
@@ -475,17 +475,11 @@ static int parse_path(const char *v, void *data)
 	*p = sdl_path(*p);
 	return 0;
 }
-extern int theme_relative; /* hack, theme layer here :( */
+
 int parse_full_path(const char *v, void *data)
 {
 	char cwd[PATH_MAX];
 	char **p = ((char **)data);
-
-	if (theme_relative || 
-		!strncmp(v, "blank:", 6) || 
-		!strncmp(v, "box:", 4) ||
-		!strncmp(v, "spr:", 4)) /* hack for special files*/
-		return parse_path(v, data);
 
 	if (*p)
 		free(*p);

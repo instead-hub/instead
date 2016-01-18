@@ -28,6 +28,7 @@
 int theme_relative = 0;
 
 char	*curtheme_dir[2] = { NULL, NULL };
+struct theme *curtheme_loading = NULL;
 
 static int parse_win_align(const char *v, void *data)
 {
@@ -211,17 +212,42 @@ static int parse_include(const char *v, void *data)
 	setdir(cwd);
 	return rc;
 }
+
+static int theme_parse_full_path(const char *v, void *data)
+{
+	int rc;
+	char **p = (char **)data;
+	char *np;
+	if (theme_relative) {
+		if (!strncmp(v, "blank:", 6) || 
+			!strncmp(v, "box:", 4) ||
+			!strncmp(v, "spr:", 4)) /* hack for special files*/
+			return parse_path(v, data);
+		rc = parse_path(v, data);
+		if (rc)
+			return rc;
+		if (curtheme_loading && curtheme_loading->type == THEME_GAME) {
+			np = getfilepath(curtheme_loading->path, *p);
+			if (!*np)
+				return -1;
+			free(*p); *p = np;
+		}
+		return 0;
+	}
+	return parse_full_path(v, data);
+}
+
 struct parser cmd_parser[] = {
 	{ "scr.w", parse_int, &game_theme.w, 0 },
 	{ "scr.h", parse_int, &game_theme.h, 0 },
 	{ "scr.gfx.scalable", parse_int, &game_theme.gfx_scalable, 0 },
 	{ "scr.col.bg", parse_color, &game_theme.bgcol, 0 },
-	{ "scr.gfx.bg", parse_full_path, &game_theme.bg_name, CHANGED_BG },
-	{ "scr.gfx.cursor.normal", parse_full_path, &game_theme.cursor_name, CHANGED_CURSOR },
+	{ "scr.gfx.bg", theme_parse_full_path, &game_theme.bg_name, CHANGED_BG },
+	{ "scr.gfx.cursor.normal", theme_parse_full_path, &game_theme.cursor_name, CHANGED_CURSOR },
 	{ "scr.gfx.cursor.x", parse_int, &game_theme.cur_x, 0 },
 	{ "scr.gfx.cursor.y", parse_int, &game_theme.cur_y, 0 },
-	{ "scr.gfx.use", parse_full_path, &game_theme.use_name, CHANGED_USE }, /* compat */
-	{ "scr.gfx.cursor.use", parse_full_path, &game_theme.use_name, CHANGED_USE },
+	{ "scr.gfx.use", theme_parse_full_path, &game_theme.use_name, CHANGED_USE }, /* compat */
+	{ "scr.gfx.cursor.use", theme_parse_full_path, &game_theme.use_name, CHANGED_USE },
 	{ "scr.gfx.pad", parse_int, &game_theme.pad, 0 }, 
 	{ "scr.gfx.x", parse_int, &game_theme.gfx_x, 0 },
 	{ "scr.gfx.y", parse_int, &game_theme.gfx_y, 0 },
@@ -236,14 +262,14 @@ struct parser cmd_parser[] = {
 	{ "win.h", parse_int, &game_theme.win_h, 0 },
 	{ "win.scroll.mode", parse_int, &game_theme.win_scroll_mode, 0 },
 
-	{ "win.fnt.name", parse_full_path, &game_theme.font_name, CHANGED_FONT },
+	{ "win.fnt.name", theme_parse_full_path, &game_theme.font_name, CHANGED_FONT },
 	{ "win.fnt.size", parse_int, &game_theme.font_size, CHANGED_FONT },
 	{ "win.fnt.height", parse_float, &game_theme.font_height, 0 },
 /* compat mode directive */
 	{ "win.gfx.h", parse_int, &game_theme.max_scene_h, 0 },
 /* here it was */
-	{ "win.gfx.up", parse_full_path, &game_theme.a_up_name, CHANGED_UP },
-	{ "win.gfx.down", parse_full_path, &game_theme.a_down_name, CHANGED_DOWN },
+	{ "win.gfx.up", theme_parse_full_path, &game_theme.a_up_name, CHANGED_UP },
+	{ "win.gfx.down", theme_parse_full_path, &game_theme.a_down_name, CHANGED_DOWN },
 	{ "win.up.x", parse_int, &game_theme.a_up_x, 0 },
 	{ "win.up.y", parse_int, &game_theme.a_up_y, 0 },
 	{ "win.down.x", parse_int, &game_theme.a_down_x, 0 },
@@ -262,11 +288,11 @@ struct parser cmd_parser[] = {
 	{ "inv.col.fg", parse_color, &game_theme.icol, 0 },
 	{ "inv.col.link", parse_color, &game_theme.ilcol, 0 },
 	{ "inv.col.alink", parse_color, &game_theme.iacol, 0 }, 
-	{ "inv.fnt.name", parse_full_path, &game_theme.inv_font_name, CHANGED_IFONT },
+	{ "inv.fnt.name", theme_parse_full_path, &game_theme.inv_font_name, CHANGED_IFONT },
 	{ "inv.fnt.size", parse_int, &game_theme.inv_font_size, CHANGED_IFONT },
 	{ "inv.fnt.height", parse_float, &game_theme.inv_font_height, 0 },
-	{ "inv.gfx.up", parse_full_path, &game_theme.inv_a_up_name, CHANGED_IUP },
-	{ "inv.gfx.down", parse_full_path, &game_theme.inv_a_down_name, CHANGED_IDOWN },
+	{ "inv.gfx.up", theme_parse_full_path, &game_theme.inv_a_up_name, CHANGED_IUP },
+	{ "inv.gfx.down", theme_parse_full_path, &game_theme.inv_a_down_name, CHANGED_IDOWN },
 	{ "inv.up.x", parse_int, &game_theme.inv_a_up_x, 0 },
 	{ "inv.up.y", parse_int, &game_theme.inv_a_up_y, 0 },
 	{ "inv.down.x", parse_int, &game_theme.inv_a_down_x, 0 },
@@ -279,17 +305,17 @@ struct parser cmd_parser[] = {
 	{ "menu.col.alpha", parse_int, &game_theme.menu_alpha, 0 },
 	{ "menu.col.border", parse_color, &game_theme.border_col, 0 },
 	{ "menu.bw", parse_int, &game_theme.border_w, 0 },
-	{ "menu.fnt.name", parse_full_path, &game_theme.menu_font_name, CHANGED_MFONT },
+	{ "menu.fnt.name", theme_parse_full_path, &game_theme.menu_font_name, CHANGED_MFONT },
 	{ "menu.fnt.size", parse_int, &game_theme.menu_font_size, CHANGED_MFONT },
 	{ "menu.fnt.height", parse_float, &game_theme.menu_font_height, 0 },
-	{ "menu.gfx.button", parse_full_path, &game_theme.menu_button_name, CHANGED_BUTTON },
+	{ "menu.gfx.button", theme_parse_full_path, &game_theme.menu_button_name, CHANGED_BUTTON },
 	{ "menu.button.x", parse_int, &game_theme.menu_button_x, 0 },
 	{ "menu.button.y", parse_int, &game_theme.menu_button_y, 0 },
 /* compat */
 	{ "menu.buttonx", parse_int, &game_theme.menu_button_x, 0 },
 	{ "menu.buttony", parse_int, &game_theme.menu_button_y, 0 },
 
-	{ "snd.click", parse_full_path, &game_theme.click_name, CHANGED_CLICK },
+	{ "snd.click", theme_parse_full_path, &game_theme.click_name, CHANGED_CLICK },
 	{ "include", parse_include, NULL, 0 },
 	{ NULL, NULL, NULL, 0 },
 };
@@ -706,7 +732,7 @@ static int game_theme_update_data(void)
 			goto err;
 		}
 	}
-	
+
 	if (t->inv_font_name && (t->changed & CHANGED_IFONT)) {
 		fnt_free(t->inv_font);
 		if (!(t->inv_font = fnt_load(t->inv_font_name, FONT_SZ(t->inv_font_size)))) {
@@ -738,7 +764,7 @@ static int game_theme_update_data(void)
 		if (theme_img_scale(&t->a_up))
 			goto err;
 	}
-	
+
 	if (t->a_down_name && (t->changed & CHANGED_DOWN)) {
 		gfx_free_image(t->a_down);
 		if (!(t->a_down = gfx_load_image(t->a_down_name))) {
@@ -1172,7 +1198,7 @@ struct theme *theme_lookup(const char *name, int type)
 {
 	int i;
 	if (!name || !*name) {
-		if (themes_nr == 1) 
+		if (themes_nr == 1 && themes[0].type == type) 
 			return &themes[0];
 		return NULL;
 	}
@@ -1204,6 +1230,8 @@ int game_theme_load(const char *name, int type)
 	if (!theme)
 		goto err;
 
+	curtheme_loading = theme;
+
 	if (theme->idf) {
 		if (idf_setdir(game_idf, theme->path))
 			goto err;
@@ -1218,6 +1246,7 @@ int game_theme_load(const char *name, int type)
 	rc = 0;
 err:
 	setdir(cwd);
+	curtheme_loading = NULL;
 	idf_setdir(game_idf, "");
 	theme_relative = rel;
 	return rc;
@@ -1241,5 +1270,11 @@ int game_theme_select(const char *name)
 
 int game_default_theme(void)
 {
-	return game_theme_load(DEFAULT_THEME, THEME_GLOBAL);
+	int rc;
+	rc = game_theme_load(DEFAULT_THEME, THEME_GLOBAL);
+	if (rc)
+		return rc;
+	if (opt_owntheme && themes_count(THEME_GAME) > 0)
+		rc = game_theme_load(DEFAULT_THEME, THEME_GAME);
+	return rc;
 }

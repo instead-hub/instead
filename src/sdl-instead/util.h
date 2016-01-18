@@ -58,6 +58,7 @@ extern int parse_int(const char *v, void *data);
 extern int parse_float(const char *v, void *data);
 
 extern int parse_full_path(const char *v, void *data);
+extern int parse_path(const char *v, void *data);
 extern int process_cmd(char *n, char *v, struct parser *cmd_parser);
 
 extern char *encode_esc_string(const char *v);
