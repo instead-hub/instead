@@ -718,7 +718,8 @@ static int luaB_theme_var(lua_State *L) {
 	}
 	if (!val || !var)
 		return 0;
-	game_own_theme = 1;
+	if (!game_own_theme)
+		return 0;
 	if (!opt_owntheme)
 		return 0;
 	if (!strcmp(var, "scr.w") ||

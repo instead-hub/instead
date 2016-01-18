@@ -4,6 +4,9 @@ theme = {
 	system_type = true;
 	save = function(self, name, h, need)
 		local k,v
+		if self.name() ~= '.' then
+			return
+		end
 		for k,v in stead.pairs(self.vars) do
 			h:write(stead.string.format("theme.set(%q, %q);\n", k, v))
 		end
