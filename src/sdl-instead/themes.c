@@ -147,7 +147,19 @@ static int parse_inv_mode(const char *v, void *data)
 		*i = INV_MODE_VERT | INV_ALIGN_SET(ALIGN_CENTER);
 	else
 		return -1;
-	return 0;	
+	return 0;
+}
+
+static int parse_ways_mode(const char *v, void *data)
+{
+	int *i = (int *)data;
+	if (!strcmp(v, "top"))
+		*i = ALIGN_TOP;
+	else if (!strcmp(v, "bottom"))
+		*i = ALIGN_BOTTOM;
+	else
+		return -1;
+	return 0;
 }
 
 static int out_inv_mode(const void *v, char **out)
@@ -234,6 +246,7 @@ struct parser cmd_parser[] = {
 	{ "win.y", parse_int, &game_theme.win_y, 0 },
 	{ "win.w", parse_int, &game_theme.win_w, 0 },
 	{ "win.h", parse_int, &game_theme.win_h, 0 },
+	{ "win.ways.mode", parse_ways_mode, &game_theme.ways_mode, 0 },
 	{ "win.scroll.mode", parse_int, &game_theme.win_scroll_mode, 0 },
 
 	{ "win.fnt.name", parse_full_path, &game_theme.font_name, CHANGED_FONT },
@@ -383,6 +396,7 @@ struct game_theme game_theme = {
 	.win_scroll_mode = 2,
 	.gfx_mode = GFX_MODE_EMBEDDED,
 	.inv_mode = INV_MODE_VERT | INV_ALIGN_SET(ALIGN_LEFT),
+	.ways_mode = ALIGN_TOP,
 	.click_name = NULL,
 	.click = NULL,
 	.xoff = 0,

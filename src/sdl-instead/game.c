@@ -2236,7 +2236,7 @@ int game_cmd(char *cmd, int flags)
 	if (game_theme.gfx_mode != GFX_MODE_EMBEDDED) {
 		txt_layout_set(el_layout(el_ways), waystr);
 		txt_layout_size(el_layout(el_ways), NULL, &ways_h);
-		if (ways_h == 0 && pict_h != 0)
+		if ((ways_h == 0 || WAYS_BOTTOM) && pict_h != 0)
 			pict_h += game_theme.font_size * game_theme.font_height / 2;
 	} 
 	old_off = txt_box_off(el_box(el_scene));
@@ -2251,12 +2251,16 @@ int game_cmd(char *cmd, int flags)
 		p = malloc(strlen(cmdstr) + ((waystr)?strlen(waystr):0) + 16);
 		if (p) {
 			*p = 0;
-			if ((waystr && *waystr) || el_img(el_spic)) { /* is this hack needed? */
-				if (waystr)
-					strcpy(p, waystr);
-				strcat(p, "\n"); /* small hack */
-			}
+			if (!WAYS_BOTTOM && waystr && *waystr) {
+				strcpy(p, waystr);
+				strcat(p, "\n");
+			} else if (el_img(el_spic))
+				strcat(p, "\n");
 			strcat(p, cmdstr);
+			if (WAYS_BOTTOM) {
+				strcat(p, "\n");
+				strcat(p, waystr);
+			}
 			free(cmdstr);
 			cmdstr = p;
 		} else { /* paranoia? Yes... */
@@ -2267,17 +2271,23 @@ int game_cmd(char *cmd, int flags)
 		txt_box_set(el_box(el_scene), txt_box_layout(el_box(el_scene)));
 	} else {
 		if (GFX_MODE(game_theme.gfx_mode) == GFX_MODE_FLOAT) 
-			pict_h = 0;	
+			pict_h = 0;
 		txt_layout_set(txt_box_layout(el_box(el_scene)), cmdstr);
 		txt_box_set(el_box(el_scene), txt_box_layout(el_box(el_scene)));
 	}
 	
-	el(el_ways)->y = el(el_title)->y + title_h + pict_h;
+	if (WAYS_BOTTOM)
+		el(el_ways)->y = game_theme.win_h - ways_h + game_theme.win_y;
+	else
+		el(el_ways)->y = el(el_title)->y + title_h + pict_h;
 
 	if (waystr)
 		free(waystr);
 
-	el(el_scene)->y = el(el_ways)->y + ways_h;
+	if (WAYS_BOTTOM)
+		el(el_scene)->y = el(el_title)->y + title_h + pict_h; 
+	else
+		el(el_scene)->y = el(el_ways)->y + ways_h;
 	
 /*
 	game_clear(game_theme.win_x, game_theme.win_y + pict_h + title_h, 

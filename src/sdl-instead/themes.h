@@ -121,6 +121,7 @@ struct game_theme {
 	int 	menu_button_y;
 	int	gfx_mode;
 	int	inv_mode;
+	int	ways_mode;
 	char	*click_name;
 	void	*click;
 	int xoff;
@@ -187,6 +188,7 @@ extern int theme_relative;
 #define INV_ALIGN(v) ((v)>>8)
 #define INV_ALIGN_SET(v) ((v)<<8)
 
+#define WAYS_BOTTOM (game_theme.ways_mode == ALIGN_BOTTOM)
 #define DIRECT_MODE (game_theme.gfx_mode == GFX_MODE_DIRECT)
 
 #define SCALABLE_FONT (!(game_theme.gfx_scalable & 4))
