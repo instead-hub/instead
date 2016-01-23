@@ -3987,9 +3987,13 @@ void txt_box_resize(textbox_t tbox, int w, int h)
 	struct textbox *box = (struct textbox *)tbox;
 	if (!tbox)
 		return;
+	if (w < 0)
+		w = 0;
+	if (h < 0)
+		h = 0;
 	box->w = w;
 	box->h = h;
-	txt_box_norm(tbox);	
+	txt_box_norm(tbox);
 }
 
 void txt_box_size(textbox_t tbox, int *w, int *h)
