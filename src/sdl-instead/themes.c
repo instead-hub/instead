@@ -27,7 +27,8 @@
 
 int theme_relative = 0;
 
-char	*curtheme_dir = NULL;
+char	*curtheme_dir[2] = { NULL, NULL };
+struct theme *curtheme_loading = NULL;
 
 static int parse_win_align(const char *v, void *data)
 {
@@ -215,25 +216,53 @@ static int parse_include(const char *v, void *data)
 	char cwd[PATH_MAX];
 	if (!strlowcmp(v, DEFAULT_THEME))
 		return 0;
+	if (curtheme_loading && strlowcmp(v, curtheme_loading->dir) &&
+		theme_lookup(v, curtheme_loading->type)) /* internal theme? */
+		return game_theme_load(v, THEME_GAME);
 	getdir(cwd, sizeof(cwd));
 	setdir(game_cwd);
-	rc = game_theme_load(v);
+	rc = game_theme_load(v, THEME_GLOBAL);
 /*	if (!rc)
 		game_theme_select(v); */
 	setdir(cwd);
 	return rc;
 }
+
+static int theme_parse_full_path(const char *v, void *data)
+{
+	int rc;
+	char **p = (char **)data;
+	char *np;
+	if (theme_relative) {
+		if (!strncmp(v, "blank:", 6) || 
+			!strncmp(v, "box:", 4) ||
+			!strncmp(v, "spr:", 4)) /* hack for special files*/
+			return parse_path(v, data);
+		rc = parse_path(v, data);
+		if (rc)
+			return rc;
+		if (curtheme_loading && curtheme_loading->type == THEME_GAME) {
+			np = getfilepath(curtheme_loading->path, *p);
+			if (!*np)
+				return -1;
+			free(*p); *p = np;
+		}
+		return 0;
+	}
+	return parse_full_path(v, data);
+}
+
 struct parser cmd_parser[] = {
 	{ "scr.w", parse_int, &game_theme.w, 0 },
 	{ "scr.h", parse_int, &game_theme.h, 0 },
 	{ "scr.gfx.scalable", parse_int, &game_theme.gfx_scalable, 0 },
 	{ "scr.col.bg", parse_color, &game_theme.bgcol, 0 },
-	{ "scr.gfx.bg", parse_full_path, &game_theme.bg_name, CHANGED_BG },
-	{ "scr.gfx.cursor.normal", parse_full_path, &game_theme.cursor_name, CHANGED_CURSOR },
+	{ "scr.gfx.bg", theme_parse_full_path, &game_theme.bg_name, CHANGED_BG },
+	{ "scr.gfx.cursor.normal", theme_parse_full_path, &game_theme.cursor_name, CHANGED_CURSOR },
 	{ "scr.gfx.cursor.x", parse_int, &game_theme.cur_x, 0 },
 	{ "scr.gfx.cursor.y", parse_int, &game_theme.cur_y, 0 },
-	{ "scr.gfx.use", parse_full_path, &game_theme.use_name, CHANGED_USE }, /* compat */
-	{ "scr.gfx.cursor.use", parse_full_path, &game_theme.use_name, CHANGED_USE },
+	{ "scr.gfx.use", theme_parse_full_path, &game_theme.use_name, CHANGED_USE }, /* compat */
+	{ "scr.gfx.cursor.use", theme_parse_full_path, &game_theme.use_name, CHANGED_USE },
 	{ "scr.gfx.pad", parse_int, &game_theme.pad, 0 }, 
 	{ "scr.gfx.x", parse_int, &game_theme.gfx_x, 0 },
 	{ "scr.gfx.y", parse_int, &game_theme.gfx_y, 0 },
@@ -249,14 +278,14 @@ struct parser cmd_parser[] = {
 	{ "win.ways.mode", parse_ways_mode, &game_theme.ways_mode, 0 },
 	{ "win.scroll.mode", parse_int, &game_theme.win_scroll_mode, 0 },
 
-	{ "win.fnt.name", parse_full_path, &game_theme.font_name, CHANGED_FONT },
+	{ "win.fnt.name", theme_parse_full_path, &game_theme.font_name, CHANGED_FONT },
 	{ "win.fnt.size", parse_int, &game_theme.font_size, CHANGED_FONT },
 	{ "win.fnt.height", parse_float, &game_theme.font_height, 0 },
 /* compat mode directive */
 	{ "win.gfx.h", parse_int, &game_theme.max_scene_h, 0 },
 /* here it was */
-	{ "win.gfx.up", parse_full_path, &game_theme.a_up_name, CHANGED_UP },
-	{ "win.gfx.down", parse_full_path, &game_theme.a_down_name, CHANGED_DOWN },
+	{ "win.gfx.up", theme_parse_full_path, &game_theme.a_up_name, CHANGED_UP },
+	{ "win.gfx.down", theme_parse_full_path, &game_theme.a_down_name, CHANGED_DOWN },
 	{ "win.up.x", parse_int, &game_theme.a_up_x, 0 },
 	{ "win.up.y", parse_int, &game_theme.a_up_y, 0 },
 	{ "win.down.x", parse_int, &game_theme.a_down_x, 0 },
@@ -275,11 +304,11 @@ struct parser cmd_parser[] = {
 	{ "inv.col.fg", parse_color, &game_theme.icol, 0 },
 	{ "inv.col.link", parse_color, &game_theme.ilcol, 0 },
 	{ "inv.col.alink", parse_color, &game_theme.iacol, 0 }, 
-	{ "inv.fnt.name", parse_full_path, &game_theme.inv_font_name, CHANGED_IFONT },
+	{ "inv.fnt.name", theme_parse_full_path, &game_theme.inv_font_name, CHANGED_IFONT },
 	{ "inv.fnt.size", parse_int, &game_theme.inv_font_size, CHANGED_IFONT },
 	{ "inv.fnt.height", parse_float, &game_theme.inv_font_height, 0 },
-	{ "inv.gfx.up", parse_full_path, &game_theme.inv_a_up_name, CHANGED_IUP },
-	{ "inv.gfx.down", parse_full_path, &game_theme.inv_a_down_name, CHANGED_IDOWN },
+	{ "inv.gfx.up", theme_parse_full_path, &game_theme.inv_a_up_name, CHANGED_IUP },
+	{ "inv.gfx.down", theme_parse_full_path, &game_theme.inv_a_down_name, CHANGED_IDOWN },
 	{ "inv.up.x", parse_int, &game_theme.inv_a_up_x, 0 },
 	{ "inv.up.y", parse_int, &game_theme.inv_a_up_y, 0 },
 	{ "inv.down.x", parse_int, &game_theme.inv_a_down_x, 0 },
@@ -292,17 +321,17 @@ struct parser cmd_parser[] = {
 	{ "menu.col.alpha", parse_int, &game_theme.menu_alpha, 0 },
 	{ "menu.col.border", parse_color, &game_theme.border_col, 0 },
 	{ "menu.bw", parse_int, &game_theme.border_w, 0 },
-	{ "menu.fnt.name", parse_full_path, &game_theme.menu_font_name, CHANGED_MFONT },
+	{ "menu.fnt.name", theme_parse_full_path, &game_theme.menu_font_name, CHANGED_MFONT },
 	{ "menu.fnt.size", parse_int, &game_theme.menu_font_size, CHANGED_MFONT },
 	{ "menu.fnt.height", parse_float, &game_theme.menu_font_height, 0 },
-	{ "menu.gfx.button", parse_full_path, &game_theme.menu_button_name, CHANGED_BUTTON },
+	{ "menu.gfx.button", theme_parse_full_path, &game_theme.menu_button_name, CHANGED_BUTTON },
 	{ "menu.button.x", parse_int, &game_theme.menu_button_x, 0 },
 	{ "menu.button.y", parse_int, &game_theme.menu_button_y, 0 },
 /* compat */
 	{ "menu.buttonx", parse_int, &game_theme.menu_button_x, 0 },
 	{ "menu.buttony", parse_int, &game_theme.menu_button_y, 0 },
 
-	{ "snd.click", parse_full_path, &game_theme.click_name, CHANGED_CLICK },
+	{ "snd.click", theme_parse_full_path, &game_theme.click_name, CHANGED_CLICK },
 	{ "include", parse_include, NULL, 0 },
 	{ NULL, NULL, NULL, 0 },
 };
@@ -720,7 +749,7 @@ static int game_theme_update_data(void)
 			goto err;
 		}
 	}
-	
+
 	if (t->inv_font_name && (t->changed & CHANGED_IFONT)) {
 		fnt_free(t->inv_font);
 		if (!(t->inv_font = fnt_load(t->inv_font_name, FONT_SZ(t->inv_font_size)))) {
@@ -752,7 +781,7 @@ static int game_theme_update_data(void)
 		if (theme_img_scale(&t->a_up))
 			goto err;
 	}
-	
+
 	if (t->a_down_name && (t->changed & CHANGED_DOWN)) {
 		gfx_free_image(t->a_down);
 		if (!(t->a_down = gfx_load_image(t->a_down_name))) {
@@ -909,40 +938,51 @@ int game_theme_init(void)
 	return 0;
 }
 
-static int theme_parse(const char *path)
+static int theme_parse_idf(idf_t idf, const char *path)
 {
-	idff_t idf = NULL;
+	idff_t idff = NULL;
+	if (idf)
+		idff = idf_open(idf, path);
 
-	if (theme_relative)
-		idf = idf_open(game_idf, path);
-
-	if (idf) {
-		int rc = parse_idff(idf, path, cmd_parser);
-		idf_close(idf);
+	if (idff) {
+		int rc = parse_idff(idff, path, cmd_parser);
+		idf_close(idff);
 		if (rc)
 			fprintf(stderr, "Theme parsed with errors!\n");
 		return rc;
 	}
-
 	if (parse_ini(dirpath(path), cmd_parser)) {
 		fprintf(stderr, "Theme parsed with errors!\n");
 /*		game_theme_free(); */
 		return -1;
 	}
+
 	return 0;
 }
 
 int theme_load(const char *name)
 {
-	if (theme_parse(name))
+	idf_t idf = NULL;
+
+	if (theme_relative)
+		idf = game_idf;
+
+	if (theme_parse_idf(idf, name))
+		return 0; /* no theme loaded if error in parsing */
+	return 0;
+}
+
+int theme_load_idf(idf_t idf, const char *name)
+{
+	if (theme_parse_idf(idf, name))
 		return 0; /* no theme loaded if error in parsing */
 	return 0;
 }
 
 struct	theme *themes = NULL;
-int	themes_nr = 0;
+int themes_nr = 0;
 
-static int is_theme(const char *path, const char *n)
+static int is_theme_idf(idf_t idf, const char *path, const char *n)
 {
 	int rc = 0;
 	char *p = getpath(path, n);
@@ -953,12 +993,19 @@ static int is_theme(const char *path, const char *n)
 	if (pp) {
 		strcpy(pp, p);
 		strcat(pp, THEME_FILE);
-		if (!access(pp, R_OK))
-			rc = 1;
+		if (idf)
+			rc = !idf_access(idf, pp);
+		else
+			rc = !access(pp, R_OK);
 		free(pp);
 	}
 	free(p);
 	return rc;
+}
+
+static int is_theme(const char *path, const char *n)
+{
+	return is_theme_idf(NULL, path, n);
 }
 
 static char *theme_name(const char *path, const char *d_name)
@@ -975,10 +1022,26 @@ err:
 	return strdup(d_name);
 }
 
+static char *theme_name_idf(idf_t idf, const char *path, const char *d_name)
+{
+	char *l;	
+	char *p = getfilepath(path, THEME_FILE);
+	if (!p)
+		goto err;
+	l = lookup_lang_tag_idf(idf, p, "Name", ";");
+	free(p);
+	if (l) 
+		return l;
+err:
+	return strdup(d_name);
+}
+
 static int cmp_theme(const void *p1, const void *p2)
 {
 	const struct theme *t1 = (const struct theme*)p1;
 	const struct theme *t2 = (const struct theme*)p2;
+	if (t1->type != t2->type)
+		return t1->type - t2->type;
 	return strcmp(t1->name, t2->name);
 }
 
@@ -987,9 +1050,99 @@ static void themes_sort()
 	qsort(themes, themes_nr, sizeof(struct theme), cmp_theme);
 }
 
-static struct theme *theme_lookup(const char *name);
+struct theme *theme_lookup(const char *name, int type);
 
-int themes_lookup(const char *path)
+int themes_count(int type)
+{
+	int rc = 0;
+	int i;
+	for (i = 0; i < themes_nr; i++)
+		rc = rc + (themes[i].type == type);
+	return rc;
+}
+
+void themes_drop(int type)
+{
+	int new_size;
+	struct theme *new_themes = NULL;
+	int rc, i, k = 0;
+	rc  = themes_count(type);
+	if (!rc)
+		return;
+	new_size = (themes_nr - rc) * sizeof(struct theme);
+	if (new_size)
+		new_themes = malloc( new_size);
+
+	for (i = 0; i < themes_nr; i ++) {
+		if (themes[i].type == type) {
+			free(themes[i].path);
+			free(themes[i].dir);
+			free(themes[i].name);
+		} else {
+			char *p = curtheme_dir[themes[i].type];
+			new_themes[k++] = themes[i];
+			if (p && !strlowcmp(p, themes[i].dir))
+				curtheme_dir[themes[i].type] = p;
+		}
+	}
+	themes_nr = k;
+	curtheme_dir[type] = NULL;
+
+	free(themes);
+	themes = new_themes;
+}
+
+int themes_lookup_idf(idf_t idf, const char *path, int type)
+{
+	char *p;
+	idff_t idf_dir;
+	int n = 0, i = 0;
+	struct theme *new_themes;
+	char *idf_de;
+	if (!idf)
+		return -1;
+	idf_dir = idf_opendir(idf, path);
+	if (!idf_dir)
+		return -1;
+	while ((idf_de = idf_readdir(idf_dir))) {
+		if (theme_lookup(idf_de, type))
+			continue;
+		if (!is_theme_idf(idf, path, idf_de))
+			continue;
+		n ++;
+	}
+	if (!n)
+		goto out;
+	idf_closedir(idf_dir); idf_dir = idf_opendir(idf, path);
+	if (!idf_dir)
+		return -1;
+	new_themes = realloc(themes, sizeof(struct theme) * (n + themes_nr));
+	if (!new_themes) {
+		idf_closedir(idf_dir);
+		return -1;
+	}
+	themes = new_themes;
+	while ((idf_de = idf_readdir(idf_dir)) && i < n) {
+		if (theme_lookup(idf_de, type))
+			continue;
+		if (!is_theme_idf(idf, path, idf_de))
+			continue;
+		p = getpath(path, idf_de);
+		themes[themes_nr].path = p;
+		themes[themes_nr].dir = strdup(idf_de);
+		themes[themes_nr].name = theme_name_idf(idf, p, idf_de);
+		themes[themes_nr].type = type;
+		themes[themes_nr].idf = 1;
+		themes_nr ++;
+		i ++;
+	}
+out:
+	idf_closedir(idf_dir);
+	themes_sort();
+	return 0;
+}
+
+int themes_lookup(const char *path, int type)
 {
 	char *p;
 	int n = 0, i = 0;
@@ -1004,7 +1157,7 @@ int themes_lookup(const char *path)
 	if (!d)
 		return -1;
 	while ((de = readdir(d))) {
-		if (theme_lookup(de->d_name))
+		if (theme_lookup(de->d_name, type))
 			continue;
 		if (!is_theme(path, de->d_name))
 			continue;
@@ -1024,7 +1177,7 @@ int themes_lookup(const char *path)
 	while ((de = readdir(d)) && i < n) {
 		/*if (de->d_type != DT_DIR)
 			continue;*/
-		if (theme_lookup(de->d_name))
+		if (theme_lookup(de->d_name, type))
 			continue;
 		if (!is_theme(path, de->d_name))
 			continue;
@@ -1032,6 +1185,8 @@ int themes_lookup(const char *path)
 		themes[themes_nr].path = p;
 		themes[themes_nr].dir = strdup(de->d_name);
 		themes[themes_nr].name = theme_name(p, de->d_name);
+		themes[themes_nr].type = type;
+		themes[themes_nr].idf = 0;
 		themes_nr ++;
 		i ++;
 	}
@@ -1055,37 +1210,74 @@ int themes_rename(void)
 	return 0;
 }
 
-static struct theme *theme_lookup(const char *name)
+struct theme *theme_lookup(const char *name, int type)
 {
 	int i;
 	if (!name || !*name) {
-		if (themes_nr == 1) 
+		if (themes_nr == 1 && themes[0].type == type) 
 			return &themes[0];
 		return NULL;
 	}
 	for (i = 0; i<themes_nr; i ++) {
-		if (!strlowcmp(themes[i].dir, name)) {
+		if (!strlowcmp(themes[i].dir, name) && themes[i].type == type) {
 			return &themes[i];
 		}
 	}
 	return NULL;
 }
 
-int game_theme_load(const char *name)
+int game_theme_load(const char *name, int type)
 {
+	struct theme *otheme = curtheme_loading;
 	struct theme *theme;
+	struct game *game;
 	char cwd[PATH_MAX];
 	int rc = -1;
 	int rel = theme_relative;
+
 	getdir(cwd, sizeof(cwd));
 	setdir(game_cwd);
-	theme = theme_lookup(name);
-	theme_relative = 0;
-	if (!theme || setdir(theme->path) || theme_load(THEME_FILE))
+
+	if (type == THEME_GLOBAL) {
+		theme_relative = 0;
+	} else {
+		game = game_lookup(curgame_dir);
+		if (!game)
+			return -1;
+		if (!game->idf)
+			setdir(game->path);
+		theme_relative = 1;
+	}
+
+	theme = theme_lookup(name, type);
+	if (!theme)
 		goto err;
+
+	if (theme->idf) /* cwd is always game_cwd */
+		strcpy(cwd, idf_getdir(game_idf));
+
+	curtheme_loading = theme;
+
+	if (theme->idf) {
+		if (idf_setdir(game_idf, theme->path))
+			goto err;
+		if (theme_load_idf(game_idf, THEME_FILE))
+			goto err;
+	} else {
+		if (setdir(theme->path))
+			goto err;
+		if (theme_load(THEME_FILE))
+			goto err;
+	}
 	rc = 0;
 err:
-	setdir(cwd);
+	curtheme_loading = otheme;
+
+	if (theme && theme->idf)
+		idf_setdir(game_idf, cwd);
+	else
+		setdir(cwd);
+
 	theme_relative = rel;
 	return rc;
 }
@@ -1093,14 +1285,26 @@ err:
 int game_theme_select(const char *name)
 {
 	struct theme *theme;
-	theme = theme_lookup(name);
+	theme = theme_lookup(name, THEME_GAME);
+	if (theme) {
+		curtheme_dir[THEME_GAME] = theme->dir;
+		game_cfg_save();
+		return 0;
+	}
+	theme = theme_lookup(name, THEME_GLOBAL);
 	if (!theme)
 		return -1;
-	curtheme_dir = theme->dir;
+	curtheme_dir[THEME_GLOBAL] = theme->dir;
 	return 0;
 }
 
 int game_default_theme(void)
 {
-	return game_theme_load(DEFAULT_THEME);
+	int rc;
+	rc = game_theme_load(DEFAULT_THEME, THEME_GLOBAL);
+	if (rc)
+		return rc;
+	if (opt_owntheme && themes_count(THEME_GAME) > 0)
+		rc = game_theme_load(DEFAULT_THEME, THEME_GAME);
+	return rc;
 }

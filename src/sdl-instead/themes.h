@@ -35,6 +35,9 @@
 
 #define THEME_FILE	"theme.ini"
 
+#define THEME_GLOBAL	0
+#define THEME_GAME	1
+
 struct game_theme {
 	float	scale;
 	int 	w;
@@ -146,11 +149,14 @@ struct theme {
 	char *path;
 	char *name;
 	char *dir;
+	int  type;
+	int  idf;
 };
 
 extern	struct	theme *themes;
-extern 	int	themes_nr;
-extern 	char	*curtheme_dir;
+extern	int	themes_nr;
+extern	char	*curtheme_dir[];
+extern	char	*curgametheme_dir;
 
 extern struct 	game_theme game_theme;
 extern struct	game_theme game_theme_unscaled;
@@ -158,15 +164,22 @@ extern struct	game_theme game_theme_unscaled;
 extern int 	game_default_theme(void);
 extern int 	game_theme_select(const char *name);
 
-extern int 	themes_lookup(const char *path);
+extern int	themes_lookup(const char *path, int type);
+extern int	themes_lookup_idf(idf_t idf, const char *path, int type);
+
+extern struct theme *theme_lookup(const char *name, int type);
 extern int 	themes_rename(void);
-extern int 	game_theme_load(const char *name);
+extern int	themes_count(int type);
+extern void	themes_drop(int type);
+
+extern int 	game_theme_load(const char *name, int type);
 extern int	game_theme_init(void);
 extern int 	game_theme_free(void);
 extern int	game_theme_optimize(void);
 extern int	game_theme_update(void);
 
 extern int 	theme_load(const char *name);
+extern int 	theme_load_idf(idf_t idf, const char *name);
 extern char 	*game_local_themes_path(void);
 extern int 	theme_img_scale(img_t *p);
 extern int	theme_scalable_mode(int w, int h);

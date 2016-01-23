@@ -311,14 +311,25 @@ int games_menu_maxw(void)
 static void themes_menu(void)
 {
 	int i, n;
+
+	int type = THEME_GLOBAL;
+	int count = themes_count(THEME_GLOBAL);
+
+	if ((n = themes_count(THEME_GAME)) > 0 && opt_owntheme) {
+		count = n;
+		type = THEME_GAME;
+	}
+
 	strcpy(menu_buff, SELECT_THEME_MENU);
-	if ((themes_nr - 1) / MENU_THEMES_MAX)
-		pages_menu(menu_buff, themes_menu_from / MENU_THEMES_MAX, (themes_nr - 1) / MENU_THEMES_MAX + 1, "themes", "\n");
+	if ((count - 1) / MENU_THEMES_MAX)
+		pages_menu(menu_buff, themes_menu_from / MENU_THEMES_MAX, (count - 1) / MENU_THEMES_MAX + 1, "themes", "\n");
 	for (i = themes_menu_from, n = 0; i < themes_nr && n < MENU_THEMES_MAX; i ++) {
 		char tmp[PATH_MAX];
 		if (!themes[i].name[0]) /* empty */
 			continue;
-		if (curtheme_dir && !strcmp(themes[i].dir, curtheme_dir))
+		if (themes[i].type != type)
+			continue;
+		if (curtheme_dir[type] && !strcmp(themes[i].dir, curtheme_dir[type]))
 			snprintf(tmp, sizeof(tmp), "<l><a:/resume><b>%s</b></a></l>\n", themes[i].name);
 		else
 			snprintf(tmp, sizeof(tmp), "<l><a:%s>%s</a></l>\n", themes[i].dir, themes[i].name);
@@ -326,10 +337,10 @@ static void themes_menu(void)
 		n ++;
 	}
 
-	for(;n < MENU_THEMES_MAX && themes_nr > MENU_THEMES_MAX; n++) /* align h */
+	for(;n < MENU_THEMES_MAX && count > MENU_THEMES_MAX; n++) /* align h */
 		strcat(menu_buff, "\n");
 
-	if (!themes_nr)
+	if (!count)
 		sprintf(menu_buff, NOTHEMES_MENU, THEMES_PATH);
 	strcat(menu_buff, "\n");
 	strcat(menu_buff, BACK_MENU); 
@@ -715,7 +726,7 @@ int game_menu_act(const char *a)
 			game_done(0);
 			if (game_init(og)) {
 				game_error();
-			} else if (curgame_dir && game_own_theme && opt_owntheme) {
+			} else if (curgame_dir && game_own_theme && opt_owntheme && !curtheme_dir[THEME_GAME]) {
 				game_menu(menu_own_theme);
 			}
 			free(p);
