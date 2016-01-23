@@ -1067,7 +1067,7 @@ void themes_drop(int type)
 		} else {
 			char *p = curtheme_dir[themes[i].type];
 			new_themes[k++] = themes[i];
-			if (p && !strcmp(p, themes[i].dir))
+			if (p && !strlowcmp(p, themes[i].dir))
 				curtheme_dir[themes[i].type] = p;
 		}
 	}
