@@ -1502,6 +1502,10 @@ static int luaB_show_menu(lua_State *L) {
 			menu_toggle(menu_load);
 		else if (!strcmp(menu, "quit") || !strcmp(menu, "exit"))
 			menu_toggle(menu_askquit);
+		else if (!strcmp(menu, "themes"))
+			menu_toggle(menu_themes);
+		else if (!strcmp(menu, "settings"))
+			menu_toggle(menu_settings);
 		else
 			menu_toggle(-1);
 		return 0;

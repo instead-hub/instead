@@ -20,6 +20,8 @@
 #define MAX_MENU_LINES 16
 
 extern int cur_menu;
+extern int top_menu;
+
 extern char *game_menu_gen(void);
 extern int game_menu_act(const char *a);
 extern void custom_theme_warn(void);

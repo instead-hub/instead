@@ -2620,6 +2620,7 @@ void menu_toggle(int menu)
 		cur_menu = menu_main;
 	else if (menu != -1)
 		cur_menu = menu;
+	top_menu = cur_menu;
 	game_menu_box(on, game_menu_gen());
 	menu_shown = on;
 }

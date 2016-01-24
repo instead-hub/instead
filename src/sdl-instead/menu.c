@@ -33,6 +33,7 @@ static int themes_menu_from = 0;
 static int cur_lang = 0;
 
 int cur_menu = menu_main;
+int top_menu = menu_main;
 
 char *UNKNOWN_ERROR = NULL;
 char *ERROR_MENU = NULL;
@@ -596,11 +597,15 @@ int game_menu_act(const char *a)
 			custom_theme_warn();
 		}
 	} else if (!strcmp(a,"/main")) {
+		if (top_menu != menu_main) {
+			cur_menu = menu_main;
+			game_menu_box(0, NULL);
+		} else
+			game_menu(menu_main);
 		if (restart_needed) {
 			game_restart();
 			restart_needed = 0;
 		}
-		game_menu(menu_main);
 	} else if (!strcmp(a,"/ask_quit")) {
 		game_menu(menu_askquit);
 	} else if (!strncmp(a, "/remove_", 8)) {
