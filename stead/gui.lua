@@ -121,6 +121,21 @@ iface.tab = function(self, str, al)
 	return '<x:'..str..'>'
 end;
 
+iface.y = function(self, str, al)
+	if stead.tonum(str) then
+		str = stead.tostr(str)
+	end
+	if stead.type(str) ~= 'string' then
+		return nil;
+	end
+	if al == 'middle' then
+		str = str .. ",middle"
+	elseif al == 'top' then
+		str = str .. ",top"
+	end
+	return '<y:'..str..'>'
+end;
+
 iface.bold = function(self, str)
 	if str == nil then return nil; end;
 	return stead.cat('<b>',str,'</b>');

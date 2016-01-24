@@ -2621,6 +2621,8 @@ struct line {
 	int pos;
 	int	tabx;
 	int	al_tabx;
+	int	taby;
+	int	al_taby;
 	struct word *words;
 	struct line *next;
 	struct line *prev;
@@ -2668,6 +2670,8 @@ struct line *line_new(void)
 	l->num = 0;
 	l->tabx = -1;
 	l->al_tabx = ALIGN_LEFT;
+	l->taby = -1;
+	l->al_taby = ALIGN_BOTTOM;
 	l->layout = NULL;
 	l->align = 0;
 	l->pos = 0;
@@ -3055,6 +3059,18 @@ static int layout_skip_margin(struct layout *layout, int y)
 }
 #endif
 
+static void margin_rebase(struct layout *layout)
+{
+	struct margin *m = layout->margin;
+	if (!m)
+		return;
+
+	while (m) {
+		m->y = m->word->line->y;
+		m = m->next;
+	}
+}
+
 static int layout_find_margin(struct layout *layout, int y, int *w)
 {
 	struct margin *m = layout->margin;
@@ -3104,6 +3120,12 @@ img_t txt_layout_images(layout_t lay, void **v)
 	if (!*v)
 		return NULL;
 	return (*g)->image;
+}
+
+textbox_t txt_layout_box(layout_t lay)
+{
+	struct layout *layout = (struct layout *)lay;
+	return layout->box;
 }
 
 void layout_add_image(struct layout *layout, struct image *image)
@@ -3325,8 +3347,9 @@ void txt_layout_free(layout_t lay)
 #define TOKEN_D		0x400
 #define TOKEN_M		0x800
 #define TOKEN_X		0x1000
-#define TOKEN_CLOSE	0x2000
-#define TOKEN(x)	(x & 0x1fff)
+#define TOKEN_Y		0x2000
+#define TOKEN_CLOSE	0x4000
+#define TOKEN(x)	(x & 0x3fff)
 
 int get_token(const char *ptr, char **eptr, char **val, int *sp)
 {
@@ -3354,6 +3377,9 @@ int get_token(const char *ptr, char **eptr, char **val, int *sp)
 		ptr ++;
 	}
 	switch (*ptr) {
+		int y_token = 0;
+	case 'y':
+		y_token = 1;
 	case 'x':
 		if (ptr[1] != ':')
 			return 0;
@@ -3370,7 +3396,7 @@ int get_token(const char *ptr, char **eptr, char **val, int *sp)
 			*val = p;
 		}
 		*eptr = ep + 1;
-		return TOKEN_X;
+		return (y_token)?TOKEN_Y:TOKEN_X;
 	case 'a':
 		if (closing) {
 			*eptr = (char*)ptr + 2;
@@ -3979,7 +4005,7 @@ void txt_box_set(textbox_t tbox, layout_t lay)
 	box->off = 0;
 	if (lay)
 		box->lay->box = box;
-	txt_box_norm(tbox);	
+	txt_box_norm(tbox);
 }
 
 void txt_box_resize(textbox_t tbox, int w, int h)
@@ -4479,20 +4505,31 @@ char *process_token(char *ptr, struct layout *layout, struct line *line, struct 
 		}
 		goto out;
 	}
-	if (TOKEN(token) == TOKEN_X) {
-		int xpos;
-		if (strchr(val, '%') && sscanf(val, "%d%%", &xpos) == 1) {
-			xpos = layout->w * xpos / 100;
-		} else  {
-			xpos = atoi(val);
-			xpos = xpos * game_theme.scale;
+	if (TOKEN(token) == TOKEN_X || TOKEN(token) == TOKEN_Y) {
+		int pos;
+		pos = atoi(val) * game_theme.scale;
+		if (strchr(val, '%') && sscanf(val, "%d%%", &pos) == 1) {
+			if (TOKEN(token) == TOKEN_Y) {
+				if (layout->box)
+					pos = layout->box->h * pos / 100;
+			} else 
+				pos = layout->w * pos / 100;
 		}
-		line->tabx = xpos;
-		line->al_tabx = ALIGN_LEFT;
-		if (strstr(val, "right"))
-			line->al_tabx = ALIGN_RIGHT;
-		else if (strstr(val, "center"))
-			line->al_tabx = ALIGN_CENTER;
+		if (TOKEN(token) == TOKEN_X) {
+			line->tabx = pos;
+			line->al_tabx = ALIGN_LEFT;
+			if (strstr(val, "right"))
+				line->al_tabx = ALIGN_RIGHT;
+			else if (strstr(val, "center"))
+				line->al_tabx = ALIGN_CENTER;
+		} else {
+			line->taby = pos;
+			line->al_taby = ALIGN_BOTTOM;
+			if (strstr(val, "top"))
+				line->al_taby = ALIGN_TOP;
+			else if (strstr(val, "middle"))
+				line->al_taby = ALIGN_MIDDLE;
+		}
 		goto out;
 	}
 	if (TOKEN(token) == TOKEN_A) {
@@ -4586,6 +4623,41 @@ int txt_layout_anchor(layout_t lay, int *hh)
 	if (hh)
 		*hh = line->h;
 	return off;
+}
+
+static void line_y(layout_t lay, struct line *line)
+{
+	int y = line->taby;
+	if (line->taby < 0)
+		return;
+	if (line->al_taby == ALIGN_BOTTOM) {
+		y -= line->h;
+	} else if (line->al_taby == ALIGN_MIDDLE)
+		y -= line->h/2;
+	line->taby = -1;
+	if (y > line->y)
+		line->y = y;
+	margin_rebase(lay);
+}
+
+static void word_x(struct line *line, struct word *word, int width)
+{
+	if (line->tabx < 0)
+		return;
+	word->x = line->tabx - line->x;
+	if (line->al_tabx == ALIGN_RIGHT)
+		word->x -= word->w;
+	else if (line->al_tabx == ALIGN_CENTER)
+		word->x -= word->w/2;
+
+	if (word->x + word->w > width)
+		word->x = width - word->w;
+	if (word->x < line->w)
+		word->x = line->w;
+	else
+		line->w = word->x;
+	line->tabx = -1;
+	line->align = ALIGN_LEFT;
 }
 
 void _txt_layout_add(layout_t lay, char *txt)
@@ -4696,6 +4768,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 			if (line != lastline) {
 				layout_add_line(layout, line);
 			}
+			line_y(layout, line);
 			line_align(line, width, line->align, nl);
 
 			line = line_new();
@@ -4741,22 +4814,9 @@ void _txt_layout_add(layout_t lay, char *txt)
 
 		word->w = w;
 		word->x = line->w;
-		if (line->tabx > 0) {
-			word->x = line->tabx - line->x;
-			if (line->al_tabx == ALIGN_RIGHT)
-				word->x -= word->w;
-			else if (line->al_tabx == ALIGN_CENTER)
-				word->x -= word->w/2;
 
-			if (word->x + word->w > width)
-				word->x = width - word->w;
-			if (word->x < line->w)
-				word->x = line->w;
-			else
-				line->w = word->x;
-			line->tabx = -1;
-			line->align = ALIGN_LEFT;
-		}
+		word_x(line, word, width);
+
 		word->img = img;
 		word->img_align = img_align;
 
@@ -4806,8 +4866,10 @@ void _txt_layout_add(layout_t lay, char *txt)
 		layout->h = line->y + line->h;
 
 /*	if (line->num) { */
-		if (line != lastline) 
+		if (line != lastline) { 
 			layout_add_line(layout, line);
+		}
+		line_y(layout, line);
 		line_align(line, width, line->align, nl);
 /*	} else
 		line_free(line); */

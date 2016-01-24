@@ -155,7 +155,7 @@ extern xref_t 	txt_layout_xref(layout_t lay, int x, int y);
 extern void 	txt_layout_color(layout_t lay, color_t fg);
 extern fnt_t 	txt_layout_font(layout_t lay);
 extern void 	txt_layout_font_height(layout_t lay, float height);
-
+extern textbox_t	txt_layout_box(layout_t lay);
 extern void 	txt_layout_link_color(layout_t lay, color_t link);
 extern void 	txt_layout_active_color(layout_t lay, color_t link);
 extern void	txt_layout_link_style(layout_t lay, int style);

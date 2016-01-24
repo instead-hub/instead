@@ -2308,9 +2308,11 @@ int game_cmd(char *cmd, int flags)
 			pict_h += game_theme.font_size * game_theme.font_height / 2;
 	} 
 	old_off = txt_box_off(el_box(el_scene));
+
 	if (GFX_MODE(game_theme.gfx_mode) == GFX_MODE_EMBEDDED) {
 		char *p;
 		pict_h = 0; /* to fake code bellow */
+		txt_box_resize(el_box(el_scene), game_theme.win_w, game_theme.win_h - title_h - ways_h - pict_h);
 		txt_layout_set(txt_box_layout(el_box(el_scene)), ""); /* hack, to null layout, but not images */
 		if (el_img(el_spic)) {
 			txt_layout_add_img(txt_box_layout(el_box(el_scene)),"scene", el_img(el_spic));
@@ -2340,6 +2342,7 @@ int game_cmd(char *cmd, int flags)
 	} else {
 		if (GFX_MODE(game_theme.gfx_mode) == GFX_MODE_FLOAT) 
 			pict_h = 0;
+		txt_box_resize(el_box(el_scene), game_theme.win_w, game_theme.win_h - title_h - ways_h - pict_h);
 		txt_layout_set(txt_box_layout(el_box(el_scene)), cmdstr);
 		txt_box_set(el_box(el_scene), txt_box_layout(el_box(el_scene)));
 	}
@@ -2373,8 +2376,6 @@ int game_cmd(char *cmd, int flags)
 			gfx_noclip();
 		}
 	}
-
-	txt_box_resize(el_box(el_scene), game_theme.win_w, game_theme.win_h - title_h - ways_h - pict_h);
 
 	if (game_theme.win_scroll_mode == 1 || game_theme.win_scroll_mode == 2) {
 		scroll_to_diff(cmdstr, old_off, new_scene);

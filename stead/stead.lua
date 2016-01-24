@@ -366,6 +366,10 @@ function txttab(v,a)
 	return iface:tab(v, a)
 end
 
+function txty(v, a)
+	return iface:y(v, a)
+end
+
 function txtj(v)
 	if stead.type(v) ~= 'string' then return nil; end; 
 	return iface:just(v)
