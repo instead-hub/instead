@@ -396,12 +396,13 @@ char *game_menu_gen(void)
 				}
 			}
 		}
-	} else if (cur_menu == menu_about) {
+	} else if (cur_menu == menu_about || cur_menu == menu_about_instead) {
 		struct game *g;
-		if (curgame_dir && (g = game_lookup(curgame_dir))) {
+		if (cur_menu == menu_about && curgame_dir && (g = game_lookup(curgame_dir))) {
 			char version[32];
 			char author[64];
 			char info[192];
+			char instead[64];
 
 			if (g->version)
 				snprintf(version, sizeof(version), "%s", g->version);
@@ -417,13 +418,18 @@ char *game_menu_gen(void)
 				snprintf(info, sizeof(info), "\n\n%s", g->info);
 			else
 				strcpy(info, "");
+
+			if (!standalone_sw)
+				snprintf(instead, sizeof(instead), "<a:/about-instead>INSTEAD</a> | ");
+			else
+				strcpy(instead, "");
 			author[sizeof(author) - 1] = 0;
 			version[sizeof(version) - 1] = 0;
 			info[sizeof(info) - 1] = 0;
-			snprintf(menu_buff, sizeof(menu_buff), "%s - %s%s%s\n\n%s", 
+			snprintf(menu_buff, sizeof(menu_buff), "%s - %s%s%s\n\n%s%s", 
 				g->name, version,
 				author, info,
-				BACK_MENU);
+				instead, BACK_MENU);
 		} else {
 			snprintf(menu_buff, sizeof(menu_buff), ABOUT_MENU, VERSION);
 		}
@@ -657,6 +663,8 @@ int game_menu_act(const char *a)
 		game_menu(menu_remove);
 	} else if (!strcmp(a,"/about")) {
 		game_menu(menu_about);
+	} else if (!strcmp(a,"/about-instead")) {
+		game_menu(menu_about_instead);
 	} else if (!strcmp(a,"/mtoggle")) {
 		if (!old_vol) {
 			old_vol = snd_volume_mus(-1);

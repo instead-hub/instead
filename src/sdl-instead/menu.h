@@ -41,6 +41,7 @@ extern int	langs_nr;
 enum {
 	menu_main = 1,
 	menu_about, 
+	menu_about_instead, 
 	menu_settings,
 	menu_quit,
 	menu_askquit,
