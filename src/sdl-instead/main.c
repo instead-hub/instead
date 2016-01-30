@@ -502,8 +502,10 @@ int main(int argc, char *argv[])
 			free(b);
 	}
 	if (games_nr == 1) {
-		fprintf(stderr, "Standalone mode...\n");
-		standalone_sw = 1;
+		if (strncmp(GAMES_PATH, games[0].path, strlen(GAMES_PATH))) {
+			fprintf(stderr, "Standalone mode...\n");
+			standalone_sw = 1;
+		}
 	}
 
 	if (standalone_sw)
