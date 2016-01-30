@@ -1,6 +1,11 @@
 -- $Name:Tutorial$
 -- $Name(ru):Обучение$
 -- $Name(ua):Навчання$
+-- $Name(de):Einführung$
+-- $Name(es):Tutorial$
+-- $Name(fr):Tutoriel$
+-- $Name(it):Tutorial$
+-- $Name(pt):Tutorial$
 
 instead_version "1.6.0"
 require "xact"
@@ -59,4 +64,3 @@ main = room {
 		xact("de", code [[ gamefile('main-de.lua', true) ]]);
 	}
 }
-

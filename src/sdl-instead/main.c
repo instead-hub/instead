@@ -73,6 +73,7 @@ char *idf_sw = NULL;
 char *start_idf_sw = NULL;
 char *lua_sw = NULL;
 static int lua_exec = 1;
+static int nocfg_sw = 0;
 
 #ifdef _USE_UNPACK
 extern int unpack(const char *zipfilename, const char *where);
@@ -336,6 +337,8 @@ int main(int argc, char *argv[])
 		} else if (!strcmp(argv[i], "-standalone")) {
 			standalone_sw = 1;
 			owntheme_sw = 1;
+		} else if (!strcmp(argv[i], "-noconfig")) {
+			nocfg_sw = 1;
 #ifdef _USE_UNPACK
 		} else if (!strcmp(argv[i], "-install")) {
 			if ((i + 1) < argc) {
@@ -398,7 +401,8 @@ int main(int argc, char *argv[])
 		}
 #endif
 	}
-	cfg_load();
+	if (!nocfg_sw)
+		cfg_load();
 
 	if (opt_debug == 1 && debug_sw == 0) {
 		debug_sw = 1;
