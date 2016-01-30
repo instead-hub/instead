@@ -310,7 +310,10 @@ static char *game_author(const char *path, const char *d_name)
 
 static char *game_version(const char *path, const char *d_name)
 {
-	return game_tag(path, d_name, "Version");
+	char *p = game_tag(path, d_name, "Version");
+	if (p)
+		p[strcspn(p, "\n\r")] = 0;
+	return p;
 }
 
 int games_rename(void)
