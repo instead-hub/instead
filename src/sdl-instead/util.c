@@ -861,7 +861,7 @@ int hex2data(const void *d, void *o, int len)
 {
 	unsigned char *data = (unsigned char *)d;
 	unsigned char *out = (unsigned char *)o;
-	unsigned char b;
+	unsigned char b = 0;
 	int rc = 0;
 	len *= 2;
 
