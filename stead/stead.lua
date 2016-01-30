@@ -1,5 +1,5 @@
 stead = {
-	version = "2.3.0",
+	version = "2.4.0",
 	api_version = "1.1.6", -- last version before 1.2.0
 	table = table,
 	delim = ',',
@@ -2241,7 +2241,7 @@ end
 
 game = game {
 	codepage = "UTF-8",
-	nam = "INSTEAD -- Simple Text Adventure interpreter v"..stead.version.." '2009-2015 by Peter Kosyh",
+	nam = "INSTEAD -- Simple Text Adventure interpreter v"..stead.version.." '2009-2016 by Peter Kosyh",
 	dsc = [[
 Commands:^
     look(or just enter), act <on what> (or just what), use <what> [on what], go <where>,^

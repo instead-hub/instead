@@ -1,3 +1,17 @@
+2.4.0
+
+  * txty (iface.y) -- y position in text;
+  * menu_toggle ("themes", "settings" added), w/o return to top menu;
+  * win.ways.mode = top|bottom in themes;
+  * game themes support (themes/ directory in game);
+  * set theme vars is not works when not using own themes;
+  * fix stead.api_atleast/atleast when using with vv.mm format;
+  * be more strict while loading combined images;
+  * in -debug mode any "resource not found" messages are errors;
+  * be more simple with walk from enter/exit (>=2.3.0);
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 30 Jan 2016 10:08:00 +0300
+
 2.3.0
 
   * audio default is 44100 hz;
@@ -10,13 +24,13 @@
   * SDL2: graphics rewrite (better full screen handling, resize, etc.)
   * SDL2: fix with alpha blended bg;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Sun, 18 Oct 2015 13:15:00 +0400
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sun, 18 Oct 2015 13:15:00 +0300
 
 2.2.7
 
   * fix bug with fingers positions (forgotten patch) (SDL2);
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Sun, 20 Sep 2015 13:49:00 +0400
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sun, 20 Sep 2015 13:49:00 +0300
 
 2.2.6
 
@@ -27,7 +41,7 @@
   * fix bug with menu and 32 bit float (S60);
   * fix SDL window title on S60;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Sun, 20 Sep 2015 13:22:00 +0400
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sun, 20 Sep 2015 13:22:00 +0300
 
 2.2.5
 
@@ -36,7 +50,7 @@
   * fix some bugs with SDL2;
   * fix bug with music paused while run fullscreen mode;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Sun, 30 Aug 2015 16:15:00 +0400
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sun, 30 Aug 2015 16:15:00 +0300
 
 2.2.4
 
