@@ -466,10 +466,6 @@ int main(int argc, char *argv[])
 	if (games_sw)
 		games_lookup(games_sw);
 
-	if (owntheme_sw && !opt_owntheme) {
-		opt_owntheme = 2;
-	}
-
 	if (!nostdgames_sw && games_lookup(dirpath(GAMES_PATH)))
 		fprintf(stderr, "No games found in: %s.\n", GAMES_PATH);
 
@@ -480,9 +476,10 @@ int main(int argc, char *argv[])
 		themes_lookup(dirpath(THEMES_PATH), THEME_GLOBAL);
 		themes_lookup(game_local_themes_path(), THEME_GLOBAL);
 	}
-	
+
 	if (!nostdgames_sw)
 		games_lookup(game_local_games_path(0));
+
 
 	if (start_idf_sw) {
 		char *d, *b;
@@ -503,6 +500,17 @@ int main(int argc, char *argv[])
 			free(d); 
 		if (b)
 			free(b);
+	}
+	if (games_nr == 1) {
+		fprintf(stderr, "Standalone mode...\n");
+		standalone_sw = 1;
+	}
+
+	if (standalone_sw)
+		owntheme_sw = 1;
+
+	if (owntheme_sw && !opt_owntheme) {
+		opt_owntheme = 2;
 	}
 
 	if (noauto_sw && opt_autosave)
