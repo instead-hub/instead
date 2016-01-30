@@ -238,7 +238,7 @@ err:
 	return rc;
 }
 
-static char *game_name(const char *path, const char *d_name)
+static char *game_tag(const char *path, const char *d_name, const char *tag)
 {
 	char *l = NULL;
 	char *p;
@@ -246,22 +246,52 @@ static char *game_name(const char *path, const char *d_name)
 	if (idf_magic(path)) {
 		idf_t idf = idf_init(path);
 		if (idf) {
-			l = lookup_lang_tag_idf(idf, MAIN_FILE, "Name", "--");
+			l = lookup_lang_tag_idf(idf, MAIN_FILE, tag, "--");
 			idf_done(idf);
 		}
 		if (l)
-			return l;
+			goto ok;
 		goto err;
 	}
 	p = getfilepath(path, MAIN_FILE);
 	if (!p)
 		goto err;
-	l = lookup_lang_tag(p, "Name", "--");
+	l = lookup_lang_tag(p, tag, "--");
 	free(p);
-	if (l)
-		return l;
+	if (!l)
+		goto err;
+ok:
+	if (!standalone_sw && strstr(l, "<")) { /* avoid dangerous tag */
+		free(l);
+		return NULL;
+	}
+	return l;
 err:
-	return strdup(d_name);
+	return NULL;
+}
+
+
+static char *game_name(const char *path, const char *d_name)
+{
+	char *p = game_tag(path, d_name, "Name");
+	if (!p)
+		return strdup(d_name);
+	return p;
+}
+
+static char *game_info(const char *path, const char *d_name)
+{
+	return game_tag(path, d_name, "Info");
+}
+
+static char *game_author(const char *path, const char *d_name)
+{
+	return game_tag(path, d_name, "Author");
+}
+
+static char *game_version(const char *path, const char *d_name)
+{
+	return game_tag(path, d_name, "Version");
 }
 
 int games_rename(void)
@@ -272,7 +302,13 @@ int games_rename(void)
 	setdir(game_cwd);
 	for (i = 0; i < games_nr; i++) {
 		FREE(games[i].name);
+		FREE(games[i].info);
+		FREE(games[i].author);
+		FREE(games[i].version);
 		games[i].name = game_name(dirpath(games[i].path), games[i].dir);
+		games[i].info = game_info(dirpath(games[i].path), games[i].dir);
+		games[i].author = game_author(dirpath(games[i].path), games[i].dir);
+		games[i].version = game_version(dirpath(games[i].path), games[i].dir);
 	}
 	setdir(cwd);
 	return 0;
@@ -311,6 +347,9 @@ static int games_add(const char *path, const char *dir)
 	games[games_nr].path = p;
 	games[games_nr].dir = strdup(dir);
 	games[games_nr].name = game_name(p, dir);
+	games[games_nr].info = game_info(p, dir);
+	games[games_nr].author = game_author(p, dir);
+	games[games_nr].version = game_version(p, dir);
 	games_nr ++;
 	return 0;
 }
@@ -331,12 +370,19 @@ int games_replace(const char *path, const char *dir)
 			p = getpath(path, dir);
 		if (!p)
 			return -1;
-		free(g->path);
-		free(g->dir);
-		free(g->name);
+		FREE(g->path);
+		FREE(g->dir);
+		FREE(g->name);
+		FREE(g->info);
+		FREE(g->author);
+		FREE(g->version);
+		
 		g->path = p;
 		g->dir = strdup(dir);
 		g->name = game_name(p, dir);
+		g->info = game_info(p, dir);
+		g->author = game_author(p, dir);
+		g->version = game_version(p, dir);
 		games_sort();
 		return 0;
 	}
@@ -699,6 +745,8 @@ int game_apply_theme(void)
 	el_set(el_spic, elt_image, game_theme.win_x, game_theme.win_y, NULL);
 	el_set(el_menu, elt_layout, 0, 0, NULL);
 	el_set(el_menu_button, elt_image, game_theme.menu_button_x, game_theme.menu_button_y, game_theme.menu_button);
+
+	gfx_set_icon(game_theme.icon);
 
 	if (!DIRECT_MODE) {
 		el_draw(el_menu_button);
@@ -3578,7 +3626,7 @@ int game_loop(void)
 				game_restart();
 				if (old_menu != -1)
 					game_menu(old_menu);
-			} else if (!is_key(&ev, "f4") && !alt_pressed) {
+			} else if (!is_key(&ev, "f4") && !alt_pressed && !standalone_sw) {
 #ifdef _USE_UNPACK
 #ifdef _USE_BROWSE
 				mouse_reset(1);

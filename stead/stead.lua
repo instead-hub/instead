@@ -3377,6 +3377,9 @@ end
 
 
 stead.sandbox = function()
+	if STANDALONE then
+		return
+	end
 -- sandbox --
 local check_path = function(realpath, type, find, gsub, savepath, gamepath, path)
 	if not path then

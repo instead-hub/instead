@@ -2011,6 +2011,8 @@ int instead_init_lua(const char *path)
 	instead_lang();
 	if (debug_sw)
 		instead_eval("DEBUG=true"); instead_clear();
+	if (standalone_sw)
+		instead_eval("STANDALONE=true"); instead_clear();
 	return 0;
 }
 

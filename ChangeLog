@@ -9,6 +9,9 @@
   * be more strict while loading combined images;
   * in -debug mode any "resource not found" messages are errors;
   * be more simple with walk from enter/exit (>=2.3.0);
+  * About menu shows game information;
+  * -standalone mode;
+  * scr.gfx.icon added (SDL2 only, experimental);
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 30 Jan 2016 10:08:00 +0300
 

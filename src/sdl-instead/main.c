@@ -57,6 +57,7 @@ int software_sw = 0;
 int hinting_sw = 1;
 int vsync_sw = 0;
 int resizable_sw = 0;
+int standalone_sw = 0;
 
 static int opt_index = 0;
 
@@ -332,6 +333,8 @@ int main(int argc, char *argv[])
 			software_sw = 1;
 		} else if (!strcmp(argv[i], "-resizable")) {
 			resizable_sw = 1;
+		} else if (!strcmp(argv[i], "-standalone")) {
+			standalone_sw = 1;
 #ifdef _USE_UNPACK
 		} else if (!strcmp(argv[i], "-install")) {
 			if ((i + 1) < argc) {

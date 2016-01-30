@@ -3408,7 +3408,7 @@ int get_token(const char *ptr, char **eptr, char **val, int *sp)
 		ptr += 2;
 /*		ep = (char*)ptr + strcspn(ptr, ">"); */
 		ep = find_in_esc(ptr, "\\>");
-		if (*ep != '>') {
+		if (!ep || *ep != '>') {
 			return 0;
 		}
 		if (val) {
@@ -5309,6 +5309,21 @@ int gfx_set_title(const char *title)
 #else
 	if (SDL_VideoWindow)
 		SDL_SetWindowTitle(SDL_VideoWindow, title);
+#endif
+	return 0;
+}
+
+int gfx_set_icon(img_t ic)
+{
+#if SDL_VERSION_ATLEAST(2,0,0)
+	if (SDL_VideoWindow) {
+		if (ic)
+			SDL_SetWindowIcon(SDL_VideoWindow, Surf(ic));
+		else if (icon)
+			SDL_SetWindowIcon(SDL_VideoWindow, icon);
+	}
+#else
+/* not works for SDL < 2 */
 #endif
 	return 0;
 }

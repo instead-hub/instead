@@ -380,9 +380,53 @@ static int menu_settings_num = 0;
 char *game_menu_gen(void)
 {
 	if (cur_menu == menu_main) {
+		char *p, *ep;
 		strcpy(menu_buff, MAIN_MENU);
+		if (standalone_sw) {
+			p = strstr(menu_buff, "<a:/select>");
+			if (p) {
+				ep = strstr(p, "</a>");
+				if (ep) {
+					int len;
+					ep += strcspn(ep, "\n\r");
+					ep += strspn(ep, "\n\r");
+					len = strlen(ep);
+					memmove(p, ep, len);
+					p[len] = 0;
+				}
+			}
+		}
 	} else if (cur_menu == menu_about) {
-		snprintf(menu_buff, sizeof(menu_buff), ABOUT_MENU, VERSION);
+		struct game *g;
+		if (curgame_dir && (g = game_lookup(curgame_dir))) {
+			char version[32];
+			char author[64];
+			char info[192];
+
+			if (g->version)
+				snprintf(version, sizeof(version), "%s", g->version);
+			else
+				strcpy(version, "1.0");
+
+			if (g->author)
+				snprintf(author, sizeof(author), "\n%s", g->author);
+			else
+				strcpy(author, "");
+
+			if (g->info)
+				snprintf(info, sizeof(info), "\n\n%s", g->info);
+			else
+				strcpy(info, "");
+			author[sizeof(author) - 1] = 0;
+			version[sizeof(version) - 1] = 0;
+			info[sizeof(info) - 1] = 0;
+			snprintf(menu_buff, sizeof(menu_buff), "%s - %s%s%s\n\n%s", 
+				g->name, version,
+				author, info,
+				BACK_MENU);
+		} else {
+			snprintf(menu_buff, sizeof(menu_buff), ABOUT_MENU, VERSION);
+		}
 	} else if (cur_menu == menu_settings) {
 		char *just[JUST_MAX] = { FROM_THEME, OFF, ON };
 		char *kbd [KBD_MAX] = { KBD_MODE_SMART, KBD_MODE_LINKS, KBD_MODE_SCROLL };

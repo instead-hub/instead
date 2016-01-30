@@ -51,6 +51,7 @@ extern char 	game_cwd[PATH_MAX]; /* current game cwd */
 extern char 	*curgame_dir;
 extern int	vsync_sw;
 extern int	resizable_sw;
+extern int	standalone_sw;
 
 extern char	*game_local_stead_path(void);
 
@@ -146,6 +147,9 @@ extern void 	game_cursor(int on); /* must be called with -1 before gfx change an
 struct game {
 	char *path;
 	char *name;
+	char *author;
+	char *version;
+	char *info;
 	char *dir;
 	int idf;
 };

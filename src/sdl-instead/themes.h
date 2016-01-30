@@ -127,6 +127,8 @@ struct game_theme {
 	int	ways_mode;
 	char	*click_name;
 	void	*click;
+	char	*icon_name;
+	img_t	icon;
 	int xoff;
 	int yoff;
 	int	changed;
@@ -135,7 +137,7 @@ struct game_theme {
 #define CHANGED_FONT	1
 #define CHANGED_IFONT	2
 #define CHANGED_MFONT	4
-#define CHANGED_BG		8
+#define CHANGED_BG	8
 #define CHANGED_CLICK	0x10
 #define CHANGED_CURSOR	0x20
 #define CHANGED_USE	0x40
@@ -144,6 +146,7 @@ struct game_theme {
 #define CHANGED_IUP	0x200
 #define CHANGED_IDOWN	0x400
 #define CHANGED_BUTTON	0x800
+#define CHANGED_ICON	0x1000
 #define CHANGED_ALL 0xffff
 struct theme {
 	char *path;

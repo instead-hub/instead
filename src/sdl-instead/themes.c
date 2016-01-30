@@ -257,6 +257,7 @@ struct parser cmd_parser[] = {
 	{ "scr.h", parse_int, &game_theme.h, 0 },
 	{ "scr.gfx.scalable", parse_int, &game_theme.gfx_scalable, 0 },
 	{ "scr.col.bg", parse_color, &game_theme.bgcol, 0 },
+	{ "scr.gfx.icon", theme_parse_full_path, &game_theme.icon_name, CHANGED_ICON },
 	{ "scr.gfx.bg", theme_parse_full_path, &game_theme.bg_name, CHANGED_BG },
 	{ "scr.gfx.cursor.normal", theme_parse_full_path, &game_theme.cursor_name, CHANGED_CURSOR },
 	{ "scr.gfx.cursor.x", parse_int, &game_theme.cur_x, 0 },
@@ -390,6 +391,8 @@ struct game_theme game_theme = {
 	.bg = NULL,
 	.use_name = NULL,
 	.cursor_name = NULL,
+	.icon = NULL,
+	.icon_name = NULL,
 	.use = NULL,
 	.cursor = NULL,
 	.cur_x = 0,
@@ -438,6 +441,7 @@ static void free_theme_strings(void)
 {
 	struct game_theme *t = &game_theme;
 	FREE(t->use_name);
+	FREE(t->icon_name);
 	FREE(t->cursor_name);
 	FREE(t->bg_name);
 	FREE(t->inv_a_up_name);
@@ -486,6 +490,12 @@ int game_theme_free(void)
 	if (game_theme.click) {
 		sound_put(game_theme.click);
 	}
+
+	if (game_theme.icon) {
+		gfx_set_icon(NULL);
+		gfx_free_image(game_theme.icon);
+	}
+
 	game_theme.font = game_theme.inv_font = game_theme.menu_font = NULL;
 	game_theme.a_up = game_theme.a_down = game_theme.use = NULL;
 	game_theme.inv_a_up = game_theme.inv_a_down = NULL;
@@ -494,6 +504,7 @@ int game_theme_free(void)
 	game_theme.click = NULL;
 	game_theme.cur_x = game_theme.cur_y = 0;
 	game_theme.cursor = game_theme.use = NULL;
+	game_theme.icon = NULL;
 	return 0;
 }
 
@@ -825,6 +836,12 @@ static int game_theme_update_data(void)
 			goto err;
 	}
 skip:
+	if (t->icon_name && (t->changed & CHANGED_ICON)) {
+		if (t->icon)
+			gfx_free_image(t->icon);
+		t->icon = gfx_load_image(t->icon_name);
+	}
+
 	if (t->use_name && (t->changed & CHANGED_USE)) {
 		gfx_free_image(t->use);	
 		if (!(t->use = gfx_load_image(t->use_name))) {

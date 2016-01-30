@@ -589,7 +589,13 @@ char *parse_tag(char *line, const char *tag, const char *comm, int *brk)
 	l = ns; ns = NULL;
 	if (parse_esc_string(l, &ns))
 		return NULL;
-	ns[strcspn(ns, "\n\r")] = 0;
+	l = ns + strlen(ns);
+	while (l != ns) {
+		l --;
+		if (*l != '\r' && *l != '\n')
+			break;
+		*l = 0;
+	}
 	return ns;
 }
 #ifdef _HAVE_ICONV

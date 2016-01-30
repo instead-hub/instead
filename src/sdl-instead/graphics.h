@@ -91,6 +91,7 @@ extern int	gfx_get_max_mode(int *w, int *h);
 extern int	gfx_check_mode(int w, int h);
 
 extern int	gfx_set_title(const char *title);
+extern int	gfx_set_icon(img_t icon);
 
 extern int	gfx_next_mode(int *w, int *h);
 extern int	gfx_prev_mode(int *w, int *h);
