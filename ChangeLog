@@ -4,7 +4,7 @@
   * menu_toggle ("themes", "settings" added), w/o return to top menu;
   * win.ways.mode = top|bottom in themes;
   * game themes support (themes/ directory in game);
-  * set theme vars is not works when not using own themes;
+  * set theme vars is not working when not using own themes;
   * fix stead.api_atleast/atleast when using with vv.mm format;
   * be more strict while loading combined images;
   * in -debug mode any "resource not found" messages are errors;
