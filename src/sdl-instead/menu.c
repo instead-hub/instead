@@ -377,24 +377,40 @@ static char *opt_get_mode(void)
 
 static int gtr = 0;
 static int menu_settings_num = 0;
+
+static void menu_strip_tag(const char *a, const char *b)
+{
+	char *p, *ep;
+	int len;
+	p = strstr(menu_buff, a);
+	if (!p)
+		return;
+	ep = strstr(p, b);
+	if (!ep)
+		return;
+	ep += strcspn(ep, "\n\r");
+	ep += strspn(ep, "\n\r");
+	len = strlen(ep);
+	memmove(p, ep, len);
+	p[len] = 0;
+}
+
 char *game_menu_gen(void)
 {
 	if (cur_menu == menu_main) {
-		char *p, *ep;
 		strcpy(menu_buff, MAIN_MENU);
 		if (standalone_sw) {
-			p = strstr(menu_buff, "<a:/select>");
-			if (p) {
-				ep = strstr(p, "</a>");
-				if (ep) {
-					int len;
-					ep += strcspn(ep, "\n\r");
-					ep += strspn(ep, "\n\r");
-					len = strlen(ep);
-					memmove(p, ep, len);
-					p[len] = 0;
-				}
+			int count = 0, n;
+			menu_strip_tag("<a:/select>", "</a>");
+			count = themes_count(THEME_GLOBAL);
+			if (curgame_dir && opt_owntheme) {
+				if ((n = themes_count(THEME_GAME)) > 0)
+					count = n;
+				else if (game_own_theme)
+					count = 1;
 			}
+			if (count <= 1)
+				menu_strip_tag("<a:/themes>", "</a>");
 		}
 	} else if (cur_menu == menu_about || cur_menu == menu_about_instead) {
 		struct game *g;
