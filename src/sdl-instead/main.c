@@ -335,6 +335,7 @@ int main(int argc, char *argv[])
 			resizable_sw = 1;
 		} else if (!strcmp(argv[i], "-standalone")) {
 			standalone_sw = 1;
+			owntheme_sw = 1;
 #ifdef _USE_UNPACK
 		} else if (!strcmp(argv[i], "-install")) {
 			if ((i + 1) < argc) {

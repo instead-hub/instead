@@ -388,9 +388,33 @@ static void menu_strip_tag(const char *a, const char *b)
 	ep = strstr(p, b);
 	if (!ep)
 		return;
-	ep += strcspn(ep, "\n\r");
-	ep += strspn(ep, "\n\r");
+/*	ep += strcspn(ep, "\n\r");
+	ep += strspn(ep, "\n\r"); */
+	ep += strlen(b);
 	len = strlen(ep);
+	memmove(p, ep, len);
+	p[len] = 0;
+}
+
+static void menu_remove_tag(const char *a, const char *b)
+{
+	char *p, *ep;
+	int len;
+	p = strstr(menu_buff, a);
+	if (!p)
+		return;
+	ep = p + strlen(a);
+	len = strlen(ep);
+	memmove(p, ep, len);
+	p[len] = 0;
+
+	ep = strstr(p, b);
+	if (!ep)
+		return;
+	p = ep;
+	ep += strlen(b);
+	len = strlen(ep);
+
 	memmove(p, ep, len);
 	p[len] = 0;
 }
@@ -401,7 +425,7 @@ char *game_menu_gen(void)
 		strcpy(menu_buff, MAIN_MENU);
 		if (standalone_sw) {
 			int count = 0, n;
-			menu_strip_tag("<a:/select>", "</a>");
+			menu_strip_tag("<?:select>", "</?>");
 			count = themes_count(THEME_GLOBAL);
 			if (curgame_dir && opt_owntheme) {
 				if ((n = themes_count(THEME_GAME)) > 0)
@@ -410,7 +434,12 @@ char *game_menu_gen(void)
 					count = 1;
 			}
 			if (count <= 1)
-				menu_strip_tag("<a:/themes>", "</a>");
+				menu_strip_tag("<?:themes>", "</?>");
+			else
+				menu_remove_tag("<?:themes>", "</?>");
+		} else {
+			menu_remove_tag("<?:select>", "</?>");
+			menu_remove_tag("<?:themes>", "</?>");
 		}
 	} else if (cur_menu == menu_about || cur_menu == menu_about_instead) {
 		struct game *g;
@@ -459,6 +488,10 @@ char *game_menu_gen(void)
 			snprintf(menu_buff, sizeof(menu_buff), SETTINGS_GFX_MENU, 
 			opt_get_mode(), opt_fs?ON:OFF, opt_fsize, just[opt_justify],
 				opt_hl?ON:OFF, opt_fading?ON:OFF, opt_owntheme?ON:OFF);
+			if (standalone_sw)
+				menu_strip_tag("<?:owntheme>", "</?>");
+			else
+				menu_remove_tag("<?:owntheme>", "</?>");
 			break;
 		case 1:
 			snprintf(menu_buff, sizeof(menu_buff), SETTINGS_SND_MENU, 
