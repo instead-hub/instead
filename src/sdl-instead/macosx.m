@@ -44,7 +44,12 @@ char *game_locale(void)
 
 char *game_tmp_path(void)
 {
+	static time_t t = 0;
 	static char tmp[PATH_MAX]="/tmp/instead-games";
+	if (!t) {
+		t = time(NULL);
+		sprintf(tmp, "/tmp/instead-games-%ld", (unsigned long)t);
+	}
 	if (mkdir(tmp, S_IRWXU) && errno != EEXIST)
 		return NULL;
 	return tmp;
