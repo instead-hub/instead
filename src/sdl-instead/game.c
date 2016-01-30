@@ -276,17 +276,36 @@ static char *game_name(const char *path, const char *d_name)
 	char *p = game_tag(path, d_name, "Name");
 	if (!p)
 		return strdup(d_name);
+	p[strcspn(p, "\n\r")] = 0;
 	return p;
 }
 
 static char *game_info(const char *path, const char *d_name)
 {
-	return game_tag(path, d_name, "Info");
+	int n = 0;
+	char *pp;
+	char *p = game_tag(path, d_name, "Info");
+	if (!p || standalone_sw)
+		return p;
+	pp = p;
+	while (pp[strcspn(pp, "\n\r")]) {
+		n ++;
+		pp += strcspn(pp, "\n\r");
+		if (n >= 4) {
+			*pp = 0;
+			break;
+		}
+		pp ++;
+	}
+	return p;
 }
 
 static char *game_author(const char *path, const char *d_name)
 {
-	return game_tag(path, d_name, "Author");
+	char *p = game_tag(path, d_name, "Author");
+	if (!standalone_sw && p)
+		p[strcspn(p, "\n\r")] = 0;
+	return p;
 }
 
 static char *game_version(const char *path, const char *d_name)
