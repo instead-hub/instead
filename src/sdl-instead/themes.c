@@ -1022,12 +1022,16 @@ static int is_theme_idf(idf_t idf, const char *path, const char *n)
 
 static int is_theme(const char *path, const char *n)
 {
+	if (!n)
+		return 0;
+	if (!strcmp("..", n) || !strcmp(".", n))
+		return 0;
 	return is_theme_idf(NULL, path, n);
 }
 
 static char *theme_name(const char *path, const char *d_name)
 {
-	char *l;	
+	char *l;
 	char *p = getfilepath(path, THEME_FILE);
 	if (!p)
 		goto err;

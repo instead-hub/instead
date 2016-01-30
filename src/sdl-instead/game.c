@@ -90,8 +90,13 @@ void game_res_err_msg(const char *filename)
 int is_game(const char *path, const char *n)
 {
 	int rc = 0;
-	char *p = getfilepath(path, n);
+	char *p;
 	char *pp;
+	if (!n)
+		return 0;
+	if (!strcmp("..", n) || !strcmp(".", n))
+		return 0;
+	p = getfilepath(path, n);
 	if (!p)
 		return 0;
 	if (idf_magic(p)) {
