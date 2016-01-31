@@ -93,7 +93,10 @@ int setup_zip(const char *file, char *p)
 		}
 		return -1;
 	}
-	game_sw = zip_game_dirname;
+	p = strdup(p);
+	FREE(game_sw);
+	FREE(games_sw);
+	game_sw = strdup(zip_game_dirname);
 	games_sw = p;
 	return 0;
 }
@@ -105,7 +108,8 @@ static int start_idf(char *file)
 		return -1;
 	if (!idf_magic(file))
 		return -1;
-	start_idf_sw = file;
+	FREE(start_idf_sw);
+	start_idf_sw = strdup(file);
 	return 0;
 }
 
@@ -189,8 +193,10 @@ static int run_game(const char *path)
 		fprintf(stderr, "%s/%s is not a game path.\n", d, ep);
 		return -1;
 	}
-	game_sw = ep;
-	games_sw = d;
+	FREE(game_sw);
+	FREE(games_sw);
+	game_sw = strdup(ep);
+	games_sw = strdup(d);
 	return 0;
 }
 static void usage(void)
@@ -217,7 +223,7 @@ static void usage(void)
 	"    -chunksize [size in bytes]\n        Size for audio buffer. Try this if sound lags.\n"
 	"    -vsync\n        Enable vsync display output (SDL2 only)\n");
 }
-static int profile_load(void);
+static int profile_load(const char *path);
 
 int main(int argc, char *argv[])
 {
@@ -252,7 +258,7 @@ int main(int argc, char *argv[])
 	unix_path(game_cwd);
 	setdir(game_cwd);
 
-	profile_load();
+	profile_load(NULL);
 
 	for (i = 1; i < argc; i++) {
 		if (!strcmp(argv[i], "-vsync"))
@@ -261,11 +267,12 @@ int main(int argc, char *argv[])
 			nosound_sw = 1;
 		else if (!strcmp(argv[i], "-fullscreen"))
 			fullscreen_sw = 1;
-		else if (!strcmp(argv[i], "-mode")) {	
+		else if (!strcmp(argv[i], "-mode")) {
+			FREE(mode_sw);
 			if ((i + 1) < argc)
-				mode_sw = argv[++i];
+				mode_sw = strdup(argv[++i]);
 			else
-				mode_sw = "-1x-1";
+				mode_sw = strdup("-1x-1");
 		} else if (!strcmp(argv[i], "-window"))
 			window_sw = 1;
 		else if (!strcmp(argv[i], "-debug")) {
@@ -277,23 +284,26 @@ int main(int argc, char *argv[])
 		else if (!strcmp(argv[i], "-noautosave"))
 			noauto_sw = 1;
 		else if (!strcmp(argv[i], "-game")) {
+			FREE(game_sw);
 			if ((i + 1) < argc)
-				game_sw = argv[++i];
+				game_sw = strdup(argv[++i]);
 			else
-				game_sw = "";
+				game_sw = strdup("");
 		} else if (!strcmp(argv[i], "-theme")) {
+			FREE(theme_sw);
 			if ((i + 1) < argc)
-				theme_sw = argv[++i];
+				theme_sw = strdup(argv[++i]);
 			else
-				theme_sw = "";
+				theme_sw = strdup("");
 		} else if (!strcmp(argv[i], "-nostdgames")) {
 			nostdgames_sw = 1;
 #ifdef _LOCAL_APPDATA
 		} else if (!strcmp(argv[i], "-appdata")) {
+			FREE(appdata_sw);
 			if ((i + 1) < argc)
-				appdata_sw = argv[++i];
+				appdata_sw = strdup(argv[++i]);
 			else
-				appdata_sw = "";
+				appdata_sw = strdup("");
 #endif
 		} else if (!strcmp(argv[i], "-chunksize")) {
 			if ((i + 1) < argc)
@@ -301,35 +311,40 @@ int main(int argc, char *argv[])
 			else
 				chunksize_sw = DEFAULT_CHUNKSIZE;
 		} else if (!strcmp(argv[i], "-gamespath")) {
+			FREE(games_sw);
 			if ((i + 1) < argc)
-				games_sw = argv[++i];
+				games_sw = strdup(argv[++i]);
 			else
-				games_sw = "";
+				games_sw = strdup("");
 		} else if (!strcmp(argv[i], "-themespath")) {
+			FREE(themes_sw);
 			if ((i + 1) < argc)
-				themes_sw = argv[++i];
+				themes_sw = strdup(argv[++i]);
 			else
-				themes_sw = "";
-		} else if (!strcmp(argv[i], "-idf")) {	
+				themes_sw = strdup("");
+		} else if (!strcmp(argv[i], "-idf")) {
+			FREE(idf_sw);
 			if ((i + 1) < argc)
-				idf_sw = argv[++i];
+				idf_sw = strdup(argv[++i]);
 			else {
 				fprintf(stderr,"No data directory specified.\n");
 				err = 1;
 				goto out;
 			}
-		} else if (!strcmp(argv[i], "-encode")) {	
+		} else if (!strcmp(argv[i], "-encode")) {
+			FREE(encode_sw);
 			if ((i + 1) < argc)
-				encode_sw = argv[++i];
+				encode_sw = strdup(argv[++i]);
 			else {
 				fprintf(stderr,"No lua file specified.\n");
 				err = 1;
 				goto out;
 			}
+			FREE(encode_output);
 			if ((i + 1) < argc)
-				encode_output = argv[++i];
+				encode_output = strdup(argv[++i]);
 			else
-				encode_output = "lua.enc";
+				encode_output = strdup("lua.enc");
 		} else if (!strcmp(argv[i], "-version")) {
 			version_sw = 1;
 		} else if (!strcmp(argv[i], "-nopause")) {
@@ -343,6 +358,9 @@ int main(int argc, char *argv[])
 			owntheme_sw = 1;
 		} else if (!strcmp(argv[i], "-noconfig")) {
 			nocfg_sw = 1;
+		} else if (!strcmp(argv[i], "-profile")) {
+			if ((i + 1) < argc)
+				profile_load(argv[++i]);
 #ifdef _USE_UNPACK
 		} else if (!strcmp(argv[i], "-install")) {
 			if ((i + 1) < argc) {
@@ -368,7 +386,8 @@ int main(int argc, char *argv[])
 		} else if (!strcmp(argv[i], "-lua") || !strcmp(argv[i], "-luac")) {
 			if ((i + 1) < argc) {
 				lua_exec = !strcmp(argv[i], "-lua");
-				lua_sw = argv[++ i];
+				FREE(lua_sw);
+				lua_sw = strdup(argv[++ i]);
 				opt_index = i + 1;
 				break;
 			} else {
@@ -499,9 +518,10 @@ int main(int argc, char *argv[])
 			dd = dirname(d);
 			bb = basename(b);
 			if (!games_replace(dirpath(dd), bb)) {
-				game_sw = idf_game;
 				strncpy(idf_game, bb, sizeof(idf_game) - 1);
 				idf_game[sizeof(idf_game) - 1] = 0;
+				FREE(game_sw);
+				game_sw = strdup(idf_game);
 			}
 		}
 		if (d)
@@ -617,13 +637,16 @@ static int profile_parse(const char *path)
 	return parse_ini(path, profile_parser);
 }
 
-static int profile_load(void)
+static int profile_load(const char *prof)
 {
 	char path[PATH_MAX];
-	char *p = appdir();
+	const char *p = (prof)?prof:appdir();
 	if (!p)
 		return -1;
-	snprintf(path, sizeof(path), "%s/profile", p);
+	if (!prof)
+		snprintf(path, sizeof(path), "%s/profile", p);
+	else
+		snprintf(path, sizeof(path), "%s", p);
 	if (access(path, R_OK))
 		return 0;
 	fprintf(stderr, "Using profile...'%s'\n", path);
