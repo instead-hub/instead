@@ -1971,6 +1971,10 @@ static int instead_package(const char *path)
 	strcat(stead_path, "/?.lua");
 	strcat(stead_path, "\"");
 
+	if (standalone_sw) {
+		strcat(stead_path, "..';'..(package.path or '')");
+	}
+
 	instead_eval(stead_path); instead_clear();
 	free(stead_path);
 /*	putenv(stead_path); */
