@@ -13,7 +13,7 @@
   * -standalone mode;
   * scr.gfx.icon added (SDL2 only, experimental);
   * -noconfig parameter;
-  * profiles support added;
+  * profiles support added (-profile parameter);
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 30 Jan 2016 10:08:00 +0300
 
