@@ -113,7 +113,7 @@ char *sdl_path(char *p)
 	return r;
 }
 
-char *app_dir( void );
+char *appdir( void );
 
 char *game_tmp_path(void)
 {
@@ -134,7 +134,7 @@ char *game_tmp_path(void)
 
 char *game_local_games_path(int cr)
 {
-	char *app = app_dir();
+	char *app = appdir();
 	if (!app)
 		return NULL;
 	snprintf(local_games_path, sizeof(local_games_path) - 1 , "%s/", app);
@@ -152,13 +152,13 @@ char *game_local_games_path(int cr)
 
 char *game_local_themes_path(void)
 {
-	snprintf(local_themes_path, sizeof(local_themes_path) - 1 , "%s/themes", app_dir());
+	snprintf(local_themes_path, sizeof(local_themes_path) - 1 , "%s/themes", appdir());
 	return local_themes_path;
 }
 
 char *game_local_stead_path(void)
 {
-	snprintf(local_stead_path, sizeof(local_stead_path) - 1 , "%s/stead", app_dir());
+	snprintf(local_stead_path, sizeof(local_stead_path) - 1 , "%s/stead", appdir());
 	return local_stead_path;
 }
 
@@ -175,7 +175,7 @@ char *home_dir( void )
 	return homedir;
 }
 #endif
-char *app_dir( void )
+char *appdir( void )
 {
 	static char appdir[PATH_MAX]="";
 #ifdef _LOCAL_APPDATA
@@ -201,7 +201,7 @@ char *app_dir( void )
 
 char *game_cfg_path( void )
 {
-	char *p = app_dir();
+	char *p = appdir();
 	if (!p)
 		return NULL;
 
@@ -221,7 +221,7 @@ char *game_cfg_path( void )
 char *game_save_path( int cr, int nr )
 {
 	char appdir[PATH_MAX];
-	char *p = app_dir();
+	char *p = appdir();
 
 	if (!curgame_dir)
 		return NULL;

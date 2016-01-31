@@ -54,6 +54,7 @@ extern int	resizable_sw;
 extern int	standalone_sw;
 
 extern char	*game_local_stead_path(void);
+extern char	*appdir(void);
 
 extern char 	*game_local_games_path(int cr);
 extern char 	*game_tmp_path(void);

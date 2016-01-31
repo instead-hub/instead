@@ -217,6 +217,8 @@ static void usage(void)
 	"    -chunksize [size in bytes]\n        Size for audio buffer. Try this if sound lags.\n"
 	"    -vsync\n        Enable vsync display output (SDL2 only)\n");
 }
+static int profile_load(void);
+
 int main(int argc, char *argv[])
 {
 #ifdef _USE_UNPACK
@@ -249,6 +251,8 @@ int main(int argc, char *argv[])
 #endif
 	unix_path(game_cwd);
 	setdir(game_cwd);
+
+	profile_load();
 
 	for (i = 1; i < argc; i++) {
 		if (!strcmp(argv[i], "-vsync"))
@@ -505,15 +509,17 @@ int main(int argc, char *argv[])
 		if (b)
 			free(b);
 	}
+/* too dangerous to be in release
 	if (games_nr == 1) {
 		if (strncmp(GAMES_PATH, games[0].path, strlen(GAMES_PATH))) {
-			fprintf(stderr, "Standalone mode...\n");
 			standalone_sw = 1;
 		}
 	}
-
-	if (standalone_sw)
+*/
+	if (standalone_sw) {
+		fprintf(stderr, "Standalone mode...\n");
 		owntheme_sw = 1;
+	}
 
 	if (owntheme_sw && !opt_owntheme) {
 		opt_owntheme = 2;
@@ -582,3 +588,44 @@ out:
 	return err;
 }
 
+static struct parser profile_parser[] = {
+	{ "standalone", parse_int, &standalone_sw, 0 },
+	{ "vsync", parse_int, &vsync_sw, 0 },
+	{ "debug", parse_int, &debug_sw, 0 },
+	{ "nopause", parse_int, &nopause_sw, 0 },
+	{ "noconfig", parse_int, &nocfg_sw, 0 },
+	{ "noautosave", parse_int, &noauto_sw, 0 },
+	{ "nostdgames", parse_int, &nostdgames_sw, 0 },
+	{ "nostdthemes", parse_int, &nostdthemes_sw, 0 },
+	{ "chunksize", parse_int, &chunksize_sw, 0 },
+	{ "software", parse_int, &software_sw, 0 },
+	{ "hinting", parse_int, &hinting_sw, 0 },
+	{ "resizable", parse_int, &resizable_sw, 0 },
+	{ "gamespath", parse_full_path, &games_sw, 0 },
+	{ "themespath", parse_full_path, &themes_sw, 0 },
+	{ "game", parse_string, &game_sw, 0 },
+	{ "owntheme", parse_int, &owntheme_sw, 0 },
+	{ "appdata", parse_full_path, &appdata_sw, 0 },
+	{ "fullscreen", parse_int, &fullscreen_sw, 0 },
+	{ "window", parse_int, &window_sw, 0 },
+	{ "mode", parse_string, &mode_sw, 0 },
+	{ NULL, NULL, NULL, 0 },
+};
+
+static int profile_parse(const char *path)
+{
+	return parse_ini(path, profile_parser);
+}
+
+static int profile_load(void)
+{
+	char path[PATH_MAX];
+	char *p = appdir();
+	if (!p)
+		return -1;
+	snprintf(path, sizeof(path), "%s/profile", p);
+	if (access(path, R_OK))
+		return 0;
+	fprintf(stderr, "Using profile...'%s'\n", path);
+	return profile_parse(path);
+}
