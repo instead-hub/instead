@@ -618,7 +618,7 @@ char *theme_getvar(char *name)
 			num = (int *)cmd_parser[i].p;
 			sprintf(buf, "%d", *num);
 			return strdup(buf);
-		} else if (cmd_parser[i].fn == parse_full_path) {
+		} else if (cmd_parser[i].fn == theme_parse_full_path) {
 			s = *((char **)cmd_parser[i].p);
 			if (!s)
 				return NULL;
