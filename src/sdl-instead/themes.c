@@ -163,6 +163,21 @@ static int parse_ways_mode(const char *v, void *data)
 	return 0;
 }
 
+static int out_ways_mode(const void *v, char **out)
+{
+	char *o;
+	int m = *((int*)v);
+	o = malloc(64);
+	if (!o)
+		return -1;
+	if (m == ALIGN_BOTTOM)
+		sprintf(o, "bottom");
+	else
+		sprintf(o, "top");
+	*out = o;
+	return 0;
+}
+
 static int out_inv_mode(const void *v, char **out)
 {
 	char *o;
@@ -625,6 +640,10 @@ char *theme_getvar(char *name)
 			return strdup(s);
 		} else if (cmd_parser[i].fn == parse_inv_mode) {
 			if (out_inv_mode(cmd_parser[i].p, &s))
+				return NULL;
+			return s;
+		} else if (cmd_parser[i].fn == parse_ways_mode) {
+			if (out_ways_mode(cmd_parser[i].p, &s))
 				return NULL;
 			return s;
 		} else if (cmd_parser[i].fn == parse_gfx_mode) {
