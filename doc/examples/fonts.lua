@@ -6,6 +6,12 @@ function font(name, size, scale)
 	if scale == nil then
 		scale = true
 	end
+	if not size then
+		size  = false
+	end
+	if not name then
+		name = false
+	end
 	local v = obj {
 		nam = 'styler';
 		fname = name;
@@ -116,15 +122,27 @@ function font(name, size, scale)
 			end
 		end;
 		save = function(self, name, h, need)
-			h:write(stead.string.format("%s = font(%q, %d, %s);\n", name, self.fname, self.size, stead.tostring(self.scaled)))
+			local n
+			if self.fname then
+				n = stead.string.format("%q", self.fname)
+			else
+				n = stead.tostr(self.fname)
+			end
+			h:write(stead.string.format("%s = font(%s, %s, %s);\n", name, n, tostring(self.size), stead.tostring(self.scaled)))
 			local k, v
 			for k,v in ipairs(self.list) do
 				h:write(stead.string.format("%s:cache_add(%q, %q, %d, %q, %d);\n", name, v.word, v.color, v.t, v.img, v.time))
 			end
 		end;
 	}
+	if not size then
+		size = stead.tonum(theme.get 'win.fnt.size')
+	end
 	if v.scaled then
 		size = sprite.font_scaled_size(size)
+	end
+	if not name then
+		name = theme.get 'win.fnt.name'
 	end
 	v.font = sprite.font(name, size);
 	lifeon(v);
