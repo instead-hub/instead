@@ -965,6 +965,8 @@ int game_cfg_save(void)
 {
 	FILE *fp;
 	char *p;
+	if (!curgame_dir)
+		return 0;
 	if (!curtheme_dir[THEME_GAME]) /* nothing todo */
 		return 0;
 	p  = getfilepath(dirname(game_save_path(1, 0)), "config.ini");
@@ -1113,9 +1115,11 @@ void game_done(int err)
 	game_event("quit");
 	gfx_del_timer(timer_han);
 	timer_han = NULL_TIMER;
-	if ((opt_autosave & 1) && curgame_dir && !err)
-		game_save(0);
-	game_cfg_save();
+	if (curgame_dir && !err) {
+		if (opt_autosave & 1)
+			game_save(0);
+		game_cfg_save();
+	}
 	curgame_dir = NULL;
 	setdir(game_cwd);
 /*	cfg_save(); */
