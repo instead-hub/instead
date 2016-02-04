@@ -29,4 +29,7 @@
 #ifndef S60
 #include <libgen.h>
 #endif
+#ifdef S60
+#include "snprintf.h"
+#endif
 #include <math.h>
