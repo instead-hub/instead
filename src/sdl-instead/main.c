@@ -225,7 +225,7 @@ static void usage(void)
 }
 static int profile_load(const char *path);
 
-int main(int argc, char *argv[])
+int instead_main(int argc, char *argv[])
 {
 #ifdef _USE_UNPACK
 	int clean_tmp = 0;
@@ -602,9 +602,6 @@ out:
 	if (clean_tmp)
 		remove_dir(game_tmp_path());
 #endif
-#if defined(ANDROID) || defined(IOS)
-	exit(err);
-#endif
 	return err;
 }
 
@@ -651,4 +648,14 @@ static int profile_load(const char *prof)
 		return 0;
 	fprintf(stderr, "Using profile...'%s'\n", path);
 	return profile_parse(path);
+}
+
+int main(int argc, char *argv[])
+{
+	int err;
+	err = instead_main(argc, argv);
+#if defined(ANDROID) || defined(IOS)
+	exit(err);
+#endif
+	return err;
 }
