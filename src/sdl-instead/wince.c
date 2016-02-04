@@ -192,7 +192,7 @@ char *appdir( void )
 		strcat(dir, "/appdata");
 	}
 	if (!access(dir, W_OK))
-		return appdir;
+		return dir;
 	return NULL;
 }
 
