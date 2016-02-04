@@ -32,6 +32,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "sdl_iconv.h"
 #include "internals.h"
