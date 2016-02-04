@@ -9,6 +9,8 @@
 #define ICON_PATH DATAPATH"icon/"
 #define LANG_PATH DATAPATH"lang/"
 
+#include "snprintf.h"
+
 extern char *dirname(char *);
 extern char *basename(char *);
 
