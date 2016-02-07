@@ -1617,6 +1617,13 @@ int gfx_get_max_mode(int *w, int *h)
 	*h = 480;
 #else
 #if SDL_VERSION_ATLEAST(2,0,0)
+#if defined(ANDROID) || defined(IOS)
+	if (current_gfx_w != -1) {
+		*w = current_gfx_w;
+		*h = current_gfx_h;
+		return 0;
+	}
+#endif
 	SDL_DisplayMode desktop_mode;
 	*w = 0; *h = 0;
 	if (!SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode)) {
@@ -1794,12 +1801,14 @@ int gfx_set_mode(int w, int h, int fs)
 	if (fs && !software_sw) {
 		win_w = max_mode_w;
 		win_h = max_mode_h;
+#if 0
 		if ((w < h && win_w > win_h) || (w > h && win_w < win_h)) { /* orientation */
 			if (!gfx_check_mode(max_mode_h, max_mode_w)) {
 				win_w = max_mode_h;
 				win_h = max_mode_w;
 			}
 		}
+#endif
 	}
 	SelectVideoDisplay();
 	SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode);
@@ -2138,9 +2147,18 @@ void gfx_flip(void)
 #endif
 }
 
-void gfx_resize(void)
+#if defined(ANDROID) || defined(IOS)
+static int current_gfx_w = - 1;
+static int current_gfx_h = - 1;
+#endif
+
+void gfx_resize(int w, int h)
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
+#if defined(ANDROID) || defined(IOS)
+	current_gfx_w = w;
+	current_gfx_h = h;
+#endif
 	SDL_RenderClear(Renderer);
 #endif
 }

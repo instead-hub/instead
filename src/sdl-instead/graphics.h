@@ -98,7 +98,7 @@ extern int	gfx_prev_mode(int *w, int *h);
 extern void	gfx_update(int x, int y, int w, int h);
 extern void	gfx_video_done(void);
 extern void	gfx_clear(int x, int y, int w, int h);
-extern void	gfx_resize(void);
+extern void	gfx_resize(int w, int h);
 
 extern void	gfx_copy_from(img_t p, int x, int y, int width, int height, img_t to, int xx, int yy);
 extern void	gfx_draw(img_t p, int x, int y);

@@ -284,7 +284,7 @@ int input(struct inp_event *inp, int wait)
 /*		case SDL_WINDOWEVENT_SHOWN: */
 /*		case SDL_WINDOWEVENT_RESIZED: */
 		case SDL_WINDOWEVENT_SIZE_CHANGED:
-			gfx_resize();
+			gfx_resize(event.window.data1, event.window.data2);
 		case SDL_WINDOWEVENT_EXPOSED:
 			gfx_flip();
 			gfx_commit();
