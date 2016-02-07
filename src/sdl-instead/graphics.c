@@ -4360,7 +4360,7 @@ img_t get_img(struct layout *layout, char *p, int *al)
 	if (!img) {
 		unix_path(p);
 		if (!(img = gfx_load_image(p))) {
-			game_res_err_msg(p);
+			game_res_err_msg(p, debug_sw);
 			goto out;
 		}
 		theme_img_scale(&img); /* bad style, no gfx layer :( */

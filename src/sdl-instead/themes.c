@@ -909,7 +909,7 @@ skip:
 err:
 	idf_only(game_idf, idf);
 	t->changed = 0;
-	game_res_err_msg(res);
+	game_res_err_msg(res, 1);
 	return -1;
 }
 

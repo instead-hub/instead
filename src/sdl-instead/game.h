@@ -89,7 +89,7 @@ extern int	games_replace(const char *path, const char *dir);
 extern int 	games_rename(void);
 
 extern void 	game_err_msg(const char *s);
-extern void 	game_res_err_msg(const char *s);
+extern void 	game_res_err_msg(const char *s, int alert);
 extern int 	game_error(void);
 
 extern int	game_restart(void);
