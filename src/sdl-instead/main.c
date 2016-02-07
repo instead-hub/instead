@@ -262,6 +262,10 @@ int instead_main(int argc, char *argv[])
 	profile_load(NULL);
 
 	for (i = 1; i < argc; i++) {
+		if (lua_sw) {
+			opt_index = i;
+			break;
+		}
 		if (!strcmp(argv[i], "-vsync"))
 			vsync_sw = 1;
 		else if (!strcmp(argv[i], "-nosound"))
@@ -612,6 +616,7 @@ static struct parser profile_parser[] = {
 	{ "standalone", parse_int, &standalone_sw, 0 },
 	{ "vsync", parse_int, &vsync_sw, 0 },
 	{ "debug", parse_int, &debug_sw, 0 },
+	{ "lua", parse_full_path, &lua_sw, 0 },
 	{ "nopause", parse_int, &nopause_sw, 0 },
 	{ "noconfig", parse_int, &nocfg_sw, 0 },
 	{ "noautosave", parse_int, &noauto_sw, 0 },
