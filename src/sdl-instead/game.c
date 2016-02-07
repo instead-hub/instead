@@ -75,7 +75,7 @@ void game_res_err_msg(const char *filename)
 	char *msg;
 	if (!filename)
 		return;
-	if (debug_sw) {
+	if (debug_sw || !curgame_dir) {
 		msg = malloc(sizeof(preambule) + strlen(filename));
 		if (msg) {
 			strcpy(msg, preambule);
