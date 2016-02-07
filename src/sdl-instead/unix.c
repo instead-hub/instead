@@ -242,13 +242,13 @@ char *game_local_games_path(int cr)
 	strcpy(local_games_path, app);
 	if (cr) {
 		if (mkdir(local_games_path, S_IRWXU) && errno != EEXIST)
-        		return NULL;
-        }
-        strcat(local_games_path,"/games");
-        if (cr) { 
+			return NULL;
+	}
+	strcat(local_games_path,"/games");
+	if (cr) { 
 		if (mkdir(local_games_path, S_IRWXU) && errno != EEXIST)
-        		return NULL;
-        }
+			return NULL;
+	}
 	return local_games_path;
 }
 

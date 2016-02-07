@@ -59,7 +59,7 @@ int vsync_sw = 0;
 int resizable_sw = 0;
 int standalone_sw = 0;
 
-static int opt_index = 0;
+static int opt_index = 1;
 
 char *game_sw = NULL;
 char *games_sw = NULL;
@@ -262,10 +262,8 @@ int instead_main(int argc, char *argv[])
 	profile_load(NULL);
 
 	for (i = 1; i < argc; i++) {
-		if (lua_sw) {
-			opt_index = i;
+		if (lua_sw) /* during load profile */
 			break;
-		}
 		if (!strcmp(argv[i], "-vsync"))
 			vsync_sw = 1;
 		else if (!strcmp(argv[i], "-nosound"))
@@ -366,8 +364,10 @@ int instead_main(int argc, char *argv[])
 		} else if (!strcmp(argv[i], "-noconfig")) {
 			nocfg_sw = 1;
 		} else if (!strcmp(argv[i], "-profile")) {
-			if ((i + 1) < argc)
+			if ((i + 1) < argc) {
 				profile_load(argv[++i]);
+				i ++;
+			}
 #ifdef _USE_UNPACK
 		} else if (!strcmp(argv[i], "-install")) {
 			if ((i + 1) < argc) {
@@ -430,6 +430,7 @@ int instead_main(int argc, char *argv[])
 			clean_tmp = 1;
 		}
 #endif
+		opt_index = i;
 	}
 	if (!nocfg_sw)
 		cfg_load();
