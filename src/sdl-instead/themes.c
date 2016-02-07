@@ -936,6 +936,25 @@ int game_theme_init(void)
 	int w  = opt_mode[0];
 	int h  = opt_mode[1];
 
+	if (opt_fs && hires_sw && !gfx_get_max_mode(&w, &h)) {
+#if defined(IOS) || defined(ANDROID)
+		if ((game_theme.w > game_theme.h && w < h) ||
+			(game_theme.w < game_theme.h && w > h)) { /* rotated */
+			w ^= h; h ^= w; w ^= h; /* swap it */
+		}
+		if ((game_theme.w > w || game_theme.h > h) &&
+			(game_theme.w > h || game_theme.h > w)) { /* theme is larger then resolution */
+			if (game_theme.w >= game_theme.h) { /* landscape */
+				w = game_theme.w;
+				h = game_theme.h;
+			} else {
+				w = game_theme.h;
+				h = game_theme.w;
+			}
+		}
+#endif
+	}
+
 	if (w == -1) { /* as theme */
 #if !defined(IOS) /* IOS always hardware accelerated */
 		if (gfx_get_max_mode(&w, &h) || (game_theme.w <= w && game_theme.h <= h)) {

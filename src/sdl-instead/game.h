@@ -42,6 +42,7 @@ extern int	game_theme_changed;
 extern int 	nosound_sw;
 extern int	debug_sw;
 extern int 	fullscreen_sw;
+extern int 	hires_sw;
 extern int 	window_sw;
 extern int	nopause_sw;
 extern int 	game_own_theme; /* current game has own theme */

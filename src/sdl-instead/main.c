@@ -212,6 +212,7 @@ static void usage(void)
 	"    -game <basename>\n        Select game in gamespath.\n"
 	"    -owntheme\n        Force game to use own theme.\n"
 	"    -fullscreen\n        Run the game in fullscreen mode.\n"
+	"    -hires\n        Set the high resolution if run in fullscreen mode.\n"
 	"    -window\n        Run the game in windowed mode.\n"
 	"    -noautosave\n        Disable autosave/autoload.\n"
 	"    -mode [WxH]\n        Use WxH resolution.\n"
@@ -267,6 +268,8 @@ int instead_main(int argc, char *argv[])
 			nosound_sw = 1;
 		else if (!strcmp(argv[i], "-fullscreen"))
 			fullscreen_sw = 1;
+		else if (!strcmp(argv[i], "-hires"))
+			hires_sw = 1;
 		else if (!strcmp(argv[i], "-mode")) {
 			FREE(mode_sw);
 			if ((i + 1) < argc)
@@ -624,6 +627,7 @@ static struct parser profile_parser[] = {
 	{ "owntheme", parse_int, &owntheme_sw, 0 },
 	{ "appdata", parse_full_path, &appdata_sw, 0 },
 	{ "fullscreen", parse_int, &fullscreen_sw, 0 },
+	{ "hires", parse_int, &hires_sw, 0 },
 	{ "window", parse_int, &window_sw, 0 },
 	{ "mode", parse_string, &mode_sw, 0 },
 	{ NULL, NULL, NULL, 0 },
