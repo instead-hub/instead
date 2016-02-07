@@ -1609,6 +1609,10 @@ int gfx_next_mode(int *w, int *h)
 	*w = ww; *h = hh;
 	return 0;
 }
+#if defined(ANDROID) || defined(IOS)
+static int current_gfx_w = - 1;
+static int current_gfx_h = - 1;
+#endif
 
 int gfx_get_max_mode(int *w, int *h)
 {
@@ -1617,6 +1621,7 @@ int gfx_get_max_mode(int *w, int *h)
 	*h = 480;
 #else
 #if SDL_VERSION_ATLEAST(2,0,0)
+	SDL_DisplayMode desktop_mode;
 #if defined(ANDROID) || defined(IOS)
 	if (current_gfx_w != -1) {
 		*w = current_gfx_w;
@@ -1624,7 +1629,6 @@ int gfx_get_max_mode(int *w, int *h)
 		return 0;
 	}
 #endif
-	SDL_DisplayMode desktop_mode;
 	*w = 0; *h = 0;
 	if (!SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode)) {
 		*w = desktop_mode.w;
@@ -2146,11 +2150,6 @@ void gfx_flip(void)
 	SDL_Flip(Surf(screen));
 #endif
 }
-
-#if defined(ANDROID) || defined(IOS)
-static int current_gfx_w = - 1;
-static int current_gfx_h = - 1;
-#endif
 
 void gfx_resize(int w, int h)
 {
