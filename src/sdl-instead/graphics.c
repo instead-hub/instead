@@ -1942,6 +1942,8 @@ retry:
 	SDL_AddEventWatch(mouse_watcher, NULL);
 #endif
 	fprintf(stderr,"Video mode: %dx%d@%dbpp\n", Surf(screen)->w, Surf(screen)->h, Surf(screen)->format->BitsPerPixel);
+	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
+	SDL_RenderClear(Renderer);
 	gfx_clear(0, 0, gfx_width, gfx_height);
 	return 0;
 }
