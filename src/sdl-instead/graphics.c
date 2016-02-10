@@ -1554,7 +1554,7 @@ static int gfx_parse_modes(void)
 		memcpy(m, p, (i > sizeof(m))? sizeof(m): i);
 		m[sizeof(m) - 1] = 0;
 		if (parse_mode(m, &mode))
-			goto err;
+			break;
 		r = SDL_malloc(sizeof(SDL_Rect));
 		if (!r)
 			goto err;
@@ -1573,7 +1573,8 @@ err:
 		SDL_free(vid_modes[i]);
 	}
 	SDL_free(vid_modes);
-	return nr;
+	vid_modes = NULL;
+	return 0;
 }
 
 int gfx_modes(void)
