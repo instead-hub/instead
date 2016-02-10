@@ -68,6 +68,7 @@ char *themes_sw = NULL;
 char *encode_sw = NULL;
 char *encode_output = NULL;
 char *mode_sw = NULL;
+char *modes_sw = NULL;
 char *appdata_sw = NULL;
 char *idf_sw = NULL;
 char *start_idf_sw = NULL;
@@ -278,6 +279,10 @@ int instead_main(int argc, char *argv[])
 				mode_sw = strdup(argv[++i]);
 			else
 				mode_sw = strdup("-1x-1");
+		} else if (!strcmp(argv[i], "-modes")) {
+			FREE(modes_sw);
+			if ((i + 1) < argc)
+				modes_sw = strdup(argv[++i]);
 		} else if (!strcmp(argv[i], "-window"))
 			window_sw = 1;
 		else if (!strcmp(argv[i], "-debug")) {
@@ -636,6 +641,7 @@ static struct parser profile_parser[] = {
 	{ "hires", parse_int, &hires_sw, 0 },
 	{ "window", parse_int, &window_sw, 0 },
 	{ "mode", parse_string, &mode_sw, 0 },
+	{ "modes", parse_string, &modes_sw, 0 },
 	{ NULL, NULL, NULL, 0 },
 };
 

@@ -1525,10 +1525,63 @@ static SDL_Rect **SDL_ListModes(const SDL_PixelFormat * format, Uint32 flags)
 }
 #endif
 
+extern char *modes_sw;
+
+static int gfx_parse_modes(void)
+{
+	const char *p = modes_sw;
+	int nr = 0;
+	int mode[2];
+	int i = 0;
+	while (*p) {
+		p += strcspn(p, ",");
+		if (*p)
+			p ++;
+		nr ++;
+	}
+	if (!nr)
+		return 0;
+	vid_modes = SDL_malloc(sizeof(SDL_Rect *) * (nr + 1)); /* array of pointers */
+	if (!vid_modes)
+		return 0;
+	p = modes_sw;
+	nr = 0;
+	while (*p) {
+		char m[64];
+		SDL_Rect *r;
+		i = strcspn(p, ",");
+		memset(m, 0, sizeof(m));
+		memcpy(m, p, (i > sizeof(m))? sizeof(m): i);
+		m[sizeof(m) - 1] = 0;
+		if (parse_mode(m, &mode))
+			goto err;
+		r = SDL_malloc(sizeof(SDL_Rect));
+		if (!r)
+			goto err;
+		vid_modes[nr ++] = r;
+		r->w = mode[0];
+		r->h = mode[1];
+		fprintf(stderr, "Available mode: %dx%d\n", r->w, r->h);
+		p += strcspn(p, ",");
+		if (*p)
+			p ++;
+	}
+	vid_modes[nr] = NULL;
+	return nr;
+err:
+	for (i = 0; i < nr; i++) {
+		SDL_free(vid_modes[i]);
+	}
+	SDL_free(vid_modes);
+	return nr;
+}
+
 int gfx_modes(void)
 {
 	int i = 0;
 	SDL_Rect** modes;
+	if ((i = gfx_parse_modes()))
+		return i;
 #if SDL_VERSION_ATLEAST(2,0,0)
 	modes = SDL_ListModes(NULL, 0);
 #else
@@ -1614,31 +1667,31 @@ static int current_gfx_w = - 1;
 static int current_gfx_h = - 1;
 #endif
 
-int gfx_get_max_mode(int *w, int *h)
+int gfx_get_max_mode(int *w, int *h, int o)
 {
+	int ww = 0, hh = 0;
+	int i = 0;
 #ifdef MAEMO
 	*w = 800;
 	*h = 480;
 #else
-#if SDL_VERSION_ATLEAST(2,0,0)
+	*w = 0;
+	*h = 0;
+ #if SDL_VERSION_ATLEAST(2,0,0)
 	SDL_DisplayMode desktop_mode;
-#if defined(ANDROID) || defined(IOS)
-	if (current_gfx_w != -1) {
+  #if defined(ANDROID) || defined(IOS)
+	if (o == MODE_ANY && current_gfx_w != -1) {
 		*w = current_gfx_w;
 		*h = current_gfx_h;
 		return 0;
 	}
-#endif
-	*w = 0; *h = 0;
-	if (!SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode)) {
+  #endif
+	if (o == MODE_ANY && !SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode)) {
 		*w = desktop_mode.w;
 		*h = desktop_mode.h;
+		return 0;
 	}
-#else
-	int ww = 0, hh = 0;
-	int i = 0;
-	*w = 0;
-	*h = 0;
+ #endif
 	if (!vid_modes)
 		gfx_modes();
 
@@ -1646,13 +1699,15 @@ int gfx_get_max_mode(int *w, int *h)
 		return -1;
 
 	while (!gfx_get_mode(i, &ww, &hh)) {
-		if ((ww * hh >= (*w) * (*h)) && ww > (*w)) {
-			*w = ww;
-			*h = hh;
+		if ((ww * hh >= (*w) * (*h))) {
+			if (o == MODE_ANY || (o == MODE_H && ww >= hh) ||
+				(o == MODE_V && hh > ww)) {
+				*w = ww;
+				*h = hh;
+			}
 		}
 		i ++;
 	}
-#endif
 #endif
 	return 0;
 }
@@ -1798,7 +1853,7 @@ int gfx_set_mode(int w, int h, int fs)
 		return 0; /* already done */
 	}
 	win_w = w; win_h = h;
-	gfx_get_max_mode(&max_mode_w, &max_mode_h);
+	gfx_get_max_mode(&max_mode_w, &max_mode_h, MODE_ANY); /* get current window size */
 #if defined(IOS) || defined(ANDROID) || defined(MAEMO) || defined(_WIN32_WCE) || defined(S60)
 	fs = 1; /* always fs for mobiles */
 #endif

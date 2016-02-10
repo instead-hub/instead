@@ -936,11 +936,13 @@ int game_theme_init(void)
 	int w  = opt_mode[0];
 	int h  = opt_mode[1];
 
-	if (opt_fs && hires_sw && !gfx_get_max_mode(&w, &h)) {
+	if (opt_fs && hires_sw && !gfx_get_max_mode(&w, &h, MODE_ANY)) {
 #if defined(IOS) || defined(ANDROID)
 		if ((game_theme.w > game_theme.h && w < h) ||
 			(game_theme.w < game_theme.h && w > h)) { /* rotated */
-			w ^= h; h ^= w; w ^= h; /* swap it */
+			if (gfx_get_max_mode(&w, &h, (game_theme.w > game_theme.h)?MODE_H:MODE_V)) {
+				gfx_get_max_mode(&w, &h, MODE_ANY); /* fallback to any mode */
+			}
 		}
 		if ((game_theme.w > w || game_theme.h > h) &&
 			(game_theme.w > h || game_theme.h > w)) { /* theme is larger then resolution */
@@ -957,26 +959,13 @@ int game_theme_init(void)
 
 	if (w == -1) { /* as theme */
 #if !defined(IOS) /* IOS always hardware accelerated */
-		if (gfx_get_max_mode(&w, &h) || (game_theme.w <= w && game_theme.h <= h)) {
+		if (gfx_get_max_mode(&w, &h, MODE_ANY) || (game_theme.w <= w && game_theme.h <= h)) {
 			w = opt_mode[0];
 			h = opt_mode[1];
 		}
 #endif
 	}
-#if 0 /* not useful */
-	 else if (opt_fs) { /* selected and full screen */
-		if (gfx_get_max_mode(&w, &h) || (opt_mode[0] <= w && opt_mode[1] <= h)) {
-			w = opt_mode[0];
-			h = opt_mode[1];
-		}
-	}
-#endif
-#if 0
-	if (!SCALABLE_THEME && (w < game_theme.w || h < game_theme.h)) { /* no scalable? TODO: message? */
-		w = game_theme.w;
-		h = game_theme.h;
-	}
-#endif
+
 	game_theme_scale(w, h);
 
 	if (gfx_set_mode(game_theme.w, game_theme.h, opt_fs)) {
