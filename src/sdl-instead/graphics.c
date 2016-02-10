@@ -1551,7 +1551,7 @@ static int gfx_parse_modes(void)
 		SDL_Rect *r;
 		i = strcspn(p, ",");
 		memset(m, 0, sizeof(m));
-		memcpy(m, p, (i > sizeof(m))? sizeof(m): i);
+		memcpy(m, p, (i > (int)sizeof(m))? sizeof(m): i);
 		m[sizeof(m) - 1] = 0;
 		if (parse_mode(m, &mode))
 			break;
