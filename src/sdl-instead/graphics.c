@@ -3428,6 +3428,7 @@ void txt_layout_free(layout_t lay)
 
 int get_token(const char *ptr, char **eptr, char **val, int *sp)
 {
+	int y_token = 0;
 	char *ep, *p;
 	int closing = 0;
 	*eptr = NULL;
@@ -3452,7 +3453,6 @@ int get_token(const char *ptr, char **eptr, char **val, int *sp)
 		ptr ++;
 	}
 	switch (*ptr) {
-		int y_token = 0;
 	case 'y':
 		y_token = 1;
 	case 'x':
