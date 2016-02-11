@@ -934,6 +934,7 @@ int game_theme_update(void)
 #if defined(ANDROID)
 extern void rotate_landscape(void);
 extern void rotate_portrait(void);
+extern void unlock_rotation(void);
 #endif
 
 int game_theme_init(void)
@@ -965,6 +966,8 @@ int game_theme_init(void)
 			rotate_landscape();
 		else if (game_theme.w < game_theme.h)
 			rotate_portrait();
+		else
+			unlock_rotation();
 #endif
 #endif
 	}
