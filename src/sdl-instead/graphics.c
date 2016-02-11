@@ -1549,9 +1549,10 @@ static int gfx_parse_modes(void)
 	while (*p) {
 		char m[64];
 		SDL_Rect *r;
-		i = strcspn(p, ",");
+		size_t s;
+		s = strcspn(p, ",");
 		memset(m, 0, sizeof(m));
-		memcpy(m, p, (i > (int)sizeof(m))? sizeof(m): i);
+		memcpy(m, p, (s > sizeof(m))? sizeof(m): s);
 		m[sizeof(m) - 1] = 0;
 		if (parse_mode(m, &mode))
 			break;
