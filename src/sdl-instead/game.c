@@ -1868,7 +1868,8 @@ static _snd_t *sound_add(const char *fname)
 	}
 	w = snd_load_wav(fname);
 	if (!w) {
-		game_res_err_msg(fname, debug_sw);
+		if (snd_enabled())
+			game_res_err_msg(fname, debug_sw);
 		goto err;
 	}
 	sn->wav = w;

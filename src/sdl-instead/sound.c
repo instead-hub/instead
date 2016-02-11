@@ -52,6 +52,11 @@ struct _mus_t {
 	SDL_RWops *rw;
 };
 
+int snd_enabled(void)
+{
+	return sound_on;
+}
+
 static void mus_callback(void *aux)
 {
 	if (!timer_id)
