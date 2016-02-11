@@ -1533,6 +1533,10 @@ static int gfx_parse_modes(void)
 	int nr = 0;
 	int mode[2];
 	int i = 0;
+
+	if (!modes_sw)
+		return 0;
+
 	while (*p) {
 		p += strcspn(p, ",");
 		if (*p)
