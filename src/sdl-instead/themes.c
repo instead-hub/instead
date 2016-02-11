@@ -254,8 +254,9 @@ static int theme_parse_full_path(const char *v, void *data)
 			!strncmp(v, "spr:", 4)) /* hack for special files*/
 			return parse_path(v, data);
 		rc = parse_path(v, data);
-		if (rc)
+		if (rc || !*p || !*p[0])
 			return rc;
+
 		if (curtheme_loading && curtheme_loading->type == THEME_GAME) {
 			np = getfilepath(curtheme_loading->path, *p);
 			if (!*np)
@@ -1119,7 +1120,7 @@ void themes_drop(int type)
 		return;
 	new_size = (themes_nr - rc) * sizeof(struct theme);
 	if (new_size)
-		new_themes = malloc( new_size);
+		new_themes = malloc(new_size);
 
 	for (i = 0; i < themes_nr; i ++) {
 		if (themes[i].type == type) {

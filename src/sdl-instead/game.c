@@ -954,7 +954,7 @@ static struct parser cmd_game_parser[] = {
 static int game_cfg_load(void)
 {
 	char *p = getfilepath(dirname(game_save_path(1, 0)), "config.ini");
-	curtheme_dir[THEME_GAME] = DEFAULT_THEME;
+	curtheme_dir[THEME_GAME] = NULL;
 	if (!p)
 		return -1;
 	parse_ini(p, cmd_game_parser);
@@ -998,12 +998,13 @@ int game_use_theme(void)
 	}
 
 	if (themes_count(THEME_GAME) > 0) { /* new scheme with own themes? */
-		game_own_theme = 1;
+		game_own_theme = 2;
 		if (opt_owntheme) {
 			fprintf(stderr, "Using own themes directory...\n");
 			if (curtheme_dir[THEME_GAME] && strlowcmp(DEFAULT_THEME, curtheme_dir[THEME_GAME])) {
 				rc = game_theme_load(curtheme_dir[THEME_GAME], THEME_GAME);
-			}
+			} else
+				curtheme_dir[THEME_GAME] = DEFAULT_THEME;
 			return rc;
 		}
 	} else if (curgame_dir && (!idf_access(game_idf, THEME_FILE) || !access(dirpath(THEME_FILE), R_OK))) {

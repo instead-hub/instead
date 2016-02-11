@@ -735,7 +735,7 @@ static int luaB_theme_var(lua_State *L) {
 static int luaB_theme_name(lua_State *L) {
 	char *name;
 	if (game_own_theme && opt_owntheme) {
-		if (curtheme_dir[THEME_GAME]) {
+		if (game_own_theme == 2) {
 			name = malloc(strlen(curtheme_dir[THEME_GAME]) + 2);
 			if (!name)
 				return 0;
