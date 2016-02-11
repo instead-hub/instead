@@ -931,6 +931,11 @@ int game_theme_update(void)
 	return 0;
 }
 
+#if defined(ANDROID)
+extern void rotate_landscape(void);
+extern void rotate_portrait(void);
+#endif
+
 int game_theme_init(void)
 {
 	color_t col = { .r = 0, .g = 0, .b = 0, .a = 0 };
@@ -955,6 +960,12 @@ int game_theme_init(void)
 				h = game_theme.w;
 			}
 		}
+#if defined(ANDROID)
+		if (game_theme.w > game_theme.h)
+			rotate_landscape();
+		else if (game_theme.w < game_theme.h)
+			rotate_portrait();
+#endif
 #endif
 	}
 
