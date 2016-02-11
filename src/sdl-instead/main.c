@@ -665,7 +665,7 @@ static int profile_load(const char *prof)
 	fprintf(stderr, "Using profile...'%s'\n", path);
 	return profile_parse(path);
 }
-
+#ifndef NOMAIN
 int main(int argc, char *argv[])
 {
 	int err;
@@ -675,3 +675,4 @@ int main(int argc, char *argv[])
 #endif
 	return err;
 }
+#endif

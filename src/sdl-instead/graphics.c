@@ -1847,12 +1847,6 @@ int gfx_set_mode(int w, int h, int fs)
 	strcpy(title, "INSTEAD - " );
 	strcat(title, VERSION );
 
-	if (gfx_width == w && gfx_height == h && gfx_fs == fs) {
-		game_reset_name();
-		if (SDL_VideoWindow)
-			SDL_SetWindowSize(SDL_VideoWindow, win_w, win_h);
-		return 0; /* already done */
-	}
 	win_w = w; win_h = h;
 	gfx_get_max_mode(&max_mode_w, &max_mode_h, MODE_ANY); /* get current window size */
 #if defined(IOS) || defined(ANDROID) || defined(MAEMO) || defined(_WIN32_WCE) || defined(S60)
@@ -1869,6 +1863,12 @@ int gfx_set_mode(int w, int h, int fs)
 			}
 		}
 #endif
+	}
+	if (gfx_width == w && gfx_height == h && gfx_fs == fs) {
+		game_reset_name();
+		if (SDL_VideoWindow)
+			SDL_SetWindowSize(SDL_VideoWindow, win_w, win_h);
+		return 0; /* already done */
 	}
 	SelectVideoDisplay();
 	SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode);
