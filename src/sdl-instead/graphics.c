@@ -3431,12 +3431,13 @@ void txt_layout_free(layout_t lay)
 #define TOKEN_CLOSE	0x4000
 #define TOKEN(x)	(x & 0x3fff)
 
-int get_token(const char *ptr, char **eptr, char **val, int *sp)
+int gfx_get_token(const char *ptr, char **eptr, char **val, int *sp)
 {
 	int y_token = 0;
 	char *ep, *p;
 	int closing = 0;
-	*eptr = NULL;
+	if (eptr)
+		*eptr = NULL;
 	p = (char*)ptr;
 	ptr += strspn(ptr, " \t");
 	if (sp) {
@@ -3475,11 +3476,13 @@ int get_token(const char *ptr, char **eptr, char **val, int *sp)
 			p[ep - ptr] = 0;
 			*val = p;
 		}
-		*eptr = ep + 1;
+		if (eptr)
+			*eptr = ep + 1;
 		return (y_token)?TOKEN_Y:TOKEN_X;
 	case 'a':
 		if (closing) {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_A | TOKEN_CLOSE;
 		}
 		if (ptr[1] != ':') {
@@ -3503,115 +3506,138 @@ int get_token(const char *ptr, char **eptr, char **val, int *sp)
 			else
 				*val = p;
 		}
-		*eptr = ep + 1;
+		if (eptr)
+			*eptr = ep + 1;
 		return TOKEN_A;
 	case 'b':
 		if (closing) {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_B | TOKEN_CLOSE;
 		}
 		if (ptr[1] == '>') {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_B;
 		}
 		break;
 	case 'i':
 		if (closing) {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_I | TOKEN_CLOSE;
 		}
 		if (ptr[1] == '>') {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_I;
 		}
 		break;
 	case 's':
 		if (closing) {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_S | TOKEN_CLOSE;
 		}
 		if (ptr[1] == '>') {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_S;
 		}
 		break;
 	case 't':
 		if (closing) {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_T | TOKEN_CLOSE;
 		}
 		if (ptr[1] == '>') {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_T;
 		}
 		break;
 	case 'd':
 		if (closing) {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_D | TOKEN_CLOSE;
 		}
 		if (ptr[1] == '>') {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_D;
 		}
 		break;
 	case 'm':
 		if (closing) {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_M | TOKEN_CLOSE;
 		}
 		if (ptr[1] == '>') {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_M;
 		}
 		break;
 	case 'u':
 		if (closing) {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_U | TOKEN_CLOSE;
 		}
 		if (ptr[1] == '>') {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_U;
 		}
 		break;
 	case 'c':
 		if (closing) {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_C | TOKEN_CLOSE;
 		}
 		if (ptr[1] == '>') {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_C;
 		}
 		break;
 	case 'r':
 		if (closing) {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_R | TOKEN_CLOSE;
 		}
 		if (ptr[1] == '>') {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_R;
 		}
 		break;
 	case 'j':
 		if (closing) {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_J | TOKEN_CLOSE;
 		}
 		if (ptr[1] == '>') {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_J;
 		}
 		break;
 	case 'l':
 		if (closing) {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_L | TOKEN_CLOSE;
 		}
 		if (ptr[1] == '>') {
-			*eptr = (char*)ptr + 2;
+			if (eptr)
+				*eptr = (char*)ptr + 2;
 			return TOKEN_L;
 		}
 		break;
@@ -3710,7 +3736,7 @@ static const char *lookup_token_or_sp(const char *ptr)
 			return p;
 		}
 		
-		if (!get_token(p, &eptr, NULL, NULL)) {
+		if (!gfx_get_token(p, &eptr, NULL, NULL)) {
 			if (word_img(p, &eptr)) {
 				if (p == ptr) /* first one */
 					p = eptr;
@@ -4500,7 +4526,7 @@ char *process_token(char *ptr, struct layout *layout, struct line *line, struct 
 	int *cnt = NULL;
 	char *eptr;
 
-	token = get_token(ptr, &eptr, &val, sp);
+	token = gfx_get_token(ptr, &eptr, &val, sp);
 	if (!token)
 		return NULL;
 	if (TOKEN(token) == TOKEN_B) {
@@ -4643,7 +4669,7 @@ int get_unbrakable_len(struct layout *layout, const char *ptr)
 	char *p, *eptr;
 	while (ptr && *ptr) {
 		int sp, sp2 = 0;
-		while (get_token(ptr, &eptr, NULL, &sp)) {
+		while (gfx_get_token(ptr, &eptr, NULL, &sp)) {
 			if (sp)
 				sp2 ++;
 			ptr = eptr;

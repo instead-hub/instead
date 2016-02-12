@@ -87,6 +87,7 @@ extern int 	gfx_height;
 extern int	gfx_video_init(void);
 extern int 	gfx_set_mode(int w, int h, int fs);
 extern int 	gfx_get_mode(int n, int *w, int *h);
+extern int	gfx_get_token(const char *ptr, char **eptr, char **val, int *sp);
 
 #define MODE_ANY 0
 #define MODE_H 1

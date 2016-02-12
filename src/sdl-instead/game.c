@@ -242,7 +242,17 @@ err:
 	game_reset_name();
 	return rc;
 }
-
+static int has_tokens(const char *p)
+{
+	while (p && *p) {
+		p += strcspn(p, "<");
+		if (gfx_get_token(p, NULL, NULL, NULL))
+			return 1;
+		if (*p == '<')
+			p ++;
+	}
+	return 0;
+}
 static char *game_tag(const char *path, const char *d_name, const char *tag)
 {
 	char *l = NULL;
@@ -266,7 +276,7 @@ static char *game_tag(const char *path, const char *d_name, const char *tag)
 	if (!l)
 		goto err;
 ok:
-	if (!standalone_sw && strstr(l, "<")) { /* avoid dangerous tag */
+	if (has_tokens(l)) { /* avoid dangerous tags */
 		free(l);
 		return NULL;
 	}
@@ -290,7 +300,7 @@ static char *game_info(const char *path, const char *d_name)
 	int n = 0;
 	char *pp;
 	char *p = game_tag(path, d_name, "Info");
-	if (!p || standalone_sw)
+	if (!p)
 		return p;
 	pp = p;
 	while (pp[strcspn(pp, "\n\r")]) {
@@ -308,7 +318,7 @@ static char *game_info(const char *path, const char *d_name)
 static char *game_author(const char *path, const char *d_name)
 {
 	char *p = game_tag(path, d_name, "Author");
-	if (!standalone_sw && p)
+	if (p)
 		p[strcspn(p, "\n\r")] = 0;
 	return p;
 }
