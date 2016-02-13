@@ -346,7 +346,7 @@ end
 
 function game_download(name)
 	local g = game_lookup(name)
-	local url, size = g.url, g.size
+	local url, size = g and g.url, g and g.size
 
 	if not url then
 		io.stderr:write("Game '"..name.."' not found.\n")
