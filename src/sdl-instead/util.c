@@ -881,3 +881,26 @@ int hex2data(const void *d, void *o, int len)
 	}
 	return rc;
 }
+
+void trunc_lines(char *pp, int max)
+{
+	int n = 0;
+
+	if (!pp)
+		return;
+
+	if (max == 0) {
+		pp[strcspn(pp, "\n\r")] = 0;
+		return;
+	}
+
+	while (pp[strcspn(pp, "\n\r")]) {
+		n ++;
+		pp += strcspn(pp, "\n\r");
+		if (n >= max) {
+			*pp = 0;
+			break;
+		}
+		pp ++;
+	}
+}

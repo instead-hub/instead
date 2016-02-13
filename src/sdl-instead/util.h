@@ -88,6 +88,7 @@ extern double mt_random_double(void);
 
 extern void data2hex(const void *d, int len, void *o);
 extern int hex2data(const void *d, void *o, int len);
+extern void trunc_lines(char *pp, int max);
 
 #ifndef PATH_MAX
 #define PATH_MAX 	4096
