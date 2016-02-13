@@ -73,7 +73,7 @@ void game_res_err_msg(const char *filename, int alert)
 {
 	static const char preambule[] = "Can't load: ";
 	char *msg;
-	if (!filename)
+	if (!filename || !*filename)
 		return;
 	if (alert) {
 		msg = malloc(sizeof(preambule) + strlen(filename));
