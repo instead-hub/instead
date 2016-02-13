@@ -297,35 +297,30 @@ function games_feed(url)
 			return chunk:len()
 		end
 	}
-	local turl, tname, game_name, title, game_title
+	local game_name, game_title, game_size
+	local tag
+	local val = {}
 	parser = SLAXML:parser {
 		startElement = function(name, nsURI,nsPrefix)
-			if name == 'name' then
-				tname = true
-			elseif name == 'url' then
-				turl = true
-			elseif name == 'title' then
-				title = true
+			if name == 'game' then
+				tag = false
+				val = {}
+			else
+				tag = name
 			end
 		end, -- When "<foo" or <x:foo is seen
 		attribute  = function(name,value,nsURI,nsPrefix) 
 		end, -- attribute found on current element
 		closeElement = function(name,nsURI)
-			if name == 'name' then
-				tname = false
-			elseif name == 'url' then
-				turl = false
-			elseif name == 'title' then
-				title = false
+			if name == 'game' then
+				table.insert(games, { name = val.name, url = val.url, title = val.title, size = tonumber(val.size) })
+			else
+				tag = false;
 			end
 		end, -- When "</foo>" or </x:foo> or "/>" is seen
 		text = function(text)
-			if tname then
-				game_name = text
-			elseif title then
-				game_title = text
-			elseif turl then
-				table.insert(games, { name = game_name, url = text, title = game_title })
+			if tag and not val[tag] then
+				val[tag] = text
 			end
 		end, -- text and CDATA nodes
 		comment = function(content)
@@ -339,7 +334,7 @@ function game_lookup(name)
 	local k, v
 	for k,v in ipairs(games) do
 		if v.name == name then
-			return v.url
+			return v
 		end
 	end
 end
@@ -350,7 +345,8 @@ local function basename(str)
 end
 
 function game_download(name)
-	local url = game_lookup(name)
+	local g = game_lookup(name)
+	local url, size = g.url, g.size
 
 	if not url then
 		io.stderr:write("Game '"..name.."' not found.\n")
@@ -361,14 +357,25 @@ function game_download(name)
 	if not fd then
 		return
 	end
-	io.stderr:write("Download: "..tostring(basename(url)).." [")
+	io.stderr:write("Download: "..tostring(basename(url)).." [     ]")
+	local sz = 0
 	http.request { 
 		url = url, 
 		sink = function(chunk, err)
 			if not chunk then
 				return 1
 			end
-			io.stderr:write(".")
+			sz = sz + chunk:len()
+			local pcnt
+			if size then
+				pcnt = math.floor(sz * 100 / size)
+				pcnt = string.format("%3d", pcnt);
+				pcnt = pcnt .. '%'
+			else
+				pcnt = math.floor(sz / 1024 / 1024)
+				pcnt = string.format("%4d", pcnt);
+			end
+			io.stderr:write("\b\b\b\b\b\b"..pcnt.." ]")
 			return fd:write(chunk)
 		end
 	}
