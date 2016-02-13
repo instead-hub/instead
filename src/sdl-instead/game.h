@@ -136,6 +136,7 @@ extern void sounds_free(void);
 extern const char *sound_channel(int i);
 extern void *sound_get(const char *fname);
 extern void sound_put(void *sn);
+extern int game_tag_valid(const char *p);
 
 void game_gfx_commit(int sync);
 

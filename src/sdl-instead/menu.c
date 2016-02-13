@@ -82,7 +82,8 @@ static char *slot_name(const char *path)
 		return NULL;
 	l = lookup_tag(path, "Name", "--");
 	if (l) {
-		if (!is_empty(l)) {
+		trunc_lines(l, 0);
+		if (!is_empty(l) && game_tag_valid(l)) {
 			int y;
 			char *m;
 			static char *months[] = {/* to work on every locale ;)*/

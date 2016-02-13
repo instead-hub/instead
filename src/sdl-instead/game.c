@@ -243,16 +243,16 @@ err:
 	return rc;
 }
 
-static int has_tokens(const char *p)
+int game_tag_valid(const char *p)
 {
 	while (p && *p) {
 		p += strcspn(p, "<");
 		if (gfx_get_token(p, NULL, NULL, NULL))
-			return 1;
+			return 0;
 		if (*p == '<')
 			p ++;
 	}
-	return 0;
+	return 1;
 }
 
 static char *game_tag(const char *path, const char *d_name, const char *tag)
@@ -278,7 +278,7 @@ static char *game_tag(const char *path, const char *d_name, const char *tag)
 	if (!l)
 		goto err;
 ok:
-	if (has_tokens(l)) { /* avoid dangerous tags */
+	if (!game_tag_valid(l)) { /* avoid dangerous tags */
 		free(l);
 		return NULL;
 	}
