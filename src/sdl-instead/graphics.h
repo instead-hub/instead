@@ -84,6 +84,7 @@ extern void 	gfx_clip(int x, int y, int w, int h);
 extern void	gfx_getclip(int *x, int *y, int *w, int *h);
 extern int 	gfx_width;
 extern int 	gfx_height;
+extern int 	gfx_fs;
 extern int	gfx_video_init(void);
 extern int 	gfx_set_mode(int w, int h, int fs);
 extern int 	gfx_get_mode(int n, int *w, int *h);
