@@ -656,6 +656,19 @@ static int luaB_get_realpath(lua_State *L) {
 	return 1;
 }
 
+extern char *instead_exec;
+
+static int luaB_get_exepath(lua_State *L) {
+	char instead_path[PATH_MAX];
+	if (instead_exec) {
+		strcpy(instead_path, instead_exec);
+		unix_path(instead_path);
+		lua_pushstring(L, instead_exec);
+		return 1;
+	}
+	return 0;
+}
+
 static void instead_timer_do(void *data)
 {
 	char *p;
@@ -1840,6 +1853,7 @@ static const luaL_Reg base_funcs[] = {
 	{"instead_themespath", luaB_get_themespath},
 	{"instead_gamespath", luaB_get_gamespath},
 	{"instead_realpath", luaB_get_realpath},
+	{"instead_exepath", luaB_get_exepath},
 	{"instead_timer", luaB_set_timer},
 	{"instead_theme_var", luaB_theme_var},
 	{"instead_theme_name", luaB_theme_name},

@@ -7,17 +7,7 @@
 local http = require("socket.http")
 local ltn12 = require("ltn12")
 
-if PLATFORM == "WIN32" then
-	INSTEAD = "sdl-instead.exe"
-else
-	local f = io.open("./sdl-instead", "r")
-	if not f then
-		INSTEAD = "sdl-instead"
-	else
-		INSTEAD = "./sdl-instead"
-		f:close()
-	end
-end
+INSTEAD = instead_exepath()
 
 --[[
 Copyright (c) 2013 Gavin Kistner
@@ -404,6 +394,6 @@ end
 local f = game_download(a[1]) 
 
 if f then
-	os.execute(INSTEAD.." -install "..f);
+	os.execute(INSTEAD.." -install "..f.." -quit");
 	os.remove(f)
 end

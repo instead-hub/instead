@@ -76,6 +76,8 @@ char *lua_sw = NULL;
 static int lua_exec = 1;
 static int nocfg_sw = 0;
 
+char *instead_exec = NULL;
+
 #ifdef _USE_UNPACK
 extern int unpack(const char *zipfilename, const char *where);
 extern char zip_game_dirname[];
@@ -257,6 +259,9 @@ int instead_main(int argc, char *argv[])
 #endif
 #endif
 #endif
+	if (argc > 0)
+		instead_exec = argv[0];
+
 	unix_path(game_cwd);
 	setdir(game_cwd);
 
