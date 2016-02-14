@@ -951,16 +951,6 @@ int game_theme_init(void)
 				gfx_get_max_mode(&w, &h, MODE_ANY); /* fallback to any mode */
 			}
 		}
-		if ((game_theme.w > w || game_theme.h > h) &&
-			(game_theme.w > h || game_theme.h > w)) { /* theme is larger then resolution */
-			if (game_theme.w >= game_theme.h) { /* landscape */
-				w = game_theme.w;
-				h = game_theme.h;
-			} else {
-				w = game_theme.h;
-				h = game_theme.w;
-			}
-		}
 #if defined(ANDROID)
 		if (game_theme.w > game_theme.h)
 			rotate_landscape();
