@@ -1,6 +1,6 @@
 -- 
 -- this is the network game installer
--- Usage: instead -standalone -lua webinst.lua [<game>]
+-- Usage: instead -lua webinst.lua [<game>]
 -- You must have installed luasocket module.
 --
 
