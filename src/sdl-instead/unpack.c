@@ -302,7 +302,7 @@ const char *password;
 	}
 
 	if (*zip_game_dirname) {
-		int s = strlen(zip_game_dirname);
+		size_t s = strlen(zip_game_dirname);
 		unix_path(zip_game_dirname);
 		if (s && (zip_game_dirname[s - 1] == '/'))
 			s --;
