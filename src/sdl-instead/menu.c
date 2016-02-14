@@ -382,7 +382,7 @@ static int menu_settings_num = 0;
 static void menu_strip_tag(const char *a, const char *b)
 {
 	char *p, *ep;
-	int len;
+	size_t len;
 	p = strstr(menu_buff, a);
 	if (!p)
 		return;
@@ -400,7 +400,7 @@ static void menu_strip_tag(const char *a, const char *b)
 static void menu_remove_tag(const char *a, const char *b)
 {
 	char *p, *ep;
-	int len;
+	size_t len;
 	p = strstr(menu_buff, a);
 	if (!p)
 		return;
