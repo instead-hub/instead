@@ -260,7 +260,7 @@ int instead_main(int argc, char *argv[])
 #endif
 #endif
 	if (argc > 0)
-		instead_exec = argv[0];
+		instead_exec = strdup(argv[0]);
 
 	unix_path(game_cwd);
 	setdir(game_cwd);
