@@ -2031,6 +2031,8 @@ int instead_init_lua(const char *path)
 		instead_eval("DEBUG=true"); instead_clear();
 	if (standalone_sw)
 		instead_eval("STANDALONE=true"); instead_clear();
+	srand(time(NULL));
+	mt_random_init();
 	return 0;
 }
 
@@ -2049,8 +2051,6 @@ int instead_init(const char *path)
 	}
 	/* cleanup Lua */
 	instead_clear();
-	srand(time(NULL));
-	mt_random_init();
 	return 0;
 }
 
