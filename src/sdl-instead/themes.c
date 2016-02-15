@@ -931,7 +931,7 @@ int game_theme_update(void)
 	return 0;
 }
 
-#if defined(ANDROID)
+#if defined(ANDROID) || defined(IOS)
 extern void rotate_landscape(void);
 extern void rotate_portrait(void);
 extern void unlock_rotation(void);
