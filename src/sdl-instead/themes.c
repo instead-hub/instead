@@ -943,7 +943,7 @@ int game_theme_init(void)
 	int w  = opt_mode[0];
 	int h  = opt_mode[1];
 
-	if (opt_fs && hires_sw && !gfx_get_max_mode(&w, &h, MODE_ANY)) {
+	if (opt_fs && opt_hires && !gfx_get_max_mode(&w, &h, MODE_ANY)) {
 #if defined(IOS) || defined(ANDROID)
 		if ((game_theme.w > game_theme.h && w < h) ||
 			(game_theme.w < game_theme.h && w > h)) { /* rotated */

@@ -278,6 +278,8 @@ int instead_main(int argc, char *argv[])
 			fullscreen_sw = 1;
 		else if (!strcmp(argv[i], "-hires"))
 			hires_sw = 1;
+		else if (!strcmp(argv[i], "-nohires"))
+			hires_sw = 0;
 		else if (!strcmp(argv[i], "-mode")) {
 			FREE(mode_sw);
 			if ((i + 1) < argc)
@@ -570,7 +572,10 @@ int instead_main(int argc, char *argv[])
 		opt_fs = 0;
 	if (fullscreen_sw)
 		opt_fs = 1;
-	
+
+	if (hires_sw != -1)
+		opt_hires = hires_sw;
+
 	if (mode_sw)
 		parse_mode(mode_sw, opt_mode);
 	
@@ -582,7 +587,7 @@ int instead_main(int argc, char *argv[])
 	if (theme_sw) {
 		FREE(opt_theme);
 		opt_theme = theme_sw;
-	}	
+	}
 	
 	if (opt_theme)
 		game_theme_select(opt_theme);

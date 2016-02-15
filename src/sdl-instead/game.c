@@ -612,7 +612,7 @@ static void el_draw(int n);
 
 int window_sw = 0;
 int fullscreen_sw = 0;
-int hires_sw = 0;
+int hires_sw = -1;
 
 int game_load(int nr)
 {
