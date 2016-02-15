@@ -12,6 +12,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <dirent.h>
+#include <SDL.h>
 
 #include "sdl_iconv.h"
 #include "internals.h"
@@ -232,4 +233,31 @@ int is_absolute_path(const char *path)
 	if (!path || !*path)
 		return 0;
 	return (*path == '/');
+}
+
+void rotate_landscape(void)
+{
+	SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight");
+	if (UIDeviceOrientationIsPortrait([UIApplication sharedApplication].statusBarOrientation)) {
+		[[UIDevice currentDevice] setValue:@(UIDeviceOrientationLandscapeRight) forKey:@"orientation"];
+	}
+}
+
+void rotate_portrait(void)
+{
+	SDL_SetHint(SDL_HINT_ORIENTATIONS, "Portrait PortraitUpsideDown");
+	if (UIDeviceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)) {
+		[[UIDevice currentDevice] setValue:@(UIDeviceOrientationPortrait) forKey:@"orientation"];
+	}
+}
+
+void unlock_rotation(void)
+{
+	SDL_SetHint(SDL_HINT_ORIENTATIONS, "Portrait PortraitUpsideDown LandscapeLeft LandscapeRight");
+}
+
+void ios_cfg_init(void)
+{
+	BOOL is_iPhone = [UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone;
+	opt_fsize = (is_iPhone) ? 5 : 0;
 }

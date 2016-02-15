@@ -64,6 +64,8 @@ extern char *opt_game;
 extern char *opt_theme;
 extern char *opt_lang;
 
+extern void cfg_init(void);
+
 extern int cfg_load(void);
 extern int cfg_save(void);
 

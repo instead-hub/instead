@@ -951,7 +951,7 @@ int game_theme_init(void)
 				gfx_get_max_mode(&w, &h, MODE_ANY); /* fallback to any mode */
 			}
 		}
-#if defined(ANDROID)
+#if defined(ANDROID) || defined(IOS)
 		if (game_theme.w > game_theme.h)
 			rotate_landscape();
 		else if (game_theme.w < game_theme.h)
@@ -961,6 +961,11 @@ int game_theme_init(void)
 #endif
 #endif
 	}
+#if defined(ANDROID) || defined(IOS)
+	else {
+		unlock_rotation();
+	}
+#endif
 
 	if (w == -1) { /* as theme */
 #if !defined(IOS) /* IOS always hardware accelerated */

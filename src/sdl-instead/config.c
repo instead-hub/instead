@@ -117,6 +117,13 @@ static struct parser cfg_parser[] = {
 	{ NULL, NULL, NULL, 0 },
 };
 
+void cfg_init(void)
+{
+#if defined(IOS)
+	ios_cfg_init();
+#endif
+}
+
 static int cfg_parse(const char *path)
 {
 	return parse_ini(path, cfg_parser);
