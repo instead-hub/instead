@@ -57,11 +57,14 @@ extern int opt_justify;
 extern int opt_vsync;
 extern int opt_debug;
 extern int opt_resizable;
+extern int opt_hires;
 
 extern int opt_mode[2];
 extern char *opt_game;
 extern char *opt_theme;
 extern char *opt_lang;
+
+extern void cfg_init(void);
 
 extern int cfg_load(void);
 extern int cfg_save(void);

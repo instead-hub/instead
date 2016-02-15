@@ -487,7 +487,7 @@ char *game_menu_gen(void)
 		switch (menu_settings_num) {
 		case 0:
 			snprintf(menu_buff, sizeof(menu_buff), SETTINGS_GFX_MENU, 
-			opt_get_mode(), opt_fs?ON:OFF, opt_fsize, just[opt_justify],
+			opt_get_mode(), opt_fs?ON:OFF, opt_hires?ON:OFF, opt_fsize, just[opt_justify],
 				opt_hl?ON:OFF, opt_fading?ON:OFF, opt_owntheme?ON:OFF);
 			if (standalone_sw)
 				menu_strip_tag("<?:owntheme>", "</?>");
@@ -615,6 +615,11 @@ int game_menu_act(const char *a)
 		opt_fs ^= 1;
 		game_menu_box(1, game_menu_gen());
 #endif
+	} else if (!strcmp(a, "/hires")) {
+		opt_hires ^= 1;
+		if (opt_fs)
+			restart_needed = 1;
+		game_menu_box(1, game_menu_gen());
 	} else if (!strncmp(a, "/games ", 7)) {
 		if (!strcmp(a + 7, "prev")) {
 			games_menu_from -= MENU_GAMES_MAX;

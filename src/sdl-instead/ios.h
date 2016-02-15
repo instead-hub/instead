@@ -7,4 +7,5 @@
 #define ICON_PATH "icon"
 #define LANG_PATH "lang"
 extern int setup_inbox(void);
+extern void ios_cfg_init(void);
 #endif

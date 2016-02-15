@@ -61,6 +61,8 @@ int standalone_sw = 0;
 
 static int opt_index = 1;
 
+static int nohires_sw = 0;
+
 char *game_sw = NULL;
 char *games_sw = NULL;
 char *theme_sw = NULL;
@@ -278,6 +280,8 @@ int instead_main(int argc, char *argv[])
 			fullscreen_sw = 1;
 		else if (!strcmp(argv[i], "-hires"))
 			hires_sw = 1;
+		else if (!strcmp(argv[i], "-nohires"))
+			nohires_sw = 1;
 		else if (!strcmp(argv[i], "-mode")) {
 			FREE(mode_sw);
 			if ((i + 1) < argc)
@@ -442,8 +446,10 @@ int instead_main(int argc, char *argv[])
 #endif
 		opt_index = i;
 	}
-	if (!nocfg_sw)
-		cfg_load();
+
+	if (nocfg_sw || cfg_load()) { /* no config */
+		cfg_init();
+	}
 
 	if (opt_debug == 1 && debug_sw == 0) {
 		debug_sw = 1;
@@ -570,7 +576,13 @@ int instead_main(int argc, char *argv[])
 		opt_fs = 0;
 	if (fullscreen_sw)
 		opt_fs = 1;
-	
+
+	if (nohires_sw)
+		opt_hires = 0;
+
+	if (hires_sw != -1)
+		opt_hires = hires_sw;
+
 	if (mode_sw)
 		parse_mode(mode_sw, opt_mode);
 	
@@ -582,7 +594,7 @@ int instead_main(int argc, char *argv[])
 	if (theme_sw) {
 		FREE(opt_theme);
 		opt_theme = theme_sw;
-	}	
+	}
 	
 	if (opt_theme)
 		game_theme_select(opt_theme);
@@ -645,6 +657,7 @@ static struct parser profile_parser[] = {
 	{ "appdata", parse_string, &appdata_sw, 0 },
 	{ "fullscreen", parse_int, &fullscreen_sw, 0 },
 	{ "hires", parse_int, &hires_sw, 0 },
+	{ "nohires", parse_int, &nohires_sw, 0 },
 	{ "window", parse_int, &window_sw, 0 },
 	{ "mode", parse_string, &mode_sw, 0 },
 	{ "modes", parse_string, &modes_sw, 0 },
