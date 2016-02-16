@@ -383,6 +383,7 @@ function games_list()
 end
 
 games_feed("http://instead-games.ru/xml.php")
+-- games_feed("http://instead-games.ru/xml2.php")
 
 local a = { ... }
 

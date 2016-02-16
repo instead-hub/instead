@@ -1839,8 +1839,8 @@ int gfx_set_mode(int w, int h, int fs)
 	int vsync = SDL_RENDERER_PRESENTVSYNC;
 	int window_x = SDL_WINDOWPOS_UNDEFINED;
 	int window_y = SDL_WINDOWPOS_UNDEFINED;
-	static int win_w;
-	static int win_h; int sw_fallback = 0;
+	int win_w;
+	int win_h; int sw_fallback = 0;
 	int max_mode_w = 0;
 	int max_mode_h = 0;
 
@@ -1860,19 +1860,14 @@ int gfx_set_mode(int w, int h, int fs)
 	if (fs && !software_sw) {
 		win_w = max_mode_w;
 		win_h = max_mode_h;
-#if 0
-		if ((w < h && win_w > win_h) || (w > h && win_w < win_h)) { /* orientation */
-			if (!gfx_check_mode(max_mode_h, max_mode_w)) {
-				win_w = max_mode_h;
-				win_h = max_mode_w;
-			}
-		}
-#endif
 	}
 	if (gfx_width == w && gfx_height == h && gfx_fs == fs) {
 		game_reset_name();
-		if (SDL_VideoWindow)
+		if (SDL_VideoWindow) {
 			SDL_SetWindowSize(SDL_VideoWindow, win_w, win_h);
+			if (fs)
+				SDL_SetWindowDisplayMode(SDL_VideoWindow, NULL);
+		}
 		return 0; /* already done */
 	}
 	SelectVideoDisplay();
