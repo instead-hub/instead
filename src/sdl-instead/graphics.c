@@ -1863,7 +1863,11 @@ int gfx_set_mode(int w, int h, int fs)
 	}
 	if (gfx_width == w && gfx_height == h && gfx_fs == fs) {
 		game_reset_name();
+#if defined(ANDROID)
+		if (SDL_VideoWindow) /* see gfx_set_mode call from input.c */
+#else
 		if (SDL_VideoWindow && !fs)
+#endif
 			SDL_SetWindowSize(SDL_VideoWindow, win_w, win_h);
 		return 0; /* already done */
 	}
