@@ -1890,6 +1890,7 @@ int gfx_set_mode(int w, int h, int fs)
 	screen = NULL;
 	Renderer = NULL;
 	SDL_VideoTexture = NULL;
+
 	if (SDL_VideoWindow) {
 		SDL_GetWindowPosition(SDL_VideoWindow, &window_x, &window_y);
 		SDL_DestroyWindow(SDL_VideoWindow);
@@ -1907,6 +1908,14 @@ int gfx_set_mode(int w, int h, int fs)
 	t = game_reset_name();
 	if (!t)
 		t = title;
+
+#if defined(ANDROID)
+	/* fix for hackish samsung devices */
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 6);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
+#endif
+
 #if defined(IOS) || defined(ANDROID)
 	SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h, 
 			SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE);
@@ -2002,7 +2011,6 @@ retry:
 	SDL_SetRenderDrawBlendMode(Renderer, SDL_BLENDMODE_NONE);
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
 	SDL_RenderClear(Renderer);
-	SDL_RenderPresent(Renderer);
 	gfx_clear(0, 0, gfx_width, gfx_height);
 	return 0;
 }
