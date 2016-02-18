@@ -50,7 +50,7 @@ local go = function (self, where, back, noenter, noexit, nodsc)
 		if r == false or (stead.api_atleast(1, 3, 0) and v == false and r == nil) then
 			return v, ret(r)
 		end
-		if stead.api_atleast(2, 3, 0) then
+		if stead.api_atleast(2, 4, 0) then
 			jump = PLAYER_MOVED
 		else
 			jump = (self.where ~= was)
@@ -75,7 +75,7 @@ local go = function (self, where, back, noenter, noexit, nodsc)
 		end
 	end
 	
-	if stead.api_atleast(2, 3, 0) then
+	if stead.api_atleast(2, 4, 0) then
 		need_scene = not PLAYER_MOVED;
 	else
 		need_scene = not (stead.ref(where) ~= stead.ref(self.where))

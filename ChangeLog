@@ -8,7 +8,7 @@
   * fix stead.api_atleast/atleast when using with vv.mm format;
   * be more strict while loading combined images;
   * in -debug mode any "resource not found" messages are errors;
-  * be more simple with walk from enter/exit (>=2.3.0);
+  * be more simple with walk from enter/exit (>= 2.4.0);
   * About menu shows game information;
   * -standalone mode;
   * scr.gfx.icon added (SDL2 only, experimental);
