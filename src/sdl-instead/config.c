@@ -67,7 +67,7 @@ int opt_justify = 0;
 int opt_vsync = -1;
 int opt_debug = -1;
 int opt_resizable = -1;
-int opt_hires = 0;
+int opt_hires = 1;
 
 char *opt_game = NULL;
 char *opt_theme = NULL;
