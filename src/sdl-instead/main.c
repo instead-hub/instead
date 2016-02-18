@@ -700,7 +700,8 @@ static int profile_load(const char *prof)
 		snprintf(path, sizeof(path), "%s", p);
 	if (access(path, R_OK))
 		return 0;
-	fprintf(stderr, "Using profile...'%s'\n", path);
+	if (prof)
+		fprintf(stderr, "Using profile...'%s'\n", path);
 	return profile_parse(path);
 }
 #ifndef NOMAIN
