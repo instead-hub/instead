@@ -14,11 +14,12 @@
   * scr.gfx.icon added (SDL2 only, experimental);
   * -noconfig parameter;
   * profiles support added (-profile parameter);
-  * -hires parameter and HQ option;
+  * -hires parameter and HQ option (enabled by default);
   * -modes parameter;
   * Android-NG and IOS ports improvements;
+  * font size scale is displayed in percents;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 30 Jan 2016 10:08:00 +0300
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 18 Feb 2016 15:09:00 +0300
 
 2.3.0
 
