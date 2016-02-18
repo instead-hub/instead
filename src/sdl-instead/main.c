@@ -62,6 +62,7 @@ int standalone_sw = 0;
 static int opt_index = 1;
 
 static int nohires_sw = 0;
+static char *fsize_sw = NULL;
 
 char *game_sw = NULL;
 char *games_sw = NULL;
@@ -292,6 +293,12 @@ int instead_main(int argc, char *argv[])
 			FREE(modes_sw);
 			if ((i + 1) < argc)
 				modes_sw = strdup(argv[++i]);
+		} else if (!strcmp(argv[i], "-fontscale")) {
+			FREE(fsize_sw);
+			if (i + 1 < argc)
+				fsize_sw = strdup(argv[++i]);
+			else
+				fsize_sw = NULL;
 		} else if (!strcmp(argv[i], "-window"))
 			window_sw = 1;
 		else if (!strcmp(argv[i], "-debug")) {
@@ -450,6 +457,17 @@ int instead_main(int argc, char *argv[])
 	if (nocfg_sw || cfg_load()) { /* no config */
 		cfg_init();
 	}
+
+	if (fsize_sw) {
+		int i = atoi(fsize_sw);
+		if (i > 0)
+			opt_fsize = (i - 100) / 10;
+	}
+
+	if (opt_fsize < FONT_MIN_SZ)
+		opt_fsize = FONT_MIN_SZ;
+	else if (opt_fsize > FONT_MAX_SZ)
+		opt_fsize = FONT_MAX_SZ;
 
 	if (opt_debug == 1 && debug_sw == 0) {
 		debug_sw = 1;
@@ -661,6 +679,7 @@ static struct parser profile_parser[] = {
 	{ "window", parse_int, &window_sw, 0 },
 	{ "mode", parse_string, &mode_sw, 0 },
 	{ "modes", parse_string, &modes_sw, 0 },
+	{ "fontscale", parse_string, &fsize_sw, 0 },
 	{ NULL, NULL, NULL, 0 },
 };
 

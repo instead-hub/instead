@@ -18,6 +18,7 @@
   * -modes parameter;
   * Android-NG and IOS ports improvements;
   * font size scale is displayed in percents;
+  * -fontscale <percents> argument;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 18 Feb 2016 15:09:00 +0300
 
