@@ -11,8 +11,8 @@
 #define MENU_PER_PAGER 7
 #endif
 
-#define FONT_MIN_SZ	8
-#define FONT_MAX_SZ	64
+#define FONT_MIN_SZ	-5
+#define FONT_MAX_SZ	30
 
 #define MAX_SAVE_SLOTS 6
 

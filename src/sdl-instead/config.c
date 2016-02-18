@@ -122,6 +122,10 @@ void cfg_init(void)
 #if defined(IOS)
 	ios_cfg_init();
 #endif
+	if (opt_fsize < FONT_MIN_SZ)
+		opt_fsize = FONT_MIN_SZ;
+	else if (opt_fsize > FONT_MAX_SZ)
+		opt_fsize = FONT_MAX_SZ;
 }
 
 static int cfg_parse(const char *path)
