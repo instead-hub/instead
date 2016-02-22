@@ -919,8 +919,8 @@ static int luaB_load_sprite(lua_State *L) {
 		return 0;
 
 	img = gfx_load_image((char*)fname);
-	if (img)
-		img = gfx_display_alpha(img); /*speed up */
+/*	if (img)
+		img = gfx_display_alpha(img);*/ /*speed up */
 	if (img)
 		theme_img_scale(&img);
 
