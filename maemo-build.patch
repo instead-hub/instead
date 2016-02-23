@@ -129,7 +129,7 @@ diff -Nur instead-2.2.0/themes/wide/theme.ini instead-2.2.0-maemo/themes/wide/th
 --- instead-2.2.0/themes/wide/theme.ini	2015-01-01 10:53:54.000000000 +0300
 +++ instead-2.2.0-maemo/themes/wide/theme.ini	2015-01-01 11:04:20.000000000 +0300
 @@ -3,10 +3,3 @@
- ; $Name(ua):Широка$
+ ; $Name(uk):Широка$
  ; $Name(es):Amplio$
  ; $Name(it):Ampio$
 -

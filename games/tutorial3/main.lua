@@ -1,6 +1,6 @@
 -- $Name:Tutorial$
 -- $Name(ru):Обучение$
--- $Name(ua):Навчання$
+-- $Name(uk):Навчання$
 -- $Name(de):Einführung$
 -- $Name(es):Tutorial$
 -- $Name(fr):Tutoriel$
