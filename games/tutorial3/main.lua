@@ -47,7 +47,7 @@ main = room {
 		txtb(tut_lang)..'^^'..
 		img('gb.png')..' '..[[{en|English}^]]..
 		img('ru.png')..' '..[[{ru|Русский}^]]..
-		img('ua.png')..' '..[[{ua|Українська}^]]..
+		img('uk.png')..' '..[[{uk|Українська}^]]..
 		img('es.png')..' '..[[{es|Español}^]]..
 		img('br.png')..' '..[[{pt|Português}^]]..
 		img('it.png')..' '..[[{it|Italiano}^]]..
@@ -56,7 +56,7 @@ main = room {
 	obj = {
 		xact("ru", code [[ gamefile('main-ru.lua', true) ]]);
 		xact("en", code [[ gamefile('main-en.lua', true) ]]);
-		xact("ua", code [[ gamefile('main-ua.lua', true) ]]);
+		xact("uk", code [[ gamefile('main-uk.lua', true) ]]);
 		xact("es", code [[ gamefile('main-es.lua', true) ]]);
 		xact("it", code [[ gamefile('main-it.lua', true) ]]);
 		xact("pt", code [[ gamefile('main-pt.lua', true) ]]);
