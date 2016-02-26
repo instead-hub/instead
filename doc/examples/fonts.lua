@@ -66,8 +66,13 @@ function font(name, size, scale)
 			while true do
 				local start = ss
 				while true do
-					s, e = txt:find("[ \\\t\n^]+", ss);
-					if s and txt:sub(s, s) == '\\' then
+					local s1, e1 = txt:find("\\", ss)
+					s, e = txt:find("[ \t\n^]+", ss);
+					if not s1 or not s then
+						break
+					end
+					if s1 < s then
+						s, e = s1, e1
 						ss = s + 2
 					else
 						break
@@ -82,7 +87,7 @@ function font(name, size, scale)
 					if s then
 						c = txt:sub(s + 1, e)
 					end
-					w = w:gsub("\\([^\\])", "%1")
+					w = w:gsub("\\(.)", "%1")
 					w = w:gsub("[ \t\n]+$", "");
 				end
 				if w and w ~= '' and w ~= '\n' then
