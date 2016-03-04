@@ -1587,6 +1587,33 @@ static void game_instead_restart(void)
 	need_restart = b;
 }
 
+static void game_instead_menu(void)
+{
+	char *menu;
+	if (!curgame_dir)
+		return;
+	instead_function("instead.get_menu", NULL);
+	menu = instead_retval(0);
+	instead_clear();
+	if (!menu)
+		return;
+	if (!strcmp(menu, "save"))
+		menu_toggle(menu_save);
+	else if (!strcmp(menu, "load"))
+		menu_toggle(menu_load);
+	else if (!strcmp(menu, "quit") || !strcmp(menu, "exit"))
+		menu_toggle(menu_askquit);
+	else if (!strcmp(menu, "themes"))
+		menu_toggle(menu_themes);
+	else if (!strcmp(menu, "settings"))
+		menu_toggle(menu_settings);
+	else if (!strcmp(menu, "main"))
+		menu_toggle(menu_main);
+	else
+		menu_toggle(-1);
+	free(menu);
+}
+
 static void finish_music(void *data)
 {
 	int rc;
@@ -2516,6 +2543,7 @@ err:
 
 	game_autosave();
 	game_instead_restart();
+	game_instead_menu();
 #if 0
 	if (err_msg) {
 		game_menu(menu_warning);
