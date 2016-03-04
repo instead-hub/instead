@@ -173,6 +173,7 @@ extern int	themes_lookup_idf(idf_t idf, const char *path, int type);
 extern struct theme *theme_lookup(const char *name, int type);
 extern int 	themes_rename(void);
 extern int	themes_count(int type);
+extern int	themes_max(int *type);
 extern void	themes_drop(int type);
 
 extern int 	game_theme_load(const char *name, int type);
