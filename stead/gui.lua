@@ -68,7 +68,7 @@ end;
 
 iface.nb = function(self, str)
 	if stead.type(str) ~= 'string' then return nil end
-	return "<w:"..str:gsub("\\", "\\\\\\"):gsub(">","\\>"):gsub("%^","\\^")..">";
+	return "<w:"..str:gsub("\\", "\\\\\\\\"):gsub(">","\\>"):gsub("%^","\\^")..">";
 end;
 
 iface.under = function(self, str)
