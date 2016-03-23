@@ -17,7 +17,6 @@ stead = {
 	mouse_pos = instead_mouse_pos,
 	finger_pos = instead_finger_pos,
 	mouse_filter = instead_mouse_filter, 
-	menu_toggle = instead_menu_toggle,
 	set_timer = instead_timer,
 	random = instead_random,
 	randomseed = instead_srandom,
@@ -67,6 +66,17 @@ stead = {
 		f();
 	end
 }
+
+function instead_menu_toggle(n)
+	if n == nil then
+		n = 'main'
+	elseif type(n) ~= 'string' then
+		n = 'toggle'
+	end
+	stead.need_menu = n
+end
+
+stead.menu_toggle = instead_menu_toggle
 
 stead.api_atleast = function(...)
 	local k
@@ -2208,7 +2218,7 @@ stead.game_save = function(self, name, file)
 	h:flush();
 	h:close();
 	game.autosave = false; -- we have only one try for autosave
-	game.restart_game = false
+	stead.restart_game = false
 	return nil;
 end
 
@@ -3049,6 +3059,12 @@ stead.autosave = autosave;
 
 stead.get_restart = function()
 	return stead.restart_game
+end
+
+stead.get_menu = function()
+	local n = stead.need_menu
+	stead.need_menu = nil
+	return n
 end
 
 stead.restart = function()

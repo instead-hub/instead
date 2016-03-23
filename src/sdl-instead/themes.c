@@ -1119,6 +1119,23 @@ int themes_count(int type)
 	return rc;
 }
 
+int themes_max(int *type)
+{
+	int n;
+	int count = themes_count(THEME_GLOBAL);
+
+	if (type)
+		*type = THEME_GLOBAL;
+
+	if ((n = themes_count(THEME_GAME)) > 0 && opt_owntheme) {
+		count = n;
+		if (type)
+			*type = THEME_GAME;
+	}
+
+	return count;
+}
+
 void themes_drop(int type)
 {
 	int new_size;

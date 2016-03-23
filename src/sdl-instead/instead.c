@@ -1508,27 +1508,6 @@ static int luaB_free_sprite(lua_State *L) {
 	return 1;
 }
 
-static int luaB_show_menu(lua_State *L) {
-	const char *menu = luaL_optstring(L, 1, NULL);
-	if (menu) {
-		if (!strcmp(menu, "save"))
-			menu_toggle(menu_save);
-		else if (!strcmp(menu, "load"))
-			menu_toggle(menu_load);
-		else if (!strcmp(menu, "quit") || !strcmp(menu, "exit"))
-			menu_toggle(menu_askquit);
-		else if (!strcmp(menu, "themes"))
-			menu_toggle(menu_themes);
-		else if (!strcmp(menu, "settings"))
-			menu_toggle(menu_settings);
-		else
-			menu_toggle(-1);
-		return 0;
-	}
-	menu_toggle(menu_main);
-	return 0;
-}
-
 static int luaB_stead_busy(lua_State *L) {
 	static unsigned long busy_time = 0;
 	int busy = lua_toboolean(L, 1);
@@ -1860,7 +1839,6 @@ static const luaL_Reg base_funcs[] = {
 	{"instead_timer", luaB_set_timer},
 	{"instead_theme_var", luaB_theme_var},
 	{"instead_theme_name", luaB_theme_name},
-	{"instead_menu_toggle", luaB_show_menu},
 	{"instead_busy", luaB_stead_busy},
 	{"instead_sound_load", luaB_load_sound},
 	{"instead_sound_free", luaB_free_sound},
