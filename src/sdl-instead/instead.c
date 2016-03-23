@@ -1563,6 +1563,7 @@ static int luaB_free_font(lua_State *L) {
 		return 0;
 
 	list_del(&fn->list);
+	fnt_free(fn->fnt);
 	free(fn->name); free(fn);
 	lua_pushboolean(L, 1);
 	return 1;
