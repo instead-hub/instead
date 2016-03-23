@@ -39,7 +39,7 @@ sprite = {
 		return stead.font_load(font, size, ...);
 	end;
 	free_font = function(font)
-		return stead.font_free(key);
+		return stead.font_free(font);
 	end;
 	font_height = function(font)
 		local w,h = stead.sprite_text_size(font)
