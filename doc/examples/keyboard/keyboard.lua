@@ -212,6 +212,14 @@ keyboard = function(v)
 	if not v.msg then
 		v.msg = 'Ввод: ';
 	end
+
+	v.ini = function(s, load)
+		s.alt = false
+		if load and here() == s then
+			s._flt = stead.mouse_filter(0)
+		end
+	end;
+
 	v.entered = function(s)
 		s.text = '';
 		s.alt = false
@@ -225,6 +233,7 @@ keyboard = function(v)
 		hook_keys('left alt', 'right alt', 'alt')
 		hook_keys('left shift', 'right shift', 'shift')
 		hook_keys('return');
+		s._flt = stead.mouse_filter(0)
 	end
 	v.left = function(s)
 		unhook_keys('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z');
@@ -235,6 +244,7 @@ keyboard = function(v)
 		unhook_keys('left alt', 'right alt', 'alt')
 		unhook_keys('left shift', 'right shift', 'shift')
 		unhook_keys('return');
+		stead.mouse_filter(s._flt)
 	end
 	v.kbd = function(s, press, key)
 		if key:find("alt") then
