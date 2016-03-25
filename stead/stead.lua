@@ -15,6 +15,7 @@ stead = {
 	math = math,
 	ticks = instead_ticks,
 	mouse_pos = instead_mouse_pos,
+	mouse_show = instead_mouse_show,
 	finger_pos = instead_finger_pos,
 	mouse_filter = instead_mouse_filter, 
 	set_timer = instead_timer,

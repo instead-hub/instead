@@ -2937,6 +2937,8 @@ int mouse_restore(void)
 	return 0;
 }
 
+int game_cursor_show = 1;
+
 void game_cursor(int on)
 {
 	static img_t	grab = NULL;
@@ -2945,7 +2947,7 @@ void game_cursor(int on)
 	int xx, yy, ww, hh;
 	gfx_getclip(&xx, &yy, &ww, &hh);
 	gfx_noclip();
-	if (on == CURSOR_OFF)	
+	if (on == CURSOR_OFF)
 		cur = NULL;
 
 	if (grab) {
@@ -2953,7 +2955,7 @@ void game_cursor(int on)
 		gfx_free_image(grab);
 		grab = NULL;
 	}
-	
+
 	if (on == CURSOR_OFF) {
 		gfx_update(xc, yc, w, h);
 		goto out;
@@ -2983,7 +2985,7 @@ void game_cursor(int on)
 		h = gfx_img_h(cur);
 
 		grab = gfx_grab_screen(xc, yc, w, h);
-		if (mouse_focus())
+		if (mouse_focus() && (game_cursor_show || menu_shown))
 			gfx_draw(cur, xc, yc);
 
 		if (on != CURSOR_DRAW) {

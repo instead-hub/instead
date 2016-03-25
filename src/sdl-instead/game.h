@@ -146,6 +146,7 @@ void game_gfx_commit(int sync);
 #define CURSOR_DRAW   2
 
 extern void 	game_cursor(int on); /* must be called with -1 before gfx change and 1 after, 2 - not update */
+extern int game_cursor_show;
 
 struct game {
 	char *path;

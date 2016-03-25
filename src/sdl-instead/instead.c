@@ -1650,6 +1650,15 @@ static int luaB_mouse_filter(lua_State *L) {
 	return 1;
 }
 
+static int luaB_mouse_show(lua_State *L) {
+	int show = lua_toboolean(L, 1);
+	int ov = game_cursor_show;
+	if (lua_isboolean(L, 1))
+		game_cursor_show = show;
+	lua_pushboolean(L, ov);
+	return 1;
+}
+
 static int luaB_get_ticks(lua_State *L) {
 	lua_pushnumber(L, gfx_ticks());
 	return 1;
@@ -1849,6 +1858,7 @@ static const luaL_Reg base_funcs[] = {
 
 	{"instead_mouse_pos", luaB_mouse_pos},
 	{"instead_mouse_filter", luaB_mouse_filter},
+	{"instead_mouse_show", luaB_mouse_show},
 	{"instead_finger_pos", luaB_finger_pos},
 
 	{"instead_font_load", luaB_load_font},
