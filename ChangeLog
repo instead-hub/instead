@@ -1,3 +1,17 @@
+2.4.1
+
+  * sprite from sprite load bug fixed with scaling;
+  * fix in themes pager;
+  * fix in stead.menu_toggle();
+  * memory leak in free_font (sprtites) fixed;
+  * new stead.mouse_show();
+  * fix in txtnb() escaping;
+  * fix in stead.busy();  
+  * fixes in fonts,cutscene and keyboard example modules;
+  * ua -> uk language, fixes in translation;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sun, 10 Apr 2016 11:27:00 +0300
+
 2.4.0
 
   * txty (iface.y) -- y position in text;
