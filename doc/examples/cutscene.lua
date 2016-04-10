@@ -70,6 +70,12 @@ cutscene = function(v)
 	end
 
 	v.timer = function(s)
+		if not s._to then
+			if game.timer then
+				return game:timer()
+			end
+			return
+		end
 		s._fading = nil
 		s._state = s._state + 1
 		timer:stop()
@@ -99,6 +105,8 @@ cutscene = function(v)
 		s._txt = nil
 		s._dsc = nil
 		s._pic = nil
+		s._to = nil
+		s._timer_fn = nil
 	end
 
 	v:reset()
@@ -196,7 +204,8 @@ cutscene = function(v)
 			if not a or a == "" then
 				a = 1000
 			end
-			timer:set(tonumber(a))
+			self._to = tonumber(a)
+			timer:set(self._to)
 		elseif c == 'cut' then
 			self._state = self._state + 1
 			if not a or a == "" then
@@ -208,7 +217,8 @@ cutscene = function(v)
 				a = game.gui.fading
 			end
 			self._fading = tonumber(a)
-			timer:set(10)
+			self._to = 10
+			timer:set(self._to)
 		end
 	end
 	v.dsc = function(s)
