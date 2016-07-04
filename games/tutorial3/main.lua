@@ -6,6 +6,7 @@
 -- $Name(fr):Tutoriel$
 -- $Name(it):Tutorial$
 -- $Name(pt):Tutorial$
+-- $Name(nl):Snelstart Training$
 
 instead_version "1.6.0"
 require "xact"
@@ -19,6 +20,7 @@ tut_lang = {
 	pt = 'Linguagem',
 	fr = 'Langue',
 	de = 'Sprache',
+	nl = 'Taal',
 }
 
 tut_title = {
@@ -30,6 +32,7 @@ tut_title = {
 	pt = 'Tutorial',
 	fr = 'Tutoriel',
 	de = 'Einführung',
+	nl = 'Snelstart Training',
 }
 
 if not LANG or not tut_lang[LANG] then
@@ -52,7 +55,9 @@ main = room {
 		img('br.png')..' '..[[{pt|Português}^]]..
 		img('it.png')..' '..[[{it|Italiano}^]]..
 		img('fr.png')..' '..[[{fr|Français}^]]..
-		img('de.png')..' '..[[{de|Deutsch}]]);
+		img('de.png')..' '..[[{de|Deutsch}^]]..
+		img('nl.png')..' '..[[{nl|Nederlands}^]]..
+		'');
 	obj = {
 		xact("ru", code [[ gamefile('main-ru.lua', true) ]]);
 		xact("en", code [[ gamefile('main-en.lua', true) ]]);
@@ -62,5 +67,6 @@ main = room {
 		xact("pt", code [[ gamefile('main-pt.lua', true) ]]);
 		xact("fr", code [[ gamefile('main-fr.lua', true) ]]);
 		xact("de", code [[ gamefile('main-de.lua', true) ]]);
+		xact("nl", code [[ gamefile('main-nl.lua', true) ]]);
 	}
 }
