@@ -197,7 +197,7 @@ r6 = room {
 	end,
 	dsc = [[Lição 6. Movendo-se - Parte II^^
 		Agora vá para a última lição.]],
-	way = { 'r1', 'r2', 'r3', 'r4', 'r6', 'theend'},
+	way = { 'r1', 'r2', 'r3', 'r4', 'r5', 'theend'},
 };
 
 theend = room {

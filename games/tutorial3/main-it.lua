@@ -194,7 +194,7 @@ r6 = room {
 	end,
 	dsc = [[Lezione 6. Movimenti - Parte II^^
 		Ora passiamo all'ultimo step di questa guida.]],
-	way = { 'r1', 'r2', 'r3', 'r4', 'r6', 'theend'},
+	way = { 'r1', 'r2', 'r3', 'r4', 'r5', 'theend'},
 };
 
 theend = room {
