@@ -24,35 +24,67 @@
 
 #ifndef __INSTEAD_H__
 #define __INSTEAD_H__
+#include <lua.h>
+#include <lauxlib.h>
+
+#include "idf.h"
 
 #define INSTEAD_NIL  0
 #define INSTEAD_NUM  1
 #define INSTEAD_STR  2
 #define INSTEAD_BOOL 3
 
+#define INSTEAD_HOOK_INIT 0
+#define INSTEAD_HOOK_DONE 1
+#define INSTEAD_HOOK_ERR 2
+#define INSTEAD_HOOK_MAX 2
+
+#define INSTEAD_MAIN	"main.lua"
+#define INSTEAD_IDF	"data.idf"
+
+#ifndef STEAD_PATH
+#define STEAD_PATH 	"./stead"
+#endif
+
 struct instead_args {
 	int type;
 	const char *val;
 };
 
-extern int  instead_init(const char *path);
-extern int  instead_load(char *game);
+extern int  instead_init(const char *path, const char *wd, int idf);
+extern int  instead_load(void);
 extern void instead_done(void);
 extern char *instead_cmd(char *s);
 extern char *instead_file_cmd(char *s);
+
 extern int  instead_function(char *s, struct instead_args *args);
 extern int  instead_eval(char *s);
 extern int  instead_clear(void);
 extern char *instead_retval(int n);
 extern int  instead_bretval(int n);
 extern int  instead_iretval(int n);
-extern int	instead_lang(void);
-char 		*fromgame(const char *s);
+extern char *instead_fromgame(const char *s);
 extern int  instead_encode(const char *s, const char *d);
 extern int  instead_busy(void);
 
 /* internal use */
-extern int  instead_init_lua(const char *path);
+extern int  instead_init_lua(const char *path, const char *wd);
 extern int  instead_loadscript(char *name, int argc, char **argv, int exec);
+
+extern void 	instead_err_msg(const char *s);
+extern const	char *instead_err(void);
+
+extern int	instead_api_register(const luaL_Reg *api);
+typedef int	(*instead_hook_fn)(void);
+extern int	instead_hook_register(int nr, instead_hook_fn fn);
+
+extern idf_t  instead_idf(void);
+extern int  instead_set_lang(const char *lang);
+extern int  instead_set_debug(int);
+extern int  instead_set_standalone(int);
+
+extern lua_State *instead_lua(void);
+
+extern char	*instead_local_stead_path(void);
 
 #endif

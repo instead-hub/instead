@@ -231,6 +231,12 @@ static void usage(void)
 	"    -vsync\n        Enable vsync display output (SDL2 only)\n");
 }
 static int profile_load(const char *path);
+extern int game_instead_extensions(void);
+
+static int sdl_extensions(void)
+{
+	return game_instead_extensions();
+}
 
 int instead_main(int argc, char *argv[])
 {
@@ -262,6 +268,8 @@ int instead_main(int argc, char *argv[])
 #endif
 #endif
 #endif
+	instead_hook_register(INSTEAD_HOOK_INIT, sdl_extensions);
+
 	if (argc > 0)
 		instead_exec = strdup(argv[0]);
 
@@ -487,7 +495,7 @@ int instead_main(int argc, char *argv[])
 
 	if (lua_sw) {
 		standalone_sw = 1;
-		err = instead_init_lua(dirname(lua_sw));
+		err = instead_init_lua(dirname(lua_sw), game_cwd);
 		if (err)
 			goto out;
 		if (!err)

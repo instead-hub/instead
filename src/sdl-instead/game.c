@@ -30,13 +30,8 @@
 #define MOTION_TIME (abs(timer_counter - click_time) >= 200 / HZ)
 int game_running = 1;
 
-char *err_msg = NULL;
-
-#define ERR_MSG_MAX 512
 char	game_cwd[PATH_MAX];
 char	*curgame_dir = NULL;
-
-#define DATA_IDF "data.idf"
 
 idf_t game_idf = NULL;
 
@@ -55,20 +50,6 @@ static	char *last_cmd = NULL;
 
 void game_cursor(int on);
 
-void game_err_msg(const char *s)
-{
-	if (err_msg)
-		free(err_msg);
-	if (s) {
-		err_msg = strdup(s);
-		if (err_msg && strlen(err_msg) > ERR_MSG_MAX) {
-			err_msg[ERR_MSG_MAX - 4] = 0;
-			strcat(err_msg, "...");
-		}
-	} else
-		err_msg = NULL;
-}
-
 void game_res_err_msg(const char *filename, int alert)
 {
 	static const char preambule[] = "Can't load: ";
@@ -80,7 +61,7 @@ void game_res_err_msg(const char *filename, int alert)
 		if (msg) {
 			strcpy(msg, preambule);
 			strcat(msg, filename);
-			game_err_msg(msg);
+			instead_err_msg(msg);
 			free(msg);
 		}
 	}
@@ -104,10 +85,10 @@ int is_game(const char *path, const char *n)
 		return 1;
 	}
 	strcat(p, "/");
-	pp = malloc(strlen(p) + strlen(MAIN_FILE) + 1);
+	pp = malloc(strlen(p) + strlen(INSTEAD_MAIN) + 1);
 	if (pp) {
 		strcpy(pp, p);
-		strcat(pp, MAIN_FILE);
+		strcat(pp, INSTEAD_MAIN);
 		if (!access(pp, R_OK))
 			rc = 1;
 		free(pp);
@@ -186,30 +167,17 @@ int game_select(const char *name)
 		char *oldgame = curgame_dir;
 		curgame_dir = g->dir;
 		instead_done();
-		if (instead_init((g->idf) ? NULL : g->path)) {
-			curgame_dir = oldgame;
-			goto err;
-		}
 
-		if (g->idf) {
+		instead_set_debug(debug_sw);
+		instead_set_standalone(standalone_sw);
+
+		if (instead_init((g->idf) ? NULL : g->path, game_cwd, g->idf)) {
+			curgame_dir = oldgame;
 			setdir(game_cwd);
-			if (oldgame != curgame_dir) {
-				idf_done(game_idf);
-				game_idf = idf_init(g->path);
-				if (game_idf)
-					idf_only(game_idf, 1);
-			}
-		}
-		
-		if ((!g->idf && setdir(g->path)) || (g->idf && !game_idf)) {
-			curgame_dir = oldgame;
 			goto err;
 		}
 
-		if (oldgame != curgame_dir && !g->idf) {
-			idf_done(game_idf);
-			game_idf = idf_init(DATA_IDF);
-		}
+		game_idf = instead_idf();
 
 		themes_lookup_idf(game_idf, "themes/", THEME_GAME);
 		if (idf_only(game_idf, -1) != 1)
@@ -224,15 +192,12 @@ int game_select(const char *name)
 			goto err;
 		}
 
-		rc = instead_function("stead:init", NULL); instead_clear();
-		if (rc)
-			goto err;
+		instead_set_lang(opt_lang);
 
-		if (instead_load(MAIN_FILE)) {
+		if ((rc = instead_load())) {
 			curgame_dir = oldgame;
 			goto err;
 		}
-		rc = instead_function("game:ini", NULL); instead_clear();
 	} else {
 		game_use_theme();
 		game_theme_init();
@@ -263,14 +228,14 @@ static char *game_tag(const char *path, const char *d_name, const char *tag)
 	if (idf_magic(path)) {
 		idf_t idf = idf_init(path);
 		if (idf) {
-			l = lookup_lang_tag_idf(idf, MAIN_FILE, tag, "--");
+			l = lookup_lang_tag_idf(idf, INSTEAD_MAIN, tag, "--");
 			idf_done(idf);
 		}
 		if (l)
 			goto ok;
 		goto err;
 	}
-	p = getfilepath(path, MAIN_FILE);
+	p = getfilepath(path, INSTEAD_MAIN);
 	if (!p)
 		goto err;
 	l = lookup_lang_tag(p, tag, "--");
@@ -676,7 +641,7 @@ int game_save(int nr)
 		p = instead_file_cmd(cmd);
 		if (p)
 			free(p);
-		if (!instead_bretval(1) || (!p && err_msg)) {
+		if (!instead_bretval(1) || (!p && instead_err())) {
 			instead_clear();
 			game_menu(menu_warning);
 			return -1;
@@ -1027,9 +992,6 @@ int game_init(const char *name)
 	getdir(game_cwd, sizeof(game_cwd));
 	unix_path(game_cwd);
 
-	if (name)
-		game_err_msg(NULL);
-
 	snd_init(opt_hz);
 
 	if (!nosound_sw)
@@ -1138,7 +1100,7 @@ void game_done(int err)
 	gfx_video_done();
 #endif */
 	game_own_theme = 0;
-	idf_done(game_idf); game_idf = NULL;
+	game_idf = NULL;
 	need_restart = 0;
 /*	SDL_Quit(); */
 }	
@@ -2545,7 +2507,7 @@ err:
 	game_instead_restart();
 	game_instead_menu();
 #if 0
-	if (err_msg) {
+	if (instead_err()) {
 		game_menu(menu_warning);
 		return -1;
 	}
@@ -3836,10 +3798,26 @@ int game_loop(void)
 			}
 		}
 		game_cursor(CURSOR_ON);
-		if (err_msg) {
+		if (instead_err()) {
 			game_menu(menu_warning);
 		}
 		game_gfx_commit(0);
 	}
+	return 0;
+}
+
+extern int instead_bits_init(void);
+extern int instead_timer_init(void);
+extern int instead_sprites_init(void);
+extern int instead_sound_init(void);
+extern int instead_paths_init(void);
+
+int game_instead_extensions(void)
+{
+	instead_bits_init();
+	instead_timer_init();
+	instead_sprites_init();
+	instead_sound_init();
+	instead_paths_init();
 	return 0;
 }

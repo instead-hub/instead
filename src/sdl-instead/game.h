@@ -33,7 +33,6 @@
 #define GAMES_PATH "./games"
 #endif
 
-#define MAIN_FILE	"main.lua"
 #define HZ 		100
 
 extern int	game_running;
@@ -47,17 +46,16 @@ extern int 	window_sw;
 extern int	nopause_sw;
 extern int 	game_own_theme; /* current game has own theme */
 extern char	*games_sw;
-extern char 	*err_msg; /* last error message */
 extern char 	game_cwd[PATH_MAX]; /* current game cwd */
 extern char 	*curgame_dir;
 extern int	vsync_sw;
 extern int	resizable_sw;
 extern int	standalone_sw;
 
-extern char	*game_local_stead_path(void);
 extern char	*appdir(void);
 
 extern char 	*game_local_games_path(int cr);
+extern char 	*game_local_themes_path(void);
 extern char 	*game_tmp_path(void);
 extern int 	game_theme_select(const char *name);
 
@@ -88,7 +86,6 @@ extern int	games_remove(int nr);
 extern int	games_replace(const char *path, const char *dir);
 extern int 	games_rename(void);
 
-extern void 	game_err_msg(const char *s);
 extern void 	game_res_err_msg(const char *s, int alert);
 extern int 	game_error(void);
 

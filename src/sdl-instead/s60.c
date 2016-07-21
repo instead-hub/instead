@@ -136,7 +136,7 @@ char *game_local_themes_path(void)
 	return local_themes_path;
 }
 
-char *game_local_stead_path(void)
+char *instead_local_stead_path(void)
 {
 	char *app = appdir();
 	if (!app)

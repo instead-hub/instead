@@ -96,7 +96,7 @@ static char *slot_name(const char *path)
 			struct tm *tm;
 			time_t t;
 
-			char *s = fromgame(l);
+			char *s = instead_fromgame(l);
 			free(l);
 			if (!s)
 				return s;
@@ -537,12 +537,12 @@ char *game_menu_gen(void)
 		save_menu();
 	} else if (cur_menu == menu_error) {
 		snprintf(menu_buff, sizeof(menu_buff),
-		ERROR_MENU, err_msg?err_msg:UNKNOWN_ERROR);
-		game_err_msg(NULL);
+		ERROR_MENU, instead_err()?instead_err():UNKNOWN_ERROR);
+		instead_err_msg(NULL);
 	} else if (cur_menu == menu_warning) {
 		snprintf(menu_buff, sizeof(menu_buff),
-		WARNING_MENU, err_msg?err_msg:UNKNOWN_ERROR);
-		game_err_msg(NULL);
+		WARNING_MENU, instead_err()?instead_err():UNKNOWN_ERROR);
+		instead_err_msg(NULL);
 	} else if (cur_menu == menu_remove) {
 		const char *sname = games[gtr].path;
 		if (strlen(games[gtr].path) >= 48) {
@@ -809,7 +809,7 @@ int game_menu_act(const char *a)
 				cur_lang = 0;
 		} while (menu_lang_select(langs[cur_lang].file));
 		if (curgame_dir)
-			instead_lang();
+			instead_set_lang(opt_lang);
 		themes_rename();
 		games_rename();
 		game_reset_name();
@@ -821,7 +821,7 @@ int game_menu_act(const char *a)
 			cur_lang = langs_nr - 1;
 		} while (menu_lang_select(langs[cur_lang].file));
 		if (curgame_dir)
-			instead_lang();
+			instead_set_lang(opt_lang);
 		themes_rename();
 		games_rename();
 		game_reset_name();
