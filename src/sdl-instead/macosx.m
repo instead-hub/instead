@@ -24,12 +24,6 @@ static char local_games_path[PATH_MAX];
 static char local_themes_path[PATH_MAX];
 static char local_stead_path[PATH_MAX];
 
-
-void	nsleep(int u)
-{
-	usleep(u);
-}
-
 char *game_locale(void)
 {
 	char *p;

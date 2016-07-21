@@ -1,4 +1,7 @@
+#ifdef _USE_SDL
 #include <SDL_config.h>
+#endif
+
 #ifdef _WIN32_WCE
 #include "wince.h"
 #endif
@@ -15,7 +18,10 @@
 /* #include <libintl.h> */
 #include <unistd.h>
 
+#ifdef _USE_SDL
 #include "sdl_iconv.h"
+#endif
+
 #include <limits.h>
 /* #include <pwd.h> */
 

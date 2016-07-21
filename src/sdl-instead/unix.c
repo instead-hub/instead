@@ -37,6 +37,7 @@
 #include "sdl_iconv.h"
 #include "internals.h"
 #ifdef _USE_GTK
+#include "input.h"
 #include <gtk/gtk.h>
 #endif
 
@@ -49,12 +50,6 @@ static char cfg_path[PATH_MAX];
 static char local_games_path[PATH_MAX];
 static char local_themes_path[PATH_MAX];
 static char local_stead_path[PATH_MAX];
-
-
-void	nsleep(int u)
-{
-	usleep(u);
-}
 
 char *game_locale(void)
 {
@@ -187,7 +182,7 @@ char *open_file_dialog(void)
 			while ((input(&ev, 0)) == AGAIN);
 		} 
 		while ((input(&ev, 0)) == AGAIN);
-		nsleep(HZ*100);
+		usleep(HZ*100);
 	}
 	if (gtk_response == GTK_RESPONSE_ACCEPT) {
 		filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (file_dialog));
@@ -312,7 +307,7 @@ char *game_save_path(int cr, int nr)
 		return NULL;
 	snprintf(save_path, sizeof(save_path) - 1, "%s/saves/%s/", app, curgame_dir);
 	if (cr && mkdir(save_path, S_IRWXU) && errno != EEXIST)
-		return NULL;	
+		return NULL;
 	if (nr)
 		snprintf(save_path, sizeof(save_path) - 1, "%s/saves/%s/save%d", app, curgame_dir, nr);
 	else

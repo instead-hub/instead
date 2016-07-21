@@ -29,11 +29,6 @@ static char local_stead_path[PATH_MAX];
 
 extern int setup_zip(const char *file, char *p);
 
-void	nsleep(int u)
-{
-	usleep(u);
-}
-
 char *game_locale(void)
 {
 	NSString * language = [[NSLocale preferredLanguages] objectAtIndex:0];

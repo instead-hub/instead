@@ -49,8 +49,8 @@ extern char *strip(char *s);
 char *getfilepath(const char *d, const char *n);
 
 extern char *lookup_tag(const char *fname, const char *tag, const char *comm);
-extern char *lookup_lang_tag(const char *fname, const char *tag, const char *comm);
-extern char *lookup_lang_tag_idf(idf_t idf, const char *fname, const char *tag, const char *comm);
+extern char *lookup_lang_tag(const char *fname, const char *tag, const char *comm, const char *lang);
+extern char *lookup_lang_tag_idf(idf_t idf, const char *fname, const char *tag, const char *comm, const char *lang);
 
 extern int parse_esc_string(const char *v, void *data);
 extern int parse_string(const char *v, void *data);

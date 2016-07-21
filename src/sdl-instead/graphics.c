@@ -5294,8 +5294,6 @@ static Uint32 update(Uint32 interval, void *aux)
 	return interval;
 }
 
-extern void nsleep(int delay);
-
 void gfx_change_screen(img_t src, int steps)
 {
 	struct inp_event ev;

@@ -51,11 +51,6 @@ static char local_stead_path[PATH_MAX];
 
 extern void s60delay(int u);
 
-void	nsleep(int u)
-{
-	s60delay(u);
-}
-
 char *game_locale(void)
 {
 	char *p;

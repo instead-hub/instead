@@ -44,11 +44,6 @@ static char local_stead_path[PATH_MAX];
 static char save_path[PATH_MAX];
 static char cfg_path[PATH_MAX];
 
-void	nsleep(int u)
-{
-	Sleep(u);
-}
-
 char *game_locale(void)
 {
 	char buff[64];

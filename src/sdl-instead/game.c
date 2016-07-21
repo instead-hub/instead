@@ -228,7 +228,7 @@ static char *game_tag(const char *path, const char *d_name, const char *tag)
 	if (idf_magic(path)) {
 		idf_t idf = idf_init(path);
 		if (idf) {
-			l = lookup_lang_tag_idf(idf, INSTEAD_MAIN, tag, "--");
+			l = lookup_lang_tag_idf(idf, INSTEAD_MAIN, tag, "--", opt_lang);
 			idf_done(idf);
 		}
 		if (l)
@@ -238,7 +238,7 @@ static char *game_tag(const char *path, const char *d_name, const char *tag)
 	p = getfilepath(path, INSTEAD_MAIN);
 	if (!p)
 		goto err;
-	l = lookup_lang_tag(p, tag, "--");
+	l = lookup_lang_tag(p, tag, "--", opt_lang);
 	free(p);
 	if (!l)
 		goto err;

@@ -1074,7 +1074,7 @@ static char *theme_name(const char *path, const char *d_name)
 	char *p = getfilepath(path, THEME_FILE);
 	if (!p)
 		goto err;
-	l = lookup_lang_tag(p, "Name", ";");
+	l = lookup_lang_tag(p, "Name", ";", opt_lang);
 	free(p);
 	if (l) 
 		return l;
@@ -1088,7 +1088,7 @@ static char *theme_name_idf(idf_t idf, const char *path, const char *d_name)
 	char *p = getfilepath(path, THEME_FILE);
 	if (!p)
 		goto err;
-	l = lookup_lang_tag_idf(idf, p, "Name", ";");
+	l = lookup_lang_tag_idf(idf, p, "Name", ";", opt_lang);
 	free(p);
 	if (l) 
 		return l;

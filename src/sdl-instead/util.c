@@ -23,7 +23,6 @@
  */
 
 #include "externals.h"
-#include "config.h"
 #include "util.h"
 #include "idf.h"
 
@@ -535,7 +534,7 @@ char *lookup_tag(const char *fname, const char *tag, const char *comm)
 	return l;
 }
 
-char *lookup_lang_tag(const char *fname, const char *tag, const char *comm)
+char *lookup_lang_tag(const char *fname, const char *tag, const char *comm, const char *opt_lang)
 {
 	char lang_tag[1024];
 	char *l;
@@ -546,7 +545,7 @@ char *lookup_lang_tag(const char *fname, const char *tag, const char *comm)
 	return l;
 }
 
-char *lookup_lang_tag_idf(idf_t idf, const char *fname, const char *tag, const char *comm)
+char *lookup_lang_tag_idf(idf_t idf, const char *fname, const char *tag, const char *comm, const char *opt_lang)
 {
 	char lang_tag[1024];
 	char *l;

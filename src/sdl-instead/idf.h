@@ -25,6 +25,10 @@
 #ifndef __IDF_H_INCLUDED
 #define __IDF_H_INCLUDED
 
+#include "externals.h"
+#include "list.h"
+#include "cache.h"
+
 struct _idf_t;
 struct _idff_t;
 typedef struct _idf_t *idf_t;
