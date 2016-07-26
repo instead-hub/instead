@@ -24,9 +24,9 @@
 
 #ifndef __INSTEAD_H__
 #define __INSTEAD_H__
+
 #include <lua.h>
 #include <lauxlib.h>
-
 #include "idf.h"
 
 #define INSTEAD_NIL  0
@@ -51,7 +51,7 @@ struct instead_args {
 	const char *val;
 };
 
-extern int  instead_init(const char *path, const char *wd, int idf);
+extern int  instead_init(const char *path);
 extern int  instead_load(void);
 extern void instead_done(void);
 extern char *instead_cmd(char *s);
@@ -68,8 +68,9 @@ extern int  instead_encode(const char *s, const char *d);
 extern int  instead_busy(void);
 
 /* internal use */
-extern int  instead_init_lua(const char *path, const char *wd);
+extern int  instead_init_lua(const char *path);
 extern int  instead_loadscript(char *name, int argc, char **argv, int exec);
+extern int  instead_loadfile(char *name);
 
 extern void 	instead_err_msg(const char *s);
 extern const	char *instead_err(void);

@@ -22,11 +22,11 @@
  *
  */
 
-#include "externals.h"
+#include "system.h"
 #include "idf.h"
 #include "util.h"
-
-
+#include "cache.h"
+#include "list.h"
 
 typedef struct _idfd_t {
 	struct list_head list;

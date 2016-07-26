@@ -22,7 +22,7 @@
  *
  */
 
-#include "externals.h"
+#include "system.h"
 #include "instead.h"
 #include "util.h"
 #include "list.h"
@@ -478,15 +478,23 @@ err:
 	return -1;
 }
 
+int instead_loadfile(char *name)
+{
+	return instead_loadscript(name, -1, NULL, 1);
+}
+
 int instead_loadscript(char *name, int argc, char **argv, int exec)
 {
 	int status;
-	if (exec)
+	if (exec && argc >= 0)
 		instead_getargs(argv, argc);
 	status = luaL_loadfile(L, name);
 	if (!status) {
 		if (exec) {
-			lua_insert(L, -(argc + 1));
+			if (argc >= 0)
+				lua_insert(L, -(argc + 1));
+			else
+				argc = 0;
 			status |= docall(L, argc);
 		}
 	}
@@ -702,7 +710,6 @@ static int instead_platform(void)
 
 static int instead_package(const char *path)
 {
-	char *p;
 	char *stead_path;
 	stead_path = malloc(PATH_MAX * 5); /* instead_cwd + STEAD_PATH and so on... */
 	if (!stead_path)
@@ -718,13 +725,15 @@ static int instead_package(const char *path)
 		strcat(stead_path, "./?.lua;");
 #endif
 
-	p = instead_local_stead_path();
+#ifdef INSTEAD_LEGACY
+	p = instead_local_stead_path(wd);
 	if (p) {
 		strcat(stead_path, p);
 		strcat(stead_path, "/?.lua;");
 	}
+#endif
 
-	if (STEAD_PATH[0] != '/') {
+	if (!is_absolute_path(STEAD_PATH)) {
 		strcat(stead_path, instead_cwd);
 		strcat(stead_path, "/");
 		strcat(stead_path, STEAD_PATH);
@@ -744,14 +753,14 @@ static int instead_package(const char *path)
 	return 0;
 }
 
-int instead_init_lua(const char *path, const char *wd)
+int instead_init_lua(const char *path)
 {
 	busy = 0;
 	setlocale(LC_ALL,"");
 	setlocale(LC_NUMERIC,"C"); /* to avoid . -> , in numbers */	
 	setlocale(LC_CTYPE,"C"); /* to avoid lower/upper problems */	
 /*	strcpy(curcp, "UTF-8"); */
-	strncpy(instead_cwd, wd, sizeof(instead_cwd) - 1);
+	getdir(instead_cwd, sizeof(instead_cwd));
 	instead_cwd[sizeof(instead_cwd) - 1] = 0;
 	/* initialize Lua */
 #if LUA_VERSION_NUM >= 502
@@ -785,10 +794,13 @@ int instead_init_lua(const char *path, const char *wd)
 	return 0;
 }
 
-int instead_init(const char *path, const char *wd, int idf)
+int instead_init(const char *path)
 {
-	if (instead_init_lua(path, wd))
+	int idf = 0;
+
+	if (instead_init_lua(path))
 		goto err;
+
 
 	if (dofile(L, dirpath(STEAD_PATH"/stead.lua")))
 		goto err;
@@ -798,24 +810,23 @@ int instead_init(const char *path, const char *wd, int idf)
 		goto err;
 	}
 
-	if (idf) {
-		setdir(wd);
-		if (data_idf)
-			idf_done(data_idf);
-		data_idf = idf_init(path);
-		if (data_idf)
-			idf_only(data_idf, 1);
+	if (data_idf)
+		idf_done(data_idf);
+
+	data_idf = idf_init(path);
+
+	if (data_idf) {
+		idf_only(data_idf, 1);
+		idf = 1;
 	}
 
-	if ((!idf && setdir(path)) || (idf && !data_idf)) {
+	if ((!idf && setdir(path))) {
 		instead_clear();
 		goto err;
 	}
 
-	if (!idf && data_idf) {
-		idf_done(data_idf);
+	if (!idf)
 		data_idf = idf_init(DATA_IDF);
-	}
 
 	/* cleanup Lua */
 	instead_clear();
@@ -877,6 +888,7 @@ void instead_done(void)
 	if (data_idf)
 		idf_done(data_idf);
 	data_idf = NULL;
+	setdir(instead_cwd);
 }
 
 int  instead_encode(const char *s, const char *d)

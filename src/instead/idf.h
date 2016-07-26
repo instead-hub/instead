@@ -25,10 +25,6 @@
 #ifndef __IDF_H_INCLUDED
 #define __IDF_H_INCLUDED
 
-#include "externals.h"
-#include "list.h"
-#include "cache.h"
-
 struct _idf_t;
 struct _idff_t;
 typedef struct _idf_t *idf_t;
@@ -58,5 +54,10 @@ extern char *idf_readdir(idff_t d);
 extern char *idf_gets(idff_t idf, char *b, int size);
 extern int idf_magic(const char *fname);
 extern int idf_only(idf_t idf, int fl);
+
+#ifdef _USE_SDL
+#include <SDL_rwops.h>
+extern SDL_RWops *RWFromIdf(idf_t idf, const char *fname);
+#endif
 
 #endif
