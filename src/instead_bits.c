@@ -23,7 +23,7 @@
  */
 
 #include "externals.h"
-#include "instead.h"
+#include "instead/instead.h"
 
 static int luaB_bit_and(lua_State *L) {
 	unsigned int a = luaL_optnumber(L, 1, 0);

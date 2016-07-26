@@ -27,7 +27,6 @@
 
 #include <SDL.h>
 #include <SDL_mixer.h>
-#include "sdl_idf.h"
 
 #ifdef S60
 int audio_rate = 11025;

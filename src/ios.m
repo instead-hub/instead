@@ -14,7 +14,6 @@
 #include <dirent.h>
 #include <SDL.h>
 
-#include "sdl_iconv.h"
 #include "internals.h"
 
 #ifndef PATH_MAX
@@ -206,28 +205,6 @@ char *open_file_dialog(void)
 	}
 #endif
 	return NULL;
-}
-
-int setdir(const char *path)
-{
-	return chdir(path);
-}
-
-char *getdir(char *path, size_t size)
-{
-	return getcwd(path, size);
-}
-
-char *dirpath(const char *path)
-{
-	return (char*)path;
-}
-
-int is_absolute_path(const char *path)
-{
-	if (!path || !*path)
-		return 0;
-	return (*path == '/');
 }
 
 void rotate_landscape(void)

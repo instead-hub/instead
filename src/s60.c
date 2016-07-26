@@ -36,7 +36,6 @@
 #include <sys/unistd.h>
 
 #include "snprintf.h"
-#include "sdl_iconv.h"
 #include "internals.h"
 
 #ifndef PATH_MAX
@@ -195,16 +194,6 @@ char *sdl_path(char *p)
 	return p;
 }
 
-int setdir(const char *path)
-{
-	return chdir(path);
-}
-
-char *getdir(char *path, size_t size)
-{
-	return getcwd(path, size);
-}
-
 char *dirpath(const char *path)
 {
 	return (char*)path;
@@ -233,15 +222,4 @@ char* basename (char* path)
 	while (ptr[(l = strcspn (ptr, "\\//"))])
 		ptr += l + 1;
 	return ptr;
-}
-
-int is_absolute_path(const char *path)
-{
-	if (!path || !path[0])
-		return 0;
-	if (path[0] == '/' || path[0] == '\\')
-		return 1;
-	if (!path[1])
-		return 0;
-	return (path[1] == ':');
 }

@@ -24,7 +24,6 @@
 
 #include "externals.h"
 #include "internals.h"
-#include "list.h"
 
 static LIST_HEAD(sprites);
 

@@ -24,8 +24,6 @@
 
 #include "externals.h"
 #include "internals.h"
-#include "list.h"
-#include "idf.h"
 
 #define MOTION_TIME (abs(timer_counter - click_time) >= 200 / HZ)
 int game_running = 1;
@@ -171,7 +169,7 @@ int game_select(const char *name)
 		instead_set_debug(debug_sw);
 		instead_set_standalone(standalone_sw);
 
-		if (instead_init((g->idf) ? NULL : g->path, game_cwd, g->idf)) {
+		if (instead_init(g->path)) {
 			curgame_dir = oldgame;
 			setdir(game_cwd);
 			goto err;

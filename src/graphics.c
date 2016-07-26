@@ -38,7 +38,7 @@
 #endif
 #include "SDL_gfxBlitFunc.h"
 #include "SDL_anigif.h"
-#include "sdl_idf.h"
+
 #define IMG_ANIGIF 1
 struct _img_t {
 	SDL_Surface *s;

@@ -31,7 +31,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-#include "sdl_iconv.h"
 #include "internals.h"
 
 extern char *curgame;
@@ -289,36 +288,3 @@ char *open_file_dialog(void)
 	return ofn.lpstrFile;
 }
 #endif
-
-static char curdir[PATH_MAX];
-
-int setdir(const char *path)
-{
-	strncpy(curdir, path, sizeof(curdir) - 1);
-	return 0;
-}
-
-char *getdir(char *path, size_t size)
-{
-	strncpy(path, curdir, size - 1);
-	return path;
-}
-
-char *dirpath(const char *path)
-{
-	static char fp[PATH_MAX * 4];
-	if (path[0] == '/')
-		return (char*)path;
-	strcpy(fp, curdir);
-	strcat(fp, "/");
-	strcat(fp, path);
-	unix_path(fp);
-	return fp;
-}
-
-int is_absolute_path(const char *path)
-{
-	if (!path || !*path)
-		return 0;
-	return (*path == '/' || *path == '\\');
-}

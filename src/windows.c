@@ -31,7 +31,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-#include "sdl_iconv.h"
 #include "internals.h"
 
 extern char *curgame_dir;

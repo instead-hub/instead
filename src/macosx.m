@@ -11,7 +11,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "sdl_iconv.h"
 #include "internals.h"
 
 #ifndef PATH_MAX

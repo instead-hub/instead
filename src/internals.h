@@ -2,8 +2,11 @@
 #include "s60.h"
 #endif
 
+#ifdef __IPHONEOS__
+#include "ios.h"
+#endif
+
 #include "util.h"
-#include "cache.h"
 #include "graphics.h"
 #include "sound.h"
 #include "game.h"
@@ -11,4 +14,4 @@
 #include "menu.h"
 #include "config.h"
 #include "input.h"
-#include "instead.h"
+#include "instead/instead.h"
