@@ -38,4 +38,4 @@ uninstall:
 	$(RM) $(DESTDIR)$(BIN)/instead$(EXE)
 
 clean:
-	$(RM) -f *.o sdl-instead$(EXE)
+	$(RM) -f *.o instead/*.o sdl-instead$(EXE) 
