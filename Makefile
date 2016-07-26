@@ -4,7 +4,7 @@ include config.make
 VERTITLE := instead-$(VERSION)
 ARCHIVE := instead_$(VERSION).tar.gz#
 
-SUBDIRS += src/sdl-instead stead games themes icon desktop doc lang
+SUBDIRS += src/ stead games themes icon desktop doc lang
 
 all:
 	@for dir in $(SUBDIRS); do \

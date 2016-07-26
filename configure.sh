@@ -208,7 +208,7 @@ if [ "x$ans" = "x1" -o "x$ans" = "x" ]; then
 	rm -f Rules.make
 	ln -sf Rules.make.standalone Rules.make
 	rm -f sdl-instead
-	ln -sf src/sdl-instead/sdl-instead sdl-instead
+	ln -sf src/sdl-instead sdl-instead
 	echo "Ok. We are ready to build. Use these commands:"
 	echo "    \$ make"
 	echo "    \$ ./sdl-instead"
