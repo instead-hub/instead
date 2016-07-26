@@ -9,7 +9,4 @@
 #define ICON_PATH DATAPATH"icon/"
 #define LANG_PATH DATAPATH"lang/"
 
-extern char *dirname(char *);
-extern char *basename(char *);
-
 #endif

@@ -193,33 +193,3 @@ char *sdl_path(char *p)
 	unix_path(p);
 	return p;
 }
-
-char *dirpath(const char *path)
-{
-	return (char*)path;
-}
-
-char *dirname(char *path)
-{
-	char *p;
-	if (path == NULL || *path == '\0')
-		return ".";
-	p = path + strlen(path) - 1;
-	while (*p == '/') {
-		if (p == path)
-			return path;
-		*p-- = '\0';
-	}
-	while (p >= path && *p != '/')
-		p--;
-	return p < path ? "." : p == path ? "/" : (*p = '\0', path);
-}
-
-char* basename (char* path)
-{
-	char *ptr = path;
-	int l = 0;
-	while (ptr[(l = strcspn (ptr, "\\//"))])
-		ptr += l + 1;
-	return ptr;
-}
