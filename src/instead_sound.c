@@ -116,11 +116,19 @@ static int sound_init(void)
 	return 0;
 }
 
+static int sound_cmd(void)
+{
+	game_music_player();
+	game_sound_player();
+	return 0;
+}
+
 int instead_sound_init(void)
 {
 	instead_api_register(sound_funcs);
 	instead_hook_register(INSTEAD_HOOK_DONE, sound_done);
 	instead_hook_register(INSTEAD_HOOK_INIT, sound_init);
+	instead_hook_register(INSTEAD_HOOK_CMD, sound_cmd);
 	return instead_loadfile(dirpath(STEAD_PATH"/extensions/sound.lua"));
 
 }

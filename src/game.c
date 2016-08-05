@@ -613,6 +613,7 @@ int game_save(int nr)
 	char *s = game_save_path(1, nr);
 	char cmd[PATH_MAX];
 	char *p;
+	int rc;
 	if (s) {
 		if (nr == -1 || nr == 0) {
 			struct instead_args args_1[] = { 
@@ -632,15 +633,13 @@ int game_save(int nr)
 			instead_clear();
 		}
 		snprintf(cmd, sizeof(cmd) - 1, "save %s", s);
-		p = instead_file_cmd(cmd);
+		p = instead_file_cmd(cmd, &rc);
 		if (p)
 			free(p);
-		if (!instead_bretval(1) || (!p && instead_err())) {
-			instead_clear();
+		if (rc || (!p && instead_err())) {
 			game_menu(menu_warning);
 			return -1;
 		}
-		instead_clear();
 		return 0;
 	}
 	return -1;
@@ -2175,13 +2174,9 @@ int game_cmd(char *cmd, int flags)
 /*	if (dd) */
 		game_cursor(CURSOR_CLEAR);
 	if (flags & GAME_CMD_FILE) /* file command */
-		cmdstr = instead_file_cmd(cmd); 
+		cmdstr = instead_file_cmd(cmd, &rc); 
 	else
-		cmdstr = instead_cmd(cmd);
-	rc = !instead_bretval(1); instead_clear();
-
-	game_music_player();
-	game_sound_player();
+		cmdstr = instead_cmd(cmd, &rc);
 
 	if (opt_click && (flags & GAME_CMD_CLICK) && !rc)
 		sound_play(game_theme.click, -1, 1);

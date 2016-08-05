@@ -259,7 +259,7 @@ int instead_iretval(int n)
 	return lua_tonumber(L, n - N);
 }
 
-char *instead_file_cmd(char *s)
+char *instead_file_cmd(char *s, int *rc)
 {
 	struct instead_args args[] = {
 		{ .val = NULL, .type = INSTEAD_STR },
@@ -269,10 +269,15 @@ char *instead_file_cmd(char *s)
 		return NULL;
 	args[0].val = s;
 	instead_function("iface:cmd", args);
-	return instead_retval(0);
+	s = instead_retval(0);
+	if (rc)
+		*rc = !instead_bretval(1); 
+	instead_clear();
+	instead_hook(INSTEAD_HOOK_CMD);
+	return s;
 }
 
-char *instead_cmd(char *s)
+char *instead_cmd(char *s, int *rc)
 {
 	struct instead_args args[] = {
 		{ .val = NULL, .type = INSTEAD_STR },
@@ -286,7 +291,12 @@ char *instead_cmd(char *s)
 	args[0].val = s;
 	instead_function("iface:cmd", args);
 	free(s);
-	return instead_retval(0);
+	s = instead_retval(0);
+	if (rc)
+		*rc = !instead_bretval(1); 
+	instead_clear();
+	instead_hook(INSTEAD_HOOK_CMD);
+	return s;
 }
 
 int instead_function(char *s, struct instead_args *args)

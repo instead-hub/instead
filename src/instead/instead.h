@@ -37,7 +37,8 @@
 #define INSTEAD_HOOK_INIT 0
 #define INSTEAD_HOOK_DONE 1
 #define INSTEAD_HOOK_ERR 2
-#define INSTEAD_HOOK_MAX 2
+#define INSTEAD_HOOK_CMD 3
+#define INSTEAD_HOOK_MAX 3
 
 #define INSTEAD_MAIN	"main.lua"
 #define INSTEAD_IDF	"data.idf"
@@ -54,8 +55,8 @@ struct instead_args {
 extern int  instead_init(const char *path);
 extern int  instead_load(void);
 extern void instead_done(void);
-extern char *instead_cmd(char *s);
-extern char *instead_file_cmd(char *s);
+extern char *instead_cmd(char *s, int *rc);
+extern char *instead_file_cmd(char *s, int *rc);
 
 extern int  instead_function(char *s, struct instead_args *args);
 extern int  instead_eval(char *s);

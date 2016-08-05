@@ -73,6 +73,8 @@ extern int	game_reset(void);
 extern int	game_cfg_save(void);
 
 extern void 	game_music_player(void);
+extern void 	game_sound_player(void);
+
 extern void	game_stop_mus(int ms);
 
 extern int 	game_change_vol(int d, int val);
