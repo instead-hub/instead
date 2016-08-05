@@ -1106,14 +1106,14 @@ static img_t _gfx_load_image(char *filename, int combined)
 		}
 		return img;
 	}
-	rw = RWFromIdf(game_idf, filename);
+	rw = RWFromIdf(instead_idf(), filename);
 
 	if (!rw || !(img = GFX_IMG_REL(IMG_Load_RW(rw, 1))))
 		return NULL;
 
 	if (Surf(img)->format->BitsPerPixel == 32) { /* hack for 32 bit BMP :( */
 		SDL_RWops *rwop;
-		rwop = RWFromIdf(game_idf, filename);
+		rwop = RWFromIdf(instead_idf(), filename);
 		if (rwop) {
 			if (IMG_isBMP(rwop))
 /*				SDL_SetAlpha(img, 0, SDL_ALPHA_OPAQUE); */
@@ -2475,7 +2475,7 @@ fnt_t fnt_load(const char *fname, int size)
 	for (i = 0; i < n; i++) {
 		fn = NULL;
 		if (!is_empty(files[i])) {
-			SDL_RWops *rw = RWFromIdf(game_idf, files[i]);
+			SDL_RWops *rw = RWFromIdf(instead_idf(), files[i]);
 			if (!rw || !(fn = TTF_OpenFontRW(rw, 1, size))) {
 				fprintf(stderr, "Can not load font: '%s'\n", files[i]);
 			}

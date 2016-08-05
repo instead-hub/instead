@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "SDL_anigif.h"
-#include "instead/idf.h"
+#include "instead/instead.h"
 
 extern idf_t game_idf;
 
@@ -139,7 +139,7 @@ int AG_LoadGIF( const char* file, AG_Frame* frames, int size, int *loop )
 {
 	int n = 0;
 
-	SDL_RWops* src = RWFromIdf(game_idf, file);
+	SDL_RWops* src = RWFromIdf(instead_idf(), file);
 
 	if ( src )
 	{

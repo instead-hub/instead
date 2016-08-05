@@ -772,7 +772,7 @@ static int game_theme_update_data(void)
 {
 	struct game_theme *t = &game_theme;
 	const char *res = NULL;
-	int idf = idf_only(game_idf, 0);
+	int idf = idf_only(instead_idf(), 0);
 	if (t->font_name && (t->changed & CHANGED_FONT)) {
 		fnt_free(t->font);
 		if (!(t->font = fnt_load(t->font_name, FONT_SZ(t->font_size)))) {
@@ -905,10 +905,10 @@ skip:
 		fprintf(stderr,"Can't init theme. Not all required elements are defined.\n");
 		goto err;
 	}
-	idf_only(game_idf, idf);
+	idf_only(instead_idf(), idf);
 	return 0;
 err:
-	idf_only(game_idf, idf);
+	idf_only(instead_idf(), idf);
 	t->changed = 0;
 	game_res_err_msg(res, 1);
 	return -1;
@@ -1021,7 +1021,7 @@ int theme_load(const char *name)
 	idf_t idf = NULL;
 
 	if (theme_relative)
-		idf = game_idf;
+		idf = instead_idf();
 
 	if (theme_parse_idf(idf, name))
 		return 0; /* no theme loaded if error in parsing */
@@ -1331,14 +1331,14 @@ int game_theme_load(const char *name, int type)
 		goto err;
 
 	if (theme->idf) /* cwd is always game_cwd */
-		strcpy(cwd, idf_getdir(game_idf));
+		strcpy(cwd, idf_getdir(instead_idf()));
 
 	curtheme_loading = theme;
 
 	if (theme->idf) {
-		if (idf_setdir(game_idf, theme->path))
+		if (idf_setdir(instead_idf(), theme->path))
 			goto err;
-		if (theme_load_idf(game_idf, THEME_FILE))
+		if (theme_load_idf(instead_idf(), THEME_FILE))
 			goto err;
 	} else {
 		if (setdir(theme->path))
@@ -1351,7 +1351,7 @@ err:
 	curtheme_loading = otheme;
 
 	if (theme && theme->idf)
-		idf_setdir(game_idf, cwd);
+		idf_setdir(instead_idf(), cwd);
 	else
 		setdir(cwd);
 

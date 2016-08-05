@@ -11,6 +11,35 @@ game.gui = {
 	hidetitle = false;
 }
 
+iface.input = function(event, ...)
+	if stead.type(input) ~= 'table' then
+		return
+	end
+	if event == 'kbd' then
+		if stead.type(input.key) == 'function' then
+			return input:key(...); -- pressed, event
+		end
+	elseif event == 'mouse' then
+		if stead.type(input.click) == 'function' then
+			return input:click(...); -- pressed, x, y, mb
+		end
+	elseif event == 'finger' then
+		if stead.type(input.finger) == 'function' then
+			return input:finger(...); -- pressed, x, y, finger
+		end
+	elseif event == 'event' then
+		if stead.type(input.event) == 'function' then
+			return input:event(...);
+		end
+	end
+	return
+end
+
+stead.objects.input =  obj { -- input object
+	system_type = true,
+	nam = 'input',
+};
+
 iface.xref = function(self, str, obj, ...)
 	local o = stead.ref(obj);
 	local cmd=''

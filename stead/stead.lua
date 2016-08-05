@@ -22,29 +22,6 @@ stead = {
 	call_top = 0,
 	call_ctx = { txt = nil, self = nil },
 --	functions = {}, -- code blocks
-	input = function(event, ...)
-		if stead.type(input) ~= 'table' then
-			return
-		end
-		if event == 'kbd' then
-			if stead.type(input.key) == 'function' then
-				return input:key(...); -- pressed, event
-			end
-		elseif event == 'mouse' then
-			if stead.type(input.click) == 'function' then
-				return input:click(...); -- pressed, x, y, mb
-			end
-		elseif event == 'finger' then
-			if stead.type(input.finger) == 'function' then
-				return input:finger(...); -- pressed, x, y, finger
-			end
-		elseif event == 'event' then
-			if stead.type(input.event) == 'function' then
-				return input:event(...);
-			end
-		end
-		return
-	end,
 
 	modules_ini = {},
 	modules_done = {},
@@ -2081,7 +2058,7 @@ stead.gamereset = function(file, forget)
 		end
 	end
 	if forget then
-		stead.done();
+		stead:done();
 		if stead.type(variables) == 'table' then
 			local k,v
 			for k,v in stead.ipairs(variables) do
@@ -2104,7 +2081,7 @@ stead.gamereset = function(file, forget)
 		game.lifes:zap()
 		game.scriptsforget = true
 		-- anything else?
-		stead.init();
+		stead:init();
 	end
 	dofile(file);
 	game:ini();
@@ -3140,17 +3117,6 @@ stead.code = code
 stead.objects = {
 	null = obj {
 		nam = 'null';
-	};
-
-	input = obj { -- input object
-		system_type = true,
-		nam = 'input',
-	--[[	key = function(s, down, key)
-			return
-		end, ]]
-	--[[	click = function(s, down, mb, x, y, [ px, py ] )
-			return
-		end ]]
 	};
 
 	allocator = obj {

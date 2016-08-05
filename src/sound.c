@@ -112,7 +112,6 @@ int snd_init(int hz)
 		hz = audio_rate;
 	else
 		audio_rate = hz;
-
 	chunk = (chunksize_sw>0)?chunksize_sw:DEFAULT_CHUNKSIZE;
 	audio_buffers = (audio_rate / 11025) * chunk;
 	if (audio_buffers <=0) /* wrong parameter? */
@@ -149,7 +148,7 @@ wav_t	snd_load_wav(const char *fname)
 		return NULL;
 	if (!fname || !*fname)
 		return NULL;
-	rw = RWFromIdf(game_idf, fname);
+	rw = RWFromIdf(instead_idf(), fname);
 	if (!rw || !(r = (wav_t)Mix_LoadWAV_RW(rw, 1))) {
 		return NULL;
 	}
@@ -182,7 +181,7 @@ mus_t snd_load_mus(const char *fname)
 	mus = malloc(sizeof(struct _mus_t));
 	if (!mus)
 		return NULL;
-	mus->rw = RWFromIdf(game_idf, fname);
+	mus->rw = RWFromIdf(instead_idf(), fname);
 	if (!mus->rw) 
 		goto err;
 #if MIXER_VERSION_ATLEAST(2,0,0)

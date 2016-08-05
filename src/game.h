@@ -157,7 +157,6 @@ struct game {
 
 extern struct	game *games;
 extern int	games_nr;
-extern idf_t	game_idf;
 
 extern unsigned long timer_counter;
 #endif

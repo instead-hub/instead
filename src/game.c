@@ -31,8 +31,6 @@ int game_running = 1;
 char	game_cwd[PATH_MAX];
 char	*curgame_dir = NULL;
 
-idf_t game_idf = NULL;
-
 int game_own_theme = 0;
 int game_theme_changed = 0;
 int mouse_filter_delay = 400;
@@ -175,10 +173,8 @@ int game_select(const char *name)
 			goto err;
 		}
 
-		game_idf = instead_idf();
-
-		themes_lookup_idf(game_idf, "themes/", THEME_GAME);
-		if (idf_only(game_idf, -1) != 1)
+		themes_lookup_idf(instead_idf(), "themes/", THEME_GAME);
+		if (idf_only(instead_idf(), -1) != 1)
 			themes_lookup(dirpath("themes"), THEME_GAME);
 
 		game_cfg_load();
@@ -969,7 +965,7 @@ int game_use_theme(void)
 				curtheme_dir[THEME_GAME] = DEFAULT_THEME;
 			return rc;
 		}
-	} else if (curgame_dir && (!idf_access(game_idf, THEME_FILE) || !access(dirpath(THEME_FILE), R_OK))) {
+	} else if (curgame_dir && (!idf_access(instead_idf(), THEME_FILE) || !access(dirpath(THEME_FILE), R_OK))) {
 		game_own_theme = 1;
 		if (opt_owntheme) {
 			fprintf(stderr, "Using own theme file...\n");
@@ -989,11 +985,6 @@ int game_init(const char *name)
 {
 	getdir(game_cwd, sizeof(game_cwd));
 	unix_path(game_cwd);
-
-	snd_init(opt_hz);
-
-	if (!nosound_sw)
-		game_change_vol(0, opt_vol);
 
 	if (game_select(name))
 		return -1;
@@ -1092,13 +1083,12 @@ void game_done(int err)
 	game_theme_free();
 	themes_drop(THEME_GAME);
 	input_clear();
-	snd_done();
+
 	instead_done();
 /* #ifndef ANDROID
 	gfx_video_done();
 #endif */
 	game_own_theme = 0;
-	game_idf = NULL;
 	need_restart = 0;
 /*	SDL_Quit(); */
 }	
@@ -3391,7 +3381,7 @@ static int game_event(const char *ev)
 	args[0].val = "event"; args[0].type = INSTEAD_STR;
 	args[1].val = ev; args[1].type = INSTEAD_STR;
 	args[2].val = NULL;
-	if (instead_function("stead.input", args)) {
+	if (instead_function("iface.input", args)) {
 		instead_clear();
 		return -1;
 	}
@@ -3458,7 +3448,7 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 			args[7].val = NULL;
 		}
 	}
-	if (instead_function("stead.input", args)) {
+	if (instead_function("iface.input", args)) {
 		instead_clear();
 		return -1;
 	}
