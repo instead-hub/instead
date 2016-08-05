@@ -29,7 +29,8 @@
 
 #define DATA_IDF INSTEAD_IDF
 
-char	instead_cwd[PATH_MAX];
+static char	instead_cwd_path[PATH_MAX];
+static char	instead_game_path[PATH_MAX];
 
 static int debug_sw = 0;
 static int standalone_sw = 0;
@@ -679,6 +680,37 @@ static int luaB_get_realpath(lua_State *L) {
 	return 1;
 }
 
+static int luaB_get_gamepath(lua_State *L) {
+	char path[PATH_MAX * 2];
+	char *p = getdir(path, sizeof(path));
+	if (!p)
+		return 0;
+	unix_path(p);
+
+	if (idf_only(instead_idf(), -1) == 1) { /* no gamepath */
+		strcpy(path, instead_game_path);
+	}
+
+	lua_pushstring(L, p);
+	return 1;
+}
+
+static int luaB_get_steadpath(lua_State *L) {
+	char stead_path[PATH_MAX];
+
+	if (STEAD_PATH[0] != '/') {
+		strcpy(stead_path, instead_cwd());
+		strcat(stead_path, "/");
+	} else
+		stead_path[0] = 0;
+	strcat(stead_path, STEAD_PATH);
+	unix_path(stead_path);
+	lua_pushstring(L, stead_path);
+	return 1;
+}
+
+extern int dir_iter_factory (lua_State *L);
+extern int luaopen_lfs (lua_State *L);
 
 static const luaL_Reg base_funcs[] = {
 	{"print", luaB_print}, /* for some mystic, it is needed in win version (with -debug) */
@@ -690,7 +722,12 @@ static const luaL_Reg base_funcs[] = {
 
 	{"instead_random", luaB_random},
 	{"instead_srandom", luaB_srandom},
+
 	{"instead_realpath", luaB_get_realpath},
+	{"instead_gamepath", luaB_get_gamepath},
+	{"instead_steadpath", luaB_get_steadpath},
+
+	{"instead_readdir", dir_iter_factory},
 
 	{ NULL, NULL }
 };
@@ -751,7 +788,7 @@ static int instead_package(const char *path)
 #endif
 
 	if (!is_absolute_path(STEAD_PATH)) {
-		strcat(stead_path, instead_cwd);
+		strcat(stead_path, instead_cwd());
 		strcat(stead_path, "/");
 		strcat(stead_path, STEAD_PATH);
 	} else {
@@ -769,7 +806,6 @@ static int instead_package(const char *path)
 /*	putenv(stead_path); */
 	return 0;
 }
-
 int instead_init_lua(const char *path)
 {
 	busy = 0;
@@ -777,8 +813,10 @@ int instead_init_lua(const char *path)
 	setlocale(LC_NUMERIC,"C"); /* to avoid . -> , in numbers */	
 	setlocale(LC_CTYPE,"C"); /* to avoid lower/upper problems */	
 /*	strcpy(curcp, "UTF-8"); */
-	getdir(instead_cwd, sizeof(instead_cwd));
-	instead_cwd[sizeof(instead_cwd) - 1] = 0;
+	getdir(instead_cwd_path, sizeof(instead_cwd_path));
+	instead_cwd_path[sizeof(instead_cwd_path) - 1] = 0;
+	strncpy(instead_game_path, path, sizeof(instead_game_path));
+	instead_cwd_path[sizeof(instead_game_path) - 1] = 0;
 	/* initialize Lua */
 #if LUA_VERSION_NUM >= 502
 	L = luaL_newstate();
@@ -807,7 +845,7 @@ int instead_init_lua(const char *path)
 		instead_eval("STANDALONE=true"); instead_clear();
 	srand(time(NULL));
 	mt_random_init();
-
+	luaopen_lfs(L);
 	return 0;
 }
 
@@ -904,7 +942,7 @@ void instead_done(void)
 	if (data_idf)
 		idf_done(data_idf);
 	data_idf = NULL;
-	setdir(instead_cwd);
+	setdir(instead_cwd_path);
 }
 
 int  instead_encode(const char *s, const char *d)
@@ -948,6 +986,16 @@ int  instead_encode(const char *s, const char *d)
 idf_t  instead_idf(void)
 {
 	return data_idf;
+}
+
+char *instead_path(void)
+{
+	return instead_game_path;
+}
+
+char *instead_cwd(void)
+{
+	return instead_cwd_path;
 }
 
 int instead_set_debug(int sw)

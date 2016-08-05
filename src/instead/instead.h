@@ -87,5 +87,7 @@ extern int  instead_set_standalone(int);
 extern lua_State *instead_lua(void);
 
 extern char	*instead_local_stead_path(void);
+extern char	*instead_path(void);
+extern char	*instead_cwd(void);
 
 #endif

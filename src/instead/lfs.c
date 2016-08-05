@@ -3,7 +3,7 @@
 ** Copyright Kepler Project 2003 (http://www.keplerproject.org/luafilesystem)
 ** $Id: lfs.c,v 1.61 2009/07/04 02:10:16 mascarenhas Exp $
 */
-#include "externals.h"
+#include "system.h"
 
 #define DIR_METATABLE "directory metatable"
 typedef struct dir_data {

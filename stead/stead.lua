@@ -1757,7 +1757,6 @@ local compat_api = function()
 		get_savepath = instead_savepath
 		get_gamepath = instead_gamepath
 		get_steadpath = instead_steadpath
-		get_themespath = instead_themespath
 		get_gamespath = instead_gamespath
 
 		menu_toggle = instead_menu_toggle

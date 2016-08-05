@@ -925,6 +925,20 @@ static int luaB_get_ticks(lua_State *L) {
 	return 1;
 }
 
+static int luaB_get_themespath(lua_State *L) {
+	char themes_path[PATH_MAX];
+
+	if (THEMES_PATH[0] != '/') {
+		strcpy(themes_path, instead_cwd());
+		strcat(themes_path, "/");
+	} else
+		themes_path[0] = 0;
+	strcat(themes_path, THEMES_PATH);
+	unix_path(themes_path);
+	lua_pushstring(L, themes_path);
+	return 1;
+}
+
 static const luaL_Reg sprites_funcs[] = {
 	{"instead_font_load", luaB_load_font},
 	{"instead_font_free", luaB_free_font},
@@ -953,6 +967,8 @@ static const luaL_Reg sprites_funcs[] = {
 	{"instead_mouse_filter", luaB_mouse_filter},
 	{"instead_mouse_show", luaB_mouse_show},
 	{"instead_finger_pos", luaB_finger_pos},
+	{"instead_themespath", luaB_get_themespath},
+
 	{NULL, NULL}
 };
 

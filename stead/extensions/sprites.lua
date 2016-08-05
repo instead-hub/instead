@@ -15,6 +15,7 @@ local function compat_api()
 		stead_busy = instead_busy
 		theme_var = instead_themevar
 		theme_name = instead_theme_name
+		get_themespath = instead_themespath
 	end
 end
 
