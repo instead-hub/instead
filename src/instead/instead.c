@@ -938,7 +938,8 @@ int instead_hook_register(int nr, instead_hook_fn fn)
 
 void instead_done(void)
 {
-	instead_hook(INSTEAD_HOOK_DONE);
+	if (L)
+		instead_hook(INSTEAD_HOOK_DONE);
 #ifdef _HAVE_ICONV
 	if (fromcp)
 		free(fromcp);

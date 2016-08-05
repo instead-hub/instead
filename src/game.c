@@ -1064,15 +1064,15 @@ static int game_event(const char *ev);
 void game_done(int err)
 {
 	game_event("quit");
-	gfx_del_timer(timer_han);
-	timer_han = NULL_TIMER;
+/*	gfx_del_timer(timer_han);
+	timer_han = NULL_TIMER;  */
 	if (curgame_dir && !err) {
 		if (opt_autosave & 1)
 			game_save(0);
 		game_cfg_save();
 	}
 	curgame_dir = NULL;
-	setdir(game_cwd);
+/*	setdir(game_cwd); */
 /*	cfg_save(); */
 
 	if (menu_shown)
