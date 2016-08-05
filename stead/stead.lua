@@ -1760,9 +1760,6 @@ local compat_api = function()
 		get_themespath = instead_themespath
 		get_gamespath = instead_gamespath
 
-		theme_var = instead_themevar
-		theme_name = instead_theme_name
-
 		menu_toggle = instead_menu_toggle
 		readdir = instead_readdir
 

@@ -13,6 +13,8 @@ get_ticks = stead.ticks
 local function compat_api()
 	if not stead.api_atleast(1, 7, 1) then
 		stead_busy = instead_busy
+		theme_var = instead_themevar
+		theme_name = instead_theme_name
 	end
 end
 
