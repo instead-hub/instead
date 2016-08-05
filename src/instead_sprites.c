@@ -965,5 +965,6 @@ static int sprites_done(void)
 int instead_sprites_init(void)
 {
 	instead_hook_register(INSTEAD_HOOK_DONE, sprites_done);
-	return instead_api_register(sprites_funcs);
+	instead_api_register(sprites_funcs);
+	return instead_loadfile(dirpath(STEAD_PATH"/extensions/sprites.lua"));
 }

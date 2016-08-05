@@ -3,7 +3,6 @@ stead = {
 	api_version = "1.1.6", -- last version before 1.2.0
 	table = table,
 	delim = ',',
-	busy = instead_busy,
 	scene_delim = "^^",
 	space_delim = ' ',
 	string = string,
@@ -13,12 +12,6 @@ stead = {
 	ipairs = ipairs,
 	pairs = pairs, 
 	math = math,
-	ticks = instead_ticks,
-	mouse_pos = instead_mouse_pos,
-	mouse_show = instead_mouse_show,
-	finger_pos = instead_finger_pos,
-	mouse_filter = instead_mouse_filter, 
-	set_timer = instead_timer,
 	random = instead_random,
 	randomseed = instead_srandom,
 	next = next,
@@ -29,12 +22,6 @@ stead = {
 	call_top = 0,
 	call_ctx = { txt = nil, self = nil },
 --	functions = {}, -- code blocks
-	timer = function()
-		if stead.type(timer) == 'table' and stead.type(timer.callback) == 'function' then
-			return timer:callback();
-		end
-		return
-	end,
 	input = function(event, ...)
 		if stead.type(input) ~= 'table' then
 			return
@@ -58,14 +45,40 @@ stead = {
 		end
 		return
 	end,
+
 	modules_ini = {},
+	modules_done = {},
+	modules_start = {},
+	modules_cmd = {},
+
 	module_init = function(f, ...)
 		if stead.type(f) ~= 'function' then
-			error ("Wrong parameter to mod_init.", 2);
+			error ("Wrong parameter to module_init.", 2);
 		end
 		stead.table.insert(stead.modules_ini, f);
 		f();
-	end
+	end;
+
+	module_done = function(f, ...)
+		if stead.type(f) ~= 'function' then
+			error ("Wrong parameter to module_done.", 2);
+		end
+		stead.table.insert(stead.modules_done, f);
+	end;
+
+	module_start = function(f, ...)
+		if stead.type(f) ~= 'function' then
+			error ("Wrong parameter to module_start.", 2);
+		end
+		stead.table.insert(stead.modules_start, f);
+	end;
+
+	module_cmd = function(f, ...)
+		if stead.type(f) ~= 'function' then
+			error ("Wrong parameter to module_cmd.", 2);
+		end
+		stead.table.insert(stead.modules_cmd, f);
+	end;
 }
 
 function instead_menu_toggle(n)
@@ -146,11 +159,6 @@ stead.need_scene = function(s)
 		NEED_SCENE = true
 	else
 		NEED_SCENE = s
-	end
-end
-
-if not stead.busy then
-	stead.busy = function(v)
 	end
 end
 
@@ -1755,40 +1763,8 @@ local compat_api = function()
 		theme_var = instead_themevar
 		theme_name = instead_theme_name
 
-		is_sound = instead_sound
-
-		set_timer = instead_timer
-
 		menu_toggle = instead_menu_toggle
-		stead_busy = instead_busy
 		readdir = instead_readdir
-
-		sound_load = instead_sound_load
-		sound_free = instead_sound_free
-		sounds_free = instead_sounds_free
-		sound_channel = instead_sound_channel
-		sound_volume = instead_sound_volume
-		sound_panning = instead_sound_panning
-
-		font_load = instead_font_load
-		font_free = instead_font_free
-		font_scaled_size = instead_font_scaled_size
-
-		sprite_alpha = instead_sprite_alpha
-		sprite_dup = instead_sprite_dup
-		sprite_scale = instead_sprite_scale
-		sprite_rotate = instead_sprite_rotate
-		sprite_text = instead_sprite_text
-		sprite_text_size = instead_sprite_text_size
-		sprite_draw = instead_sprite_draw
-		sprite_copy = instead_sprite_copy
-		sprite_compose = instead_sprite_compose
-		sprite_fill = instead_sprite_fill
-		sprite_pixel = instead_sprite_pixel
-		sprite_load = instead_sprite_load
-		sprite_free = instead_sprite_free
-		sprite_size = instead_sprite_size
-		sprites_free = instead_sprites_free
 
 		call = stead.call
 		call_bool = stead.call_bool
@@ -1825,9 +1801,6 @@ local compat_api = function()
 		savemembers = stead.savemembers;
 		savevar = stead.savevar
 		clearvar = stead.clearvar
-
-	--	do_ini = stead.do_ini
-	--	do_savegame = stead.do_savegame
 	end
 
 	stead.compat_api = true
@@ -1859,9 +1832,13 @@ stead.do_ini = function(self, load)
 	stead.me().where = stead.deref(stead.me().where);
 --	game.where = stead.deref(game.where);
 
+	local i, f
+	for i, f in ipairs(stead.modules_start) do
+		f(load)
+	end
+
 	if not load then 
 		compat_api()
-
 		for_everything(function(k, s)
 			if isObject(s) then
 				call_key(k, s)
@@ -1892,9 +1869,6 @@ stead.game_ini = function(self)
 	if stead.type(init) == 'function' then
 		init();
 	end
---	if stead.type(hooks) == 'function' then
---		hooks();
---	end
 	return stead.par(stead.scene_delim, vv, v);
 end
 
@@ -2111,9 +2085,7 @@ stead.gamereset = function(file, forget)
 		end
 	end
 	if forget then
-		stead.stop_music();
-		stead.stop_sound();
-		timer:stop();
+		stead.done();
 		if stead.type(variables) == 'table' then
 			local k,v
 			for k,v in stead.ipairs(variables) do
@@ -2136,7 +2108,7 @@ stead.gamereset = function(file, forget)
 		game.lifes:zap()
 		game.scriptsforget = true
 		-- anything else?
-		stead:init();
+		stead.init();
 	end
 	dofile(file);
 	game:ini();
@@ -2389,10 +2361,21 @@ iface = {
 		stead.state = false; -- changed state (main screen)
 		local a = { };
 		local cmd;
+
 		RAW_TEXT = nil
 		PLAYER_MOVED = nil
-		stead.set_sound(); -- empty sound
-		cmd,a = stead.getcmd(inp);
+
+		cmd, a = stead.getcmd(inp);
+
+		local i, f
+
+		for i, f in ipairs(stead.modules_cmd) do
+			local r, v = f(cmd, stead.unpack(a))
+			if r ~= nil or v ~= nil then
+				return r, v
+			end
+		end
+
 		if cmd == '' then cmd = 'look' end
 --		stead.me():tag();
 		local oldloc = stead.here();
@@ -2983,69 +2966,6 @@ stead.get_title = function()
 	return s;
 end
 
-stead.get_music = function()
-	return game._music, game._music_loop;
-end
-
-stead.get_music_loop = function()
-	return game._music_loop;
-end
-
-stead.save_music = function(s)
-	if s == nil then
-		s = self
-	end
-	s.__old_music__ = stead.get_music();
-	s.__old_loop__ = stead.get_music_loop();
-end
-
-stead.restore_music = function(s)
-	if s == nil then
-		s = self
-	end
-	stead.set_music(s.__old_music__, s.__old_loop__);
-end
-
-stead.set_music = function(s, count)
-	game._music = s;
-	if not stead.tonum(count) then
-		game._music_loop = 0;
-	else
-		game._music_loop = stead.tonum(count);
-	end
-end
-
-stead.set_music_fading = function(o, i)
-	if o and o == 0 then o = -1 end
-	if i and i == 0 then i = -1 end
-
-	game._music_fadeout = o
-	if not i then
-		game._music_fadein = o
-	else
-		game._music_fadein = i
-	end
-end
-
-stead.get_music_fading = function()
-	return game._music_fadeout, game._music_fadein
-end
-
-stead.stop_music = function()
-	stead.set_music(nil, -1);
-end
-
-stead.is_music = function()
-	return game._music ~= nil and game._music_loop ~= -1
-end
-
-if instead_sound == nil then
-	function instead_sound()
-		return false -- sdl-instead export own function
-	end
-end
-stead.is_sound = instead_sound
-
 if instead_savepath == nil then
 	function instead_savepath()
 		return "./"
@@ -3074,66 +2994,6 @@ end
 
 stead.get_autosave = function()
 	return game.autosave, game.autosave_slot
-end
-
-stead.get_sound = function()
-	return game._sound, game._sound_channel, game._sound_loop;
-end
-
-stead.get_sound_chan = function()
-	return game._sound_channel
-end
-
-stead.get_sound_loop = function()
-	return game._sound_loop
-end
-
-stead.stop_sound = function(chan, fo)
-	if not stead.tonum(chan) then
-		if stead.tonum(fo) then
-			stead.set_sound('@-1,'..stead.tostr(fo));
-		else
-			stead.set_sound('@-1');
-		end
-		return
-	end
-	if stead.tonum(fo) then
-		stead.add_sound('@'..stead.tostr(chan)..','..stead.tostr(fo));
-	else
-		stead.add_sound('@'..stead.tostr(chan));
-	end
-end
-
-stead.add_sound = function(s, chan, loop)
-	if stead.type(s) ~= 'string' then
-		return
-	end
-	if stead.type(game._sound) == 'string' then
-		if stead.tonum(chan) then
-			s = s..'@'..stead.tostr(chan);
-		end
-		if stead.tonum(loop) then
-			s = s..','..stead.tostr(loop)
-		end
-		stead.set_sound(game._sound..';'..s, stead.get_sound_chan(), stead.get_sound_loop());
-	else
-		stead.set_sound(s, chan, loop);
-	end
-end
-
-stead.set_sound = function(s, chan, loop)
-	game._sound = s;	
-	if not stead.tonum(loop) then
-		game._sound_loop = 1;
-	else
-		game._sound_loop = stead.tonum(loop);
-	end
-
-	if not stead.tonum(chan) then
-		game._sound_channel = -1;
-	else
-		game._sound_channel = stead.tonum(chan);
-	end
 end
 
 function change_pl(p)
@@ -3281,10 +3141,10 @@ end
 stead.code = code
 
 --- here the game begins
-stead.objects = function(s)
+stead.objects = {
 	null = obj {
 		nam = 'null';
-	}
+	};
 
 	input = obj { -- input object
 		system_type = true,
@@ -3295,37 +3155,6 @@ stead.objects = function(s)
 	--[[	click = function(s, down, mb, x, y, [ px, py ] )
 			return
 		end ]]
-	};
-
-	timer = obj { -- timer calls stead.timer callback 
-		nam = 'timer',
-		ini = function(s)
-			if stead.tonum(s._timer) ~= nil and stead.type(stead.set_timer) == 'function' then
-				stead.set_timer(s._timer);
-			end
-		end,
-		get = function(s)
-			if stead.tonum(s._timer) == nil then
-				return 0
-			end
-			return stead.tonum(s._timer);
-		end,
-		stop = function(s)
-			return s:set(0);
-		end,
-		del = function(s)
-			return s:set(0);
-		end,
-		set = function(s, v)
-			s._timer = stead.tonum(v);
-			if stead.type(stead.set_timer) ~= 'function' then
-				return false
-			end
-			stead.set_timer(v)
-			return true
-		end,
-		--[[ 	callback = function(s)
-			end, ]]
 	};
 
 	allocator = obj {
@@ -3390,7 +3219,7 @@ stead.objects = function(s)
 		nam = 'main',
 		dsc = 'No main room defined.',
 	};
-end
+}
 
 
 stead.sandbox = function()
@@ -3507,7 +3336,10 @@ end
 stead.init = function(s)
 	stead.initialized = false
 	stead.started = false
-	stead:objects();
+	local k, v
+	for k, v in pairs(stead.objects) do
+		_G[k] = v;
+	end
 	s.functions = {} -- code blocks
 	local k,v
 	for k,v in stead.ipairs(s.modules_ini) do
@@ -3518,36 +3350,15 @@ stead.init = function(s)
 		stead.sandbox = nil
 	end
 end
-
--- those are sill in global space
-add_sound = stead.add_sound
-set_sound = stead.set_sound
-stop_sound = stead.stop_sound
-
-get_sound = stead.get_sound
-get_sound_loop = stead.get_sound_loop
-get_sound_chan = stead.get_sound_chan
-
-get_music = stead.get_music
-get_music_fading = stead.get_music_fading
-get_music_loop = stead.get_music_loop
-
-set_music = stead.set_music
-set_music_fading = stead.set_music_fading
-stop_music = stead.stop_music
-
-save_music = stead.save_music
-restore_music = stead.restore_music
-
-is_music = stead.is_music
+stead.done = function(s)
+	local k,v
+	for k,v in stead.ipairs(s.modules_done) do
+		v();
+	end
+end
 
 ref = stead.ref
 deref = stead.deref
-
-mouse_pos = stead.mouse_pos
-mouse_filter = stead.mouse_filter
-
-get_ticks = stead.ticks
 
 pclr = stead.pclr
 pget =  stead.pget

@@ -127,3 +127,34 @@ sprite = {
 stead.module_init(function()
 	stead.sprites_free();
 end)
+
+local function compat_api()
+	if not stead.api_atleast(1, 7, 1) then
+		font_load = instead_font_load
+		font_free = instead_font_free
+		font_scaled_size = instead_font_scaled_size
+
+		sprite_alpha = instead_sprite_alpha
+		sprite_dup = instead_sprite_dup
+		sprite_scale = instead_sprite_scale
+		sprite_rotate = instead_sprite_rotate
+		sprite_text = instead_sprite_text
+		sprite_text_size = instead_sprite_text_size
+		sprite_draw = instead_sprite_draw
+		sprite_copy = instead_sprite_copy
+		sprite_compose = instead_sprite_compose
+		sprite_fill = instead_sprite_fill
+		sprite_pixel = instead_sprite_pixel
+		sprite_load = instead_sprite_load
+		sprite_free = instead_sprite_free
+		sprite_size = instead_sprite_size
+		sprites_free = instead_sprites_free
+	end
+end
+
+stead.module_start(function(load)
+	if compat_api and not load then
+		compat_api()
+		compat_api = nil
+	end
+end)

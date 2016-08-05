@@ -234,7 +234,10 @@ extern int game_instead_extensions(void);
 
 static int sdl_extensions(void)
 {
-	return game_instead_extensions();
+	if (game_instead_extensions() || instead_loadfile(dirpath(STEAD_PATH"/gui.lua"))) {
+		return -1;
+	}
+	return 0;
 }
 
 int instead_main(int argc, char *argv[])

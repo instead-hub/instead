@@ -104,5 +104,7 @@ static const luaL_Reg sound_funcs[] = {
 
 int instead_sound_init(void)
 {
-	return instead_api_register(sound_funcs);
+	instead_api_register(sound_funcs);
+	return instead_loadfile(dirpath(STEAD_PATH"/extensions/sound.lua"));
+
 }

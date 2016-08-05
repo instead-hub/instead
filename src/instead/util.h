@@ -74,5 +74,6 @@ extern char *decode(iconv_t hiconv, const char *s);
 extern char *dirname(char *);
 extern char *basename(char *);
 #endif
+extern char *getrealpath(const char *path, char *resolved);
 
 #endif

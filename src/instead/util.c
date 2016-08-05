@@ -527,3 +527,168 @@ int is_absolute_path(const char *path)
 }
 
 #endif
+
+/*
+ *
+ * This code is derived from software contributed to Berkeley by
+ * Jan-Simon Pendry.
+ *
+ */
+
+/*
+ * char *realpath(const char *path, char *resolved);
+ *
+ * Find the real name of path, by removing all ".", ".." and symlink
+ * components.  Returns (resolved) on success, or (NULL) on failure,
+ * in which case the path which caused trouble is left in (resolved).
+ */
+
+char *getrealpath(const char *path, char *resolved)
+{
+	const char *q;
+	char *p, *fres;
+	size_t len;
+#if defined(unix) && !defined(S60)
+	struct stat sb;
+	ssize_t n;
+	int idx = 0, nlnk = 0;
+	char wbuf[2][PATH_MAX];
+#endif
+	/* POSIX sez we must test for this */
+	if (path == NULL) {
+		return NULL;
+	}
+
+	if (resolved == NULL) {
+		fres = resolved = malloc(PATH_MAX);
+		if (resolved == NULL)
+			return NULL;
+	} else
+		fres = NULL;
+
+
+	/*
+	 * Build real path one by one with paying an attention to .,
+	 * .. and symbolic link.
+	 */
+
+	/*
+	 * `p' is where we'll put a new component with prepending
+	 * a delimiter.
+	 */
+	p = resolved;
+
+	if (*path == '\0') {
+		*p = '\0';
+		goto out;
+	}
+
+	/* If relative path, start from current working directory. */
+	if (!is_absolute_path(path)) {
+		/* check for resolved pointer to appease coverity */
+		if (resolved && getdir(resolved, PATH_MAX) == NULL) {
+			p[0] = '.';
+			p[1] = '\0';
+			goto out;
+		}
+		unix_path(resolved);
+		len = strlen(resolved);
+		if (len > 1)
+			p += len;
+	}
+
+loop:
+	/* Skip any slash. */
+	while (*path == '/')
+		path++;
+
+	if (*path == '\0') {
+		if (p == resolved)
+			*p++ = '/';
+		*p = '\0';
+		return resolved;
+	}
+
+	/* Find the end of this component. */
+	q = path;
+	do
+		q++;
+	while (*q != '/' && *q != '\0');
+
+	/* Test . or .. */
+	if (path[0] == '.') {
+		if (q - path == 1) {
+			path = q;
+			goto loop;
+		}
+		if (path[1] == '.' && q - path == 2) {
+			/* Trim the last component. */
+			if (p != resolved)
+				while (*--p != '/' && p != resolved)
+					continue;
+			path = q;
+			goto loop;
+		}
+	}
+
+	/* Append this component. */
+	if (p - resolved + 1 + q - path + 1 > PATH_MAX) {
+		if (p == resolved)
+			*p++ = '/';
+		*p = '\0';
+		goto out;
+	}
+	if (p == resolved 
+		&& is_absolute_path(path) 
+			&& path[0] != '/') { /* win? */
+		memcpy(&p[0], path,
+		    q - path);
+		p[q - path] = '\0';
+		p += q - path;
+		path = q;
+		goto loop;
+	} else {
+		p[0] = '/';
+		memcpy(&p[1], path,
+		    /* LINTED We know q > path. */
+		    q - path);
+		p[1 + q - path] = '\0';
+	}
+#if defined(unix) && !defined(S60)
+	/*
+	 * If this component is a symlink, toss it and prepend link
+	 * target to unresolved path.
+	 */
+	if (lstat(resolved, &sb) != -1 && S_ISLNK(sb.st_mode)) {
+		if (nlnk++ >= 16) {
+			goto out;
+		}
+		n = readlink(resolved, wbuf[idx], sizeof(wbuf[0]) - 1);
+		if (n < 0)
+			goto out;
+		if (n == 0) {
+			goto out;
+		}
+
+		/* Append unresolved path to link target and switch to it. */
+		if (n + (len = strlen(q)) + 1 > sizeof(wbuf[0])) {
+			goto out;
+		}
+		memcpy(&wbuf[idx][n], q, len + 1);
+		path = wbuf[idx];
+		idx ^= 1;
+
+		/* If absolute symlink, start from root. */
+		if (*path == '/')
+			p = resolved;
+		goto loop;
+	}
+#endif
+	/* Advance both resolved and unresolved path. */
+	p += 1 + q - path;
+	path = q;
+	goto loop;
+out:
+	free(fres);
+	return NULL;
+}

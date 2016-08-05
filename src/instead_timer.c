@@ -90,5 +90,6 @@ int instead_timer_init(void)
 {
 	instead_hook_register(INSTEAD_HOOK_DONE, timer_done);
 	instead_hook_register(INSTEAD_HOOK_ERR, timer_done); /* to avoid loop errors */
-	return instead_api_register(timer_funcs);
+	instead_api_register(timer_funcs);
+	return instead_loadfile(dirpath(STEAD_PATH"/extensions/timer.lua"));
 }

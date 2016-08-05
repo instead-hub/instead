@@ -89,22 +89,6 @@ static int luaB_get_gamespath(lua_State *L) {
 	return 1;
 }
 
-static int luaB_get_realpath(lua_State *L) {
-	char realpath[PATH_MAX];
-	char outpath[PATH_MAX];
-	const char *path = luaL_optstring(L, 1, NULL);
-	if (!path)
-		return 0;
-	strncpy(realpath, path, sizeof(realpath));
-	realpath[sizeof(realpath) - 1] = 0;
-	unix_path(realpath);
-	path = getrealpath(realpath, outpath);
-	if (!path)
-		return 0;
-	lua_pushstring(L, outpath);
-	return 1;
-}
-
 extern char *instead_exec;
 
 static int luaB_get_exepath(lua_State *L) {
@@ -128,7 +112,6 @@ static const luaL_Reg paths_funcs[] = {
 	{"instead_steadpath", luaB_get_steadpath},
 	{"instead_themespath", luaB_get_themespath},
 	{"instead_gamespath", luaB_get_gamespath},
-	{"instead_realpath", luaB_get_realpath},
 	{"instead_exepath", luaB_get_exepath},
 
 	{ NULL, NULL }

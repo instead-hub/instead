@@ -2189,6 +2189,7 @@ int game_cmd(char *cmd, int flags)
 	else
 		cmdstr = instead_cmd(cmd);
 	rc = !instead_bretval(1); instead_clear();
+
 	game_music_player();
 	game_sound_player();
 

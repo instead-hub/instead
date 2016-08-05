@@ -663,6 +663,22 @@ static int luaB_random(lua_State *L) {
 	return 1;
 }
 
+static int luaB_get_realpath(lua_State *L) {
+	char realpath[PATH_MAX];
+	char outpath[PATH_MAX];
+	const char *path = luaL_optstring(L, 1, NULL);
+	if (!path)
+		return 0;
+	strncpy(realpath, path, sizeof(realpath));
+	realpath[sizeof(realpath) - 1] = 0;
+	unix_path(realpath);
+	path = getrealpath(realpath, outpath);
+	if (!path)
+		return 0;
+	lua_pushstring(L, outpath);
+	return 1;
+}
+
 
 static const luaL_Reg base_funcs[] = {
 	{"print", luaB_print}, /* for some mystic, it is needed in win version (with -debug) */
@@ -674,6 +690,7 @@ static const luaL_Reg base_funcs[] = {
 
 	{"instead_random", luaB_random},
 	{"instead_srandom", luaB_srandom},
+	{"instead_realpath", luaB_get_realpath},
 
 	{ NULL, NULL }
 };
@@ -790,7 +807,7 @@ int instead_init_lua(const char *path)
 		instead_eval("STANDALONE=true"); instead_clear();
 	srand(time(NULL));
 	mt_random_init();
-	instead_hook(INSTEAD_HOOK_INIT);
+
 	return 0;
 }
 
@@ -801,12 +818,11 @@ int instead_init(const char *path)
 	if (instead_init_lua(path))
 		goto err;
 
-
 	if (dofile(L, dirpath(STEAD_PATH"/stead.lua")))
 		goto err;
 
-	if (dofile(L, dirpath(STEAD_PATH"/gui.lua"))) {
-		instead_clear();
+	if (instead_hook(INSTEAD_HOOK_INIT) < 0) {
+		fprintf(stderr, "Can't init instead engine.\n");
 		goto err;
 	}
 

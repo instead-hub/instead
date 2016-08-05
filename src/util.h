@@ -63,8 +63,6 @@ extern char *sdl_path(char *path);
 extern char *parse_tag(char *line, const char *tag, const char *comm, int *brk);
 extern int remove_dir(const char *path);
 
-extern char *getrealpath(const char *path, char *resolved);
-
 extern void data2hex(const void *d, int len, void *o);
 extern int hex2data(const void *d, void *o, int len);
 extern void trunc_lines(char *pp, int max);
