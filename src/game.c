@@ -25,7 +25,7 @@
 #include "externals.h"
 #include "internals.h"
 
-#define MOTION_TIME (abs(timer_counter - click_time) >= 200 / HZ)
+#define MOTION_TIME (timer_counter - click_time >= 200 / HZ)
 int game_running = 1;
 
 char	game_cwd[PATH_MAX];
@@ -2717,10 +2717,10 @@ static int scroll_pdown(int id)
 
 int mouse_filter(int filter)
 {
-	static unsigned int old_counter = 0;
+	static unsigned long old_counter = 0;
 	if (!opt_filter || !mouse_filter_delay)
 		return 0;
-	if (filter && (abs(old_counter - timer_counter) <= (mouse_filter_delay / HZ))) /* 400 ms */
+	if (filter && (old_counter - timer_counter <= (mouse_filter_delay / HZ))) /* 400 ms */
 		return -1;
 	old_counter = timer_counter;
 	return 0;

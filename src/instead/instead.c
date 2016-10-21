@@ -53,7 +53,7 @@ static struct list_head extensions = LIST_HEAD_INIT(extensions);
 
 #define EXTENSIONS_HOOK(name) ({\
 	int ext_rc = 0; \
-	struct instead_ext *ext; \
+	struct instead_ext *ext = NULL; \
 \
 	for_each_extension(ext) { \
 		if (ext->name) \
