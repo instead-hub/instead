@@ -51,18 +51,48 @@ static struct list_head extensions = LIST_HEAD_INIT(extensions);
 
 #define for_each_extension(ext) list_for_each(&extensions, ext, list)
 
-#define EXTENSIONS_HOOK(name) ({\
-	int ext_rc = 0; \
-	struct instead_ext *ext = NULL; \
-\
-	for_each_extension(ext) { \
-		if (ext->name) \
-			ext_rc = ext->name(); \
-		if (ext_rc) \
-			break; \
-	}\
-	ext_rc;\
-})
+enum instead_hook {
+	init,
+	done,
+	cmd,
+	err,
+};
+
+#define HOOK_INIT 1
+#define HOOK_DONE 2
+#define HOOK_CMD  3
+#define HOOK_ERR  4
+
+static int extensions_hook(enum instead_hook nr)
+{
+	int rc = 0;
+	struct instead_ext *ext = NULL;
+	for_each_extension(ext) {
+		switch (nr) {
+		case init:
+			if (ext->init)
+				rc = ext->init();
+			break;
+		case done:
+			if (ext->done)
+				rc = ext->done();
+			break;
+		case cmd:
+			if (ext->cmd)
+				rc = ext->cmd();
+			break;
+		case err:
+			if (ext->err)
+				rc = ext->err();
+			break;
+		default:
+			return -1;
+		}
+		if (rc)
+			break;
+	}
+	return rc;
+}
 
 int instead_extension(struct instead_ext *ext)
 {
@@ -108,7 +138,7 @@ static int report (lua_State *L, int status)
 			free(p);
 		lua_pop(L, 1);
 		status = -1;
-		EXTENSIONS_HOOK(err);
+		extensions_hook(err);
 	}
 	return status;
 }
@@ -281,7 +311,7 @@ char *instead_file_cmd(char *s, int *rc)
 	if (rc)
 		*rc = !instead_bretval(1); 
 	instead_clear();
-	EXTENSIONS_HOOK(cmd);
+	extensions_hook(cmd);
 	return s;
 }
 
@@ -303,7 +333,7 @@ char *instead_cmd(char *s, int *rc)
 	if (rc)
 		*rc = !instead_bretval(1); 
 	instead_clear();
-	EXTENSIONS_HOOK(cmd);
+	extensions_hook(cmd);
 	return s;
 }
 
@@ -877,7 +907,7 @@ int instead_init(const char *path)
 	if (dofile(L, dirpath(STEAD_PATH"/stead.lua")))
 		goto err;
 
-	if (EXTENSIONS_HOOK(init) < 0) {
+	if (extensions_hook(init) < 0) {
 		fprintf(stderr, "Can't init instead engine.\n");
 		goto err;
 	}
@@ -933,7 +963,7 @@ int instead_api_register(const luaL_Reg *api)
 void instead_done(void)
 {
 	if (L)
-		EXTENSIONS_HOOK(done);
+		extensions_hook(done);
 #ifdef _HAVE_ICONV
 	if (fromcp)
 		free(fromcp);
