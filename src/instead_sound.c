@@ -110,6 +110,11 @@ static int sound_done(void)
 
 static int sound_init(void)
 {
+	int rc;
+	instead_api_register(sound_funcs);
+	rc = instead_loadfile(dirpath(STEAD_PATH"/extensions/sound.lua"));
+	if (rc)
+		return rc;
 	snd_init(opt_hz);
 	if (!nosound_sw)
 		game_change_vol(0, opt_vol);
@@ -123,12 +128,13 @@ static int sound_cmd(void)
 	return 0;
 }
 
+static struct instead_ext ext = {
+	.init = sound_init,
+	.done = sound_done,
+	.cmd = sound_cmd,
+};
+
 int instead_sound_init(void)
 {
-	instead_api_register(sound_funcs);
-	instead_hook_register(INSTEAD_HOOK_DONE, sound_done);
-	instead_hook_register(INSTEAD_HOOK_INIT, sound_init);
-	instead_hook_register(INSTEAD_HOOK_CMD, sound_cmd);
-	return instead_loadfile(dirpath(STEAD_PATH"/extensions/sound.lua"));
-
+	return instead_extension(&ext);
 }

@@ -86,10 +86,18 @@ static int timer_done(void)
 	return 0;
 }
 
-int instead_timer_init(void)
+static int timer_init(void)
 {
-	instead_hook_register(INSTEAD_HOOK_DONE, timer_done);
-	instead_hook_register(INSTEAD_HOOK_ERR, timer_done); /* to avoid loop errors */
 	instead_api_register(timer_funcs);
 	return instead_loadfile(dirpath(STEAD_PATH"/extensions/timer.lua"));
+}
+
+static struct instead_ext ext = {
+	.err = timer_done,
+	.done = timer_done, /* to avoid loop errors */
+	.init = timer_init,
+};
+int instead_timer_init(void)
+{
+	return instead_extension(&ext);
 }

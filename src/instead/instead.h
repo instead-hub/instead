@@ -28,17 +28,12 @@
 #include <lua.h>
 #include <lauxlib.h>
 #include "idf.h"
+#include "list.h"
 
 #define INSTEAD_NIL  0
 #define INSTEAD_NUM  1
 #define INSTEAD_STR  2
 #define INSTEAD_BOOL 3
-
-#define INSTEAD_HOOK_INIT 0
-#define INSTEAD_HOOK_DONE 1
-#define INSTEAD_HOOK_ERR 2
-#define INSTEAD_HOOK_CMD 3
-#define INSTEAD_HOOK_MAX 3
 
 #define INSTEAD_MAIN	"main.lua"
 #define INSTEAD_IDF	"data.idf"
@@ -50,6 +45,14 @@
 struct instead_args {
 	int type;
 	const char *val;
+};
+
+struct instead_ext {
+	struct list_node list;
+	int (*init)(void);
+	int (*done)(void);
+	int (*err)(void);
+	int (*cmd)(void);
 };
 
 extern int  instead_init(const char *path);
@@ -76,9 +79,8 @@ extern int  instead_loadfile(char *name);
 extern void 	instead_err_msg(const char *s);
 extern const	char *instead_err(void);
 
+extern int	instead_extension(struct instead_ext *ext);
 extern int	instead_api_register(const luaL_Reg *api);
-typedef int	(*instead_hook_fn)(void);
-extern int	instead_hook_register(int nr, instead_hook_fn fn);
 
 extern idf_t  instead_idf(void);
 extern int  instead_set_lang(const char *lang);

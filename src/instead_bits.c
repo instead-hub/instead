@@ -172,7 +172,16 @@ static const luaL_Reg bits_funcs[] = {
 	{NULL, NULL}
 };
 
-int instead_bits_init(void)
+static int bits_init(void)
 {
 	return instead_api_register(bits_funcs);
+}
+
+static struct instead_ext ext = {
+	.init = bits_init,
+};
+
+int instead_bits_init(void)
+{
+	return instead_extension(&ext);
 }

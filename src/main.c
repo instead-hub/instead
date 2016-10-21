@@ -232,12 +232,20 @@ static void usage(void)
 static int profile_load(const char *path);
 extern int game_instead_extensions(void);
 
+static int sdl_ext_init(void)
+{
+	return instead_loadfile(dirpath(STEAD_PATH"/gui.lua"));
+}
+
+static struct instead_ext sdl_ext = {
+	.init = sdl_ext_init,
+};
+
 static int sdl_extensions(void)
 {
-	if (game_instead_extensions() || instead_loadfile(dirpath(STEAD_PATH"/gui.lua"))) {
+	if (game_instead_extensions())
 		return -1;
-	}
-	return 0;
+	return instead_extension(&sdl_ext);
 }
 
 int instead_main(int argc, char *argv[])
@@ -270,7 +278,10 @@ int instead_main(int argc, char *argv[])
 #endif
 #endif
 #endif
-	instead_hook_register(INSTEAD_HOOK_INIT, sdl_extensions);
+	if (sdl_extensions() < 0) {
+		fprintf(stderr, "Fatal: can not init SDL extensions\n");
+		return 1;
+	}
 
 	if (argc > 0)
 		instead_exec = strdup(argv[0]);

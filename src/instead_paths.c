@@ -65,7 +65,16 @@ static const luaL_Reg paths_funcs[] = {
 	{ NULL, NULL }
 };
 
-int instead_paths_init(void)
+static int paths_init(void)
 {
 	return instead_api_register(paths_funcs);
+}
+
+static struct instead_ext ext = {
+	.init = paths_init,
+};
+
+int instead_paths_init(void)
+{
+	return instead_extension(&ext);
 }

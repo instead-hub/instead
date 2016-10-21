@@ -978,9 +978,18 @@ static int sprites_done(void)
 	return 0;
 }
 
-int instead_sprites_init(void)
+static int sprites_init(void)
 {
-	instead_hook_register(INSTEAD_HOOK_DONE, sprites_done);
 	instead_api_register(sprites_funcs);
 	return instead_loadfile(dirpath(STEAD_PATH"/extensions/sprites.lua"));
+}
+
+static struct instead_ext ext = {
+	.init = sprites_init,
+	.done = sprites_done,
+};
+
+int instead_sprites_init(void)
+{
+	return instead_extension(&ext);
 }

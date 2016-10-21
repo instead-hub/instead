@@ -47,18 +47,26 @@ static char *err_msg = NULL;
 
 #define ERR_MSG_MAX 512
 
-#define LUA_HOOK_TYPES (INSTEAD_HOOK_MAX+1)
-#define LUA_HOOK_NR 32
+static struct list_head extensions = LIST_HEAD_INIT(extensions);
 
-static  instead_hook_fn lua_hooks[LUA_HOOK_TYPES][LUA_HOOK_NR];
+#define for_each_extension(ext) list_for_each(&extensions, ext, list)
 
-static int instead_hook(int nr)
+#define EXTENSIONS_HOOK(name) ({\
+	int ext_rc = 0; \
+	struct instead_ext *ext; \
+\
+	for_each_extension(ext) { \
+		if (ext->name) \
+			ext_rc = ext->name(); \
+		if (ext_rc) \
+			break; \
+	}\
+	ext_rc;\
+})
+
+int instead_extension(struct instead_ext *ext)
 {
-	int i;
-	for (i = 0; i < LUA_HOOK_NR; i++) {
-		if (lua_hooks[nr][i])
-			lua_hooks[nr][i]();
-	}
+	list_add(&extensions, &ext->list);
 	return 0;
 }
 
@@ -100,7 +108,7 @@ static int report (lua_State *L, int status)
 			free(p);
 		lua_pop(L, 1);
 		status = -1;
-		instead_hook(INSTEAD_HOOK_ERR);
+		EXTENSIONS_HOOK(err);
 	}
 	return status;
 }
@@ -273,7 +281,7 @@ char *instead_file_cmd(char *s, int *rc)
 	if (rc)
 		*rc = !instead_bretval(1); 
 	instead_clear();
-	instead_hook(INSTEAD_HOOK_CMD);
+	EXTENSIONS_HOOK(cmd);
 	return s;
 }
 
@@ -295,7 +303,7 @@ char *instead_cmd(char *s, int *rc)
 	if (rc)
 		*rc = !instead_bretval(1); 
 	instead_clear();
-	instead_hook(INSTEAD_HOOK_CMD);
+	EXTENSIONS_HOOK(cmd);
 	return s;
 }
 
@@ -869,7 +877,7 @@ int instead_init(const char *path)
 	if (dofile(L, dirpath(STEAD_PATH"/stead.lua")))
 		goto err;
 
-	if (instead_hook(INSTEAD_HOOK_INIT) < 0) {
+	if (EXTENSIONS_HOOK(init) < 0) {
 		fprintf(stderr, "Can't init instead engine.\n");
 		goto err;
 	}
@@ -922,24 +930,10 @@ int instead_api_register(const luaL_Reg *api)
 	return 0;
 }
 
-int instead_hook_register(int nr, instead_hook_fn fn)
-{
-	int i;
-	if (nr >= LUA_HOOK_TYPES)
-		return -1;
-	for (i = 0; i < LUA_HOOK_NR; i++) {
-		if (!lua_hooks[nr][i]) {
-			lua_hooks[nr][i] = fn;
-			return 0;
-		}
-	}
-	return -1;
-}
-
 void instead_done(void)
 {
 	if (L)
-		instead_hook(INSTEAD_HOOK_DONE);
+		EXTENSIONS_HOOK(done);
 #ifdef _HAVE_ICONV
 	if (fromcp)
 		free(fromcp);
