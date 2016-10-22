@@ -19,6 +19,7 @@ stead = {
 	io = io,
 	os = os,
 	readdir = instead_readdir,
+	cache = {},
 	call_top = 0,
 	call_ctx = { txt = nil, self = nil },
 --	functions = {}, -- code blocks
@@ -2196,15 +2197,15 @@ end
 
 
 game = game {
-	codepage = "UTF-8",
-	nam = "INSTEAD -- Simple Text Adventure interpreter v"..stead.version.." '2009-2016 by Peter Kosyh",
+	codepage = "UTF-8";
+	nam = [[INSTEAD -- Simple Text Adventure interpreter v]]..stead.version..[[ '2009-2016 by Peter Kosyh]];
 	dsc = [[
 Commands:^
     look(or just enter), act <on what> (or just what), use <what> [on what], go <where>,^
-    back, inv, way, obj, quit, save <fname>, load <fname>.]],
-	pl ='pl',
-	showlast = true, 
-	_scripts = {},
+    back, inv, way, obj, quit, save <fname>, load <fname>.]];
+	pl ='pl';
+	showlast = true;
+	_scripts = {};
 };
 
 stead.strip = function(s)
@@ -2337,9 +2338,8 @@ iface = {
 
 		RAW_TEXT = nil
 		PLAYER_MOVED = nil
-
+		stead.cache = {}
 		cmd, a = stead.getcmd(inp);
-
 		local i, f
 
 		for i, f in ipairs(stead.modules_cmd) do
@@ -2926,18 +2926,34 @@ function movef(obj, there, from)
 	return stead.moveto(obj, there, from, 1);
 end
 
-stead.get_picture = function()
+stead.cacheable = function(n, f)
+	return function(...)
+		local s = stead.cache[n]
+		if s ~= nil then
+			if s == -1 then s = nil end
+			return s
+		end
+		stead.cache[n] = -1
+		s = f(...)
+		if s ~= nil then
+			stead.cache[n] = s
+		end
+		return s
+	end
+end
+
+stead.get_picture = stead.cacheable('pic', function()
 	local s = stead.call(stead.here(),'pic');
 	if not s then
 		s = stead.call(game, 'pic');
 	end
 	return s;
-end
+end)
 
-stead.get_title = function()
-	local s = stead.call(stead.here(),'nam');
+stead.get_title = stead.cacheable('title', function()
+	local s = stead.call(stead.here(), 'nam');
 	return s;
-end
+end)
 
 if instead_savepath == nil then
 	function instead_savepath()
@@ -3171,16 +3187,19 @@ stead.objects = {
 		},
 	};
 
-	pl = player {
+	pl = function()
+		return player {
 		nam = "Incognito",
 		where = 'main',
 		obj = { }
 	};
-
-	main = room {
+	end;
+	main = function()
+		return room {
 		nam = 'main',
 		dsc = 'No main room defined.',
 	};
+	end;
 }
 
 
@@ -3300,7 +3319,11 @@ stead.init = function(s)
 	stead.started = false
 	local k, v
 	for k, v in pairs(stead.objects) do
-		_G[k] = v;
+		if type(v) == 'function' then
+			_G[k] = v()
+		else
+			_G[k] = v
+		end
 	end
 	s.functions = {} -- code blocks
 	local k,v

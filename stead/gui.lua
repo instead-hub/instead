@@ -193,7 +193,7 @@ iface.ways = function(self, str)
 	return str
 end;
 
-instead.get_inv = function(horiz)
+instead.get_inv = stead.cacheable('inv', function(horiz)
 	local r = stead.call_value(game.gui, 'hideinv');
 	if r then
 		return
@@ -210,9 +210,9 @@ instead.get_inv = function(horiz)
 		end
 	end
 	return str
-end
+end)
 
-instead.get_ways = function()
+instead.get_ways = stead.cacheable('ways', function()
 	local r = stead.call_value(game.gui, 'hideways');
 	if r then
 		return
@@ -225,9 +225,9 @@ instead.get_ways = function()
 		return iface:center(str);
 	end
 	return str
-end
+end)
 
-instead.get_title = function()
+instead.get_title = stead.cacheable('title', function()
 	local r = stead.call_value(game.gui, 'hidetitle');
 	if r then
 		return
@@ -246,7 +246,7 @@ instead.get_title = function()
 		s = stead.string.gsub(s, '\\'..stead.delim, stead.delim);
 	end
 	return s
-end
+end)
 
 instead.finish_music = function()
 	if instead.get_music_loop() == 0 then
@@ -344,7 +344,7 @@ end
 
 game.fading = function(s)
 	local rc = false
-	local p = stead.call(stead.here(), 'pic');
+	local p = instead.get_picture();
 	if stead.cmd == 'load' then
 		game.lastpic = p;
 		return true
