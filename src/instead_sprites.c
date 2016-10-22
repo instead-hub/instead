@@ -981,7 +981,7 @@ static int sprites_done(void)
 static int sprites_init(void)
 {
 	instead_api_register(sprites_funcs);
-	return instead_loadfile(dirpath(STEAD_PATH"/extensions/sprites.lua"));
+	return instead_loadfile(dirpath(STEAD_PATH"/ext/sprites.lua"));
 }
 
 static struct instead_ext ext = {

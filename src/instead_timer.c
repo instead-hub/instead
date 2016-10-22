@@ -89,7 +89,7 @@ static int timer_done(void)
 static int timer_init(void)
 {
 	instead_api_register(timer_funcs);
-	return instead_loadfile(dirpath(STEAD_PATH"/extensions/timer.lua"));
+	return instead_loadfile(dirpath(STEAD_PATH"/ext/timer.lua"));
 }
 
 static struct instead_ext ext = {

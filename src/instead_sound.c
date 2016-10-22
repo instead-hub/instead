@@ -112,7 +112,7 @@ static int sound_init(void)
 {
 	int rc;
 	instead_api_register(sound_funcs);
-	rc = instead_loadfile(dirpath(STEAD_PATH"/extensions/sound.lua"));
+	rc = instead_loadfile(dirpath(STEAD_PATH"/ext/sound.lua"));
 	if (rc)
 		return rc;
 	snd_init(opt_hz);
