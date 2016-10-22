@@ -3135,7 +3135,8 @@ stead.objects = {
 		nam = 'null';
 	};
 
-	allocator = obj {
+	allocator = function()
+		return obj {
 		nam = 'allocator',
 		get = function(s, n, c)
 			if isObject(stead.ref(n)) and stead.api_atleast(1, 3, 0) then -- static?
@@ -3186,7 +3187,7 @@ stead.objects = {
 			end,
 		},
 	};
-
+	end;
 	pl = function()
 		return player {
 		nam = "Incognito",

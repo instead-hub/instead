@@ -35,10 +35,12 @@ iface.input = function(event, ...)
 	return
 end
 
-stead.objects.input =  obj { -- input object
-	system_type = true,
-	nam = 'input',
-};
+stead.objects.input =  function()
+	return obj { -- input object
+		system_type = true,
+		nam = 'input',
+	};
+end;
 
 iface.xref = function(self, str, obj, ...)
 	local o = stead.ref(obj);
