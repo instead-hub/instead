@@ -157,8 +157,6 @@ int game_select(const char *name)
 		game_use_theme();
 		return game_theme_init();
 	}
-	if (setdir(game_cwd))
-		return -1;
 	if (g) {
 		char *oldgame = curgame_dir;
 		curgame_dir = g->dir;
@@ -169,7 +167,6 @@ int game_select(const char *name)
 
 		if (instead_init(g->path)) {
 			curgame_dir = oldgame;
-			setdir(game_cwd);
 			goto err;
 		}
 
@@ -1064,16 +1061,12 @@ static int game_event(const char *ev);
 void game_done(int err)
 {
 	game_event("quit");
-/*	gfx_del_timer(timer_han);
-	timer_han = NULL_TIMER;  */
 	if (curgame_dir && !err) {
 		if (opt_autosave & 1)
 			game_save(0);
 		game_cfg_save();
 	}
 	curgame_dir = NULL;
-/*	setdir(game_cwd); */
-/*	cfg_save(); */
 
 	if (menu_shown)
 		menu_toggle(-1);

@@ -862,6 +862,7 @@ int instead_init_lua(const char *path)
 	setlocale(LC_CTYPE,"C"); /* to avoid lower/upper problems */	
 /*	strcpy(curcp, "UTF-8"); */
 	getdir(instead_cwd_path, sizeof(instead_cwd_path));
+	unix_path(instead_cwd_path);
 	instead_cwd_path[sizeof(instead_cwd_path) - 1] = 0;
 	strncpy(instead_game_path, path, sizeof(instead_game_path));
 	instead_cwd_path[sizeof(instead_game_path) - 1] = 0;
