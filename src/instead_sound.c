@@ -102,7 +102,7 @@ static const luaL_Reg sound_funcs[] = {
 	{NULL, NULL}
 };
 
-static sound_inited = 0;
+static int sound_inited = 0;
 
 static int sound_done(void)
 {
