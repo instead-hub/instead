@@ -695,7 +695,6 @@ int game_menu_act(const char *a)
 		int nr = atoi(a + 5);
 		if (!curgame_dir)
 			return 0;
-/*		free_last(); */
 		game_menu_box(0, NULL);
 		if (!game_reset()) {
 			game_load(nr);
@@ -706,7 +705,6 @@ int game_menu_act(const char *a)
 		char *s;
 		if (!curgame_dir)
 			return 0;
-/*		free_last(); */
 
 /* remove autlosave */
 		s = game_save_path(0, 0);

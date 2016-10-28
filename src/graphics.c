@@ -580,28 +580,41 @@ static img_t	gfx_new_img(SDL_Surface *s, int fl, void *data, int release)
 	return i;
 }
 
+img_t   gfx_new_rgba(int w, int h)
+{
+	SDL_Surface *dst;
+	Uint32 rmask, gmask, bmask, amask;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+	rmask = 0xff000000;
+	gmask = 0x00ff0000;
+	bmask = 0x0000ff00;
+	amask = 0x000000ff;
+#else
+	rmask = 0x000000ff;
+	gmask = 0x0000ff00;
+	bmask = 0x00ff0000;
+	amask = 0xff000000;
+#endif
+	dst = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, w, h,
+				   32,
+				   rmask,
+				   gmask,
+				   bmask,
+				   amask);
+#if SDL_VERSION_ATLEAST(2,0,0)
+	if (dst)
+		SDL_SetSurfaceBlendMode(dst, SDL_BLENDMODE_NONE);
+#endif
+	if (dst)
+		return GFX_IMG_REL(dst);
+	return NULL;
+}
+
 img_t 	gfx_new(int w, int h)
 {
 	SDL_Surface *dst;
 	if (!screen) {
-		Uint32 rmask, gmask, bmask, amask;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-		rmask = 0xff000000;
-		gmask = 0x00ff0000;
-		bmask = 0x0000ff00;
-		amask = 0x000000ff;
-#else
-		rmask = 0x000000ff;
-		gmask = 0x0000ff00;
-		bmask = 0x00ff0000;
-		amask = 0xff000000;
-#endif
-		dst = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, w, h, 
-			32,
-			rmask, 
-			gmask, 
-			bmask, 
-			amask);	
+		return gfx_new_rgba(w, h);
 	} else {
 		dst = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, w, h, 
 			Surf(screen)->format->BitsPerPixel, 
@@ -801,6 +814,25 @@ int gfx_set_pixel(img_t src, int x, int y,  color_t color)
 
 	SDL_UnlockSurface(img);
 	return 0;
+}
+
+void gfx_put_pixels(img_t src)
+{
+	SDL_Surface *img = Surf(src);
+	SDL_UnlockSurface(img);
+	return;
+}
+
+unsigned char *gfx_get_pixels(img_t src)
+{
+	Uint8 *ptr;
+	SDL_Surface *img = Surf(src);
+
+	if (SDL_LockSurface(img))
+		return NULL;
+
+	ptr = (unsigned char*)img->pixels;
+	return ptr;
 }
 
 img_t gfx_alpha_img(img_t src, int alpha)
@@ -2341,7 +2373,7 @@ img_t gfx_rotate(img_t src, float angle, int smooth)
 			float rsin, rcos;
 
 			SDL_Surface *s;
-			s = (err) ? NULL : rotozoomSurface(ag->frames[i].surface, angle, 1.0, smooth);
+			s = (err) ? NULL : rotozoomSurface(ag->frames[i].surface, angle, 1.0f, smooth);
 
 			if (!s) {
 				err ++;
@@ -2393,7 +2425,7 @@ img_t gfx_rotate(img_t src, float angle, int smooth)
 		}
 		return img;
 	}
-	return GFX_IMG_REL(rotozoomSurface(Surf(src), angle, 1.0, smooth));
+	return GFX_IMG_REL(rotozoomSurface(Surf(src), angle, 1.0f, smooth));
 }
 
 #define FN_REG  0

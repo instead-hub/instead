@@ -113,6 +113,7 @@ extern void	gfx_copy(img_t p, int x, int y);
 extern void	gfx_draw_wh(img_t p, int x, int y, int w, int h);
 extern img_t	gfx_grab_screen(int x, int y, int w, int h);
 extern img_t 	gfx_new(int w, int h);
+extern img_t	gfx_new_rgba(int w, int h);
 extern img_t	gfx_load_image(char *filename);
 extern void	gfx_free_image(img_t pixmap);
 extern int	gfx_img_w(img_t pixmap);
@@ -140,6 +141,9 @@ extern void	gfx_img_fill(img_t img, int x, int y, int w, int h, color_t col);
 extern void	gfx_fill(int x, int y, int w, int h, color_t col);
 extern int	gfx_get_pixel(img_t src, int x, int y,  color_t *color);
 extern int	gfx_set_pixel(img_t src, int x, int y,  color_t color);
+extern void	gfx_put_pixels(img_t src);
+extern unsigned char *gfx_get_pixels(img_t src);
+
 
 extern fnt_t 	fnt_load(const char *fname, int size);
 extern void 	fnt_free(fnt_t);

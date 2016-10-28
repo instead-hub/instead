@@ -96,7 +96,7 @@ int is_game(const char *path, const char *n)
 struct	game *games = NULL;
 int	games_nr = 0;
 
-void free_last(void);
+static void game_release(void);
 
 struct game *game_lookup(const char *name)
 {
@@ -116,7 +116,7 @@ struct game *game_lookup(const char *name)
 
 int game_reset(void)
 {
-	free_last(); /* commit all user events */
+	game_release(); /* commit all user events */
 	game_release_theme();
 	if (game_select(curgame_dir))
 		goto out;
@@ -1016,7 +1016,7 @@ void free_last_music(void)
 	last_music = NULL;
 }
 
-void free_last(void)
+static void game_release(void)
 {
 	if (last_pict)
 		free(last_pict);
@@ -1025,8 +1025,9 @@ void free_last(void)
 	if (last_cmd)
 		free(last_cmd);
 	last_pict = last_title = last_cmd = NULL;
-	game_stop_mus(500);
-	sounds_free();
+	// game_stop_mus(500);
+	// sounds_free();
+	input_uevents(); /* all callbacks */
 }
 
 void game_release_theme(void)
@@ -1070,7 +1071,7 @@ void game_done(int err)
 
 	if (menu_shown)
 		menu_toggle(-1);
-	free_last(); /* here all lost user callback are */
+	game_release(); /* here all lost user callback are */
 	game_release_theme();
 	game_theme_free();
 	themes_drop(THEME_GAME);

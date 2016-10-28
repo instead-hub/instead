@@ -371,12 +371,17 @@ static int luaB_sprite_size(lua_State *L) {
 #define BLIT_COPY 0
 #define BLIT_DRAW 1
 #define BLIT_COMPOSE 2
+struct lua_pixels;
+
+static img_t pixels_img(struct lua_pixels *hdr);
 
 static int luaB_blit_sprite(lua_State *L, int mode) {
-	img_t s, d;
+	img_t s = NULL, d = NULL;
 	img_t img2 = NULL;
 	float v;
-	const char *src = luaL_optstring(L, 1, NULL);
+	struct lua_pixels *pixels = lua_touserdata(L, 1);
+	const char *src = NULL;
+
 	int x = luaL_optnumber(L, 2, 0);
 	int y = luaL_optnumber(L, 3, 0);
 	int w = luaL_optnumber(L, 4, -1);
@@ -387,12 +392,19 @@ static int luaB_blit_sprite(lua_State *L, int mode) {
 	int alpha = luaL_optnumber(L, 9, 255);
 	int xoff = 0, yoff = 0;
 	int xoff0 = 0, yoff0 = 0;
-	if (!src || !dst)
+
+	if (!pixels)
+		src = luaL_optstring(L, 1, NULL);
+
+	if ((!src && !pixels) || !dst)
 		return 0;
 
-	s = grab_sprite(src, &xoff0, &yoff0);
+	if (pixels)
+		s = pixels_img(pixels);
+	if (!s)
+		s = grab_sprite(src, &xoff0, &yoff0);
 
-	d = grab_sprite(dst, &xoff, &yoff);	
+	d = grab_sprite(dst, &xoff, &yoff);
 
 	if (!s || !d)
 		return 0;
@@ -938,6 +950,192 @@ static int luaB_get_themespath(lua_State *L) {
 	lua_pushstring(L, themes_path);
 	return 1;
 }
+#define PIXELS_MAGIC 0x1980
+struct lua_pixels {
+	int type;
+	int w;
+	int h;
+	size_t size;
+	img_t img;
+};
+
+static int pixels_value(lua_State *L) {
+	struct lua_pixels *hdr = (struct lua_pixels*)lua_touserdata(L, 1);
+	int x = luaL_optnumber(L, 2, -1);
+	int y = luaL_optnumber(L, 3, -1);
+	int r = luaL_optnumber(L, 4, -1);
+	int g, b, a;
+	unsigned char *ptr;
+	if (r != -1) {
+		g = luaL_optnumber(L, 5, 0);
+		b = luaL_optnumber(L, 6, 0);
+		a = luaL_optnumber(L, 7, 255);
+	}
+	if (x < 0 || y < 0)
+		return 0;
+
+	if (!hdr || hdr->type != PIXELS_MAGIC)
+		return 0;
+
+	if (x >= hdr->w || y >= hdr->h)
+		return 0;
+
+	ptr = (unsigned char*)(hdr + 1);
+	ptr += ((y * hdr->w + x) << 2);
+	if (r == -1) {
+		lua_pushnumber(L, *(ptr ++));
+		lua_pushnumber(L, *(ptr ++));
+		lua_pushnumber(L, *(ptr ++));
+		lua_pushnumber(L, *ptr);
+		return 4;
+	}
+	*(ptr ++) = r;
+	*(ptr ++) = g;
+	*(ptr ++) = b;
+	*(ptr) = a;
+	return 0;
+}
+
+static img_t pixels_img(struct lua_pixels *hdr) {
+	int w, h, ww, hh, xx, yy, dx, dy, xoff, yoff;
+	unsigned char *ptr;
+	unsigned char *p;
+	int xv, yv;
+	int scale = 1;
+	img_t img;
+	if (!hdr)
+		return NULL;
+	if (hdr->type != PIXELS_MAGIC)
+		return NULL;
+	img = hdr->img;
+	if (!img)
+		return NULL;
+	ptr = (unsigned char*)(hdr + 1);
+	ww = gfx_img_w(img);
+	hh = gfx_img_h(img);
+	w = hdr->w;
+	h = hdr->h;
+	p = gfx_get_pixels(img);
+
+	if (ww == w && hh == h)
+		scale = 0;
+	xv = floor((float)ww / (float)w);
+	yv = floor((float)hh / (float)h);
+	dy = floor(yv); yoff = 0;
+
+	if (!p)
+		return NULL;
+	for (yy = 0; yy < hh; yy++) {
+		dx = floor(xv);
+		xoff = 0;
+		for (xx = 0; xx < ww; xx++) {
+			memcpy(p, ptr, 4); p += 4;
+			if (scale) {
+				if (dx)
+					dx --;
+				if (!dx) {
+					while (ww <= w * (xx + 1) / (xoff + 1)) {
+						if (xoff >= w)
+							break;
+						ptr += 4;
+						dx = xv;
+						xoff ++;
+					}
+				}
+			} else {
+				ptr += 4;
+				xoff ++;
+			}
+		}
+		ptr -= (xoff << 2);
+		if (scale) {
+			if (dy)
+				dy --;
+			if (!dy) {
+				while (hh <= h * (yy + 1) / (yoff + 1)) {
+					if (yoff >= h)
+						break;
+					ptr += (w << 2);
+					dy = yv;
+					yoff ++;
+				}
+			}
+		} else {
+			ptr += (w << 2);
+		}
+	}
+	gfx_put_pixels(img);
+	return img;
+}
+
+static int pixels_destroy(lua_State *L) {
+	struct lua_pixels *hdr = (struct lua_pixels*)lua_touserdata(L, 1);
+	if (!hdr || hdr->type != PIXELS_MAGIC)
+		return 0;
+
+	if (hdr->img)
+		gfx_free_image(hdr->img);
+	return 0;
+}
+
+static int luaB_pixels(lua_State *L) {
+	int w = luaL_optnumber(L, 1, -1);
+	int h = luaL_optnumber(L, 2, -1);
+	int scale = luaL_optnumber(L, 3, 1);
+	int ww = w;
+	int hh = h;
+	size_t size;
+	float v;
+	img_t img;
+	struct lua_pixels *hdr;
+
+	if (w < 0 || h < 0)
+		return 0;
+	v = game_theme.scale;
+	if (v != 1.0f) {
+		ww = ceil((float)w * v);
+		hh = ceil((float)h * v);
+	}
+	ww *= scale;
+	hh *= scale;
+
+	img = gfx_new_rgba(ww, hh);
+	if (!img)
+		return 0;
+	size = w * h * 4;
+	hdr = lua_newuserdata(L, sizeof(*hdr) + size);
+	if (!hdr) {
+		gfx_free_image(img);
+		return 0;
+	}
+	memset(hdr, 255, sizeof(*hdr) + size);
+	hdr->type = PIXELS_MAGIC;
+	hdr->img = img;
+	hdr->w = w;
+	hdr->h = h;
+	hdr->size = size;
+	luaL_getmetatable(L, "pixels metatable");
+	lua_setmetatable(L, -2);
+	return 1;
+}
+
+/*
+** Creates pixels metatable.
+*/
+static int pixels_create_meta (lua_State *L) {
+	luaL_newmetatable (L, "pixels metatable");
+	lua_pushstring (L, "__index");
+	lua_newtable(L);
+	lua_pushstring (L, "value");
+	lua_pushcfunction (L, pixels_value);
+	lua_settable(L, -3);
+	lua_settable(L, -3);
+	lua_pushstring (L, "__gc");
+	lua_pushcfunction (L, pixels_destroy);
+	lua_settable (L, -3);
+	return 0;
+}
+
 
 static const luaL_Reg sprites_funcs[] = {
 	{"instead_font_load", luaB_load_font},
@@ -968,7 +1166,7 @@ static const luaL_Reg sprites_funcs[] = {
 	{"instead_mouse_show", luaB_mouse_show},
 	{"instead_finger_pos", luaB_finger_pos},
 	{"instead_themespath", luaB_get_themespath},
-
+	{"instead_pixels", luaB_pixels},
 	{NULL, NULL}
 };
 
@@ -980,6 +1178,8 @@ static int sprites_done(void)
 
 static int sprites_init(void)
 {
+	if (pixels_create_meta(instead_lua()))
+		return -1;
 	instead_api_register(sprites_funcs);
 	return instead_loadfile(dirpath(STEAD_PATH"/ext/sprites.lua"));
 }

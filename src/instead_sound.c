@@ -102,9 +102,16 @@ static const luaL_Reg sound_funcs[] = {
 	{NULL, NULL}
 };
 
+static sound_inited = 0;
+
 static int sound_done(void)
 {
+	if (!sound_inited)
+		return 0;
+	game_stop_mus(500);
+	sounds_free();
 	snd_done();
+	sound_inited = 0;
 	return 0;
 }
 
@@ -115,9 +122,12 @@ static int sound_init(void)
 	rc = instead_loadfile(dirpath(STEAD_PATH"/ext/sound.lua"));
 	if (rc)
 		return rc;
+	if (sound_inited)
+		sound_done();
 	snd_init(opt_hz);
 	if (!nosound_sw)
 		game_change_vol(0, opt_vol);
+	sound_inited = 1;
 	return 0;
 }
 
