@@ -955,7 +955,7 @@ struct lua_pixels {
 	int type;
 	int w;
 	int h;
-	int scale;
+	float scale;
 	size_t size;
 	img_t img;
 };
@@ -1092,7 +1092,7 @@ static int pixels_destroy(lua_State *L) {
 static int luaB_pixels(lua_State *L) {
 	int w = luaL_optnumber(L, 1, -1);
 	int h = luaL_optnumber(L, 2, -1);
-	int scale = luaL_optnumber(L, 3, 1);
+	float scale = luaL_optnumber(L, 3, 1);
 	int ww = w;
 	int hh = h;
 	size_t size;
@@ -1107,8 +1107,8 @@ static int luaB_pixels(lua_State *L) {
 		ww = ceil((float)w * v);
 		hh = ceil((float)h * v);
 	}
-	ww *= scale;
-	hh *= scale;
+	ww = ceil((float)ww * scale);
+	hh = ceil((float)hh * scale);
 
 	img = gfx_new_rgba(ww, hh);
 	if (!img)
