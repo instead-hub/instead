@@ -183,6 +183,7 @@ static int luaB_load_sprite(lua_State *L) {
 		fname = luaL_optstring(L, 1, NULL);
 	else {
 		snprintf(pixels_name, sizeof(pixels_name), "pxl:%p", pixels);
+		pixels_name[sizeof(pixels_name) - 1] = 0;
 		fname = pixels_name;
 	}
 
