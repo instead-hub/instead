@@ -41,6 +41,10 @@ typedef struct {
 	img_t	img;
 } _spr_t;
 
+struct lua_pixels;
+
+static img_t pixels_img(struct lua_pixels *hdr);
+
 static void sprites_free(void)
 {
 /*	fprintf(stderr, "sprites free \n"); */
@@ -170,20 +174,32 @@ static int luaB_load_sprite(lua_State *L) {
 	_spr_t *sp;
 	const char *key;
 	char sname[sizeof(unsigned long) * 2 + 16];
-
-	const char *fname = luaL_optstring(L, 1, NULL);
+	struct lua_pixels *pixels = lua_touserdata(L, 1);
 	const char *desc = luaL_optstring(L, 2, NULL);
+	const char *fname = NULL;
+	char pixels_name[32];
+
+	if (!pixels)
+		fname = luaL_optstring(L, 1, NULL);
+	else {
+		snprintf(pixels_name, sizeof(pixels_name), "pxl:%p", pixels);
+		fname = pixels_name;
+	}
 
 	if (!fname)
 		return 0;
 
-	img = gfx_load_image((char*)fname);
-
-	if (img)
-		theme_img_scale(&img);
-
-	if (img)
-		img = gfx_display_alpha(img); /*speed up */
+	if (pixels) {
+		img = pixels_img(pixels);
+		if (img)
+			img = gfx_alpha_img(img, 255);
+	} else {
+		img = gfx_load_image((char*)fname);
+		if (img)
+			theme_img_scale(&img);
+		if (img)
+			img = gfx_display_alpha(img); /*speed up */
+	}
 
 	if (!img)
 		goto err;
@@ -371,9 +387,6 @@ static int luaB_sprite_size(lua_State *L) {
 #define BLIT_COPY 0
 #define BLIT_DRAW 1
 #define BLIT_COMPOSE 2
-struct lua_pixels;
-
-static img_t pixels_img(struct lua_pixels *hdr);
 
 static int luaB_blit_sprite(lua_State *L, int mode) {
 	img_t s = NULL, d = NULL;
