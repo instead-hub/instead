@@ -1163,9 +1163,10 @@ static int luaB_pixels(lua_State *L) {
 	}
 	if (img2) {
 		unsigned char *ptr = gfx_get_pixels(img2);
-		if (ptr)
+		if (ptr) {
 			memcpy(hdr + 1, ptr, size);
-		gfx_put_pixels(img2);
+			gfx_put_pixels(img2);
+		}
 		gfx_free_image(img2);
 	} else {
 		memset(hdr, 0, sizeof(*hdr) + size);
