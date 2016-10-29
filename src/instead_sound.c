@@ -49,6 +49,61 @@ static int luaB_load_sound(lua_State *L) {
 	return 1;
 }
 
+static int luaB_load_sound_mem(lua_State *L) {
+	static int snd_nr = 0;
+	int hz = luaL_optnumber(L, 1, -1);
+	int channels = luaL_optnumber(L, 2, -1);
+	int len; int i;
+	int *buf = NULL;
+	int fmt = 0;
+	int rc;
+	char name[64];
+	luaL_checktype(L, 3, LUA_TTABLE);
+
+	if (hz < 0 || channels < 0)
+		return 0;
+
+	len = lua_objlen(L, 3);
+	if (len <= 0)
+		return 0;
+	buf = malloc(sizeof(int) * len);
+	if (!buf)
+		return 0;
+
+	lua_pushvalue(L, 3);
+
+	for (i = 0; i < len; i++) {
+		float v;
+		lua_pushinteger(L, i + 1);
+		lua_gettable(L, -2);
+
+		if (!lua_isnumber(L, -1)) {
+			v = 0;
+		} else {
+			v = (float)lua_tonumber(L, -1);
+		}
+		buf[i] = (int)((float)v * 16384) * 2;
+		lua_pop(L, 1);
+	}
+	lua_pop(L, 1);
+	/* here we got the sample */
+	snprintf(name, sizeof(name), "snd:%d", snd_nr ++);
+	if (channels == 2)
+		fmt |= SND_FMT_STEREO;
+
+	if (hz == 11025)
+		fmt |= SND_FMT_11;
+	else if (hz == 22050)
+		fmt |= SND_FMT_22;
+	else
+		fmt |= SND_FMT_44;
+	rc = sound_load_mem(name, fmt, buf, len);
+	free(buf);
+	if (rc)
+		return 0;
+	lua_pushstring(L, name);
+	return 1;
+}
 
 static int luaB_free_sound(lua_State *L) {
 	const char *fname = luaL_optstring(L, 1, NULL);
@@ -93,6 +148,7 @@ static int luaB_channel_sound(lua_State *L) {
 static const luaL_Reg sound_funcs[] = {
 	{"instead_sound", luaB_is_sound},
 	{"instead_sound_load", luaB_load_sound},
+	{"instead_sound_load_mem", luaB_load_sound_mem},
 	{"instead_sound_free", luaB_free_sound},
 	{"instead_sound_channel", luaB_channel_sound},
 	{"instead_sound_panning", luaB_panning_sound},

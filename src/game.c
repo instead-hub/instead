@@ -1771,6 +1771,8 @@ static _snd_t *sound_find(const char *fname)
 {
 	_snd_t *pos = NULL;
 	_snd_t *sn;
+	if (!fname)
+		return NULL;
 	list_for_each(&sounds, pos, list) {
 		sn = (_snd_t*)pos;
 		if (!strcmp(fname, sn->fname)) {
@@ -1818,7 +1820,7 @@ static void sound_play(_snd_t *sn, int chan, int loop)
 	channels[c] = sn;
 }
 
-static _snd_t *sound_add(const char *fname)
+static _snd_t *sound_add(const char *fname, int fmt, int *buf, int len)
 {
 	wav_t w;
 	_snd_t *sn;
@@ -1835,7 +1837,10 @@ static _snd_t *sound_add(const char *fname)
 		free(sn);
 		return NULL;
 	}
-	w = snd_load_wav(fname);
+	if (buf)
+		w = snd_load_mem(fmt, buf, len);
+	else
+		w = snd_load_wav(fname);
 	if (!w) {
 		if (snd_enabled())
 			game_res_err_msg(fname, debug_sw);
@@ -1872,7 +1877,7 @@ static void sounds_reload(void)
 	input_uevents(); /* all callbacks */
 }
 
-static void *_sound_get(const char *fname)
+static void *_sound_get(const char *fname, int fmt, int *buff, size_t len)
 {
 	_snd_t *sn;
 	sn = sound_find(fname);
@@ -1880,7 +1885,7 @@ static void *_sound_get(const char *fname)
 		sn->loaded ++; /* to pin */
 		return sn;
 	}
-	sn = sound_add(fname);
+	sn = sound_add(fname, fmt, buff, len);
 	if (!sn)
 		return NULL;
 	sn->loaded = 1;
@@ -1901,7 +1906,7 @@ static void _sound_put(void *s)
 
 void *sound_get(const char *fname)
 {
-	_snd_t *sn = _sound_get(fname);
+	_snd_t *sn = _sound_get(fname, 0, NULL, 0);
 	if (!sn)
 		return NULL;
 	sn->system = 1;
@@ -1919,7 +1924,15 @@ void sound_put(void *s)
 
 int sound_load(const char *fname)
 {
-	_snd_t *sn = _sound_get(fname);
+	_snd_t *sn = _sound_get(fname, 0, NULL, 0);
+	if (!sn)
+		return -1;
+	return 0;
+}
+
+int sound_load_mem(const char *name, int fmt, int *buff, size_t len)
+{
+	_snd_t *sn = _sound_get(name, fmt, buff, len);
 	if (!sn)
 		return -1;
 	return 0;
@@ -1939,7 +1952,6 @@ static int _play_combined_snd(char *filename, int chan, int loop)
 	char *str;
 	char *p, *ep;
 	_snd_t *sn;
-
 	p = str = strdup(filename);
 	if (!str)
 		return -1;
@@ -1966,7 +1978,7 @@ static int _play_combined_snd(char *filename, int chan, int loop)
 		p = strip(p);
 		sn = sound_find(p);
 		if (!sn)
-			sn = sound_add(p);
+			sn = sound_add(p, 0, NULL, 0);
 		if (sn)
 			sound_play(sn, c, l);
 		else if (at || c != -1) { /* if @ or specific channel */

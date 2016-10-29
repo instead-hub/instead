@@ -107,7 +107,7 @@ stead.add_sound = function(s, chan, loop)
 end
 
 stead.set_sound = function(s, chan, loop)
-	game._sound = s;	
+	game._sound = s;
 	if not stead.tonum(loop) then
 		game._sound_loop = 1;
 	else
