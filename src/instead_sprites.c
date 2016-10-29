@@ -268,7 +268,7 @@ static int luaB_text_size(lua_State *L) {
 		return 0;
 
 	fn = font_lookup(font);
-	
+
 	if (!fn)
 		return 0;
 	if (!text) {
@@ -326,7 +326,7 @@ static int luaB_text_sprite(lua_State *L) {
 
 	if (!img)
 		return 0;
-	
+
 	if (!desc || sprite_lookup(desc)) {
 		key = sname;
 		strncpy(txtkey, text, sizeof(txtkey));
@@ -334,7 +334,7 @@ static int luaB_text_sprite(lua_State *L) {
 		sprite_name(txtkey, sname, sizeof(sname));
 	} else
 		key = desc;
-	
+
 	sp = sprite_new(key, img);
 
 	if (!sp)
@@ -374,7 +374,7 @@ static int luaB_sprite_size(lua_State *L) {
 	s = grab_sprite(src, &xoff, &yoff);
 	if (!s)
 		return 0;
-	
+
 	v = game_theme.scale;
 
 	w = ceil ((float)(gfx_img_w(s) - xoff * 2) / v);
@@ -471,17 +471,17 @@ static int luaB_blit_sprite(lua_State *L, int mode) {
 }
 
 
-static int luaB_draw_sprite(lua_State *L) 
+static int luaB_draw_sprite(lua_State *L)
 {
 	return luaB_blit_sprite(L, BLIT_DRAW);
 }
 
-static int luaB_copy_sprite(lua_State *L) 
+static int luaB_copy_sprite(lua_State *L)
 {
 	return luaB_blit_sprite(L, BLIT_COPY);
 }
 
-static int luaB_compose_sprite(lua_State *L) 
+static int luaB_compose_sprite(lua_State *L)
 {
 	return luaB_blit_sprite(L, BLIT_COMPOSE);
 }
@@ -503,7 +503,7 @@ static int luaB_alpha_sprite(lua_State *L) {
 	s = cache_lookup(gfx_image_cache(), src);
 	if (!s)
 		return 0;
-	
+
 	img2 = gfx_alpha_img(s, alpha);
 	if (!img2)
 		return 0;
@@ -541,7 +541,7 @@ static int luaB_colorkey_sprite(lua_State *L) {
 		return 0;
 	if (color)
 		gfx_set_colorkey(s, col);
-	else 
+	else
 		gfx_unset_colorkey(s);
 	return 0;
 }
@@ -1042,14 +1042,16 @@ static img_t pixels_img(struct lua_pixels *hdr) {
 	h = hdr->h;
 	p = gfx_get_pixels(img);
 
+	if (!p)
+		return NULL;
+
 	if (ww == w && hh == h)
 		scale = 0;
+
 	xv = floor((float)ww / (float)w);
 	yv = floor((float)hh / (float)h);
 	dy = yv; yoff = 0;
 
-	if (!p)
-		return NULL;
 	for (yy = 0; yy < hh; yy++) {
 		dx = xv;
 		xoff = 0;
@@ -1104,23 +1106,47 @@ static int pixels_destroy(lua_State *L) {
 }
 
 static int luaB_pixels(lua_State *L) {
-	int w = luaL_optnumber(L, 1, -1);
-	int h = luaL_optnumber(L, 2, -1);
-	float scale = luaL_optnumber(L, 3, 1);
-	int ww = w;
-	int hh = h;
+	const char *fname;
+	int w, h;
+	float scale;
+	int ww, hh;
 	size_t size;
 	float v;
-	img_t img;
+	img_t img = NULL, img2 = NULL;
 	struct lua_pixels *hdr;
 
-	if (w < 0 || h < 0)
-		return 0;
+	if (!lua_isnumber(L, 1)) {
+		fname = luaL_optstring(L, 1, NULL);
+		if (!fname)
+			return 0;
+		img = gfx_load_image((char*)fname);
+		if (!img)
+			return 0;
+		w = gfx_img_w(img);
+		h = gfx_img_h(img);
+
+		img2 = gfx_new_rgba(w, h);
+		if (!img2) {
+			gfx_free_image(img);
+			return 0;
+		}
+		gfx_copy_from(img, 0, 0, w, h, img2, 0, 0);
+		gfx_free_image(img);
+		scale = luaL_optnumber(L, 2, 1);
+	} else {
+		w = luaL_optnumber(L, 1, -1);
+		h = luaL_optnumber(L, 2, -1);
+		scale = luaL_optnumber(L, 3, 1);
+		if (w < 0 || h < 0)
+			return 0;
+	}
+	ww = w; hh = h;
 	v = game_theme.scale;
 	if (v != 1.0f) {
 		ww = ceil((float)w * v);
 		hh = ceil((float)h * v);
 	}
+
 	ww = ceil((float)ww * scale);
 	hh = ceil((float)hh * scale);
 
@@ -1130,10 +1156,20 @@ static int luaB_pixels(lua_State *L) {
 	size = w * h * 4;
 	hdr = lua_newuserdata(L, sizeof(*hdr) + size);
 	if (!hdr) {
+		if (img2)
+			gfx_free_image(img2);
 		gfx_free_image(img);
 		return 0;
 	}
-	memset(hdr, 255, sizeof(*hdr) + size);
+	if (img2) {
+		unsigned char *ptr = gfx_get_pixels(img2);
+		if (ptr)
+			memcpy(hdr + 1, ptr, size);
+		gfx_put_pixels(img2);
+		gfx_free_image(img2);
+	} else {
+		memset(hdr, 0, sizeof(*hdr) + size);
+	}
 	hdr->type = PIXELS_MAGIC;
 	hdr->img = img;
 	hdr->w = w;
