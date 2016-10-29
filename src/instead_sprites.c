@@ -1046,12 +1046,12 @@ static img_t pixels_img(struct lua_pixels *hdr) {
 		scale = 0;
 	xv = floor((float)ww / (float)w);
 	yv = floor((float)hh / (float)h);
-	dy = floor(yv); yoff = 0;
+	dy = yv; yoff = 0;
 
 	if (!p)
 		return NULL;
 	for (yy = 0; yy < hh; yy++) {
-		dx = floor(xv);
+		dx = xv;
 		xoff = 0;
 		for (xx = 0; xx < ww; xx++) {
 			memcpy(p, ptr, 4); p += 4;
