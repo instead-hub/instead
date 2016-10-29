@@ -272,7 +272,7 @@ int gfx_parse_color (
 	    }
 	    return 0;
 	}
-	
+
 	for (i=0; cnames[i].name; i++) {
 		if (!strcmp(cnames[i].name, spec)) {
 			if (def) {
@@ -322,8 +322,8 @@ static int anigif_spawn(anigif_t ag, int x, int y, int w, int h)
 		return -1;
 	nr = ag->spawn_nr + 1;
 	if (!(nr % AGSPAWN_BLOCK)) { /* grow */
-		void *p = realloc(ag->spawn, AGSPAWN_BLOCK * sizeof(struct agspawn) * 
-						((nr / AGSPAWN_BLOCK) + 1));	
+		void *p = realloc(ag->spawn, AGSPAWN_BLOCK * sizeof(struct agspawn) *
+						((nr / AGSPAWN_BLOCK) + 1));
 		if (!p)
 			return -1;
 		ag->spawn = p;
@@ -359,7 +359,7 @@ static void anigif_disposal(anigif_t g)
 	AG_Frame *frame;
 	frame = &g->frames[g->cur_frame];
 	SDL_GetClipRect(Surf(screen), &clip);
-	
+
 	dest.x = 0; /* g->x; */
 	dest.y = 0; /* g->y; */
 	dest.w = dest.h = 0; /* to make happy compiler */
@@ -370,15 +370,15 @@ static void anigif_disposal(anigif_t g)
 		break;
 	case AG_DISPOSE_RESTORE_BACKGROUND:
 /*		img = g->bg;
-		dest.w = Surf(img)->w; 
-		dest.h = Surf(img)->h; */
+		dest.w = Surf(img)->w;
+		dest.h = Surf(img)->h;*/
 		break;
 	case AG_DISPOSE_RESTORE_PREVIOUS:
 		if (g->cur_frame) {
 			img = (g->frames[g->cur_frame - 1].surface);
-			dest.w = g->frames[g->cur_frame - 1].surface->w; 
+			dest.w = g->frames[g->cur_frame - 1].surface->w;
 			dest.h = g->frames[g->cur_frame - 1].surface->h;
-			dest.x += g->frames[g->cur_frame - 1].x; 
+			dest.x += g->frames[g->cur_frame - 1].x;
 			dest.y += g->frames[g->cur_frame - 1].y;
 		}
 		break;
@@ -393,7 +393,7 @@ static void anigif_disposal(anigif_t g)
 		if (frame->disposal == AG_DISPOSE_RESTORE_BACKGROUND) {
 			img = Surf(g->spawn[i].bg);
 			if (img) {
-				dst.w = img->w; 
+				dst.w = img->w;
 				dst.h = img->h;
 			}
 		}
@@ -414,10 +414,10 @@ static void anigif_frame(anigif_t g)
 	frame = &g->frames[g->cur_frame];
 	SDL_GetClipRect(Surf(screen), &clip);
 
-	dest.w = frame->surface->w; 
+	dest.w = frame->surface->w;
 	dest.h = frame->surface->h;
 
-	for (i = 0; i < g->spawn_nr; i++) {	
+	for (i = 0; i < g->spawn_nr; i++) {
 		dest.x = g->spawn[i].x + frame->x;
 		dest.y = g->spawn[i].y + frame->y;
 		SDL_SetClipRect(Surf(screen), &g->spawn[i].clip);
@@ -425,7 +425,7 @@ static void anigif_frame(anigif_t g)
 	}
 	g->delay = timer_counter;
 	SDL_SetClipRect(Surf(screen), &clip);
-}	
+}
 
 static anigif_t is_anigif(img_t img)
 {
@@ -616,11 +616,11 @@ img_t 	gfx_new(int w, int h)
 	if (!screen) {
 		return gfx_new_rgba(w, h);
 	} else {
-		dst = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, w, h, 
-			Surf(screen)->format->BitsPerPixel, 
-			Surf(screen)->format->Rmask, 
-			Surf(screen)->format->Gmask, 
-			Surf(screen)->format->Bmask, 
+		dst = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, w, h,
+			Surf(screen)->format->BitsPerPixel,
+			Surf(screen)->format->Rmask,
+			Surf(screen)->format->Gmask,
+			Surf(screen)->format->Bmask,
 			Surf(screen)->format->Amask);
 	}
 #if SDL_VERSION_ATLEAST(2,0,0)
@@ -638,8 +638,8 @@ void	gfx_img_fill(img_t img, int x, int y, int w, int h, color_t col)
 	if (!img)
 		return;
 	dest.x = x;
-	dest.y = y; 
-	dest.w = w; 
+	dest.y = y;
+	dest.w = w;
 	dest.h = h;
 	SDL_FillRect(Surf(img), &dest, SDL_MapRGB((Surf(img))->format, col.r, col.g, col.b));
 }
@@ -679,7 +679,7 @@ img_t	gfx_grab_screen(int x, int y, int w, int h)
 	dst.x = 0;
 	dst.y = 0;
 	dst.w = w;
-	dst.h = h;	
+	dst.h = h;
 /*	SDL_SetSurfaceBlendMode(screen, SDL_BLENDMODE_NONE);
 	SDL_SetSurfaceBlendMode(img, SDL_BLENDMODE_NONE); */
 	a = gfx_unset_alpha(screen);
@@ -773,7 +773,7 @@ int gfx_get_pixel(img_t src, int x, int y,  color_t *color)
 
 	memcpy(&col, ptr, bpp);
 
-	SDL_UnlockSurface(img);	
+	SDL_UnlockSurface(img);
 	if (color)
 		SDL_GetRGBA(col, img->format, &r, &g, &b, &a);
 
@@ -864,7 +864,7 @@ img_t gfx_alpha_img(img_t src, int alpha)
 	if (SDL_LockSurface(Surf(img)) == 0) {
 		int w = Surf(img)->w;
 		ptr = (Uint8*)(Surf(img)->pixels);
-		size = Surf(img)->w * Surf(img)->h;		
+		size = Surf(img)->w * Surf(img)->h;
 		while (size --) {
 			Uint8 r, g, b, a;
 			memcpy(&col, ptr, bpp);
@@ -959,7 +959,7 @@ static img_t img_pad(char *fname)
 {
 	int l,r,t,b, rc;
 	img_t img, img2;
-	SDL_Rect to;	
+	SDL_Rect to;
 	char *p = fname;
 	p += strcspn(p, ",");
 	if (*p != ',')
@@ -1057,7 +1057,7 @@ skip:
 	if (parse_mode(filename, wh))
 		goto err;
 	if (wh[0] <= 0 || wh[1] <= 0)
-		goto err; 
+		goto err;
 	img = gfx_new(wh[0], wh[1]);
 	if (!img)
 		goto err;
@@ -1239,8 +1239,8 @@ void gfx_draw_bg(img_t p, int x, int y, int width, int height)
 	src.w = width;
 	src.h = height;
 	dest.x = x;
-	dest.y = y; 
-	dest.w = width; 
+	dest.y = y;
+	dest.w = width;
 	dest.h = height;
 	a = gfx_unset_alpha(p);
 	SDL_BlitSurface(pixbuf, &src, Surf(screen), &dest);
@@ -1261,8 +1261,8 @@ void gfx_draw_from(img_t p, int x, int y, int width, int height, img_t to, int x
 	src.w = width;
 	src.h = height;
 	dest.x = xx;
-	dest.y = yy; 
-	dest.w = width; 
+	dest.y = yy;
+	dest.w = width;
 	dest.h = height;
 	SDL_BlitSurface(pixbuf, &src, scr, &dest);
 }
@@ -1279,8 +1279,8 @@ void gfx_compose_from(img_t p, int x, int y, int width, int height, img_t to, in
 	src.w = width;
 	src.h = height;
 	dest.x = xx;
-	dest.y = yy; 
-	dest.w = width; 
+	dest.y = yy;
+	dest.w = width;
 	dest.h = height;
 	SDL_gfxBlitRGBA(pixbuf, &src, scr, &dest);
 }
@@ -1293,7 +1293,7 @@ void gfx_copy(img_t p, int x, int y)
 	if (!p)
 		return;
 	dest.x = x;
-	dest.y = y; 
+	dest.y = y;
 	dest.w = pixbuf->w;
 	dest.h = pixbuf->h;
 	a = gfx_unset_alpha(p);
@@ -1316,8 +1316,8 @@ void gfx_copy_from(img_t p, int x, int y, int width, int height, img_t to, int x
 	src.w = width;
 	src.h = height;
 	dest.x = xx;
-	dest.y = yy; 
-	dest.w = width; 
+	dest.y = yy;
+	dest.w = width;
 	dest.h = height;
 	a = gfx_unset_alpha(p);
 	SDL_BlitSurface(pixbuf, &src, scr, &dest);
@@ -1332,8 +1332,8 @@ void gfx_draw(img_t p, int x, int y)
 	if (!p)
 		return;
 	dest.x = x;
-	dest.y = y; 
-	dest.w = pixbuf->w; 
+	dest.y = y;
+	dest.w = pixbuf->w;
 	dest.h = pixbuf->h;
 	if (!DIRECT_MODE) /* no gifs in direct mode */
 		ag = is_anigif(p);
@@ -1397,7 +1397,7 @@ int gfx_frame_gif(img_t img)
 
 	if (ag->cur_frame != ag->nr_frames - 1 || ag->loop > 1 || !ag->loop)
 		anigif_disposal(ag);
-		
+
 	ag->cur_frame ++;
 
 	if (ag->cur_frame >= ag->nr_frames) {
@@ -1407,7 +1407,7 @@ int gfx_frame_gif(img_t img)
 			ag->cur_frame --; /* last one */
 		if (ag->loop) {
 			ag->loop --;
-			if (!ag->loop)	
+			if (!ag->loop)
 				ag->loop = -1; /* disabled */
 		}
 
@@ -1433,7 +1433,7 @@ void gfx_update_gif(img_t img)
 	if (!ag->drawn || !ag->active)
 		return;
 	for (i = 0; i < ag->spawn_nr; i++) {
-		gfx_update(ag->spawn[i].x, ag->spawn[i].y, 
+		gfx_update(ag->spawn[i].x, ag->spawn[i].y,
 			gfx_img_w(img), gfx_img_h(img));
 	}
 }
@@ -1443,12 +1443,12 @@ void gfx_draw_wh(img_t p, int x, int y, int w, int h)
 	SDL_Surface *pixbuf = Surf(p);
 	SDL_Rect dest, src;
 	src.x = 0;
-	src.y = 0; 
-	src.w = w; 
+	src.y = 0;
+	src.w = w;
 	src.h = h;
 	dest.x = x;
-	dest.y = y; 
-	dest.w = w; 
+	dest.y = y;
+	dest.w = w;
 	dest.h = h;
 	SDL_BlitSurface(pixbuf, &src, Surf(screen), &dest);
 }
@@ -1465,8 +1465,8 @@ void gfx_clear(int x, int y, int w, int h)
 {
 	SDL_Rect dest;
 	dest.x = x;
-	dest.y = y; 
-	dest.w = w; 
+	dest.y = y;
+	dest.w = w;
 	dest.h = h;
 	SDL_FillRect(Surf(screen), &dest, SDL_MapRGB(Surf(screen)->format, bgcol.r, bgcol.g, bgcol.b));
 }
@@ -1510,7 +1510,7 @@ static SDL_Rect **SDL_ListModes(const SDL_PixelFormat * format, Uint32 flags)
 
 	SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &disp_mode);
 	SDL_PixelFormatEnumToMasks(disp_mode.format, &bpp, &Rmask, &Gmask, &Bmask,
-                                   &Amask);
+				   &Amask);
 	if (format)
 		bpp = format->BitsPerPixel;
 	nmodes = 0;
@@ -1644,7 +1644,7 @@ int gfx_get_mode(int n, int *w, int *h)
 {
 	if (!vid_modes)
 		gfx_modes();
-			
+
 	if (!vid_modes || !vid_modes[n])
 		return -1;
 	if (w)
@@ -1661,14 +1661,14 @@ int gfx_prev_mode(int *w, int *h)
 	if (!w || !h)
 		return -1;
 
-			
-	while ((*w != -1 && *h != -1) && 
+
+	while ((*w != -1 && *h != -1) &&
 		!gfx_get_mode(i, &ww, &hh)) {
 		if (ww == *w && hh == *h)
 			break;
 		i ++;
 	}
-	
+
 	if (*w == -1 || *h == -1)
 		i = gfx_modes();
 
@@ -1688,7 +1688,7 @@ int gfx_next_mode(int *w, int *h)
 	if (!w || !h)
 		return -1;
 
-	while ((*w != -1 && *h != -1) && 
+	while ((*w != -1 && *h != -1) &&
 		!gfx_get_mode(i, &ww, &hh)) {
 		i ++;
 		if (ww == *w && hh == *h)
@@ -1949,7 +1949,7 @@ int gfx_set_mode(int w, int h, int fs)
 #endif
 
 #if defined(IOS) || defined(ANDROID)
-	SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h, 
+	SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h,
 			SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE);
 	if (!SDL_VideoWindow) {
 		fprintf(stderr, "Fallback to software window.\n");
@@ -1981,10 +1981,10 @@ int gfx_set_mode(int w, int h, int fs)
 	if (!vsync_sw)
 		vsync = 0;
 retry:
-	if (software_sw || 
-		(!(Renderer = SDL_CreateRenderer(SDL_VideoWindow, -1, 
+	if (software_sw ||
+		(!(Renderer = SDL_CreateRenderer(SDL_VideoWindow, -1,
 		SDL_RENDERER_ACCELERATED | vsync | SDL_RENDERER_TARGETTEXTURE)) &&
-		!(Renderer = SDL_CreateRenderer(SDL_VideoWindow, -1, 
+		!(Renderer = SDL_CreateRenderer(SDL_VideoWindow, -1,
 		SDL_RENDERER_ACCELERATED)))) {
 		fprintf(stderr, "Fallback to software renderer.\n");
 		sw_fallback = 1;
@@ -2069,7 +2069,7 @@ int gfx_set_mode(int w, int h, int fs)
   #ifdef MAEMO
 	scr = SDL_SetVideoMode(gfx_width, gfx_height, 16, SDL_DOUBLEBUF | hw | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
   #else
-   #ifdef __APPLE__	
+   #ifdef __APPLE__
 	scr = SDL_SetVideoMode(gfx_width, gfx_height, (fs)?32:0, SDL_SWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 	if (scr == NULL) /* ok, fallback to anyformat */
 		scr = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | SDL_SWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
@@ -2202,7 +2202,7 @@ int SDL_Flip(SDL_Surface * screen)
 	int psize = screen->format->BytesPerPixel;
 	void *pixels = screen->pixels;
 
-	if (queue_dirty) { 
+	if (queue_dirty) {
 		rect.x = queue_x1;
 		rect.y = queue_y1;
 		rect.w = queue_x2 - queue_x1;
@@ -2277,7 +2277,7 @@ void gfx_update(int x, int y, int w, int h) {
 	}
 	if (y < 0) {
 		h += y;
-		y = 0;	
+		y = 0;
 	}
 	if (w < 0 || h < 0)
 		return;
@@ -2511,7 +2511,7 @@ fnt_t fnt_load(const char *fname, int size)
 			if (!rw || !(fn = TTF_OpenFontRW(rw, 1, size))) {
 				fprintf(stderr, "Can not load font: '%s'\n", files[i]);
 			}
-		} 
+		}
 		if (!fn && i == 0) /* no regular */
 			goto err;
 #ifdef TTF_HINTING_LIGHT
@@ -2602,7 +2602,7 @@ void fnt_free(fnt_t fnt)
 	if (!fnt)
 		return;
 	for (i = 0; i < FN_MAX; i++) {
-		if (h->fonts[i]) 
+		if (h->fonts[i])
 			TTF_CloseFont((TTF_Font *)h->fonts[i]);
 	}
 	free(h);
@@ -2916,7 +2916,7 @@ void line_align(struct line *line, int width, int style, int nl)
 		line_center(line, width);
 		return;
 	}
-	if (style == ALIGN_LEFT) 
+	if (style == ALIGN_LEFT)
 		return;
 	if (style == ALIGN_RIGHT) {
 		line_right(line, width);
@@ -2936,7 +2936,7 @@ void line_free(struct line *line)
 		struct word *ow = w;
 		w = w->next;
 		word_free(ow);
-	}	
+	}
 	free(line);
 }
 
@@ -3047,20 +3047,20 @@ struct layout {
 };
 
 struct xref {
-	struct  xref *next;
-	struct 	xref *prev;
-	struct 	word **words;
-	struct  layout *layout;
-	char  	*link;
+	struct	xref *next;
+	struct	xref *prev;
+	struct	word **words;
+	struct	layout *layout;
+	char	*link;
 	int	num;
-	int 	active;
+	int	active;
 };
 struct textbox {
 	struct 	layout *lay;
-	struct  line    *line;
-	int 	off;
-	int 	w;
-	int 	h;
+	struct line	*line;
+	int	off;
+	int	w;
+	int	h;
 };
 
 void word_free(struct word *word)
@@ -3227,10 +3227,10 @@ img_t txt_layout_images(layout_t lay, void **v)
 {
 	struct image **g = (struct image **)v;
 	struct layout *layout = (struct layout *)lay;
-	
+
 	if (!layout)
 		return NULL;
-		
+
 	if (!*v)
 		*v = layout->images;
 	else
@@ -3712,8 +3712,8 @@ static int process_word_token(const char *p, char **eptr, char ch)
 	ep = find_in_esc(p, "\\>");
 	if (*ep != '>')
 		return 0;
-	if (eptr)	
-		*eptr = ep + 1;	
+	if (eptr)
+		*eptr = ep + 1;
 	return (ep - p + 1);
 }
 
@@ -3773,7 +3773,7 @@ static const char *lookup_token_or_sp(const char *ptr)
 				p ++; */
 			return p;
 		}
-		
+
 		if (!gfx_get_token(p, &eptr, NULL, NULL)) {
 			if (word_img(p, &eptr)) {
 				if (p == ptr) /* first one */
@@ -3817,15 +3817,15 @@ static char *get_word(const char *ptr, char **eptr, int *sp)
 	o = malloc(sz + 1);
 	memcpy(o, ptr, sz);
 	o[sz] = 0;
-	
+
 	sz = word_img(ptr, eptr);
 	if (sz)
 		return o;
 	sz = word_token(ptr, eptr);
 	if (sz)
 		return o;
-	*eptr = (char*)ep;	
-	return o; 
+	*eptr = (char*)ep;
+	return o;
 }
 
 void	layout_debug(struct layout *layout)
@@ -3866,21 +3866,21 @@ void txt_layout_link_color(layout_t lay, color_t link)
 	struct layout *layout = (struct layout*)lay;
 	if (!lay)
 		return;
-	layout->lcol = link;	
+	layout->lcol = link;
 }
 void txt_layout_active_color(layout_t lay, color_t link)
 {
 	struct layout *layout = (struct layout*)lay;
 	if (!lay)
 		return;
-	layout->acol = link;	
+	layout->acol = link;
 }
 void txt_layout_link_style(layout_t lay, int style)
 {
 	struct layout *layout = (struct layout*)lay;
 	if (!lay)
 		return;
-	layout->lstyle = style;	
+	layout->lstyle = style;
 }
 
 static char *word_cache_string(struct word *w, Uint32 style)
@@ -4067,7 +4067,7 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 		return;
 	for (v = NULL; (img = txt_layout_images(lay, &v)); )
 		gfx_dispose_gif(img);
-	
+
 	for (margin = layout->margin; margin; margin = margin->next) {
 		if (margin->y + margin->h < off)
 			continue;
@@ -4102,7 +4102,7 @@ void txt_layout_draw(layout_t lay, int x, int y)
 
 textbox_t txt_box(int w, int h)
 {
-	struct textbox *box;	
+	struct textbox *box;
 	box = malloc(sizeof(struct textbox));
 	if (!box)
 		return NULL;
@@ -4128,7 +4128,7 @@ void txt_box_norm(textbox_t tbox)
 		if (off < line->h)
 			break;
 		off -= line->h;
-		box->line = line; 
+		box->line = line;
 	}
 }
 
@@ -4196,7 +4196,7 @@ void txt_box_scroll_next(textbox_t tbox, int disp)
 	off = h - box->off - box->h;
 	if (disp > off)
 		disp = off;
-	
+
 	off = box->off - line->y; /* offset from cur line */
 	off += disp; /* needed offset */
 
@@ -4221,7 +4221,7 @@ void txt_box_scroll_prev(textbox_t tbox, int disp)
 		return;
 	off = box->off - line->y; /* offset from cur line */
 	off -= disp; /* offset from current line */
-	
+
 	while (line != l->lines && off < 0) {
 		line = line->prev;
 		off += (line->next->y - line->y);
@@ -4282,7 +4282,7 @@ void txt_box_prev_line(textbox_t tbox)
 		line = line->prev;
 		box->line = line;
 		box->off = line->y;
-	} else 
+	} else
 		box->off = 0;
 }
 
@@ -4607,7 +4607,7 @@ char *process_token(char *ptr, struct layout *layout, struct line *line, struct 
 		al = ALIGN_CENTER;
 	else if (TOKEN(token) == TOKEN_J)
 		al = ALIGN_JUSTIFY;
-	
+
 	if (al) {
 		if (token & TOKEN_CLOSE)  {
 			layout->acnt --;
@@ -4624,7 +4624,7 @@ char *process_token(char *ptr, struct layout *layout, struct line *line, struct 
 		}
 		goto out;
 	}
-	
+
 	al = 0;
 
 	if (TOKEN(token) == TOKEN_T)
@@ -4656,7 +4656,7 @@ char *process_token(char *ptr, struct layout *layout, struct line *line, struct 
 			if (TOKEN(token) == TOKEN_Y) {
 				if (layout->box)
 					pos = layout->box->h * pos / 100;
-			} else 
+			} else
 				pos = layout->w * pos / 100;
 		}
 		if (TOKEN(token) == TOKEN_X) {
@@ -4701,7 +4701,7 @@ out:
 }
 
 int get_unbrakable_len(struct layout *layout, const char *ptr)
-{		
+{
 	int w = 0;
 	int ww = 0;
 	char *p, *eptr;
@@ -4724,7 +4724,7 @@ int get_unbrakable_len(struct layout *layout, const char *ptr)
 		}
 
 		txt_size(layout->fn, p, &ww, NULL);
-			
+
 		ptr = eptr;
 		w += ww;
 		if (!*p)
@@ -4822,7 +4822,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 	img_t img = NULL;
 	if (!layout || !layout->fn)
 		return;
-	saved_style = layout->style; 
+	saved_style = layout->style;
 	fnt_style(layout->fn, 0);
 	txt_size(layout->fn, " ", &spw, NULL);
 
@@ -4830,7 +4830,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 		lastline = layout->lines->prev;
 		lastline->pos = 0;
 	}
-	
+
 	if (!lastline) {
 		line = line_new();
 		if (!line)
@@ -4842,7 +4842,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 	}
 
 	line->x = layout_find_margin(layout, line->y, &width);
-	
+
 	while (ptr && *ptr) {
 		struct word *word;
 		int sp2, addlen = 0;
@@ -4860,7 +4860,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 			if (sp2)
 				sp = -1;
 			continue;
-		} 
+		}
 		if (sp == -1) {
 			p = get_word(ptr, &eptr, NULL);
 			sp = 1;
@@ -4883,7 +4883,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 					width = layout->w;
 					line->x = 0;
 				}
-				if (width - w <= 0) 
+				if (width - w <= 0)
 					img_align = 0;
 			}
 		} else {
@@ -4903,7 +4903,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 			int ww = width - (line->w + ((sp && line->w)?spw:0) + addlen);
 			p = word_hyphen(layout, p, ww, &eptr, &w);
 		}
-#endif		
+#endif
 		if ((line->num && (line->w + ((sp && line->w)?spw:0) + w + addlen) > width) || nl) {
 			struct line *ol = line;
 			h = 0; /* reset h for new line */
@@ -4937,7 +4937,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 			continue;
 		}
 
-	
+
 		if (h > line->h && !img_align)
 			line->h = h;
 
@@ -4950,9 +4950,9 @@ void _txt_layout_add(layout_t lay, char *txt)
 		word->valign = layout->valign;
 		if (!sp && !line_empty(line))
 			word->unbrake = 1;
-		
+
 		word->style = layout->style;
-		
+
 		if (line->w && !word->unbrake)
 			line->w += spw;
 
@@ -4972,14 +4972,14 @@ void _txt_layout_add(layout_t lay, char *txt)
 			if (img_align == ALIGN_LEFT) {
 				line->x += w;
 				m->w = x2 + w;
-			} 
+			}
 			else
 				m->w = layout->w - x2 - w2 + w;
 /*			fprintf(stderr,"w: %d %d %d\n", width, w, width - w); */
 			width -= w;
 			m->h = h;
 			m->y = line->y;
-			m->align = img_align; 
+			m->align = img_align;
 			m->word = word;
 			word->w = 0;
 			if (img_align == ALIGN_LEFT)
@@ -5001,7 +5001,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 
 		line->w += w;
 
-		if (nl) 
+		if (nl)
 			eptr ++;
 		ptr = eptr;
 		free(p);
@@ -5010,7 +5010,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 		layout->h = line->y + line->h;
 
 /*	if (line->num) { */
-		if (line != lastline) { 
+		if (line != lastline) {
 			layout_add_line(layout, line);
 		}
 		line_y(layout, line);
@@ -5029,7 +5029,7 @@ err:
 void txt_layout_add(layout_t lay, char *txt)
 {
 	struct layout *layout = (struct layout*)lay;
-	if (layout) 
+	if (layout)
 		layout->h = 0;
 	_txt_layout_add(lay, txt);
 }
@@ -5087,9 +5087,9 @@ int xref_position(xref_t x, int *xc, int *yc)
 		if (!word->img_align)
 			w += word->w;
 	}
-	
+
 	w = w/2;
-	
+
 	for (i = 0; i < xref->num; i ++) {
 		word = xref->words[i];
 		if (word->img_align)
@@ -5193,7 +5193,7 @@ void txt_layout_set(layout_t lay, char *txt)
 {
 	struct layout *layout = (struct layout*)lay;
 	if (!layout)
-		return;	
+		return;
 	layout->h = 0;
 	_txt_layout_free(lay);
 	_txt_layout_add(lay, txt);
@@ -5205,7 +5205,7 @@ void _txt_layout_real_size(layout_t lay, struct line *line, int *pw, int *ph)
 	struct margin *margin;
 	struct layout *layout = (struct layout*)lay;
 	if (!layout)
-		return;	
+		return;
 	if (!line)
 		line = layout->lines;
 	for ( ; line; line = line->next) {
