@@ -1105,7 +1105,7 @@ static int pixels_destroy(lua_State *L) {
 	return 0;
 }
 
-static int luaB_pixels(lua_State *L) {
+static int luaB_pixels_sprite(lua_State *L) {
 	const char *fname;
 	int w, h;
 	float scale;
@@ -1223,6 +1223,7 @@ static const luaL_Reg sprites_funcs[] = {
 	{"instead_sprite_rotate", luaB_rotate_sprite},
 	{"instead_sprite_text_size", luaB_text_size},
 	{"instead_sprite_pixel", luaB_pixel_sprite},
+	{"instead_sprite_pixels", luaB_pixels_sprite},
 	{"instead_theme_var", luaB_theme_var},
 	{"instead_theme_name", luaB_theme_name},
 	{"instead_ticks", luaB_get_ticks},
@@ -1232,7 +1233,6 @@ static const luaL_Reg sprites_funcs[] = {
 	{"instead_mouse_show", luaB_mouse_show},
 	{"instead_finger_pos", luaB_finger_pos},
 	{"instead_themespath", luaB_get_themespath},
-	{"instead_pixels", luaB_pixels},
 	{NULL, NULL}
 };
 

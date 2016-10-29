@@ -19,6 +19,7 @@ stead.sprite_free = instead_sprite_free
 stead.sprite_size = instead_sprite_size
 stead.sprites_free = instead_sprites_free
 stead.sprite_colorkey = instead_sprite_colorkey
+stead.sprite_pixels = instead_sprite_pixels
 
 sprite = {
 	nam = 'sprites';
@@ -121,6 +122,9 @@ sprite = {
 	end;
 	free = function(key)
 		return stead.sprite_free(key);
+	end;
+	pixels = function(...)
+		return stead.sprite_pixels(...)
 	end;
 }
 
