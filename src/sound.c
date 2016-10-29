@@ -151,6 +151,7 @@ wav_t	snd_load_mem(int fmt, const int *data, size_t len)
 	int freq = 22050, ffreq;
 	SDL_AudioCVT wavecvt;
 	Mix_Chunk *chunk;
+	size_t size = len * sizeof(int);
 
 	Mix_QuerySpec(&freq, NULL, NULL);
 
@@ -161,25 +162,34 @@ wav_t	snd_load_mem(int fmt, const int *data, size_t len)
 	else
 		ffreq = 44100;
 
-	if (SDL_BuildAudioCVT(&wavecvt,
-			      SND_DEFAULT_FORMAT, fmt & SND_FMT_STEREO, ffreq,
+	if (audio_format != SND_DEFAULT_FORMAT ||
+	    audio_channels != ((fmt & SND_FMT_STEREO) ? 2:1) ||
+	    ffreq != freq) {
+		if (SDL_BuildAudioCVT(&wavecvt,
+			      SND_DEFAULT_FORMAT, (fmt & SND_FMT_STEREO) ? 2:1, ffreq,
 			      audio_format, audio_channels, freq) < 0)
-		return NULL;
+			return NULL;
 
-	wavecvt.len = len;
-	wavecvt.buf = (Uint8 *)SDL_calloc(1, wavecvt.len * wavecvt.len_mult);
+		wavecvt.len = size;
+		wavecvt.buf = (Uint8 *)SDL_calloc(1, wavecvt.len * wavecvt.len_mult);
 
-	if (!wavecvt.buf)
-		return NULL;
+		if (!wavecvt.buf)
+			return NULL;
 
-	SDL_memcpy(wavecvt.buf, data, len);
+		SDL_memcpy(wavecvt.buf, data, size);
 
-	if (SDL_ConvertAudio(&wavecvt) < 0) {
-		SDL_free(wavecvt.buf);
-		return NULL;
+		if (SDL_ConvertAudio(&wavecvt) < 0) {
+			SDL_free(wavecvt.buf);
+			return NULL;
+		}
+		chunk = Mix_QuickLoad_RAW(wavecvt.buf, wavecvt.len_cvt);
+	} else {
+		Uint8 *b = (Uint8 *)SDL_calloc(1, len * sizeof(int));
+		if (!b)
+			return NULL;
+		SDL_memcpy(b, data, size);
+		chunk = Mix_QuickLoad_RAW(b, size);
 	}
-
-	chunk = Mix_QuickLoad_RAW(wavecvt.buf, wavecvt.len_cvt);
 	if (!chunk)
 		return NULL;
 	chunk->allocated = 1;
