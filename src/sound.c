@@ -138,7 +138,53 @@ int snd_volume_mus(int vol)
 	return Mix_VolumeMusic(vol);
 }
 
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+#define SND_DEFAULT_FORMAT  AUDIO_S16LSB
+#else
+#define SND_DEFAULT_FORMAT  AUDIO_S16MSB
+#endif
+
 #define MIXER_VERSION_ATLEAST(a,b,c)  (SDL_VERSIONNUM(SDL_MIXER_MAJOR_VERSION, SDL_MIXER_MINOR_VERSION,SDL_MIXER_PATCHLEVEL) >= SDL_VERSIONNUM(a, b, c))
+
+wav_t	snd_load_mem(int fmt, const int *data, size_t len)
+{
+	int freq = 22050, ffreq;
+	SDL_AudioCVT wavecvt;
+	Mix_Chunk *chunk;
+
+	Mix_QuerySpec(&freq, NULL, NULL);
+
+	if (fmt & SND_FMT_11)
+		ffreq = 11025;
+	if (fmt & SND_FMT_22)
+		ffreq = 22050;
+	else
+		ffreq = 44100;
+
+	if (SDL_BuildAudioCVT(&wavecvt,
+			      SND_DEFAULT_FORMAT, fmt & SND_FMT_STEREO, ffreq,
+			      audio_format, audio_channels, freq) < 0)
+		return NULL;
+
+	wavecvt.len = len;
+	wavecvt.buf = (Uint8 *)SDL_calloc(1, wavecvt.len * wavecvt.len_mult);
+
+	if (!wavecvt.buf)
+		return NULL;
+
+	SDL_memcpy(wavecvt.buf, data, len);
+
+	if (SDL_ConvertAudio(&wavecvt) < 0) {
+		SDL_free(wavecvt.buf);
+		return NULL;
+	}
+
+	chunk = Mix_QuickLoad_RAW(wavecvt.buf, wavecvt.len_cvt);
+	if (!chunk)
+		return NULL;
+	chunk->allocated = 1;
+	return (wav_t)chunk;
+}
 
 wav_t	snd_load_wav(const char *fname)
 {

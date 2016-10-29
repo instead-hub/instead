@@ -15,6 +15,13 @@ extern void 	snd_halt_chan(int han, int ms);
 
 extern void	snd_free_wav(wav_t chunk);
 extern wav_t	snd_load_wav(const char *fname);
+
+#define SND_FMT_STEREO	1
+#define SND_FMT_44	2
+#define SND_FMT_22	4
+#define SND_FMT_11	8
+
+extern wav_t	snd_load_mem(int fmt, const int *buf, size_t len);
 extern int	snd_play_mus(char *music, int ms, int loop);
 extern int	snd_playing_mus();
 extern void     snd_stop_mus(int ms);
