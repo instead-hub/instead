@@ -1150,6 +1150,11 @@ void themes_drop(int type)
 	if (new_size)
 		new_themes = malloc(new_size);
 
+	if (!new_themes) {
+		fprintf(stderr, "Fatal: can't alloc memory.\n");
+		return;
+	}
+
 	for (i = 0; i < themes_nr; i ++) {
 		if (themes[i].type == type) {
 			free(themes[i].path);

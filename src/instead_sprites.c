@@ -350,7 +350,7 @@ err:
 static img_t grab_sprite(const char *dst, int *xoff, int *yoff)
 {
 	img_t d;
-	if (DIRECT_MODE && !strcmp(dst, "screen")) {
+	if (DIRECT_MODE && dst && !strcmp(dst, "screen")) {
 		d = gfx_screen(NULL);
 		*xoff = game_theme.xoff;
 		*yoff = game_theme.yoff;

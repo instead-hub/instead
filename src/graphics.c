@@ -828,6 +828,9 @@ unsigned char *gfx_get_pixels(img_t src)
 	Uint8 *ptr;
 	SDL_Surface *img = Surf(src);
 
+	if (!img)
+		return NULL;
+
 	if (SDL_LockSurface(img))
 		return NULL;
 
@@ -886,11 +889,15 @@ img_t gfx_alpha_img(img_t src, int alpha)
 
 void gfx_set_colorkey(img_t src, color_t col)
 {
-	Uint32 c = SDL_MapRGB(Surf(src)->format, col.r, col.g, col.b);
+	Uint32 c;
+	SDL_Surface *s = Surf(src);
+	if (!s)
+		return;
+	c = SDL_MapRGB(s->format, col.r, col.g, col.b);
 #if SDL_VERSION_ATLEAST(2,0,0)
-	SDL_SetColorKey(Surf(src), SDL_TRUE, c);
+	SDL_SetColorKey(s, SDL_TRUE, c);
 #else
-	SDL_SetColorKey(Surf(src), SDL_SRCCOLORKEY, c);
+	SDL_SetColorKey(s, SDL_SRCCOLORKEY, c);
 #endif
 /*	gfx_unset_alpha(src); */
 }
@@ -1464,11 +1471,14 @@ void gfx_bg(color_t col)
 void gfx_clear(int x, int y, int w, int h)
 {
 	SDL_Rect dest;
+	SDL_Surface *s = Surf(screen);
+	if (!s)
+		return;
 	dest.x = x;
 	dest.y = y;
 	dest.w = w;
 	dest.h = h;
-	SDL_FillRect(Surf(screen), &dest, SDL_MapRGB(Surf(screen)->format, bgcol.r, bgcol.g, bgcol.b));
+	SDL_FillRect(s, &dest, SDL_MapRGB(s->format, bgcol.r, bgcol.g, bgcol.b));
 }
 
 int gfx_width = -1;
@@ -1517,9 +1527,11 @@ static SDL_Rect **SDL_ListModes(const SDL_PixelFormat * format, Uint32 flags)
 	modes = NULL;
 	for (i = 0; i < SDL_GetNumDisplayModes(SDL_CurrentDisplay); ++i) {
 		SDL_DisplayMode mode;
-		SDL_GetDisplayMode(SDL_CurrentDisplay, i, &mode);
+		if (SDL_GetDisplayMode(SDL_CurrentDisplay, i, &mode) < 0)
+			continue;
+
 		if (!mode.w || !mode.h) {
-			return (SDL_Rect **) (-1);
+			continue;
 		}
 /*		fprintf(stderr, "Mode: %d %d %d %d\n", bpp, SDL_BITSPERPIXEL(mode.format), mode.w, mode.h); */
 		if ((unsigned int)bpp < SDL_BITSPERPIXEL(mode.format)) {
@@ -1536,24 +1548,29 @@ static SDL_Rect **SDL_ListModes(const SDL_PixelFormat * format, Uint32 flags)
 			continue;
 		}
 		new_modes = SDL_realloc(modes, (nmodes + 2) * sizeof(*modes));
-		if (!new_modes) {
-			return NULL;
-		}
+		if (!new_modes)
+			goto out;
 		modes = new_modes;
 		modes[nmodes] = (SDL_Rect *) SDL_malloc(sizeof(SDL_Rect));
-		if (!modes[nmodes]) {
-			return NULL;
-		}
+		if (!modes[nmodes])
+			goto out;
 		modes[nmodes]->x = 0;
 		modes[nmodes]->y = 0;
 		modes[nmodes]->w = mode.w;
 		modes[nmodes]->h = mode.h;
 		++nmodes;
 	}
+	if (!modes) /* no modes found */
+		return (SDL_Rect **) (-1);
 	if (modes) {
 		modes[nmodes] = NULL;
 	}
 	return modes;
+out:
+	for (i = 0; i < nmodes; i++)
+		SDL_free(modes[i]);
+	SDL_free(modes);
+	return NULL;
 }
 #endif
 
@@ -2198,10 +2215,13 @@ static void SDL_UpdateRect(SDL_Surface * screen, Sint32 x, Sint32 y, Uint32 w, U
 int SDL_Flip(SDL_Surface * screen)
 {
 	SDL_Rect rect;
-	int pitch = screen->pitch;
-	int psize = screen->format->BytesPerPixel;
-	void *pixels = screen->pixels;
-
+	int pitch, psize;
+	void *pixels;
+	if (!screen)
+		return 0;
+	pitch = screen->pitch;
+	psize = screen->format->BytesPerPixel;
+	pixels = screen->pixels;
 	if (queue_dirty) {
 		rect.x = queue_x1;
 		rect.y = queue_y1;

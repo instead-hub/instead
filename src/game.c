@@ -2375,7 +2375,7 @@ int game_cmd(char *cmd, int flags)
 			} else if (el_img(el_spic))
 				strcat(p, "\n");
 			strcat(p, cmdstr);
-			if (WAYS_BOTTOM) {
+			if (WAYS_BOTTOM && waystr) {
 				strcat(p, "\n");
 				strcat(p, waystr);
 			}
