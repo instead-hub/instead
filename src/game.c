@@ -1930,7 +1930,7 @@ int sound_load(const char *fname)
 	return 0;
 }
 
-int sound_load_mem(const char *name, int fmt, int *buff, size_t len)
+int sound_load_mem(const char *name, int fmt, short *buff, size_t len)
 {
 	_snd_t *sn = _sound_get(name, fmt, buff, len);
 	if (!sn)

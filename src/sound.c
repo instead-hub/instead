@@ -146,12 +146,12 @@ int snd_volume_mus(int vol)
 
 #define MIXER_VERSION_ATLEAST(a,b,c)  (SDL_VERSIONNUM(SDL_MIXER_MAJOR_VERSION, SDL_MIXER_MINOR_VERSION,SDL_MIXER_PATCHLEVEL) >= SDL_VERSIONNUM(a, b, c))
 
-wav_t	snd_load_mem(int fmt, const int *data, size_t len)
+wav_t	snd_load_mem(int fmt, const short *data, size_t len)
 {
 	int freq = 22050, ffreq;
 	SDL_AudioCVT wavecvt;
 	Mix_Chunk *chunk;
-	size_t size = len * sizeof(int);
+	size_t size = len * sizeof(short);
 
 	Mix_QuerySpec(&freq, NULL, NULL);
 
@@ -184,7 +184,7 @@ wav_t	snd_load_mem(int fmt, const int *data, size_t len)
 		}
 		chunk = Mix_QuickLoad_RAW(wavecvt.buf, wavecvt.len_cvt);
 	} else {
-		Uint8 *b = (Uint8 *)SDL_calloc(1, len * sizeof(int));
+		Uint8 *b = (Uint8 *)SDL_calloc(1, size);
 		if (!b)
 			return NULL;
 		SDL_memcpy(b, data, size);

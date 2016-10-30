@@ -54,7 +54,7 @@ static int luaB_load_sound_mem(lua_State *L) {
 	int hz = luaL_optnumber(L, 1, -1);
 	int channels = luaL_optnumber(L, 2, -1);
 	int len; int i;
-	int *buf = NULL;
+	short *buf = NULL;
 	int fmt = 0;
 	int rc;
 	char name[64];
@@ -82,7 +82,7 @@ static int luaB_load_sound_mem(lua_State *L) {
 		} else {
 			v = (float)lua_tonumber(L, -1);
 		}
-		buf[i] = (int)((float)v * 16384) * 2;
+		buf[i] = (short)((float)v * 16384) * 2;
 		lua_pop(L, 1);
 	}
 	lua_pop(L, 1);
