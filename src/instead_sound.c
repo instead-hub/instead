@@ -237,10 +237,11 @@ static int sound_value(lua_State *L) {
 	struct lua_sound *hdr = (struct lua_sound*)lua_touserdata(L, 1);
 	int pos = luaL_optnumber(L, 2, -1);
 	float v = luaL_optnumber(L, 3, -2.0f);
-	if (pos < 0)
+	if (pos <= 0)
 		return 0;
-	if (pos >= hdr->len)
+	if (pos > hdr->len)
 		return 0;
+	pos --;
 	if (v == -2.0f) {
 		lua_pushnumber(L, hdr->buf[pos]);
 		return 1;
