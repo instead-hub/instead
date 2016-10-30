@@ -95,7 +95,7 @@ static int luaB_load_sound_mem(lua_State *L) {
 	else
 		fmt |= SND_FMT_44;
 	name = sound_load_mem(fmt, buf, len);
-	free(buf);
+/*	free(buf); */
 	if (!name)
 		return 0;
 	lua_pushstring(L, name);

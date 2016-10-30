@@ -3912,7 +3912,7 @@ static char *word_cache_string(struct word *w, Uint32 style)
 	p = malloc(len);
 	if (!p)
 		return NULL;
-	sprintf(p, "%s-%08x", (w->word)?w->word:"", style);
+	snprintf(p, len, "%s-%08x", (w->word)?w->word:"", style);
 	return p;
 }
 

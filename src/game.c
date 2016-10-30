@@ -1639,6 +1639,9 @@ typedef struct {
 	wav_t	wav;
 	int	loaded;
 	int	system;
+	int	fmt;
+	short	*buf;
+	size_t	len;
 } _snd_t;
 typedef struct {
 	_snd_t *snd;
@@ -1719,6 +1722,8 @@ static void sound_free(_snd_t *sn)
 	sounds_nr --;
 	free(sn->fname);
 	snd_free_wav(sn->wav);
+	if (sn->buf)
+		free(sn->buf);
 	free(sn);
 }
 
@@ -1829,10 +1834,14 @@ static _snd_t *sound_add(const char *fname, int fmt, short *buf, int len)
 	sn = malloc(sizeof(_snd_t));
 	if (!sn)
 		return NULL;
+	memset(sn, 0, sizeof(*sn));
 /*	LIST_HEAD_INIT(&sn->list); */
 	sn->fname = strdup(fname);
 	sn->loaded = 0;
 	sn->system = 0;
+	sn->buf = buf;
+	sn->len = len;
+	sn->fmt = fmt;
 	if (!sn->fname) {
 		free(sn);
 		return NULL;
@@ -1868,7 +1877,10 @@ static void sounds_reload(void)
 	list_for_each(&sounds, pos, list) {
 		sn = (_snd_t*)pos;
 		snd_free_wav(sn->wav);
-		sn->wav = snd_load_wav(sn->fname);
+		if (sn->buf)
+			sn->wav = snd_load_mem(sn->fmt, sn->buf, sn->len);
+		else
+			sn->wav = snd_load_wav(sn->fname);
 	}
 	for (i = 0; i < SND_CHANNELS; i++) {
 		channels[i] = NULL;
