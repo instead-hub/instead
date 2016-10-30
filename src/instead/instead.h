@@ -58,11 +58,14 @@ struct instead_ext {
 extern int  instead_init(const char *path);
 extern int  instead_load(void);
 extern void instead_done(void);
+extern void instead_lock(void);
+extern void instead_unlock(void);
 extern char *instead_cmd(char *s, int *rc);
 extern char *instead_file_cmd(char *s, int *rc);
 
 extern int  instead_function(char *s, struct instead_args *args);
 extern int  instead_eval(char *s);
+extern int  instead_pcall(lua_State *L, int nargs);
 extern int  instead_clear(void);
 extern char *instead_retval(int n);
 extern int  instead_bretval(int n);

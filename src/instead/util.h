@@ -53,6 +53,7 @@ extern double mt_random_double(void);
 
 #ifdef _USE_SDL
  #include <SDL_config.h>
+ #include <SDL_mutex.h>
  #ifdef _USE_SDL_ICONV
   #include <SDL_stdinc.h>
   #define iconv SDL_iconv

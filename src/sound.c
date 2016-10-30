@@ -153,7 +153,7 @@ wav_t	snd_load_mem(int fmt, const short *data, size_t len)
 	Mix_Chunk *chunk;
 	size_t size = len * sizeof(short);
 
-	Mix_QuerySpec(&freq, NULL, NULL);
+	freq = snd_hz();
 
 	if (fmt & SND_FMT_11)
 		ffreq = 11025;
@@ -317,7 +317,7 @@ int snd_playing(int channel)
 	if (channel >= MIX_CHANNELS)
 		channel %= MIX_CHANNELS;
 	if (channel < 0)
-		channel = -1;	
+		channel = -1;
 	return Mix_Playing(channel);
 }
 
@@ -368,6 +368,11 @@ int snd_play(void *chunk, int channel, int loop)
 		snd_halt_chan(channel, 0);
 	snd_volume_mus(snd_volume_mus(-1)); /* SDL hack? */
 	return Mix_PlayChannel(channel, (Mix_Chunk*)chunk, loop);
+}
+
+void snd_mus_callback(void (*fn)(void *udata, unsigned char *stream, int len), void *arg)
+{
+	Mix_HookMusic(fn, arg);
 }
 
 void snd_done(void)

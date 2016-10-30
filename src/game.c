@@ -590,18 +590,22 @@ int game_load(int nr)
 int game_saves_enabled(void)
 {
 	int rc;
+	instead_lock();
 	instead_function("instead.isEnableSave", NULL);
 	rc = instead_bretval(0);
 	instead_clear();
+	instead_unlock();
 	return rc;
 }
 
 int game_autosave_enabled(void)
 {
 	int rc;
+	instead_lock();
 	instead_function("instead.isEnableAutosave", NULL);
 	rc = instead_bretval(0);
 	instead_clear();
+	instead_unlock();
 	return rc;
 }
 
@@ -621,16 +625,22 @@ int game_save(int nr)
 				{ .val = "0", .type = INSTEAD_NUM }, 
 				{ .val = NULL, } 
 			};
-			if (nr == -1)
+			if (nr == -1) {
+				instead_lock();
 				instead_function("instead.autosave", args_1); /* enable saving for -1 */
-			else if (!game_autosave_enabled())
+			} else if (!game_autosave_enabled())
 				return 0; /* nothing todo */
-			else
+			else {
+				instead_lock();
 				instead_function("instead.autosave", args_0); /* enable saving for 0 */
+			}
 			instead_clear();
+			instead_unlock();
 		}
 		snprintf(cmd, sizeof(cmd) - 1, "save %s", s);
+		instead_lock();
 		p = instead_file_cmd(cmd, &rc);
+		instead_unlock();
 		if (p)
 			free(p);
 		if (rc || (!p && instead_err())) {
@@ -1488,6 +1498,7 @@ static int check_fading(int *new_scene)
 {
 	int rc;
 	int st;
+	instead_lock();
 	instead_function("instead.get_fading", NULL);
 	rc = instead_bretval(0);
 	st = instead_iretval(1);
@@ -1498,6 +1509,7 @@ static int check_fading(int *new_scene)
 		st = 255;
 
 	instead_clear();
+	instead_unlock();
 	if (new_scene)
 		*new_scene = rc;
 	return st;
@@ -1508,10 +1520,12 @@ static void game_autosave(void)
 	int b,r;
 	if (!curgame_dir)
 		return;
+	instead_lock();
 	instead_function("instead.get_autosave", NULL);
 	b = instead_bretval(0); 
 	r = instead_iretval(1); 
 	instead_clear();
+	instead_unlock();
 	if (b) {
 		r = r % MAX_SAVE_SLOTS;
 		game_save(r);
@@ -1524,9 +1538,11 @@ static void game_instead_restart(void)
 	int b;
 	if (!curgame_dir)
 		return;
+	instead_lock();
 	instead_function("instead.get_restart", NULL);
 	b = instead_bretval(0); 
 	instead_clear();
+	instead_unlock();
 	need_restart = b;
 }
 
@@ -1535,9 +1551,11 @@ static void game_instead_menu(void)
 	char *menu;
 	if (!curgame_dir)
 		return;
+	instead_lock();
 	instead_function("instead.get_menu", NULL);
 	menu = instead_retval(0);
 	instead_clear();
+	instead_unlock();
 	if (!menu)
 		return;
 	if (!strcmp(menu, "save"))
@@ -1562,9 +1580,11 @@ static void finish_music(void *data)
 	int rc;
 	if (!curgame_dir)
 		return;
+	instead_lock();
 	instead_function("instead.finish_music", NULL);
 	rc = instead_bretval(0); 
 	instead_clear();
+	instead_unlock();
 	if (rc)
 		free_last_music();
 	snd_volume_mus(cur_vol); /* reset volume */
@@ -1587,7 +1607,7 @@ void game_music_player(void)
 		return;
 	if (!opt_music || !curgame_dir)
 		return;
-
+	instead_lock();
 	instead_function("instead.get_music", NULL);
 	mus = instead_retval(0);
 	loop = instead_iretval(1);
@@ -1598,7 +1618,7 @@ void game_music_player(void)
 	cf_out = instead_iretval(0);
 	cf_in = instead_iretval(1);
 	instead_clear();
-
+	instead_unlock();
 	if (mus && loop == -1) { /* disabled, 0 - forever, 1-n - loops */
 		free(mus);
 		mus = NULL;
@@ -2033,7 +2053,9 @@ void game_sound_player(void)
 	};
 
 	if (!snd_volume_mus(-1))
-		return;	
+		return;
+
+	instead_lock();
 	instead_function("instead.get_sound", NULL);
 
 	loop = instead_iretval(2);
@@ -2046,10 +2068,11 @@ void game_sound_player(void)
 			snd_halt_chan(chan, 500);
 			instead_function("instead.set_sound", args); instead_clear();
 		}
+		instead_unlock();
 		return;
-	}	
+	}
 	instead_function("instead.set_sound", args); instead_clear();
-	
+	instead_unlock();
 	unix_path(snd);
 	_play_combined_snd(snd, chan, loop);
 	free(snd);
@@ -2063,9 +2086,11 @@ static char *get_inv(void)
 		{ .val = NULL, },
 	};
 	args[0].val = (INV_MODE(game_theme.inv_mode) == INV_MODE_HORIZ)?"true":"false";
+	instead_lock();
 	instead_function("instead.get_inv", args);
 	ni = instead_retval(0);
 	instead_clear();
+	instead_unlock();
 	return ni;
 }
 
@@ -2206,10 +2231,12 @@ int game_cmd(char *cmd, int flags)
 
 /*	if (dd) */
 		game_cursor(CURSOR_CLEAR);
+	instead_lock();
 	if (flags & GAME_CMD_FILE) /* file command */
 		cmdstr = instead_file_cmd(cmd, &rc); 
 	else
 		cmdstr = instead_cmd(cmd, &rc);
+	instead_unlock();
 
 	if (opt_click && (flags & GAME_CMD_CLICK) && !rc)
 		sound_play(game_theme.click, -1, 1);
@@ -2257,15 +2284,19 @@ int game_cmd(char *cmd, int flags)
 
 	fading = check_fading(&new_scene);
 
+	instead_lock();
 	instead_function("instead.get_title", NULL); 
 	title = instead_retval(0); 
 	instead_clear();
+	instead_unlock();
 
 	new_place = check_new_place(title);
 
+	instead_lock();
 	instead_function("instead.get_picture", NULL);
 	pict = instead_retval(0);
 	instead_clear();
+	instead_unlock();
 
 	unix_path(pict);
 
@@ -2378,9 +2409,11 @@ int game_cmd(char *cmd, int flags)
 
 	el_clear(el_scene);
 
+	instead_lock();
 	instead_function("instead.get_ways", NULL); 
 	waystr = instead_retval(0);
 	instead_clear();
+	instead_unlock();
 
 	if (waystr) {
 		int l = strlen(waystr);
@@ -3409,11 +3442,14 @@ static int game_event(const char *ev)
 	args[0].val = "event"; args[0].type = INSTEAD_STR;
 	args[1].val = ev; args[1].type = INSTEAD_STR;
 	args[2].val = NULL;
+	instead_lock();
 	if (instead_function("iface.input", args)) {
 		instead_clear();
+		instead_unlock();
 		return -1;
 	}
 	p = instead_retval(0); instead_clear();
+	instead_unlock();
 	if (!p)
 		return -1;
 	rc = game_cmd(p, GAME_CMD_NOHL); free(p);
@@ -3476,14 +3512,18 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 			args[7].val = NULL;
 		}
 	}
+	instead_lock();
 	if (instead_function("iface.input", args)) {
 		instead_clear();
+		instead_unlock();
 		return -1;
 	}
 
 	p = instead_retval(0); instead_clear();
-	if (!p)
+	instead_unlock();
+	if (!p) {
 		return -1;
+	}
 
 	rc = game_cmd(p, (mb != -1)?GAME_CMD_CLICK:0); free(p);
 

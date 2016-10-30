@@ -28,7 +28,20 @@
 #include "list.h"
 
 #define DATA_IDF INSTEAD_IDF
-
+#ifdef _USE_SDL
+static SDL_mutex *sem;
+void instead_lock(void) {
+	SDL_LockMutex(sem);
+}
+void instead_unlock(void) {
+	SDL_UnlockMutex(sem);
+}
+#else
+void instead_lock(void) {
+}
+void instead_unlock(void) {
+}
+#endif
 static char	instead_cwd_path[PATH_MAX];
 static char	instead_game_path[PATH_MAX];
 
@@ -190,6 +203,14 @@ static int docall (lua_State *L, int narg)
 	/* force a complete garbage collection in case of errors */
 	if (status != 0) 
 		lua_gc(L, LUA_GCCOLLECT, 0);
+	return status;
+}
+
+int instead_pcall(lua_State *L, int nargs)
+{
+	int status;
+	status = docall(L, nargs);
+	status = report(L, status);
 	return status;
 }
 
@@ -401,18 +422,6 @@ int instead_function(char *s, struct instead_args *args)
 		lua_gc(L, LUA_GCCOLLECT, 0);
 	}
 	return report(L, status);
-}
-
-int luacall(char *cmd)
-{
-	int rc;
-	if (!L)
-		return -1;
-	if (dostring(L, cmd)) {
-		return -1;
-	}
-	rc = lua_tonumber(L, -1);
-	return rc;
 }
 
 #ifdef _HAVE_ICONV
@@ -848,7 +857,6 @@ static int instead_package(const char *path)
 	if (standalone_sw) {
 		strcat(stead_path, "..';'..(package.path or '')");
 	}
-
 	instead_eval(stead_path); instead_clear();
 	free(stead_path);
 /*	putenv(stead_path); */
@@ -912,7 +920,11 @@ int instead_init(const char *path)
 		fprintf(stderr, "Can't init instead engine.\n");
 		goto err;
 	}
-
+#ifdef _USE_SDL
+	sem = SDL_CreateMutex();
+	if (!sem)
+		goto err;
+#endif
 	if (data_idf)
 		idf_done(data_idf);
 
@@ -965,6 +977,9 @@ void instead_done(void)
 {
 	if (L)
 		extensions_hook(done);
+#ifdef _USE_SDL
+	SDL_DestroyMutex(sem);
+#endif
 #ifdef _HAVE_ICONV
 	if (fromcp)
 		free(fromcp);
