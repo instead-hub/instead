@@ -130,7 +130,7 @@ extern int menu_visible(void);
 extern void game_channel_finished(int channel);
 
 extern int sound_load(const char *fname);
-extern int sound_load_mem(const char *fname, int fmt, short *buff, size_t len);
+extern char *sound_load_mem(int fmt, short *buff, size_t len);
 extern void sound_unload(const char *fname);
 extern void sounds_free(void);
 extern const char *sound_channel(int i);

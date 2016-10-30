@@ -1879,13 +1879,28 @@ static void sounds_reload(void)
 
 static void *_sound_get(const char *fname, int fmt, short *buff, size_t len)
 {
-	_snd_t *sn;
-	sn = sound_find(fname);
-	if (sn) {
-		sn->loaded ++; /* to pin */
-		return sn;
+	_snd_t *sn = NULL;
+	if (fname) {
+		sn = sound_find(fname);
+		if (sn) {
+			sn->loaded ++; /* to pin */
+			return sn;
+		}
+		sn = sound_add(fname, fmt, buff, len);
+	} else if (buff) {
+		char *name = malloc(64);
+		if (!name)
+			return NULL;
+		snprintf(name, 64, "snd:%p", buff); name[64 - 1] = 0;
+		sn = sound_add(name, fmt, buff, len);
+		if (!sn)
+			free(name);
+		else {
+			snprintf(name, 64, "snd:%p", sn); name[64 - 1] = 0;
+			free(sn->fname);
+			sn->fname = name;
+		}
 	}
-	sn = sound_add(fname, fmt, buff, len);
 	if (!sn)
 		return NULL;
 	sn->loaded = 1;
@@ -1930,12 +1945,12 @@ int sound_load(const char *fname)
 	return 0;
 }
 
-int sound_load_mem(const char *name, int fmt, short *buff, size_t len)
+char *sound_load_mem(int fmt, short *buff, size_t len)
 {
-	_snd_t *sn = _sound_get(name, fmt, buff, len);
+	_snd_t *sn = _sound_get(NULL, fmt, buff, len);
 	if (!sn)
-		return -1;
-	return 0;
+		return NULL;
+	return sn->fname;
 }
 
 void sound_unload(const char *fname)
