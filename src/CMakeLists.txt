@@ -3,24 +3,30 @@ SET(INSTEAD_SRCS
 	SDL_anigif.c
 	SDL_gfxBlitFunc.c
 	SDL_rotozoom.c
-	cache.c
 	config.c
 	game.c
 	graphics.c
-	idf.c
 	input.c
-	instead.c
 	ioapi.c
-	lfs.c
 	main.c
 	menu.c
 	sound.c
 	themes.c
-	tinymt32.c
 	unpack.c
 	unzip.c
 	util.c
-	list.c
+	instead_bits.c
+	instead_sprites.c
+	instead_timer.c
+	instead_sound.c
+	instead_paths.c
+	instead/instead.c
+	instead/util.c
+	instead/list.c
+	instead/cache.c
+	instead/idf.c
+	instead/tinymt32.c
+	instead/lfs.c
 )
 
 # platform-specific sources
@@ -43,6 +49,7 @@ ADD_DEFINITIONS(
 	-DVERSION=\"${INSTEAD_VERSION}\"
 	-D_USE_UNPACK
 	-Wall
+	-D_USE_SDL
 )
 
 INCLUDE(CheckCXXCompilerFlag)

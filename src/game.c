@@ -33,7 +33,7 @@ char	*curgame_dir = NULL;
 
 int game_own_theme = 0;
 int game_theme_changed = 0;
-int mouse_filter_delay = 400;
+unsigned int mouse_filter_delay = 400;
 
 static int need_restart = 0;
 static int game_pic_w = 0;

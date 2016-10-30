@@ -149,7 +149,7 @@ static int sound_inited = 0;
 struct lua_sound {
 	int type;
 	short *buf;
-	size_t len;
+	int len;
 };
 static void mus_callback(void *udata, unsigned char *stream, int len)
 {
