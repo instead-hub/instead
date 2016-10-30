@@ -1820,7 +1820,7 @@ static void sound_play(_snd_t *sn, int chan, int loop)
 	channels[c] = sn;
 }
 
-static _snd_t *sound_add(const char *fname, int fmt, int *buf, int len)
+static _snd_t *sound_add(const char *fname, int fmt, short *buf, int len)
 {
 	wav_t w;
 	_snd_t *sn;
@@ -1877,7 +1877,7 @@ static void sounds_reload(void)
 	input_uevents(); /* all callbacks */
 }
 
-static void *_sound_get(const char *fname, int fmt, int *buff, size_t len)
+static void *_sound_get(const char *fname, int fmt, short *buff, size_t len)
 {
 	_snd_t *sn;
 	sn = sound_find(fname);

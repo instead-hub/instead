@@ -66,7 +66,7 @@ static int luaB_load_sound_mem(lua_State *L) {
 	len = lua_objlen(L, 3);
 	if (len <= 0)
 		return 0;
-	buf = malloc(sizeof(int) * len);
+	buf = malloc(sizeof(short) * len);
 	if (!buf)
 		return 0;
 
