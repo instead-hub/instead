@@ -32,13 +32,18 @@ static int instead_timer_nr = 0;
 static void instead_timer_do(void *data)
 {
 	char *p;
-	if (game_paused() || !curgame_dir)
+	instead_lock();
+	if (game_paused() || !curgame_dir) {
+		instead_unlock();
 		goto out;
+	}
 	if (instead_function("stead.timer", NULL)) {
 		instead_clear();
+		instead_unlock();
 		goto out;
 	}
 	p = instead_retval(0); instead_clear();
+	instead_unlock();
 	if (!p)
 		goto out;
 
