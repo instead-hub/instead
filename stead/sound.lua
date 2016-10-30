@@ -4,6 +4,7 @@ stead.sounds_free = instead_sounds_free
 stead.sound_channel = instead_sound_channel
 stead.sound_volume = instead_sound_volume
 stead.sound_panning = instead_sound_panning
+stead.sound_load_mem = instead_sound_load_mem
 
 sound = {
 	nam = 'sound';
@@ -11,6 +12,9 @@ sound = {
 	system_type = true;
 	load = function(fname)
 		return stead.sound_load(fname);
+	end;
+	load_mem = function(hz, channel, t)
+		return stead.sound_load_mem(hz, channel, t);
 	end;
 	free = function(key)
 		return stead.sound_free(key);
