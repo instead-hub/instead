@@ -978,7 +978,9 @@ void instead_done(void)
 	if (L)
 		extensions_hook(done);
 #ifdef _USE_SDL
-	SDL_DestroyMutex(sem);
+	if (sem)
+		SDL_DestroyMutex(sem);
+	sem = NULL;
 #endif
 #ifdef _HAVE_ICONV
 	if (fromcp)
