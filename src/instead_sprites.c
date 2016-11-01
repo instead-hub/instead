@@ -986,7 +986,33 @@ static int pixels_size(lua_State *L) {
 
 #define PXL_BLEND_COPY 1
 #define PXL_BLEND_BLEND 2
-
+static void inline blend(unsigned char *s, unsigned char *d)
+{
+	unsigned int r, g, b, a;
+	unsigned int sa = s[3];
+	unsigned int da = d[3];
+	a = sa + da * (255 - sa)/ 255;
+	r = (unsigned int)s[0] * sa / 255 +
+		(unsigned int)d[0] * da * (255 - sa) / 65025;
+	g = (unsigned int)s[1] * sa / 255 +
+		(unsigned int)d[1] * da * (255 - sa) / 65025;
+	b = (unsigned int)s[2] * sa / 255 +
+		(unsigned int)d[2] * da * (255 - sa) / 65025;
+	d[0] = r; d[1] = g; d[2] = b; d[3] = a;
+}
+static void inline draw(unsigned char *s, unsigned char *d)
+{
+	unsigned int r, g, b, a;
+	unsigned int sa = s[3];
+	a = 255;
+	r = (unsigned int)s[0] * sa / 255 +
+		(unsigned int)d[0] * (255 - sa) / 255;
+	g = (unsigned int)s[1] * sa / 255 +
+		(unsigned int)d[1] * (255 - sa) / 255;
+	b = (unsigned int)s[2] * sa / 255 +
+		(unsigned int)d[2] * (255 - sa) / 255;
+	d[0] = r; d[1] = g; d[2] = b; d[3] = a;
+}
 static int _pixels_blend(struct lua_pixels *src, int x, int y, int w, int h,
 			struct lua_pixels *dst, int xx, int yy, int mode)
 
@@ -1044,20 +1070,12 @@ static int _pixels_blend(struct lua_pixels *src, int x, int y, int w, int h,
 				unsigned int a_dst = p2[3];
 				if (a_src == 255) {
 					memcpy(p2, p1, 4);
+				} else if (a_dst == 0) {
+					draw(p1, p2);
 				} else if (a_src == 0) {
 					/* nothing to do */
 				} else {
-					unsigned int r, g, b, a;
-					a = a_src + a_dst;
-					if (a > 255)
-						a = 255;
-					r = (unsigned int)p1[0] * a_src / 255 +
-						(unsigned int)p2[0] * (255 - a_src) / 255;
-					g = (unsigned int)p1[1] * a_src / 255 +
-						(unsigned int)p2[1] * (255 - a_src) / 255;
-					b = (unsigned int)p1[2] * a_src / 255 +
-						(unsigned int)p2[2] * (255 - a_src) / 255;
-					p2[0] = r; p2[1] = g; p2[2] = b; p2[3] = a;
+					blend(p1, p2);
 				}
 			}
 			p1 += 4;
