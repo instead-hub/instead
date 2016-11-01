@@ -1028,48 +1028,93 @@ static void inline pixel(unsigned char *s, unsigned char *d)
 		blend(s, d);
 	}
 }
-static void inline line0(struct lua_pixels *hdr, unsigned char *ptr, int dx, int dy, int yd, int xd, unsigned char *col)
+static void inline line0(struct lua_pixels *hdr, int x1, int y1, int dx, int dy, int xd, unsigned char *col)
 {
 	int dy2 = dy * 2;
 	int dyx2 = dy2 - dx * 2;
 	int err = dy2 - dx;
-	unsigned char *start = (unsigned char*)(hdr + 1);
-	unsigned char *end = start + hdr->size;
-	if (ptr >= start && ptr < end)
-		pixel(col, ptr);
-	while (dx --) {
+	unsigned char *ptr = NULL;
+	int w = hdr->w; int h = hdr->h;
+
+	int ly = w * 4;
+	int lx = xd * 4;
+
+	while ((x1 < 0 || y1 < 0 || x1 >= w) && dx --) {
 		if (err >= 0) {
-			ptr += yd;
+			y1 ++;
 			err += dyx2;
 		} else {
 			err += dy2;
 		}
-		ptr += xd;
-		if (ptr >= start && ptr < end)
-			pixel(col, ptr);
+		x1 += xd;
+	}
+	if (!dx)
+		return;
+	ptr = (unsigned char*)(hdr + 1);
+	ptr += (y1 * w + x1) << 2;
+
+	pixel(col, ptr);
+	while (dx --) {
+		if (err >= 0) {
+			y1 ++;
+			if (y1 >= h)
+				break;
+			ptr += ly;
+			err += dyx2;
+		} else {
+			err += dy2;
+		}
+		x1 += xd;
+		if (x1 >= w || x1 < 0)
+			break;
+		ptr += lx;
+		pixel(col, ptr);
 	}
 	return;
 }
 
-static void inline line1(struct lua_pixels *hdr, unsigned char *ptr, int dx, int dy, int yd, int xd, unsigned char *col)
+static void inline line1(struct lua_pixels *hdr, int x1, int y1, int dx, int dy, int xd, unsigned char *col)
 {
 	int dx2 = dx * 2;
 	int dxy2 = dx2 - dy * 2;
 	int err = dx2 - dy;
-	unsigned char *start = (unsigned char*)(hdr + 1);
-	unsigned char *end = start + hdr->size;
-	if (ptr >= start && ptr < end)
-		pixel(col, ptr);
-	while (dy --) {
+	int w = hdr->w; int h = hdr->h;
+	unsigned char *ptr = NULL;
+	int ly = w * 4;
+	int lx = xd * 4;
+
+	while ((x1 < 0 || y1 < 0 || x1 >= w) && dy --) {
 		if (err >= 0) {
-			ptr += xd;
+		        x1 += xd;
 			err += dxy2;
 		} else {
 			err += dx2;
 		}
-		ptr += yd;
-		if (ptr >= start && ptr < end)
-			pixel(col, ptr);
+		y1 ++;
+	}
+	if (!dy)
+		return;
+
+	ptr = (unsigned char*)(hdr + 1);
+	ptr += (y1 * w + x1) << 2;
+
+	pixel(col, ptr);
+
+	while (dy --) {
+		if (err >= 0) {
+			x1 += xd;
+			if (x1 < 0 || x1 >= w)
+				break;
+			ptr += lx;
+			err += dxy2;
+		} else {
+			err += dx2;
+		}
+		y1 ++;
+		if (y1 >= h)
+			break;
+		ptr += ly;
+		pixel(col, ptr);
 	}
 	return;
 }
@@ -1077,7 +1122,6 @@ static void inline line1(struct lua_pixels *hdr, unsigned char *ptr, int dx, int
 static void line(struct lua_pixels *src, int x1, int y1, int x2, int y2, int r, int g, int b, int a)
 {
 	int dx, dy, tmp;
-	unsigned char *ptr;
 	unsigned char col[4];
 	if (y1 > y2) {
 		tmp = y1; y1 = y2; y2 = tmp;
@@ -1101,20 +1145,18 @@ static void line(struct lua_pixels *src, int x1, int y1, int x2, int y2, int r, 
 	}
 	dx = x2 - x1;
 	dy = y2 - y1;
-	ptr = (unsigned char*)(src + 1);
-	ptr += (y1 * src->w + x1) << 2;
 	if (dx > 0) {
 		if (dx > dy) {
-			line0(src, ptr, dx, dy, src->w * 4, 4, col);
+			line0(src, x1, y1, dx, dy, 1, col);
 		} else {
-			line1(src, ptr, dx, dy, src->w * 4, 4, col);
+			line1(src, x1, y1, dx, dy, 1, col);
 		}
 	} else {
 		dx = -dx;
 		if (dx > dy) {
-			line0(src, ptr, dx, dy, src->w * 4, -4, col);
+			line0(src, x1, y1, dx, dy, -1, col);
 		} else {
-			line1(src, ptr, dx, dy, src->w * 4, -4, col);
+			line1(src, x1, y1, dx, dy, -1, col);
 		}
 	}
 }
