@@ -1048,7 +1048,7 @@ static void inline line0(struct lua_pixels *hdr, int x1, int y1, int dx, int dy,
 		}
 		x1 += xd;
 	}
-	if (!dx)
+	if (dx < 0)
 		return;
 	ptr = (unsigned char*)(hdr + 1);
 	ptr += (y1 * w + x1) << 2;
@@ -1092,7 +1092,7 @@ static void inline line1(struct lua_pixels *hdr, int x1, int y1, int dx, int dy,
 		}
 		y1 ++;
 	}
-	if (!dy)
+	if (dy < 0)
 		return;
 
 	ptr = (unsigned char*)(hdr + 1);
