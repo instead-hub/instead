@@ -1051,12 +1051,12 @@ static int _pixels_blend(struct lua_pixels *src, int x, int y, int w, int h,
 					a = a_src + a_dst;
 					if (a > 255)
 						a = 255;
-					r = (unsigned int)p1[0] * 255 / a_src +
-						(unsigned int)p2[0] * 255 / (255 - a_src);
-					g = (unsigned int)p1[1] * 255 / a_src +
-						(unsigned int)p2[1] * 255 / (255 - a_src);
-					b = (unsigned int)p1[2] * 255 / a_src +
-						(unsigned int)p2[2] * 255 / (255 - a_src);
+					r = (unsigned int)p1[0] * a_src / 255 +
+						(unsigned int)p2[0] * (255 - a_src) / 255;
+					g = (unsigned int)p1[1] * a_src / 255 +
+						(unsigned int)p2[1] * (255 - a_src) / 255;
+					b = (unsigned int)p1[2] * a_src / 255 +
+						(unsigned int)p2[2] * (255 - a_src) / 255;
 					p2[0] = r; p2[1] = g; p2[2] = b; p2[3] = a;
 				}
 			}
