@@ -1000,6 +1000,7 @@ static void inline blend(unsigned char *s, unsigned char *d)
 		(unsigned int)d[2] * da * (255 - sa) / 65025;
 	d[0] = r; d[1] = g; d[2] = b; d[3] = a;
 }
+
 static void inline draw(unsigned char *s, unsigned char *d)
 {
 	unsigned int r, g, b, a;
@@ -1012,6 +1013,110 @@ static void inline draw(unsigned char *s, unsigned char *d)
 	b = (unsigned int)s[2] * sa / 255 +
 		(unsigned int)d[2] * (255 - sa) / 255;
 	d[0] = r; d[1] = g; d[2] = b; d[3] = a;
+}
+static void inline pixel(unsigned char *s, unsigned char *d)
+{
+	unsigned char a_src = s[3];
+	unsigned char a_dst = d[3];
+	if (a_src == 255) {
+		memcpy(d, s, 4);
+	} else if (a_dst == 0) {
+		draw(s, d);
+	} else if (a_src == 0) {
+		/* nothing to do */
+	} else {
+		blend(s, d);
+	}
+}
+static void inline line0(struct lua_pixels *hdr, unsigned char *ptr, int dx, int dy, int yd, int xd, unsigned char *col)
+{
+	int dy2 = dy * 2;
+	int dyx2 = dy2 - dx * 2;
+	int err = dy2 - dx;
+	unsigned char *start = (unsigned char*)(hdr + 1);
+	unsigned char *end = start + hdr->size;
+	if (ptr >= start && ptr < end)
+		pixel(col, ptr);
+	while (dx --) {
+		if (err >= 0) {
+			ptr += yd;
+			err += dyx2;
+		} else {
+			err += dy2;
+		}
+		ptr += xd;
+		if (ptr >= start && ptr < end)
+			pixel(col, ptr);
+	}
+	return;
+}
+
+static void inline line1(struct lua_pixels *hdr, unsigned char *ptr, int dx, int dy, int yd, int xd, unsigned char *col)
+{
+	int dx2 = dx * 2;
+	int dxy2 = dx2 - dy * 2;
+	int err = dx2 - dy;
+	unsigned char *start = (unsigned char*)(hdr + 1);
+	unsigned char *end = start + hdr->size;
+	if (ptr >= start && ptr < end)
+		pixel(col, ptr);
+	while (dy --) {
+		if (err >= 0) {
+			ptr += xd;
+			err += dxy2;
+		} else {
+			err += dx2;
+		}
+		ptr += yd;
+		if (ptr >= start && ptr < end)
+			pixel(col, ptr);
+	}
+	return;
+}
+
+static void line(struct lua_pixels *src, int x1, int y1, int x2, int y2, int r, int g, int b, int a)
+{
+	int dx, dy, tmp;
+	unsigned char *ptr;
+	unsigned char col[4];
+	if (y1 > y2) {
+		tmp = y1; y1 = y2; y2 = tmp;
+		tmp = x1; x1 = x2; x2 = tmp;
+	}
+	col[0] = r; col[1] = g; col[2] = b; col[3] = a;
+	if (y1 >= src->h)
+		return;
+	if (y2 < 0)
+		return;
+	if (x1 < x2) {
+		if (x2 < 0)
+			return;
+		if (x1 >= src->w)
+			return;
+	} else {
+		if (x1 < 0)
+			return;
+		if (x2 >= src->w)
+			return;
+	}
+	dx = x2 - x1;
+	dy = y2 - y1;
+	ptr = (unsigned char*)(src + 1);
+	ptr += (y1 * src->w + x1) << 2;
+	if (dx > 0) {
+		if (dx > dy) {
+			line0(src, ptr, dx, dy, src->w * 4, 4, col);
+		} else {
+			line1(src, ptr, dx, dy, src->w * 4, 4, col);
+		}
+	} else {
+		dx = -dx;
+		if (dx > dy) {
+			line0(src, ptr, dx, dy, src->w * 4, -4, col);
+		} else {
+			line1(src, ptr, dx, dy, src->w * 4, -4, col);
+		}
+	}
 }
 static int _pixels_blend(struct lua_pixels *src, int x, int y, int w, int h,
 			struct lua_pixels *dst, int xx, int yy, int mode)
@@ -1066,17 +1171,7 @@ static int _pixels_blend(struct lua_pixels *src, int x, int y, int w, int h,
 			if (mode == PXL_BLEND_COPY)
 				memcpy(p2, p1, 4);
 			else { /* blend */
-				unsigned int a_src = p1[3];
-				unsigned int a_dst = p2[3];
-				if (a_src == 255) {
-					memcpy(p2, p1, 4);
-				} else if (a_dst == 0) {
-					draw(p1, p2);
-				} else if (a_src == 0) {
-					/* nothing to do */
-				} else {
-					blend(p1, p2);
-				}
+				pixel(p1, p2);
 			}
 			p1 += 4;
 			p2 += 4;
@@ -1193,6 +1288,23 @@ static int pixels_fill(lua_State *L) {
 		}
 		ptr1 += (src->w * 4);
 	}
+	return 0;
+}
+static int pixels_line(lua_State *L) {
+	int x1 = 0, y1 = 0, x2 = 0, y2 = 0, r = 0, g = 0, b = 0, a = 255;
+	struct lua_pixels *src;
+	src = (struct lua_pixels*)lua_touserdata(L, 1);
+	if (!src || src->type != PIXELS_MAGIC)
+		return 0;
+	x1 = luaL_optnumber(L, 2, 0);
+	y1 = luaL_optnumber(L, 3, 0);
+	x2 = luaL_optnumber(L, 4, 0);
+	y2 = luaL_optnumber(L, 5, 0);
+	r = luaL_optnumber(L, 6, 0);
+	g = luaL_optnumber(L, 7, 0);
+	b = luaL_optnumber(L, 8, 0);
+	a = luaL_optnumber(L, 9, 255);
+	line(src, x1, y1, x2, y2, r, g, b, a);
 	return 0;
 }
 
@@ -1415,6 +1527,9 @@ static int pixels_create_meta (lua_State *L) {
 	lua_settable(L, -3);
 	lua_pushstring(L, "fill");
 	lua_pushcfunction (L, pixels_fill);
+	lua_settable(L, -3);
+	lua_pushstring(L, "line");
+	lua_pushcfunction (L, pixels_line);
 	lua_settable(L, -3);
 	lua_settable(L, -3);
 	lua_pushstring (L, "__gc");
