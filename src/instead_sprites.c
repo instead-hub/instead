@@ -1042,7 +1042,7 @@ static int _pixels_blend(struct lua_pixels *src, int x, int y, int w, int h,
 			else { /* blend */
 				unsigned int a_src = p1[3];
 				unsigned int a_dst = p2[3];
-				if (a_src == 255 || a_dst == 0) {
+				if (a_src == 255) {
 					memcpy(p2, p1, 4);
 				} else if (a_src == 0) {
 					/* nothing to do */
@@ -1051,13 +1051,13 @@ static int _pixels_blend(struct lua_pixels *src, int x, int y, int w, int h,
 					a = a_src + a_dst;
 					if (a > 255)
 						a = 255;
-					r = (unsigned int)p1[1] * 255 / a_src +
+					r = (unsigned int)p1[0] * 255 / a_src +
+						(unsigned int)p2[0] * 255 / (255 - a_src);
+					g = (unsigned int)p1[1] * 255 / a_src +
 						(unsigned int)p2[1] * 255 / (255 - a_src);
-					g = (unsigned int)p1[2] * 255 / a_src +
+					b = (unsigned int)p1[2] * 255 / a_src +
 						(unsigned int)p2[2] * 255 / (255 - a_src);
-					b = (unsigned int)p1[3] * 255 / a_src +
-						(unsigned int)p2[3] * 255 / (255 - a_src);
-					p2[1] = r; p2[2] = g; p2[3] = b; p2[4] = a;
+					p2[0] = r; p2[1] = g; p2[2] = b; p2[3] = a;
 				}
 			}
 			p1 += 4;
