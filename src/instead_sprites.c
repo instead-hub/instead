@@ -1018,9 +1018,9 @@ static void inline pixel(unsigned char *s, unsigned char *d)
 {
 	unsigned char a_src = s[3];
 	unsigned char a_dst = d[3];
-	if (a_src == 255) {
+	if (a_src == 255 || a_dst == 0) {
 		memcpy(d, s, 4);
-	} else if (a_dst == 0) {
+	} else if (a_dst == 255) {
 		draw(s, d);
 	} else if (a_src == 0) {
 		/* nothing to do */
@@ -1325,7 +1325,8 @@ static int pixels_fill(lua_State *L) {
 	for (cy = 0; cy < h; cy ++) {
 		unsigned char *p1 = ptr1;
 		for (cx = 0; cx < w; cx ++) {
-			memcpy(p1, col, 4);
+			//memcpy(p1, col, 4);
+			pixel(col, p1);
 			p1 += 4;
 		}
 		ptr1 += (src->w * 4);
