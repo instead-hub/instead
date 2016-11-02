@@ -1272,11 +1272,54 @@ static int pixels_blend(lua_State *L) {
 	return _pixels_blend(src, x, y, w, h, dst, xx, yy, PXL_BLEND_BLEND);
 }
 
-static int pixels_fill(lua_State *L) {
-	int x = 0, y = 0, w = 0, h = 0, r = 0, g = 0, b = 0, a = 255;
+static void _fill(struct lua_pixels *src, int x, int y, int w, int h,
+		  int r, int g, int b, int a, int mode) {
 	unsigned char col[4];
 	unsigned char *ptr1;
 	int cy, cx;
+	if (!src || src->type != PIXELS_MAGIC)
+		return;
+	col[0] = r; col[1] = g; col[2] = b; col[3] = a;
+	if (!w)
+		w = src->w;
+	if (!h)
+		h = src->h;
+
+	if (x < 0) {
+		w += x;
+		x = 0;
+	}
+	if (y < 0) {
+		h += y;
+		y = 0;
+	}
+
+	if (w <= 0 || h <= 0 || x >= src->w || y >= src->h)
+		return;
+
+	if (x + w > src->w)
+		w = src->w - x;
+	if (y + h > src->h)
+		h = src->h - y;
+
+	ptr1 = (unsigned char *)(src + 1);
+	ptr1 += (y * src->w + x) << 2;
+	for (cy = 0; cy < h; cy ++) {
+		unsigned char *p1 = ptr1;
+		for (cx = 0; cx < w; cx ++) {
+			if (mode == PXL_BLEND_COPY)
+				memcpy(p1, col, 4);
+			else
+				pixel(col, p1);
+			p1 += 4;
+		}
+		ptr1 += (src->w * 4);
+	}
+	return;
+}
+
+static int pixels_fill(lua_State *L) {
+	int x = 0, y = 0, w = 0, h = 0, r = 0, g = 0, b = 0, a = 255;
 	struct lua_pixels *src;
 	src = (struct lua_pixels*)lua_touserdata(L, 1);
 	if (!src || src->type != PIXELS_MAGIC)
@@ -1297,42 +1340,36 @@ static int pixels_fill(lua_State *L) {
 		b = luaL_optnumber(L, 8, 0);
 		a = luaL_optnumber(L, 9, 255);
 	}
-	col[0] = r; col[1] = g; col[2] = b; col[3] = a;
-	if (!w)
-		w = src->w;
-	if (!h)
-		h = src->h;
-
-	if (x < 0) {
-		w += x;
-		x = 0;
-	}
-	if (y < 0) {
-		h += y;
-		y = 0;
-	}
-
-	if (w <= 0 || h <= 0 || x >= src->w || y >= src->h)
-		return 0;
-
-	if (x + w > src->w)
-		w = src->w - x;
-	if (y + h > src->h)
-		h = src->h - y;
-
-	ptr1 = (unsigned char *)(src + 1);
-	ptr1 += (y * src->w + x) << 2;
-	for (cy = 0; cy < h; cy ++) {
-		unsigned char *p1 = ptr1;
-		for (cx = 0; cx < w; cx ++) {
-			//memcpy(p1, col, 4);
-			pixel(col, p1);
-			p1 += 4;
-		}
-		ptr1 += (src->w * 4);
-	}
+	_fill(src, x, y, w, h, r, g, b, a, PXL_BLEND_BLEND);
 	return 0;
 }
+
+static int pixels_clear(lua_State *L) {
+	int x = 0, y = 0, w = 0, h = 0, r = 0, g = 0, b = 0, a = 0;
+	struct lua_pixels *src;
+	src = (struct lua_pixels*)lua_touserdata(L, 1);
+	if (!src || src->type != PIXELS_MAGIC)
+		return 0;
+	b = luaL_optnumber(L, 8, -1);
+	if (b < 0) {
+		r = luaL_optnumber(L, 2, 0);
+		g = luaL_optnumber(L, 3, 0);
+		b = luaL_optnumber(L, 4, 0);
+		a = luaL_optnumber(L, 5, 0);
+	} else {
+		x = luaL_optnumber(L, 2, 0);
+		y = luaL_optnumber(L, 3, 0);
+		w = luaL_optnumber(L, 4, 0);
+		h = luaL_optnumber(L, 5, 0);
+		r = luaL_optnumber(L, 6, 0);
+		g = luaL_optnumber(L, 7, 0);
+		b = luaL_optnumber(L, 8, 0);
+		a = luaL_optnumber(L, 9, 0);
+	}
+	_fill(src, x, y, w, h, r, g, b, a, PXL_BLEND_COPY);
+	return 0;
+}
+
 static int pixels_line(lua_State *L) {
 	int x1 = 0, y1 = 0, x2 = 0, y2 = 0, r = 0, g = 0, b = 0, a = 255;
 	struct lua_pixels *src;
@@ -1567,6 +1604,9 @@ static int pixels_create_meta (lua_State *L) {
 	lua_settable(L, -3);
 	lua_pushstring(L, "blend");
 	lua_pushcfunction (L, pixels_blend);
+	lua_settable(L, -3);
+	lua_pushstring(L, "clear");
+	lua_pushcfunction (L, pixels_clear);
 	lua_settable(L, -3);
 	lua_pushstring(L, "fill");
 	lua_pushcfunction (L, pixels_fill);
