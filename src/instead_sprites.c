@@ -1534,6 +1534,37 @@ static int pixels_value(lua_State *L) {
 	return 0;
 }
 
+static int pixels_pixel(lua_State *L) {
+	struct lua_pixels *hdr = (struct lua_pixels*)lua_touserdata(L, 1);
+	int x = luaL_optnumber(L, 2, -1);
+	int y = luaL_optnumber(L, 3, -1);
+	int r = luaL_optnumber(L, 4, -1);
+	int g, b, a;
+	unsigned char col[4];
+	unsigned char *ptr;
+	if (r == -1)
+		return 0;
+
+	g = luaL_optnumber(L, 5, 0);
+	b = luaL_optnumber(L, 6, 0);
+	a = luaL_optnumber(L, 7, 255);
+
+	if (x < 0 || y < 0)
+		return 0;
+
+	if (!hdr || hdr->type != PIXELS_MAGIC)
+		return 0;
+
+	if (x >= hdr->w || y >= hdr->h)
+		return 0;
+
+	ptr = (unsigned char*)(hdr + 1);
+	ptr += ((y * hdr->w + x) << 2);
+	col[0] = r; col[1] = g; col[2] = b; col[3] = a;
+	pixel(col, ptr);
+	return 0;
+}
+
 static img_t pixels_img(struct lua_pixels *hdr) {
 	int w, h, ww, hh, xx, yy, dx, dy, xoff, yoff;
 	unsigned char *ptr;
@@ -1704,6 +1735,9 @@ static int pixels_create_meta (lua_State *L) {
 	lua_newtable(L);
 	lua_pushstring (L, "val");
 	lua_pushcfunction (L, pixels_value);
+	lua_settable(L, -3);
+	lua_pushstring (L, "pixel");
+	lua_pushcfunction (L, pixels_pixel);
 	lua_settable(L, -3);
 	lua_pushstring (L, "size");
 	lua_pushcfunction (L, pixels_size);
