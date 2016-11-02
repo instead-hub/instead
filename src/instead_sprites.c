@@ -1119,6 +1119,97 @@ static void inline line1(struct lua_pixels *hdr, int x1, int y1, int dx, int dy,
 	return;
 }
 
+static void lineAA(struct lua_pixels *src, int x0, int y0, int x1, int y1,
+		 int r, int g, int b, int a)
+{
+	int dx, dy, err, e2, sx;
+	int w, h;
+	int syp, sxp, ed;
+	unsigned char *ptr;
+	unsigned char col[4];
+	col[0] = r; col[1] = g; col[2] = b; col[3] = a;
+	if (y0 > y1) {
+		int tmp;
+		tmp = x0; x0 = x1; x1 = tmp;
+		tmp = y0; y0 = y1; y1 = tmp;
+	}
+	w = src->w; h = src->h;
+	if (y1 < 0 || y0 >= h)
+		return;
+	if (x0 < x1) {
+		sx = 1;
+		if (x0 >= w || x1 < 0)
+			return;
+	} else {
+		sx = -1;
+		if (x1 >= w || x0 < 0)
+			return;
+	}
+	sxp = sx * 4;
+	syp = w * 4;
+
+	dx =  abs(x1 - x0);
+	dy = y1 - y0;
+
+	err = dx - dy;
+	ed = dx + dy == 0 ? 1: sqrt((float)dx * dx + (float)dy * dy);
+
+	while (y0 < 0 || x0 < 0 || x0 >= w) {
+		e2 = err;
+		if (2 * e2 >= -dx) {
+			if (x0 == x1)
+				break;
+			err -= dy;
+			x0 += sx;
+		}
+		if (2 * e2 <= dy) {
+			if (y0 == y1)
+				break;
+			err += dx;
+			y0 ++;
+		}
+	}
+
+	if (y0 < 0 || x0 < 0 || x0 >= w)
+		return;
+
+	ptr = (unsigned char*)(src + 1);
+	ptr += (y0 * w + x0) << 2;
+
+	while (1) {
+		unsigned char *optr = ptr;
+		col[3] = 255 - a * abs(err - dx + dy) / ed;
+		pixel(col, ptr);
+		e2 = err;
+		if (2 * e2 >= -dx) {
+			if (x0 == x1)
+				break;
+			if (e2 + dy < ed) {
+				col[3] = 255 - a * (e2 + dy) / ed;
+				pixel(col, ptr + syp);
+			}
+			err -= dy;
+			x0 += sx;
+			if (x0 < 0 || x0 >= w)
+				break;
+			ptr += sxp;
+		}
+		if (2 * e2 <= dy) {
+			if (y0 == y1)
+				break;
+			if (dx - e2 < ed) {
+				col[3] = 255 - a * (dx - e2) / ed;
+				pixel(col, optr + sxp);
+			}
+			err += dx;
+			y0 ++;
+			if (y0 >= h)
+				break;
+			ptr += syp;
+		}
+	}
+}
+
 static void line(struct lua_pixels *src, int x1, int y1, int x2, int y2, int r, int g, int b, int a)
 {
 	int dx, dy, tmp;
@@ -1388,6 +1479,24 @@ static int pixels_line(lua_State *L) {
 	return 0;
 }
 
+static int pixels_lineAA(lua_State *L) {
+	int x1 = 0, y1 = 0, x2 = 0, y2 = 0, r = 0, g = 0, b = 0, a = 255;
+	struct lua_pixels *src;
+	src = (struct lua_pixels*)lua_touserdata(L, 1);
+	if (!src || src->type != PIXELS_MAGIC)
+		return 0;
+	x1 = luaL_optnumber(L, 2, 0);
+	y1 = luaL_optnumber(L, 3, 0);
+	x2 = luaL_optnumber(L, 4, 0);
+	y2 = luaL_optnumber(L, 5, 0);
+	r = luaL_optnumber(L, 6, 0);
+	g = luaL_optnumber(L, 7, 0);
+	b = luaL_optnumber(L, 8, 0);
+	a = luaL_optnumber(L, 9, 255);
+	lineAA(src, x1, y1, x2, y2, r, g, b, a);
+	return 0;
+}
+
 static int pixels_value(lua_State *L) {
 	struct lua_pixels *hdr = (struct lua_pixels*)lua_touserdata(L, 1);
 	int x = luaL_optnumber(L, 2, -1);
@@ -1613,6 +1722,9 @@ static int pixels_create_meta (lua_State *L) {
 	lua_settable(L, -3);
 	lua_pushstring(L, "line");
 	lua_pushcfunction (L, pixels_line);
+	lua_settable(L, -3);
+	lua_pushstring(L, "lineAA");
+	lua_pushcfunction (L, pixels_lineAA);
 	lua_settable(L, -3);
 	lua_settable(L, -3);
 	lua_pushstring (L, "__gc");
