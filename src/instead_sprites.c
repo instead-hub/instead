@@ -1417,12 +1417,12 @@ static inline int orient2d(int ax, int ay, int bx, int by, int cx, int cy)
 
 static inline int min3(int a, int b, int c)
 {
-	if (a <= b) {
-		if (a <= c)
+	if (a < b) {
+		if (a < c)
 			return a;
 		return c;
 	} else {
-		if (b <= c)
+		if (b < c)
 			return b;
 		return c;
 	}
