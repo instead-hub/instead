@@ -1251,6 +1251,7 @@ static void line(struct lua_pixels *src, int x1, int y1, int x2, int y2, int r, 
 		}
 	}
 }
+
 static int _pixels_blend(struct lua_pixels *src, int x, int y, int w, int h,
 			struct lua_pixels *dst, int xx, int yy, int mode)
 
@@ -1409,6 +1410,89 @@ static void _fill(struct lua_pixels *src, int x, int y, int w, int h,
 	return;
 }
 
+static inline int orient2d(int ax, int ay, int bx, int by, int cx, int cy)
+{
+	return (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
+}
+
+static inline int min3(int a, int b, int c)
+{
+	if (a <= b) {
+		if (a <= c)
+			return a;
+		return c;
+	} else {
+		if (b <= c)
+			return b;
+		return c;
+	}
+}
+
+static inline int max3(int a, int b, int c)
+{
+	if (a > b) {
+		if (a > c)
+			return a;
+		return c;
+	} else {
+		if (b > c)
+			return b;
+		return c;
+	}
+}
+
+static void triangle(struct lua_pixels *src, int x0, int y0, int x1, int y1, int x2, int y2, int r, int g, int b, int a)
+{
+	int A01 = y0 - y1, B01 = x1 - x0;
+	int A12 = y1 - y2, B12 = x2 - x1;
+	int A20 = y2 - y0, B20 = x0 - x2;
+
+	int minx = min3(x0, x1, x2);
+	int miny = min3(y0, y1, y2);
+	int maxx = max3(x0, x1, x2);
+	int maxy = max3(y0, y1, y2);
+
+	int w0_row = orient2d(x1, y1, x2, y2, minx, miny);
+	int w1_row = orient2d(x2, y2, x0, y0, minx, miny);
+	int w2_row = orient2d(x0, y0, x1, y1, minx, miny);
+
+	int y, x, w, h;
+	int yd;
+	unsigned char col[4];
+	unsigned char *ptr;
+	w = src->w; h = src->h;
+	yd = 4 * w;
+	col[0] = r; col[1] = b; col[2] = g; col[3] = a;
+
+	if (minx >= w || miny >= h)
+		return;
+	if (minx < 0)
+		minx = 0;
+	if (miny < 0)
+		miny = 0;
+
+	ptr = (unsigned char *)(src + 1) + miny * yd + 4 * minx;
+
+	for (y = miny; y <= maxy; y ++) {
+		int w0 = w0_row;
+	        int w1 = w1_row;
+		int w2 = w2_row;
+		unsigned char *p = ptr;
+		for (x = minx; x <= maxx; x++) {
+			if ((w0 | w1 | w2) >= 0)
+				pixel(col, p);
+			p += 4;
+			w0 += A12;
+			w1 += A20;
+			w2 += A01;
+		}
+		w0_row += B12;
+		w1_row += B20;
+		w2_row += B01;
+		ptr += yd;
+	}
+}
+
 static int pixels_fill(lua_State *L) {
 	int x = 0, y = 0, w = 0, h = 0, r = 0, g = 0, b = 0, a = 255;
 	struct lua_pixels *src;
@@ -1458,6 +1542,27 @@ static int pixels_clear(lua_State *L) {
 		a = luaL_optnumber(L, 9, 0);
 	}
 	_fill(src, x, y, w, h, r, g, b, a, PXL_BLEND_COPY);
+	return 0;
+}
+
+
+static int pixels_triangle(lua_State *L) {
+	int x0 = 0, y0 = 0, x1 = 0, y1 = 0, x2 = 0, y2 = 0, r = 0, g = 0, b = 0, a = 0;
+	struct lua_pixels *src;
+	src = (struct lua_pixels*)lua_touserdata(L, 1);
+	if (!src || src->type != PIXELS_MAGIC)
+		return 0;
+	x0 = luaL_optnumber(L, 2, 0);
+	y0 = luaL_optnumber(L, 3, 0);
+	x1 = luaL_optnumber(L, 4, 0);
+	y1 = luaL_optnumber(L, 5, 0);
+	x2 = luaL_optnumber(L, 6, 0);
+	y2 = luaL_optnumber(L, 7, 0);
+	r = luaL_optnumber(L, 8, 0);
+	g = luaL_optnumber(L, 9, 0);
+	b = luaL_optnumber(L, 10, 0);
+	a = luaL_optnumber(L, 11, 255);
+	triangle(src, x0, y0, x1, y1, x2, y2, r, g, b, a);
 	return 0;
 }
 
@@ -1759,6 +1864,9 @@ static int pixels_create_meta (lua_State *L) {
 	lua_settable(L, -3);
 	lua_pushstring(L, "lineAA");
 	lua_pushcfunction (L, pixels_lineAA);
+	lua_settable(L, -3);
+	lua_pushstring(L, "triangle");
+	lua_pushcfunction (L, pixels_triangle);
 	lua_settable(L, -3);
 	lua_settable(L, -3);
 	lua_pushstring (L, "__gc");
