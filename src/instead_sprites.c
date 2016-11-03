@@ -1470,7 +1470,10 @@ static void triangle(struct lua_pixels *src, int x0, int y0, int x1, int y1, int
 		minx = 0;
 	if (miny < 0)
 		miny = 0;
-
+	if (maxy >= h)
+		maxy = h - 1;
+	if (maxx >= w)
+		maxx = w - 1;
 	ptr = (unsigned char *)(src + 1) + miny * yd + 4 * minx;
 
 	for (y = miny; y <= maxy; y ++) {
