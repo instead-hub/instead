@@ -1611,7 +1611,7 @@ static int pixels_value(lua_State *L) {
 	int x = luaL_optnumber(L, 2, -1);
 	int y = luaL_optnumber(L, 3, -1);
 	int r = luaL_optnumber(L, 4, -1);
-	int g, b, a;
+	int g = 0, b = 0, a = 0;
 	unsigned char *ptr;
 	if (r != -1) {
 		g = luaL_optnumber(L, 5, 0);
