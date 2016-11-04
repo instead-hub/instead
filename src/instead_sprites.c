@@ -1675,9 +1675,8 @@ static int pixels_pixel(lua_State *L) {
 
 static img_t pixels_img(struct lua_pixels *hdr) {
 	int w, h, ww, hh, xx, yy, dx, dy, xoff, yoff;
-	unsigned char *ptr;
+	unsigned char *ptr, *optr = NULL;
 	unsigned char *p;
-	int xv, yv;
 	int scale = 1;
 	img_t img;
 	if (!hdr)
@@ -1700,47 +1699,48 @@ static img_t pixels_img(struct lua_pixels *hdr) {
 	if (ww == w && hh == h)
 		scale = 0;
 
-	xv = floor((float)ww / (float)w);
-	yv = floor((float)hh / (float)h);
-	dy = yv; yoff = 0;
+	dy = 0; yoff = 0;
 
 	for (yy = 0; yy < hh; yy++) {
-		dx = xv;
-		xoff = 0;
-		for (xx = 0; xx < ww; xx++) {
-			memcpy(p, ptr, 4); p += 4;
-			if (scale) {
-				if (dx)
-					dx --;
-				if (!dx) {
-					while (ww <= w * (xx + 1) / (xoff + 1)) {
+		unsigned char *ptrl = ptr;
+
+		dx = 0; xoff = 0;
+
+		if (optr) {
+			memcpy(p, optr, ww * 4);
+			p += ww * 4;
+		} else {
+			optr = p;
+			for (xx = 0; xx < ww; xx++) {
+				memcpy(p, ptrl, 4); p += 4;
+				if (scale) {
+					dx += w;
+					while (dx >= ww) {
+						dx -= ww;
 						if (xoff >= w)
 							break;
-						ptr += 4;
-						dx = xv;
+						ptrl += 4;
 						xoff ++;
 					}
+				} else {
+					ptrl += 4;
+					xoff ++;
 				}
-			} else {
-				ptr += 4;
-				xoff ++;
 			}
 		}
-		ptr -= (xoff << 2);
 		if (scale) {
-			if (dy)
-				dy --;
-			if (!dy) {
-				while (hh <= h * (yy + 1) / (yoff + 1)) {
-					if (yoff >= h)
-						break;
-					ptr += (w << 2);
-					dy = yv;
-					yoff ++;
-				}
+			dy += h;
+			while (dy >= hh) {
+				dy -= hh;
+				if (yoff >= h)
+					break;
+				ptr += (w << 2);
+				yoff ++;
+				optr = NULL;
 			}
 		} else {
 			ptr += (w << 2);
+			optr = NULL;
 		}
 	}
 	gfx_put_pixels(img);
