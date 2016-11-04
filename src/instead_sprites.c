@@ -972,7 +972,8 @@ struct lua_pixels {
 	float scale;
 	size_t size;
 	img_t img;
-	unsigned int direct;
+	int dirty;
+	int direct;
 };
 
 static int pixels_size(lua_State *L) {
@@ -1209,6 +1210,7 @@ static void lineAA(struct lua_pixels *src, int x0, int y0, int x1, int y1,
 			ptr += syp;
 		}
 	}
+	src->dirty = 1;
 }
 
 static void line(struct lua_pixels *src, int x1, int y1, int x2, int y2, int r, int g, int b, int a)
@@ -1251,6 +1253,7 @@ static void line(struct lua_pixels *src, int x1, int y1, int x2, int y2, int r, 
 			line1(src, x1, y1, dx, dy, -1, col);
 		}
 	}
+	src->dirty = 1;
 }
 
 static int _pixels_blend(struct lua_pixels *src, int x, int y, int w, int h,
@@ -1300,12 +1303,13 @@ static int _pixels_blend(struct lua_pixels *src, int x, int y, int w, int h,
 	ptr1 += (y * src->w + x) << 2;
 	ptr2 += (yy * dst->w + xx) << 2;
 	srcw = src->w * 4; dstw = dst->w * 4;
+	dst->dirty = 1;
 	for (cy = 0; cy < h; cy ++) {
-		unsigned char *p2 = ptr2;
-		unsigned char *p1 = ptr1;
 		if (mode == PXL_BLEND_COPY)
-			memcpy(p2, p1, w << 2);
+			memcpy(ptr2, ptr1, w << 2);
 		else {
+			unsigned char *p2 = ptr2;
+			unsigned char *p1 = ptr1;
 			for (cx = 0; cx < w; cx ++) {
 				pixel(p1, p2);
 				p1 += 4;
@@ -1398,6 +1402,7 @@ static void _fill(struct lua_pixels *src, int x, int y, int w, int h,
 
 	ptr1 = (unsigned char *)(src + 1);
 	ptr1 += (y * src->w + x) << 2;
+	src->dirty = 1;
 	for (cy = 0; cy < h; cy ++) {
 		unsigned char *p1 = ptr1;
 		for (cx = 0; cx < w; cx ++) {
@@ -1477,6 +1482,8 @@ static void triangle(struct lua_pixels *src, int x0, int y0, int x1, int y1, int
 	if (maxx >= w)
 		maxx = w - 1;
 	ptr = (unsigned char *)(src + 1) + miny * yd + 4 * minx;
+
+	src->dirty = 1;
 
 	for (y = miny; y <= maxy; y ++) {
 		int w0 = w0_row;
@@ -1637,6 +1644,7 @@ static int pixels_value(lua_State *L) {
 		lua_pushnumber(L, *ptr);
 		return 4;
 	}
+	hdr->dirty = 1;
 	*(ptr ++) = r;
 	*(ptr ++) = g;
 	*(ptr ++) = b;
@@ -1667,7 +1675,7 @@ static int pixels_pixel(lua_State *L) {
 
 	if (x >= hdr->w || y >= hdr->h)
 		return 0;
-
+	hdr->dirty = 1;
 	ptr = (unsigned char*)(hdr + 1);
 	ptr += ((y * hdr->w + x) << 2);
 	col[0] = r; col[1] = g; col[2] = b; col[3] = a;
@@ -1688,8 +1696,9 @@ static img_t pixels_img(struct lua_pixels *hdr) {
 	if (!img)
 		return NULL;
 
-	if (hdr->direct)
+	if (hdr->direct || !hdr->dirty)
 		return img;
+	hdr->dirty = 0;
 
 	ptr = (unsigned char*)(hdr + 1);
 	ww = gfx_img_w(img);
@@ -1804,6 +1813,7 @@ static int luaB_pixels_sprite(lua_State *L) {
 	hdr->h = h;
 	hdr->scale = scale;
 	hdr->size = size;
+	hdr->dirty = 0;
 
 	if (ww == h && hh == h) { /* direct map */
 		direct = 1;
@@ -1830,6 +1840,7 @@ static int luaB_pixels_sprite(lua_State *L) {
 		gfx_free_image(img2);
 	} else {
 		memset(hdr + 1, 0, size);
+		hdr->dirty = 1;
 	}
 	luaL_getmetatable(L, "pixels metatable");
 	lua_setmetatable(L, -2);
