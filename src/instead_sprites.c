@@ -972,6 +972,7 @@ struct lua_pixels {
 	float scale;
 	size_t size;
 	img_t img;
+	unsigned int direct;
 };
 
 static int pixels_size(lua_State *L) {
@@ -1685,21 +1686,21 @@ static img_t pixels_img(struct lua_pixels *hdr) {
 	img = hdr->img;
 	if (!img)
 		return NULL;
+
+	if (hdr->direct)
+		return img;
+
 	ptr = (unsigned char*)(hdr + 1);
 	ww = gfx_img_w(img);
 	hh = gfx_img_h(img);
 	w = hdr->w;
 	h = hdr->h;
+
+
 	p = gfx_get_pixels(img);
 
 	if (!p)
 		return NULL;
-
-	if (ww == w && hh == h) {
-		memcpy(p, ptr, hdr->size);
-		gfx_put_pixels(img);
-		return img;
-	}
 
 	dy = 0; yoff = 0;
 
@@ -1753,7 +1754,7 @@ static int luaB_pixels_sprite(lua_State *L) {
 	const char *fname;
 	int w, h;
 	float scale;
-	int ww, hh;
+	int ww, hh, direct = 0;
 	size_t size;
 	float v;
 	img_t img = NULL, img2 = NULL;
@@ -1793,18 +1794,38 @@ static int luaB_pixels_sprite(lua_State *L) {
 
 	ww = ceil((float)ww * scale);
 	hh = ceil((float)hh * scale);
-
-	img = gfx_new_rgba(ww, hh);
-	if (!img)
-		return 0;
 	size = w * h * 4;
+
 	hdr = lua_newuserdata(L, sizeof(*hdr) + size);
 	if (!hdr) {
 		if (img2)
 			gfx_free_image(img2);
-		gfx_free_image(img);
 		return 0;
 	}
+
+	hdr->type = PIXELS_MAGIC;
+	hdr->img = NULL;
+	hdr->w = w;
+	hdr->h = h;
+	hdr->scale = scale;
+	hdr->size = size;
+
+	if (ww == h && hh == h) { /* direct map */
+		direct = 1;
+		img = gfx_new_from(ww, hh, (unsigned char*)(hdr + 1));
+	} else {
+		img = gfx_new_rgba(ww, hh);
+	}
+	hdr->direct = direct;
+	if (!img) {
+		fprintf(stderr, "Error: no free memory\n");
+		memset(hdr, 0, sizeof(*hdr) + size);
+		if (img2)
+			gfx_free_image(img2);
+		return 1;
+	}
+
+	hdr->img = img;
 	if (img2) {
 		unsigned char *ptr = gfx_get_pixels(img2);
 		if (ptr) {
@@ -1813,14 +1834,8 @@ static int luaB_pixels_sprite(lua_State *L) {
 		}
 		gfx_free_image(img2);
 	} else {
-		memset(hdr, 0, sizeof(*hdr) + size);
+		memset(hdr + 1, 0, size);
 	}
-	hdr->type = PIXELS_MAGIC;
-	hdr->img = img;
-	hdr->w = w;
-	hdr->h = h;
-	hdr->scale = scale;
-	hdr->size = size;
 	luaL_getmetatable(L, "pixels metatable");
 	lua_setmetatable(L, -2);
 	return 1;
