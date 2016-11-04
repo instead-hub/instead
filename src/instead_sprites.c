@@ -1675,7 +1675,7 @@ static int pixels_pixel(lua_State *L) {
 }
 
 static img_t pixels_img(struct lua_pixels *hdr) {
-	int w, h, ww, hh, xx, yy, dx, dy, xoff, yoff;
+	int w, h, ww, hh, xx, yy, dx, dy;
 	unsigned char *ptr, *optr = NULL;
 	unsigned char *p;
 	img_t img;
@@ -1702,12 +1702,12 @@ static img_t pixels_img(struct lua_pixels *hdr) {
 	if (!p)
 		return NULL;
 
-	dy = 0; yoff = 0;
+	dy = 0;
 
 	for (yy = 0; yy < hh; yy++) {
 		unsigned char *ptrl = ptr;
 
-		dx = 0; xoff = 0;
+		dx = 0;
 
 		if (optr) {
 			memcpy(p, optr, ww * 4);
@@ -1719,20 +1719,14 @@ static img_t pixels_img(struct lua_pixels *hdr) {
 				dx += w;
 				while (dx >= ww) {
 					dx -= ww;
-					if (xoff >= w)
-						break;
 					ptrl += 4;
-					xoff ++;
 				}
 			}
 		}
 		dy += h;
 		while (dy >= hh) {
 			dy -= hh;
-			if (yoff >= h)
-				break;
 			ptr += (w << 2);
-			yoff ++;
 			optr = NULL;
 		}
 	}
