@@ -1258,7 +1258,7 @@ static int _pixels_blend(struct lua_pixels *src, int x, int y, int w, int h,
 
 {
 	unsigned char *ptr1, *ptr2;
-	int cy, cx;
+	int cy, cx, srcw, dstw;
 
 	if (!w)
 		w = src->w;
@@ -1299,20 +1299,21 @@ static int _pixels_blend(struct lua_pixels *src, int x, int y, int w, int h,
 	ptr2 = (unsigned char *)(dst + 1);
 	ptr1 += (y * src->w + x) << 2;
 	ptr2 += (yy * dst->w + xx) << 2;
+	srcw = src->w * 4; dstw = dst->w * 4;
 	for (cy = 0; cy < h; cy ++) {
 		unsigned char *p2 = ptr2;
 		unsigned char *p1 = ptr1;
-		for (cx = 0; cx < w; cx ++) {
-			if (mode == PXL_BLEND_COPY)
-				memcpy(p2, p1, 4);
-			else { /* blend */
+		if (mode == PXL_BLEND_COPY)
+			memcpy(p2, p1, w << 2);
+		else {
+			for (cx = 0; cx < w; cx ++) {
 				pixel(p1, p2);
+				p1 += 4;
+				p2 += 4;
 			}
-			p1 += 4;
-			p2 += 4;
 		}
-		ptr2 += (dst->w * 4);
-		ptr1 += (src->w * 4);
+		ptr2 += dstw;
+		ptr1 += srcw;
 	}
 	return 0;
 }
