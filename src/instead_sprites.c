@@ -1504,6 +1504,107 @@ static void triangle(struct lua_pixels *src, int x0, int y0, int x1, int y1, int
 		ptr += yd;
 	}
 }
+static void fill_circle(struct lua_pixels *src, int xc, int yc, int radius, int r, int g, int b, int a)
+{
+	int r2 = radius * radius;
+	int x, y, x1, x2, y1, y2;
+	unsigned char col[4] = { r, g, b, a };
+	int w = src->w, h = src->h;
+	unsigned char *ptr;
+
+	if (xc + radius < 0 || yc + radius < 0)
+		return;
+	if (xc - radius >= w || yc - radius >= h)
+		return;
+
+	if (radius <= 0)
+		return;
+
+	ptr = (unsigned char *)(src + 1);
+	src->dirty = 1;
+	ptr += (w * yc + xc) << 2;
+
+	if (radius == 1) {
+		pixel(col, ptr);
+		return;
+	}
+	y1 = -radius; y2 = radius;
+	x1 = -radius; x2 = radius;
+	if (yc - radius < 0)
+		y1 = -yc;
+	if (xc - radius < 0)
+		x1 = -xc;
+	if (xc + radius >= w)
+		x2 = w - xc - 1;
+	if (yc + radius >= h)
+		y2 = h - yc - 1;
+	for (y = y1; y <= y2; y ++) {
+		unsigned char *ptrl = ptr + ((y * w + x1) << 2);
+		for (x = x1; x <= x2; x++) {
+			if (x*x + y*y < r2 - 1)
+				pixel(col, ptrl);
+			ptrl += 4;
+		}
+	}
+}
+
+static void circle(struct lua_pixels *src, int xc, int yc, int rr, int r, int g, int b, int a)
+{
+	int x = -rr, y = 0, err = 2 - 2 * rr;
+	unsigned char *ptr = (unsigned char *)(src + 1);
+	unsigned char col[4] = { r, g, b, a };
+	int w = src->w, h = src->h;
+
+	if (rr < 0)
+		return;
+	if (xc + rr < 0 || yc + rr < 0)
+		return;
+	if (xc - rr >= w || yc - rr >= h)
+		return;
+	src->dirty = 1;
+	ptr += (w * yc + xc) * 4;
+	if (xc - rr >= 0 && xc + rr < w &&
+	    yc - rr >=0 && yc + rr < h) {
+		do {
+			int xmy = (x - y * w) * 4;
+			int yax = (y + x * w) * 4;
+			pixel(col, ptr - xmy);
+			pixel(col, ptr - yax);
+			pixel(col, ptr + xmy);
+			pixel(col, ptr + yax);
+
+			rr = err;
+			if (rr <= y)
+				err += ++y * 2 + 1;
+			if (rr > x || err > y)
+				err += ++x * 2 + 1;
+		} while (x < 0);
+		return;
+	}
+	/* slow */
+	do {
+		int xmy = (x - y * w) * 4;
+		int yax = (y + x * w) * 4;
+		if (((xc - x) | (w - xc + x - 1) |
+		    (yc + y) | (h - yc - y - 1)) >= 0)
+			pixel(col, ptr - xmy);
+		if (((xc - y) | (w - xc + y - 1) |
+		     (yc - x) | (h - yc + x - 1)) >= 0)
+			pixel(col, ptr - yax);
+		if (((xc + x) | (w - xc - x - 1) |
+		     (yc - y) | (h - yc + y - 1)) >= 0)
+			pixel(col, ptr + xmy);
+		if (((xc + y) | (w - xc - y - 1) |
+		      (yc + x) | (h - yc - x - 1)) >= 0)
+			pixel(col, ptr + yax);
+		rr = err;
+		if (rr <= y)
+			err += ++y * 2 + 1;
+		if (rr > x || err > y)
+			err += ++x * 2 + 1;
+	} while (x < 0);
+
+}
 
 static int pixels_fill(lua_State *L) {
 	int x = 0, y = 0, w = 0, h = 0, r = 0, g = 0, b = 0, a = 255;
@@ -1611,6 +1712,38 @@ static int pixels_lineAA(lua_State *L) {
 	b = luaL_optnumber(L, 8, 0);
 	a = luaL_optnumber(L, 9, 255);
 	lineAA(src, x1, y1, x2, y2, r, g, b, a);
+	return 0;
+}
+static int pixels_circle(lua_State *L) {
+	int xc = 0, yc = 0, rr = 0, r = 0, g = 0, b = 0, a = 255;
+	struct lua_pixels *src;
+	src = (struct lua_pixels*)lua_touserdata(L, 1);
+	if (!src || src->type != PIXELS_MAGIC)
+		return 0;
+	xc = luaL_optnumber(L, 2, 0);
+	yc = luaL_optnumber(L, 3, 0);
+	rr = luaL_optnumber(L, 4, 0);
+	r = luaL_optnumber(L, 5, 0);
+	g = luaL_optnumber(L, 6, 0);
+	b = luaL_optnumber(L, 7, 0);
+	a = luaL_optnumber(L, 8, 255);
+	circle(src, xc, yc, rr, r, g, b, a);
+	return 0;
+}
+static int pixels_fill_circle(lua_State *L) {
+	int xc = 0, yc = 0, rr = 0, r = 0, g = 0, b = 0, a = 255;
+	struct lua_pixels *src;
+	src = (struct lua_pixels*)lua_touserdata(L, 1);
+	if (!src || src->type != PIXELS_MAGIC)
+		return 0;
+	xc = luaL_optnumber(L, 2, 0);
+	yc = luaL_optnumber(L, 3, 0);
+	rr = luaL_optnumber(L, 4, 0);
+	r = luaL_optnumber(L, 5, 0);
+	g = luaL_optnumber(L, 6, 0);
+	b = luaL_optnumber(L, 7, 0);
+	a = luaL_optnumber(L, 8, 255);
+	fill_circle(src, xc, yc, rr, r, g, b, a);
 	return 0;
 }
 
@@ -1881,7 +2014,13 @@ static int pixels_create_meta (lua_State *L) {
 	lua_pushstring(L, "lineAA");
 	lua_pushcfunction (L, pixels_lineAA);
 	lua_settable(L, -3);
-	lua_pushstring(L, "triangle");
+	lua_pushstring(L, "circle");
+	lua_pushcfunction (L, pixels_circle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "fill_circle");
+	lua_pushcfunction (L, pixels_fill_circle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "fill_triangle");
 	lua_pushcfunction (L, pixels_triangle);
 	lua_settable(L, -3);
 	lua_settable(L, -3);
