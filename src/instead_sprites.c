@@ -1605,6 +1605,82 @@ static void circle(struct lua_pixels *src, int xc, int yc, int rr, int r, int g,
 	} while (x < 0);
 
 }
+static void circleAA(struct lua_pixels *src, int xc, int yc, int rr, int r, int g, int b, int a)
+{
+	int p1, p2, p3, p4;
+	int x = -rr, y = 0, x2, e2, err = 2 - 2 * rr;
+	unsigned char *ptr = (unsigned char *)(src + 1);
+	unsigned char col[4] = { r, g, b, a };
+	int w = src->w, h = src->h;
+	if (rr < 0)
+		return;
+	if (xc + rr < 0 || yc + rr < 0)
+		return;
+	if (xc - rr >= w || yc - rr >= h)
+		return;
+	src->dirty = 1;
+	rr = 1 - err;
+	ptr += (w * yc + xc) * 4;
+	do {
+		int i = 255 * abs(err - 2 *(x + y)-2) / rr;
+		int xmy = (x - y * w) * 4;
+		int yax = (y + x * w) * 4;
+		col[3] = 255 - i;
+		p1 = 0; p2 = 0; p3 = 0; p4 = 0;
+		if (((xc - x) | (w - xc + x - 1) |
+		     (yc + y) | (h - yc - y - 1)) >= 0) {
+			pixel(col, ptr - xmy);
+			p1 = 1;
+		}
+		if (((xc - y) | (w - xc + y - 1) |
+		     (yc - x) | (h - yc + x - 1)) >= 0) {
+			pixel(col, ptr - yax);
+			p2 = 1;
+		}
+		if (((xc + x) | (w - xc - x - 1) |
+		     (yc - y) | (h - yc + y - 1)) >= 0) {
+			pixel(col, ptr + xmy);
+			p3 = 1;
+		}
+		if (((xc + y) | (w - xc - y - 1) |
+		     (yc + x) | (h - yc - x - 1)) >= 0) {
+			pixel(col, ptr + yax);
+			p4 = 1;
+		}
+		e2 = err;
+		x2 = x;
+		if (err + y > 0) {
+			i = 255 * (err - 2 * x - 1) / rr;
+			if (i < 256) {
+				col[3] = 255 - i;
+				if (p1 && yc + y + 1 < h)
+					pixel(col, ptr - xmy + w * 4);
+				if (p2 && xc - y - 1 >= 0)
+					pixel(col, ptr - yax - 4);
+				if (p3 && yc - y - 1 >= 0)
+					pixel(col, ptr + xmy - w * 4);
+				if (p4 && xc + y < w)
+					pixel(col, ptr + yax + 4);
+			}
+			err += ++x * 2 + 1;
+		}
+		if (e2 + x <= 0) {
+			i = 255 * (2 * y + 3 - e2) / rr;
+			if (i < 256) {
+				col[3] = 255 - i;
+				if (p1 && xc - x2 - 1 >= 0)
+					pixel(col, ptr - xmy - 4);
+				if (p2 && yc - x2 - 1 >= 0)
+					pixel(col, ptr - yax - w * 4);
+				if (p3 && xc + x2 + 1 < w)
+					pixel(col, ptr + xmy + 4);
+				if (p4 && yc + x2 + 1 < h)
+					pixel(col, ptr + yax + w * 4);
+			}
+			err += ++y * 2 + 1;
+		}
+	} while (x < 0);
+}
 
 static int pixels_fill(lua_State *L) {
 	int x = 0, y = 0, w = 0, h = 0, r = 0, g = 0, b = 0, a = 255;
@@ -1728,6 +1804,22 @@ static int pixels_circle(lua_State *L) {
 	b = luaL_optnumber(L, 7, 0);
 	a = luaL_optnumber(L, 8, 255);
 	circle(src, xc, yc, rr, r, g, b, a);
+	return 0;
+}
+static int pixels_circleAA(lua_State *L) {
+	int xc = 0, yc = 0, rr = 0, r = 0, g = 0, b = 0, a = 255;
+	struct lua_pixels *src;
+	src = (struct lua_pixels*)lua_touserdata(L, 1);
+	if (!src || src->type != PIXELS_MAGIC)
+		return 0;
+	xc = luaL_optnumber(L, 2, 0);
+	yc = luaL_optnumber(L, 3, 0);
+	rr = luaL_optnumber(L, 4, 0);
+	r = luaL_optnumber(L, 5, 0);
+	g = luaL_optnumber(L, 6, 0);
+	b = luaL_optnumber(L, 7, 0);
+	a = luaL_optnumber(L, 8, 255);
+	circleAA(src, xc, yc, rr, r, g, b, a);
 	return 0;
 }
 static int pixels_fill_circle(lua_State *L) {
@@ -2016,6 +2108,9 @@ static int pixels_create_meta (lua_State *L) {
 	lua_settable(L, -3);
 	lua_pushstring(L, "circle");
 	lua_pushcfunction (L, pixels_circle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "circleAA");
+	lua_pushcfunction (L, pixels_circleAA);
 	lua_settable(L, -3);
 	lua_pushstring(L, "fill_circle");
 	lua_pushcfunction (L, pixels_fill_circle);
