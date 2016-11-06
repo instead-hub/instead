@@ -1555,7 +1555,7 @@ static void circle(struct lua_pixels *src, int xc, int yc, int rr, int r, int g,
 	unsigned char col[4] = { r, g, b, a };
 	int w = src->w, h = src->h;
 
-	if (rr < 0)
+	if (rr <= 0)
 		return;
 	if (xc + rr < 0 || yc + rr < 0)
 		return;
@@ -1612,7 +1612,7 @@ static void circleAA(struct lua_pixels *src, int xc, int yc, int rr, int r, int 
 	unsigned char *ptr = (unsigned char *)(src + 1);
 	unsigned char col[4] = { r, g, b, a };
 	int w = src->w, h = src->h;
-	if (rr < 0)
+	if (rr <= 0)
 		return;
 	if (xc + rr < 0 || yc + rr < 0)
 		return;
