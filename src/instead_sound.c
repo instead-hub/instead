@@ -61,8 +61,11 @@ static int luaB_load_sound_mem(lua_State *L) {
 
 	if (hz < 0 || channels < 0)
 		return 0;
-
+#if LUA_VERSION_NUM >= 502
+	len = lua_rawlen(L, 3);
+#else
 	len = lua_objlen(L, 3);
+#endif
 	if (len <= 0)
 		return 0;
 	buf = malloc(sizeof(short) * len);
