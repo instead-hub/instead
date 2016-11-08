@@ -1,5 +1,0 @@
-all:
-install:
-	for /D %%f in (*) do ( if not exist "..\bin\games\%%f" mkdir "..\bin\games\%%f" )
-	for /D %%f in (*) do ( copy /Y %%f ..\bin\games\%%f )
-clean:
