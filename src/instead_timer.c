@@ -27,37 +27,37 @@
 
 /* the Lua interpreter */
 static gtimer_t instead_timer = NULL_TIMER;
-static int instead_timer_nr = 0;
+static int volatile instead_timer_nr = 0;
 
 static void instead_timer_do(void *data)
 {
 	char *p;
+	instead_timer_nr = 0;
 	instead_lock();
 	if (game_paused() || !curgame_dir) {
 		instead_unlock();
-		goto out;
+		return;
 	}
 	if (instead_function("stead.timer", NULL)) {
 		instead_clear();
 		instead_unlock();
-		goto out;
+		return;
 	}
 	p = instead_retval(0); instead_clear();
 	instead_unlock();
 	if (!p)
-		goto out;
+		return;
 
 	game_cmd(p, 0); free(p);
 
 	game_cursor(CURSOR_ON);
-out:
-	instead_timer_nr = 0;
 }
 
 static int instead_fn(int interval, void *p)
 {
-	if (instead_timer_nr)
+	if (instead_timer_nr > 4) {
 		return interval; /* framedrop */
+	}
 	instead_timer_nr ++;
 	push_user_event(instead_timer_do, NULL);
 	return interval;
