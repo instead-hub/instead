@@ -1,3 +1,12 @@
+2.5.0
+
+  * sound.load_mem;
+  * sprite.pixels;
+  * bug fixes;
+  * refactoring (src/instead);
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 09 Nov 2016 11:38:00 +0300
+
 2.4.1
 
   * sprite from sprite load bug fixed with scaling;
@@ -6,7 +15,7 @@
   * memory leak in free_font (sprtites) fixed;
   * new stead.mouse_show();
   * fix in txtnb() escaping;
-  * fix in stead.busy();  
+  * fix in stead.busy();
   * fixes in fonts,cutscene and keyboard example modules;
   * ua -> uk language, fixes in translation;
 
