@@ -102,7 +102,7 @@ struct game *game_lookup(const char *name)
 {
 	int i;
 	if (!name || !*name) {
-		if (games_nr == 1) 
+		if (games_nr == 1)
 			return &games[0];
 		return NULL;
 	}
@@ -358,7 +358,7 @@ int games_replace(const char *path, const char *dir)
 		FREE(g->info);
 		FREE(g->author);
 		FREE(g->version);
-		
+
 		g->path = p;
 		g->dir = strdup(dir);
 		g->name = game_name(p, dir);
@@ -422,7 +422,7 @@ int games_lookup(const char *path)
 			continue;
 		i ++;
 	}
-out:	
+out:
 	closedir(d);
 	games_sort();
 	return 0;
@@ -447,7 +447,7 @@ static int motion_id = 0;
 static int motion_y = 0;
 
 static int mx, my;
-static img_t 	menubg = NULL;
+static img_t	menubg = NULL;
 static img_t	menu = NULL;
 
 static int menu_shown = 0;
@@ -465,7 +465,7 @@ void game_clear(int x, int y, int w, int h)
 	if (menu_shown) {
 		int xx = x - mx;
 		int yy = y - my;
-		gfx_copy_from(menubg, xx, yy, w, h, NULL, x, y); 
+		gfx_copy_from(menubg, xx, yy, w, h, NULL, x, y);
 		gfx_draw_from(menu, xx, yy, w, h, NULL, x, y);
 	}
 }
@@ -474,13 +474,13 @@ void game_clear(int x, int y, int w, int h);
 
 struct el {
 	int		id;
-	int 		x;
-	int 		y;
+	int		x;
+	int		y;
 	int		mx;
 	int		my; /* coordinates */
-	int 		type;
+	int		type;
 	int		drawn;
-/*	int 		clone; */
+/*	int		clone; */
 	union {
 		layout_t	lay;
 		textbox_t	box;
@@ -501,20 +501,20 @@ enum {
 	el_ways,
 	el_inv,
 	el_scene,
-	el_sup, 
+	el_sup,
 	el_sdown,
 /*	el_sslide, */
-	el_iup, 
+	el_iup,
 	el_idown,
 /*	el_islide, */
-	el_spic, 
+	el_spic,
 	el_menu_button,
 	el_max,
 };
 
 static struct el objs[el_max];
 
-static void 	el_set(int i, int t, int x, int y, void *p)
+static void	el_set(int i, int t, int x, int y, void *p)
 {
 	objs[i].id = i;
 	objs[i].x = x;
@@ -617,13 +617,13 @@ int game_save(int nr)
 	int rc;
 	if (s) {
 		if (nr == -1 || nr == 0) {
-			struct instead_args args_1[] = { 
-				{ .val = "-1", .type = INSTEAD_NUM }, 
-				{ .val = NULL, } 
+			struct instead_args args_1[] = {
+				{ .val = "-1", .type = INSTEAD_NUM },
+				{ .val = NULL, }
 			};
-			struct instead_args args_0[] = { 
-				{ .val = "0", .type = INSTEAD_NUM }, 
-				{ .val = NULL, } 
+			struct instead_args args_0[] = {
+				{ .val = "0", .type = INSTEAD_NUM },
+				{ .val = NULL, }
 			};
 			if (nr == -1) {
 				instead_lock();
@@ -685,7 +685,7 @@ int game_apply_theme(void)
 /*	txt_layout_link_style(lay, 4); */
 	txt_layout_active_color(lay, game_theme.acol);
 	txt_layout_font_height(lay, game_theme.font_height);
-	
+
 	txt_box_set(box, lay);
 	el_set(el_scene, elt_box, game_theme.win_x, 0, box);
 
@@ -715,13 +715,13 @@ int game_apply_theme(void)
 	txt_layout_link_color(lay, game_theme.lcol);
 	txt_layout_active_color(lay, game_theme.acol);
 	txt_layout_font_height(lay, game_theme.font_height);
-	
+
 	el_set(el_title, elt_layout, game_theme.win_x, game_theme.win_y, lay);
 
 	lay = txt_layout(game_theme.font, ALIGN_CENTER, game_theme.win_w, 0);
 	if (!lay)
 		return -1;
-	
+
 	txt_layout_color(lay, game_theme.fgcol);
 	txt_layout_link_color(lay, game_theme.lcol);
 	txt_layout_active_color(lay, game_theme.acol);
@@ -788,7 +788,7 @@ int game_change_vol(int d, int val)
 	snd_volume_mus(v);
 	if (opc && !pc) {
 		game_stop_mus(0);
-	} 
+	}
 	if (!opc && pc) {
 		game_music_player();
 	}
@@ -842,7 +842,7 @@ static void anigif_do(void *data)
 		return;
 
 	game_cursor(CURSOR_CLEAR);
-	
+
 	if (gfx_frame_gif(el_img(el_spic))) { /* scene */
 		game_cursor(CURSOR_DRAW);
 		gfx_update_gif(el_img(el_spic));
@@ -857,9 +857,9 @@ static void anigif_do(void *data)
 			gfx_update_gif(img);
 		}
 	}
-	
+
 	game_cursor(CURSOR_CLEAR);
-	
+
 	for (v = NULL; (img = txt_layout_images(txt_box_layout(el_box(el_inv)), &v)); ) { /* inv */
 		game_cursor(CURSOR_CLEAR);
 		if (gfx_frame_gif(img)) {
@@ -867,9 +867,9 @@ static void anigif_do(void *data)
 			gfx_update_gif(img);
 		}
 	}
-	
+
 	game_cursor(CURSOR_CLEAR);
-	
+
 	for (v = NULL; (img = txt_layout_images(el_layout(el_title), &v)); ) { /* title */
 		game_cursor(CURSOR_CLEAR);
 		if (gfx_frame_gif(img)) {
@@ -877,9 +877,9 @@ static void anigif_do(void *data)
 			gfx_update_gif(img);
 		}
 	}
-	
+
 	game_cursor(CURSOR_CLEAR);
-	
+
 	for (v = NULL; (img = txt_layout_images(el_layout(el_ways), &v)); ) { /* ways */
 		game_cursor(CURSOR_CLEAR);
 		if (gfx_frame_gif(img)) {
@@ -1002,7 +1002,7 @@ int game_init(const char *name)
 		game_theme_select(DEFAULT_THEME);
 		return -1;
 	}
-	timer_han = gfx_add_timer(HZ, counter_fn, NULL); 
+	timer_han = gfx_add_timer(HZ, counter_fn, NULL);
 	if (!curgame_dir) {
 		game_menu(menu_games);
 	} else {
@@ -1094,13 +1094,13 @@ void game_done(int err)
 	game_own_theme = 0;
 	need_restart = 0;
 /*	SDL_Quit(); */
-}	
+}
 
 static void el_size(int i, int *w, int *h)
 {
 	int type;
 	type = el(i)->type;
-	if (type == elt_layout) 
+	if (type == elt_layout)
 		txt_layout_size(el_layout(i), w, h);
 	else if (type == elt_box)
 		txt_box_size(el_box(i), w, h);
@@ -1115,7 +1115,7 @@ static void el_size(int i, int *w, int *h)
 			*w = 0;
 		if (h)
 			*h = 0;
-	} 
+	}
 }
 
 #define el_clear(n) _el_clear(n, game_clear)
@@ -1142,7 +1142,7 @@ static int _el_clear(int n, clear_fn clear)
 	} else if (o->type == elt_layout) {
 		for (v = NULL; (img = txt_layout_images(el_layout(n), &v)); )
 			gfx_dispose_gif(img);
-	} else if (o->type == elt_image) 
+	} else if (o->type == elt_image)
 		gfx_dispose_gif(el_img(n));
 
 	return 1;
@@ -1228,9 +1228,9 @@ void box_update_scrollbar(int n)
 		y2 = game_theme.inv_a_down_y;
 /*		elslide = el(el_islide); */
 	} else /* impossible case */
-		return; 
+		return;
 	if (!elup || !eldown)
-		return;	
+		return;
 
 /*	if (x1 == -1 || y1 == -1 || x2 == -1 || y2 == -1) */
 	el_size(n, &w, &h);
@@ -1256,7 +1256,7 @@ void box_update_scrollbar(int n)
 	}
 
 	if (el_clear(eldown->id)) {
-		if (eldown->x != x2 || eldown->y != y2) 
+		if (eldown->x != x2 || eldown->y != y2)
 			el_update(eldown->id);
 	}
 
@@ -1330,7 +1330,7 @@ img_t	game_pict_scale(img_t img, int ww, int hh)
 
 	www = ww;
 	hhh = hh;
-	
+
 	while (scale * (float)w > ww || scale * (float)h > hh) {
 		scale1 = (float)(www - 2) / (float)(w);
 		scale2 = (float)(hhh - 2) / (float)(h);
@@ -1361,7 +1361,7 @@ int game_menu_box_wh(const char *txt, int *w, int *h)
 }
 
 int game_menu_box_width(int show, const char *txt, int width)
-{	
+{
 /*	img_t	menu; */
 	int w, h, mw, mh;
 	int x, y;
@@ -1522,8 +1522,8 @@ static void game_autosave(void)
 		return;
 	instead_lock();
 	instead_function("instead.get_autosave", NULL);
-	b = instead_bretval(0); 
-	r = instead_iretval(1); 
+	b = instead_bretval(0);
+	r = instead_iretval(1);
 	instead_clear();
 	instead_unlock();
 	if (b) {
@@ -1540,7 +1540,7 @@ static void game_instead_restart(void)
 		return;
 	instead_lock();
 	instead_function("instead.get_restart", NULL);
-	b = instead_bretval(0); 
+	b = instead_bretval(0);
 	instead_clear();
 	instead_unlock();
 	need_restart = b;
@@ -1582,7 +1582,7 @@ static void finish_music(void *data)
 		return;
 	instead_lock();
 	instead_function("instead.finish_music", NULL);
-	rc = instead_bretval(0); 
+	rc = instead_bretval(0);
 	instead_clear();
 	instead_unlock();
 	if (rc)
@@ -1597,7 +1597,7 @@ void game_music_finished(void)
 
 void game_music_player(void)
 {
-	int 	loop;
+	int	loop;
 	char		*mus;
 
 	int cf_out = 0;
@@ -2222,7 +2222,7 @@ int game_cmd(char *cmd, int flags)
 	char		*title = NULL;
 	char		*pict = NULL;
 	img_t		oldscreen = NULL;
-	int 	dd = (DIRECT_MODE);
+	int	dd = (DIRECT_MODE);
 	int		rc = 0;
 	int		new_scene = 0;
 	int		m_restore = 0;
@@ -2794,12 +2794,12 @@ int mouse_filter(int filter)
 /* action: 0 - first click,1 - second, -1 - restore */
 int game_click(int x, int y, int action, int filter)
 {
-	int menu_mode 	= 0;
+	int menu_mode	= 0;
 	int use_mode	= 0;
 	int go_mode	= 0;
 	struct el	*elem = NULL;
-	char 		buf[1024];
-	xref_t 		xref = NULL;
+	char		buf[1024];
+	xref_t		xref = NULL;
 	char		*xref_txt;
 
 	int was_motion = (motion_mode == 2);
@@ -3104,7 +3104,7 @@ static void frame_prev(void)
 		sel_el = el_inv;
 		break;
 	case el_scene:
-		if (game_theme.gfx_mode != GFX_MODE_EMBEDDED && 
+		if (game_theme.gfx_mode != GFX_MODE_EMBEDDED &&
 			txt_layout_xrefs(el_layout(el_ways)))
 			sel_el = el_ways;
 		else
@@ -3246,7 +3246,7 @@ static void xref_jump(xref_t xref, struct el* elem)
 static int select_ref(int prev, int last)
 {
 	int x, y;
-	struct el 	 *elem = NULL;
+	struct el	 *elem = NULL;
 	xref_t		xref = NULL;
 	gfx_cursor(&x, &y);
 
