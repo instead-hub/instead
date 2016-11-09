@@ -157,7 +157,7 @@ wav_t	snd_load_mem(int fmt, const short *data, size_t len)
 
 	if (fmt & SND_FMT_11)
 		ffreq = 11025;
-	if (fmt & SND_FMT_22)
+	else if (fmt & SND_FMT_22)
 		ffreq = 22050;
 	else
 		ffreq = 44100;
