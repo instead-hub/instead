@@ -2008,7 +2008,7 @@ static int _play_combined_snd(char *filename, int chan, int loop)
 		int c = chan, l = loop;
 		int at = 0;
 		ep = p + strcspn(p, ";@");
-	
+
 		if (*ep == '@') {
 			at = 1;
 			*ep = 0; ep ++;
@@ -2046,10 +2046,10 @@ void game_sound_player(void)
 	int		chan = -1;
 	int		loop = 1;
 
-	struct instead_args args[] = { 
-			{ .val = "nil", .type = INSTEAD_NIL }, 
+	struct instead_args args[] = {
+			{ .val = "nil", .type = INSTEAD_NIL },
 			{ .val = "-1", .type = INSTEAD_NUM },
-			{ .val = NULL } 
+			{ .val = NULL }
 	};
 
 	if (!snd_volume_mus(-1))
@@ -2060,7 +2060,7 @@ void game_sound_player(void)
 
 	loop = instead_iretval(2);
 	chan = instead_iretval(1);
-	snd = instead_retval(0); 
+	snd = instead_retval(0);
 	instead_clear();
 	if (!snd) {
 		if (chan != -1) {
@@ -2099,7 +2099,7 @@ static int find_diff_pos(const char *p1, const char *p2)
 	int pos = 0;
 	if (!p1 || !p2)
 		return -1;
-		
+
 	while ((*p1 == *p2) && *p1) {
 		p1 ++;
 		p2 ++;
@@ -2126,7 +2126,7 @@ static void scroll_to_diff(const char *cmdstr, int cur_off, int new_scene)
 			off = txt_layout_pos2off(txt_box_layout(el_box(el_scene)), pos, &hh);
 		if (off == -1)
 			off = cur_off;
-	} 
+	}
 
 	el_size(el_scene, NULL, &h);
 
@@ -2190,7 +2190,7 @@ static void game_redraw_pic(void)
 
 	ox = el(el_spic)->x;
 	oy = el(el_spic)->y;
-	
+
 	el(el_spic)->x = x;
 	el(el_spic)->y = y;
 
@@ -2233,7 +2233,7 @@ int game_cmd(char *cmd, int flags)
 		game_cursor(CURSOR_CLEAR);
 	instead_lock();
 	if (flags & GAME_CMD_FILE) /* file command */
-		cmdstr = instead_file_cmd(cmd, &rc); 
+		cmdstr = instead_file_cmd(cmd, &rc);
 	else
 		cmdstr = instead_cmd(cmd, &rc);
 	instead_unlock();
@@ -2276,7 +2276,7 @@ int game_cmd(char *cmd, int flags)
 			}
 			goto inv; /* hackish? ok, yes  it is... */
 		}
-		goto err; /* really nothing to do */ 
+		goto err; /* really nothing to do */
 	}
 
 	m_restore = !(flags & GAME_CMD_CLICK);
@@ -2285,8 +2285,8 @@ int game_cmd(char *cmd, int flags)
 	fading = check_fading(&new_scene);
 
 	instead_lock();
-	instead_function("instead.get_title", NULL); 
-	title = instead_retval(0); 
+	instead_function("instead.get_title", NULL);
+	title = instead_retval(0);
 	instead_clear();
 	instead_unlock();
 
@@ -2364,7 +2364,7 @@ int game_cmd(char *cmd, int flags)
 			img = gfx_load_image(pict);
 			if (!img)
 				game_res_err_msg(pict, debug_sw);
-			if (GFX_MODE(game_theme.gfx_mode) != GFX_MODE_FLOAT) 
+			if (GFX_MODE(game_theme.gfx_mode) != GFX_MODE_FLOAT)
 				img = game_pict_scale(img, game_theme.win_w, game_theme.max_scene_h);
 			else
 				img = game_pict_scale(img, game_theme.max_scene_w, game_theme.max_scene_h);
@@ -2410,7 +2410,7 @@ int game_cmd(char *cmd, int flags)
 	el_clear(el_scene);
 
 	instead_lock();
-	instead_function("instead.get_ways", NULL); 
+	instead_function("instead.get_ways", NULL);
 	waystr = instead_retval(0);
 	instead_clear();
 	instead_unlock();
@@ -2426,7 +2426,7 @@ int game_cmd(char *cmd, int flags)
 		txt_layout_size(el_layout(el_ways), NULL, &ways_h);
 		if ((ways_h == 0 || WAYS_BOTTOM) && pict_h != 0)
 			pict_h += game_theme.font_size * game_theme.font_height / 2;
-	} 
+	}
 	old_off = txt_box_off(el_box(el_scene));
 
 	if (GFX_MODE(game_theme.gfx_mode) == GFX_MODE_EMBEDDED) {
@@ -2460,13 +2460,13 @@ int game_cmd(char *cmd, int flags)
 		txt_layout_add(txt_box_layout(el_box(el_scene)), cmdstr);
 		txt_box_set(el_box(el_scene), txt_box_layout(el_box(el_scene)));
 	} else {
-		if (GFX_MODE(game_theme.gfx_mode) == GFX_MODE_FLOAT) 
+		if (GFX_MODE(game_theme.gfx_mode) == GFX_MODE_FLOAT)
 			pict_h = 0;
 		txt_box_resize(el_box(el_scene), game_theme.win_w, game_theme.win_h - title_h - ways_h - pict_h);
 		txt_layout_set(txt_box_layout(el_box(el_scene)), cmdstr);
 		txt_box_set(el_box(el_scene), txt_box_layout(el_box(el_scene)));
 	}
-	
+
 	if (WAYS_BOTTOM)
 		el(el_ways)->y = game_theme.win_h - ways_h + game_theme.win_y;
 	else
@@ -2476,12 +2476,12 @@ int game_cmd(char *cmd, int flags)
 		free(waystr);
 
 	if (WAYS_BOTTOM)
-		el(el_scene)->y = el(el_title)->y + title_h + pict_h; 
+		el(el_scene)->y = el(el_title)->y + title_h + pict_h;
 	else
 		el(el_scene)->y = el(el_ways)->y + ways_h;
-	
-/*
-	game_clear(game_theme.win_x, game_theme.win_y + pict_h + title_h, 
+
+	/*
+	game_clear(game_theme.win_x, game_theme.win_y + pict_h + title_h,
 		game_theme.win_w, game_theme.win_h - pict_h - title_h); */
 
 	/* draw title and ways */
@@ -2517,10 +2517,10 @@ inv:
 		txt_layout_set(txt_box_layout(el_box(el_inv)), invstr);
 		txt_box_set(el_box(el_inv), txt_box_layout(el_box(el_inv)));
 		txt_box_scroll(el_box(el_inv), off);
-	
+
 		if (invstr)
 			free(invstr);
-	
+
 		el_clear(el_inv);
 		el_draw(el_inv);
 	}
@@ -2537,7 +2537,7 @@ inv:
 	}
 	{
 		int x, y;
-		if (!(flags & GAME_CMD_NOHL) && 
+		if (!(flags & GAME_CMD_NOHL) &&
 			(!m_restore || mouse_restore())) {
 			gfx_cursor(&x, &y);
 			game_highlight(x, y, 1); /* highlight new scene, to avoid flickering */
@@ -2569,7 +2569,7 @@ fatal:
 }
 
 void game_update(int x, int y, int w, int h)
-{	
+{
 	game_cursor(CURSOR_DRAW);
 	gfx_update(x, y, w, h);
 }
@@ -2586,7 +2586,7 @@ xref_t	use_xref = NULL;
 int disable_use(void)
 {
 	if (use_xref) {
-		xref_set_active(use_xref, 0);	
+		xref_set_active(use_xref, 0);
 		if (xref_layout(use_xref) == txt_box_layout(el_box(el_inv)))
 			game_xref_update(use_xref, el(el_inv)->x, el(el_inv)->y);
 		else
@@ -2604,7 +2604,7 @@ void enable_use(xref_t xref)
 	if (xref_layout(use_xref) == txt_box_layout(el_box(el_inv)))
 		game_xref_update(use_xref, el(el_inv)->x, el(el_inv)->y);
 	else
-		game_xref_update(use_xref, el(el_scene)->x, el(el_scene)->y);	
+		game_xref_update(use_xref, el(el_scene)->x, el(el_scene)->y);
 }
 
 
@@ -2613,7 +2613,7 @@ struct el *look_obj(int x, int y)
 	int i;
 	for (i = 0; i < el_max; i++) {
 		int w, h;
-		
+
 		if (el(i)->drawn && el(i)->id == el_menu) {
 			return el(i);
 		}
@@ -2639,7 +2639,7 @@ xref_t look_xref(int x, int y, struct el **elem)
 	if (!o)
 		return NULL;
 	type = o->type;
-	if (type == elt_layout) 
+	if (type == elt_layout)
 		xref = txt_layout_xref(o->p.lay, x - o->x, y - o->y);
 	else if (type == elt_box)
 		xref = txt_box_xref(o->p.box, x - o->x, y - o->y);
@@ -2678,8 +2678,8 @@ int menu_visible(void)
 
 int game_paused(void)
 {
-	return browse_dialog || menu_shown || 
-		use_xref || click_xref || 
+	return browse_dialog || menu_shown ||
+		use_xref || click_xref ||
 		gfx_fading() || minimized() || instead_busy();
 }
 
@@ -2751,7 +2751,7 @@ static int scroll_pup(int id)
 {
 	int hh;
 	if (box_isscroll_up(id))
-		return -1;		
+		return -1;
 /*	game_highlight(-1, -1, 0);
 	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) { */
 		el_size(el_scene, NULL, &hh);
@@ -2852,7 +2852,7 @@ int game_click(int x, int y, int action, int filter)
 		return 0;
 	}
 	/* now look only second press */
-	
+
 	if (!xref) {
 		if (elem) {
 			if (elem->id == el_menu_button) {
@@ -2868,7 +2868,7 @@ int game_click(int x, int y, int action, int filter)
 			} else disable_use();
 /*				el_update(el_inv); */
 			motion_mode = 0;
-		} else if (!(was_motion && MOTION_TIME)) { 
+		} else if (!(was_motion && MOTION_TIME)) {
 			disable_use();
 /*			el_update(el_inv);
 			gfx_flip(); */
@@ -2886,9 +2886,9 @@ int game_click(int x, int y, int action, int filter)
 		gfx_flip(); */
 		return 1;
 	}
-	
+
 	xref_txt = xref_get_text(xref);
-	
+
 	if (!strncmp("act ", xref_get_text(xref), 4)) {
 		menu_mode = 1;
 		xref_txt += 4;
@@ -2901,7 +2901,7 @@ int game_click(int x, int y, int action, int filter)
 	} else if (elem->id == el_inv) {
 		use_mode = 1;
 	}
-	
+
 	if (!use_xref) {
 		if (use_mode) {
 			enable_use(xref);
@@ -2919,22 +2919,22 @@ int game_click(int x, int y, int action, int filter)
 			return 0;
 		game_cmd(buf, GAME_CMD_CLICK);
 		return 1;
-	}	
+	}
 
 	if (menu_mode || go_mode || elem->id == el_title)
 		return 0;
 
-	if (use_xref == xref)	
+	if (use_xref == xref)
 		snprintf(buf,sizeof(buf), "use %s", xref_txt);
 	else {
 		if (!strncmp("use ", xref_get_text(use_xref), 4)) /* already use */
 			snprintf(buf,sizeof(buf), "%s,%s", xref_get_text(use_xref), xref_txt);
 		else
 			snprintf(buf,sizeof(buf), "use %s,%s", xref_get_text(use_xref), xref_txt);
-	}	
+	}
 	if (mouse_filter(filter))
 		return 0;
-		
+
 	disable_use();
 
 	game_cmd(buf, GAME_CMD_CLICK);
@@ -2978,21 +2978,21 @@ void game_cursor(int on)
 
 	if (on != CURSOR_DRAW)
 		cur = (use_xref) ? game_theme.use:game_theme.cursor;
-	if (!cur) 
+	if (!cur)
 		goto out;
 
 	do {
-		int ox = xc; 
+		int ox = xc;
 		int oy = yc;
-		int ow = w; 
+		int ow = w;
 		int oh = h;
 
-		if (on != CURSOR_DRAW) { 
+		if (on != CURSOR_DRAW) {
 			gfx_cursor(&xc, &yc);
 			xc -= game_theme.cur_x;
 			yc -= game_theme.cur_y;
 		}
-		
+
 		w = gfx_img_w(cur);
 		h = gfx_img_h(cur);
 
@@ -3003,7 +3003,7 @@ void game_cursor(int on)
 		if (on != CURSOR_DRAW) {
 			gfx_update(xc, yc, w, h);
 			gfx_update(ox, oy, ow, oh);
-		} 
+		}
 	} while (0);
 out:
 	gfx_clip(xx, yy, ww, hh);
@@ -3015,7 +3015,7 @@ static void scroll_up(int id, int count)
 {
 /*	int i; */
 	if (box_isscroll_up(id))
-		return;		
+		return;
 /*	game_highlight(-1, -1, 0);
 	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) */
 		txt_box_scroll(el_box(id), -(FONT_SZ(game_theme.font_size)) * count);
@@ -3031,7 +3031,7 @@ static void scroll_down(int id, int count)
 {
 /*	int i; */
 	if (box_isscroll_down(id))
-		return;		
+		return;
 /*	game_highlight(-1, -1, 0);
 	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) */
 		txt_box_scroll(el_box(id), (FONT_SZ(game_theme.font_size)) * count);
@@ -3081,7 +3081,7 @@ static void frame_next(void)
 		sel_el = el_inv;
 		break;
 	case el_inv:
-		if (game_theme.gfx_mode != GFX_MODE_EMBEDDED && 
+		if (game_theme.gfx_mode != GFX_MODE_EMBEDDED &&
 			txt_layout_xrefs(el_layout(el_ways)))
 			sel_el = el_ways;
 		else
@@ -3127,14 +3127,14 @@ static void select_frame(int prev)
 {
 	struct el *elem = NULL;
 	int x, y, w, h;
-	
+
 	gfx_cursor(&x, &y);
-	
+
 	elem = look_obj(x, y);
-	
+
 	if (elem)
 		sel_el = elem->id;
-	
+
 	el(sel_el)->mx = x;
 	el(sel_el)->my = y;
 
@@ -3156,23 +3156,23 @@ static void select_frame(int prev)
 	el_size(sel_el, &w, &h);
 	x = el(sel_el)->mx;
 	y = el(sel_el)->my;
-	if (x < el(sel_el)->x || y < el(sel_el)->y || 
+	if (x < el(sel_el)->x || y < el(sel_el)->y ||
 		x > el(sel_el)->x + w || y > el(sel_el)->y + h) {
 		x = el(sel_el)->x + w / 2;
 		y = el(sel_el)->y + h / 2;
 	}
-	
+
 	gfx_warp_cursor(x, y);
-	
+
 	if (!look_xref(x, y, &elem) && elem) {
 		xref_t xref = get_nearest_xref(elem->id, x, y);
 		xref_jump(xref, elem);
-	}	
+	}
 }
 
 static int xref_rel_position(xref_t xref, struct el *elem, int *x, int *y)
 {
-	int rc = xref_position(xref, x, y);	
+	int rc = xref_position(xref, x, y);
 	if (!rc && elem->type == elt_box && y) {
 		*y -= txt_box_off(el_box(elem->id));
 	}
@@ -3184,7 +3184,7 @@ static int xref_visible(xref_t xref, struct el *elem)
 	int x, y, w, h;
 	if (!elem || !xref)
 		return -1;
-		
+
 	if (xref_rel_position(xref, elem, &x, &y))
 		return -1;
 
@@ -3237,7 +3237,7 @@ static xref_t get_xref(int i, int last)
 static void xref_jump(xref_t xref, struct el* elem)
 {
 	int x, y;
-	if (!elem || !xref || xref_visible(xref, elem) || 
+	if (!elem || !xref || xref_visible(xref, elem) ||
 		xref_rel_position(xref, elem, &x, &y))
 		return;
 	gfx_warp_cursor(elem->x + x, elem->y + y);
@@ -3282,7 +3282,7 @@ static int select_ref(int prev, int last)
 					xref = get_xref(elem->id, 0);
 			}
 		}
-	} 
+	}
 	if (!xref)
 		xref = get_nearest_xref(elem->id, x, y);
 	if (!xref)
@@ -3467,7 +3467,7 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 	char tpx[16];
 	char tpy[16];
 	char tmb[16];
-	
+
 	if (game_paused())
 		return -1;
 
@@ -3606,12 +3606,263 @@ clean:
 }
 #endif
 
+static int game_input_events(struct inp_event *ev)
+{
+	if (!curgame_dir)
+		return 0;
+	if (ev->type == KEY_DOWN || ev->type == KEY_UP) {
+		if (!game_input((ev->type == KEY_DOWN), ev->sym, -1, -1, EV_CODE_KBD))
+			return 1;
+	}
+	if (ev->type == FINGER_DOWN || ev->type == FINGER_UP) {
+		if (!game_input((ev->type == FINGER_DOWN), ev->sym, ev->x, ev->y, EV_CODE_FINGER))
+			return 1;
+	}
+	if (ev->type == MOUSE_DOWN || ev->type == MOUSE_UP) {
+		if (!game_input((ev->type == MOUSE_DOWN), "mouse", ev->x, ev->y, ev->code))
+			return 1;
+	}
+	return 0;
+}
+
+static int alt_pressed = 0;
+static int shift_pressed = 0;
+static int control_pressed = 0;
+
+static int kbd_modifiers(struct inp_event *ev)
+{
+	if (ev->type != KEY_DOWN && ev->type != KEY_UP)
+		return 0;
+	if (!is_key(ev, "left alt") || !is_key(ev, "right alt")) {
+		alt_pressed = (ev->type == KEY_DOWN);
+		return 1;
+	} else if (!is_key(ev, "left shift") || !is_key(ev, "right shift")) {
+		shift_pressed = (ev->type == KEY_DOWN);
+		return 1;
+	} else if (!is_key(ev, "left ctrl") || !is_key(ev, "right ctrl")) {
+		control_pressed = (ev->type == KEY_DOWN);
+		return 1;
+	}
+	return 0;
+}
+
+static int is_key_back(struct inp_event *ev)
+{
+	if (!is_key(ev, "escape")
+#if defined(S60) || defined(_WIN32_WCE)
+	    || !is_key(ev, "space")
+#endif
+#if defined(_WIN32_WCE)
+	    || (ev->code >= 0xc0 && ev->code <= 0xcf) ||
+	    !is_key(ev, "f1") ||
+	    !is_key(ev, "f2") ||
+	    !is_key(ev, "f3") ||
+	    !is_key(ev, "f4") ||
+	    !is_key(ev, "f5")
+#endif
+#ifdef ANDROID
+	    || ev->code == 118
+#endif
+	    )
+		return 0;
+	return -1;
+}
+
+static int kbd_instead(struct inp_event *ev, int *x, int *y)
+{
+	if (ev->type != KEY_DOWN)
+		return 0;
+
+	if (!is_key_back(ev)) {
+		if (use_xref)
+			disable_use();
+		else
+			menu_toggle(-1);
+	} else if (!is_key(ev, "f1")) {
+		if (!menu_shown)
+			menu_toggle(-1);
+	} else if (!is_key(ev, "f2") && curgame_dir) {
+		game_menu(menu_save);
+	} else if (!is_key(ev, "f3") && curgame_dir) {
+		game_menu(menu_load);
+	} else if (!is_key(ev, "f8") && curgame_dir && !menu_shown) {
+		if (game_saves_enabled())
+			game_save(9);
+	} else if (!is_key(ev, "f9") && curgame_dir && !menu_shown) {
+		if (game_saves_enabled()) {
+			if (!access(game_save_path(0, 9), R_OK)) {
+				if (!game_reset())
+					game_load(9);
+			}
+		}
+	} else if (!is_key(ev, "f5") && curgame_dir && !menu_shown) {
+		mouse_reset(1);
+		game_cmd("look", 0);
+	} else if ((alt_pressed || control_pressed) && !is_key(ev, "r") && curgame_dir && !menu_shown && debug_sw) {
+		mouse_reset(1);
+		game_menu_act("/new");
+		shift_pressed = alt_pressed = control_pressed = 0;
+	} else if (!is_key(ev, "f10")
+#ifdef ANDROID
+		   || ev.code == 270
+#endif
+		   ) {
+#ifdef ANDROID
+		return -1;
+#else
+		game_menu(menu_askquit);
+#endif
+	} else if ((alt_pressed | control_pressed) && (!is_key(ev, "q") || !is_key(ev, "f4"))) {
+		game_running = 0;
+		return -1;
+	} else if (alt_pressed &&
+		   (!is_key(ev, "enter") || !is_key(ev, "return"))) {
+		int old_menu = (menu_shown) ? cur_menu: -1;
+		shift_pressed = alt_pressed = control_pressed = 0;
+		opt_fs ^= 1;
+		game_restart();
+		if (old_menu != -1)
+			game_menu(old_menu);
+	} else if (!is_key(ev, "f4") && !alt_pressed && !standalone_sw) {
+#ifdef _USE_UNPACK
+#ifdef _USE_BROWSE
+		mouse_reset(1);
+		if (!game_from_disk()) {
+			shift_pressed = alt_pressed = control_pressed = 0;
+		}
+#endif
+#endif
+	} else if (DIRECT_MODE && !menu_shown) {
+		; /* nothing todo */
+	} else if (!alt_pressed && (!is_key(ev, "return") || !is_key(ev, "enter") 
+#ifdef S60
+				    || !is_key(&ev, ".")
+#endif
+				    )) {
+		gfx_cursor(x, y);
+		game_highlight(-1, -1, 0); /* reset */
+
+		game_click(*x, *y, 0, 0);
+		game_highlight(*x, *y, 1); /* hl on/off */
+		game_highlight(*x, *y, 0);
+
+		if (game_click(*x, *y, 1, 0) == -1) {
+			game_running = 0;
+			return -1;
+		}
+	} else if (!is_key(ev, "tab")) {
+		select_frame(shift_pressed);
+	} else if (!is_key(ev, "up") || !is_key(ev, "down") ||
+		   !is_key(ev, "[8]") || !is_key(ev, "[2]")) {
+
+		int lm;
+		int prev = !is_key(ev, "up") || !is_key(ev, "[8]");
+
+		if (opt_kbd == KBD_INVERSE)
+			lm = (alt_pressed || shift_pressed);
+		else
+			lm = (!alt_pressed && !shift_pressed);
+
+		if (menu_shown || lm) {
+			if (select_ref(prev, 0)) {
+				if (opt_kbd == KBD_SMART) {
+					(prev)?game_scroll_up(1):game_scroll_down(1);
+					select_ref(prev, 1);
+				} else
+					select_ref(prev, 1);
+			}
+		} else
+			(prev)?game_scroll_up(1):game_scroll_down(1);
+	} else if (!is_key(ev, "page up") || !is_key(ev, "[9]") ||
+		   !is_key(ev, "page down") || !is_key(ev, "[3]")) {
+		int lm;
+		int prev = !is_key(ev, "page up") || !is_key(ev, "[9]");
+
+		if (opt_kbd == KBD_INVERSE)
+			lm = (alt_pressed || shift_pressed);
+		else
+			lm = (!alt_pressed && !shift_pressed);
+		if (menu_shown || lm) {
+			if (select_ref(prev, 0) || select_ref(prev, 1)) {
+				if (opt_kbd == KBD_SMART) {
+					int s = (prev)?game_scroll_pup():game_scroll_pdown();
+					if (!s)
+						select_ref(!prev, 1);
+				} else
+					select_ref(prev, 0);
+			}
+		} else {
+			if (prev)
+				game_scroll_pup();
+			else
+				game_scroll_pdown();
+		}
+#if !defined(S60) && !defined(_WIN32_WCE)
+	} else if (!is_key(ev, "left") || !is_key(ev, "[4]")) {
+		select_ref(1, 0);
+	} else if (!is_key(ev, "right") || !is_key(ev, "[6]")) {
+		select_ref(0, 0);
+	} else if (!is_key(ev, "backspace") && !menu_shown) {
+		scroll_pup(el_scene);
+	} else if (!is_key(ev, "space") && !menu_shown) {
+		scroll_pdown(el_scene);
+#else
+	} else if (!is_key(ev, "left") || !is_key(ev, "[4]")) {
+		if (menu_shown)
+			select_ref(1, 0);
+		else
+			select_frame(1);
+	} else if (!is_key(ev, "right") || !is_key(ev, "[6]")) {
+		if (menu_shown)
+			select_ref(0, 0);
+		else
+			select_frame(0);
+#endif
+	} else
+		return 0;
+	return 1;
+}
+
+static int mouse_instead(struct inp_event *ev, int *x, int *y)
+{
+	if (ev->type == MOUSE_DOWN) {
+		if (ev->code != 1)
+			disable_use();
+		else {
+			game_highlight(-1, -1, 0);
+			game_click(ev->x, ev->y, 0, 1);
+			*x = ev->x;
+			*y = ev->y;
+		}
+	} else if (ev->type == MOUSE_UP) {
+		game_highlight(-1, -1, 0);
+		if (game_click(ev->x, ev->y, 1, 1) == -1)
+			return -1;
+	} else if (ev->type == MOUSE_WHEEL_UP && !menu_shown) {
+		game_scroll_up(ev->count);
+	} else if (ev->type == MOUSE_WHEEL_DOWN && !menu_shown) {
+		game_scroll_down(ev->count);
+	} else if (ev->type == MOUSE_MOTION) {
+		if (opt_motion && !motion_mode && click_el &&
+		    MOTION_TIME &&
+		    !scroll_possible(click_el->id, click_y - ev->y)) {
+			motion_id = click_el->id;
+			motion_y = click_y;
+			motion_mode = 1;
+			click_xref = click_el = NULL;
+		}
+		if (motion_mode) {
+			motion_mode = 2;
+			scroll_motion(motion_id, motion_y - ev->y);
+			motion_y = ev->y;
+		}
+		/*	game_highlight(ev.x, ev.y, 1); */
+	}
+	return 0;
+}
 
 int game_loop(void)
 {
-	static int alt_pressed = 0;
-	static int shift_pressed = 0;
-	static int control_pressed = 0;
 	static int x = 0, y = 0;
 	struct inp_event ev;
 	memset(&ev, 0, sizeof(struct inp_event));
@@ -3623,221 +3874,17 @@ int game_loop(void)
 			game_gfx_commit(1);
 		if (rc == -1) {/* close */
 			break;
-		} else if (curgame_dir && (ev.type == KEY_DOWN || ev.type == KEY_UP)
-				&& !game_input((ev.type == KEY_DOWN), ev.sym, -1, -1, EV_CODE_KBD)) {
+		} else if (game_input_events(&ev)) { /* kbd, mouse and touch -> pass in game */
 			; /* all is done in game_input */
-		} else if (curgame_dir && (ev.type == FINGER_DOWN || ev.type == FINGER_UP)
-				&& !game_input((ev.type == FINGER_DOWN), ev.sym, ev.x, ev.y, EV_CODE_FINGER)) {
-			; /* all is done in game_input */
-		} else if (curgame_dir && (ev.type == MOUSE_DOWN || ev.type == MOUSE_UP)
-				&& !game_input((ev.type == MOUSE_DOWN), "mouse", ev.x, ev.y, ev.code)) {
-			; /* all is done in game_input */
-		} else if (((ev.type ==  KEY_DOWN) || (ev.type == KEY_UP)) && 
-			(!is_key(&ev, "left alt") || !is_key(&ev, "right alt"))) {
-			alt_pressed = (ev.type == KEY_DOWN) ? 1:0;
-		} else if (((ev.type ==  KEY_DOWN) || (ev.type == KEY_UP)) && 
-			(!is_key(&ev,"left shift") || !is_key(&ev, "right shift"))) {
-			shift_pressed = (ev.type == KEY_DOWN) ? 1:0;
-		} else if (((ev.type ==  KEY_DOWN) || (ev.type == KEY_UP)) &&
-			(!is_key(&ev,"left ctrl") || !is_key(&ev, "right ctrl"))) {
-			control_pressed = (ev.type == KEY_DOWN) ? 1:0;
-		} else if (ev.type == KEY_DOWN) {
-			if (!is_key(&ev, "escape")
-#if defined(S60) || defined(_WIN32_WCE)
-			|| !is_key(&ev, "space")
-#endif
-#if defined(_WIN32_WCE)
-			|| (ev.code >= 0xc0 && ev.code <= 0xcf) || 
-			!is_key(&ev, "f1") || 
-			!is_key(&ev, "f2") || 
-			!is_key(&ev, "f3") || 
-			!is_key(&ev, "f4") || 
-			!is_key(&ev, "f5")
-#endif
-#ifdef ANDROID
-			|| ev.code == 118
-#endif
-
-			) {
-				if (use_xref)
-					disable_use();
-				else
-					menu_toggle(-1);
-			} else if (!is_key(&ev, "f1")) {
-				if (!menu_shown)
-					menu_toggle(-1);
-			} else if (!is_key(&ev, "f2") && curgame_dir) {
-				game_menu(menu_save);
-			} else if (!is_key(&ev, "f3") && curgame_dir) {
-				game_menu(menu_load);
-			} else if (!is_key(&ev, "f8") && curgame_dir && !menu_shown) {
-				if (game_saves_enabled())
-					game_save(9);
-			} else if (!is_key(&ev, "f9") && curgame_dir && !menu_shown) {
-				if (game_saves_enabled()) {
-					if (!access(game_save_path(0, 9), R_OK)) {
-						if (!game_reset())
-							game_load(9);
-					}
-				}
-			} else if (!is_key(&ev, "f5") && curgame_dir && !menu_shown) {
-				mouse_reset(1);
-				game_cmd("look", 0);
-			} else if ((alt_pressed || control_pressed) && !is_key(&ev, "r") && curgame_dir && !menu_shown && debug_sw) {
-				mouse_reset(1);
-				game_menu_act("/new");
-				shift_pressed = alt_pressed = control_pressed = 0;
-			} else if (!is_key(&ev, "f10")
-#ifdef ANDROID
-					|| ev.code == 270
-#endif
-			) {
-#ifdef ANDROID
+		} else if (kbd_modifiers(&ev)) { /* ctrl, alt, shift */
+			; /* got modifiers */
+		} else if ((rc = kbd_instead(&ev, &x, &y))) { /* ui keys */
+			if (rc < 0)
 				break;
-#else
-				game_menu(menu_askquit);
-#endif
-			} else if ((alt_pressed | control_pressed) && (!is_key(&ev, "q") || !is_key(&ev, "f4"))) {
-				game_running = 0;
-				break;
-			} else if (alt_pressed &&
-				(!is_key(&ev, "enter") || !is_key(&ev, "return"))) {
-				int old_menu = (menu_shown) ? cur_menu: -1;
-				shift_pressed = alt_pressed = control_pressed = 0;
-				opt_fs ^= 1;
-				game_restart();
-				if (old_menu != -1)
-					game_menu(old_menu);
-			} else if (!is_key(&ev, "f4") && !alt_pressed && !standalone_sw) {
-#ifdef _USE_UNPACK
-#ifdef _USE_BROWSE
-				mouse_reset(1);
-				if (!game_from_disk()) {
-					shift_pressed = alt_pressed = control_pressed = 0;
-				}
-#endif
-#endif
-			} else if (DIRECT_MODE && !menu_shown) {
-				; /* nothing todo */
-			} else if (!alt_pressed && (!is_key(&ev, "return") || !is_key(&ev, "enter") 
-			#ifdef S60
-				|| !is_key(&ev, ".")
-			#endif
-				)) {
-				gfx_cursor(&x, &y);
-				game_highlight(-1, -1, 0); /* reset */
-
-				game_click(x, y, 0, 0); 
-				game_highlight(x, y, 1); /* hl on/off */
-				game_highlight(x, y, 0);
-
-				if (game_click(x, y, 1, 0) == -1) {
-					game_running = 0;
-					break;
-				}
-			} else if (!is_key(&ev, "tab")) {
-				select_frame(shift_pressed);
-			} else if (!is_key(&ev, "up") || !is_key(&ev, "down") ||
-					!is_key(&ev, "[8]") || !is_key(&ev, "[2]")) {
-		
-				int lm;
-				int prev = !is_key(&ev, "up") || !is_key(&ev, "[8]");
-				
-				if (opt_kbd == KBD_INVERSE)
-					lm = (alt_pressed || shift_pressed);
-				else
-					lm = (!alt_pressed && !shift_pressed);
-			
-				if (menu_shown || lm) {
-					if (select_ref(prev, 0)) {
-						if (opt_kbd == KBD_SMART) {
-							(prev)?game_scroll_up(1):game_scroll_down(1);
-							select_ref(prev, 1);
-						} else
-							select_ref(prev, 1);
-					}
-				} else
-					(prev)?game_scroll_up(1):game_scroll_down(1);
-			} else if (!is_key(&ev, "page up") || !is_key(&ev, "[9]") || 
-					!is_key(&ev, "page down") || !is_key(&ev, "[3]")) {
-				int lm;
-				int prev = !is_key(&ev, "page up") || !is_key(&ev, "[9]");
-				
-				if (opt_kbd == KBD_INVERSE)
-					lm = (alt_pressed || shift_pressed);
-				else
-					lm = (!alt_pressed && !shift_pressed);
-				if (menu_shown || lm) {
-					if (select_ref(prev, 0) || select_ref(prev, 1)) {
-						if (opt_kbd == KBD_SMART) {
-							int s = (prev)?game_scroll_pup():game_scroll_pdown();
-							if (!s)
-								select_ref(!prev, 1);
-						} else
-							select_ref(prev, 0);
-					}
-				} else {
-					if (prev)
-						game_scroll_pup();
-					else
-						game_scroll_pdown();
-				}
-#if !defined(S60) && !defined(_WIN32_WCE)
-			} else if (!is_key(&ev, "left") || !is_key(&ev, "[4]")) {
-				select_ref(1, 0);
-			} else if (!is_key(&ev, "right") || !is_key(&ev, "[6]")) {
-				select_ref(0, 0);
-			} else if (!is_key(&ev, "backspace") && !menu_shown) {
-				scroll_pup(el_scene);
-			} else if (!is_key(&ev, "space") && !menu_shown) {
-				scroll_pdown(el_scene);
-#else
-			} else if (!is_key(&ev, "left") || !is_key(&ev, "[4]")) {
-				if (menu_shown)
-					select_ref(1, 0);
-				else
-					select_frame(1);
-			} else if (!is_key(&ev, "right") || !is_key(&ev, "[6]")) {
-				if (menu_shown)
-					select_ref(0, 0);
-				else
-					select_frame(0);
-#endif
-			}
 		} else if (DIRECT_MODE && !menu_shown) {
 			; /* nothing todo */
-		} else if (ev.type == MOUSE_DOWN) {
-			if (ev.code != 1)
-				disable_use();
-			else {
-				game_highlight(-1, -1, 0);
-				game_click(ev.x, ev.y, 0, 1);
-				x = ev.x;
-				y = ev.y;
-			}
-		} else if (ev.type == MOUSE_UP) {
-			game_highlight(-1, -1, 0);
-			if (game_click(ev.x, ev.y, 1, 1) == -1)
-				break;
-		} else if (ev.type == MOUSE_WHEEL_UP && !menu_shown) {
-			game_scroll_up(ev.count);
-		} else if (ev.type == MOUSE_WHEEL_DOWN && !menu_shown) {
-			game_scroll_down(ev.count);
-		} else if (ev.type == MOUSE_MOTION) {
-			if (opt_motion && !motion_mode && click_el &&
-					MOTION_TIME &&
-					!scroll_possible(click_el->id, click_y - ev.y)) {
-				motion_id = click_el->id;
-				motion_y = click_y;
-				motion_mode = 1;
-				click_xref = click_el = NULL;
-			}
-			if (motion_mode) {
-				motion_mode = 2;
-				scroll_motion(motion_id, motion_y - ev.y);
-				motion_y = ev.y;
-			}
-		/*	game_highlight(ev.x, ev.y, 1); */
+		} else if (mouse_instead(&ev, &x, &y) < 0) { /* ui mouse */
+			break;
 		}
 
 		if (need_restart) {
