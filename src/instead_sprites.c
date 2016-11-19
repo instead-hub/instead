@@ -1961,6 +1961,7 @@ static int pixels_fill_poly(lua_State *L) {
 	}
 	lua_pop(L, 1);
 	fill_poly(src, v, nr, col);
+	free(v);
 	return 0;
 }
 
