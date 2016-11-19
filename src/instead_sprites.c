@@ -993,13 +993,13 @@ static void inline blend(unsigned char *s, unsigned char *d)
 	unsigned int r, g, b, a;
 	unsigned int sa = s[3];
 	unsigned int da = d[3];
-	a = sa + da * (255 - sa)/ 255;
-	r = (unsigned int)s[0] * sa / 255 +
-		(unsigned int)d[0] * da * (255 - sa) / 65025;
-	g = (unsigned int)s[1] * sa / 255 +
-		(unsigned int)d[1] * da * (255 - sa) / 65025;
-	b = (unsigned int)s[2] * sa / 255 +
-		(unsigned int)d[2] * da * (255 - sa) / 65025;
+	a = sa + (da * (255 - sa) >> 8);
+	r = ((unsigned int)s[0] * sa >> 8) +
+		((unsigned int)d[0] * da * (255 - sa) >> 16);
+	g = ((unsigned int)s[1] * sa >> 8) +
+		((unsigned int)d[1] * da * (255 - sa) >> 16);
+	b = ((unsigned int)s[2] * sa >> 8) +
+		((unsigned int)d[2] * da * (255 - sa) >> 16);
 	d[0] = r; d[1] = g; d[2] = b; d[3] = a;
 }
 
@@ -1008,12 +1008,12 @@ static void inline draw(unsigned char *s, unsigned char *d)
 	unsigned int r, g, b, a;
 	unsigned int sa = s[3];
 	a = 255;
-	r = (unsigned int)s[0] * sa / 255 +
-		(unsigned int)d[0] * (255 - sa) / 255;
-	g = (unsigned int)s[1] * sa / 255 +
-		(unsigned int)d[1] * (255 - sa) / 255;
-	b = (unsigned int)s[2] * sa / 255 +
-		(unsigned int)d[2] * (255 - sa) / 255;
+	r = ((unsigned int)s[0] * sa >> 8) +
+		((unsigned int)d[0] * (255 - sa) >> 8);
+	g = ((unsigned int)s[1] * sa >> 8) +
+		((unsigned int)d[1] * (255 - sa) >> 8);
+	b = ((unsigned int)s[2] * sa >> 8) +
+		((unsigned int)d[2] * (255 - sa) >> 8);
 	d[0] = r; d[1] = g; d[2] = b; d[3] = a;
 }
 static void inline pixel(unsigned char *s, unsigned char *d)
