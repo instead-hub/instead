@@ -1876,7 +1876,7 @@ static void fill_poly(struct lua_pixels *src, struct lua_point *v, int nr, unsig
 	if (ymax >= src->h)
 		ymax = src->h;
 	ptr += (ymin * src->w) << 2;
-	for (y = ymin; y < ymax; y ++) {
+	for (y = ymin; y <= ymax; y ++) {
 		nodes = 0; j = nr - 1;
 		for (i = 0; i < nr; i++) {
 			if ((v[i].y < y && v[j].y >= y) ||
