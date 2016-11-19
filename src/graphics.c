@@ -1926,7 +1926,7 @@ int gfx_set_mode(int w, int h, int fs)
 	strcpy(title, "INSTEAD - " );
 	strcat(title, VERSION );
 
-	win_w = w; win_h = h;
+	win_w = w * scale_sw; win_h = h * scale_sw;
 	gfx_get_max_mode(&max_mode_w, &max_mode_h, MODE_ANY); /* get current window size */
 #if defined(IOS) || defined(ANDROID) || defined(MAEMO) || defined(_WIN32_WCE) || defined(S60)
 	fs = 1; /* always fs for mobiles */

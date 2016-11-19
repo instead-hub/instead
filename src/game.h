@@ -50,6 +50,7 @@ extern char 	game_cwd[PATH_MAX]; /* current game cwd */
 extern char 	*curgame_dir;
 extern int	vsync_sw;
 extern int	resizable_sw;
+extern int	scale_sw;
 extern int	standalone_sw;
 
 extern char	*appdir(void);

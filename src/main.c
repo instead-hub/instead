@@ -56,6 +56,7 @@ int software_sw = 0;
 int hinting_sw = 1;
 int vsync_sw = 0;
 int resizable_sw = 0;
+int scale_sw = 1;
 int standalone_sw = 0;
 
 static int opt_index = 1;
@@ -400,6 +401,11 @@ int instead_main(int argc, char *argv[])
 			software_sw = 1;
 		} else if (!strcmp(argv[i], "-resizable")) {
 			resizable_sw = 1;
+		} else if (!strcmp(argv[i], "-scale")) {
+			if ((i + 1) < argc)
+				scale_sw = atoi(argv[++i]);
+			else
+				scale_sw = 2;
 		} else if (!strcmp(argv[i], "-standalone")) {
 			standalone_sw = 1;
 			owntheme_sw = 1;
@@ -474,6 +480,11 @@ int instead_main(int argc, char *argv[])
 #endif
 		opt_index = i;
 	}
+
+	if (scale_sw <= 0)
+		scale_sw = 1;
+	else if (scale_sw > 8)
+		scale_sw = 8;
 
 	if (nocfg_sw || cfg_load()) { /* no config */
 		cfg_init();
@@ -689,6 +700,7 @@ static struct parser profile_parser[] = {
 	{ "software", parse_int, &software_sw, 0 },
 	{ "hinting", parse_int, &hinting_sw, 0 },
 	{ "resizable", parse_int, &resizable_sw, 0 },
+	{ "scale", parse_int, &scale_sw, 0 },
 	{ "gamespath", parse_string, &games_sw, 0 },
 	{ "themespath", parse_string, &themes_sw, 0 },
 	{ "game", parse_string, &game_sw, 0 },
