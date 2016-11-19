@@ -219,7 +219,7 @@ static void usage(void)
 	"    -fullscreen\n        Run the game in fullscreen mode.\n"
 	"    -hires\n        Set the high resolution if run in fullscreen mode.\n"
 	"    -window\n        Run the game in windowed mode.\n"
-	"    -noautosave\n        Disable autosave/autoload.\n"
+	"    -noautosave\n        Disable autosave load.\n"
 	"    -mode [WxH]\n        Use WxH resolution.\n"
 	"    -software\n        Force software rendering.\n"
 	"    -nopause\n        Do not pause the game on window minimize.\n"

@@ -1012,7 +1012,7 @@ int game_init(const char *name)
 			goto out;
 		game_cmd("look", 0);
 		custom_theme_warn();
-		if (opt_autosave & 1)
+		if (opt_autosave)
 			game_save(0);
 	}
 out:
@@ -1073,7 +1073,7 @@ void game_done(int err)
 {
 	game_event("quit");
 	if (curgame_dir && !err) {
-		if (opt_autosave & 1)
+		if (opt_autosave)
 			game_save(0);
 		game_cfg_save();
 	}
