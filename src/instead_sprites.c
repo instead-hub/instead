@@ -1838,6 +1838,131 @@ static int pixels_fill_circle(lua_State *L) {
 	fill_circle(src, xc, yc, rr, r, g, b, a);
 	return 0;
 }
+struct lua_point {
+	int x;
+	int y;
+	int nodex;
+};
+
+/*
+   http://alienryderflex.com/polygon_fill/
+   public-domain code by Darel Rex Finley, 2007
+*/
+
+static void fill_poly(struct lua_pixels *src, struct lua_point *v, int nr, unsigned char *col)
+{
+	unsigned char *ptr = (unsigned char *)(src + 1), *ptr1;
+	int y, x, xmin, xmax, ymin, ymax, swap, w;
+	int nodes = 0, j = nr - 1, i;
+	xmin = v[0].x; xmax = v[0].x;
+	ymin = v[0].y; ymax = v[0].y;
+
+	for (i = 0; i < nr; i++) {
+		if (v[i].x < xmin)
+			xmin = v[i].x;
+		if (v[i].x > xmax)
+			xmax = v[i].x;
+		if (v[i].y < ymin)
+			ymin = v[i].y;
+		if (v[i].y > ymax)
+			ymax = v[i].y;
+	}
+	if (ymin < 0)
+		ymin = 0;
+	if (xmin < 0)
+		xmin = 0;
+	if (xmax >= src->w)
+		xmax = src->w;
+	if (ymax >= src->h)
+		ymax = src->h;
+	ptr += (ymin * src->w) << 2;
+	for (y = ymin; y < ymax; y ++) {
+		nodes = 0; j = nr - 1;
+		for (i = 0; i < nr; i++) {
+			if ((v[i].y < y && v[j].y >= y) ||
+			    (v[j].y < y && v[i].y >= y)) {
+				v[nodes ++].nodex = v[i].x + ((y - v[i].y) * (v[j].x - v[i].x)) /
+					(v[j].y - v[i].y);
+			}
+			j = i;
+		}
+		if (nodes < 2)
+			goto skip;
+		i = 0;
+		while (i < nodes - 1) { /* sort */
+			if (v[i].nodex > v[i + 1].nodex) {
+				swap = v[i].nodex;
+				v[i].nodex = v[i + 1].nodex;
+				v[i + 1].nodex = swap;
+				if (i)
+					i --;
+			} else {
+				i ++;
+			}
+		}
+		for (i = 0; i < nodes; i += 2) {
+			if (v[i].nodex >= xmax)
+				break;
+			if (v[i + 1].nodex > xmin) {
+				if (v[i].nodex < xmin)
+					v[i].nodex = xmin;
+				if (v[i + 1].nodex > xmax)
+					v[i + 1].nodex = xmax;
+				// hline
+				src->dirty = 1;
+				w = (v[i + 1].nodex - v[i].nodex);
+				ptr1 = ptr + v[i].nodex * 4;
+				for (x = 0; x < w; x ++) {
+					pixel(col, ptr1);
+					ptr1 += 4;
+				}
+			}
+		}
+	skip:
+		ptr += src->w * 4;
+	}
+}
+
+static int pixels_fill_poly(lua_State *L) {
+	int nr, i;
+	struct lua_pixels *src;
+	struct lua_point *v;
+	unsigned char col[4];
+	src = (struct lua_pixels*)lua_touserdata(L, 1);
+	if (!src || src->type != PIXELS_MAGIC)
+		return 0;
+	luaL_checktype(L, 2, LUA_TTABLE);
+#if LUA_VERSION_NUM >= 502
+	nr = lua_rawlen(L, 2);
+#else
+	nr = lua_objlen(L, 2);
+#endif
+	if (nr < 6)
+		return 0;
+	col[0] = luaL_optnumber(L, 3, 0);
+	col[1] = luaL_optnumber(L, 4, 0);
+	col[2] = luaL_optnumber(L, 5, 0);
+	col[3] = luaL_optnumber(L, 6, 255);
+
+	nr /= 2;
+	v = malloc(sizeof(*v) * nr);
+	if (!v)
+		return 0;
+	lua_pushvalue(L, 2);
+	for (i = 0; i < nr; i++) {
+		lua_pushinteger(L, (i * 2) + 1);
+		lua_gettable(L, -2);
+		v[i].x = lua_tonumber(L, -1);
+		lua_pop(L, 1);
+		lua_pushinteger(L, (i * 2) + 2);
+		lua_gettable(L, -2);
+		v[i].y = lua_tonumber(L, -1);
+		lua_pop(L, 1);
+	}
+	lua_pop(L, 1);
+	fill_poly(src, v, nr, col);
+	return 0;
+}
 
 static int pixels_value(lua_State *L) {
 	struct lua_pixels *hdr = (struct lua_pixels*)lua_touserdata(L, 1);
@@ -2117,6 +2242,9 @@ static int pixels_create_meta (lua_State *L) {
 	lua_settable(L, -3);
 	lua_pushstring(L, "fill_triangle");
 	lua_pushcfunction (L, pixels_triangle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "fill_poly");
+	lua_pushcfunction (L, pixels_fill_poly);
 	lua_settable(L, -3);
 	lua_settable(L, -3);
 	lua_pushstring (L, "__gc");
