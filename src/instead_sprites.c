@@ -1180,14 +1180,14 @@ static void lineAA(struct lua_pixels *src, int x0, int y0, int x1, int y1,
 
 	while (1) {
 		unsigned char *optr = ptr;
-		col[3] = 255 - a * abs(err - dx + dy) / ed;
+		col[3] = a - a * abs(err - dx + dy) / ed;
 		pixel(col, ptr);
 		e2 = err;
 		if (2 * e2 >= -dx) {
 			if (x0 == x1)
 				break;
 			if (e2 + dy < ed) {
-				col[3] = 255 - a * (e2 + dy) / ed;
+				col[3] = a - a * (e2 + dy) / ed;
 				pixel(col, ptr + syp);
 			}
 			err -= dy;
@@ -1200,7 +1200,7 @@ static void lineAA(struct lua_pixels *src, int x0, int y0, int x1, int y1,
 			if (y0 == y1)
 				break;
 			if (dx - e2 < ed) {
-				col[3] = 255 - a * (dx - e2) / ed;
+				col[3] = a - a * (dx - e2) / ed;
 				pixel(col, optr + sxp);
 			}
 			err += dx;
@@ -1625,7 +1625,7 @@ static void circleAA(struct lua_pixels *src, int xc, int yc, int rr, int r, int 
 		int i = 255 * abs(err - 2 *(x + y)-2) / rr;
 		int xmy = (x - y * w) * 4;
 		int yax = (y + x * w) * 4;
-		col[3] = 255 - i;
+		col[3] = ((255 - i) * a) >> 8;
 		p1 = 0; p2 = 0; p3 = 0; p4 = 0;
 		if (((xc - x) | (w - xc + x - 1) |
 		     (yc + y) | (h - yc - y - 1)) >= 0) {
@@ -1652,7 +1652,7 @@ static void circleAA(struct lua_pixels *src, int xc, int yc, int rr, int r, int 
 		if (err + y > 0) {
 			i = 255 * (err - 2 * x - 1) / rr;
 			if (i < 256) {
-				col[3] = 255 - i;
+				col[3] = ((255 - i) * a) >> 8;
 				if (p1 && yc + y + 1 < h)
 					pixel(col, ptr - xmy + w * 4);
 				if (p2 && xc - y - 1 >= 0)
@@ -1667,7 +1667,7 @@ static void circleAA(struct lua_pixels *src, int xc, int yc, int rr, int r, int 
 		if (e2 + x <= 0) {
 			i = 255 * (2 * y + 3 - e2) / rr;
 			if (i < 256) {
-				col[3] = 255 - i;
+				col[3] = ((255 - i) * a) >> 8;
 				if (p1 && xc - x2 - 1 >= 0)
 					pixel(col, ptr - xmy - 4);
 				if (p2 && yc - x2 - 1 >= 0)
