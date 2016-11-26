@@ -302,6 +302,7 @@ char *open_file_dialog(void)
 	return ofn.lpstrFile;
 }
 #endif
+#if 0
 int setdir(const char *path)
 {
 	return chdir(path);
@@ -327,3 +328,4 @@ int is_absolute_path(const char *path)
 		return 0;
 	return (path[1] == ':');
 }
+#endif
