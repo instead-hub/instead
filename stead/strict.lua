@@ -26,7 +26,7 @@ setmetatable(_G, {
 	end;
 	__newindex = function(t, k, v)
 		local f = stead.getinfo(2, "S").source
-		if f:byte(1) == 0x40and and type(v) ~= 'function' and not isObject(v) then
+		if f:byte(1) == 0x40 and type(v) ~= 'function' and not isObject(v) then
 			if f:find("/stead/", 1, true) then
 				print ("Set uninitialized variable: "..k.." in: "..f:sub(2))
 			else
