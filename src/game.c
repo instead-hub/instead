@@ -51,7 +51,7 @@ void game_res_err_msg(const char *filename, int alert)
 	char *msg;
 	if (!filename || !*filename)
 		return;
-	if (alert) {
+	if (alert && curgame_dir) {
 		msg = malloc(sizeof(preambule) + strlen(filename));
 		if (msg) {
 			strcpy(msg, preambule);
@@ -149,7 +149,7 @@ int game_select(const char *name)
 {
 	int rc = -1;
 	struct game *g;
-	FREE(last_cmd);
+	// FREE(last_cmd);
 	// game_stop_mus(500);
 	g = game_lookup(name);
 	if ((!name || !*name) && !g) {
@@ -181,7 +181,6 @@ int game_select(const char *name)
 			curgame_dir = oldgame;
 			goto err;
 		}
-
 		instead_set_lang(opt_lang);
 
 		if ((rc = instead_load())) {
@@ -937,7 +936,6 @@ int game_init(const char *name)
 
 	if (game_select(name))
 		return -1;
-
 	if (game_theme_optimize())
 		return -1;
 

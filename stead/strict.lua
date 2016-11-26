@@ -12,6 +12,7 @@ function declare(n)
 	error ("Wrong parameter to declare", 2)
 end
 
+if DEBUG then
 setmetatable(_G, {
 	__index = function(_, n)
 		local f = stead.getinfo(2, "S").source
@@ -27,3 +28,4 @@ setmetatable(_G, {
 		stead.rawset(t, k, v)
 	end
 })
+end
