@@ -116,7 +116,7 @@ stead.module_init(function()
 		return
 	end
 	for k,v in stead.ipairs(variables) do
-		_G[v] = nil
+		stead.rawset(_G, v, nil)
 	end
 	variables = {}
 end)

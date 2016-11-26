@@ -1714,7 +1714,7 @@ local compat_api = function()
 		end
 		if not stead.rawget(_G, "goto") then
 			if _VERSION == "Lua 5.1" then -- 5.1 lua
-				_G["goto"] = walk
+				stead.rawset(_G, "goto", walk)
 			end
 		end
 	end
@@ -1731,7 +1731,7 @@ local compat_api = function()
 		end
 		if not stead.rawget(_G, "goto") then
 			if _VERSION == "Lua 5.1" then -- 5.1 lua
-				_G["goto"] = function() error ("Please use 'walk' instead 'goto'.", 2) end
+				stead.rawset(_G, "goto", function() error ("Please use 'walk' instead 'goto'.", 2) end)
 			end
 		end
 
@@ -2067,7 +2067,7 @@ stead.gamereset = function(file, forget)
 		if stead.type(variables) == 'table' then
 			local k,v
 			for k,v in stead.ipairs(variables) do
-				_G[v] = nil
+				stead.rawset(_G, v, nil)
 			end
 			variables = nil
 			variables_save = nil
@@ -2080,7 +2080,7 @@ stead.gamereset = function(file, forget)
 			if o.system_type then
 				return
 			end
-			_G[k] = nil
+			stead.rawset(_G, k, nil)
 		end);
 		game._scripts = { }
 		game.lifes:zap()
@@ -3325,9 +3325,9 @@ stead.init = function(s)
 	local k, v
 	for k, v in pairs(stead.objects) do
 		if type(v) == 'function' then
-			_G[k] = v()
+			stead.rawset(_G, k, v())
 		else
-			_G[k] = v
+			stead.rawset(_G, k, v)
 		end
 	end
 	s.functions = {} -- code blocks
