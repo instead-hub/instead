@@ -26,15 +26,15 @@ local function __vars_add(s, v, set)
 			error ("Variable overwrites variables object: "..stead.tostr(k))
 		elseif k ~= 'variable_type' then
 			if set and not isObject(o) then 
-				if s[k] then
+				if stead.rawget(s, k) then
 					if s == _G then
-						print ("Global variable '"..stead.tostr(k).."' conflicts with "..stead.type(s[k]));
+						print ("Global variable '"..stead.tostr(k).."' conflicts with "..stead.type(stead.rawget(s, k)));
 					else
 						error ("Variable conflict: "..stead.tostr(k));
 					end
 				end
 				stead.table.insert(s.variables, k);
-				s[k] = o
+				stead.rawset(s, k, o)
 			else
 				s.variables[k] = o
 			end
@@ -50,7 +50,7 @@ local function __vars_fill(v)
 	for k,o in stead.ipairs(v) do
 		if stead.type(o) == 'table' and o.variable_type then
 			__vars_add(v, o);
-			v[k] = false
+			stead.rawset(v, k, false)
 		end
 	end
 	if stead.type(v.variables) == 'table' then
@@ -61,10 +61,10 @@ local function __vars_fill(v)
 			if stead.tonum(k) and stead.type(o) == 'string' then
 				stead.table.insert(vars, o)
 			else
-				if v[k] then
+				if stead.rawget(v, k) then
 					error ("Variable overwrites object property: "..stead.tostr(k));
 				end
-				v[k] = o
+				stead.rawset(v, k, o)
 				stead.table.insert(vars, k);
 			end
 		end
@@ -108,17 +108,13 @@ end
 
 stead.module_init(function()
 	local k,v
-	if stead.type(variables) == 'nil' then
-		variables = {}
-		return
-	end 
-	if stead.type(variables) ~= 'table' then
-		return
+	if stead.type(variables) == 'table' then
+		for k,v in stead.ipairs(variables) do
+			stead.rawset(_G, v, nil)
+		end
 	end
-	for k,v in stead.ipairs(variables) do
-		stead.rawset(_G, v, nil)
-	end
-	variables = {}
+	stead.rawset(_G, 'variables', {})
+	stead.rawset(_G, 'variables_save', {})
 end)
 
 function var(v)
@@ -132,5 +128,4 @@ function global(v)
 	end
 	__vars_add(_G, v, true);
 end
-
 -- vim:ts=4

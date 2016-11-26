@@ -1,3 +1,4 @@
+local MAKE_SNAPSHOT
 game._snapshots = {}
 stead.make_snapshot = function(nr)
 	if not stead.tonum(nr) then nr = 0 end

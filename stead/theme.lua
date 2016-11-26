@@ -36,11 +36,11 @@ theme = {
 			theme.vars[name] = stead.tostr(val);
 		end
 	end;
-	name = function()
-		return instead_theme_name(name);
+	name = function(...)
+		return instead_theme_name(...);
 	end;
-	get = function(name)
-		return instead_theme_var(name);
+	get = function(...)
+		return instead_theme_var(...);
 	end;
 	win = {
 		reset = function()

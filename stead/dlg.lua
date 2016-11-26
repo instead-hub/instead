@@ -584,7 +584,7 @@ function dlg(v) --constructor
 		v.dsc = function(s)
 			if stead.player_moved() then
 				stead.last_act(false)
-			elseif stead.type(ACTION_TEXT) ~= 'string' and stead.last_act() then
+			elseif stead.type(stead.rawget(_G, 'ACTION_TEXT')) ~= 'string' and stead.last_act() then
 				stead.p(stead.last_act())
 			end
 		end

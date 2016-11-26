@@ -358,7 +358,7 @@ game.fading = function(s)
 		game.lastpic = p;
 		return true
 	end
-	if PLAYER_MOVED or game.lastpic ~= p then
+	if stead.player_moved() or game.lastpic ~= p then
 		rc = true
 	end
 	game.lastpic = p

@@ -131,15 +131,15 @@ stead.last_disp = function(s)
 end
 
 stead.nop = function(s) -- to refresh entry scene w/o time tick
-	RAW_TEXT = true
+	stead.rawset(_G, 'RAW_TEXT', true)
 	return stead.last_disp() or ''
 end
 
 stead.need_scene = function(s)
 	if s == nil then
-		NEED_SCENE = true
+		stead.rawset(_G, 'NEED_SCENE', true)
 	else
-		NEED_SCENE = s
+		stead.rawset(_G, 'NEED_SCENE', s)
 	end
 end
 
@@ -210,31 +210,31 @@ end
 stead.callpush = function(v, ...)
 	stead.call_top = stead.call_top + 1;
 	stead.call_ctx[stead.call_top] = { txt = nil, self = v, action = false };
-	args = {...};
-	arg1 = args[1]
-	arg2 = args[2]
-	arg3 = args[3]
-	arg4 = args[4]
-	arg5 = args[5]
-	arg6 = args[6]
-	arg7 = args[7]
-	arg8 = args[8]
-	arg9 = args[9]
+	stead.rawset(_G, 'args', {...});
+	stead.rawset(_G, 'arg1', args[1])
+	stead.rawset(_G, 'arg2', args[2])
+	stead.rawset(_G, 'arg3', args[3])
+	stead.rawset(_G, 'arg4', args[4])
+	stead.rawset(_G, 'arg5', args[5])
+	stead.rawset(_G, 'arg6', args[6])
+	stead.rawset(_G, 'arg7', args[7])
+	stead.rawset(_G, 'arg8', args[8])
+	stead.rawset(_G, 'arg9', args[9])
 	-- dirty but clean and fast :)
-	self = v
+	stead.rawset(_G, 'self', v)
 end
 
 stead.clearargs = function()
-	arg1 = nil
-	arg2 = nil
-	arg3 = nil
-	arg4 = nil
-	arg5 = nil
-	arg6 = nil
-	arg7 = nil
-	arg8 = nil
-	arg9 = nil
-	self = nil
+	stead.rawset(_G, 'arg1', nil)
+	stead.rawset(_G, 'arg2', nil)
+	stead.rawset(_G, 'arg3', nil)
+	stead.rawset(_G, 'arg4', nil)
+	stead.rawset(_G, 'arg5', nil)
+	stead.rawset(_G, 'arg6', nil)
+	stead.rawset(_G, 'arg7', nil)
+	stead.rawset(_G, 'arg8', nil)
+	stead.rawset(_G, 'arg9', nil)
+	stead.rawset(_G, 'self', nil)
 end
 
 stead.callpop = function()
@@ -1536,7 +1536,7 @@ stead.go = function(self, where, back)
 
 	ret();
 
-	PLAYER_MOVED = true
+	stead.rawset(_G, 'PLAYER_MOVED', true)
 	if need_scene then -- or isForcedsc(stead.ref(where)) then -- i'am not sure...
 		return stead.par(stead.scene_delim, res, stead.ref(where):scene());
 	end
@@ -1612,19 +1612,19 @@ stead.game_life = function(self)
 	stead.in_life_call = true;
 	stead.in_life_move = false
 	stead.lifes_op = {}; -- lifes to on/off
-	stead.PLAYER_MOVED = PLAYER_MOVED
+	stead.PLAYER_MOVED = stead.rawget(_G, 'PLAYER_MOVED')
 	for i,o in stead.opairs(self.lifes) do
 		local vv
 		local pre
 		o = stead.ref(o);
 		if not isDisabled(o) then
-			PLAYER_MOVED = false
+			stead.rawset(_G, 'PLAYER_MOVED', false)
 			vv,pre = stead.call(o, 'life');
-			if PLAYER_MOVED then -- clear life output, but not current
+			if stead.rawget(_G, 'PLAYER_MOVED') then -- clear life output, but not current
 				av = nil
 				v = nil
 				stead.in_life_move = true
-				ACTION_TEXT = vv;
+				stead.rawset(_G, 'ACTION_TEXT', vv);
 			elseif pre then
 				av = stead.par(stead.space_delim, av, vv);
 			else
@@ -1632,9 +1632,9 @@ stead.game_life = function(self)
 			end
 		end
 	end
-	PLAYER_MOVED = stead.in_life_move
-	if not PLAYER_MOVED then PLAYER_MOVED = stead.PLAYER_MOVED end
-	stead.PLAYER_MOVED = nil
+	stead.rawset(_G, 'PLAYER_MOVED', stead.in_life_move)
+	if not stead.rawget(_G, 'PLAYER_MOVED') then stead.rawset(_G, 'PLAYER_MOVED', stead.PLAYER_MOVED) end
+	stead.rawset(_G, 'PLAYER_MOVED', nil)
 	stead.in_life_call = false;
 	for i,o in stead.ipairs(stead.lifes_op) do
 		if o[1] then
@@ -1648,7 +1648,7 @@ stead.game_life = function(self)
 end
 
 stead.player_moved = function()
-	return PLAYER_MOVED or stead.PLAYER_MOVED
+	return stead.rawget(_G, 'PLAYER_MOVED') or stead.PLAYER_MOVED
 end
 
 stead.life_moved = function()
@@ -1844,14 +1844,14 @@ stead.game_ini = function(self)
 	v = stead.do_ini(self);
 	vv = iface:title(stead.call(self,'nam'));
 	vv = stead.par(stead.scene_delim, vv, stead.call(self,'dsc'));
-	if stead.type(init) == 'function' then
+	if stead.type(stead.rawget(_G, 'init')) == 'function' then
 		init();
 	end
 	return stead.par(stead.scene_delim, vv, v);
 end
 
 stead.game_start = function(s)
-	if stead.type(start) == 'function' then
+	if stead.type(stead.rawget(_G, 'start')) == 'function' then
 		start() -- start function
 	end
 end
@@ -1918,7 +1918,7 @@ function for_each(o, n, f, fv, ...)
 	stead.object = n;
 
 	for k,v in stead.pairs(o) do
-		if fv(v) then
+		if v ~= _G and fv(v) then
 			stead.table.insert(call_list, { k = k, v = v });
 		end
 	end
@@ -1954,7 +1954,7 @@ end
 stead.clearvar = function(v)
 	local k,o
 	for k,o in stead.pairs(v) do
-		if stead.type(o) == 'table' and o.__visited__ ~= nil then
+		if stead.type(o) == 'table' and o ~= _G and o.__visited__ ~= nil then
 			o.__visited__ = nil
 			o.auto_saved = nil
 			stead.clearvar(o)
@@ -2069,8 +2069,8 @@ stead.gamereset = function(file, forget)
 			for k,v in stead.ipairs(variables) do
 				stead.rawset(_G, v, nil)
 			end
-			variables = nil
-			variables_save = nil
+			stead.rawset(_G, variables, nil)
+			stead.rawset(_G, variables_save, nil)
 		end
 		init = function() -- null init function
 		end
@@ -2340,8 +2340,8 @@ iface = {
 		local a = { };
 		local cmd;
 
-		RAW_TEXT = nil
-		PLAYER_MOVED = nil
+		stead.rawset(_G, 'RAW_TEXT', nil)
+		stead.rawset(_G, 'PLAYER_MOVED', nil)
 		stead.cache = {}
 		cmd, a = stead.getcmd(inp);
 		local i, f
@@ -2409,7 +2409,7 @@ iface = {
 			return nil, false -- really nothing
 		end
 
-		if RAW_TEXT and v ~= false then
+		if stead.rawget(_G, 'RAW_TEXT') and v ~= false then
 			return stead.cat(r, '\n'), true;
 		end
 
@@ -2417,7 +2417,7 @@ iface = {
 			return stead.cat(r, '\n'), false;
 		end
 
-		ACTION_TEXT = r; -- here, life methods can redefine this
+		stead.rawset(_G, 'ACTION_TEXT', r); -- here, life methods can redefine this
 
 		local av, pv -- av -- active lifes, pv -- background
 		local vv
@@ -2428,12 +2428,12 @@ iface = {
 			vv = stead.here():look();
 		end
 
-		vv = self:fmt(cmd, stead.state, (oldloc ~= stead.here()) or PLAYER_MOVED, 
-			ACTION_TEXT, av, vv, pv);
+		vv = self:fmt(cmd, stead.state, (oldloc ~= stead.here()) or stead.player_moved(), 
+			stead.rawget(_G, 'ACTION_TEXT'), av, vv, pv);
 
 		if stead.state then
 			stead.last_disp(vv or false)
-			stead.last_act(ACTION_TEXT)
+			stead.last_act(stead.rawget(_G, 'ACTION_TEXT'))
 		end
 		if vv == nil then -- nil is error
 			vv = ''

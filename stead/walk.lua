@@ -51,7 +51,7 @@ local go = function (self, where, back, noenter, noexit, nodsc)
 			return v, ret(r)
 		end
 		if stead.api_atleast(2, 4, 0) then
-			jump = PLAYER_MOVED
+			jump = stead.rawget(_G, 'PLAYER_MOVED')
 		else
 			jump = (self.where ~= was)
 		end
@@ -76,7 +76,7 @@ local go = function (self, where, back, noenter, noexit, nodsc)
 	end
 	
 	if stead.api_atleast(2, 4, 0) then
-		need_scene = not PLAYER_MOVED;
+		need_scene = not stead.rawget(_G, 'PLAYER_MOVED');
 	else
 		need_scene = not (stead.ref(where) ~= stead.ref(self.where))
 	end
@@ -89,9 +89,9 @@ local go = function (self, where, back, noenter, noexit, nodsc)
 
 	ret()
 
-	PLAYER_MOVED = true
+	stead.rawset(_G, 'PLAYER_MOVED', true)
 	if need_scene and not nodsc then
-		NEED_SCENE = true
+		stead.need_scene()
 	end
 
 	if not stead.in_walk_call  then
@@ -215,7 +215,7 @@ iface.fmt = function(self, cmd, st, moved, r, av, objs, pv) -- st -- changed sta
 --		if not PLAYER_MOVED then
 			r = txtem(r)
 --		end
-		if isForcedsc(stead.here()) or NEED_SCENE then
+		if isForcedsc(stead.here()) or stead.rawget(_G, 'NEED_SCENE') then
 			l = stead.here():scene();
 		end
 	end
@@ -246,7 +246,7 @@ stead.go = function(...)
 end
 
 iface.cmd = stead.hook(iface.cmd, function(f, ...)
-	NEED_SCENE = nil
+	stead.rawset(_G, 'NEED_SCENE', nil)
 	return f(...)
 end)
 
@@ -259,7 +259,7 @@ player  = stead.inherit(player, function(v)
 		if game._time == 0 then
 			return stead.walk(stead.here(), false, false, true);
 		end
-		NEED_SCENE = true
+		stead.need_scene()
 		if stead.api_atleast(1, 3, 5) then
 			return true -- force action
 		end
