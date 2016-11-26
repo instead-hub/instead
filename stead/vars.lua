@@ -1,7 +1,28 @@
+local G = {
+}
+
+local function variables(g)
+	if g == _G then
+		return G.variables
+	end
+	if type(g) == 'table' then
+		return g.variables
+	end
+end
+
+local function variables_save(g)
+	if g == _G then
+		return G.variables_save
+	end
+	if type(g) == 'table' then
+		return g.variables_save
+	end
+end
+
 function isForSave(k, v, s) -- k - key, v - value, s -- parent table
 	local i,o
-	if stead.type(s.variables_save) == 'table' and 
-		s.variables_save[k] then
+	if stead.type(variables_save(s)) == 'table' and
+		variables_save(s)[k] then
 			return true
 	end
 	if stead.type(k) == 'function' then
@@ -13,16 +34,16 @@ function isForSave(k, v, s) -- k - key, v - value, s -- parent table
 	if stead.type(k) ~= 'string' then
 		return false
 	end
-	return stead.string.find(k, '_') ==  1
+	return stead.string.find(k, '_') == 1
 end
 
 local function __vars_add(s, v, set)
 	local k, o
-	if stead.type(s.variables) ~= 'table' then s.variables = {} end
+	if not variables(s) then s.variables = {} end
 	for k,o in stead.pairs(v) do
 		if stead.tonum(k) then
-			stead.table.insert(s.variables, o);
-		elseif s.variables[k] then
+			stead.table.insert(variables(s), o);
+		elseif variables(s)[k] then
 			error ("Variable overwrites variables object: "..stead.tostr(k))
 		elseif k ~= 'variable_type' then
 			if set and not isObject(o) then 
@@ -33,10 +54,10 @@ local function __vars_add(s, v, set)
 						error ("Variable conflict: "..stead.tostr(k));
 					end
 				end
-				stead.table.insert(s.variables, k);
+				stead.table.insert(variables(s), k);
 				stead.rawset(s, k, o)
 			else
-				s.variables[k] = o
+				variables(s)[k] = o
 			end
 		end
 	end
@@ -53,11 +74,15 @@ local function __vars_fill(v)
 			stead.rawset(v, k, false)
 		end
 	end
-	if stead.type(v.variables) == 'table' then
+	if stead.type(variables(v)) == 'table' then
 		local k,o
 		local vars = {}
-		v.variables_save = {}
-		for k,o in stead.pairs(v.variables) do
+		if v == _G then
+			G.variables_save = {}
+		else
+			v.variables_save = {}
+		end
+		for k,o in stead.pairs(variables(v)) do
 			if stead.tonum(k) and stead.type(o) == 'string' then
 				stead.table.insert(vars, o)
 			else
@@ -69,9 +94,13 @@ local function __vars_fill(v)
 			end
 		end
 		for k,o in stead.ipairs(vars) do
-			v.variables_save[o] = true
+			variables_save(v)[o] = true
 		end
-		v.variables = vars;
+		if v == _G then
+			G.variables = vars;
+		else
+			v.variables = vars;
+		end
 	end
 end
 
@@ -105,17 +134,18 @@ stead.add_var = function(s, v)
 	__vars_add(s, v, true)
 	__vars_fill(s)
 end
-
-stead.module_init(function()
+local function mod_init()
 	local k,v
-	if stead.type(variables) == 'table' then
-		for k,v in stead.ipairs(variables) do
+	if stead.type(variables(_G)) == 'table' then
+		for k,v in stead.ipairs(variables(_G)) do
 			stead.rawset(_G, v, nil)
 		end
 	end
-	stead.rawset(_G, 'variables', {})
-	stead.rawset(_G, 'variables_save', {})
-end)
+	G.variables = {}
+	G.variables_save = {}
+end
+stead.module_init(mod_init)
+stead.module_done(mod_init)
 
 function var(v)
 	v.variable_type = true
@@ -128,4 +158,5 @@ function global(v)
 	end
 	__vars_add(_G, v, true);
 end
+-- require 'strict'
 -- vim:ts=4

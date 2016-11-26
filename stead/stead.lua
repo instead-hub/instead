@@ -2064,14 +2064,6 @@ stead.gamereset = function(file, forget)
 	end
 	if forget then
 		stead:done();
-		if stead.type(variables) == 'table' then
-			local k,v
-			for k,v in stead.ipairs(variables) do
-				stead.rawset(_G, v, nil)
-			end
-			stead.rawset(_G, variables, nil)
-			stead.rawset(_G, variables_save, nil)
-		end
 		init = function() -- null init function
 		end
 		start = function() -- null start function
