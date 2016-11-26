@@ -11,6 +11,9 @@ stead = {
 	type = type,
 	ipairs = ipairs,
 	pairs = pairs, 
+	getinfo = debug.getinfo;
+	rawget = rawget;
+	rawset = rawset;
 	math = math,
 	random = instead_random,
 	randomseed = instead_srandom,
@@ -654,8 +657,8 @@ end
 
 function stead.ref(n, nofunc) -- ref object by name
 	if stead.type(n) == 'string' then
-		if stead.type(_G[n]) == 'table' then -- fastest path
-			return _G[n];
+		if stead.type(stead.rawget(_G, n)) == 'table' then -- fastest path
+			return stead.rawget(_G, n);
 		end
 		local f = stead.eval('return '..n);
 		if f then
@@ -1697,19 +1700,19 @@ local compat_api = function()
 	end
 
 	if not stead.api_atleast(1, 6, 0) then
-		if not go then
+		if not stead.rawget(_G, 'go') then
 			go = stead.go
 		end
-		if not goin then
+		if not stead.rawget(_G, 'goin') then
 			goin = walkin
 		end
-		if not goout then
+		if not stead.rawget(_G, 'goout') then
 			goout = walkout
 		end
-		if not goback then
+		if not stead.rawget(_G, 'goback') then
 			goback = walkback
 		end
-		if not _G["goto"] then
+		if not stead.rawget(_G, "goto") then
 			if _VERSION == "Lua 5.1" then -- 5.1 lua
 				_G["goto"] = walk
 			end
@@ -1717,16 +1720,16 @@ local compat_api = function()
 	end
 
 	if not stead.api_atleast(1, 7, 1) then
-		if not goin then
+		if not stead.rawget(_G, 'goin') then
 			goin = function() error ("Please use 'walkin' instead 'goin'.", 2) end
 		end
-		if not goout then
+		if not stead.rawget(_G, 'goout') then
 			goout = function() error ("Please use 'walkout' instead 'goout'.", 2) end
 		end
-		if not goback then
+		if not stead.rawget(_G, 'goback') then
 			goback = function() error ("Please use 'walkback' instead 'goback'.", 2) end
 		end
-		if not _G["goto"] then
+		if not stead.rawget(_G, "goto") then
 			if _VERSION == "Lua 5.1" then -- 5.1 lua
 				_G["goto"] = function() error ("Please use 'walk' instead 'goto'.", 2) end
 			end
@@ -1781,7 +1784,8 @@ local compat_api = function()
 end
 
 stead.do_ini = function(self, load)
-	local v='',vv
+	local v = ''
+	local vv
 	local function call_key(k, o)
 		o.key_name = k;
 	end

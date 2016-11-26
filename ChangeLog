@@ -1,5 +1,6 @@
 2.5.0
 
+  * strict module;
   * sound.load_mem;
   * sprite.pixels;
   * bug fixes;

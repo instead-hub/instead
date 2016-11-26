@@ -18,7 +18,7 @@ stead.player_action = function(self, what, ...)
 	if isXaction(what) then -- already xact
 		obj = what
 	else
-		obj = _G[what];
+		obj = stead.rawget(_G, what);
 	end
 	if not isXaction(obj) then
 		obj = stead.ref(self.where):srch(what);
@@ -53,7 +53,7 @@ stead.player_use = function(self, what, onwhat, ...)
 	local obj, obj2, v, vv, r;
 	local scene_use_mode = false
 
-	obj = _G[what];
+	obj = stead.rawget(_G, what);
 
 	if isXaction(obj) then -- use xact is act
 		return self:action(obj, onwhat, ...)

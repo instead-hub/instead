@@ -83,6 +83,7 @@
 ".\symbian_gamedata\stead\counters.lua" -"!:\data\instead\stead\counters.lua"
 ".\symbian_gamedata\stead\proxymenu.lua" -"!:\data\instead\stead\proxymenu.lua"
 ".\symbian_gamedata\stead\nolife.lua" -"!:\data\instead\stead\nolife.lua"
+".\symbian_gamedata\stead\strict.lua" -"!:\data\instead\stead\strict.lua"
 ".\symbian_gamedata\stead\ext\sound.lua" -"!:\data\instead\stead\ext\sound.lua"
 ".\symbian_gamedata\stead\ext\sprites.lua" -"!:\data\instead\stead\ext\sprites.lua"
 ".\symbian_gamedata\stead\ext\timer.lua" -"!:\data\instead\stead\ext\timer.lua"

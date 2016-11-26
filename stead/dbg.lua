@@ -130,7 +130,7 @@ dbg_dump_globals = function()
 		return
 	end
 	for i,o in stead.ipairs(variables) do
-		local v = _G[o];
+		local v = stead.rawget(_G, o);
 		local t = stead.tostring(v);
 		if t then
 			if rc ~='' then rc = rc..'^' end

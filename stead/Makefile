@@ -36,12 +36,11 @@ install:
 	$(INSTALL) counters.lua $(DESTDIR)$(STEADPATH)/counters.lua
 	$(INSTALL) proxymenu.lua $(DESTDIR)$(STEADPATH)/proxymenu.lua
 	$(INSTALL) nolife.lua $(DESTDIR)$(STEADPATH)/nolife.lua
+	$(INSTALL) strict.lua $(DESTDIR)$(STEADPATH)/strict.lua
 	$(INSTALLD) $(DESTDIR)$(STEADPATH)/ext
 	$(INSTALL) ext/sound.lua $(DESTDIR)$(STEADPATH)/ext/sound.lua
 	$(INSTALL) ext/sprites.lua $(DESTDIR)$(STEADPATH)/ext/sprites.lua
 	$(INSTALL) ext/timer.lua $(DESTDIR)$(STEADPATH)/ext/timer.lua
 
 uninstall:
-	$(RM) $(DESTDIR)$(STEADPATH)/stead.lua
-	$(RM) $(DESTDIR)$(STEADPATH)/gui.lua
 

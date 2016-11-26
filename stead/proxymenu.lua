@@ -59,7 +59,8 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 	if use_mode then
 		v.use = function(s, w)
 			if w.proxy_type then
-				local v, r, vv, rr, rc = false, ri
+				local v, r, vv, rr, rc, ri
+				rc = false
 				local act = s.pact
 				v, r, ri = call(game, 'before_'..act, s.pobj, w.pobj);
 				rc = ri or rc
@@ -105,7 +106,8 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 	end
 
 	v.inv = function(s)
-		local v, r, vv, rr, rc = false, ri
+		local v, r, vv, rr, rc, ri
+		rc = false
 		local act = s.pact
 		if s.use_mode then
 			act = s.useit_act

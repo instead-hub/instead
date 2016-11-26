@@ -132,4 +132,5 @@ function global(v)
 	end
 	__vars_add(_G, v, true);
 end
+
 -- vim:ts=4
