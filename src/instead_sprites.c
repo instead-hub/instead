@@ -2111,7 +2111,7 @@ static int luaB_pixels_sprite(lua_State *L) {
 	float scale;
 	int ww, hh, direct = 0;
 	size_t size;
-	float v;
+	float v = game_theme.scale;
 	img_t img = NULL, img2 = NULL;
 	struct lua_pixels *hdr;
 
@@ -2122,6 +2122,8 @@ static int luaB_pixels_sprite(lua_State *L) {
 		img = gfx_load_image((char*)fname);
 		if (!img)
 			return 0;
+		if (!cache_have(gfx_image_cache(), img))
+			v = 1.0f; /* do not scale sprites! */
 		w = gfx_img_w(img);
 		h = gfx_img_h(img);
 
@@ -2141,7 +2143,6 @@ static int luaB_pixels_sprite(lua_State *L) {
 			return 0;
 	}
 	ww = w; hh = h;
-	v = game_theme.scale;
 	if (v != 1.0f) {
 		ww = ceil((float)w * v);
 		hh = ceil((float)h * v);
