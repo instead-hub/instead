@@ -1,7 +1,15 @@
 function declare(n)
 	if type(n) == 'string' then
 		stead.rawset(_G, n, false)
+		return
 	end
+	if type(n) == 'table' then
+		local k, v
+		for k, v in stead.pairs(n) do
+			stead.rawset(_G, k, v)
+		end
+	end
+	error ("Wrong parameter to declare", 2)
 end
 
 setmetatable(_G, {
