@@ -74,7 +74,6 @@ extern int	game_reset(void);
 extern int	game_cfg_save(void);
 
 extern void 	game_music_player(void);
-extern void 	game_sound_player(void);
 
 extern void	game_stop_mus(int ms);
 
@@ -130,13 +129,10 @@ extern void menu_toggle(int menu);
 extern int menu_visible(void);
 extern void game_channel_finished(int channel);
 
-extern int sound_load(const char *fname);
-extern char *sound_load_mem(int fmt, short *buff, size_t len);
-extern void sound_unload(const char *fname);
-extern void sounds_free(void);
-extern const char *sound_channel(int i);
+extern void sound_play_click(void);
 extern void *sound_get(const char *fname);
 extern void sound_put(void *sn);
+
 extern int game_tag_valid(const char *p);
 
 void game_gfx_commit(int sync);
