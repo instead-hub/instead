@@ -15,6 +15,17 @@ function declare(n)
 	error ("Wrong parameter to declare", 2)
 end
 
+local function mod_init()
+	local k,v
+	for k, v in stead.pairs(declarations) do
+		stead.rawset(_G, k, nil)
+	end
+	declarations = {}
+end
+
+stead.module_init(mod_init)
+stead.module_done(mod_init)
+
 if RELEASE then
 	return
 end
