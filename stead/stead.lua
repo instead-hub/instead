@@ -120,18 +120,26 @@ end
 stead.last_disp = function(s)
 	local r = game._lastdisp
 
-	if s ~= nil then
-		if not s then
-			game._lastdisp = nil
-		else
-			game._lastdisp = s
-		end
+	if s == nil then
+		return r
 	end
+	if not s then s = nil end
+	game._lastdisp = s
 	return r
 end
 
+stead.act_text = function(s)
+	local o = stead.rawget(_G, 'ACTION_TEXT')
+	if s == nil then
+		return o
+	end
+	if not s then s = nil end
+	stead.rawset(_G, 'ACTION_TEXT', s)
+	return o
+end
+
 stead.nop = function(s) -- to refresh entry scene w/o time tick
-	stead.rawset(_G, 'RAW_TEXT', true)
+	stead.act_text(true)
 	return stead.last_disp() or ''
 end
 
@@ -657,7 +665,7 @@ end
 
 function stead.ref(n, nofunc) -- ref object by name
 	if stead.type(n) == 'string' then
-		if stead.type(stead.rawget(_G, n)) == 'table' then -- fastest path
+		if n:find("^[_a-zA-Z][_a-zA-Z0-9]*$") then -- fastest path
 			return stead.rawget(_G, n);
 		end
 		local f = stead.eval('return '..n);
@@ -2421,11 +2429,11 @@ iface = {
 		end
 
 		vv = self:fmt(cmd, stead.state, (oldloc ~= stead.here()) or stead.player_moved(), 
-			stead.rawget(_G, 'ACTION_TEXT'), av, vv, pv);
+			stead.act_text(), av, vv, pv);
 
 		if stead.state then
 			stead.last_disp(vv or false)
-			stead.last_act(stead.rawget(_G, 'ACTION_TEXT'))
+			stead.last_act(stead.act_text())
 		end
 		if vv == nil then -- nil is error
 			vv = ''

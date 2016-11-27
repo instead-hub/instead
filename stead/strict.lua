@@ -25,25 +25,21 @@ setmetatable(_G, {
 			return
 		end
 		local f = stead.getinfo(2, "S").source
-		if f:byte(1) == 0x40 then
-			if f:find("/stead/", 1, true) then
-				print ("Uninitialized global variable: "..n.." in "..f)
-			else
---				print ("Uninitialized global variable: "..n.." in "..f)
-				error ("Uninitialized global variable: "..n.." in "..f, 2)
-			end
+		if f:byte(1) ~= 0x40 or f:find("/stead/", 1, true) then
+			print ("Uninitialized global variable: "..n.." in "..f)
+		else
+--			print ("Uninitialized global variable: "..n.." in "..f)
+			error ("Uninitialized global variable: "..n.." in "..f, 2)
 		end
 	end;
 	__newindex = function(t, k, v)
 		if not declarations[k] and type(v) ~= 'function' and not isObject(v) then
 			local f = stead.getinfo(2, "S").source
-			if f:byte(1) == 0x40 then
-				if f:find("/stead/", 1, true) then
-					print ("Set uninitialized variable: "..k.." in "..f)
-				else
---					print ("Set uninitialized variable: "..k.." in "..f)
-					error ("Set uninitialized variable: "..k.." in "..f, 2)
-				end
+			if f:byte(1) ~= 0x40 or f:find("/stead/", 1, true) then
+				print ("Set uninitialized variable: "..k.." in "..f)
+			else
+--				print ("Set uninitialized variable: "..k.." in "..f)
+				error ("Set uninitialized variable: "..k.." in "..f, 2)
 			end
 		end
 		stead.rawset(t, k, v)
