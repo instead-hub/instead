@@ -143,6 +143,10 @@ local function mod_init()
 	end
 	G.variables = {}
 	G.variables_save = {}
+	if not stead.api_atleast(2, 5, 0) then -- fake data
+		stead.rawset(_G, 'variables_save', {}) -- to save broken saves
+		stead.rawset(_G, 'variables', {})
+	end
 end
 stead.module_init(mod_init)
 stead.module_done(mod_init)
