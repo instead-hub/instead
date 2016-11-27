@@ -1853,7 +1853,7 @@ static void fill_poly(struct lua_pixels *src, struct lua_point *v, int nr, unsig
 {
 	unsigned char *ptr = (unsigned char *)(src + 1), *ptr1;
 	int y, x, xmin, xmax, ymin, ymax, swap, w;
-	int nodes = 0, j = nr - 1, i;
+	int nodes = 0, j, i;
 	xmin = v[0].x; xmax = v[0].x;
 	ymin = v[0].y; ymax = v[0].y;
 
