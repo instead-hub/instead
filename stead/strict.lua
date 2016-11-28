@@ -11,6 +11,7 @@ function declare(n)
 			declarations[k] = true
 			stead.rawset(_G, k, v)
 		end
+		return
 	end
 	error ("Wrong parameter to declare", 2)
 end
