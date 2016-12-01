@@ -1952,11 +1952,11 @@ static int pixels_fill_poly(lua_State *L) {
 	for (i = 0; i < nr; i++) {
 		lua_pushinteger(L, (i * 2) + 1);
 		lua_gettable(L, -2);
-		v[i].x = lua_tonumber(L, -1);
+		v[i].x = lua_tointeger(L, -1);
 		lua_pop(L, 1);
 		lua_pushinteger(L, (i * 2) + 2);
 		lua_gettable(L, -2);
-		v[i].y = lua_tonumber(L, -1);
+		v[i].y = lua_tointeger(L, -1);
 		lua_pop(L, 1);
 	}
 	lua_pop(L, 1);
