@@ -685,7 +685,7 @@ static int luaB_print (lua_State *L) {
 }
 
 static int luaB_maxn (lua_State *L) {
-	lua_Number max = 0;
+	lua_Integer max = 0;
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_pushnil(L);  /* first key */
 	while (lua_next(L, 1)) {
@@ -695,29 +695,31 @@ static int luaB_maxn (lua_State *L) {
 			if (v > max) max = v;
 		}
 	}
-	lua_pushnumber(L, max);
+	lua_pushinteger(L, max);
 	return 1;
 }
 
 static int luaB_srandom(lua_State *L) {
-	mt_random_seed(luaL_optnumber(L, 1, time(NULL)));
+	mt_random_seed(luaL_optinteger(L, 1, time(NULL)));
 	return 0;
 }
 
 static int luaB_random(lua_State *L) {
 	lua_Number rt;
 	unsigned long r = 0;
-	long a = luaL_optnumber(L, 1, -1);
-	long b = luaL_optnumber(L, 2, -1);
+	long a = luaL_optinteger(L, 1, -1);
+	long b = luaL_optinteger(L, 2, -1);
 	r = mt_random();
 	if (a >=0 && b >= a) {
-		rt = a + (r % (b - a + 1));
+		r = a + (r % (b - a + 1));
+		lua_pushinteger(L, r);
 	} else if (a >=0 && b == -1) {
-		rt = (r % a) + 1;
+		r = (r % a) + 1;
+		lua_pushinteger(L, r);
 	} else {
 		rt = mt_random_double();
+		lua_pushnumber(L, rt);
 	}
-	lua_pushnumber(L, rt);
 	return 1;
 }
 

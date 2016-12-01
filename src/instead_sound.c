@@ -621,8 +621,8 @@ static int luaB_load_sound(lua_State *L) {
 #define SND_F2S(v) ((short)((float)(v) * 16383.0) * 2)
 
 static int luaB_load_sound_mem(lua_State *L) {
-	int hz = luaL_optnumber(L, 1, -1);
-	int channels = luaL_optnumber(L, 2, -1);
+	int hz = luaL_optinteger(L, 1, -1);
+	int channels = luaL_optinteger(L, 2, -1);
 	int len; int i;
 	short *buf = NULL;
 	const char *name;
@@ -690,23 +690,23 @@ static int luaB_free_sounds(lua_State *L) {
 }
 
 static int luaB_panning_sound(lua_State *L) {
-	int chan = luaL_optnumber(L, 1, -1);
-	int left = luaL_optnumber(L, 2, 255);
-	int right = luaL_optnumber(L, 3, 255);
+	int chan = luaL_optinteger(L, 1, -1);
+	int left = luaL_optinteger(L, 2, 255);
+	int right = luaL_optinteger(L, 3, 255);
 	snd_panning(chan, left, right);
 	return 0;
 }
 
 static int luaB_volume_sound(lua_State *L) {
-	int vol = luaL_optnumber(L, 1, -1);
+	int vol = luaL_optinteger(L, 1, -1);
 	vol = snd_volume_mus(vol);
-	lua_pushnumber(L, vol);
+	lua_pushinteger(L, vol);
 	return 1;
 }
 
 static int luaB_channel_sound(lua_State *L) {
 	const char *s;
-	int ch = luaL_optnumber(L, 1, 0);
+	int ch = luaL_optinteger(L, 1, 0);
 	ch = ch % SND_CHANNELS;
 	s = sound_channel(ch);
 	if (s) {
@@ -732,8 +732,8 @@ static void mus_callback(void *udata, unsigned char *stream, int len)
 		return;
 	instead_lock();
 	lua_rawgeti(L, LUA_REGISTRYINDEX, callback_ref);
-	lua_pushnumber(L, snd_hz());
-	lua_pushnumber(L, len >> 1);
+	lua_pushinteger(L, snd_hz());
+	lua_pushinteger(L, len >> 1);
 	hdr = lua_newuserdata(L, sizeof(*hdr));
 	if (!hdr)
 		goto err;
@@ -808,7 +808,7 @@ static int sound_size(lua_State *L) {
 */
 static int sound_value(lua_State *L) {
 	struct lua_sound *hdr = (struct lua_sound*)lua_touserdata(L, 1);
-	int pos = luaL_optnumber(L, 2, -1);
+	int pos = luaL_optinteger(L, 2, -1);
 	float v = luaL_optnumber(L, 3, -2.0f);
 	if (pos <= 0)
 		return 0;
@@ -816,7 +816,7 @@ static int sound_value(lua_State *L) {
 		return 0;
 	pos --;
 	if (v == -2.0f) {
-		lua_pushnumber(L, hdr->buf[pos]);
+		lua_pushinteger(L, hdr->buf[pos]);
 		return 1;
 	}
 	hdr->buf[pos] = SND_F2S(v);

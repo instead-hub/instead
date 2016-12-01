@@ -26,129 +26,129 @@
 #include "instead/instead.h"
 
 static int luaB_bit_and(lua_State *L) {
-	unsigned int a = luaL_optnumber(L, 1, 0);
-	unsigned int b = luaL_optnumber(L, 2, 0);
+	unsigned int a = luaL_optinteger(L, 1, 0);
+	unsigned int b = luaL_optinteger(L, 2, 0);
 	unsigned int r = a & b;
-	lua_pushnumber(L, r);
+	lua_pushinteger(L, r);
 	return 1;
 }
 
 static int luaB_bit_or(lua_State *L) {
-	unsigned int a = luaL_optnumber(L, 1, 0);
-	unsigned int b = luaL_optnumber(L, 2, 0);
+	unsigned int a = luaL_optinteger(L, 1, 0);
+	unsigned int b = luaL_optinteger(L, 2, 0);
 	unsigned int r = a | b;
-	lua_pushnumber(L, r);
+	lua_pushinteger(L, r);
 	return 1;
 }
 
 static int luaB_bit_xor(lua_State *L) {
-	unsigned int a = luaL_optnumber(L, 1, 0);
-	unsigned int b = luaL_optnumber(L, 2, 0);
+	unsigned int a = luaL_optinteger(L, 1, 0);
+	unsigned int b = luaL_optinteger(L, 2, 0);
 	unsigned int r = a ^ b;
-	lua_pushnumber(L, r);
+	lua_pushinteger(L, r);
 	return 1;
 }
 
 static int luaB_bit_shl(lua_State *L) {
-	unsigned int a = luaL_optnumber(L, 1, 0);
-	unsigned int b = luaL_optnumber(L, 2, 0);
+	unsigned int a = luaL_optinteger(L, 1, 0);
+	unsigned int b = luaL_optinteger(L, 2, 0);
 	unsigned int r = a << b;
-	lua_pushnumber(L, r);
+	lua_pushinteger(L, r);
 	return 1;
 }
 
 static int luaB_bit_shr(lua_State *L) {
-	unsigned int a = luaL_optnumber(L, 1, 0);
-	unsigned int b = luaL_optnumber(L, 2, 0);
+	unsigned int a = luaL_optinteger(L, 1, 0);
+	unsigned int b = luaL_optinteger(L, 2, 0);
 	unsigned int r = a >> b;
-	lua_pushnumber(L, r);
+	lua_pushinteger(L, r);
 	return 1;
 }
 
 static int luaB_bit_not(lua_State *L) {
-	unsigned int a = luaL_optnumber(L, 1, 0);
+	unsigned int a = luaL_optinteger(L, 1, 0);
 	unsigned int r = ~a;
-	lua_pushnumber(L, r);
+	lua_pushinteger(L, r);
 	return 1;
 }
 
 static int luaB_bit_div(lua_State *L) {
-	unsigned int a = luaL_optnumber(L, 1, 0);
-	unsigned int b = luaL_optnumber(L, 2, 1);
+	unsigned int a = luaL_optinteger(L, 1, 0);
+	unsigned int b = luaL_optinteger(L, 2, 1);
 	unsigned int r;
 	if (b) {
 		r = a / b;
-		lua_pushnumber(L, r);
+		lua_pushinteger(L, r);
 		return 1;
 	}
 	return 0;
 }
 
 static int luaB_bit_idiv(lua_State *L) {
-	int a = luaL_optnumber(L, 1, 0);
-	int b = luaL_optnumber(L, 2, 1);
+	int a = luaL_optinteger(L, 1, 0);
+	int b = luaL_optinteger(L, 2, 1);
 	int r;
 	if (b) {
 		r = a / b;
-		lua_pushnumber(L, r);
+		lua_pushinteger(L, r);
 		return 1;
 	}
 	return 0;
 }
 
 static int luaB_bit_mod(lua_State *L) {
-	unsigned int a = luaL_optnumber(L, 1, 0);
-	unsigned int b = luaL_optnumber(L, 2, 1);
+	unsigned int a = luaL_optinteger(L, 1, 0);
+	unsigned int b = luaL_optinteger(L, 2, 1);
 	unsigned int r;
 	if (b) {
 		r = a % b;
-		lua_pushnumber(L, r);
+		lua_pushinteger(L, r);
 		return 1;
 	}
 	return 0;
 }
 
 static int luaB_bit_mul(lua_State *L) {
-	unsigned int a = luaL_optnumber(L, 1, 0);
-	unsigned int b = luaL_optnumber(L, 2, 0);
+	unsigned int a = luaL_optinteger(L, 1, 0);
+	unsigned int b = luaL_optinteger(L, 2, 0);
 	unsigned int r = a * b;
-	lua_pushnumber(L, r);
+	lua_pushinteger(L, r);
 	return 1;
 }
 
 static int luaB_bit_imul(lua_State *L) {
-	int a = luaL_optnumber(L, 1, 0);
-	int b = luaL_optnumber(L, 2, 0);
+	int a = luaL_optinteger(L, 1, 0);
+	int b = luaL_optinteger(L, 2, 0);
 	int r = a * b;
-	lua_pushnumber(L, r);
+	lua_pushinteger(L, r);
 	return 1;
 }
 
 static int luaB_bit_sub(lua_State *L) {
-	unsigned int a = luaL_optnumber(L, 1, 0);
-	unsigned int b = luaL_optnumber(L, 2, 0);
+	unsigned int a = luaL_optinteger(L, 1, 0);
+	unsigned int b = luaL_optinteger(L, 2, 0);
 	unsigned int r = a - b;
-	lua_pushnumber(L, r);
+	lua_pushinteger(L, r);
 	return 1;
 }
 
 static int luaB_bit_add(lua_State *L) {
-	unsigned int a = luaL_optnumber(L, 1, 0);
-	unsigned int b = luaL_optnumber(L, 2, 0);
+	unsigned int a = luaL_optinteger(L, 1, 0);
+	unsigned int b = luaL_optinteger(L, 2, 0);
 	unsigned int r = a + b;
-	lua_pushnumber(L, r);
+	lua_pushinteger(L, r);
 	return 1;
 }
 
 static int luaB_bit_unsigned(lua_State *L) {
-	unsigned int a = luaL_optnumber(L, 1, 0);
-	lua_pushnumber(L, a);
+	unsigned int a = luaL_optinteger(L, 1, 0);
+	lua_pushinteger(L, a);
 	return 1;
 }
 
 static int luaB_bit_signed(lua_State *L) {
-	unsigned int a = luaL_optnumber(L, 1, 0);
-	lua_pushnumber(L, (int)a);
+	unsigned int a = luaL_optinteger(L, 1, 0);
+	lua_pushinteger(L, (int)a);
 	return 1;
 }
 

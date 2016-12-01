@@ -230,7 +230,7 @@ static int luaB_load_font(lua_State *L) {
 	struct game_theme *t = &game_theme;
 
 	const char *fname = luaL_optstring(L, 1, NULL);
-	int sz = luaL_optnumber(L, 2, t->font_size) * game_theme.scale;
+	int sz = luaL_optinteger(L, 2, t->font_size) * game_theme.scale;
 	const char *desc = luaL_optstring(L, 3, NULL);
 	if (!fname)
 		return 0;
@@ -279,14 +279,14 @@ static int luaB_text_size(lua_State *L) {
 		w = ceil((float)w / game_theme.scale);
 		h = ceil((float)h / game_theme.scale);
 	}
-	lua_pushnumber(L, w);
-	lua_pushnumber(L, h);
+	lua_pushinteger(L, w);
+	lua_pushinteger(L, h);
 	return 2;
 }
 
 static int luaB_font_size_scaled(lua_State *L) {
-	int sz = luaL_optnumber(L, 1, game_theme.font_size);
-	lua_pushnumber(L, FONT_SZ(sz));
+	int sz = luaL_optinteger(L, 1, game_theme.font_size);
+	lua_pushinteger(L, FONT_SZ(sz));
 	return 1;
 }
 
@@ -301,7 +301,7 @@ static int luaB_text_sprite(lua_State *L) {
 	const char *text = luaL_optstring(L, 2, NULL);
 	char txtkey[32];
 	const char *color = luaL_optstring(L, 3, NULL);
-	int style = luaL_optnumber(L, 4, 0);
+	int style = luaL_optinteger(L, 4, 0);
 	const char *desc = luaL_optstring(L, 5, NULL);
 
 	color_t col = { .r = game_theme.fgcol.r, .g = game_theme.fgcol.g, .b = game_theme.fgcol.b };
@@ -380,8 +380,8 @@ static int luaB_sprite_size(lua_State *L) {
 	w = ceil ((float)(gfx_img_w(s) - xoff * 2) / v);
 	h = ceil ((float)(gfx_img_h(s) - yoff * 2) / v);
 
-	lua_pushnumber(L, w);
-	lua_pushnumber(L, h);
+	lua_pushinteger(L, w);
+	lua_pushinteger(L, h);
 	return 2;
 }
 
@@ -396,14 +396,14 @@ static int luaB_blit_sprite(lua_State *L, int mode) {
 	struct lua_pixels *pixels = lua_touserdata(L, 1);
 	const char *src = NULL;
 
-	int x = luaL_optnumber(L, 2, 0);
-	int y = luaL_optnumber(L, 3, 0);
-	int w = luaL_optnumber(L, 4, -1);
-	int h = luaL_optnumber(L, 5, -1);
+	int x = luaL_optinteger(L, 2, 0);
+	int y = luaL_optinteger(L, 3, 0);
+	int w = luaL_optinteger(L, 4, -1);
+	int h = luaL_optinteger(L, 5, -1);
 	const char *dst = luaL_optstring(L, 6, NULL);
-	int xx = luaL_optnumber(L, 7, 0);
-	int yy = luaL_optnumber(L, 8, 0);
-	int alpha = luaL_optnumber(L, 9, 255);
+	int xx = luaL_optinteger(L, 7, 0);
+	int yy = luaL_optinteger(L, 8, 0);
+	int alpha = luaL_optinteger(L, 9, 255);
 	int xoff = 0, yoff = 0;
 	int xoff0 = 0, yoff0 = 0;
 
@@ -494,7 +494,7 @@ static int luaB_alpha_sprite(lua_State *L) {
 	char sname[sizeof(unsigned long) * 2 + 16];
 
 	const char *src = luaL_optstring(L, 1, NULL);
-	int alpha = luaL_optnumber(L, 2, 255);
+	int alpha = luaL_optinteger(L, 2, 255);
 	const char *desc = luaL_optstring(L, 3, NULL);
 
 	if (!src)
@@ -674,10 +674,10 @@ static int luaB_fill_sprite(lua_State *L) {
 	img_t d;
 	float v;
 	const char *dst = luaL_optstring(L, 1, NULL);
-	int x = luaL_optnumber(L, 2, 0);
-	int y = luaL_optnumber(L, 3, 0);
-	int w = luaL_optnumber(L, 4, -1);
-	int h = luaL_optnumber(L, 5, -1);
+	int x = luaL_optinteger(L, 2, 0);
+	int y = luaL_optinteger(L, 3, 0);
+	int w = luaL_optinteger(L, 4, -1);
+	int h = luaL_optinteger(L, 5, -1);
 	const char *color = luaL_optstring(L, 6, NULL);
 	int xoff = 0, yoff = 0;
 	color_t  col = { .r = game_theme.bgcol.r, .g = game_theme.bgcol.g, .b = game_theme.bgcol.b };
@@ -720,10 +720,10 @@ static int luaB_pixel_sprite(lua_State *L) {
 	int rc, w, h;
 	color_t  col = { .r = game_theme.bgcol.r, .g = game_theme.bgcol.g, .b = game_theme.bgcol.b, .a = 255 };
 	const char *dst = luaL_optstring(L, 1, NULL);
-	int x = luaL_optnumber(L, 2, 0);
-	int y = luaL_optnumber(L, 3, 0);
+	int x = luaL_optinteger(L, 2, 0);
+	int y = luaL_optinteger(L, 3, 0);
 	const char *color = luaL_optstring(L, 4, NULL);
-	int alpha = luaL_optnumber(L, 5, 255);
+	int alpha = luaL_optinteger(L, 5, 255);
 	int xoff = 0, yoff = 0;
 
 	if (!dst)
@@ -760,10 +760,10 @@ static int luaB_pixel_sprite(lua_State *L) {
 	if (rc)
 		return 0;
 
-	lua_pushnumber(L, col.r);
-	lua_pushnumber(L, col.g);
-	lua_pushnumber(L, col.b);
-	lua_pushnumber(L, col.a);
+	lua_pushinteger(L, col.r);
+	lua_pushinteger(L, col.g);
+	lua_pushinteger(L, col.b);
+	lua_pushinteger(L, col.a);
 	return 4;
 }
 
@@ -889,8 +889,8 @@ static int luaB_stead_busy(lua_State *L) {
 }
 
 static int luaB_mouse_pos(lua_State *L) {
-	int x = luaL_optnumber(L, 1, -1);
-	int y = luaL_optnumber(L, 2, -1);
+	int x = luaL_optinteger(L, 1, -1);
+	int y = luaL_optinteger(L, 2, -1);
 	int m;
 	float v = game_theme.scale;
 	if (x != -1 && y != -1) {
@@ -903,9 +903,9 @@ static int luaB_mouse_pos(lua_State *L) {
 	m = gfx_cursor(&x, &y);
 	x = (x - game_theme.xoff) / v;
 	y = (y - game_theme.yoff) / v;
-	lua_pushnumber(L, x);
-	lua_pushnumber(L, y);
-	lua_pushnumber(L, m);
+	lua_pushinteger(L, x);
+	lua_pushinteger(L, y);
+	lua_pushinteger(L, m);
 	return 3;
 }
 
@@ -920,8 +920,8 @@ static int luaB_finger_pos(lua_State *L) {
 		return 0;
 	x = (x - game_theme.xoff) / v;
 	y = (y - game_theme.yoff) / v;
-	lua_pushnumber(L, x);
-	lua_pushnumber(L, y);
+	lua_pushinteger(L, x);
+	lua_pushinteger(L, y);
 	lua_pushnumber(L, pressure);
 	return 3;
 }
@@ -929,11 +929,11 @@ static int luaB_finger_pos(lua_State *L) {
 extern int mouse_filter_delay;
 
 static int luaB_mouse_filter(lua_State *L) {
-	int d = luaL_optnumber(L, 1, -1);
+	int d = luaL_optinteger(L, 1, -1);
 	int ov = mouse_filter_delay;
 	if (d != -1)
 		mouse_filter_delay = d;
-	lua_pushnumber(L, ov);
+	lua_pushinteger(L, ov);
 	return 1;
 }
 
@@ -947,7 +947,7 @@ static int luaB_mouse_show(lua_State *L) {
 }
 
 static int luaB_get_ticks(lua_State *L) {
-	lua_pushnumber(L, gfx_ticks());
+	lua_pushinteger(L, gfx_ticks());
 	return 1;
 }
 
@@ -980,8 +980,8 @@ static int pixels_size(lua_State *L) {
 	struct lua_pixels *hdr = (struct lua_pixels*)lua_touserdata(L, 1);
 	if (!hdr || hdr->type != PIXELS_MAGIC)
 		return 0;
-	lua_pushnumber(L, hdr->w);
-	lua_pushnumber(L, hdr->h);
+	lua_pushinteger(L, hdr->w);
+	lua_pushinteger(L, hdr->h);
 	lua_pushnumber(L, hdr->scale);
 	return 3;
 }
@@ -1328,16 +1328,16 @@ static int pixels_copy(lua_State *L) {
 	src = (struct lua_pixels*)lua_touserdata(L, 1);
 	dst = (struct lua_pixels*)lua_touserdata(L, 2);
 	if (!dst) {
-		x = luaL_optnumber(L, 2, 0);
-		y = luaL_optnumber(L, 3, 0);
-		w = luaL_optnumber(L, 4, 0);
-		h = luaL_optnumber(L, 5, 0);
+		x = luaL_optinteger(L, 2, 0);
+		y = luaL_optinteger(L, 3, 0);
+		w = luaL_optinteger(L, 4, 0);
+		h = luaL_optinteger(L, 5, 0);
 		dst = (struct lua_pixels*)lua_touserdata(L, 6);
-		xx = luaL_optnumber(L, 7, 0);
-		yy = luaL_optnumber(L, 8, 0);
+		xx = luaL_optinteger(L, 7, 0);
+		yy = luaL_optinteger(L, 8, 0);
 	} else {
-		xx = luaL_optnumber(L, 3, 0);
-		yy = luaL_optnumber(L, 4, 0);
+		xx = luaL_optinteger(L, 3, 0);
+		yy = luaL_optinteger(L, 4, 0);
 	}
 	if (!src || src->type != PIXELS_MAGIC)
 		return 0;
@@ -1352,16 +1352,16 @@ static int pixels_blend(lua_State *L) {
 	src = (struct lua_pixels*)lua_touserdata(L, 1);
 	dst = (struct lua_pixels*)lua_touserdata(L, 2);
 	if (!dst) {
-		x = luaL_optnumber(L, 2, 0);
-		y = luaL_optnumber(L, 3, 0);
-		w = luaL_optnumber(L, 4, 0);
-		h = luaL_optnumber(L, 5, 0);
+		x = luaL_optinteger(L, 2, 0);
+		y = luaL_optinteger(L, 3, 0);
+		w = luaL_optinteger(L, 4, 0);
+		h = luaL_optinteger(L, 5, 0);
 		dst = (struct lua_pixels*)lua_touserdata(L, 6);
-		xx = luaL_optnumber(L, 7, 0);
-		yy = luaL_optnumber(L, 8, 0);
+		xx = luaL_optinteger(L, 7, 0);
+		yy = luaL_optinteger(L, 8, 0);
 	} else {
-		xx = luaL_optnumber(L, 3, 0);
-		yy = luaL_optnumber(L, 4, 0);
+		xx = luaL_optinteger(L, 3, 0);
+		yy = luaL_optinteger(L, 4, 0);
 	}
 	if (!src || src->type != PIXELS_MAGIC)
 		return 0;
@@ -1688,21 +1688,21 @@ static int pixels_fill(lua_State *L) {
 	src = (struct lua_pixels*)lua_touserdata(L, 1);
 	if (!src || src->type != PIXELS_MAGIC)
 		return 0;
-	b = luaL_optnumber(L, 8, -1);
+	b = luaL_optinteger(L, 8, -1);
 	if (b < 0) {
-		r = luaL_optnumber(L, 2, 0);
-		g = luaL_optnumber(L, 3, 0);
-		b = luaL_optnumber(L, 4, 0);
-		a = luaL_optnumber(L, 5, 0);
+		r = luaL_optinteger(L, 2, 0);
+		g = luaL_optinteger(L, 3, 0);
+		b = luaL_optinteger(L, 4, 0);
+		a = luaL_optinteger(L, 5, 0);
 	} else {
-		x = luaL_optnumber(L, 2, 0);
-		y = luaL_optnumber(L, 3, 0);
-		w = luaL_optnumber(L, 4, 0);
-		h = luaL_optnumber(L, 5, 0);
-		r = luaL_optnumber(L, 6, 0);
-		g = luaL_optnumber(L, 7, 0);
-		b = luaL_optnumber(L, 8, 0);
-		a = luaL_optnumber(L, 9, 255);
+		x = luaL_optinteger(L, 2, 0);
+		y = luaL_optinteger(L, 3, 0);
+		w = luaL_optinteger(L, 4, 0);
+		h = luaL_optinteger(L, 5, 0);
+		r = luaL_optinteger(L, 6, 0);
+		g = luaL_optinteger(L, 7, 0);
+		b = luaL_optinteger(L, 8, 0);
+		a = luaL_optinteger(L, 9, 255);
 	}
 	_fill(src, x, y, w, h, r, g, b, a, PXL_BLEND_BLEND);
 	return 0;
@@ -1714,21 +1714,21 @@ static int pixels_clear(lua_State *L) {
 	src = (struct lua_pixels*)lua_touserdata(L, 1);
 	if (!src || src->type != PIXELS_MAGIC)
 		return 0;
-	b = luaL_optnumber(L, 8, -1);
+	b = luaL_optinteger(L, 8, -1);
 	if (b < 0) {
-		r = luaL_optnumber(L, 2, 0);
-		g = luaL_optnumber(L, 3, 0);
-		b = luaL_optnumber(L, 4, 0);
-		a = luaL_optnumber(L, 5, 0);
+		r = luaL_optinteger(L, 2, 0);
+		g = luaL_optinteger(L, 3, 0);
+		b = luaL_optinteger(L, 4, 0);
+		a = luaL_optinteger(L, 5, 0);
 	} else {
-		x = luaL_optnumber(L, 2, 0);
-		y = luaL_optnumber(L, 3, 0);
-		w = luaL_optnumber(L, 4, 0);
-		h = luaL_optnumber(L, 5, 0);
-		r = luaL_optnumber(L, 6, 0);
-		g = luaL_optnumber(L, 7, 0);
-		b = luaL_optnumber(L, 8, 0);
-		a = luaL_optnumber(L, 9, 0);
+		x = luaL_optinteger(L, 2, 0);
+		y = luaL_optinteger(L, 3, 0);
+		w = luaL_optinteger(L, 4, 0);
+		h = luaL_optinteger(L, 5, 0);
+		r = luaL_optinteger(L, 6, 0);
+		g = luaL_optinteger(L, 7, 0);
+		b = luaL_optinteger(L, 8, 0);
+		a = luaL_optinteger(L, 9, 0);
 	}
 	_fill(src, x, y, w, h, r, g, b, a, PXL_BLEND_COPY);
 	return 0;
@@ -1741,16 +1741,16 @@ static int pixels_triangle(lua_State *L) {
 	src = (struct lua_pixels*)lua_touserdata(L, 1);
 	if (!src || src->type != PIXELS_MAGIC)
 		return 0;
-	x0 = luaL_optnumber(L, 2, 0);
-	y0 = luaL_optnumber(L, 3, 0);
-	x1 = luaL_optnumber(L, 4, 0);
-	y1 = luaL_optnumber(L, 5, 0);
-	x2 = luaL_optnumber(L, 6, 0);
-	y2 = luaL_optnumber(L, 7, 0);
-	r = luaL_optnumber(L, 8, 0);
-	g = luaL_optnumber(L, 9, 0);
-	b = luaL_optnumber(L, 10, 0);
-	a = luaL_optnumber(L, 11, 255);
+	x0 = luaL_optinteger(L, 2, 0);
+	y0 = luaL_optinteger(L, 3, 0);
+	x1 = luaL_optinteger(L, 4, 0);
+	y1 = luaL_optinteger(L, 5, 0);
+	x2 = luaL_optinteger(L, 6, 0);
+	y2 = luaL_optinteger(L, 7, 0);
+	r = luaL_optinteger(L, 8, 0);
+	g = luaL_optinteger(L, 9, 0);
+	b = luaL_optinteger(L, 10, 0);
+	a = luaL_optinteger(L, 11, 255);
 	triangle(src, x0, y0, x1, y1, x2, y2, r, g, b, a);
 	return 0;
 }
@@ -1761,14 +1761,14 @@ static int pixels_line(lua_State *L) {
 	src = (struct lua_pixels*)lua_touserdata(L, 1);
 	if (!src || src->type != PIXELS_MAGIC)
 		return 0;
-	x1 = luaL_optnumber(L, 2, 0);
-	y1 = luaL_optnumber(L, 3, 0);
-	x2 = luaL_optnumber(L, 4, 0);
-	y2 = luaL_optnumber(L, 5, 0);
-	r = luaL_optnumber(L, 6, 0);
-	g = luaL_optnumber(L, 7, 0);
-	b = luaL_optnumber(L, 8, 0);
-	a = luaL_optnumber(L, 9, 255);
+	x1 = luaL_optinteger(L, 2, 0);
+	y1 = luaL_optinteger(L, 3, 0);
+	x2 = luaL_optinteger(L, 4, 0);
+	y2 = luaL_optinteger(L, 5, 0);
+	r = luaL_optinteger(L, 6, 0);
+	g = luaL_optinteger(L, 7, 0);
+	b = luaL_optinteger(L, 8, 0);
+	a = luaL_optinteger(L, 9, 255);
 	line(src, x1, y1, x2, y2, r, g, b, a);
 	return 0;
 }
@@ -1779,14 +1779,14 @@ static int pixels_lineAA(lua_State *L) {
 	src = (struct lua_pixels*)lua_touserdata(L, 1);
 	if (!src || src->type != PIXELS_MAGIC)
 		return 0;
-	x1 = luaL_optnumber(L, 2, 0);
-	y1 = luaL_optnumber(L, 3, 0);
-	x2 = luaL_optnumber(L, 4, 0);
-	y2 = luaL_optnumber(L, 5, 0);
-	r = luaL_optnumber(L, 6, 0);
-	g = luaL_optnumber(L, 7, 0);
-	b = luaL_optnumber(L, 8, 0);
-	a = luaL_optnumber(L, 9, 255);
+	x1 = luaL_optinteger(L, 2, 0);
+	y1 = luaL_optinteger(L, 3, 0);
+	x2 = luaL_optinteger(L, 4, 0);
+	y2 = luaL_optinteger(L, 5, 0);
+	r = luaL_optinteger(L, 6, 0);
+	g = luaL_optinteger(L, 7, 0);
+	b = luaL_optinteger(L, 8, 0);
+	a = luaL_optinteger(L, 9, 255);
 	lineAA(src, x1, y1, x2, y2, r, g, b, a);
 	return 0;
 }
@@ -1796,13 +1796,13 @@ static int pixels_circle(lua_State *L) {
 	src = (struct lua_pixels*)lua_touserdata(L, 1);
 	if (!src || src->type != PIXELS_MAGIC)
 		return 0;
-	xc = luaL_optnumber(L, 2, 0);
-	yc = luaL_optnumber(L, 3, 0);
-	rr = luaL_optnumber(L, 4, 0);
-	r = luaL_optnumber(L, 5, 0);
-	g = luaL_optnumber(L, 6, 0);
-	b = luaL_optnumber(L, 7, 0);
-	a = luaL_optnumber(L, 8, 255);
+	xc = luaL_optinteger(L, 2, 0);
+	yc = luaL_optinteger(L, 3, 0);
+	rr = luaL_optinteger(L, 4, 0);
+	r = luaL_optinteger(L, 5, 0);
+	g = luaL_optinteger(L, 6, 0);
+	b = luaL_optinteger(L, 7, 0);
+	a = luaL_optinteger(L, 8, 255);
 	circle(src, xc, yc, rr, r, g, b, a);
 	return 0;
 }
@@ -1812,13 +1812,13 @@ static int pixels_circleAA(lua_State *L) {
 	src = (struct lua_pixels*)lua_touserdata(L, 1);
 	if (!src || src->type != PIXELS_MAGIC)
 		return 0;
-	xc = luaL_optnumber(L, 2, 0);
-	yc = luaL_optnumber(L, 3, 0);
-	rr = luaL_optnumber(L, 4, 0);
-	r = luaL_optnumber(L, 5, 0);
-	g = luaL_optnumber(L, 6, 0);
-	b = luaL_optnumber(L, 7, 0);
-	a = luaL_optnumber(L, 8, 255);
+	xc = luaL_optinteger(L, 2, 0);
+	yc = luaL_optinteger(L, 3, 0);
+	rr = luaL_optinteger(L, 4, 0);
+	r = luaL_optinteger(L, 5, 0);
+	g = luaL_optinteger(L, 6, 0);
+	b = luaL_optinteger(L, 7, 0);
+	a = luaL_optinteger(L, 8, 255);
 	circleAA(src, xc, yc, rr, r, g, b, a);
 	return 0;
 }
@@ -1828,13 +1828,13 @@ static int pixels_fill_circle(lua_State *L) {
 	src = (struct lua_pixels*)lua_touserdata(L, 1);
 	if (!src || src->type != PIXELS_MAGIC)
 		return 0;
-	xc = luaL_optnumber(L, 2, 0);
-	yc = luaL_optnumber(L, 3, 0);
-	rr = luaL_optnumber(L, 4, 0);
-	r = luaL_optnumber(L, 5, 0);
-	g = luaL_optnumber(L, 6, 0);
-	b = luaL_optnumber(L, 7, 0);
-	a = luaL_optnumber(L, 8, 255);
+	xc = luaL_optinteger(L, 2, 0);
+	yc = luaL_optinteger(L, 3, 0);
+	rr = luaL_optinteger(L, 4, 0);
+	r = luaL_optinteger(L, 5, 0);
+	g = luaL_optinteger(L, 6, 0);
+	b = luaL_optinteger(L, 7, 0);
+	a = luaL_optinteger(L, 8, 255);
 	fill_circle(src, xc, yc, rr, r, g, b, a);
 	return 0;
 }
@@ -1939,10 +1939,10 @@ static int pixels_fill_poly(lua_State *L) {
 #endif
 	if (nr < 6)
 		return 0;
-	col[0] = luaL_optnumber(L, 3, 0);
-	col[1] = luaL_optnumber(L, 4, 0);
-	col[2] = luaL_optnumber(L, 5, 0);
-	col[3] = luaL_optnumber(L, 6, 255);
+	col[0] = luaL_optinteger(L, 3, 0);
+	col[1] = luaL_optinteger(L, 4, 0);
+	col[2] = luaL_optinteger(L, 5, 0);
+	col[3] = luaL_optinteger(L, 6, 255);
 
 	nr /= 2;
 	v = malloc(sizeof(*v) * nr);
@@ -1967,15 +1967,15 @@ static int pixels_fill_poly(lua_State *L) {
 
 static int pixels_value(lua_State *L) {
 	struct lua_pixels *hdr = (struct lua_pixels*)lua_touserdata(L, 1);
-	int x = luaL_optnumber(L, 2, -1);
-	int y = luaL_optnumber(L, 3, -1);
-	int r = luaL_optnumber(L, 4, -1);
+	int x = luaL_optinteger(L, 2, -1);
+	int y = luaL_optinteger(L, 3, -1);
+	int r = luaL_optinteger(L, 4, -1);
 	int g = 0, b = 0, a = 0;
 	unsigned char *ptr;
 	if (r != -1) {
-		g = luaL_optnumber(L, 5, 0);
-		b = luaL_optnumber(L, 6, 0);
-		a = luaL_optnumber(L, 7, 255);
+		g = luaL_optinteger(L, 5, 0);
+		b = luaL_optinteger(L, 6, 0);
+		a = luaL_optinteger(L, 7, 255);
 	}
 	if (x < 0 || y < 0)
 		return 0;
@@ -1989,10 +1989,10 @@ static int pixels_value(lua_State *L) {
 	ptr = (unsigned char*)(hdr + 1);
 	ptr += ((y * hdr->w + x) << 2);
 	if (r == -1) {
-		lua_pushnumber(L, *(ptr ++));
-		lua_pushnumber(L, *(ptr ++));
-		lua_pushnumber(L, *(ptr ++));
-		lua_pushnumber(L, *ptr);
+		lua_pushinteger(L, *(ptr ++));
+		lua_pushinteger(L, *(ptr ++));
+		lua_pushinteger(L, *(ptr ++));
+		lua_pushinteger(L, *ptr);
 		return 4;
 	}
 	hdr->dirty = 1;
@@ -2005,18 +2005,18 @@ static int pixels_value(lua_State *L) {
 
 static int pixels_pixel(lua_State *L) {
 	struct lua_pixels *hdr = (struct lua_pixels*)lua_touserdata(L, 1);
-	int x = luaL_optnumber(L, 2, -1);
-	int y = luaL_optnumber(L, 3, -1);
-	int r = luaL_optnumber(L, 4, -1);
+	int x = luaL_optinteger(L, 2, -1);
+	int y = luaL_optinteger(L, 3, -1);
+	int r = luaL_optinteger(L, 4, -1);
 	int g, b, a;
 	unsigned char col[4];
 	unsigned char *ptr;
 	if (r == -1)
 		return 0;
 
-	g = luaL_optnumber(L, 5, 0);
-	b = luaL_optnumber(L, 6, 0);
-	a = luaL_optnumber(L, 7, 255);
+	g = luaL_optinteger(L, 5, 0);
+	b = luaL_optinteger(L, 6, 0);
+	a = luaL_optinteger(L, 7, 255);
 
 	if (x < 0 || y < 0)
 		return 0;
@@ -2134,11 +2134,11 @@ static int luaB_pixels_sprite(lua_State *L) {
 		}
 		gfx_copy_from(img, 0, 0, w, h, img2, 0, 0);
 		gfx_free_image(img);
-		scale = luaL_optnumber(L, 2, 1);
+		scale = luaL_optnumber(L, 2, 1.0f);
 	} else {
-		w = luaL_optnumber(L, 1, -1);
-		h = luaL_optnumber(L, 2, -1);
-		scale = luaL_optnumber(L, 3, 1);
+		w = luaL_optinteger(L, 1, -1);
+		h = luaL_optinteger(L, 2, -1);
+		scale = luaL_optnumber(L, 3, 1.0f);
 		if (w < 0 || h < 0)
 			return 0;
 	}
