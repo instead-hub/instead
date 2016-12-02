@@ -149,9 +149,8 @@ stead.obj_proxy = function(o, act, use_mode, used_act, useit_act)
 end
 
 stead.proxy_fill_objs = function(s, w, act, use_mode, used_act, useit_act)
-	local ii,i,o
 	local rc = false
-	for i,o,ii in stead.opairs(w) do
+	for i, o, ii in stead.opairs(w) do
 		o = stead.ref(o);
 		if isObject(o) and not isDisabled(o) and o ~= s and not isPhrase(o) 
 			and not o.proxy_type and not isStatus(o) then
@@ -167,8 +166,7 @@ stead.proxy_fill_objs = function(s, w, act, use_mode, used_act, useit_act)
 end 
 
 local select_only = function(s)
-	local k, o, i
-	for k,o in stead.opairs(stead.me().obj) do
+	for k, o in stead.opairs(stead.me().obj) do
 		o = stead.ref(o)
 		if o.action_type and o._state and o ~= s then
 			o:inv();
@@ -243,7 +241,6 @@ local proxy_menu = function(nam, act, _scene, _inv, _way, use_mode, used_act, us
 end
 
 local function gen_actions(s)
-	local k, o
 	for k, o in stead.opairs(stead.me().obj) do
 		o = stead.ref(o)
 		if o.action_type and o._state then

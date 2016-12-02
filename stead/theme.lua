@@ -3,16 +3,14 @@ theme = {
 	object_type = true;
 	system_type = true;
 	save = function(self, name, h, need)
-		local k,v
 		if self.name() ~= '.' then
 			return
 		end
-		for k,v in stead.pairs(self.vars) do
+		for k, v in stead.pairs(self.vars) do
 			h:write(stead.string.format("theme.set(%q, %q);\n", k, v))
 		end
 	end;
 	reset = function(...)
-		local i
 		local a = {...};
 		for i = 1, stead.table.maxn(a) do
 			local name = a[i]

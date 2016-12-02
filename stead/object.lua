@@ -191,8 +191,7 @@ function isVobject(v)
 end
 
 stead.list_check = function(self, name) -- force using of objects, instead refs
-	local i, v, ii;
-	for i,v,ii in stead.opairs(self) do
+	for i, v, ii in stead.opairs(self) do
 		local o = stead.ref(v);
 		if not isObject(o) then 
 			error (stead.string.format("Wrong object: %q (%s) at %s", 
@@ -263,8 +262,7 @@ stead.list_set = function(self, name, pos)
 end
 
 stead.list_concat = function(self, other, pos)
-	local n,o,ii
-	for n,o,ii in stead.opairs(other) do
+	for n, o, ii in stead.opairs(other) do
 		o = stead.ref(o);
 		if pos == nil then
 			self:add(o);
@@ -278,8 +276,8 @@ end
 stead.delim = '|'
 
 stead.list_str = function(self)
-	local i, v, vv, o;
-	for i,o in stead.opairs(self) do
+	local v, vv
+	for i, o in stead.opairs(self) do
 		o = stead.ref(o);
 		if isObject(o) and not isDisabled(o) then
 			vv = stead.dispof(o)
@@ -291,14 +289,14 @@ stead.list_str = function(self)
 end
 
 stead.obj_str = function(self)
-	local i, v, vv, o;
+	local v, vv;
 	if not isObject(self) then
 		return
 	end
 	if isDisabled(self) then
 		return 
 	end
-	for i,o in stead.opairs(self.obj) do
+	for i, o in stead.opairs(self.obj) do
 		o = stead.ref(o);
 		if isObject(o) and not isDisabled(o) then
 			vv = stead.dispof(o)

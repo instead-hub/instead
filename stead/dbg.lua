@@ -16,9 +16,8 @@ end
 
 local function ordered_n(t)
 	local ordered = {};
-	local i,v, max;
-	max = 0;
-	for i,v in stead.pairs(t) do
+	local max = 0
+	for i, v in stead.pairs(t) do
 		local o = { k = i; v = v };
 		stead.table.insert(ordered, o);
 		max = max + 1;
@@ -102,9 +101,9 @@ dbg_dump_obj = function(w)
 		seen('disp')._txt = '^^No such object.';
 		return true
 	end
-	local i,o,n
+	local n
 	local rc = ''
-	for i,o in stead.pairs(w) do
+	for i, o in stead.pairs(w) do
 		local t = stead.tostring(o);
 		if t == i then
 			t = stead.tostr(o);
@@ -124,12 +123,11 @@ dbg_dump_obj = function(w)
 end
 
 dbg_dump_globals = function()
-	local i,o
 	local rc=''
 	if stead.type(variables) ~= 'table' then
 		return
 	end
-	for i,o in stead.ipairs(variables) do
+	for i, o in stead.ipairs(variables) do
 		local v = stead.rawget(_G, o);
 		local t = stead.tostring(v);
 		if t then
@@ -146,7 +144,6 @@ dbg_here = function()
 end
 
 dbg_list_objects = function()
-	local i,o
 	local dis = function(o)
 		if isDisabled(o) then
 			return ", disabled"
@@ -155,7 +152,7 @@ dbg_list_objects = function()
 	end
 	local rc = stead.par(' ', 'Room:'..stead.tostr(stead.deref(dbg_here())), 
 			'Nam:'..stead.tostr(stead.call(dbg_here(),'nam')));
-	for i,o in stead.opairs(objs(dbg_here())) do
+	for i, o in stead.opairs(objs(dbg_here())) do
 		rc = rc..'^';
 		o = stead.ref(o)
 		rc = stead.cat(rc, stead.par(' ', 'Id: '..stead.tostr(o.id)..', '..
@@ -166,8 +163,7 @@ dbg_list_objects = function()
 end
 
 dbg_list_inv = function()
-	local i,o
-	local rc=''
+	local rc = ''
 	local dis = function(o)
 		if isDisabled(o) then
 			return ", disabled"
@@ -182,7 +178,7 @@ dbg_list_inv = function()
 		return ''
 	end
 
-	for i,o in stead.opairs(inv()) do
+	for i, o in stead.opairs(inv()) do
 		if rc ~='' then rc = rc..'^' end
 		o = stead.ref(o)
 		rc = stead.cat(rc, stead.par(' ', 'Id: '..stead.tostr(o.id)..', '..
@@ -257,9 +253,8 @@ dbg_choose_location = dlg {
 	nam = 'Go to',
 	dsc = 'Select location.',
 	gen = function(s)
-		local k,v,kk
 		objs(s):zap();
-		for k,v,kk in spairs(_G) do
+		for k, v, kk in spairs(_G) do
 			if isRoom(v) and not v.debug then
 				local n = stead.tostr(stead.call(v, 'nam'));
 				local o = kk;
@@ -282,9 +277,8 @@ dbg_choose_object = dlg {
 	nam = 'Get object',
 	dsc = 'Select object to get.',
 	gen = function(s)
-		local k,v,kk
 		objs(s):zap();
-		for k,v,kk in spairs(_G) do
+		for k, v, kk in spairs(_G) do
 			if isObject(v) and not isPhrase(v) and not isRoom(v) and not isPlayer(v) and not v.debug and not have(v) and not isStatus(v) then
 				local n = stead.tostr(stead.call(v, 'nam'));
 				local o = kk;
@@ -307,9 +301,8 @@ dbg_drop_object = dlg {
 	nam = 'Drop object',
 	dsc = 'Select object to drop.',
 	gen = function(s)
-		local k,v
 		objs(s):zap();
-		for k,v in stead.ipairs(inv()) do
+		for k, v in stead.ipairs(inv()) do
 			v = stead.ref(v);
 			if not v.debug then
 				local n = stead.tostr(stead.call(v, 'nam'));

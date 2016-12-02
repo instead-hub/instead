@@ -18,8 +18,7 @@ local tagpnext = function(a, k)
 			return
 		end
 		k = {}
-		local r,v 
-		for r,v in stead.opairs(a.s.obj) do
+		for r, v in stead.opairs(a.s.obj) do
 			v = stead.ref(v)
 			if isPhrase(v) and v.tag == a.tag then
 				stead.table.insert(k, v)
@@ -41,12 +40,12 @@ local function phrases(s, tag)
 end
 
 stead.phrase_seen = function(s, enb, ...)
-	local i, ph, k
+	local ph, k
 	local a = {...}
 	if stead.table.maxn(a) == 0 then
 		stead.table.insert(a, stead.cctx().self);
 	end
-	for i=1,stead.table.maxn(a) do
+	for i = 1,stead.table.maxn(a) do
 		local r
 		for k, ph in phrases(s, a[i]) do
 			r = isPhrase(ph) and not isRemoved(ph) and not ph:disabled();
@@ -61,12 +60,12 @@ stead.phrase_seen = function(s, enb, ...)
 end
 
 local function ponoff(s, on, ...)
-	local i, ph, k
+	local ph, k
 	local a = {...}
 	if stead.table.maxn(a) == 0 then
 		stead.table.insert(a, stead.cctx().self)
 	end
-	for i=1,stead.table.maxn(a) do
+	for i = 1,stead.table.maxn(a) do
 		for k, ph in phrases(s, a[i]) do
 			if isPhrase(ph) and not isRemoved(ph) then
 				if on then
@@ -80,12 +79,11 @@ local function ponoff(s, on, ...)
 end
 
 stead.dialog_prem = function(s, ...)
-	local i, ph, k
 	local a = {...}
 	if stead.table.maxn(a) == 0 then
 		stead.table.insert(a, stead.cctx().self);
 	end
-	for i=1,stead.table.maxn(a) do
+	for i = 1, stead.table.maxn(a) do
 		for k, ph in phrases(s, a[i]) do
 			if isPhrase(ph) then
 				ph:remove();
@@ -144,8 +142,7 @@ local function call_enter(ph)
 end
 
 local function dialog_reset(self)
-	local i,ph
-	for i,ph in stead.pairs(self.obj) do
+	for i, ph in stead.pairs(self.obj) do
 		if isPhrase(ph) then
 			ph.nam = ''
 		end
@@ -153,11 +150,11 @@ local function dialog_reset(self)
 end
 
 stead.dialog_look = function(self)
-	local i,n,v,ph,ii
+	local n, v
 	n = 1
 	local start = phr_get(self)
 	dialog_reset(self)
-	for i,ph,ii in stead.opairs(self.obj) do
+	for i, ph, ii in stead.opairs(self.obj) do
 		if ii >= start then
 			if ii ~= start and isDelimiter(ph) then
 				break
@@ -177,7 +174,7 @@ stead.dialog_look = function(self)
 end
 
 stead.dialog_rescan = function(self, naming, from)
-	local i,k,ph,ii, start
+	local k, start
 	k = 0
 	if stead.type(from) == 'number' then
 		start = from
@@ -186,7 +183,7 @@ stead.dialog_rescan = function(self, naming, from)
 	else
 		start = phr_get(self)
 	end
-	for i,ph,ii in stead.opairs(self.obj) do
+	for i, ph, ii in stead.opairs(self.obj) do
 		if ii >= start then
 			if ii ~= start and isDelimiter(ph) then
 				break
@@ -409,12 +406,11 @@ stead.phrase_save = function(self, name, h, need)
 end
 
 local function dialog_phr2obj(self)
-	local k, v, n
+	local n = 0
 	local aliases = {}
 	if stead.type(self.phr) ~= 'table' then
 		return
 	end
-	n = 0
 	for k, v in ipairs(self.phr) do
 		if stead.type(v) == 'table' then
 			if stead.type(v[1]) == 'number' then
@@ -452,8 +448,7 @@ stead.dialog_phrase = function(self, num)
 		return num
 	end
 	if stead.type(num) ~= 'number' then
-		local k,v,i
-		for k,v,i in stead.opairs(self.obj) do
+		for k, v, i in stead.opairs(self.obj) do
 			v = stead.ref(v)
 			if isPhrase(v) and v.tag == num then
 				return v, i

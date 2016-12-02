@@ -24,9 +24,8 @@ finger = {
 		end 
 	end;
 	list = function(s)
-		local k,v
 		local new = {}
-		for k,v in stead.ipairs(s.fingers_list) do
+		for k, v in stead.ipairs(s.fingers_list) do
 			local x, y, pressure
 			x, y, pressure = stead.finger_pos(v.id)
 			if x then
@@ -51,8 +50,7 @@ finger = {
 		return x, y, pressure
 	end;
 	lookup = function(s, fid)
-		local k,v
-		for k,v in stead.ipairs(s.fingers_list) do
+		for k, v in stead.ipairs(s.fingers_list) do
 			if v.id == fid then
 				return v, k
 			end

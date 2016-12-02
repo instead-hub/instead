@@ -6,7 +6,6 @@ function declare(n)
 		return
 	end
 	if type(n) == 'table' then
-		local k, v
 		for k, v in stead.pairs(n) do
 			declarations[k] = true
 			stead.rawset(_G, k, v)
@@ -17,7 +16,6 @@ function declare(n)
 end
 
 local function mod_init()
-	local k,v
 	for k, v in stead.pairs(declarations) do
 		stead.rawset(_G, k, nil)
 	end

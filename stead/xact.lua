@@ -88,9 +88,9 @@ local __do_xact = function(str, self)
 end
 
 stead.fmt = stead.hook(stead.fmt, function(f, ...)
-	local i, res, s
+	local res, s
 	local a = {...}
-	for i=1,stead.table.maxn(a) do
+	for i = 1, stead.table.maxn(a) do
 		if stead.type(a[i]) == 'string' then
 			s = __do_xact(a[i]);
 			res = stead.par('', res, s):gsub('\\?[\\{}]', { [ '\\{' ] = '{', [ '\\}' ] = '}' });

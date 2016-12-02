@@ -9,8 +9,7 @@ format = {
 	filter = nil;
 	nopara = '_';
 	save = function(self, name, h, need)
-		local k,v
-		for k,v in stead.pairs(self) do
+		for k, v in stead.pairs(self) do
 			if k == 'para' or k == 'para_space' or k == 'quotes' or
 			    k == 'dash' or k == 'nopara' then
 				local s = stead.tostring(v)

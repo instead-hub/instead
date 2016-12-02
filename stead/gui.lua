@@ -60,7 +60,6 @@ iface.xref = function(self, str, obj, ...)
 		cmd = 'act ';
 	end
 	local a = ''
-	local i
 	local varg = {...}
 	for i = 1, stead.table.maxn(varg) do
 		a = a..','..varg[i]
@@ -330,10 +329,10 @@ function isMenu(v)
 end
 
 stead.fmt = function(...)
-	local i, res
-	local a={...}
+	local res
+	local a = {...}
 
-	for i=1,stead.table.maxn(a) do
+	for i = 1, stead.table.maxn(a) do
 		if stead.type(a[i]) == 'string' then
 			local s = stead.string.gsub(a[i],'\t', stead.space_delim):gsub('[\n]+', stead.space_delim);
 			s = stead.string.gsub(s, '\\?[\\^]', { ['^'] = '\n', ['\\^'] = '^',

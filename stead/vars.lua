@@ -38,9 +38,8 @@ function isForSave(k, v, s) -- k - key, v - value, s -- parent table
 end
 
 local function __vars_add(s, v, set)
-	local k, o
 	if not variables(s) then s.variables = {} end
-	for k,o in stead.pairs(v) do
+	for k, o in stead.pairs(v) do
 		if stead.tonum(k) then
 			stead.table.insert(variables(s), o);
 		elseif variables(s)[k] then
@@ -64,25 +63,23 @@ local function __vars_add(s, v, set)
 end
 
 local function __vars_fill(v)
-	local k,o
 	if stead.type(v) ~= 'table' then
 		return
 	end
-	for k,o in stead.ipairs(v) do
+	for k, o in stead.ipairs(v) do
 		if stead.type(o) == 'table' and o.variable_type then
 			__vars_add(v, o);
 			stead.rawset(v, k, false)
 		end
 	end
 	if stead.type(variables(v)) == 'table' then
-		local k,o
 		local vars = {}
 		if v == _G then
 			G.variables_save = {}
 		else
 			v.variables_save = {}
 		end
-		for k,o in stead.pairs(variables(v)) do
+		for k, o in stead.pairs(variables(v)) do
 			if stead.tonum(k) and stead.type(o) == 'string' then
 				stead.table.insert(vars, o)
 			else
@@ -93,7 +90,7 @@ local function __vars_fill(v)
 				stead.table.insert(vars, k);
 			end
 		end
-		for k,o in stead.ipairs(vars) do
+		for k, o in stead.ipairs(vars) do
 			variables_save(v)[o] = true
 		end
 		if v == _G then
@@ -135,9 +132,8 @@ stead.add_var = function(s, v)
 	__vars_fill(s)
 end
 local function mod_init()
-	local k,v
 	if stead.type(variables(_G)) == 'table' then
-		for k,v in stead.ipairs(variables(_G)) do
+		for k, v in stead.ipairs(variables(_G)) do
 			stead.rawset(_G, v, nil)
 		end
 	end

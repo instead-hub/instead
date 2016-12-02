@@ -28,7 +28,6 @@ stead.module_init(function()
 end)
 
 stead.hook_keys = function(...)
-	local i
 	local a = {...};
 	for i = 1, stead.table.maxn(a) do
 		input._key_hooks[tostring(a[i])] = true;
@@ -36,7 +35,6 @@ stead.hook_keys = function(...)
 end
 
 stead.unhook_keys = function(...)
-	local i
 	local a = {...};
 	for i = 1, stead.table.maxn(a) do
 		input._key_hooks[tostring(a[i])] = nil;

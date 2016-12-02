@@ -149,8 +149,7 @@ local function tolow(s)
 	s = s:lower();
 	local xlat = kbdlower
 	if xlat then
-		local k,v
-		for k,v in stead.pairs(xlat) do
+		for k, v in stead.pairs(xlat) do
 			s = s:gsub(k,v);
 		end
 	end
@@ -204,8 +203,7 @@ game.action = stead.hook(game.action, function (f, s, cmd, ...)
 end)
 
 local lookup_inp = function()
-	local i,o 
-	for i,o in stead.opairs(objs()) do
+	for i, o in stead.opairs(objs()) do
 		o = stead.ref(o)
 		if o._edit then
 			return o

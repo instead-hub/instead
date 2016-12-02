@@ -5,7 +5,6 @@ stead.make_snapshot = function(nr)
 	local h = { };
 	h.txt = ''
 	h.write = function(s, ...)
-		local i
 		local a = {...};
 		for i = 1, stead.table.maxn(a) do
 			s.txt = s.txt .. stead.tostr(a[i]);

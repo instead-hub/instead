@@ -74,8 +74,6 @@ end
 stead.menu_toggle = instead_menu_toggle
 
 stead.api_atleast = function(...)
-	local k
-	local v
 	for k, v in stead.ipairs {...} do
 		if stead.type(k) ~= 'number' then
 			return false
@@ -91,8 +89,6 @@ stead.api_atleast = function(...)
 end;
 
 stead.atleast = function(...)
-	local k
-	local v
 	for k, v in stead.ipairs {...} do
 		if stead.type(k) ~= 'number' then
 			return false
@@ -263,7 +259,6 @@ stead.pget = function()
 end
 
 stead.p = function(...)
-	local i
 	local a = {...}
 	if stead.cctx() == nil then
 		error ("Call from global context.", 2);
@@ -275,7 +270,6 @@ stead.p = function(...)
 end
 
 stead.pr = function(...)
-	local i
 	local a = {...}
 	if stead.cctx() == nil then
 		error ("Call from global context.", 2);
@@ -295,7 +289,7 @@ end
 
 -- merge strings with "space" as separator
 stead.par = function(space,...)
-	local i, res
+	local res
 	local a = {...};
 	for i = 1, stead.table.maxn(a) do
 		if stead.type(a[i]) == 'string' then
@@ -311,7 +305,7 @@ stead.par = function(space,...)
 end
 -- add to not nill string any string
 stead.cat = function(v,...)
-	local i, res
+	local res
 	if not v then
 		return nil
 	end
@@ -414,10 +408,10 @@ function txtmiddle(v)
 end
 
 stead.fmt = function(...)
-	local i, res
+	local res
 	local a = {...};
 
-	for i=1,stead.table.maxn(a) do
+	for i = 1, stead.table.maxn(a) do
 		if stead.type(a[i]) == 'string' then
 			local s = stead.string.gsub(a[i],'[\t ]+', stead.space_delim);
 			s = stead.string.gsub(s, '[\n]+', stead.space_delim);
@@ -447,9 +441,8 @@ end
 
 local ordered_i = function(t)
 	local ordered = {};
-	local i,v, max;
-	max = 0;
-	for i,v in ilist(t) do
+	local max = 0
+	for i, v in ilist(t) do
 		stead.table.insert(ordered, i);
 		max = max + 1;
 	end
@@ -527,7 +520,7 @@ stead.obj_xref = function(self,str)
 end
 
 stead.obj_look = function(self)
-	local i, vv, o
+	local vv
 	if isDisabled(self) then
 		return
 	end
@@ -537,7 +530,7 @@ stead.obj_look = function(self)
 	elseif v then
 		v = stead.string.gsub(v, '[{}]','');
 	end
-	for i,o in stead.opairs(self.obj) do
+	for i, o in stead.opairs(self.obj) do
 		o = stead.ref(o);
 		if isObject(o) then
 			vv = stead.obj_look(o);
@@ -591,14 +584,14 @@ stead.obj_save = function(self, name, h, need)
 end
 
 stead.obj_str = function(self)
-	local i, v, vv, o;
+	local v, vv;
 	if not isObject(self) then
 		return
 	end
 	if isDisabled(self) then
 		return 
 	end
-	for i,o in stead.opairs(self.obj) do
+	for i, o in stead.opairs(self.obj) do
 		o = stead.ref(o);
 		if o~= nil and not isDisabled(o) then -- isObject is better, but compat layer must be ok
 			vv = stead.call(o, 'nam');
@@ -699,8 +692,7 @@ function stead.deref(n)
 end
 
 stead.list_check = function(self, name)
-	local i, v, ii;
-	for i,v,ii in stead.opairs(self) do
+	for i, v, ii in stead.opairs(self) do
 		local o = stead.ref(v);
 		if not o then -- isObject(o) then -- compat
 			error ("No object: "..name.."["..stead.tostr(ii).."]".." ("..stead.tostr(stead.type(v))..")")
@@ -714,8 +706,8 @@ stead.list_check = function(self, name)
 end
 
 stead.list_str = function(self)
-	local i, v, vv, o;
-	for i,o in stead.opairs(self) do
+	local v, vv;
+	for i, o in stead.opairs(self) do
 		o = stead.ref(o);
 		if o~= nil and not isDisabled(o) then
 			vv = stead.call(o, 'nam');
@@ -760,7 +752,6 @@ stead.list_set = function(self, name, pos)
 end
 
 stead.list_find = function(self, name)
-	local n, v, ii
 	local o = stead.ref(name, true)
 	for n,v,ii in stead.opairs(self) do 
 		if stead.ref(v) == o then -- do not call func while search
@@ -771,8 +762,7 @@ stead.list_find = function(self, name)
 end
 
 stead.list_disable_all = function(s)
-	local k,v
-	for k,v in stead.opairs(s) do
+	for k, v in stead.opairs(s) do
 		local o = stead.ref(v);
 		if isObject(o) then
 			o:disable()
@@ -781,8 +771,7 @@ stead.list_disable_all = function(s)
 end
 
 stead.list_enable_all = function(s)
-	local k,v
-	for k,v in stead.opairs(s) do
+	for k, v in stead.opairs(s) do
 		local o = stead.ref(v);
 		if isObject(o) then
 			o:enable()
@@ -817,8 +806,7 @@ stead.list_save = function(self, name, h, need)
 end
 
 stead.list_name = function(self, name, dis)
-	local n, o, ii
-	for n,o,ii in stead.opairs(self) do
+	for n, o, ii in stead.opairs(self) do
 		o = stead.ref(o);
 		if isObject(o) then
 			local nam = stead.call(o,'nam') ;
@@ -830,8 +818,7 @@ stead.list_name = function(self, name, dis)
 	return nil
 end
 stead.list_id = function(self, id, dis)
-	local n,o,ii
-	for n,o,ii in stead.opairs(self) do
+	for n, o, ii in stead.opairs(self) do
 		o = stead.ref(o);
 		if dis or not isDisabled(o) then
 			if isObject(o) and id == o.id then
@@ -860,8 +847,7 @@ stead.list_search = function(self, n, dis)
 end
 
 stead.list_zap = function(self)
-	local n,o,ii
-	for n,o,ii in stead.opairs(self) do
+	for n, o, ii in stead.opairs(self) do
 		self[ii] = nil;
 	end
 	self.__modified__ = true
@@ -869,8 +855,7 @@ stead.list_zap = function(self)
 end
 
 stead.list_concat = function(self, other, pos)
-	local n,o,ii
-	for n,o,ii in stead.opairs(other) do
+	for n, o, ii in stead.opairs(other) do
 		o = stead.ref(o);
 		if pos == nil then
 			self:add(stead.deref(o));
@@ -1038,8 +1023,8 @@ stead.room_scene = function(self)
 end
 
 stead.room_look = function(self)
-	local i, vv, o;
-	for i,o in stead.opairs(self.obj) do
+	local vv;
+	for i, o in stead.opairs(self.obj) do
 		o = stead.ref(o);
 		if isObject(o) then
 			vv = stead.par(stead.space_delim, vv, o:look());
@@ -1058,7 +1043,7 @@ stead.obj_search = function(v, n, dis)
 	if o then
 		return o, v;
 	end
-	for i,o in stead.opairs(v.obj) do
+	for i, o in stead.opairs(v.obj) do
 		o = stead.ref(o);
 		if isObject(o) then
 			local r,rr = stead.obj_search(o, n, dis);
@@ -1116,9 +1101,9 @@ stead.dialog_scene = function(self)
 end
 
 stead.dialog_look = function(self)
-	local i,n,v,ph
+	local n, v
 	n = 1
-	for i,ph in stead.opairs(self.obj) do
+	for i, ph in stead.opairs(self.obj) do
 		ph = stead.ref(ph);
 		if isPhrase(ph) and not isDisabled(ph) then
 			v = stead.par('^', v, txtnm(n, ph:look()));
@@ -1129,9 +1114,9 @@ stead.dialog_look = function(self)
 end
 
 stead.dialog_rescan = function(self)
-	local i,k,ph
+	local k
 	k = 1
-	for i,ph in stead.opairs(self.obj) do
+	for i, ph in stead.opairs(self.obj) do
 		ph = stead.ref(ph);
 		if isPhrase(ph) and not isDisabled(ph) then
 			ph.nam = stead.tostr(k);
@@ -1159,12 +1144,12 @@ stead.dialog_phrase = function(self, num)
 end
 
 stead.phrase_seen = function(s, enb, ...)
-	local i, ph
+	local ph
 	local a = {...}
 	if stead.table.maxn(a) == 0 then
 		stead.table.insert(a, stead.cctx().self);
 	end
-	for i=1,stead.table.maxn(a) do
+	for i = 1,stead.table.maxn(a) do
 		ph = stead.dialog_phrase(s, a[i]);
 		local r = not isPhrase(ph) or isRemoved(ph) or ph:disabled();
 		if not enb then r = not r end
@@ -1182,12 +1167,12 @@ stead.dialog_punseen = function(s, ...)
 end
 
 local function ponoff(s, on, ...)
-	local i, ph
+	local ph
 	local a = {...}
 	if stead.table.maxn(a) == 0 then
 		stead.table.insert(a, stead.cctx().self)
 	end
-	for i=1,stead.table.maxn(a) do
+	for i = 1,stead.table.maxn(a) do
 		ph = stead.dialog_phrase(s, a[i]);
 		if isPhrase(ph) and not isRemoved(ph) then
 			if on then
@@ -1200,12 +1185,12 @@ local function ponoff(s, on, ...)
 end
 
 stead.dialog_prem = function(s, ...)
-	local i, ph
+	local ph
 	local a = {...}
 	if stead.table.maxn(a) == 0 then
 		stead.table.insert(a, stead.cctx().self);
 	end
-	for i=1,stead.table.maxn(a) do
+	for i = 1,stead.table.maxn(a) do
 		ph = stead.dialog_phrase(s, a[i]);
 		if isPhrase(ph) then
 			ph:remove();
@@ -1371,13 +1356,11 @@ stead.player_look = function(self)
 end
 
 stead.obj_tag = function(self, id)
-	local k,v
-
 	if isDisabled(self) then
 		return id
 	end
 	
-	for k,v in stead.opairs(self.obj) do
+	for k, v in stead.opairs(self.obj) do
 		v = stead.ref(v);
 		if isObject(v) and not isDisabled(v) then
 			id = id + 1;
@@ -1389,13 +1372,12 @@ stead.obj_tag = function(self, id)
 end
 
 stead.player_tagall = function(self)
-	local id, k, v;
-	id = 0;
+	local id = 0;
 
 	id = stead.obj_tag(stead.here(), id);
 	id = stead.obj_tag(stead.me(), id);
 
-	for k,v in stead.opairs(ways()) do
+	for k, v in stead.opairs(ways()) do
 		v = stead.ref(v);
 		if isRoom(v) and not isDisabled(v) then
 			id = id + 1;
@@ -1615,13 +1597,12 @@ function player(v)
 end
 
 stead.game_life = function(self)
-	local i,o
-	local av,v
+	local av, v
 	stead.in_life_call = true;
 	stead.in_life_move = false
 	stead.lifes_op = {}; -- lifes to on/off
 	stead.PLAYER_MOVED = stead.rawget(_G, 'PLAYER_MOVED')
-	for i,o in stead.opairs(self.lifes) do
+	for i, o in stead.opairs(self.lifes) do
 		local vv
 		local pre
 		o = stead.ref(o);
@@ -1818,7 +1799,6 @@ stead.do_ini = function(self, load)
 	stead.me().where = stead.deref(stead.me().where);
 --	game.where = stead.deref(game.where);
 
-	local i, f
 	for i, f in ipairs(stead.modules_start) do
 		f(load)
 	end
@@ -1919,13 +1899,13 @@ end
 
 function for_each(o, n, f, fv, ...)
 	local call_list = {}
-	local k,v
+
 	if stead.type(o) ~= 'table' then
 		return
 	end
 	stead.object = n;
 
-	for k,v in stead.pairs(o) do
+	for k, v in stead.pairs(o) do
 		if v ~= _G and fv(v) then
 			stead.table.insert(call_list, { k = k, v = v });
 		end
@@ -1960,8 +1940,7 @@ function for_each_list(f,...)
 end
 
 stead.clearvar = function(v)
-	local k,o
-	for k,o in stead.pairs(v) do
+	for k, o in stead.pairs(v) do
 		if stead.type(o) == 'table' and o ~= _G and o.__visited__ ~= nil then
 			o.__visited__ = nil
 			o.auto_saved = nil
@@ -1971,8 +1950,7 @@ stead.clearvar = function(v)
 end
 
 stead.savemembers = function(h, self, name, need)
-	local k,v
-	for k,v in stead.pairs(self) do
+	for k, v in stead.pairs(self) do
 		local need2
 		if k ~= "__visited__" then
 			need2 = false
@@ -2119,8 +2097,7 @@ stead.do_savegame = function(s, h)
 		stead.savevar(h, value, key, isForSave(key, value, _G))
 	end
 	local forget = game.scriptsforget
-	local i,v
-	for i,v in stead.ipairs(s._scripts) do
+	for i, v in stead.ipairs(s._scripts) do
 		h:write(stead.string.format("stead.gamereset(%q,%s)\n", 
 			v, stead.tostr(forget)))
 		forget = nil
@@ -2344,7 +2321,6 @@ iface = {
 		stead.rawset(_G, 'PLAYER_MOVED', nil)
 		stead.cache = {}
 		cmd, a = stead.getcmd(inp);
-		local i, f
 
 		for i, f in ipairs(stead.modules_cmd) do
 			local r, v = f(cmd, stead.unpack(a))
@@ -2358,28 +2334,28 @@ iface = {
 		local oldloc = stead.here();
 		if cmd == 'look' then
 			stead.state = true
-			r,v = stead.me():look();
+			r, v = stead.me():look();
 		elseif cmd == 'obj' then
-			r,v = stead.me():objs();
+			r, v = stead.me():objs();
 		elseif cmd == 'inv' then
-			r,v = stead.me():inv();
+			r, v = stead.me():inv();
 		elseif cmd == 'way' then
-			r,v = stead.me():ways();
+			r, v = stead.me():ways();
 		elseif cmd == 'ls' then
 			r = stead.par(stead.scene_delim, stead.me():objs(), stead.me():inv(), stead.me():ways());
 			v = nil;
 		elseif cmd == 'go' then
 			stead.state = true
-			r,v = stead.me():go(stead.unpack(a));
+			r, v = stead.me():go(stead.unpack(a));
 		elseif cmd == 'back' then
 			stead.state = true
-			r,v = stead.me():go(stead.from());
+			r, v = stead.me():go(stead.from());
 		elseif cmd == 'act' then
 			stead.state = true
-			r,v = stead.me():action(stead.unpack(a));
+			r, v = stead.me():action(stead.unpack(a));
 		elseif cmd == 'use' then
 			stead.state = true
-			r,v = stead.me():use(stead.unpack(a));
+			r, v = stead.me():use(stead.unpack(a));
 		elseif cmd == 'save' then
 			r, v = game:save(stead.unpack(a));
 		elseif cmd == 'load' then
@@ -2397,7 +2373,7 @@ iface = {
 			stead.state = true
 		else
 			stead.state = true
-			r,v = stead.me():action(cmd, stead.unpack(a));
+			r, v = stead.me():action(cmd, stead.unpack(a));
 		end
 		-- here r is action result, v - ret code value	
 		-- state -- game state changed
@@ -3092,7 +3068,6 @@ function stead_version(v)
 	if not stead.tostr(v) then
 		return
 	end
-	local n
 
 	stead.version_table = {}
 	stead.api_version_table = {}
@@ -3322,7 +3297,6 @@ end
 stead.init = function(s)
 	stead.initialized = false
 	stead.started = false
-	local k, v
 	for k, v in pairs(stead.objects) do
 		if type(v) == 'function' then
 			stead.rawset(_G, k, v())
@@ -3331,18 +3305,19 @@ stead.init = function(s)
 		end
 	end
 	s.functions = {} -- code blocks
-	local k,v
+
 	for k,v in stead.ipairs(s.modules_ini) do
 		v();
 	end
+
 	if stead.type(stead.sandbox) == 'function' then
 		stead.sandbox()
 		stead.sandbox = nil
 	end
 end
+
 stead.done = function(s)
-	local k,v
-	for k,v in stead.ipairs(s.modules_done) do
+	for k, v in stead.ipairs(s.modules_done) do
 		v();
 	end
 end
