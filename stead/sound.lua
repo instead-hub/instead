@@ -5,16 +5,21 @@ stead.sound_channel = instead_sound_channel
 stead.sound_volume = instead_sound_volume
 stead.sound_panning = instead_sound_panning
 stead.sound_load_mem = instead_sound_load_mem
+stead.music_callback = instead_music_callback
 
 sound = {
 	nam = 'sound';
 	object_type = true;
 	system_type = true;
-	load = function(fname)
-		return stead.sound_load(fname);
+	load = function(a, b, t)
+		if type(a) == 'string' then
+			return stead.sound_load(a);
+		elseif type(t) == 'table' then
+			return stead.sound_load_mem(a, b, t) -- hz, channel, t
+		end
 	end;
-	load_mem = function(hz, channel, t)
-		return stead.sound_load_mem(hz, channel, t);
+	music_callback = function(...)
+		return stead.music_callback(...)
 	end;
 	free = function(key)
 		return stead.sound_free(key);

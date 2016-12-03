@@ -691,14 +691,14 @@ static int luaB_free_sounds(lua_State *L) {
 
 static int luaB_panning_sound(lua_State *L) {
 	int chan = luaL_optinteger(L, 1, -1);
-	int left = luaL_optinteger(L, 2, 255);
-	int right = luaL_optinteger(L, 3, 255);
+	int left = luaL_optnumber(L, 2, 255);
+	int right = luaL_optnumber(L, 3, 255);
 	snd_panning(chan, left, right);
 	return 0;
 }
 
 static int luaB_volume_sound(lua_State *L) {
-	int vol = luaL_optinteger(L, 1, -1);
+	int vol = luaL_optnumber(L, 1, -1);
 	vol = snd_volume_mus(vol);
 	lua_pushinteger(L, vol);
 	return 1;
@@ -809,13 +809,13 @@ static int sound_size(lua_State *L) {
 static int sound_value(lua_State *L) {
 	struct lua_sound *hdr = (struct lua_sound*)lua_touserdata(L, 1);
 	int pos = luaL_optinteger(L, 2, -1);
-	float v = luaL_optnumber(L, 3, -2.0f);
+	float v = luaL_optnumber(L, 3, 0.0f);
 	if (pos <= 0)
 		return 0;
 	if (pos > hdr->len)
 		return 0;
 	pos --;
-	if (v == -2.0f) {
+	if (lua_isnoneornil(L, 3)) {
 		lua_pushinteger(L, hdr->buf[pos]);
 		return 1;
 	}
