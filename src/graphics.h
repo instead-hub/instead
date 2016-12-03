@@ -115,6 +115,7 @@ extern img_t	gfx_grab_screen(int x, int y, int w, int h);
 extern img_t 	gfx_new(int w, int h);
 extern img_t	gfx_new_rgba(int w, int h);
 extern img_t	gfx_new_from(int w, int h, unsigned char *pixels);
+extern img_t	gfx_dup(img_t src);
 extern img_t	gfx_load_image(char *filename);
 extern void	gfx_free_image(img_t pixmap);
 extern int	gfx_img_w(img_t pixmap);

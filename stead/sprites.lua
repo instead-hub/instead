@@ -73,8 +73,8 @@ sprite = {
 	size = function(spr)
 		return stead.sprite_size(spr);
 	end;
-	text_size = function(fnt, spr)
-		return stead.sprite_text_size(fnt, spr);
+	text_size = function(fnt, ...)
+		return stead.sprite_text_size(fnt, ...);
 	end;
 	draw = function(s, fx, fy, fw, fh, d, x, y, alpha)
 		if d == nil and x == nil and y == nil then

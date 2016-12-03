@@ -603,11 +603,22 @@ img_t   gfx_new_rgba(int w, int h)
 				   amask);
 #if SDL_VERSION_ATLEAST(2,0,0)
 	if (dst)
-		SDL_SetSurfaceBlendMode(dst, SDL_BLENDMODE_NONE);
+		SDL_SetSurfaceBlendMode(dst, SDL_BLENDMODE_BLEND);
 #endif
 	if (dst)
 		return GFX_IMG_REL(dst);
 	return NULL;
+}
+
+img_t gfx_dup(img_t src)
+{
+	SDL_Surface *dst;
+	if (!src)
+		return NULL;
+	dst = SDL_ConvertSurface(Surf(src), Surf(src)->format, Surf(src)->flags);
+	if (!dst)
+		return NULL;
+	return GFX_IMG_REL(dst);
 }
 
 img_t   gfx_new_from(int w, int h, unsigned char *pixels)
@@ -862,7 +873,6 @@ unsigned char *gfx_get_pixels(img_t src)
 	ptr = (unsigned char*)img->pixels;
 	return ptr;
 }
-
 img_t gfx_alpha_img(img_t src, int alpha)
 {
 	Uint8 *ptr;

@@ -193,14 +193,14 @@ static int luaB_load_sprite(lua_State *L) {
 	if (pixels) {
 		img = pixels_img(pixels);
 		if (img)
-			img = gfx_alpha_img(img, 255);
+			img = gfx_dup(img);
 	} else {
 		img = gfx_load_image((char*)fname);
 		if (img)
 			theme_img_scale(&img);
-		if (img)
-			img = gfx_display_alpha(img); /*speed up */
 	}
+	if (img)
+		img = gfx_display_alpha(img); /*speed up */
 
 	if (!img)
 		goto err;
@@ -230,11 +230,14 @@ static int luaB_load_font(lua_State *L) {
 	struct game_theme *t = &game_theme;
 
 	const char *fname = luaL_optstring(L, 1, NULL);
-	int sz = luaL_optnumber(L, 2, t->font_size) * game_theme.scale;
+	int sz = luaL_optnumber(L, 2, t->font_size);
 	const char *desc = luaL_optstring(L, 3, NULL);
-	if (!fname)
+	if (!fname || sz == 0)
 		return 0;
-
+	if (sz > 0)
+		sz *= game_theme.scale;
+	else
+		sz = - sz; /* sz < 0 is unscalable */
 	fnt = fnt_load((char*)fname, sz);
 
 	if (!fnt)
@@ -562,7 +565,7 @@ static int luaB_dup_sprite(lua_State *L) {
 	if (!s)
 		return 0;
 
-	img2 = gfx_alpha_img(s, 255);
+	img2 = gfx_dup(s);
 
 	if (!img2)
 		return 0;
@@ -2132,7 +2135,7 @@ static int luaB_pixels_sprite(lua_State *L) {
 			gfx_free_image(img);
 			return 0;
 		}
-		gfx_copy_from(img, 0, 0, w, h, img2, 0, 0);
+		gfx_draw_from(img, 0, 0, w, h, img2, 0, 0);
 		gfx_free_image(img);
 		scale = luaL_optnumber(L, 2, 1.0f);
 	} else {
@@ -2167,7 +2170,7 @@ static int luaB_pixels_sprite(lua_State *L) {
 	hdr->size = size;
 	hdr->dirty = 0;
 
-	if (ww == h && hh == h) { /* direct map */
+	if (ww == w && hh == h) { /* direct map */
 		direct = 1;
 		img = gfx_new_from(ww, hh, (unsigned char*)(hdr + 1));
 	} else {
@@ -2192,8 +2195,8 @@ static int luaB_pixels_sprite(lua_State *L) {
 		gfx_free_image(img2);
 	} else {
 		memset(hdr + 1, 0, size);
-		hdr->dirty = 1;
 	}
+	hdr->dirty = 1;
 	luaL_getmetatable(L, "pixels metatable");
 	lua_setmetatable(L, -2);
 	return 1;
