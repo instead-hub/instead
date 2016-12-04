@@ -8,6 +8,7 @@ stead = {
 	string = string,
 	tostr = tostring,
 	tonum = tonumber,
+	collectgarbage = collectgarbage,
 	type = type,
 	ipairs = ipairs,
 	pairs = pairs, 
@@ -2063,6 +2064,7 @@ stead.gamereset = function(file, forget)
 		game._scripts = { }
 		game.lifes:zap()
 		game.scriptsforget = true
+		stead.collectgarbage()
 		-- anything else?
 		stead:init();
 	end
