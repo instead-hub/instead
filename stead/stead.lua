@@ -1821,11 +1821,7 @@ stead.do_ini = function(self, load)
 	for_each_object(call_ini, load);
 
 	stead.me():tag();
-	if not self.showlast then
-		stead.last_disp(false)
-	end
-	stead.initialized = true
-	return stead.par('',v, stead.last_disp()); --stead.par('^^',v);
+	return v
 end
 
 stead.game_ini = function(self)
@@ -1843,6 +1839,11 @@ stead.game_start = function(s)
 	if stead.type(stead.rawget(_G, 'start')) == 'function' then
 		start() -- start function
 	end
+	stead.started = true
+	if not s.showlast then
+		stead.last_disp(false)
+	end
+	return stead.cat('', stead.last_disp())
 end
 
 function game(v)
@@ -2051,10 +2052,10 @@ stead.gamereset = function(file, forget)
 	end
 	if forget then
 		stead:done();
-		init = function() -- null init function
-		end
-		start = function() -- null start function
-		end
+		stead.rawset(_G, 'init', function() -- null init function
+		end)
+		stead.rawset(_G, 'start', function() -- null start function
+		end)
 		for_each_object(function(k, o) -- destroy all objects
 			if o.system_type then
 				return
@@ -2082,7 +2083,6 @@ stead.gamefile = function(file, forget)
 	stead.gamereset(file, forget)
 	if forget then
 		game:start()
-		stead.started = true
 		return stead.walk(stead.here(), false, false, true);
 	end
 end
@@ -2156,6 +2156,11 @@ stead.game_load = function(self, name)
 	if name == nil then
 		return nil, false
 	end
+
+	if stead.started then
+		stead.gamereset('main.lua', true)
+	end
+
 	local f, err = loadfile(name);
 	if f then
 		local i,r = f();
@@ -2164,8 +2169,7 @@ stead.game_load = function(self, name)
 		end
 		i, r = stead.do_ini(self, true);
 		if not stead.started then
-			game:start()
-			stead.started = true
+			i, r = game:start()
 		end
 		return i, r
 	end

@@ -45,11 +45,10 @@ stead.restore_snapshot = function (nr)
 
 	if stead.api_atleast(1, 7, 1) then
 		game:start()
-		stead.started = true
-		PLAYER_MOVED = true -- force fading
+		stead.rawset(_G, 'PLAYER_MOVED',  true) -- force fading
 	end
 
-	RAW_TEXT = true
+	stead.rawset(_G, 'RAW_TEXT', true)
 --	delete_snapshot(nr);
 	if stead.cctx() then
 		stead.pr(i)
