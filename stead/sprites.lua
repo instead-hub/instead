@@ -123,9 +123,6 @@ sprite = {
 	free = function(key)
 		return stead.sprite_free(key);
 	end;
-	pixels = function(...)
-		return stead.sprite_pixels(...)
-	end;
 }
 
 stead.module_init(function()

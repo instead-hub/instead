@@ -2125,8 +2125,8 @@ static int luaB_pixels_sprite(lua_State *L) {
 		img = gfx_load_image((char*)fname);
 		if (!img)
 			return 0;
-		if (!cache_have(gfx_image_cache(), img))
-			v = 1.0f; /* do not scale sprites! */
+//		if (!cache_have(gfx_image_cache(), img))
+//			v = 1.0f; /* do not scale sprites! */
 		w = gfx_img_w(img);
 		h = gfx_img_h(img);
 
@@ -2154,7 +2154,6 @@ static int luaB_pixels_sprite(lua_State *L) {
 	ww = ceil((float)ww * scale);
 	hh = ceil((float)hh * scale);
 	size = w * h * 4;
-
 	hdr = lua_newuserdata(L, sizeof(*hdr) + size);
 	if (!hdr) {
 		if (img2)

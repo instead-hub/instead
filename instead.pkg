@@ -76,6 +76,7 @@
 ".\symbian_gamedata\stead\theme.lua" -"!:\data\instead\stead\theme.lua"
 ".\symbian_gamedata\stead\prefs.lua" -"!:\data\instead\stead\prefs.lua"
 ".\symbian_gamedata\stead\sprites.lua" -"!:\data\instead\stead\sprites.lua"
+".\symbian_gamedata\stead\pixels.lua" -"!:\data\instead\stead\pixels.lua"
 ".\symbian_gamedata\stead\sound.lua" -"!:\data\instead\stead\sound.lua"
 ".\symbian_gamedata\stead\wroom.lua" -"!:\data\instead\stead\wroom.lua"
 ".\symbian_gamedata\stead\nouse.lua" -"!:\data\instead\stead\nouse.lua"

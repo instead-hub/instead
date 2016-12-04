@@ -29,6 +29,7 @@ install:
 	$(INSTALL) hideinv.lua $(DESTDIR)$(STEADPATH)/hideinv.lua
 	$(INSTALL) theme.lua $(DESTDIR)$(STEADPATH)/theme.lua
 	$(INSTALL) sprites.lua $(DESTDIR)$(STEADPATH)/sprites.lua
+	$(INSTALL) pixels.lua $(DESTDIR)$(STEADPATH)/pixels.lua
 	$(INSTALL) sound.lua $(DESTDIR)$(STEADPATH)/sound.lua
 	$(INSTALL) wroom.lua $(DESTDIR)$(STEADPATH)/wroom.lua
 	$(INSTALL) nouse.lua $(DESTDIR)$(STEADPATH)/nouse.lua
