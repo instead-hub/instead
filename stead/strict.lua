@@ -35,6 +35,9 @@ setmetatable(_G, {
 			return
 		end
 		local f = stead.getinfo(2, "S").source
+		if f:byte(1) == 0x3d then
+			return
+		end
 		if f:byte(1) ~= 0x40 or f:find("/stead/", 1, true) then
 			print ("Uninitialized global variable: "..n.." in "..f)
 		else
