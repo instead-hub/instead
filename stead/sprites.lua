@@ -249,7 +249,7 @@ sprite = {
 	end;
 }
 
-stead.module_init(function()
+stead.module_done(function()
 	stead.sprites_free();
 end)
 
