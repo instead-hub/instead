@@ -26,7 +26,10 @@ local fnew = function(f)
 		return
 	end
 	local fn = {
+--		nam = f;
 		fnt = f;
+--		object_type = true;
+		save = function() end;
 	}
 	setmetatable(fn, font_mt)
 	return fn
@@ -42,6 +45,7 @@ local font_m = {
 }
 
 local pixels_m = {
+	save = function() end;
 	dup = function(self)
 		local w, h, s = self:size()
 		local p = stead.sprite_pixels(w, h, s)

@@ -43,7 +43,10 @@ local new = function(s)
 		return
 	end
 	local sp = {
+--		nam = s;
 		spr = s;
+--		object_type = true;
+		save = function() end;
 	}
 	setmetatable(sp, sprite_mt)
 	return sp
@@ -63,7 +66,10 @@ local fnew = function(f)
 		return
 	end
 	local fn = {
+--		nam = f;
 		fnt = f;
+--		object_type = true;
+		save = function() end;
 	}
 	setmetatable(fn, font_mt)
 	return fn
