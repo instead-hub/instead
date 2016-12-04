@@ -2135,7 +2135,7 @@ static int luaB_pixels_sprite(lua_State *L) {
 			gfx_free_image(img);
 			return 0;
 		}
-		gfx_draw_from(img, 0, 0, w, h, img2, 0, 0);
+		gfx_copy_from(img, 0, 0, w, h, img2, 0, 0);
 		gfx_free_image(img);
 		scale = luaL_optnumber(L, 2, 1.0f);
 	} else {

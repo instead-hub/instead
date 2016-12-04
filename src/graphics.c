@@ -639,7 +639,7 @@ img_t   gfx_new_from(int w, int h, unsigned char *pixels)
 	dst = SDL_CreateRGBSurfaceFrom(pixels, w, h, 32, w * 4, rmask, gmask, bmask, amask);
 #if SDL_VERSION_ATLEAST(2,0,0)
 	if (dst)
-		SDL_SetSurfaceBlendMode(dst, SDL_BLENDMODE_NONE);
+		SDL_SetSurfaceBlendMode(dst, SDL_BLENDMODE_BLEND);
 #endif
 	if (dst)
 		return GFX_IMG_REL(dst);
