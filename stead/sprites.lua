@@ -51,10 +51,10 @@ end
 
 local font_mt = {
 	__gc = function(s)
-		stead.font_free(s.font)
+		stead.font_free(s.fnt)
 	end;
 	__tostring = function(s)
-		return s.font
+		return s.fnt
 	end;
 }
 
@@ -63,7 +63,7 @@ local fnew = function(f)
 		return
 	end
 	local fn = {
-		font = f;
+		fnt = f;
 	}
 	setmetatable(fn, font_mt)
 	return fn
@@ -71,10 +71,10 @@ end
 
 local font_m = {
 	text = function(s, text, col, style, ...)
-		return new(stead.sprite_text(s.font, text, col, style, ...))
+		return new(stead.sprite_text(s.fnt, text, col, style, ...))
 	end;
 	size = function(s, ...)
-		return stead.sprite_text_size(s.font, ...);
+		return stead.sprite_text_size(s.fnt, ...);
 	end;
 }
 

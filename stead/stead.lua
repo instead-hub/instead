@@ -2923,7 +2923,7 @@ stead.cacheable = function(n, f)
 end
 
 stead.get_picture = stead.cacheable('pic', function()
-	local s = stead.call(stead.here(),'pic');
+	local s = stead.call(stead.here(), 'pic');
 	if not s then
 		s = stead.call(game, 'pic');
 	end
