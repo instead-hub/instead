@@ -2,6 +2,7 @@
 -- fake game.gui
 -- stat, menu
 -- fake audio
+-- fake input
 
 -- show hints (numbers)
 game.hinting = true
@@ -185,3 +186,10 @@ stead.module_init(function(s)
 		end,
 	};
 end)
+
+stead.objects.input =  function()
+	return obj { -- input object
+		system_type = true,
+		nam = 'input',
+	};
+end;
