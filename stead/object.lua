@@ -14,12 +14,12 @@ end
 
 stead.player_action = function(self, what, ...)
 	local v,r,obj,vv
-
 	if isXaction(what) then -- already xact
 		obj = what
 	else
 		obj = stead.rawget(_G, what);
 	end
+
 	if not isXaction(obj) then
 		obj = stead.ref(self.where):srch(what);
 	end

@@ -174,6 +174,9 @@ function stead.getcmd(str)
 	else
 		cmd = stead.string.sub(str, i, k);
 	end
+
+	if stead.tonum(cmd) then cmd = stead.tonum(cmd) end
+
 	stead.cmd = cmd
 	if cmd == 'load' or cmd == 'save' then
 		a[1] = stead.strip(stead.string.sub(str, k + 1));
@@ -187,6 +190,9 @@ function stead.getcmd(str)
 			break
 		end
 		a[n] = stead.strip(stead.string.sub(str, i, k));
+		if stead.tonum(a[n]) then
+			a[n] = stead.tonum(a[n])
+		end
 		n = n + 1;
 	end
 	stead.args = a;

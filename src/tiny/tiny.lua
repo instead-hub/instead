@@ -18,6 +18,17 @@ stead.fmt = function(...)
 	return res
 end
 
+-- fake gui
+game.gui = {
+	fading = 4;
+	ways_delim = ' | ';
+	inv_delim = ' | ';
+	hinv_delim = ' | ';
+	hideways = false;
+	hideinv = false;
+	hidetitle = false;
+}
+
 -- xref
 
 iface.xref = function(self, str, obj)
