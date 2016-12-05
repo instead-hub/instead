@@ -1,22 +1,10 @@
 -- some stubs for tiny-instead
+-- fake game.gui
+-- stat, menu
+-- fake audio
 
 -- show hints (numbers)
 game.hinting = true
-
--- own fmt function
-stead.fmt = function(...)
-	local res
-	local a = {...}
-	for i = 1, stead.table.maxn(a) do
-		if stead.type(a[i]) == 'string' then
-			local s = stead.string.gsub(a[i],'[\t ]+', stead.space_delim):gsub('[\n]+', stead.space_delim);
-			s = stead.string.gsub(s, '\\?[\\^]', { ['^'] = '\n', ['\\^'] = '^',
-				['\\\\'] = '\\' });
-			res = stead.par('', res, s);
-		end
-	end
-	return res
-end
 
 -- fake gui
 game.gui = {
@@ -29,26 +17,10 @@ game.gui = {
 	hidetitle = false;
 }
 
--- xref
-
-iface.xref = function(self, str, obj)
-	local o = stead.ref(stead.here():srch(obj));
-	if not o then
-		o = stead.ref(ways():srch(obj));
-	end
-	if not o then
-		o = stead.ref(stead.me():srch(obj));
-	end
-	if not o or not o.id or o.stat_type then
-		return str;
-	end
-	local n = stead.tonum(stead.nameof(o))
-	return stead.cat(str,"("..stead.tostr(n or o.id)..")");
-end
-
 -- menu and stat
 stat = function(v)
-	v.stat_type = true
+	v.status_type = true
+	v.id = false
 	return obj(v)
 end
 

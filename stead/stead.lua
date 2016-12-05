@@ -1364,7 +1364,7 @@ stead.obj_tag = function(self, id)
 	
 	for k, v in stead.opairs(self.obj) do
 		v = stead.ref(v);
-		if isObject(v) and not isDisabled(v) then
+		if isObject(v) and not isDisabled(v) and v.id ~= false then
 			id = id + 1;
 			v.id = id;
 			id = stead.obj_tag(v, id);
@@ -2282,7 +2282,8 @@ iface = {
 		if not o or not o.id then
 			return str;
 		end
-		return stead.cat(str,"("..stead.tostr(o.id)..")");
+		local n = stead.tonum(stead.nameof(o))
+		return stead.cat(str,"("..stead.tostr(n or o.id)..")");
 	end,
 	title = function(self, str)
 		return "["..str.."]";
