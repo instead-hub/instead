@@ -42,7 +42,6 @@ int main(int argc, const char **argv)
 		exit(1);
 	}
 	instead_set_debug(1);
-	instead_set_standalone(0);
 
 	if (instead_init(game)) {
 		fprintf(stderr, "Can not init game: %s\n", game);
@@ -87,16 +86,14 @@ int main(int argc, const char **argv)
 			snprintf(cmd, sizeof(cmd), "%s", p);
 			str = instead_cmd(cmd, &rc);
 		}
-		if (str) {
+		if (str)
 			printf("%s", str);
-		}
 		free(str);
 		if (rc)
 			printf("error!\n");
 		else
 			footer();
 	}
-
 	instead_cmd("save autosave", NULL);
 	instead_done();
 	exit(0);
