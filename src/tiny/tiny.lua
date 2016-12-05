@@ -42,7 +42,8 @@ iface.xref = function(self, str, obj)
 	if not o or not o.id or o.stat_type then
 		return str;
 	end
-	return stead.cat(str,"("..stead.tostr(o.id)..")");
+	local n = stead.tonum(stead.nameof(o))
+	return stead.cat(str,"("..stead.tostr(n or o.id)..")");
 end
 
 -- menu and stat
