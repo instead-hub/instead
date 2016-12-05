@@ -83,8 +83,10 @@ int main(int argc, const char **argv)
 			snprintf(cmd, sizeof(cmd), "%s", p);
 			str = instead_cmd(cmd, &rc);
 		}
-		if (str)
+		if (str) {
 			printf("%s", str);
+			free(str);
+		}
 		if (rc)
 			printf("error!\n");
 		else
