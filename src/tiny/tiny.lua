@@ -1,9 +1,28 @@
 -- some stubs for tiny-instead
+
+-- show hints (numbers)
 game.hinting = true
 
+-- own fmt function
+stead.fmt = function(...)
+	local res
+	local a = {...}
+	for i = 1, stead.table.maxn(a) do
+		if stead.type(a[i]) == 'string' then
+			local s = stead.string.gsub(a[i],'[\t ]+', stead.space_delim):gsub('[\n]+', stead.space_delim);
+			s = stead.string.gsub(s, '\\?[\\^]', { ['^'] = '\n', ['\\^'] = '^',
+				['\\\\'] = '\\' });
+			res = stead.par('', res, s);
+		end
+	end
+	return res
+end
+
+-- fake menu and stat
 menu = obj
 stat = obj
 
+-- fake audio and timer
 stead.get_music = function()
 	return '', 0
 end

@@ -5,22 +5,18 @@ CFLAGS += $(LUA_CFLAGS) $(EXTRA_CFLAGS) -DSTEAD_PATH=\"${STEADPATH}/\" -DVERSION
 
 LDFLAGS += $(LUA_LFLAGS) $(EXTRA_LDFLAGS)
 
-INSTEAD_SRC	:= instead/instead.c instead/util.c instead/list.c instead/cache.c instead/idf.c instead/tinymt32.c instead/lfs.c
-INSTEAD_H	:= instead/cache.h instead/system.h instead/instead.h instead/list.h instead/util.h instead/tinymt32.h instead/idf.h
+INSTEAD_SRC	:= instead.c util.c list.c cache.c idf.c tinymt32.c lfs.c
 
-SRC     := main.c $(INSTEAD_SRC)
-
-H	:= $(INSTEAD_H)
-
-OBJ     := $(patsubst %.c, %.o, $(SRC)) $(ADDOBJ)
+SRC     := $(INSTEAD_SRC)
+OBJ     := $(patsubst %.c, %.o, $(SRC))
 
 all: instead stead tiny-instead$(EXE)
 
-$(OBJ): %.o : %.c $(H)
+$(OBJ): %.o : instead/%.c 
 	$(CC) -c $(<) $(I) $(CFLAGS) $(CPPFLAGS) -o $(@)
 
-tiny-instead$(EXE):  $(OBJ) $(RESOURCES)
-	$(CC) $(CFLAGS) $(^) $(LDFLAGS) -o $(@) 
+tiny-instead$(EXE): main.c $(OBJ)
+	$(CC) $(CFLAGS) $(^) $(LDFLAGS) -o $(@)
 
 instead:
 	ln -s ../instead instead
@@ -28,12 +24,5 @@ instead:
 stead:
 	ln -s ../../stead stead
 
-install:
-	$(INSTALLD) $(DESTDIR)$(BIN)
-	$(INSTALLB) tiny-instead$(EXE) $(DESTDIR)$(BIN)/tiny-instead$(EXE)
-
-uninstall:
-	$(RM) $(DESTDIR)$(BIN)/tiny-instead$(EXE)
-
 clean:
-	$(RM) -f instead/*.o *.o instead stead tiny-instead$(EXE)
+	$(RM) -f *.o instead stead tiny-instead$(EXE)
