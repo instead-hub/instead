@@ -256,10 +256,23 @@ sprite = {
 		return fnew(stead.font_load(name, sz, ...))
 	end;
 	scr = function()
-		if theme.get 'scr.gfx.mode' ~= 'direct' then
-			return
-		end
 		return screen
+	end;
+	direct = function(v)
+		local ov = theme.get('scr.gfx.mode') == 'direct'
+		if v then
+			if ov then
+				return true
+			end
+			theme.set ('scr.gfx.mode', 'direct')
+			return theme.get('scr.gfx.mode') == 'direct'
+		elseif v == false then
+			if ov then
+				theme.reset ('scr.gfx.mode')
+			end
+			return true
+		end
+		return ov
 	end;
 }
 
