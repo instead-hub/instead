@@ -1374,10 +1374,7 @@ end
 
 stead.player_tagall = function(self)
 	local id = 0;
-
 	id = stead.obj_tag(stead.here(), id);
-	id = stead.obj_tag(stead.me(), id);
-
 	for k, v in stead.opairs(ways()) do
 		v = stead.ref(v);
 		if isRoom(v) and not isDisabled(v) then
@@ -1385,6 +1382,8 @@ stead.player_tagall = function(self)
 			v.id = id;
 		end
 	end
+	stead.rawset(_G, 'MENU_TAG_ID', id)
+	id = stead.obj_tag(stead.me(), id);
 end
 
 stead.player_action = function(self, what, ...)

@@ -18,9 +18,86 @@ stead.fmt = function(...)
 	return res
 end
 
--- fake menu and stat
-menu = obj
-stat = obj
+-- xref
+
+iface.xref = function(self, str, obj)
+	local o = stead.ref(stead.here():srch(obj));
+	if not o then
+		o = stead.ref(ways():srch(obj));
+	end
+	if not o then
+		o = stead.ref(stead.me():srch(obj));
+	end
+	if not o or not o.id or o.stat_type then
+		return str;
+	end
+	return stead.cat(str,"("..stead.tostr(o.id)..")");
+end
+
+-- menu and stat
+stat = function(v)
+	v.stat_type = true
+	return obj(v)
+end
+
+function isStatus(v)
+	if stead.type(v) ~= 'table' then
+		return false
+	end
+	if v.status_type then
+		return true
+	end
+	return false
+end
+
+function isMenu(v)
+	if stead.type(v) ~= 'table' then
+		return false
+	end
+	if v.menu_type then
+		return true
+	end
+	return false
+end
+
+stead.menu_save = function(self, name, h, need)
+	local dsc;
+	if need then
+		print ("Warning: menu "..name.." can not be saved!");
+		return
+	end
+	stead.savemembers(h, self, name, need);
+end
+
+function menu(v)
+	v.menu_type = true
+	if v.inv == nil then
+		v.inv = function(s)
+			local r,v
+			r, v = stead.call(s, 'menu');
+			if v == nil then v = true end
+			if r == nil then
+				stead.obj_tag(stead.me(), MENU_TAG_ID); -- retag menu field
+			end
+			return r, v
+		end
+	end
+	if v.act == nil then
+		v.act = function(s)
+			local r,v
+			r,v = stead.call(s, 'menu');
+			if v == nil then v = true end
+			if r == nil then
+				stead.obj_tag(stead.me(), MENU_TAG_ID); -- retag menu field
+			end
+			return r, v
+		end
+	end
+	if v.save == nil then
+		v.save = stead.menu_save;
+	end
+	return obj(v);
+end
 
 -- fake audio and timer
 stead.get_music = function()
@@ -107,6 +184,7 @@ stead.set_timer = function() end
 stead.timer = function()
 	return
 end
+instead_theme_name = function() return 'default' end
 
 stead.module_init(function(s) 
 	timer = obj {
