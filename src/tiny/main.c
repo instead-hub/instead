@@ -47,7 +47,6 @@ int main(int argc, const char **argv)
 		fprintf(stderr, "Can not init game: %s\n", game);
 		exit(1);
 	}
-
 	if (instead_load(&str)) {
 		fprintf(stderr, "Can not load game: %s\n", instead_err());
 		exit(1);
@@ -73,7 +72,8 @@ int main(int argc, const char **argv)
 			break;
 		printf("    * * *\n");
 		p[strcspn(p, "\n\r")] = 0;
-
+		if (!strcmp(p, "quit"))
+			break;
 		snprintf(cmd, sizeof(cmd), "use %s", p);
 		str = instead_cmd(cmd, &rc);
 		if (rc) { /* try go */

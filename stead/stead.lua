@@ -2424,7 +2424,7 @@ iface = {
 	end, 
 	shell = function(self)
 		local inp, i, k, cmd, a, n;
-		stead.me():tag();		
+		stead.me():tag();
 		while game._running do
 			inp = stead.io.read("*l");
 			if inp == 'quit' then
