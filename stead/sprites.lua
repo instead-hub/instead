@@ -141,6 +141,8 @@ local sprite_m = {
 sprite_mt.__index = sprite_m
 font_mt.__index = font_m
 
+local screen = new('screen')
+
 sprite = {
 	nam = 'sprites';
 	object_type = true;
@@ -252,6 +254,12 @@ sprite = {
 			error("No font size specified.", 2)
 		end
 		return fnew(stead.font_load(name, sz, ...))
+	end;
+	scr = function()
+		if theme.get 'scr.gfx.mode' ~= 'direct' then
+			return
+		end
+		return screen
 	end;
 }
 
