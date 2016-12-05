@@ -235,7 +235,7 @@ extern int game_instead_extensions(void);
 
 static int sdl_ext_init(void)
 {
-	return instead_loadfile(dirpath(STEAD_PATH"/gui.lua"));
+	return instead_loadfile(dirpath(STEAD_PATH"/ext/gui.lua"));
 }
 
 static struct instead_ext sdl_ext = {

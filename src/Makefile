@@ -8,8 +8,6 @@ LDFLAGS += $(SDL_LFLAGS) $(LUA_LFLAGS) $(ZLIB_LFLAGS) $(EXTRA_LDFLAGS)
 INSTEAD_SRC	:= instead/instead.c instead/util.c instead/list.c instead/cache.c instead/idf.c instead/tinymt32.c instead/lfs.c
 INSTEAD_H	:= instead/cache.h instead/system.h instead/instead.h instead/list.h instead/util.h instead/tinymt32.h instead/idf.h
 
-INSTEAD_OBJ     := $(patsubst %.c, %.o, $(INSTEAD_SRC))
-
 SRC     := graphics.c input.c game.c main.c \
 	instead_bits.c instead_sprites.c instead_timer.c instead_sound.c instead_paths.c \
 	sound.c SDL_rotozoom.c SDL_anigif.c SDL_gfxBlitFunc.c config.c themes.c menu.c \

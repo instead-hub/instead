@@ -503,7 +503,7 @@ static int instead_getargs (char **argv, int n)
 	return 0;
 }
 
-int instead_load(void)
+int instead_load(char **info)
 {
 	int rc;
 	idff_t idf;
@@ -529,9 +529,15 @@ int instead_load(void)
 	fromcp = getstring("return game.codepage;");
 	instead_clear();
 #endif
-
-	rc = instead_function("game:ini", NULL); instead_clear();
+	rc = instead_function("game:ini", NULL);
+	if (rc)
+		goto err2;
+	if (info)
+		*info = instead_retval(0);
+	instead_clear();
 	return rc;
+err2:
+	instead_clear();
 err:
 	return -1;
 }

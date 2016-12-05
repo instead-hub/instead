@@ -390,4 +390,5 @@ instead.get_fading = function()
 	if v == nil and r then v = game.gui.fading end
 	return r,v
 end
+
 -- vim:ts=4

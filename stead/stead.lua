@@ -32,7 +32,7 @@ stead = {
 	modules_done = {},
 	modules_start = {},
 	modules_cmd = {},
-
+	busy = function() end;
 	module_init = function(f, ...)
 		if stead.type(f) ~= 'function' then
 			error ("Wrong parameter to module_init.", 2);
@@ -1832,7 +1832,7 @@ stead.game_ini = function(self)
 	if stead.type(stead.rawget(_G, 'init')) == 'function' then
 		init();
 	end
-	return stead.par(stead.scene_delim, vv, v);
+	return stead:fmt(stead.par(stead.scene_delim, vv, v));
 end
 
 stead.game_start = function(s)
@@ -2334,7 +2334,6 @@ iface = {
 				return r, v
 			end
 		end
-
 		if cmd == '' then cmd = 'look' end
 --		stead.me():tag();
 		local oldloc = stead.here();

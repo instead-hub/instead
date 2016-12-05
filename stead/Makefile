@@ -7,7 +7,6 @@ all:	stead.lua
 install:
 	$(INSTALLD) $(DESTDIR)$(STEADPATH)
 	$(INSTALL) stead.lua $(DESTDIR)$(STEADPATH)/stead.lua
-	$(INSTALL) gui.lua $(DESTDIR)$(STEADPATH)/gui.lua
 	$(INSTALL) walk.lua $(DESTDIR)$(STEADPATH)/walk.lua
 	$(INSTALL) xact.lua $(DESTDIR)$(STEADPATH)/xact.lua
 	$(INSTALL) input.lua $(DESTDIR)$(STEADPATH)/input.lua
@@ -42,6 +41,7 @@ install:
 	$(INSTALL) ext/sound.lua $(DESTDIR)$(STEADPATH)/ext/sound.lua
 	$(INSTALL) ext/sprites.lua $(DESTDIR)$(STEADPATH)/ext/sprites.lua
 	$(INSTALL) ext/timer.lua $(DESTDIR)$(STEADPATH)/ext/timer.lua
+	$(INSTALL) ext/gui.lua $(DESTDIR)$(STEADPATH)/ext/gui.lua
 
 uninstall:
 

@@ -56,7 +56,7 @@ struct instead_ext {
 };
 
 extern int  instead_init(const char *path);
-extern int  instead_load(void);
+extern int  instead_load(char **info);
 extern void instead_done(void);
 extern void instead_lock(void);
 extern void instead_unlock(void);

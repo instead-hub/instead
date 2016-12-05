@@ -65,6 +65,10 @@ extern double mt_random_double(void);
    #include <iconv.h>
   #endif
  #endif
+#else
+  #ifdef _HAVE_ICONV
+   #include <iconv.h>
+  #endif
 #endif
 
 #ifdef _HAVE_ICONV

@@ -183,7 +183,7 @@ int game_select(const char *name)
 		}
 		instead_set_lang(opt_lang);
 
-		if ((rc = instead_load())) {
+		if ((rc = instead_load(NULL))) {
 			curgame_dir = oldgame;
 			goto err;
 		}
