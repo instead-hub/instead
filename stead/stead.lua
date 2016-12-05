@@ -1819,8 +1819,8 @@ stead.do_ini = function(self, load)
 	end
 
 	for_each_object(call_ini, load);
-
 	stead.me():tag();
+	stead.initialized = true
 	return v
 end
 
