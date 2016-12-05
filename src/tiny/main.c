@@ -56,11 +56,15 @@ int main(int argc, const char **argv)
 	printf("%s", str);
 #if 0 /* no autoload */
 	str = instead_cmd("load autosave", &rc);
+#else
+	str = instead_cmd("look", &rc);
+#endif
 	if (!rc) {
 		printf("%s", str);
 		footer();
 	}
-#endif
+	free(str);
+
 	while (1) {
 		char input[128];
 		char *p;
@@ -85,8 +89,8 @@ int main(int argc, const char **argv)
 		}
 		if (str) {
 			printf("%s", str);
-			free(str);
 		}
+		free(str);
 		if (rc)
 			printf("error!\n");
 		else
