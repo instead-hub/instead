@@ -13,14 +13,14 @@ LANGPATH=$(PREFIX)lang
 MANPATH=$(PREFIX)doc
 WINDOWS=yes
 
-ZLIB_CFLAGS=-I../zlib
-ZLIB_LFLAGS=../zlib/libz.a
+ZLIB_CFLAGS=-I./zlib
+ZLIB_LFLAGS=./zlib/libz.a
 
-LUA_CFLAGS=-I../windows/
-LUA_LFLAGS=-llua5.1 -L../windows/
+LUA_CFLAGS=-I./windows/
+LUA_LFLAGS=-llua5.1 -L./windows/
 
-SDL_CFLAGS=-I../windows/SDL
-SDL_LFLAGS=-lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image -L../windows/SDL
+SDL_CFLAGS=-I./windows/SDL
+SDL_LFLAGS=-lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image -L./windows/SDL
 
 CFLAGS	+= -Wall -mwindows -D_HAVE_ICONV -D_USE_UNPACK -D_USE_BROWSE -D_LOCAL_APPDATA # -D_SDL_MOD_BUG
 LDFLAGS += -liconv

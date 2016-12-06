@@ -3,7 +3,7 @@ ISCC = wine ~/.wine/drive_c/Program\ Files\ \(x86\)/Inno\ Setup\ 5/ISCC.exe
 
 all: config.make src/windows
 	$(MAKE) -C src/zlib all
-	$(MAKE) -C src/sdl-instead all
+	$(MAKE) -C src all
 	$(MAKE) -C themes all
 
 src/windows:
