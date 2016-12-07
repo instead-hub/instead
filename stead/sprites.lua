@@ -229,11 +229,11 @@ sprite = {
 		return stead.sprite_load(fname, ...);
 	end;
 	blank = function(w, h, ...)
-		local t = 'blank:'..stead.tostr(w)..'x'..stead.tostr(h)
+		local t = 'blank:'..stead.tostr(stead.math.floor(w))..'x'..stead.tostr(stead.math.floor(h))
 		return stead.sprite_load(t, ...)
 	end;
 	box = function(w, h, col, alpha, ...)
-		local t = 'box:'..stead.tostr(w)..'x'..stead.tostr(h)
+		local t = 'box:'..stead.tostr(stead.math.floor(w))..'x'..stead.tostr(stead.math.floor(h))
 		if col then
 			t = t..','..stead.tostr(col)
 		end
@@ -246,8 +246,12 @@ sprite = {
 		return stead.sprite_free(key);
 	end;
 -- new api
-	new = function(...)
-		return new(stead.sprite_load(...))
+	new = function(w, h, ...)
+		if stead.tonum(w) and stead.tonum(h) then
+			local t = 'blank:'..stead.tostr(stead.math.floor(w))..'x'..stead.tostr(stead.math.floor(h))
+			return new(stead.sprite_load(t))
+		end
+		return new(stead.sprite_load(w, h, ...))
 	end;
 	fnt = function(name, sz, ...)
 		if not tonumber(sz) then

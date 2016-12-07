@@ -13,7 +13,7 @@ local font_mt = {
 }
 
 local pnew = function(p)
-	if type(p) ~= 'userdata' then
+	if stead.type(p) ~= 'userdata' then
 		return
 	end
 	local t = getmetatable(p).__index 
@@ -22,7 +22,7 @@ local pnew = function(p)
 end
 
 local fnew = function(f)
-	if type(f) ~= 'string' then
+	if stead.type(f) ~= 'string' then
 		return
 	end
 	local fn = {
@@ -67,7 +67,7 @@ pixels = {
 	object_type = true;
 	system_type = true;
 	fnt = function(name, sz, ...)
-		if not tonumber(sz) then
+		if not stead.tonum(sz) then
 			error("No font size specified.", 2)
 		end
 		return fnew(stead.font_load(name, -sz, ...))
