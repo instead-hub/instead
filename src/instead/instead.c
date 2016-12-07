@@ -532,8 +532,10 @@ int instead_load(char **info)
 	rc = instead_function("game:ini", NULL);
 	if (rc)
 		goto err2;
-	if (info)
+	if (info) {
 		*info = instead_retval(0);
+		*info = instead_fromgame(*info);
+	}
 	instead_clear();
 	return rc;
 err2:
