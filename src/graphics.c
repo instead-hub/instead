@@ -1965,16 +1965,6 @@ int gfx_set_mode(int w, int h, int fs)
 	}
 	vid_modes = NULL;
 
-	if (screen)
-		gfx_free_image(screen);
-	if (SDL_VideoTexture)
-		SDL_DestroyTexture(SDL_VideoTexture);
-	if (Renderer)
-		SDL_DestroyRenderer(Renderer);
-	screen = NULL;
-	Renderer = NULL;
-	SDL_VideoTexture = NULL;
-
 	if (SDL_VideoWindow) {
 		SDL_GetWindowPosition(SDL_VideoWindow, &window_x, &window_y);
 		SDL_DestroyWindow(SDL_VideoWindow);
@@ -1985,6 +1975,18 @@ int gfx_set_mode(int w, int h, int fs)
 		}
 	} else
 		GetEnvironmentWindowPosition(win_w, win_h, &window_x, &window_y);
+
+	if (screen)
+		gfx_free_image(screen);
+	if (SDL_VideoTexture)
+		SDL_DestroyTexture(SDL_VideoTexture);
+	if (Renderer)
+		SDL_DestroyRenderer(Renderer);
+
+	screen = NULL;
+	Renderer = NULL;
+	SDL_VideoTexture = NULL;
+
 	if (desktop_mode.w <= win_w || fs)
 		window_x = 0;
 	if (desktop_mode.h <= win_h || fs)
