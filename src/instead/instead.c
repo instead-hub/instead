@@ -907,9 +907,15 @@ int instead_init_lua(const char *path)
 	instead_platform();
 /*	instead_set_lang(opt_lang); */
 	if (debug_sw)
-		instead_eval("DEBUG=true"); instead_clear();
+		instead_eval("DEBUG=true");
+	else
+		instead_eval("DEBUG=false");
+	instead_clear();
 	if (standalone_sw)
-		instead_eval("STANDALONE=true"); instead_clear();
+		instead_eval("STANDALONE=true");
+	else
+		instead_eval("STANDALONE=false");
+	instead_clear();
 	srand(time(NULL));
 	mt_random_init();
 	luaopen_lfs(L);
@@ -1069,7 +1075,7 @@ int instead_set_debug(int sw)
 		if (sw)
 			instead_eval("DEBUG=true");
 		else
-			instead_eval("DEBUG=nil");
+			instead_eval("DEBUG=false");
 		instead_clear();
 	}
 	return ov;
@@ -1081,9 +1087,9 @@ int instead_set_standalone(int sw)
 	standalone_sw = sw;
 	if (L) {
 		if (sw)
-			instead_eval("STANDALONE=true"); 
+			instead_eval("STANDALONE=true");
 		else
-			instead_eval("STANDALONE=nil"); 
+			instead_eval("STANDALONE=false");
 		instead_clear();
 	}
 	return ov;
