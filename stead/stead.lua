@@ -1624,7 +1624,7 @@ stead.game_life = function(self)
 	end
 	stead.rawset(_G, 'PLAYER_MOVED', stead.in_life_move)
 	if not stead.rawget(_G, 'PLAYER_MOVED') then stead.rawset(_G, 'PLAYER_MOVED', stead.PLAYER_MOVED) end
-	stead.rawset(_G, 'PLAYER_MOVED', nil)
+	stead.PLAYER_MOVED = nil
 	stead.in_life_call = false;
 	for i,o in stead.ipairs(stead.lifes_op) do
 		if o[1] then
