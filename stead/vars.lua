@@ -158,5 +158,5 @@ function global(v)
 	end
 	__vars_add(_G, v, true);
 end
-require 'strict'
+-- require 'strict'
 -- vim:ts=4
