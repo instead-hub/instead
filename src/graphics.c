@@ -1752,11 +1752,12 @@ int gfx_next_mode(int *w, int *h)
 	*w = ww; *h = hh;
 	return 0;
 }
+#if SDL_VERSION_ATLEAST(2,0,0)
 #if defined(ANDROID) || defined(IOS)
 static int current_gfx_w = - 1;
 static int current_gfx_h = - 1;
 #endif
-
+#endif
 int gfx_get_max_mode(int *w, int *h, int o)
 {
 	int ww = 0, hh = 0;

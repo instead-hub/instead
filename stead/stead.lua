@@ -2283,7 +2283,7 @@ iface = {
 			return str;
 		end
 		local n = stead.tonum(stead.nameof(o))
-		return stead.cat(str,"("..stead.tostr(n or o.id)..")");
+		return stead.cat(str, "("..stead.tostr(n or o.id)..")");
 	end,
 	title = function(self, str)
 		return "["..str.."]";

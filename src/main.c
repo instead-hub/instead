@@ -289,7 +289,6 @@ int instead_main(int argc, char *argv[])
 
 	unix_path(game_cwd);
 	setdir(game_cwd);
-
 	profile_load(NULL);
 
 	for (i = 1; i < argc; i++) {

@@ -991,7 +991,8 @@ int instead_api_register(const luaL_Reg *api)
 
 void instead_done(void)
 {
-	if (L)
+	int wasL = !!L;
+	if (wasL)
 		extensions_hook(done);
 #ifdef _USE_SDL
 	if (sem)
@@ -1011,7 +1012,8 @@ void instead_done(void)
 	if (data_idf)
 		idf_done(data_idf);
 	data_idf = NULL;
-	setdir(instead_cwd_path);
+	if (wasL)
+		setdir(instead_cwd_path);
 }
 
 int  instead_encode(const char *s, const char *d)

@@ -3135,7 +3135,7 @@ static int kbd_instead(struct inp_event *ev, int *x, int *y)
 		shift_pressed = alt_pressed = control_pressed = 0;
 	} else if (!is_key(ev, "f10")
 #ifdef ANDROID
-		   || ev.code == 270
+		   || ev->code == 270
 #endif
 		   ) {
 #ifdef ANDROID
