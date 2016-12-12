@@ -55,7 +55,7 @@ static void instead_timer_do(void *data)
 
 static int instead_fn(int interval, void *p)
 {
-	if (instead_timer_nr > 4) {
+	if (instead_timer_nr > 0) {
 		return interval; /* framedrop */
 	}
 	instead_timer_nr ++;
