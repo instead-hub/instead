@@ -1,11 +1,11 @@
 local declarations = {}
 
 function declare(n)
-	if type(n) == 'string' then
+	if stead.type(n) == 'string' then
 		declarations[n] = true
 		return
 	end
-	if type(n) == 'table' then
+	if stead.type(n) == 'table' then
 		for k, v in stead.pairs(n) do
 			declarations[k] = true
 			stead.rawset(_G, k, v)
@@ -46,7 +46,7 @@ setmetatable(_G, {
 		end
 	end;
 	__newindex = function(t, k, v)
-		if not declarations[k] and type(v) ~= 'function' and not isObject(v) then
+		if not declarations[k] and stead.type(v) ~= 'function' and not isObject(v) then
 			local f = stead.getinfo(2, "S").source
 			if f:byte(1) ~= 0x40 or f:find("/stead/", 1, true) then
 				print ("Set uninitialized variable: "..k.." in "..f)
