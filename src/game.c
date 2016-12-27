@@ -164,7 +164,7 @@ int game_select(const char *name)
 		instead_set_debug(debug_sw);
 		instead_set_standalone(standalone_sw);
 
-		if (instead_init(g->path)) {
+		if (instead_set_api(g->api) || instead_init(g->path)) {
 			curgame_dir = oldgame;
 			goto err;
 		}
@@ -274,6 +274,15 @@ static char *game_version(const char *path, const char *d_name)
 	return p;
 }
 
+static char *game_api(const char *path, const char *d_name)
+{
+	char *p = game_tag(path, d_name, "API");
+	trunc_lines(p, 0);
+	if (!p)
+		return strdup("classic");
+	return p;
+}
+
 int games_rename(void)
 {
 	int i;
@@ -285,10 +294,12 @@ int games_rename(void)
 		FREE(games[i].info);
 		FREE(games[i].author);
 		FREE(games[i].version);
+		FREE(games[i].api);
 		games[i].name = game_name(dirpath(games[i].path), games[i].dir);
 		games[i].info = game_info(dirpath(games[i].path), games[i].dir);
 		games[i].author = game_author(dirpath(games[i].path), games[i].dir);
 		games[i].version = game_version(dirpath(games[i].path), games[i].dir);
+		games[i].api = game_api(dirpath(games[i].path), games[i].dir);
 	}
 	setdir(cwd);
 	return 0;
@@ -330,6 +341,7 @@ static int games_add(const char *path, const char *dir)
 	games[games_nr].info = game_info(p, dir);
 	games[games_nr].author = game_author(p, dir);
 	games[games_nr].version = game_version(p, dir);
+	games[games_nr].api = game_api(p, dir);
 	games_nr ++;
 	return 0;
 }
@@ -356,6 +368,7 @@ int games_replace(const char *path, const char *dir)
 		FREE(g->info);
 		FREE(g->author);
 		FREE(g->version);
+		FREE(g->api);
 
 		g->path = p;
 		g->dir = strdup(dir);
@@ -363,6 +376,7 @@ int games_replace(const char *path, const char *dir)
 		g->info = game_info(p, dir);
 		g->author = game_author(p, dir);
 		g->version = game_version(p, dir);
+		g->api = game_api(p, dir);
 		games_sort();
 		return 0;
 	}

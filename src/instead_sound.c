@@ -846,9 +846,14 @@ static int chunk_create_meta (lua_State *L) {
 static int sound_init(void)
 {
 	int rc;
+	char path[PATH_MAX];
+
 	instead_api_register(sound_funcs);
 	chunk_create_meta(instead_lua());
-	rc = instead_loadfile(dirpath(STEAD_PATH"/ext/sound.lua"));
+
+	snprintf(path, sizeof(path), "%s/%s", instead_stead_path(), "/ext/sound.lua");
+
+	rc = instead_loadfile(dirpath(path));
 	if (rc)
 		return rc;
 	if (sound_inited)

@@ -2299,10 +2299,12 @@ static int sprites_done(void)
 
 static int sprites_init(void)
 {
+	char path[PATH_MAX];
 	if (pixels_create_meta(instead_lua()))
 		return -1;
 	instead_api_register(sprites_funcs);
-	return instead_loadfile(dirpath(STEAD_PATH"/ext/sprites.lua"));
+	snprintf(path, sizeof(path), "%s/%s", instead_stead_path(), "/ext/sprites.lua");
+	return instead_loadfile(dirpath(path));
 }
 
 static struct instead_ext ext = {

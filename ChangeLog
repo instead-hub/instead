@@ -5,6 +5,7 @@
   * sprite.pixels;
   * bug fixes;
   * refactoring (src/instead);
+  * different api support;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 09 Nov 2016 11:38:00 +0300
 

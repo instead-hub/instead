@@ -57,6 +57,11 @@ char 		*togame(const char *s);
 lua_State	*L = NULL;
 
 static char *err_msg = NULL;
+static char instead_api_path[PATH_MAX];
+
+static char *API = NULL;
+
+#define STEAD_API_PATH instead_api_path
 
 #define ERR_MSG_MAX 512
 
@@ -765,12 +770,12 @@ static int luaB_get_gamepath(lua_State *L) {
 static int luaB_get_steadpath(lua_State *L) {
 	char stead_path[PATH_MAX];
 
-	if (STEAD_PATH[0] != '/') {
+	if (STEAD_API_PATH[0] != '/') {
 		strcpy(stead_path, instead_cwd());
 		strcat(stead_path, "/");
 	} else
 		stead_path[0] = 0;
-	strcat(stead_path, STEAD_PATH);
+	strcat(stead_path, STEAD_API_PATH);
 	unix_path(stead_path);
 	lua_pushstring(L, stead_path);
 	return 1;
@@ -832,7 +837,7 @@ static int instead_platform(void)
 static int instead_package(const char *path)
 {
 	char *stead_path;
-	stead_path = malloc(PATH_MAX * 5); /* instead_cwd + STEAD_PATH and so on... */
+	stead_path = malloc(PATH_MAX * 5); /* instead_cwd + STEAD_API_PATH and so on... */
 	if (!stead_path)
 		return -1;
 	strcpy(stead_path, "package.path=\"");
@@ -854,12 +859,12 @@ static int instead_package(const char *path)
 	}
 #endif
 
-	if (!is_absolute_path(STEAD_PATH)) {
+	if (!is_absolute_path(STEAD_API_PATH)) {
 		strcat(stead_path, instead_cwd());
 		strcat(stead_path, "/");
-		strcat(stead_path, STEAD_PATH);
+		strcat(stead_path, STEAD_API_PATH);
 	} else {
-		strcat(stead_path, STEAD_PATH);
+		strcat(stead_path, STEAD_API_PATH);
 	}
 	strcat(stead_path, "/?.lua");
 	strcat(stead_path, "\"");
@@ -884,6 +889,7 @@ int instead_init_lua(const char *path)
 	instead_cwd_path[sizeof(instead_cwd_path) - 1] = 0;
 	strncpy(instead_game_path, path, sizeof(instead_game_path));
 	instead_cwd_path[sizeof(instead_game_path) - 1] = 0;
+	instead_set_api(API);
 	/* initialize Lua */
 #if LUA_VERSION_NUM >= 502
 	L = luaL_newstate();
@@ -924,12 +930,14 @@ int instead_init_lua(const char *path)
 
 int instead_init(const char *path)
 {
+	char stead_path[PATH_MAX];
 	int idf = 0;
 
 	if (instead_init_lua(path))
 		goto err;
 
-	if (dofile(L, dirpath(STEAD_PATH"/stead.lua")))
+	snprintf(stead_path, sizeof(stead_path), "%s/stead.lua", STEAD_API_PATH);
+	if (dofile(L, dirpath(stead_path)))
 		goto err;
 
 	if (extensions_hook(init) < 0) {
@@ -1014,6 +1022,8 @@ void instead_done(void)
 	data_idf = NULL;
 	if (wasL)
 		setdir(instead_cwd_path);
+	FREE(API);
+	API = NULL;
 }
 
 int  instead_encode(const char *s, const char *d)
@@ -1059,6 +1069,11 @@ idf_t  instead_idf(void)
 	return data_idf;
 }
 
+char *instead_stead_path(void)
+{
+	return instead_api_path;
+}
+
 char *instead_path(void)
 {
 	return instead_game_path;
@@ -1095,6 +1110,36 @@ int instead_set_standalone(int sw)
 		instead_clear();
 	}
 	return ov;
+}
+
+int instead_set_api(const char *api)
+{
+	int i, c = 0;
+	size_t s;
+	char *oa;
+	if (!api || !*api) {
+		FREE(API);
+		API = NULL;
+		snprintf(instead_api_path, sizeof(instead_api_path), "%s", STEAD_PATH);
+	} else {
+		s = strlen(api);
+		for (i = 0; i < s; i ++) {
+			if (api[i] == '.') {
+				if (c > 0) {
+					instead_err_msg("Wrong API.");
+					fprintf(stderr, "Wrong API.\n");
+					return -1;
+				}
+				c ++;
+			} else
+				c = 0;
+		}
+		oa = API;
+		API = strdup(api);
+		FREE(oa);
+		snprintf(instead_api_path, sizeof(instead_api_path), "%s/%s", STEAD_PATH, API);
+	}
+	return 0;
 }
 
 int instead_set_lang(const char *opt_lang)

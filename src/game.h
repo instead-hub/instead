@@ -152,6 +152,7 @@ struct game {
 	char *version;
 	char *info;
 	char *dir;
+	char *api;
 	int idf;
 };
 

@@ -89,11 +89,13 @@ extern idf_t  instead_idf(void);
 extern int  instead_set_lang(const char *lang);
 extern int  instead_set_debug(int);
 extern int  instead_set_standalone(int);
+extern int  instead_set_api(const char *api);
 
 extern lua_State *instead_lua(void);
 
 extern char	*instead_local_stead_path(void);
 extern char	*instead_path(void);
+extern char	*instead_stead_path(void);
 extern char	*instead_cwd(void);
 
 #endif

@@ -93,8 +93,10 @@ static int timer_done(void)
 
 static int timer_init(void)
 {
+	char path[PATH_MAX];
+	snprintf(path, sizeof(path), "%s/%s", instead_stead_path(), "/ext/timer.lua");
 	instead_api_register(timer_funcs);
-	return instead_loadfile(dirpath(STEAD_PATH"/ext/timer.lua"));
+	return instead_loadfile(dirpath(path));
 }
 
 static struct instead_ext ext = {
