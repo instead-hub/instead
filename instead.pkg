@@ -1,39 +1,39 @@
-; This is an auto-generated PKG file by Carbide.
-; This file uses variables specific to Carbide builds that will not work
-; on command-line builds. If you want to use this generated PKG file from the
-; command-line tools you will need to modify the variables with the appropriate
-; values: , $(PLATFORM), $(TARGET)
-;
-;Language - standard language definitions
-&EN
-
-; standard SIS file header
-#{"INSTEAD"},(0xA0020500),2,5,0
-
-;Localised Vendor name
-%{"Peter Kosyh"}
-
-;Unique Vendor name
-:"Peter Kosyh"
-
-;Supports Series 60 v 3.0
-[0x101F7961], 0, 0, 0, {"Series60ProductID"}
-
-;
-;
-
-
-;Files to install
-;You should change the source paths to match that of your environment
-;<source> <destination>
+; This is an auto-generated PKG file by Carbide.
+; This file uses variables specific to Carbide builds that will not work
+; on command-line builds. If you want to use this generated PKG file from the
+; command-line tools you will need to modify the variables with the appropriate
+; values: , $(PLATFORM), $(TARGET)
+;
+;Language - standard language definitions
+&EN
+
+; standard SIS file header
+#{"INSTEAD"},(0xA0020500),2,5,0
+
+;Localised Vendor name
+%{"Peter Kosyh"}
+
+;Unique Vendor name
+:"Peter Kosyh"
+
+;Supports Series 60 v 3.0
+[0x101F7961], 0, 0, 0, {"Series60ProductID"}
+
+;
+;
+
+
+;Files to install
+;You should change the source paths to match that of your environment
+;<source> <destination>
 ""-"c:\data\instead\stdout.txt",FILENULL
 ""-"c:\data\instead\stderr.txt",FILENULL
 ""-"c:\data\instead\sdl.ini",FILENULL
-
-"\home\peter\Devel\gnupoc\symbian-sdks\s60_26\epoc32\release\gcce\urel\instead.exe"    -"!:\sys\bin\instead.exe"
-"\home\peter\Devel\gnupoc\symbian-sdks\s60_26\epoc32\data\z\resource\apps\instead.rsc"             -"!:\resource\apps\instead.rsc"
-"\home\peter\Devel\gnupoc\symbian-sdks\s60_26\epoc32\data\z\private\10003a3f\apps\instead_reg.rsc" -"!:\private\10003a3f\import\apps\instead_reg.rsc"
-"\home\peter\Devel\gnupoc\symbian-sdks\s60_26\epoc32\data\z\resource\apps\instead.mif"             -"!:\resource\apps\instead.mif"
+
+"\home\peter\Devel\gnupoc\symbian-sdks\s60_26\epoc32\release\gcce\urel\instead.exe"    -"!:\sys\bin\instead.exe"
+"\home\peter\Devel\gnupoc\symbian-sdks\s60_26\epoc32\data\z\resource\apps\instead.rsc"             -"!:\resource\apps\instead.rsc"
+"\home\peter\Devel\gnupoc\symbian-sdks\s60_26\epoc32\data\z\private\10003a3f\apps\instead_reg.rsc" -"!:\private\10003a3f\import\apps\instead_reg.rsc"
+"\home\peter\Devel\gnupoc\symbian-sdks\s60_26\epoc32\data\z\resource\apps\instead.mif"             -"!:\resource\apps\instead.mif"
 ".\symbian_gamedata\appdata\games\tutorial3\main.lua" -"!:\data\instead\appdata\games\tutorial3\main.lua"
 ".\symbian_gamedata\appdata\games\tutorial3\main-ru.lua" -"!:\data\instead\appdata\games\tutorial3\main-ru.lua"
 ".\symbian_gamedata\appdata\games\tutorial3\main-uk.lua" -"!:\data\instead\appdata\games\tutorial3\main-uk.lua"
@@ -53,41 +53,41 @@
 ".\symbian_gamedata\appdata\games\tutorial3\fr.png" -"!:\data\instead\appdata\games\tutorial3\fr.png"
 ".\symbian_gamedata\appdata\games\tutorial3\instead.png" -"!:\data\instead\appdata\games\tutorial3\instead.png"
 ".\symbian_gamedata\appdata\games\tutorial3\instead.ogg" -"!:\data\instead\appdata\games\tutorial3\instead.ogg"
-".\symbian_gamedata\stead\classic\vars.lua" -"!:\data\instead\stead\classic\vars.lua"
-".\symbian_gamedata\stead\classic\timer.lua" -"!:\data\instead\stead\classic\timer.lua"
-".\symbian_gamedata\stead\classic\kbd.lua" -"!:\data\instead\stead\classic\kbd.lua"
-".\symbian_gamedata\stead\classic\walk.lua" -"!:\data\instead\stead\classic\walk.lua"
-".\symbian_gamedata\stead\classic\object.lua" -"!:\data\instead\stead\classic\object.lua"
-".\symbian_gamedata\stead\classic\dash.lua" -"!:\data\instead\stead\classic\dash.lua"
-".\symbian_gamedata\stead\classic\snapshots.lua" -"!:\data\instead\stead\classic\snapshots.lua"
-".\symbian_gamedata\stead\classic\hideinv.lua" -"!:\data\instead\stead\classic\hideinv.lua"
-".\symbian_gamedata\stead\classic\quotes.lua" -"!:\data\instead\stead\classic\quotes.lua"
-".\symbian_gamedata\stead\classic\format.lua" -"!:\data\instead\stead\classic\format.lua"
-".\symbian_gamedata\stead\classic\click.lua" -"!:\data\instead\stead\classic\click.lua"
-".\symbian_gamedata\stead\classic\finger.lua" -"!:\data\instead\stead\classic\finger.lua"
-".\symbian_gamedata\stead\classic\events.lua" -"!:\data\instead\stead\classic\events.lua"
-".\symbian_gamedata\stead\classic\dbg.lua" -"!:\data\instead\stead\classic\dbg.lua"
-".\symbian_gamedata\stead\classic\xact.lua" -"!:\data\instead\stead\classic\xact.lua"
-".\symbian_gamedata\stead\classic\hotkeys.lua" -"!:\data\instead\stead\classic\hotkeys.lua"
-".\symbian_gamedata\stead\classic\input.lua" -"!:\data\instead\stead\classic\input.lua"
-".\symbian_gamedata\stead\classic\stead.lua" -"!:\data\instead\stead\classic\stead.lua"
-".\symbian_gamedata\stead\classic\para.lua" -"!:\data\instead\stead\classic\para.lua"
-".\symbian_gamedata\stead\classic\theme.lua" -"!:\data\instead\stead\classic\theme.lua"
-".\symbian_gamedata\stead\classic\prefs.lua" -"!:\data\instead\stead\classic\prefs.lua"
-".\symbian_gamedata\stead\classic\sprites.lua" -"!:\data\instead\stead\classic\sprites.lua"
-".\symbian_gamedata\stead\classic\pixels.lua" -"!:\data\instead\stead\classic\pixels.lua"
-".\symbian_gamedata\stead\classic\sound.lua" -"!:\data\instead\stead\classic\sound.lua"
-".\symbian_gamedata\stead\classic\wroom.lua" -"!:\data\instead\stead\classic\wroom.lua"
-".\symbian_gamedata\stead\classic\nouse.lua" -"!:\data\instead\stead\classic\nouse.lua"
-".\symbian_gamedata\stead\classic\dlg.lua" -"!:\data\instead\stead\classic\dlg.lua"
-".\symbian_gamedata\stead\classic\counters.lua" -"!:\data\instead\stead\classic\counters.lua"
-".\symbian_gamedata\stead\classic\proxymenu.lua" -"!:\data\instead\stead\classic\proxymenu.lua"
-".\symbian_gamedata\stead\classic\nolife.lua" -"!:\data\instead\stead\classic\nolife.lua"
-".\symbian_gamedata\stead\classic\strict.lua" -"!:\data\instead\stead\classic\strict.lua"
-".\symbian_gamedata\stead\classic\ext\sound.lua" -"!:\data\instead\stead\classic\ext\sound.lua"
-".\symbian_gamedata\stead\classic\ext\sprites.lua" -"!:\data\instead\stead\classic\ext\sprites.lua"
-".\symbian_gamedata\stead\classic\ext\timer.lua" -"!:\data\instead\stead\classic\ext\timer.lua"
-".\symbian_gamedata\stead\classic\ext\gui.lua" -"!:\data\instead\stead\classic\ext\gui.lua"
+".\symbian_gamedata\stead\stead2\vars.lua" -"!:\data\instead\stead\stead2\vars.lua"
+".\symbian_gamedata\stead\stead2\timer.lua" -"!:\data\instead\stead\stead2\timer.lua"
+".\symbian_gamedata\stead\stead2\kbd.lua" -"!:\data\instead\stead\stead2\kbd.lua"
+".\symbian_gamedata\stead\stead2\walk.lua" -"!:\data\instead\stead\stead2\walk.lua"
+".\symbian_gamedata\stead\stead2\object.lua" -"!:\data\instead\stead\stead2\object.lua"
+".\symbian_gamedata\stead\stead2\dash.lua" -"!:\data\instead\stead\stead2\dash.lua"
+".\symbian_gamedata\stead\stead2\snapshots.lua" -"!:\data\instead\stead\stead2\snapshots.lua"
+".\symbian_gamedata\stead\stead2\hideinv.lua" -"!:\data\instead\stead\stead2\hideinv.lua"
+".\symbian_gamedata\stead\stead2\quotes.lua" -"!:\data\instead\stead\stead2\quotes.lua"
+".\symbian_gamedata\stead\stead2\format.lua" -"!:\data\instead\stead\stead2\format.lua"
+".\symbian_gamedata\stead\stead2\click.lua" -"!:\data\instead\stead\stead2\click.lua"
+".\symbian_gamedata\stead\stead2\finger.lua" -"!:\data\instead\stead\stead2\finger.lua"
+".\symbian_gamedata\stead\stead2\events.lua" -"!:\data\instead\stead\stead2\events.lua"
+".\symbian_gamedata\stead\stead2\dbg.lua" -"!:\data\instead\stead\stead2\dbg.lua"
+".\symbian_gamedata\stead\stead2\xact.lua" -"!:\data\instead\stead\stead2\xact.lua"
+".\symbian_gamedata\stead\stead2\hotkeys.lua" -"!:\data\instead\stead\stead2\hotkeys.lua"
+".\symbian_gamedata\stead\stead2\input.lua" -"!:\data\instead\stead\stead2\input.lua"
+".\symbian_gamedata\stead\stead2\stead.lua" -"!:\data\instead\stead\stead2\stead.lua"
+".\symbian_gamedata\stead\stead2\para.lua" -"!:\data\instead\stead\stead2\para.lua"
+".\symbian_gamedata\stead\stead2\theme.lua" -"!:\data\instead\stead\stead2\theme.lua"
+".\symbian_gamedata\stead\stead2\prefs.lua" -"!:\data\instead\stead\stead2\prefs.lua"
+".\symbian_gamedata\stead\stead2\sprites.lua" -"!:\data\instead\stead\stead2\sprites.lua"
+".\symbian_gamedata\stead\stead2\pixels.lua" -"!:\data\instead\stead\stead2\pixels.lua"
+".\symbian_gamedata\stead\stead2\sound.lua" -"!:\data\instead\stead\stead2\sound.lua"
+".\symbian_gamedata\stead\stead2\wroom.lua" -"!:\data\instead\stead\stead2\wroom.lua"
+".\symbian_gamedata\stead\stead2\nouse.lua" -"!:\data\instead\stead\stead2\nouse.lua"
+".\symbian_gamedata\stead\stead2\dlg.lua" -"!:\data\instead\stead\stead2\dlg.lua"
+".\symbian_gamedata\stead\stead2\counters.lua" -"!:\data\instead\stead\stead2\counters.lua"
+".\symbian_gamedata\stead\stead2\proxymenu.lua" -"!:\data\instead\stead\stead2\proxymenu.lua"
+".\symbian_gamedata\stead\stead2\nolife.lua" -"!:\data\instead\stead\stead2\nolife.lua"
+".\symbian_gamedata\stead\stead2\strict.lua" -"!:\data\instead\stead\stead2\strict.lua"
+".\symbian_gamedata\stead\stead2\ext\sound.lua" -"!:\data\instead\stead\stead2\ext\sound.lua"
+".\symbian_gamedata\stead\stead2\ext\sprites.lua" -"!:\data\instead\stead\stead2\ext\sprites.lua"
+".\symbian_gamedata\stead\stead2\ext\timer.lua" -"!:\data\instead\stead\stead2\ext\timer.lua"
+".\symbian_gamedata\stead\stead2\ext\gui.lua" -"!:\data\instead\stead\stead2\ext\gui.lua"
 ".\symbian_gamedata\lang\ru.ini" -"!:\data\instead\lang\ru.ini"
 ".\symbian_gamedata\lang\en.ini" -"!:\data\instead\lang\en.ini"
 ".\symbian_gamedata\lang\cz.ini" -"!:\data\instead\lang\cz.ini"

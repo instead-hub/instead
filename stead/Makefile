@@ -2,12 +2,12 @@ include ../Rules.make
 include ../config.make
 
 clean:
-all:	classic/stead.lua
+all:	stead2/stead.lua
 
 install:
 	$(INSTALLD) $(DESTDIR)$(STEADPATH)
 
-	for api in classic; do \
+	for api in stead2; do \
 		$(INSTALLD) $(DESTDIR)$(STEADPATH)/$$api; \
 		$(INSTALLD) $(DESTDIR)$(STEADPATH)/$$api/ext; \
 		for f in $$api/*.lua; do \
@@ -19,4 +19,3 @@ install:
 	done
 
 uninstall:
-

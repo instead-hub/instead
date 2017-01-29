@@ -12,7 +12,7 @@ OBJ     := $(patsubst %.c, %.o, $(SRC))
 
 all: instead stead tiny-instead$(EXE)
 
-$(OBJ): %.o : instead/%.c 
+$(OBJ): %.o : instead/%.c
 	$(CC) -c $(<) $(I) $(CFLAGS) $(CPPFLAGS) -o $(@)
 
 tiny-instead$(EXE): main.c $(OBJ)
@@ -22,7 +22,7 @@ instead:
 	ln -s ../instead instead
 
 stead:
-	ln -s ../../stead/classic stead
+	ln -s ../../stead/stead2 stead
 
 clean:
 	$(RM) -f *.o instead stead tiny-instead$(EXE)

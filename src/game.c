@@ -279,7 +279,7 @@ static char *game_api(const char *path, const char *d_name)
 	char *p = game_tag(path, d_name, "API");
 	trunc_lines(p, 0);
 	if (!p)
-		return strdup("classic");
+		return strdup("stead2");
 	return p;
 }
 
@@ -702,7 +702,7 @@ int game_apply_theme(void)
 	el_set(el_scene, elt_box, game_theme.win_x, 0, box);
 
 	if (inv_enabled()) {
-		lay = txt_layout(game_theme.inv_font, INV_ALIGN(game_theme.inv_mode), 
+		lay = txt_layout(game_theme.inv_font, INV_ALIGN(game_theme.inv_mode),
 			game_theme.inv_w, game_theme.inv_h);
 		if (!lay)
 			return -1;
@@ -1793,9 +1793,9 @@ int game_cmd(char *cmd, int flags)
 			if (new_pict) {
 				gfx_free_image(el_img(el_spic));
 				el(el_spic)->p.p = NULL;
-				if (GFX_MODE(game_theme.gfx_mode) == GFX_MODE_EMBEDDED && 
+				if (GFX_MODE(game_theme.gfx_mode) == GFX_MODE_EMBEDDED &&
 					!el(el_spic)->p.p) /* clear embedded gfx */
-				txt_layout_add_img(txt_box_layout(el_box(el_scene)), 
+				txt_layout_add_img(txt_box_layout(el_box(el_scene)),
 					"scene", NULL);
 			}
 		}
@@ -2035,7 +2035,7 @@ int disable_use(void)
 		if (xref_layout(use_xref) == txt_box_layout(el_box(el_inv)))
 			game_xref_update(use_xref, el(el_inv)->x, el(el_inv)->y);
 		else
-			game_xref_update(use_xref, el(el_scene)->x, el(el_scene)->y);	
+			game_xref_update(use_xref, el(el_scene)->x, el(el_scene)->y);
 		use_xref = NULL;
 		return 1;
 	}
@@ -3179,7 +3179,7 @@ static int kbd_instead(struct inp_event *ev, int *x, int *y)
 #endif
 	} else if (DIRECT_MODE && !menu_shown) {
 		; /* nothing todo */
-	} else if (!alt_pressed && (!is_key(ev, "return") || !is_key(ev, "enter") 
+	} else if (!alt_pressed && (!is_key(ev, "return") || !is_key(ev, "enter")
 #ifdef S60
 				    || !is_key(&ev, ".")
 #endif
