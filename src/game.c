@@ -75,19 +75,30 @@ int is_game(const char *path, const char *n)
 	p = getfilepath(path, n);
 	if (!p)
 		return 0;
+
 	if (idf_magic(p)) {
 		free(p);
 		return 1;
 	}
-	strcat(p, "/");
-	pp = malloc(strlen(p) + strlen(INSTEAD_MAIN) + 1);
-	if (pp) {
-		strcpy(pp, p);
-		strcat(pp, INSTEAD_MAIN);
-		if (!access(pp, R_OK))
-			rc = 1;
-		free(pp);
-	}
+/* new api? */
+	pp = getfilepath(p, INSTEAD_MAIN3);
+	if (!pp)
+		goto out;
+	if (!access(pp, R_OK))
+		rc = 3;
+	free(pp);
+	if (rc) /* got one! */
+		goto out;
+/* classic one? */
+	pp = getfilepath(p, INSTEAD_MAIN);
+	if (!pp)
+		goto out;
+	if (!access(pp, R_OK))
+		rc = 2;
+	free(pp);
+	if (rc)
+		goto out;
+out:
 	free(p);
 	return rc;
 }
@@ -164,7 +175,7 @@ int game_select(const char *name)
 		instead_set_debug(debug_sw);
 		instead_set_standalone(standalone_sw);
 
-		if (instead_set_api(g->api) || instead_init(g->path)) {
+		if (instead_init(g->path)) {
 			curgame_dir = oldgame;
 			goto err;
 		}
@@ -273,7 +284,7 @@ static char *game_version(const char *path, const char *d_name)
 	trunc_lines(p, 0);
 	return p;
 }
-
+#if 0
 static char *game_api(const char *path, const char *d_name)
 {
 	char *p = game_tag(path, d_name, "API");
@@ -281,6 +292,38 @@ static char *game_api(const char *path, const char *d_name)
 	if (!p)
 		return strdup("stead2");
 	return p;
+}
+#endif
+static void game_info_free(struct game *g)
+{
+	FREE(g->name);
+	FREE(g->info);
+	FREE(g->author);
+	FREE(g->version);
+/*	FREE(g->api); */
+}
+
+static void game_free(struct game *g)
+{
+	FREE(g->path);
+	FREE(g->dir);
+	game_info_free(g);
+}
+
+static void game_info_fill(struct game *g)
+{
+	g->name = game_name(dirpath(g->path), g->dir);
+	g->info = game_info(dirpath(g->path), g->dir);
+	g->author = game_author(dirpath(g->path), g->dir);
+	g->version = game_version(dirpath(g->path), g->dir);
+/*	g->api = game_api(dirpath(g->path), g->dir); */
+}
+
+static void game_fill(struct game *g, const char *p, const char *dir)
+{
+	g->path = strdup(p);
+	g->dir = strdup(dir);
+	game_info_fill(g);
 }
 
 int games_rename(void)
@@ -290,16 +333,8 @@ int games_rename(void)
 	getdir(cwd, sizeof(cwd));
 	setdir(game_cwd);
 	for (i = 0; i < games_nr; i++) {
-		FREE(games[i].name);
-		FREE(games[i].info);
-		FREE(games[i].author);
-		FREE(games[i].version);
-		FREE(games[i].api);
-		games[i].name = game_name(dirpath(games[i].path), games[i].dir);
-		games[i].info = game_info(dirpath(games[i].path), games[i].dir);
-		games[i].author = game_author(dirpath(games[i].path), games[i].dir);
-		games[i].version = game_version(dirpath(games[i].path), games[i].dir);
-		games[i].api = game_api(dirpath(games[i].path), games[i].dir);
+		game_info_free(&games[i]);
+		game_info_fill(&games[i]);
 	}
 	setdir(cwd);
 	return 0;
@@ -322,6 +357,7 @@ static void games_sort()
 	qsort(games, games_nr, sizeof(struct game), cmp_game);
 }
 
+
 static int games_add(const char *path, const char *dir)
 {
 	char *p;
@@ -335,13 +371,8 @@ static int games_add(const char *path, const char *dir)
 		games[games_nr].idf = 0;
 	} else
 		games[games_nr].idf = 1;
-	games[games_nr].path = p;
-	games[games_nr].dir = strdup(dir);
-	games[games_nr].name = game_name(p, dir);
-	games[games_nr].info = game_info(p, dir);
-	games[games_nr].author = game_author(p, dir);
-	games[games_nr].version = game_version(p, dir);
-	games[games_nr].api = game_api(p, dir);
+	game_fill(&games[games_nr], p, dir);
+	free(p);
 	games_nr ++;
 	return 0;
 }
@@ -362,21 +393,9 @@ int games_replace(const char *path, const char *dir)
 			p = getpath(path, dir);
 		if (!p)
 			return -1;
-		FREE(g->path);
-		FREE(g->dir);
-		FREE(g->name);
-		FREE(g->info);
-		FREE(g->author);
-		FREE(g->version);
-		FREE(g->api);
-
-		g->path = p;
-		g->dir = strdup(dir);
-		g->name = game_name(p, dir);
-		g->info = game_info(p, dir);
-		g->author = game_author(p, dir);
-		g->version = game_version(p, dir);
-		g->api = game_api(p, dir);
+		game_free(g);
+		game_fill(g, p, dir);
+		free(p);
 		games_sort();
 		return 0;
 	}

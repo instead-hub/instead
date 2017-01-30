@@ -36,6 +36,7 @@
 #define INSTEAD_BOOL 3
 
 #define INSTEAD_MAIN	"main.lua"
+#define INSTEAD_MAIN3	"main3.lua"
 #define INSTEAD_IDF	"data.idf"
 
 #ifndef STEAD_PATH
@@ -89,7 +90,7 @@ extern idf_t  instead_idf(void);
 extern int  instead_set_lang(const char *lang);
 extern int  instead_set_debug(int);
 extern int  instead_set_standalone(int);
-extern int  instead_set_api(const char *api);
+/* extern int  instead_set_api(const char *api); */
 
 extern lua_State *instead_lua(void);
 

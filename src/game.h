@@ -152,7 +152,7 @@ struct game {
 	char *version;
 	char *info;
 	char *dir;
-	char *api;
+/*	char *api; */
 	int idf;
 };
 

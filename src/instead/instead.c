@@ -60,6 +60,7 @@ static char *err_msg = NULL;
 static char instead_api_path[PATH_MAX];
 
 static char *API = NULL;
+static char *MAIN = NULL;
 
 #define STEAD_API_PATH instead_api_path
 
@@ -517,14 +518,14 @@ int instead_load(char **info)
 	if (rc)
 		goto err;
 
-	idf = idf_open(data_idf, INSTEAD_MAIN);
+	idf = idf_open(data_idf, MAIN);
 
 	if (idf) {
-		int rc = dofile_idf(L, idf, INSTEAD_MAIN);
+		int rc = dofile_idf(L, idf, MAIN);
 		idf_close(idf);
 		if (rc)
 			goto err;
-	} else if (dofile(L, dirpath(INSTEAD_MAIN))) {
+	} else if (dofile(L, dirpath(MAIN))) {
 		goto err;
 	}
 	instead_clear();
@@ -877,6 +878,77 @@ static int instead_package(const char *path)
 /*	putenv(stead_path); */
 	return 0;
 }
+
+static int instead_set_api(const char *api)
+{
+	int i, c = 0;
+	size_t s;
+	char *oa;
+	if (!api || !*api) {
+		FREE(API);
+		API = NULL;
+		snprintf(instead_api_path, sizeof(instead_api_path), "%s", STEAD_PATH);
+	} else {
+		s = strlen(api);
+		for (i = 0; i < s; i ++) {
+			if (api[i] == '.') {
+				if (c > 0) {
+					instead_err_msg("Wrong API.");
+					fprintf(stderr, "Wrong API.\n");
+					return -1;
+				}
+				c ++;
+			} else
+				c = 0;
+		}
+		oa = API;
+		API = strdup(api);
+		FREE(oa);
+		snprintf(instead_api_path, sizeof(instead_api_path), "%s/%s", STEAD_PATH, API);
+	}
+	return 0;
+}
+
+
+static int instead_detect_api(const char *path)
+{
+	int api = 0;
+	char *p;
+	if (data_idf && idf_only(data_idf, -1) == 1) {
+		if (!idf_access(data_idf, INSTEAD_MAIN3))
+			api = 3;
+		else if (!idf_access(data_idf, INSTEAD_MAIN))
+			api = 2;
+	} else {
+		p = getfilepath(path, INSTEAD_MAIN3);
+		if (!p)
+			return -1;
+		if (!access(dirpath(p), R_OK))
+			api = 3;
+		free(p);
+		if (api)
+			goto out;
+		p = getfilepath(path, INSTEAD_MAIN);
+		if (!access(dirpath(p), R_OK))
+			api = 2;
+		free(p);
+	}
+out:
+	switch (api){
+	case 2:
+		api = instead_set_api("stead2");
+		MAIN = INSTEAD_MAIN;
+		break;
+	case 3:
+		api = instead_set_api("stead3");
+		MAIN = INSTEAD_MAIN3;
+		break;
+	default:
+		return -1;
+	}
+	return api;
+}
+
 int instead_init_lua(const char *path)
 {
 	busy = 0;
@@ -889,7 +961,12 @@ int instead_init_lua(const char *path)
 	instead_cwd_path[sizeof(instead_cwd_path) - 1] = 0;
 	strncpy(instead_game_path, path, sizeof(instead_game_path));
 	instead_cwd_path[sizeof(instead_game_path) - 1] = 0;
-	instead_set_api(API);
+
+	if (instead_detect_api(path) < 0) {
+		fprintf(stderr, "Can not detect game format: %s\n", path);
+		return -1;
+	}
+
 	/* initialize Lua */
 #if LUA_VERSION_NUM >= 502
 	L = luaL_newstate();
@@ -933,6 +1010,16 @@ int instead_init(const char *path)
 	char stead_path[PATH_MAX];
 	int idf = 0;
 
+	if (data_idf)
+		idf_done(data_idf);
+
+	data_idf = idf_init(path);
+
+	if (data_idf) {
+		idf_only(data_idf, 1);
+		idf = 1;
+	}
+
 	if (instead_init_lua(path))
 		goto err;
 
@@ -949,15 +1036,6 @@ int instead_init(const char *path)
 	if (!sem)
 		goto err;
 #endif
-	if (data_idf)
-		idf_done(data_idf);
-
-	data_idf = idf_init(path);
-
-	if (data_idf) {
-		idf_only(data_idf, 1);
-		idf = 1;
-	}
 
 	if ((!idf && setdir(path))) {
 		instead_clear();
@@ -1110,36 +1188,6 @@ int instead_set_standalone(int sw)
 		instead_clear();
 	}
 	return ov;
-}
-
-int instead_set_api(const char *api)
-{
-	int i, c = 0;
-	size_t s;
-	char *oa;
-	if (!api || !*api) {
-		FREE(API);
-		API = NULL;
-		snprintf(instead_api_path, sizeof(instead_api_path), "%s", STEAD_PATH);
-	} else {
-		s = strlen(api);
-		for (i = 0; i < s; i ++) {
-			if (api[i] == '.') {
-				if (c > 0) {
-					instead_err_msg("Wrong API.");
-					fprintf(stderr, "Wrong API.\n");
-					return -1;
-				}
-				c ++;
-			} else
-				c = 0;
-		}
-		oa = API;
-		API = strdup(api);
-		FREE(oa);
-		snprintf(instead_api_path, sizeof(instead_api_path), "%s/%s", STEAD_PATH, API);
-	}
-	return 0;
 }
 
 int instead_set_lang(const char *opt_lang)
