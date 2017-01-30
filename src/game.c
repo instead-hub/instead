@@ -2907,7 +2907,7 @@ static int game_event(const char *ev)
 	args[1].val = ev; args[1].type = INSTEAD_STR;
 	args[2].val = NULL;
 	instead_lock();
-	if (instead_function("iface.input", args)) {
+	if (instead_function("iface:input", args)) {
 		instead_clear();
 		instead_unlock();
 		return -1;
@@ -2977,7 +2977,7 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 		}
 	}
 	instead_lock();
-	if (instead_function("iface.input", args)) {
+	if (instead_function("iface:input", args)) {
 		instead_clear();
 		instead_unlock();
 		return -1;

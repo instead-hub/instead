@@ -11,7 +11,7 @@ game.gui = {
 	hidetitle = false;
 }
 
-iface.input = function(event, ...)
+iface.input = function(self, event, ...)
 	if stead.type(input) ~= 'table' then
 		return
 	end
