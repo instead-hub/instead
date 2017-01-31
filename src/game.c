@@ -2361,7 +2361,12 @@ int game_click(int x, int y, int action, int filter)
 		xref_txt += 4;
 	} else if (!strncmp("go ", xref_get_text(xref), 3)) {
 		go_mode = 1;
-		xref_txt += 3;
+		/* xref_txt += 3; */
+	} else if (!strncmp("obj/act ", xref_get_text(xref), 8)) {
+		if (!use_xref)
+			xref_txt += 4; /* act */
+		else
+			xref_txt += 8; /* obj */
 	} else if (elem->id == el_inv) {
 		use_mode = 1;
 	}
@@ -2378,7 +2383,7 @@ int game_click(int x, int y, int action, int filter)
 			else
 				snprintf(buf, sizeof(buf), "act %s", xref_txt);
 		} else
-			snprintf(buf, sizeof(buf), "%s", xref_get_text(xref));
+			snprintf(buf, sizeof(buf), "%s", xref_txt);
 		if (mouse_filter(filter))
 			return 0;
 		game_cmd(buf, GAME_CMD_CLICK);
