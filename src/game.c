@@ -3330,52 +3330,61 @@ static int mouse_instead(struct inp_event *ev, int *x, int *y)
 	return 0;
 }
 
+static inline int game_cycle(void)
+{
+	static int x = 0, y = 0, rc;
+	struct inp_event ev;
+	ev.x = -1;
+	/* game_cursor(CURSOR_CLEAR); */ /* release bg */
+	while (((rc = input(&ev, 1)) == AGAIN) && !need_restart)
+		game_gfx_commit(1);
+	if (rc == -1) {/* close */
+		return -1;
+	} else if (game_input_events(&ev)) { /* kbd, mouse and touch -> pass in game */
+		; /* all is done in game_input */
+	} else if (kbd_modifiers(&ev)) { /* ctrl, alt, shift */
+		; /* got modifiers */
+	} else if ((rc = kbd_instead(&ev, &x, &y))) { /* ui keys */
+		if (rc < 0)
+			return -1;
+	} else if (DIRECT_MODE && !menu_shown) {
+		; /* nothing todo */
+	} else if (mouse_instead(&ev, &x, &y) < 0) { /* ui mouse */
+		return -1;
+	}
+
+	if (need_restart) {
+		need_restart = 0;
+		game_menu_act("/new");
+	}
+
+	if (!DIRECT_MODE || menu_shown) {
+		if (click_xref)
+			game_highlight(x, y, 1);
+		else if (!motion_mode) {
+			int x, y;
+			gfx_cursor(&x, &y);
+			game_highlight(x, y, 1);
+		}
+	}
+	game_cursor(CURSOR_ON);
+	if (instead_err()) {
+		game_menu(menu_warning);
+	}
+	game_gfx_commit(0);
+	return 0;
+}
+
 int game_loop(void)
 {
-	static int x = 0, y = 0;
-	struct inp_event ev;
-	memset(&ev, 0, sizeof(struct inp_event));
+#ifdef __EMSCRIPTEN__
+	emscripten_set_main_loop(game_cycle, 30, 1);
+#else
 	while (game_running) {
-		int rc;
-		ev.x = -1;
-/*		game_cursor(CURSOR_CLEAR); */ /* release bg */
-		while (((rc = input(&ev, 1)) == AGAIN) && !need_restart)
-			game_gfx_commit(1);
-		if (rc == -1) {/* close */
+		if (game_cycle() < 0)
 			break;
-		} else if (game_input_events(&ev)) { /* kbd, mouse and touch -> pass in game */
-			; /* all is done in game_input */
-		} else if (kbd_modifiers(&ev)) { /* ctrl, alt, shift */
-			; /* got modifiers */
-		} else if ((rc = kbd_instead(&ev, &x, &y))) { /* ui keys */
-			if (rc < 0)
-				break;
-		} else if (DIRECT_MODE && !menu_shown) {
-			; /* nothing todo */
-		} else if (mouse_instead(&ev, &x, &y) < 0) { /* ui mouse */
-			break;
-		}
-
-		if (need_restart) {
-			need_restart = 0;
-			game_menu_act("/new");
-		}
-
-		if (!DIRECT_MODE || menu_shown) {
-			if (click_xref)
-				game_highlight(x, y, 1);
-			else if (!motion_mode) {
-				int x, y;
-				gfx_cursor(&x, &y);
-				game_highlight(x, y, 1);
-			}
-		}
-		game_cursor(CURSOR_ON);
-		if (instead_err()) {
-			game_menu(menu_warning);
-		}
-		game_gfx_commit(0);
 	}
+#endif
 	return 0;
 }
 
