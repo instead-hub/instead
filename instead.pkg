@@ -88,6 +88,7 @@
 ".\symbian_gamedata\stead\stead2\ext\sprites.lua" -"!:\data\instead\stead\stead2\ext\sprites.lua"
 ".\symbian_gamedata\stead\stead2\ext\timer.lua" -"!:\data\instead\stead\stead2\ext\timer.lua"
 ".\symbian_gamedata\stead\stead2\ext\gui.lua" -"!:\data\instead\stead\stead2\ext\gui.lua"
+".\symbian_gamedata\stead\stead2\ext\paths.lua" -"!:\data\instead\stead\stead2\ext\paths.lua"
 ".\symbian_gamedata\lang\ru.ini" -"!:\data\instead\lang\ru.ini"
 ".\symbian_gamedata\lang\en.ini" -"!:\data\instead\lang\en.ini"
 ".\symbian_gamedata\lang\cz.ini" -"!:\data\instead\lang\cz.ini"
