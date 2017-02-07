@@ -67,7 +67,10 @@ static const luaL_Reg paths_funcs[] = {
 
 static int paths_init(void)
 {
-	return instead_api_register(paths_funcs);
+	char path[PATH_MAX];
+	snprintf(path, sizeof(path), "%s/%s", instead_stead_path(), "/ext/paths.lua");
+	instead_api_register(paths_funcs);
+	return instead_loadfile(dirpath(path));
 }
 
 static struct instead_ext ext = {
