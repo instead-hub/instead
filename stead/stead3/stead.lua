@@ -605,7 +605,7 @@ std.list = std.class {
 			return o
 		end
 	end;
-	dump = function(s, recurse)
+	__dump = function(s, recurse)
 		local rc
 		for i = 1, #s do
 			local v = s[i]
@@ -621,7 +621,7 @@ std.list = std.class {
 					     { [std.delim] = '\\'..std.delim });
 				rc = rc .. vv
 				if recurse and not v:closed() then
-					vv = v:dump(recurse)
+					vv = v:__dump(recurse)
 					if vv then
 						rc = rc .. std.delim .. vv
 					end
@@ -1231,8 +1231,8 @@ std.obj = std.class {
 			end
 		end
 	end;
-	dump = function(s)
-		return s.obj:dump(true)
+	__dump = function(s)
+		return s.obj:__dump(true)
 	end;
 	lifeon = function(s)
 		local game = std.ref 'game'
@@ -1311,8 +1311,8 @@ std.room = std.class({
 	visible = function(s)
 		return not s:disabled() and not s:closed()
 	end;
-	dump = function(s)
-		return s.way:dump()
+	__dump = function(s)
+		return s.way:__dump()
 	end
 }, std.obj);
 
@@ -1554,10 +1554,10 @@ std.world = std.class({
 			end
 			r, v = s.player:go(o)
 		elseif cmd[1] == 'inv' then -- show inv
-			r = s.player:dump() -- just info
+			r = s.player:__dump() -- just info
 			v = nil
 		elseif cmd[1] == 'way' then -- show ways
-			r = s.player:where():dump()
+			r = s.player:where():__dump()
 			v = nil
 		elseif cmd[1] == 'save' then -- todo
 			if #cmd < 2 then
