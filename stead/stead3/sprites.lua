@@ -1,0 +1,1 @@
+sprite = stead.ref '@sprite'

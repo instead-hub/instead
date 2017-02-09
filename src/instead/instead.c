@@ -882,7 +882,7 @@ static int instead_package(const char *path)
 static int instead_set_api(const char *api)
 {
 	int i, c = 0;
-	size_t s;
+	ssize_t s;
 	char *oa;
 	if (!api || !*api) {
 		FREE(API);

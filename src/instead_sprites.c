@@ -991,7 +991,7 @@ static int pixels_size(lua_State *L) {
 
 #define PXL_BLEND_COPY 1
 #define PXL_BLEND_BLEND 2
-static void inline blend(unsigned char *s, unsigned char *d)
+static inline void blend(unsigned char *s, unsigned char *d)
 {
 	unsigned int r, g, b, a;
 	unsigned int sa = s[3];
@@ -1006,7 +1006,7 @@ static void inline blend(unsigned char *s, unsigned char *d)
 	d[0] = r; d[1] = g; d[2] = b; d[3] = a;
 }
 
-static void inline draw(unsigned char *s, unsigned char *d)
+static inline void draw(unsigned char *s, unsigned char *d)
 {
 	unsigned int r, g, b, a;
 	unsigned int sa = s[3];
@@ -1019,7 +1019,7 @@ static void inline draw(unsigned char *s, unsigned char *d)
 		((unsigned int)d[2] * (255 - sa) >> 8);
 	d[0] = r; d[1] = g; d[2] = b; d[3] = a;
 }
-static void inline pixel(unsigned char *s, unsigned char *d)
+static inline void pixel(unsigned char *s, unsigned char *d)
 {
 	unsigned char a_src = s[3];
 	unsigned char a_dst = d[3];
@@ -1033,7 +1033,7 @@ static void inline pixel(unsigned char *s, unsigned char *d)
 		blend(s, d);
 	}
 }
-static void inline line0(struct lua_pixels *hdr, int x1, int y1, int dx, int dy, int xd, unsigned char *col)
+static inline void line0(struct lua_pixels *hdr, int x1, int y1, int dx, int dy, int xd, unsigned char *col)
 {
 	int dy2 = dy * 2;
 	int dyx2 = dy2 - dx * 2;
@@ -1078,7 +1078,7 @@ static void inline line0(struct lua_pixels *hdr, int x1, int y1, int dx, int dy,
 	return;
 }
 
-static void inline line1(struct lua_pixels *hdr, int x1, int y1, int dx, int dy, int xd, unsigned char *col)
+static inline void line1(struct lua_pixels *hdr, int x1, int y1, int dx, int dy, int xd, unsigned char *col)
 {
 	int dx2 = dx * 2;
 	int dxy2 = dx2 - dy * 2;

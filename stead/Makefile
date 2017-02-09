@@ -2,12 +2,12 @@ include ../Rules.make
 include ../config.make
 
 clean:
-all:	stead2/stead.lua
+all:	stead2/stead.lua stead3/stead.lua
 
 install:
 	$(INSTALLD) $(DESTDIR)$(STEADPATH)
 
-	for api in stead2; do \
+	for api in stead2 stead3; do \
 		$(INSTALLD) $(DESTDIR)$(STEADPATH)/$$api; \
 		$(INSTALLD) $(DESTDIR)$(STEADPATH)/$$api/ext; \
 		for f in $$api/*.lua; do \
