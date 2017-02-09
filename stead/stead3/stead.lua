@@ -576,14 +576,13 @@ std.list = std.class {
 			end
 		end
 	end;
---	seen = function(s, n)
---		for i = 1, #s do
---			local o = std.ref(s[i])
---			if std.dispof(o) == n then
---				return o, i
---			end
---		end
---	end;
+	seen = function(s, n)
+		local o = s:lookup(n)
+		if not o or not o:visible() then
+			return false
+		end
+		return o
+	end;
 	empty = function(s)
 		return (#s == 0)
 	end;

@@ -91,7 +91,11 @@ for_all = std.for_all
 function seen(w, ww)
 	local wh
 	ww = ww or std.here()
-	wh = std.ref(ww)
+	if not std.is_obj(ww, 'list') then
+		wh = std.ref(ww)
+	else
+		return ww:seen(w)
+	end
 	if not std.is_obj(wh) then
 		std.err("Wrong 2-nd argument to seen(): "..std.tostr(ww), 2)
 	end
@@ -101,6 +105,11 @@ end
 function lookup(w, ww)
 	local wh
 	ww = ww or std.here()
+	if not std.is_obj(ww, 'list') then
+		wh = std.ref(ww)
+	else
+		return ww:lookup(w)
+	end
 	wh = std.ref(ww)
 	if not std.is_obj(wh) and not std.is_obj(wh, 'list') then
 		std.err("Wrong 2-nd argument to lookup(): "..std.tostr(ww), 2)
