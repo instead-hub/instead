@@ -459,7 +459,7 @@ std.list = std.class {
 			end
 			local o = s[i]
 			if o:visible() then
-				local d = o:xref(std.call(s[i], 'dsc'))
+				local d = o:__xref(std.call(s[i], 'dsc'))
 				if type(d) == 'string' then
 					r = (r or '').. d
 				end
@@ -1157,7 +1157,7 @@ std.obj = std.class {
 			std.save_var(s[k], fp, l)
 		end
 	end;
-	xref = function(self, str)
+	__xref = function(self, str)
 		if type(str) ~= 'string' then
 			return
 		end

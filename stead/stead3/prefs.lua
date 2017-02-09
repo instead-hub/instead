@@ -33,12 +33,6 @@ local preferences = std.obj {
 	end,
 	purge = function(s)
 		local name = stead.savepath() .. '/prefs';
-		if std.type(s.__var) == 'table' then
-			for k, v in std.pairs(s.__var) do
-				s[k] = nil
-			end
-			s.__var = {}
-		end
 		return std.os.remove(name);
 	end
 };
