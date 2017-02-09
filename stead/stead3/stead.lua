@@ -605,6 +605,31 @@ std.list = std.class {
 			return o
 		end
 	end;
+	dump = function(s, recurse)
+		local rc
+		for i = 1, #s do
+			local v = s[i]
+			if std.is_obj(v) and v:visible() then
+				local vv
+				if rc then
+					rc = rc .. std.delim
+				else
+					rc = ''
+				end
+				vv = iface:xref(std.dispof(v), v)
+				vv = vv:gsub('\\?'..std.delim,
+					     { [std.delim] = '\\'..std.delim });
+				rc = rc .. vv
+				if recurse and not v:closed() then
+					vv = v:dump(recurse)
+					if vv then
+						rc = rc .. std.delim .. vv
+					end
+				end
+			end
+		end
+		return rc
+	end;
 	__save = function(s, fp, n)
 		if not s:__dirty() then
 			return
@@ -1207,29 +1232,7 @@ std.obj = std.class {
 		end
 	end;
 	dump = function(s)
-		local rc
-		for i = 1, #s.obj do
-			local v = s.obj[i]
-			if std.is_obj(v) and not v:disabled() then
-				local vv
-				if rc then
-					rc = rc .. std.delim
-				else
-					rc = ''
-				end
-				vv = iface:xref(std.dispof(v), v)
-				vv = vv:gsub('\\?'..std.delim,
-					     { [std.delim] = '\\'..std.delim });
-				rc = rc .. vv
-				if not v:closed() then
-					vv = v:dump()
-					if vv then
-						rc = rc .. std.delim .. vv
-					end
-				end
-			end
-		end
-		return rc
+		return s.obj:dump(true)
 	end;
 	lifeon = function(s)
 		local game = std.ref 'game'
@@ -1305,25 +1308,11 @@ std.room = std.class({
 	display = function(s)
 		return s.obj:display()
 	end;
-	dump_way = function(s)
-		local rc
-		for i = 1, #s.way do
-			local v = s.way[i]
-			if std.is_obj(v, 'room')
-			and not v:disabled() and not v:closed() then
-				local vv
-				if rc then
-					rc = rc .. std.delim
-				else
-					rc = ''
-				end
-				vv = iface:xref(std.dispof(v), v)
-				vv = vv:gsub('\\?'..std.delim,
-					     { [std.delim] = '\\'..std.delim });
-				rc = rc .. vv
-			end
-		end
-		return rc
+	visible = function(s)
+		return not s:disabled() and not s:closed()
+	end;
+	dump = function(s)
+		return s.way:dump()
 	end
 }, std.obj);
 
@@ -1568,7 +1557,7 @@ std.world = std.class({
 			r = s.player:dump() -- just info
 			v = nil
 		elseif cmd[1] == 'way' then -- show ways
-			r = s.player:where():dump_way()
+			r = s.player:where():dump()
 			v = nil
 		elseif cmd[1] == 'save' then -- todo
 			if #cmd < 2 then

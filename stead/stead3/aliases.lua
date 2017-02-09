@@ -117,6 +117,10 @@ function lookup(w, ww)
 	return wh:lookup(w)
 end
 
+function way(w, wh)
+	return lookup(w, ways(wh))
+end
+
 function ways(ww)
 	local wh
 	ww = ww or std.here()
