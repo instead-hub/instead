@@ -251,6 +251,9 @@ std.fmt = function(str, fmt, state)
 	end
 
 	s = std.for_each_xref(s, fmt_post) -- rename and xref
+	if state then
+		s = s:gsub('\\?'..std.delim, { ['\\'..std.delim] = std.delim })
+	end
 	return s
 end
 
@@ -1178,7 +1181,7 @@ std.obj = std.class {
 				[std.delim] = '\003',
 				[ '\\{' ] = '{',
 				[ '\\}' ] = '}',
-				[ '\\'..std.delim ] = std.delim }):
+				[ '\\'..std.delim ] = '\\'..std.delim }):
 				gsub('\001([^\002\003]+)\002', '\001'..nam..'\003%1\002'):
 				gsub('[\001\002\003]', { ['\001'] = '{', ['\002'] = '}', ['\003'] = std.delim });
 		if s == str then
@@ -1578,17 +1581,17 @@ std.world = std.class({
 		end
 
 		if r == nil and v == nil then
-			return nil, true -- no reaction
+			v = false -- no reaction
 		end
 
 		if v == false or std.abort_cmd then
 			return r, v -- wrong cmd?
 		end
-
+-- v is true or nil
 		s = std.game -- after reset game is recreated
 		s:reaction(r or false)
 
-		if v then -- game:step
+		if v then
 			std.mod_call('step')
 			s:step()
 		end
@@ -1597,7 +1600,7 @@ std.world = std.class({
 			s:lastreact(s:reaction() or false)
 			s:lastdisp(r)
 		end
-		return r, true
+		return r, v
 	end;
 }, std.obj);
 
@@ -2330,10 +2333,7 @@ std.obj {
 			end
 			return iface:fmt(r, cmd[1] == 'load'), false
 		end
-		if v == true then
-			r = iface:fmt(r, true)
-		end
-		-- print(r, v)
+		r = iface:fmt(r, v)
 		return r, v
 	end;
 	xref = function(self, str, obj)
