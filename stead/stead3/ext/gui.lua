@@ -183,7 +183,7 @@ std.menu = std.class({
 }, std.obj);
 
 function iface:esc(str)
-	str = str:gsub("\\?[\\<>]", { ['\\\\'] = '\\\\\\\\\\', ['>'] = '>', ['<'] = '<' })
+	str = str:gsub("\\?[\\<>]", { ['\\\\'] = '\\\\\\\\\\', ['>'] = iface:nb('>'), ['<'] = iface:nb('<') })
 	return str
 end
 
