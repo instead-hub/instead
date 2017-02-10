@@ -1,12 +1,10 @@
 local std = stead
 
 std.mod_step(function()
-	if std.me():moved() then
-		if std.here().nolife and std.game:live() then
-			std.game:lifeoff()
-		elseif not std.game:live() then
-			std.game:lifeon()
-		end
+	if std.here().nolife and std.game:live() then
+		std.game:lifeoff()
+	elseif not std.game:live() then
+		std.game:lifeon()
 	end
 end)
 

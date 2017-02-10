@@ -160,7 +160,7 @@ end
 local function xref_prep(str)
 	local oo, self
 	local a = {}
-	local s = str --:gsub("^{", ""):gsub("}$", "")
+	local s = str
 	local i = s:find('\001', 1, true)
 	if not i then
 		return str
@@ -194,8 +194,7 @@ local fmt_refs
 
 local function fmt_prep(str)
 	local s = str:gsub("^{", ""):gsub("}$", "")
-	s = s:gsub('\\?[\\'..std.delim..']',
-		   { [std.delim] = '\001', ['\\'..std.delim] = '\\'..std.delim });
+	s = s:gsub('\\?['..std.delim..']', { [std.delim] = '\001' });
 	local l = s:find('\001')
 	if not l or l == 1 then
 		return str
@@ -206,8 +205,8 @@ local function fmt_prep(str)
 end
 
 local function fmt_post(str)
-	local s = str:gsub("^{", ""):gsub("}$", ""):gsub('\\?[\\'..std.delim..']',
-		   { [std.delim] = '\001', ['\\'..std.delim] = '\\'..std.delim });
+	local s = str:gsub("^{", ""):gsub("}$", ""):gsub('\\?['..std.delim..']',
+		{ [std.delim] = '\001' } );
 	local l = s:find('\001')
 	if not l or l == 1 then
 		return str
@@ -217,12 +216,12 @@ local function fmt_post(str)
 		return str
 	end
 	s = fmt_refs[n]..s:sub(l)
-	return xref_prep(s)
+	return xref_prep(std.unesc(s))
 end
 
 function std.for_each_xref(s, fn)
 	s = string.gsub(s, '\\?[\\{}]',
-			{ ['{'] = '\001', ['}'] = '\002', [ '\\{' ] = '{', [ '\\}' ] = '}' });
+			{ ['{'] = '\001', ['}'] = '\002', [ '\\{' ] = '\\{', [ '\\}' ] = '\\}' });
 	local function prep(s)
 		s = s:gsub("[\001\002]", "")
 		s = fn('{'..s..'}')
@@ -237,20 +236,17 @@ std.fmt = function(str, fmt, state)
 	if type(str) ~= 'string' then
 		return
 	end
-
 	local xref = xref_prep
-
 	local s = string.gsub(str, '[\t \n]+', std.space_delim);
-	s = string.gsub(s, '\\?[\\^]', { ['^'] = '\n', ['\\^'] = '^', ['\\\\'] = '\\'} );
-
+	s = string.gsub(s, '\\?[\\^]', { ['^'] = '\n', ['\\^'] = '^'} );
 	fmt_refs = {}
-	s = std.for_each_xref(s, fmt_prep) -- rename all {}
 
+	s = std.for_each_xref(s, fmt_prep) -- rename all {}
 	if type(fmt) == 'function' then
 		s = fmt(s, state)
 	end
-
 	s = std.for_each_xref(s, fmt_post) -- rename and xref
+	s = s:gsub('\\?'..'[{}]', { ['\\{'] = '{', ['\\}'] = '}' })
 	if state then
 		s = s:gsub('\\?'..std.delim, { ['\\'..std.delim] = std.delim })
 	end
@@ -620,9 +616,7 @@ std.list = std.class {
 				else
 					n = v.nam
 				end
-				vv = std.dispof(v):gsub('\\?'..std.delim, {['\\'..std.delim] = '\\'..std.delim,
-										[std.delim] = '\\'..std.delim })
-				vv = '{'..n..std.delim..vv..'}'
+				vv = '{'..std.esc(n)..std.delim..std.esc(n)..'}'
 				rc = rc .. vv
 				if recurse and not v:closed() then
 					vv = v:__dump(recurse)
@@ -1174,18 +1168,13 @@ std.obj = std.class {
 		if type(nam) == 'number' then
 			nam = '# '..std.tostr(nam)
 		end
-
 		local s = string.gsub(str, '\\?[\\{}'..std.delim..']',
 			{ ['{'] = '\001',
-				['}'] = '\002',
-				[std.delim] = '\003',
-				[ '\\{' ] = '{',
-				[ '\\}' ] = '}',
-				[ '\\'..std.delim ] = '\\'..std.delim }):
-				gsub('\001([^\002\003]+)\002', '\001'..nam..'\003%1\002'):
-				gsub('[\001\002\003]', { ['\001'] = '{', ['\002'] = '}', ['\003'] = std.delim });
+				['}'] = '\002', [std.delim] = '\003' }):
+			gsub('\001([^\002\003]+)\002', '\001'..std.esc(nam)..'\003%1\002'):
+			gsub('[\001\002\003]', { ['\001'] = '{', ['\002'] = '}', ['\003'] = std.delim });
 		if s == str then
-			return ("{"..nam..std.delim..s.."}")
+			return '{'..(std.esc(nam)..std.delim..std.esc(s))..'}'
 		end
 		return s;
 	end;
@@ -1981,6 +1970,18 @@ function std.split(s, sep)
 	return fields
 end
 
+function std.esc(s, sym)
+	sym = sym or std.delim
+	s = s:gsub("\\?["..sym.."]", { [sym] = '\\'..sym, ['\\'..sym] = '\\\\'..sym})
+	return s
+end
+
+function std.unesc(s, sym)
+	sym = sym or std.delim
+	s = s:gsub("\\?[\\"..sym.."]", { ['\\'..sym] = sym, ['\\\\'] = '\\' })
+	return s
+end
+
 local function __dump(t, nested)
 	local rc = '';
 	if type(t) == 'string' then
@@ -2326,14 +2327,10 @@ std.obj {
 		std.cmd = cmd
 		std.cache = {}
 		local r, v = std.ref 'game':cmd(cmd)
-		-- print("r, v = ", r, v)
-		if v == false then
-			if r == true then -- true, false is now menu mode
-				return nil, true -- hack for menu mode
-			end
-			return iface:fmt(r, cmd[1] == 'load'), false
+		if r == true and v == false then
+			return nil, true -- hack for menu mode
 		end
-		r = iface:fmt(r, v)
+		r = iface:fmt(r, v or cmd[1] == 'load') -- to force fmt
 		return r, v
 	end;
 	xref = function(self, str, obj)
