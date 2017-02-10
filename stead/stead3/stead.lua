@@ -616,7 +616,7 @@ std.list = std.class {
 				else
 					n = v.nam
 				end
-				vv = '{'..std.esc(n)..std.delim..std.esc(n)..'}'
+				vv = '{'..std.esc(n)..std.delim..std.esc(std.dispof(v))..'}'
 				rc = rc .. vv
 				if recurse and not v:closed() then
 					vv = v:__dump(recurse)
@@ -1972,6 +1972,7 @@ end
 
 function std.esc(s, sym)
 	sym = sym or std.delim
+	if type(s) ~= 'string' then return s end
 	s = s:gsub("\\?["..sym.."]", { [sym] = '\\'..sym, ['\\'..sym] = '\\\\'..sym})
 	return s
 end
@@ -2126,7 +2127,8 @@ function std.dispof(o)
 		return
 	end
 	if o.disp ~= nil then
-		return std.call(o, 'disp')
+		local d = std.call(o, 'disp')
+		return d
 	end
 	if type(o.nam) ~= 'string' then
 		if std.is_tag(o.tag) then
