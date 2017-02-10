@@ -160,9 +160,7 @@ end
 local function xref_prep(str)
 	local oo, self
 	local a = {}
-	local s = str:gsub("^{", ""):gsub("}$", ""):gsub('\\?[\\'..std.delim..']',
-		{ [std.delim] = '\001', ['\\'..std.delim] = std.delim });
-
+	local s = str --:gsub("^{", ""):gsub("}$", "")
 	local i = s:find('\001', 1, true)
 	if not i then
 		return str
@@ -197,7 +195,7 @@ local fmt_refs
 local function fmt_prep(str)
 	local s = str:gsub("^{", ""):gsub("}$", "")
 	s = s:gsub('\\?[\\'..std.delim..']',
-		   { [std.delim] = '\001', ['\\'..std.delim] = std.delim });
+		   { [std.delim] = '\001', ['\\'..std.delim] = '\\'..std.delim });
 	local l = s:find('\001')
 	if not l or l == 1 then
 		return str
@@ -209,7 +207,7 @@ end
 
 local function fmt_post(str)
 	local s = str:gsub("^{", ""):gsub("}$", ""):gsub('\\?[\\'..std.delim..']',
-		   { [std.delim] = '\001', ['\\'..std.delim] = std.delim });
+		   { [std.delim] = '\001', ['\\'..std.delim] = '\\'..std.delim });
 	local l = s:find('\001')
 	if not l or l == 1 then
 		return str
@@ -218,7 +216,7 @@ local function fmt_post(str)
 	if not fmt_refs[n] then
 		return str
 	end
-	s = fmt_refs[n]..std.delim..s:sub(l + 1)
+	s = fmt_refs[n]..s:sub(l)
 	return xref_prep(s)
 end
 
@@ -246,7 +244,6 @@ std.fmt = function(str, fmt, state)
 	s = string.gsub(s, '\\?[\\^]', { ['^'] = '\n', ['\\^'] = '^', ['\\\\'] = '\\'} );
 
 	fmt_refs = {}
-
 	s = std.for_each_xref(s, fmt_prep) -- rename all {}
 
 	if type(fmt) == 'function' then
@@ -254,7 +251,6 @@ std.fmt = function(str, fmt, state)
 	end
 
 	s = std.for_each_xref(s, fmt_post) -- rename and xref
-
 	return s
 end
 
@@ -610,15 +606,20 @@ std.list = std.class {
 		for i = 1, #s do
 			local v = s[i]
 			if std.is_obj(v) and v:visible() then
-				local vv
+				local vv, n
 				if rc then
 					rc = rc .. std.delim
 				else
 					rc = ''
 				end
-				vv = iface:xref(std.dispof(v), v)
-				vv = vv:gsub('\\?'..std.delim,
-					     { [std.delim] = '\\'..std.delim });
+				if type(v.nam) == 'number' then
+					n = '# '..std.tostr(v.nam)
+				else
+					n = v.nam
+				end
+				vv = std.dispof(v):gsub('\\?'..std.delim, {['\\'..std.delim] = '\\'..std.delim,
+										[std.delim] = '\\'..std.delim })
+				vv = '{'..n..std.delim..vv..'}'
 				rc = rc .. vv
 				if recurse and not v:closed() then
 					vv = v:__dump(recurse)
