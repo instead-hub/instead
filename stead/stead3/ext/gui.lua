@@ -203,13 +203,13 @@ function iface:xref(str, o, ...)
 		args = args .. ' '..std.dump(a[i])
 	end
 	if std.cmd[1] == 'way' then
-		return std.string.format("<a:go %s%s>", iface:esc(std.deref_str(o)), iface:esc(args))..iface:esc(str).."</a>"
+		return std.string.format("<a:go %s%s>", iface:esc(std.deref_str(o)), iface:esc(args))..str.."</a>"
 	elseif o:type 'menu' or std.is_system(o) then
-		return std.string.format("<a:act %s%s>", iface:esc(std.deref_str(o)), iface:esc(args))..iface:esc(str).."</a>"
+		return std.string.format("<a:act %s%s>", iface:esc(std.deref_str(o)), iface:esc(args))..str.."</a>"
 	elseif std.cmd[1] == 'inv' then
-		return std.string.format("<a:%s%s>", iface:esc(std.deref_str(o)), iface:esc(args))..iface:esc(str).."</a>"
+		return std.string.format("<a:%s%s>", iface:esc(std.deref_str(o)), iface:esc(args))..str.."</a>"
 	end
-	return std.string.format("<a:obj/act %s%s>", iface:esc(std.deref_str(o)), iface:esc(args))..iface:esc(str).."</a>"
+	return std.string.format("<a:obj/act %s%s>", iface:esc(std.deref_str(o)), iface:esc(args))..str.."</a>"
 end
 
 function iface:em(str)

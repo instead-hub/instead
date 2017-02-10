@@ -1568,7 +1568,6 @@ std.world = std.class({
 			r = std:load(cmd[2])
 			v = false
 		end
-
 		if r == nil and v == nil then
 			v = false -- no reaction
 		end
