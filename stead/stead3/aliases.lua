@@ -45,6 +45,16 @@ local function walkroom(w)
 	return w
 end
 
+function visits(w)
+	if not w then return std.here():visits() end
+	return std.object(walkroom(w)):visits()
+end
+
+function visited(w)
+	if not w then return std.here():visited() end
+	return std.object(walkroom(w)):visited()
+end
+
 function walk(w, ...)
 	local r, v = std.me():walk(walkroom(w), ...)
 	if std.cctx() and type(r) == 'string' then
