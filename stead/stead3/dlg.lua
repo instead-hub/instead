@@ -178,7 +178,7 @@ std.dlg = std.class({
 				local d = std.call(o, 'dsc')
 				if type(d) == 'string' then
 					d = phr_prefix(d, nr)
-					d = o:xref(d)
+					d = o:__xref(d)
 					r = (r or '').. d
 					nr = nr + 1
 				end
