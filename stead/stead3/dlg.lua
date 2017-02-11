@@ -158,6 +158,13 @@ std.dlg = std.class({
 		s.current = c
 		return c
 	end;
+	seen = function(self, w)
+		local r, v = std.obj.lookup(self, w)
+		if std.is_obj(r) and r:visible() then
+			return r, v
+		end
+		return
+	end;
 	display = function(s)
 		local r, nr
 		nr = 1
