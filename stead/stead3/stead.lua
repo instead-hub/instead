@@ -686,6 +686,8 @@ std.save_var = function(vv, fp, n)
 			fp:write(string.format("%s = %s\n", n,  std.dump(vv)))
 --			std.save_table(vv, fp, n)
 		end
+	elseif vv == nil then
+		fp:write(string.format("%s = nil\n", n))
 	end
 end
 
