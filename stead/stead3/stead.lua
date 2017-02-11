@@ -1302,7 +1302,8 @@ std.room = std.class({
 		return std.par(std.scene_delim, title or false, dsc)
 	end;
 	display = function(s)
-		return s.obj:display()
+		local deco = std.call(s, 'deco'); -- static decorations
+		return std.par(std.scene_delim, deco or false, s.obj:display())
 	end;
 	visible = function(s)
 		return not s:disabled() and not s:closed()
@@ -1560,13 +1561,15 @@ std.world = std.class({
 				return nil, false
 			end
 			r = std:save(cmd[2])
-			v = nil
+			v = true
+			std.abort()
 		elseif cmd[1] == 'load' then -- todo
 			if #cmd < 2 then
 				return nil, false
 			end
 			r = std:load(cmd[2])
-			v = false
+			v = true
+			std.abort()
 		end
 		if r == nil and v == nil then
 			v = false -- no reaction
@@ -2331,7 +2334,7 @@ std.obj {
 		if r == true and v == false then
 			return nil, true -- hack for menu mode
 		end
-		r = iface:fmt(r, v or cmd[1] == 'load') -- to force fmt
+		r = iface:fmt(r, v) -- to force fmt
 		return r, v
 	end;
 	xref = function(self, str, obj)
