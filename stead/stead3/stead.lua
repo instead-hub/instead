@@ -1329,11 +1329,11 @@ std.world = std.class({
 		if not v.player then
 			v.player = 'player'
 		end
-		v = std.obj(v)
 		if v.lifes == nil then
 			rawset(v, 'lifes', {})
 		end
 		v.lifes = std.list(v.lifes)
+		v = std.obj(v)
 		std.setmt(v, self)
 		return v
 	end;
@@ -1420,10 +1420,10 @@ std.world = std.class({
 		end
 
 		for i = 1, #ll do
-			local v, pre
+			local v, pre, st
 			local o = ll[i]
 			if not o:disabled() then
-				v, pre = std.method(o, 'life');
+				v, st, pre = std.method(o, 'life');
 				av, vv = s:events()
 				if pre then -- hi-pri msg
 					av = std.par(std.space_delim, av or false, v)
@@ -1431,7 +1431,7 @@ std.world = std.class({
 					vv = std.par(std.space_delim, vv or false, v)
 				end
 				s:events(av or false, vv or false)
-				if pre == false then -- break cycle
+				if st == false then -- break cycle
 					break
 				end
 			end
@@ -2197,15 +2197,18 @@ std.method = function(v, n, ...)
 	end
 	if type(v[n]) == 'function' then
 		std.callpush(v, ...)
+		local c
 		local a, b = v[n](v, ...);
+		c = b
 		if type(a) ~= 'string' and b == nil then
 			a, b = std.pget(), a
+			c = b
 			if b == nil then
 				b = true -- the fact of call
 			end
 		end
 		std.callpop()
-		return a, b
+		return a, b, c
 	end
 	if type(v[n]) == 'boolean' then
 		return v[n], true
