@@ -879,6 +879,11 @@ static int instead_package(const char *path)
 	return 0;
 }
 
+const char *instead_get_api(void)
+{
+	return API;
+}
+
 static int instead_set_api(const char *api)
 {
 	int i, c = 0;
@@ -936,11 +941,13 @@ static int instead_detect_api(const char *path)
 out:
 	switch (api){
 	case 2:
-		api = instead_set_api("stead2");
+		if (instead_set_api("stead2") < 0)
+			return -1;
 		MAIN = INSTEAD_MAIN;
 		break;
 	case 3:
-		api = instead_set_api("stead3");
+		if (instead_set_api("stead3") < 0)
+			return -1;
 		MAIN = INSTEAD_MAIN3;
 		break;
 	default:
@@ -951,6 +958,7 @@ out:
 
 int instead_init_lua(const char *path)
 {
+	int api;
 	busy = 0;
 	setlocale(LC_ALL,"");
 	setlocale(LC_NUMERIC,"C"); /* to avoid . -> , in numbers */	
@@ -962,7 +970,7 @@ int instead_init_lua(const char *path)
 	strncpy(instead_game_path, path, sizeof(instead_game_path));
 	instead_cwd_path[sizeof(instead_game_path) - 1] = 0;
 
-	if (instead_detect_api(path) < 0) {
+	if ((api = instead_detect_api(path)) < 0) {
 		fprintf(stderr, "Can not detect game format: %s\n", path);
 		return -1;
 	}
@@ -989,6 +997,10 @@ int instead_init_lua(const char *path)
 	instead_package(path);
 	instead_platform();
 /*	instead_set_lang(opt_lang); */
+	if (api == 3)
+		instead_eval("API='stead3'");
+	else
+		instead_eval("API='stead2'");
 	if (debug_sw)
 		instead_eval("DEBUG=true");
 	else

@@ -91,6 +91,7 @@ extern int  instead_set_lang(const char *lang);
 extern int  instead_set_debug(int);
 extern int  instead_set_standalone(int);
 /* extern int  instead_set_api(const char *api); */
+extern const char *instead_get_api(void);
 
 extern lua_State *instead_lua(void);
 
