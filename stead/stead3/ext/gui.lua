@@ -374,10 +374,19 @@ local iface_cmd = iface.cmd -- save old
 function iface:cmd(inp)
 	local a = std.split(inp)
 	if a[1] == 'act' or a[1] == 'use' or a[1] == 'go' then
-		if std.tonum(a[2]) then
+		if a[1] == 'use' then
+			local use = std.split(a[2], ',')
+			for i = 1, 2 do
+				local u = std.tonum(use[i])
+				if u then
+					use[i] = dict[u]
+				end
+			end
+			a[2] = std.join(use, ',')
+		elseif std.tonum(a[2]) then
 			a[2] = dict[std.tonum(a[2])]
-			inp = std.join(a)
 		end
+		inp = std.join(a)
 	end
 	return iface_cmd(self, inp)
 end
