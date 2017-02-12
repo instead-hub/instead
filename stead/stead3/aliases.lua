@@ -316,6 +316,19 @@ function drop(w, wh)
 	return place(w, wh)
 end
 
+function path(t, s, w)
+	if not w then
+		s, w = t, s
+	end
+	return room {
+		nam = t;
+		disp = s;
+		onenter = function(s)
+			walk(w)
+		end
+	}
+end
+
 local xact = (std.menu or std.obj) {
 	nam = '@';
 	{
