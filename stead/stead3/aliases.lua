@@ -23,6 +23,7 @@ delete = std.delete
 nameof = std.nameof
 dispof = std.dispof
 titleof = std.titleof
+gamefile = std.gamefile
 
 function from(ww)
 	local wh

@@ -454,7 +454,8 @@ std.list = std.class {
 			end
 			local o = s[i]
 			if o:visible() then
-				local d = o:__xref(std.call(s[i], 'dsc'))
+				local disp = o:display()
+				local d = o:__xref(disp)
 				if type(d) == 'string' then
 					r = (r or '').. d
 				end
@@ -1160,6 +1161,10 @@ std.obj = std.class {
 			std.save_var(s[k], fp, l)
 		end
 	end;
+	display = function(self)
+		local d = std.call(self, 'dsc')
+		return d
+	end;
 	__xref = function(self, str)
 		if type(str) ~= 'string' then
 			return
@@ -1304,7 +1309,7 @@ std.room = std.class({
 		return std.par(std.scene_delim, title or false, dsc)
 	end;
 	display = function(s)
-		local deco = std.call(s, 'deco'); -- static decorations
+		local deco = std.call(s, 'decor'); -- static decorations
 		return std.par(std.scene_delim, deco or false, s.obj:display())
 	end;
 	visible = function(s)
