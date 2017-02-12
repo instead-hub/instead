@@ -34,6 +34,7 @@ stead = {
 	__mod_hooks = {};
 	files = {};
 	busy = function() end;
+	xref_debug = true;
 }
 
 local std = stead
@@ -185,7 +186,12 @@ local function xref_prep(str)
 		end
 	end
 	if not std.is_obj(self) then
-		std.err("Wrong object in xref: "..std.tostr(oo), 2)
+		if std.xref_debug then
+			std.err("Wrong object in xref: "..std.tostr(oo), 2)
+		else
+			print("Wrong xref: "..std.tostr(oo))
+			return s
+		end
 	end
 	return iface:xref(s, self, std.unpack(a));
 end
