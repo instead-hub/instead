@@ -22,7 +22,7 @@ instead:
 	ln -s ../instead instead
 
 stead:
-	ln -s ../../stead/stead2 stead
+	ln -s ../../stead stead
 
 clean:
 	$(RM) -f *.o instead stead tiny-instead$(EXE)
