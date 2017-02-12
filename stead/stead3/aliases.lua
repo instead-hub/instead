@@ -85,6 +85,12 @@ function object(w)
 	if std.is_tag(w) then
 		o = std.here():lookup(w)
 		if not o then
+			o = std.ways():lookup(w)
+		end
+		if not o then
+			o = std.me():lookup(w)
+		end
+		if not o then
 			std.err("Wrong tag: "..w, 3)
 		end
 		return o
@@ -178,6 +184,18 @@ end
 
 function enable(w)
 	return std.object(w):enable()
+end
+
+function disable(w)
+	return std.object(w):enable()
+end
+
+function open(w)
+	return std.object(w):open()
+end
+
+function close(w)
+	return std.object(w):close()
 end
 
 function actions(w, t)

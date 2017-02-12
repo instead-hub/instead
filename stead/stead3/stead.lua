@@ -431,7 +431,7 @@ std.list = std.class {
 			local k = s[i]
 			s[i] = std.ref(k)
 			if not std.is_obj(s[i]) then
-				std.err("Wrong item in list: "..std.tostr(k), 2)
+				std.err("Wrong item in list: "..std.tostr(k).." in "..std.dispof(o), 2)
 			end
 			s:__attach(s[i])
 		end
