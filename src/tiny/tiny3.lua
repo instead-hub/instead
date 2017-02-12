@@ -7,10 +7,6 @@ local type = std.type
 
 local dict = {}
 
-iface.inv_delim = '\n'
-iface.hinv_delim = ' | '
-iface.ways_delim = ' | '
-
 local function get_bool(o, nam)
 	if type(o[nam]) == 'boolean' then
 		return o[nam]
@@ -28,42 +24,6 @@ instead.get_title = std.cacheable('title', function()
 		return
 	end
 	return std.titleof(stead.here())
-end)
-
-iface.noways = false
-
-instead.get_ways = std.cacheable('ways', function()
-	if get_bool(iface, 'noways') then
-		return
-	end
-	local str = iface:cmd("way");
-	if str then
-		str = std.string.gsub(str, '\n$','');
-		str = std.string.gsub(str, '\\?['..std.delim ..']',
-			{ [std.delim] = iface.ways_delim, [ '\\'..std.delim ] = std.delim });
-		return iface:center(str);
-	end
-	return str
-end)
-
-iface.noinv = false
-
-instead.get_inv = std.cacheable('inv', function(horiz)
-	if get_bool(iface, 'noinv') then
-		return
-	end
-	local str = iface:cmd("inv");
-	if str then
-		str = std.string.gsub(str, '\n$','');
-		if not horiz then
-			str = std.string.gsub(str, '\\?['.. std.delim ..']',
-				{ [std.delim] = iface.inv_delim, ['\\'..std.delim] = std.delim });
-		else
-			str = std.string.gsub(str, '\\?['.. std.delim ..']',
-				{ [std.delim] = iface.hinv_delim, ['\\'..std.delim] = std.delim });
-		end
-	end
-	return str
 end)
 
 function iface:fading()
@@ -192,6 +152,19 @@ std.obj { -- input object
 menu = std.menu
 stat = std.stat
 txt = iface
+
+-- fake sound
+local sound = std.obj {
+	nam = '@sound';
+}
+
+sound.set = function() end
+sound.play = function() end
+sound.stop = function() end
+sound.music = function() end
+sound.stop_music = function() end
+sound.music_fading = function() end
+sound.new = function() return sound end
 
 std.mod_init(function()
 	std.rawset(_G, 'instead', instead)
