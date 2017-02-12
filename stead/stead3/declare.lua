@@ -10,13 +10,23 @@ local table = std.table
 local next = std.next
 
 local function __declare_one(k, v, t)
+	local system
+
 	if type(k) ~= 'string' then -- k:find("^[a-zA-Z_][a-zA-Z0-9_]*$") then
 		std.err ("Wrong declaration name: "..k, 3)
 	end
 	if declarations[k] then
 		std.err ("Duplicate declaration: "..k, 3)
 	end
-	declarations[k] = {value = v, type = t}
+
+	system = rawget(_G, k)
+
+	declarations[k] = { value = v, type = t, system = system }
+
+	if system and v ~= system then
+		std.err("Overwite global declaration: "..std.tostr(k), 3)
+	end
+
 	if t == 'global' then
 		if type(v) == 'function' and not std.functions[v] then
 			std.err("Use declare to declare function: "..k, 3)
@@ -160,14 +170,14 @@ local function mod_init()
 			return d.value
 		end
 		local f = std.getinfo(2, "S").source
-		if f:byte(1) == 0x3d then
-			return
-		end
-		if f:byte(1) ~= 0x40 then
-			print ("Uninitialized global variable: "..n.." in "..f)
-		else
-			error ("Uninitialized global variable: "..n.." in "..f, 2)
-		end
+--		if f:byte(1) == 0x3d then
+--			return
+--		end
+--		if f:byte(1) ~= 0x40 then
+--			print ("Uninitialized global variable: "..n.." in "..f)
+--		else
+			std.err ("Uninitialized global variable: "..n.." in "..f, 2)
+--		end
 	end;
 	__newindex = function(t, k, v)
 		local d = declarations[k]
@@ -203,7 +213,9 @@ end
 local function mod_done()
 	std.setmt(_G, {})
 	for k, v in pairs(declarations) do
-		rawset(_G, k, nil)
+		if not v.system then
+			rawset(_G, k, nil)
+		end
 	end
 	std.tables = {}
 	std.functions = {}

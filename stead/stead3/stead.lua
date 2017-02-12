@@ -1589,6 +1589,7 @@ std.world = std.class({
 		end
 
 		if v == false or std.abort_cmd then
+			std.mod_call('step', false)
 			return r, v -- wrong cmd?
 		end
 -- v is true or nil
@@ -1596,7 +1597,7 @@ std.world = std.class({
 		s:reaction(r or false)
 
 		if v then
-			std.mod_call('step')
+			std.mod_call('step', v)
 			s:step()
 		end
 		r = s:display(v)
@@ -1972,6 +1973,15 @@ function std.strip(s)
 	s = tostring(s)
 	s = s:gsub("^[ \t]*", ""):gsub("[ \t]*$", "")
 	return s
+end
+
+function std.join(a, sep)
+	sep = sep or ' '
+	local rc
+	for i = 1, #a do
+		rc = (rc and rc .. sep or '') .. a[i]
+	end
+	return rc
 end
 
 function std.split(s, sep)

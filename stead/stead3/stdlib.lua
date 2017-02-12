@@ -15,9 +15,6 @@ dlg = std.dlg
 me = std.me
 here = std.here
 from = std.from
-walk = std.walk
-walkin = std.walkin
-walkout = std.walkout
 new = std.new
 delete = std.delete
 nameof = std.nameof
@@ -79,6 +76,10 @@ function walkout(w, ...)
 	end
 	return r, v
 end
+
+std.walkout = walkout
+std.walkin = walkin
+std.walk = walk
 
 function object(w)
 	local o

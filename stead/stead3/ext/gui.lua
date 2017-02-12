@@ -7,6 +7,8 @@ local instead = std.obj { nam = '@instead' }
 local iface = std '@iface'
 local type = std.type
 
+local dict = {}
+
 iface.inv_delim = '\n'
 iface.hinv_delim = ' | '
 iface.ways_delim = ' | '
@@ -202,14 +204,20 @@ function iface:xref(str, o, ...)
 		end
 		args = args .. ' '..std.dump(a[i])
 	end
+	local xref = std.string.format("%s%s", std.deref_str(o), args)
+	-- std.string.format("%s%s", iface:esc(std.deref_str(o)), iface:esc(args))
+
+	table.insert(dict, xref)
+	xref = std.tostr(#dict)
+
 	if std.cmd[1] == 'way' then
-		return std.string.format("<a:go %s%s>", iface:esc(std.deref_str(o)), iface:esc(args))..str.."</a>"
+		return std.string.format("<a:go %s>", xref)..str.."</a>"
 	elseif o:type 'menu' or std.is_system(o) then
-		return std.string.format("<a:act %s%s>", iface:esc(std.deref_str(o)), iface:esc(args))..str.."</a>"
+		return std.string.format("<a:act %s>", xref)..str.."</a>"
 	elseif std.cmd[1] == 'inv' then
-		return std.string.format("<a:%s%s>", iface:esc(std.deref_str(o)), iface:esc(args))..str.."</a>"
+		return std.string.format("<a:%s>", xref)..str.."</a>"
 	end
-	return std.string.format("<a:obj/act %s%s>", iface:esc(std.deref_str(o)), iface:esc(args))..str.."</a>"
+	return std.string.format("<a:obj/act %s>", xref)..str.."</a>"
 end
 
 function iface:em(str)
@@ -361,6 +369,19 @@ function iface:input(event, ...)
 	return
 end
 
+local iface_cmd = iface.cmd -- save old
+
+function iface:cmd(inp)
+	local a = std.split(inp)
+	if a[1] == 'act' or a[1] == 'use' or a[1] == 'go' then
+		if std.tonum(a[2]) then
+			a[2] = dict[std.tonum(a[2])]
+			inp = std.join(a)
+		end
+	end
+	return iface_cmd(self, inp)
+end
+
 std.obj { -- input object
 	nam = '@input';
 };
@@ -374,7 +395,11 @@ std.mod_init(function()
 	std.rawset(_G, 'instead', instead)
 	require "ext/sandbox"
 end)
-
+std.mod_step(function(state)
+	if state then
+		dict = {}
+	end
+end)
 std.mod_done(function()
 	last_picture = nil
 end)

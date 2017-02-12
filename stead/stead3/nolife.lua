@@ -1,6 +1,9 @@
 local std = stead
 
-std.mod_step(function()
+std.mod_step(function(state)
+	if not state then
+		return
+	end
 	if std.here().nolife and std.game:live() then
 		std.game:lifeoff()
 	elseif not std.game:live() then

@@ -1,6 +1,9 @@
 local std = stead
 
-std.mod_step(function()
+std.mod_step(function(state)
+	if not state then
+		return
+	end
 	if std.here().noinv and not std.me().__inv_disabled then
 		std.me():inventory():disable()
 		std.me().__inv_disabled = true
