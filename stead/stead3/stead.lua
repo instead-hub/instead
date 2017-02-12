@@ -34,7 +34,7 @@ stead = {
 	__mod_hooks = {};
 	files = {};
 	busy = function() end;
-	xref_debug = true;
+	debug_xref = true;
 }
 
 local std = stead
@@ -186,7 +186,7 @@ local function xref_prep(str)
 		end
 	end
 	if not std.is_obj(self) then
-		if std.xref_debug then
+		if std.debug_xref then
 			std.err("Wrong object in xref: "..std.tostr(oo), 2)
 		else
 			print("Wrong xref: "..std.tostr(oo))
@@ -2414,4 +2414,4 @@ end
 -- require "ext/gui"
 require "declare"
 require "dlg"
-require "aliases"
+require "stdlib"
