@@ -155,14 +155,6 @@ end
 
 std.stat = std.class({
 	__stat_type = true;
-	new = function(self, v)
-		if type(v) ~= 'table' then
-			std.err ("Wrong argument to std.stat:"..std.tostr(v), 2)
-		end
-		v = std.obj(v)
-		std.setmt(v, self)
-		return v
-	end;
 }, std.obj);
 
 std.menu = std.class({
