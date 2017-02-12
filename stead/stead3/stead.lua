@@ -2339,7 +2339,9 @@ std.obj {
 	nam = '@iface';
 	cmd = function(self, inp)
 		local cmd = cmd_parse(inp)
-		-- print("input: ", inp)
+		if std.debug_input then
+			print("* input: ", inp)
+		end
 		if not cmd then
 			return "Error in cmd arguments", false
 		end
@@ -2351,6 +2353,9 @@ std.obj {
 			return nil, true -- hack for menu mode
 		end
 		r = iface:fmt(r, v) -- to force fmt
+		if std.debug_output then
+			print("* output: ", r, v)
+		end
 		return r, v
 	end;
 	xref = function(self, str, obj)

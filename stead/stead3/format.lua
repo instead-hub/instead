@@ -26,7 +26,9 @@ std.format = function(r, state)
 	if utf8 then
 		if fmt.dash then
 			r = r:gsub('([^-])%-%-([^-])', '%1—%2');
-			r = r:gsub('^%-%-([^-])', '—%1'):gsub("^—[ \t]+", "— ");
+			r = r:gsub('^%-%-([^-])', '—%1')
+			r = r:gsub("\n—[ \t]+", "— ");
+			r = r:gsub("^—[ \t]+", "— ");
 		end
 
 		if fmt.quotes then
