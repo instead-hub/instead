@@ -317,15 +317,32 @@ function drop(w, wh)
 	return place(w, wh)
 end
 
-function path(t, s, w)
+function path(t)
+	if type(t) ~= 'table' then
+		std.err("Wrong path() argumen", 2)
+	end
+	local n, s, w = t[1], t[2], t[3]
 	if not w then
-		s, w = t, s
+		s, w = n, s
+		n = nil
 	end
 	return room {
-		nam = t;
-		disp = s;
+		nam = n;
+		before = s;
+		disp = function(s)
+			if s.after ~= nil and visited(w) then
+				return std.call(s, 'after')
+			end
+			return std.call(s, 'before')
+		end;
+		after = t.after;
+		walk = w;
 		onenter = function(s)
-			walk(w)
+			if type(s.walk) == 'function' then
+				walk(s.walk())
+			else
+				walk(s.walk)
+			end
 		end
 	}
 end
