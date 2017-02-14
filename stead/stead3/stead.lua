@@ -333,6 +333,17 @@ function std.class(s, inh)
 		end
 		return v:new(n, ...)
 	end;
+	s.__mod = function(self, b)
+		if not std.is_obj(b) then
+			std.err("Wrong ^ operation on: "..std.tostr(self), 2)
+		end
+		if std.is_obj(self) then
+			self.obj:add(b)
+		elseif std.is_obj(self, 'list') then
+			self:add(b)
+		end
+		return self
+	end;
 	s.__tostring = function(self)
 		if not std.is_obj(self) then
 			local os = s.__tostring
@@ -468,7 +479,7 @@ std.list = std.class {
 				if not o:closed() then
 					d = o.obj:display()
 					if type(d) == 'string' then
-						r = (r or '') .. d
+						r = (r and (r .. std.space_delim) or '') .. d
 					end
 				end
 			end

@@ -103,6 +103,10 @@ std.dlg = std.class({
 		end
 		return t, r ~= false
 	end;
+	reset = function(s, phr)
+		s.__stack = {}
+		return s:push(phr)
+	end;
 	pop = function(s, phr)
 		if #s.__stack == 0 then
 			return false
