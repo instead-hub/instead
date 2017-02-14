@@ -3336,8 +3336,10 @@ static inline int game_cycle(void)
 	struct inp_event ev;
 	ev.x = -1;
 	/* game_cursor(CURSOR_CLEAR); */ /* release bg */
-	while (((rc = input(&ev, 1)) == AGAIN) && !need_restart)
+	if (((rc = input(&ev, 1)) == AGAIN) && !need_restart) {
 		game_gfx_commit(1);
+		return 0;
+	}
 	if (rc == -1) {/* close */
 		return -1;
 	} else if (game_input_events(&ev)) { /* kbd, mouse and touch -> pass in game */
