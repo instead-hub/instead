@@ -942,18 +942,18 @@ end
 
 std.obj = std.class {
 	__obj_type = true;
-	with = function(self, f)
-		if type(f) == 'function' or type(f) == 'table' then
-			return function(...)
-				local v = f(...)
-				table.insert(self.obj, v)
-				return self
+	with = function(self, ...)
+		local a = {...}
+		for i = 1, #a do
+			if type(a[i]) == 'table' then
+				for k = 1, #a[i] do
+					table.insert(self.obj, a[i][k])
+				end
+			else
+				table.insert(self.obj, a[i])
 			end
-		elseif type(f) == 'string' or type(f) == 'number' then
-			table.insert(self.obj, f)
-		else
-			std.err("Wrong argument to with", 2)
 		end
+		return self
 	end;
 	new = function(self, v)
 		if std.game and not std.__in_new and not std.__in_gamefile then
