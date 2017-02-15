@@ -333,20 +333,6 @@ function std.class(s, inh)
 		end
 		return v:new(n, ...)
 	end;
-	s.__mod = function(self, b)
-		if not std.is_obj(b) and type(b) ~= 'string' then
-			std.err("Wrong % operation on: "..std.tostr(self), 2)
-		end
-		if std.game then
-			std.err("Wrong % operation in non-global context: "..std.tostr(self), 2)
-		end
-		if std.is_obj(self) then
-			table.insert(self.obj, b)
-		elseif std.is_obj(self, 'list') then
-			table.insert(self, b)
-		end
-		return self
-	end;
 	s.__tostring = function(self)
 		if not std.is_obj(self) then
 			local os = s.__tostring
@@ -956,6 +942,19 @@ end
 
 std.obj = std.class {
 	__obj_type = true;
+	with = function(self, f)
+		if type(f) == 'function' or type(f) == 'table' then
+			return function(...)
+				local v = f(...)
+				table.insert(self.obj, v)
+				return self
+			end
+		elseif type(f) == 'string' or type(f) == 'number' then
+			table.insert(self.obj, f)
+		else
+			std.err("Wrong argument to with", 2)
+		end
+	end;
 	new = function(self, v)
 		if std.game and not std.__in_new and not std.__in_gamefile then
 			std.err ("Use std.new() to create dynamic objects:"..std.tostr(v), 2)
