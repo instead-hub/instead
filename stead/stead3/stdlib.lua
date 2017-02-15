@@ -180,7 +180,7 @@ function closed(w)
 end
 
 function disabled(w)
-	return not std.object(w):disabled()
+	return std.object(w):disabled()
 end
 
 function enable(w)
