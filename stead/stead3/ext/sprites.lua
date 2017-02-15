@@ -453,6 +453,28 @@ function pxl:sprite()
 	return sprite.new(self)
 end
 
+function pxl:draw_spr(fx, fy, fw, fh, d, x, y, alpha)
+	if d == nil and x == nil and y == nil then
+		return instead.sprite_draw(self, 0, 0, -1, -1, spr_get(fx), fy, fw, fh);
+	end
+	return instead.sprite_draw(self, fx, fy, fw, fh, get(d), x, y, alpha);
+end
+
+function pxl:copy_spr(fx, fy, fw, fh, d, x, y, alpha)
+	if d == nil and x == nil and y == nil then
+		return instead.sprite_copy(self, 0, 0, -1, -1, spr_get(fx), fy, fw, fh);
+	end
+	return instead.sprite_copy(self, fx, fy, fw, fh, spr_get(d), x, y, alpha);
+end
+
+function pxl:compose_spr(fx, fy, fw, fh, d, x, y, alpha)
+	if d == nil and x == nil and y == nil then
+		return instead.sprite_compose(self, 0, 0, -1, -1, spr_get(fx), fy, fw, fh);
+	end
+	return instead.sprite_compose(self, fx, fy, fw, fh, spr_get(d), x, y, alpha);
+end
+
+
 function pxl:new(p)
 	if type(p) ~= 'userdata' then
 		return
