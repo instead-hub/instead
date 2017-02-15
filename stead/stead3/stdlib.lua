@@ -327,9 +327,12 @@ function path(t)
 		n = nil
 	end
 	return room {
-		nam = n;
+		nam = n or t.nam;
 		before = s;
 		disp = function(s)
+			if disabled(s.walk) or closed(s.walk) then
+				return false
+			end
 			if s.after ~= nil and visited(w) then
 				return std.call(s, 'after')
 			end
@@ -338,6 +341,9 @@ function path(t)
 		after = t.after;
 		walk = w;
 		onenter = function(s)
+			if disabled(s.walk) or closed(s.walk) then
+				return false
+			end
 			if type(s.walk) == 'function' then
 				walk(s.walk())
 			else
