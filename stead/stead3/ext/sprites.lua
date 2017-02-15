@@ -474,6 +474,30 @@ function pxl:compose_spr(fx, fy, fw, fh, d, x, y, alpha)
 	return instead.sprite_compose(self, fx, fy, fw, fh, spr_get(d), x, y, alpha);
 end
 
+local function poly(self, fn, t, ...)
+	if type(t) ~= 'table' then
+		std.err("Wrong argument to :poly()", 3)
+	end
+	if #t < 4 then
+		return
+	end
+	local n = #t
+	for i = 1, n, 2 do
+		if i == n - 1 then
+			fn(self, t[i], t[i+1], t[1], t[2], ...);
+		else
+			fn(self, t[i], t[i+1], t[i+2], t[i+3], ...);
+		end
+	end
+end
+
+function pxl:poly(t, ...)
+	poly(self, self.line, t, ...)
+end
+
+function pxl:polyAA(t, ...)
+	poly(self, self.lineAA, t, ...)
+end
 
 function pxl:new(p)
 	if type(p) ~= 'userdata' then
