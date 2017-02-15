@@ -29,7 +29,7 @@ instead.get_title = std.cacheable('title', function()
 	if get_bool(iface, 'notitle') then
 		return
 	end
-	return std.titleof(stead.here())
+	return iface:fmt(std.titleof(stead.here()), false)
 end)
 
 iface.noways = false
