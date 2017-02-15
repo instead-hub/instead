@@ -15,6 +15,14 @@ end
 
 std.dlg = std.class({
 	__dlg_type = true;
+	ini = function(s, ...)
+		for i = 1, #s.obj do
+			if not std.is_obj(s.obj[i]) then
+				s.obj[i] = std.phr(s.obj[i])
+			end
+		end
+		std.room.ini(s, ...)
+	end;
 	new = function(s, v)
 		if v.current == nil then
 			v.current = false
@@ -22,13 +30,6 @@ std.dlg = std.class({
 		v.dlg_onenter = v.onenter
 		v.onenter = nil
 		v.__stack = {}
-		if type(v.obj) == 'table' then
-			for i = 1, #v.obj do
-				if not std.is_obj(v.obj[i]) then
-					v.obj[i] = std.phr(v.obj[i])
-				end
-			end
-		end
 		v = std.room(v)
 		std.setmt(v, s)
 		return v
