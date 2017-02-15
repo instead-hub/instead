@@ -1696,7 +1696,7 @@ static int pixels_fill(lua_State *L) {
 		r = luaL_optnumber(L, 2, 0);
 		g = luaL_optnumber(L, 3, 0);
 		b = luaL_optnumber(L, 4, 0);
-		a = luaL_optnumber(L, 5, 0);
+		a = luaL_optnumber(L, 5, 255);
 	} else {
 		x = luaL_optnumber(L, 2, 0);
 		y = luaL_optnumber(L, 3, 0);
