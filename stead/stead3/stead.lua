@@ -627,18 +627,21 @@ std.list = std.class {
 			local v = s[i]
 			if std.is_obj(v) and v:visible() then
 				local vv, n
-				if rc then
-					rc = rc .. std.delim
-				else
-					rc = ''
-				end
 				if type(v.nam) == 'number' then
 					n = '# '..std.tostr(v.nam)
 				else
 					n = v.nam
 				end
-				vv = '{'..std.esc(n)..std.delim..std.esc(std.dispof(v))..'}'
-				rc = rc .. vv
+				local disp = std.dispof(v)
+				if disp then
+					if rc then
+						rc = rc .. std.delim
+					else
+						rc = ''
+					end
+					vv = '{'..std.esc(n)..std.delim..std.esc(disp)..'}'
+					rc = rc .. vv
+				end
 				if recurse and not v:closed() then
 					vv = v:__dump(recurse)
 					if vv then
