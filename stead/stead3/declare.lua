@@ -46,7 +46,8 @@ local function __declare(n, t)
 	if type(n) == 'string' then
 		return function(v)
 			if v == nil then
-				std.err("Wrong declaration: "..std.tostr(t), 2)
+				v = false
+--				std.err("Wrong declaration: "..std.tostr(t), 2)
 			end
 			__declare_one(n, v, t)
 		end
