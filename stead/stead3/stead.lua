@@ -335,12 +335,15 @@ function std.class(s, inh)
 	end;
 	s.__mod = function(self, b)
 		if not std.is_obj(b) then
-			std.err("Wrong ^ operation on: "..std.tostr(self), 2)
+			std.err("Wrong % operation on: "..std.tostr(self), 2)
+		end
+		if std.game then
+			std.err("Wrong % operation in non-global context: "..std.tostr(self), 2)
 		end
 		if std.is_obj(self) then
-			self.obj:add(b)
+			table.insert(self.obj, b)
 		elseif std.is_obj(self, 'list') then
-			self:add(b)
+			table.insert(self, b)
 		end
 		return self
 	end;

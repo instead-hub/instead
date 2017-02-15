@@ -188,7 +188,7 @@ function enable(w)
 end
 
 function disable(w)
-	return std.object(w):enable()
+	return std.object(w):disable()
 end
 
 function open(w)
@@ -319,7 +319,7 @@ end
 
 function path(t)
 	if type(t) ~= 'table' then
-		std.err("Wrong path() argumen", 2)
+		std.err("Wrong path() argument", 2)
 	end
 	local n, s, w = t[1], t[2], t[3]
 	if not w then
