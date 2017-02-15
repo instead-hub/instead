@@ -334,7 +334,7 @@ function std.class(s, inh)
 		return v:new(n, ...)
 	end;
 	s.__mod = function(self, b)
-		if not std.is_obj(b) then
+		if not std.is_obj(b) and type(b) ~= 'string' then
 			std.err("Wrong % operation on: "..std.tostr(self), 2)
 		end
 		if std.game then
