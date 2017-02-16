@@ -73,7 +73,7 @@ std.dlg = std.class({
 		if std.here() ~= s then
 			return r, v
 		end
-		local rr, vv = s:push()
+		local rr, vv = s:push(s.current)
 		if not vv then
 			std.err("Wrong dialog: "..std.tostr(s), 2)
 		end
