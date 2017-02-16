@@ -298,6 +298,59 @@ local	commands = {
 		return r, v
 	  end;
 	},
+	{ nam = 'drop',
+	  act = function(s, par)
+		if not par then
+			return
+		end
+		local st, r, v = s:eval(drop, std.tonum(par) or par)
+		if not st then
+			s:printf("%s\n", r)
+			return
+		end
+		return r, v
+	  end;
+	},
+	{ nam = 'remove',
+	  act = function(s, par)
+		if not par then
+			return
+		end
+		local st, r, v = s:eval(remove, std.tonum(par) or par)
+		if not st then
+			s:printf("%s\n", r)
+			return
+		end
+		return r, v
+	  end;
+	},
+	{ nam = 'enable',
+	  act = function(s, par)
+		if not par then
+			return
+		end
+		local st, r, v = s:eval(enable, std.tonum(par) or par)
+		if not st then
+			s:printf("%s\n", r)
+			return
+		end
+		return r, v
+	  end;
+	},
+	{ nam = 'disable',
+	  act = function(s, par)
+		if not par then
+			return
+		end
+		local st, r, v = s:eval(disable, std.tonum(par) or par)
+		if not st then
+			s:printf("%s\n", r)
+			return
+		end
+		return r, v
+	  end;
+	},
+
 	{ nam = 'dump',
 		act = function(s, par)
 			if not par then
@@ -342,7 +395,12 @@ local	commands = {
 			if not par then
 				return
 			end
-			return s:eval(walk, par, true)
+			local st, r, v = s:eval(walk, par, true)
+			if not st then
+				s:printf("%s\n", r)
+				return
+			end
+			return r, v
 		end;
 	};
 	{ nam = 'clear',
@@ -489,13 +547,14 @@ local dbg = std.obj {
 		local st, r, v = std.pcall(fn, ...)
 		if not st then
 			s:printf("%s\n", r)
+			return false
 		else
 			s.on = false
 			s:disable()
 			if std.me():moved() then
-				return nil, true
+				return true, nil, true
 			else
-				return std.nop()
+				return true, std.nop()
 			end
 		end
 	end;
@@ -560,10 +619,10 @@ local dbg = std.obj {
 			return
 		elseif key:find 'alt' then
 			s.key_alt = press
-			if not press then
-				s.kbd_alt_xlat = not s.kbd_alt_xlat
-			end
 			if s.on then
+				if not press then
+					s.kbd_alt_xlat = not s.kbd_alt_xlat
+				end
 				return 'look'
 			end
 			return
