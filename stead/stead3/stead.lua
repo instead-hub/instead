@@ -1910,7 +1910,7 @@ std.par = function(space, ...)
 			else
 				res = res .. space;
 			end
-			res = res .. std.strip(a[i]);
+			res = res .. a[i];
 		end
 	end
 	return res;
@@ -1990,7 +1990,7 @@ function std.strip(s)
 		return
 	end
 	s = tostring(s)
-	s = s:gsub("^[ \t%^]*", ""):gsub("[ \t%^]*$", "")
+	s = s:gsub("^[ \t]*", ""):gsub("[ \t]*$", "")
 	return s
 end
 
