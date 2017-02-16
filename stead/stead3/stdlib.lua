@@ -199,8 +199,8 @@ function close(w)
 	return std.object(w):close()
 end
 
-function actions(w, t)
-	return std.object(w):actions(t)
+function actions(w, t, v)
+	return std.object(w):actions(t, v)
 end
 
 function pop(w)
@@ -310,10 +310,22 @@ function put(w, wh)
 end
 
 function take(w)
+	local o = std.object(w)
+	if o then
+		o:actions('take', 1 + o:actions 'take')
+	end
 	return place(w, std.ref(std.me()):inventory())
 end
 
+function was(w, n)
+	return actions(w, n) ~= 0
+end
+
 function drop(w, wh)
+	local o = std.object(w)
+	if o then
+		o:actions('drop', 1 + o:actions 'drop')
+	end
 	return place(w, wh)
 end
 

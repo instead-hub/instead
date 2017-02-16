@@ -1025,14 +1025,18 @@ std.obj = std.class {
 		std.setmt(v, self)
 		return v
 	end;
-	actions = function(s, t)
+	actions = function(s, t, v)
 		t = t or 'act'
 		if type(t) ~= 'string' then
 			std.err("Wrong argument to obj:actions(): "..std.tostr(t), 2)
 		end
-		return s['__nr_'..t] or 0
+		local ov = s['__nr_'..t] or 0
+		if type(v) == 'number' or v == false then
+			s['__nr_'..t] = v or nil
+		end
+		return ov
 	end;
-	renam = function(s, new)
+	__renam = function(s, new)
 		local oo = std.objects
 		if new == s.nam then
 			return
@@ -1165,7 +1169,7 @@ std.obj = std.class {
 				l = l .. ', '..std.dump(arg[i])
 			end
 			if type(s.nam) == 'number' then
-				l = string.format("std.new(%s%s):renam(%d)\n", n, l, s.nam)
+				l = string.format("std.new(%s%s):__renam(%d)\n", n, l, s.nam)
 			else
 				l = string.format("std.new(%s%s)\n", n, l, s.nam)
 			end
@@ -1768,15 +1772,14 @@ std.player = std.class ({
 		if m == 'use' and w2 then
 			r, v = std.call(w2, 'used', w, ...)
 			t = std.par(std.scene_delim, t or false, r)
-			if r ~= nil or v ~= nil then
+			if v == true then -- false from used --> pass to use
 				w2['__nr_used'] = (w2['__nr_used'] or 0) + 1
 				return t or r, true -- stop chain
 			end
 		end
 		r, v = std.call(w, m, w2, ...)
 		t = std.par(std.scene_delim, t or false, r)
-
-		if v ~= nil or r ~= nil then
+		if r ~= nil or v == true then
 			w['__nr_'..m] = (w['__nr_'..m] or 0) + 1
 			return t or r, v
 		end
