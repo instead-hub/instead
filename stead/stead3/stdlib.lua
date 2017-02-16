@@ -148,6 +148,7 @@ function ways(ww)
 	end
 	return wh.way
 end
+std.ways = ways
 
 function objs(ww)
 	local wh

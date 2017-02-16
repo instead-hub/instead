@@ -27,8 +27,8 @@ std.dlg = std.class({
 		if v.current == nil then
 			v.current = false
 		end
-		v.dlg_onenter = v.onenter
-		v.onenter = nil
+		v.dlg_enter = v.enter
+		v.enter = nil
 		v.__stack = {}
 		v = std.room(v)
 		std.setmt(v, s)
@@ -64,20 +64,20 @@ std.dlg = std.class({
 		end
 		return w:empty()
 	end;
-	onenter = function(s, ...)
+	enter = function(s, ...)
 		s.__llact = false
 		s.__stack = {}
 		s.current = nil
 		s:for_each(function(s) s:open() end) -- open all phrases
-		local r, v = std.call(s, s.dlg_onenter, ...)
-		if v == false then
+		local r, v = std.call(s, 'dlg_enter', ...)
+		if std.here() ~= s then
 			return r, v
 		end
 		local rr, vv = s:push()
 		if not vv then
 			std.err("Wrong dialog: "..std.tostr(s), 2)
 		end
-		return std.par(std.scene_delim, r, rr), v
+		return std.par(std.scene_delim, r or false, rr or false), v
 	end;
 	push = function(s, p)
 		local c = s.current
