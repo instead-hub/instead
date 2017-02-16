@@ -804,18 +804,26 @@ unsigned long	timer_counter = 0;
 
 gtimer_t timer_han = NULL_TIMER;
 
+static int gfx_commit_event = 0;
+
 static void _game_gfx_commit(void *data)
 {
+	gfx_commit_event = 0;
 	gfx_commit();
 }
 
 void game_gfx_commit(int sync)
 {
 	if (gfx_pending()) {
-		if (sync)
+		if (sync) {
+			gfx_commit_event = 0;
 			gfx_commit();
-		else
-			push_user_event(_game_gfx_commit, NULL);
+		} else {
+			if (!gfx_commit_event) {
+				gfx_commit_event ++;
+				push_user_event(_game_gfx_commit, NULL);
+			}
+		}
 	}
 }
 

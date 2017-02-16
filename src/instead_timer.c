@@ -47,7 +47,6 @@ static void instead_timer_do(void *data)
 	instead_unlock();
 	if (!p)
 		return;
-
 	game_cmd(p, 0); free(p);
 
 	game_cursor(CURSOR_ON);
