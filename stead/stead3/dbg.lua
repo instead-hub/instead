@@ -163,7 +163,7 @@ end
 local function show_obj(s, v, pfx, verbose)
 	local wh = v:where()
 	if wh then
-		wh = '@'..std.dispof(wh)
+		wh = '@'..std.tostr(std.nameof(wh))..'['..std.titleof(wh)..']'
 	else
 		wh = ''
 	end
@@ -622,8 +622,8 @@ local dbg = std.obj {
 			if s.on then
 				if not press then
 					s.kbd_alt_xlat = not s.kbd_alt_xlat
+					return 'look'
 				end
-				return 'look'
 			end
 			return
 		end
