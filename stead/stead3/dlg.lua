@@ -67,7 +67,7 @@ std.dlg = std.class({
 	enter = function(s, ...)
 		s.__llact = false
 		s.__stack = {}
-		s.current = nil
+    		s.current = nil
 		s:for_each(function(s) s:open() end) -- open all phrases
 		local r, v = std.call(s, 'dlg_enter', ...)
 		if std.here() ~= s then
@@ -302,13 +302,13 @@ std.phr = std.class({
 		local t
 
 		local rr, vv = std.here():push(n)
-
 		if not vv then
 			t = std.walkout(std.here():from())
 		end
 		return std.par(std.scene_delim, r or false, rr or false, t or false), v
 	end,
 	select = function(s)
+		s:close()
 		for i = 1, #s.obj do
 			local o = s.obj[i]
 			o = o:__alias()

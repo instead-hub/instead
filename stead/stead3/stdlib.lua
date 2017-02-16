@@ -221,7 +221,7 @@ function push(w)
 	if not std.is_obj(wh, 'dlg') then
 		std.err("Call push() in non-dialog object: "..std.tostr(wh), 2)
 	end
-	local r, v = ww:push(w)
+	local r, v = wh:push(w)
 	if std.cctx() and type(r) == 'string' then
 		std.p(r)
 	end
