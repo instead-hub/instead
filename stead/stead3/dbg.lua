@@ -622,8 +622,8 @@ local dbg = std.obj {
 			if s.on then
 				if not press then
 					s.kbd_alt_xlat = not s.kbd_alt_xlat
-					return 'look'
 				end
+				return 'look'
 			end
 			return
 		end
@@ -631,6 +631,9 @@ local dbg = std.obj {
 			return
 		end
 		if s.key_ctrl or s.key_alt then
+			if s.on and key == 'q' then
+				return '@dbg toggle'
+			end
 			if key == 'q' or key == 'r' then
 				return
 			end
