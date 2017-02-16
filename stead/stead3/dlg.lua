@@ -70,7 +70,7 @@ std.dlg = std.class({
     		s.current = nil
 		s:for_each(function(s) s:open() end) -- open all phrases
 		local r, v = std.call(s, 'dlg_enter', ...)
-		if std.here() ~= s or s.current then
+		if std.here() ~= s or #s.__stack > 0 then
 			return r, v
 		end
 		local rr, vv = s:push(s.current)
