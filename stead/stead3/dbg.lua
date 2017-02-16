@@ -492,7 +492,11 @@ local dbg = std.obj {
 		else
 			s.on = false
 			s:disable()
-			return std.nop()
+			if std.me():moved() then
+				return nil, true
+			else
+				return std.nop()
+			end
 		end
 	end;
 	cls = function(s)
@@ -558,6 +562,8 @@ local dbg = std.obj {
 			s.key_alt = press
 			if not press then
 				s.kbd_alt_xlat = not s.kbd_alt_xlat
+			end
+			if s.on then
 				return 'look'
 			end
 			return

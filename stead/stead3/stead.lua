@@ -2260,6 +2260,7 @@ std.call = function(v, n, ...)
 	end
 	local r, v = std.method(v, n, ...)
 	if type(r) == 'string' then
+		r = r:gsub("[%^]+$", "") -- extra trailing ^
 		if v == nil then v = true end
 		return r, v
 	end
