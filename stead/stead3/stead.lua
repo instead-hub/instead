@@ -1449,7 +1449,7 @@ std.world = std.class({
 			local v, pre, st
 			local o = ll[i]
 			if not o:disabled() then
-				v, st, pre = std.method(o, 'life');
+				v, st, pre = std.call(o, 'life');
 				av, vv = s:events()
 				if pre then -- hi-pri msg
 					av = std.par(std.space_delim, av or false, v)
