@@ -168,7 +168,7 @@ local function xref_prep(str)
 	end
 	oo = std.strip(s:sub(1, i - 1))
 	s = s:sub(i + 1)
-	if oo:find('@', 1, true) == 1 or oo:find('$', 1, true) == 1 then -- call '@' obj (aka xact) or '$' aka subst
+	if oo:find('@', 1, true) == 1 or oo:find('$', 1, true) then -- call '@' obj (aka xact) or '$' aka subst
 		local o = std.split(oo)[1]
 		local i = oo:find("[ \t]")
 		if i then
@@ -314,7 +314,7 @@ function std.is_system(v)
 	end
 	local n = v.nam
 	if type(n) == 'string' then
-		if n:byte(1) == 0x40 then
+		if n:byte(1) == 0x40 or n:byte(1) == 0x24 then
 			return true
 		end
 	end
