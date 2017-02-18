@@ -1032,7 +1032,7 @@ std.obj = std.class {
 			std.err ("Wrong .nam in object.", 2)
 		end
 
-		if oo[v.nam] then
+		if oo[v.nam] and not std.is_system(oo[v.nam]) then
 			if v.nam ~= 'main' and v.nam ~= 'player' and v.nam ~= 'game' then
 				std.err ("Duplicated object: "..v.nam, 2)
 			end
