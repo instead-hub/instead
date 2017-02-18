@@ -1259,10 +1259,17 @@ std.obj = std.class {
 		local s = std.for_each_xref_outer(str, function(str)
 			rep = true
 			local s = str:gsub("^{", ""):gsub("}$", "")
-			local test = string.gsub(s, '\\?[\\{'..std.delim..']',
-				{ ['{'] = '\001',
+			local test = string.gsub(s, '\\?[\\{}'..std.delim..']',
+				{ ['{'] = '\001', ['}'] = '\003',
 				  [std.delim] = '\002' });
-			local a = test:find('[\001\002]')
+			while true do
+				local s = test:gsub("\001[^\001\003]+\003", "")
+				if s == test then
+					break
+				end
+				test = s
+			end
+			local a = test:find('\002', 1, true)
 			if not a or test:byte(a) == 1 then -- need to be |
 				return '{'..(std.esc(nam)..std.delim..s)..'}'
 			end
