@@ -194,6 +194,7 @@ local function xref_prep(str)
 		end
 	end
 	if type(self.nam) == 'string' and self.nam:find('$', 1, true) == 1 then -- subst
+		table.insert(a, s)
 		local r, v = std.method(self, 'act', std.unpack(a))
 		if not v then
 			return s
