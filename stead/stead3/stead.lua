@@ -158,6 +158,8 @@ function std.hook(o, f)
 	end
 end
 
+local substs
+
 local function xref_prep(str)
 	local oo, self
 	local a = {}
@@ -195,6 +197,7 @@ local function xref_prep(str)
 	end
 	if type(self.nam) == 'string' and self.nam:find('$', 1, true) == 1 then -- subst
 		table.insert(a, s)
+		substs = true
 		local r, v = std.method(self, 'act', std.unpack(a))
 		if not v then
 			return s
@@ -255,17 +258,19 @@ std.fmt = function(str, fmt, state)
 		return
 	end
 	local xref = xref_prep
-	local s = string.gsub(str, '[\t \n]+', std.space_delim);
+	local s = str
+	s = string.gsub(s, '[\t \n]+', std.space_delim);
 	s = string.gsub(s, '\\?[\\^]', { ['^'] = '\n', ['\\^'] = '^'} );
 	while true do
 		fmt_refs = {}
+		substs = false
 		s = std.for_each_xref(s, fmt_prep) -- rename all {}
 		if type(fmt) == 'function' then
 			s = fmt(s, state)
 		end
 		s = std.for_each_xref(s, fmt_post) -- rename and xref
 		s = s:gsub('\\?'..'[{}]', { ['\\{'] = '{', ['\\}'] = '}' })
-		if #fmt_refs == 0 then
+		if not substs then
 			break
 		end
 	end
