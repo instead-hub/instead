@@ -16,11 +16,6 @@ end
 std.dlg = std.class({
 	__dlg_type = true;
 	ini = function(s, ...)
-		for i = 1, #s.obj do
-			if not std.is_obj(s.obj[i]) then
-				s.obj[i] = std.phr(s.obj[i])
-			end
-		end
 		std.room.ini(s, ...)
 	end;
 	new = function(s, v)
@@ -32,7 +27,20 @@ std.dlg = std.class({
 		v.__stack = {}
 		v = std.room(v)
 		std.setmt(v, s)
+		v:__recreate()
 		return v
+	end;
+	__recreate = function(s)
+		for i = 1, #s.obj do
+			if not std.is_obj(s.obj[i]) then
+				s.obj[i] = std.phr(s.obj[i])
+			end
+		end
+	end;
+	with = function(self, ...)
+		std.room.with(self, ...)
+		self:__recreate()
+		return self
 	end;
 	scene = function(s)
 		local title, dsc, lact

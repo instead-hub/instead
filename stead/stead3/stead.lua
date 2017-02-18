@@ -851,7 +851,7 @@ function std:done()
 		if std.is_system(v) then
 			objects[k] = v
 		else
-			-- print("Deleting "..k)
+--			print("Deleting "..k)
 		end
 	end)
 	std.objects = objects
@@ -1753,20 +1753,20 @@ std.player = std.class ({
 		r, v = std.call(std.ref 'game', 'on'..m, w, w2, ...)
 		t = std.par(std.scene_delim, t or false, r)
 		if v == false then
-			return t or r, true
+			return t or r, true, false
 		end
 		if v ~= true then
 			r, v = std.call(s, 'on'..m, w, w2, ...)
 			t = std.par(std.scene_delim, t or false, r)
 			if v == false then
-				return t or r, true
+				return t or r, true, false
 			end
 		end
 		if v ~= true then
 			r, v = std.call(s:where(), 'on'..m, w, w2, ...)
 			t = std.par(std.scene_delim, t or false, r)
 			if v == false then
-				return t or r, true
+				return t or r, true, false
 			end
 		end
 		if m == 'use' and w2 then
@@ -1774,12 +1774,13 @@ std.player = std.class ({
 			t = std.par(std.scene_delim, t or false, r)
 			if v == true then -- false from used --> pass to use
 				w2['__nr_used'] = (w2['__nr_used'] or 0) + 1
-				return t or r, true -- stop chain
+				return t or r, v -- stop chain
 			end
 		end
 		r, v = std.call(w, m, w2, ...)
 		t = std.par(std.scene_delim, t or false, r)
-		if r ~= nil or v == true then
+		if (m == 'use' and v == true) or
+			(m ~= 'use' and type(v) == 'boolean') then
 			w['__nr_'..m] = (w['__nr_'..m] or 0) + 1
 			return t or r, v
 		end
@@ -1794,14 +1795,14 @@ std.player = std.class ({
 		return s.obj
 	end;
 	take = function(s, w, ...)
-		local r, v = s:call('tak', w, ...)
-		if v == true then -- take it!
+		local r, v, c = s:call('tak', w, ...)
+		if v == true and c ~= false then -- take it!
 			w = std.ref(w)
 			local o = w:remove()
 			s:inventory():add(o)
 			return r, v
 		end
-		if v == false then -- forbidden take
+		if v == false or c == false then -- forbidden take
 			return r, true
 		end
 		return r, v
@@ -2235,12 +2236,12 @@ std.method = function(v, n, ...)
 		local c
 		local a, b = v[n](v, ...);
 		c = b
-		if type(a) ~= 'string' and b == nil then
+		if b == nil and type(a) ~= 'string' then
 			a, b = std.pget(), a
 			c = b
-			if b == nil then
-				b = true -- the fact of call
-			end
+		end
+		if b == nil then
+			b = true -- the fact of call
 		end
 		std.callpop()
 		return a, b, c
@@ -2258,13 +2259,12 @@ std.call = function(v, n, ...)
 	if type(v) ~= 'table' then
 		std.err("Call on non table object: "..std.tostr(n), 2)
 	end
-	local r, v = std.method(v, n, ...)
+	local r, v, c = std.method(v, n, ...)
 	if type(r) == 'string' then
 		r = r:gsub("[%^]+$", "") -- extra trailing ^
-		if v == nil then v = true end
-		return r, v
+		return r, v, c
 	end
-	return r or nil, v
+	return r or nil, v, c
 end
 
 local function get_token(inp)
