@@ -240,6 +240,39 @@ local function fmt_post(str)
 	return xref_prep(std.unesc(s))
 end
 
+function std.for_each_xref_outer(s, fn)
+	s = string.gsub(s, '\\?[\\{}]',
+			{ ['{'] = '\001', ['}'] = '\002', [ '\\{' ] = '\\{', [ '\\}' ] = '\\}' });
+	local start
+	while true do
+		start = s:find('\001')
+		if not start then break end
+		local idx = 1
+		local n = start
+		while idx > 0 do
+			n = s:find('[\001\002]', n + 1)
+			if not n then
+				break
+			end
+			if s:sub(n, n) == '\001' then
+				idx = idx + 1
+			else
+				idx = idx - 1
+			end
+		end
+		if idx == 0 then
+			local new = fn(s:sub(start, n):gsub('[\001\002]', {['\001'] = '{', ['\002'] = '}'}))
+			if start == 1 then
+				s = new..s:sub(n + 1)
+			else
+				s = s:sub(1, start - 1)..new..s:sub(n + 1)
+			end
+		end
+	end
+	s = s:gsub('[\001\002]', { ['\001'] = '{', ['\002'] = '}' });
+	return s
+end
+
 function std.for_each_xref(s, fn)
 	s = string.gsub(s, '\\?[\\{}]',
 			{ ['{'] = '\001', ['}'] = '\002', [ '\\{' ] = '\\{', [ '\\}' ] = '\\}' });
@@ -248,7 +281,7 @@ function std.for_each_xref(s, fn)
 		s = fn('{'..s..'}')
 		return s
 	end
-	s = string.gsub(s, '(\001[^\001^\002]+\002)', prep)
+	s = string.gsub(s, '(\001[^\001\002]+\002)', prep)
 	s = s:gsub('[\001\002]', { ['\001'] = '{', ['\002'] = '}' });
 	return s
 end
@@ -269,11 +302,11 @@ std.fmt = function(str, fmt, state)
 			s = fmt(s, state)
 		end
 		s = std.for_each_xref(s, fmt_post) -- rename and xref
-		s = s:gsub('\\?'..'[{}]', { ['\\{'] = '{', ['\\}'] = '}' })
 		if not substs then
 			break
 		end
 	end
+	s = s:gsub('\\?'..'[{}]', { ['\\{'] = '{', ['\\}'] = '}' })
 	if state then
 		s = s:gsub('\\?'..std.delim, { ['\\'..std.delim] = std.delim })
 	end
@@ -1222,13 +1255,21 @@ std.obj = std.class {
 		if type(nam) == 'number' then
 			nam = '# '..std.tostr(nam)
 		end
-		local s = string.gsub(str, '\\?[\\{}'..std.delim..']',
-			{ ['{'] = '\001',
-				['}'] = '\002', [std.delim] = '\003' }):
-			gsub('\001([^\002\003]+)\002', '\001'..std.esc(nam)..'\003%1\002'):
-			gsub('[\001\002\003]', { ['\001'] = '{', ['\002'] = '}', ['\003'] = std.delim });
-		if s == str then
-			return '{'..(std.esc(nam)..std.delim..std.esc(s))..'}'
+		local rep = false
+		local s = std.for_each_xref_outer(str, function(str)
+			rep = true
+			local s = str:gsub("^{", ""):gsub("}$", "")
+			local test = string.gsub(s, '\\?[\\{'..std.delim..']',
+				{ ['{'] = '\001',
+				  [std.delim] = '\002' });
+			local a = test:find('[\001\002]')
+			if not a or test:byte(a) == 1 then -- need to be |
+				return '{'..(std.esc(nam)..std.delim..s)..'}'
+			end
+			return str
+		end)
+		if not rep then -- nothing todo?
+			return '{'..(std.esc(nam)..std.delim..s)..'}'
 		end
 		return s;
 	end;
