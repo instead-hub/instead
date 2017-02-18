@@ -168,7 +168,7 @@ local function xref_prep(str)
 	end
 	oo = std.strip(s:sub(1, i - 1))
 	s = s:sub(i + 1)
-	if oo:find('@', 1, true) == 1 then -- call '@' obj (aka xact)
+	if oo:find('@', 1, true) == 1 or oo:find('$', 1, true) == 1 then -- call '@' obj (aka xact) or '$' aka subst
 		local o = std.split(oo)[1]
 		local i = oo:find("[ \t]")
 		if i then
@@ -193,6 +193,13 @@ local function xref_prep(str)
 			return s
 		end
 	end
+	if type(self.nam) == 'string' and self.nam:find('$', 1, true) == 1 then -- subst
+		local r, v = std.method(self, 'act', std.unpack(a))
+		if not v then
+			return s
+		end
+		return std.tostr(r)
+	end
 	return iface:xref(s, self, std.unpack(a));
 end
 
@@ -201,10 +208,14 @@ local fmt_refs
 local function fmt_prep(str)
 	local s = str:gsub("^{", ""):gsub("}$", "")
 	s = s:gsub('\\?['..std.delim..']', { [std.delim] = '\001' });
-	local l = s:find('\001')
-	if not l or l == 1 then
+	local l = s:find('\001', 1, true)
+	if l == 1 then
 		return str
 	end
+	if not l then
+		s = s .. '\001'
+	end
+	l = s:find('\001', 1, true)
 	table.insert(fmt_refs, s:sub(1, l - 1))
 	local n = string.format("%d%s", #fmt_refs, std.delim)
 	return "{"..n..s:sub(l + 1).."}"
@@ -233,7 +244,7 @@ function std.for_each_xref(s, fn)
 		s = fn('{'..s..'}')
 		return s
 	end
-	s = string.gsub(s, '(\001[^\002]+\002)', prep)
+	s = string.gsub(s, '(\001[^\001^\002]+\002)', prep)
 	s = s:gsub('[\001\002]', { ['\001'] = '{', ['\002'] = '}' });
 	return s
 end
@@ -245,14 +256,18 @@ std.fmt = function(str, fmt, state)
 	local xref = xref_prep
 	local s = string.gsub(str, '[\t \n]+', std.space_delim);
 	s = string.gsub(s, '\\?[\\^]', { ['^'] = '\n', ['\\^'] = '^'} );
-	fmt_refs = {}
-
-	s = std.for_each_xref(s, fmt_prep) -- rename all {}
-	if type(fmt) == 'function' then
-		s = fmt(s, state)
+	while true do
+		fmt_refs = {}
+		s = std.for_each_xref(s, fmt_prep) -- rename all {}
+		if type(fmt) == 'function' then
+			s = fmt(s, state)
+		end
+		s = std.for_each_xref(s, fmt_post) -- rename and xref
+		s = s:gsub('\\?'..'[{}]', { ['\\{'] = '{', ['\\}'] = '}' })
+		if #fmt_refs == 0 then
+			break
+		end
 	end
-	s = std.for_each_xref(s, fmt_post) -- rename and xref
-	s = s:gsub('\\?'..'[{}]', { ['\\{'] = '{', ['\\}'] = '}' })
 	if state then
 		s = s:gsub('\\?'..std.delim, { ['\\'..std.delim] = std.delim })
 	end
@@ -2330,10 +2345,10 @@ local function cmd_parse(inp)
 	while true do
 		inp = inp:gsub("^[ ,\t]*","")
 		local v, i = get_token(inp)
-		inp = inp:sub(i)
 		if v == nil or v == '' then
 			break
 		end
+		inp = inp:sub(i)
 		table.insert(cmd, v)
 	end
 	return cmd
