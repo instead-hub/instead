@@ -6,7 +6,7 @@ std.mod_step(function(state)
 	end
 	if std.here().nolife and std.game:live() then
 		std.game:lifeoff()
-	elseif not std.game:live() then
+	elseif not std.game:live() and not std.here().nolife then
 		std.game:lifeon()
 	end
 end)
