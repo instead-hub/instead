@@ -1245,7 +1245,7 @@ std.obj = std.class {
 		local d = std.call(self, 'dsc')
 		return d
 	end;
-	__xref = function(self, str)
+	__xref = function(self, str, force)
 		if type(str) ~= 'string' then
 			return
 		end
@@ -1275,7 +1275,7 @@ std.obj = std.class {
 			end
 			return str
 		end)
-		if not rep then -- nothing todo?
+		if not rep and force then -- nothing todo?
 			return '{'..(std.esc(nam)..std.delim..s)..'}'
 		end
 		return s;

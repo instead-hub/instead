@@ -1,6 +1,5 @@
 local std = stead
 local type = std.type
-_ = std.ref
 std.rawset(_G, 'std', stead)
 include = std.include
 p = std.p
@@ -103,6 +102,7 @@ function object(w)
 	return o
 end
 std.object = object
+_ = std.object
 
 for_all = std.for_all
 
@@ -169,11 +169,11 @@ function have(w, ...)
 end
 
 function inroom(w, ...)
-	return std.object(w):inroom(std.object(w), ...)
+	return std.object(w):inroom(...)
 end
 
 function where(w, ...)
-	return std.object(w):where(std.object(w), ...)
+	return std.object(w):where(...)
 end
 
 function closed(w)
