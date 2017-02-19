@@ -2049,7 +2049,7 @@ std.pn = function(...)
 end
 
 std.pf = function(fmt, ...)
-	if type(ftm) ~= 'string' then
+	if type(fmt) ~= 'string' then
 		std.err("Wrong argument to std.pf: "..std.tostr(fmt))
 	end
 	std.pr(string.format(fmt, ...))
