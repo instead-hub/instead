@@ -204,7 +204,13 @@ function actions(w, t, v)
 	return std.object(w):actions(t, v)
 end
 
-function pop(w)
+function pop(w, ww)
+	if not std.is_tag(w) and type(w) == 'string' then
+		return function()
+			p(w)
+			pop(ww)
+		end
+	end
 	local wh = std.here()
 	if not std.is_obj(wh, 'dlg') then
 		std.err("Call pop() in non-dialog object: "..std.tostr(wh), 2)
