@@ -28,7 +28,8 @@ std.format = function(r, state)
 			r = r:gsub('([^-])%-%-([^-])', '%1—%2');
 			r = r:gsub('^%-%-([^-])', '—%1')
 			r = r:gsub("\n—[ \t]+", "— ");
-			r = r:gsub("^([^ \t]*)—[ \t]+", "%1— ");
+			r = r:gsub("(^[^ \t]*)—[ \t]+", "%1— ");
+			r = r:gsub("(\n[^ \t]*)—[ \t]+", "%1— ");
 		end
 
 		if fmt.quotes then
@@ -37,7 +38,6 @@ std.format = function(r, state)
 			r = r:gsub(',,','„'):gsub("''",'”');
 		end
 	end
-
 	if not state then
 		return r
 	end
