@@ -362,6 +362,7 @@ function path(t)
 			else
 				walk(s.walk)
 			end
+			return false
 		end
 	}
 end
