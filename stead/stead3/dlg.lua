@@ -294,7 +294,15 @@ std.phr = std.class({
 	act = function(s, ...)
 		local n = s
 --		s = s:__alias()
-		if not s.always then
+		local w = s:where()
+		if w and w.only then -- only one choice
+			for i = 1, #w.obj do
+				local o = w.obj[i]
+				if not o.always then
+					o:close()
+				end
+			end
+		elseif not s.always then
 			s:close()
 		end
 		local cur = std.here().current
