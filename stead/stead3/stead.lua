@@ -2535,7 +2535,7 @@ std.obj {
 };
 
 function std.loadmod(f)
-	if std.game then
+	if std.game and not not std.__in_gamefile then
 		std.err("Use loadmod() only in global context", 2)
 	end
 	if type(f) ~= 'string' then
@@ -2551,7 +2551,7 @@ function std.loadmod(f)
 end
 
 function std.include(f)
-	if std.game then
+	if std.game and not std.__in_gamefile then
 		std.err("Use include() only in global context", 2)
 	end
 	if type(f) ~= 'string' then
