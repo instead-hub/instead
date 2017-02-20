@@ -473,6 +473,25 @@ function std.is_tag(n)
 	return type(n) == 'string' and n:byte(1) == 0x23
 end
 
+function std.sort(t, fn)
+	local prio = {}
+	local v
+	for i = 1, #t do
+		v = t[i]
+		prio[i] = { v = v, i = i }
+	end
+	table.sort(prio, function(a, b)
+		local r = fn(a.v, b.v)
+		if type(r) == 'boolean' then
+			return r
+		end
+		return a.i < b.i
+	end)
+	for i = 1, #prio do
+		t[i] = prio[i].v
+	end
+end
+
 std.list = std.class {
 	__list_type = true;
 	new = function(s, v)
@@ -498,11 +517,13 @@ std.list = std.class {
 		if o then
 			s:attach(o)
 		end
+		s:sort()
 	end;
 	sort = function(s)
-		std.table.sort(s, function(a, b)
+		std.sort(s, function(a, b)
 			local p1 = std.tonum(a.pri) or 0
 			local p2 = std.tonum(b.pri) or 0
+			if p1 == p2 then return nil end
 			return p1 < p2
 		end)
 	end;
