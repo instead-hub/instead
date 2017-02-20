@@ -20,6 +20,7 @@ nameof = std.nameof
 dispof = std.dispof
 titleof = std.titleof
 gamefile = std.gamefile
+player = std.player
 
 function from(ww)
 	local wh
