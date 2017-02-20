@@ -391,6 +391,6 @@ std.rawset(_G, 'xact', xact.methods)
 std.mod_init(function()
 	declare {
 		game = std.ref 'game',
-		pl = std.ref 'pl',
+		pl = std.ref 'player',
 	}
 end)

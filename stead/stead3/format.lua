@@ -47,5 +47,4 @@ std.format = function(r, state)
 
 	return r
 end
-
 format = fmt

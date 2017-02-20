@@ -10,7 +10,7 @@ local table = std.table
 local next = std.next
 
 local function __declare_one(k, v, t)
-	local system
+	local link
 
 	if type(k) ~= 'string' then -- k:find("^[a-zA-Z_][a-zA-Z0-9_]*$") then
 		std.err ("Wrong declaration name: "..k, 3)
@@ -19,11 +19,11 @@ local function __declare_one(k, v, t)
 		std.err ("Duplicate declaration: "..k, 3)
 	end
 
-	system = rawget(_G, k)
+	link = rawget(_G, k)
 
-	declarations[k] = { value = v, type = t, system = system }
+	declarations[k] = { value = v, type = t, link = link }
 
-	if system and v ~= system then
+	if link and v ~= link then
 		std.err("Overwite global declaration: "..std.tostr(k), 3)
 	end
 
@@ -171,16 +171,12 @@ local function mod_init()
 			return d.value
 		end
 		local f = std.getinfo(2, "S").source
---		if f:byte(1) == 0x3d then
---			return
---		end
---		if f:byte(1) ~= 0x40 then
---			print ("Uninitialized global variable: "..n.." in "..f)
---		else
-			std.err ("Uninitialized global variable: "..n.." in "..f, 2)
---		end
+		std.err ("Uninitialized global variable: "..n.." in "..f, 2)
 	end;
 	__newindex = function(t, k, v)
+		if not std.game and std.is_obj(v) then -- autodeclare objects
+			__declare_one(k, v, 'declare')
+		end
 		local d = declarations[k]
 		if d then
 			if v == d.value then
@@ -198,13 +194,9 @@ local function mod_init()
 			end
 			return
 		end
-		if std.game or (type(v) ~= 'function' and not std.is_obj(v)) then
+		if std.game or type(v) ~= 'function' then
 			local f = std.getinfo(2, "S").source
-			if f:byte(1) ~= 0x40 then
-				print ("Set uninitialized variable: "..k.." in "..f)
-			else
-				error ("Set uninitialized variable: "..k.." in "..f, 2)
-			end
+			error ("Set uninitialized variable: "..k.." in "..f, 2)
 		end
 		rawset(t, k, v)
 	end
@@ -213,14 +205,18 @@ end
 
 local function mod_done()
 	std.setmt(_G, {})
+	local decl = {}
 	for k, v in pairs(declarations) do
-		if not v.system then
+		local o = std.rawget(_G, k) or v.value
+		if std.is_system(o) then -- save system declarations
+			decl[k] = v
+		elseif not v.link then
 			rawset(_G, k, nil)
 		end
 	end
 	std.tables = {}
 	std.functions = {}
-	declarations = {}
+	declarations = decl
 	variables = {}
 end
 
