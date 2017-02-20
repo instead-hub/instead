@@ -84,9 +84,12 @@ local function __mod_callback_reg(f, hook, prio, ...)
 	end
 	local i = { fn = f, prio = prio }
 	table.insert(std.__mod_hooks[hook], i);
-	table.sort(std.__mod_hooks[hook], function (a, b)
+	std.sort(std.__mod_hooks[hook], function (a, b)
 		local a = a.prio or 0
 		local b = b.prio or 0
+		if a == b then
+			return nil
+		end
 		return a < b
 	end)
 --	f();
