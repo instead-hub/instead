@@ -84,7 +84,7 @@ local function __mod_callback_reg(f, hook, prio, ...)
 	if not std.__mod_hooks[hook] then
 		std.__mod_hooks[hook] = {}
 	end
-	local i = { fn = f, prio = prio }
+	local i = { fn = f, prio = prio, unload = std.__in_include }
 	table.insert(std.__mod_hooks[hook], i);
 	std.sort(std.__mod_hooks[hook], function (a, b)
 		local a = a.prio or 0
@@ -95,6 +95,20 @@ local function __mod_callback_reg(f, hook, prio, ...)
 		return a < b
 	end)
 --	f();
+end
+
+function std.mod_unload()
+	local new = {}
+	for k, v in pairs(std.__mod_hooks) do
+		local list = {}
+		for kk, vv in ipairs(v) do
+			if not vv.unload then
+				table.insert(list, vv)
+			end
+		end
+		new[k] = list
+	end
+	std.__mod_hooks = new
 end
 
 function std.mod_call(hook, ...)
@@ -821,6 +835,15 @@ function std:load(fname) -- load save
 	return self.game:lastdisp()
 end
 
+local function in_section(name, fn)
+	name = "__in_"..name
+	local old = std[name]
+	std[name] = true
+	local r, v = fn()
+	std[name] = old or false
+	return r, v
+end
+
 function std.gamefile(fn, reset) -- load game file
 	if type(fn) ~= 'string' then
 		std.err("Wrong paramter to stead:file: "..std.tostr(f), 2)
@@ -834,9 +857,7 @@ function std.gamefile(fn, reset) -- load game file
 		std.game.player:need_scene(true)
 		return
 	end
-	std.__in_gamefile = true
-	std.dofile(fn)
-	std.__in_gamefile = false
+	in_section ('gamefile', function() std.dofile(fn) end)
 	std.ref 'game':ini()
 	table.insert(std.files, fn) -- remember it
 end
@@ -925,6 +946,7 @@ end
 
 function std:done()
 	std.mod_call_rev('done')
+	std.mod_unload() -- unload hooks from includes
 	local objects = {}
 	std.for_each_obj(function(v)
 		local k = std.deref(v)
@@ -2226,9 +2248,7 @@ function std.new(fn, ...)
 	end
 	local arg = { ... }
 
-	std.__in_new = true
-	local o = fn(...)
-	std.__in_new = false
+	local o = in_section ('new', function() return fn(std.unpack(arg)) end)
 
 	if type(o) ~= 'table' then
 		std.err ("Constructor did not return object:"..std.functions[fn], 2)
@@ -2542,7 +2562,9 @@ function std.include(f)
 	end
 	if not std.includes[f] then
 		std.includes[f] = true
-		std.dofile(f)
+		in_section('include', function()
+			std.dofile(f)
+		end)
 	end
 end
 
