@@ -179,6 +179,10 @@ std.dlg = std.class({
 		return
 	end;
 	display = function(s)
+		local deco = std.call(s, 'decor'); -- static decorations
+		return std.par(std.scene_delim, deco or false, s:ph_display())
+	end;
+	ph_display = function(s)
 		local r, nr
 		nr = 1
 		local oo = s.current
