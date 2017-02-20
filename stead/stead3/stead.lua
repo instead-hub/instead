@@ -9,6 +9,7 @@ stead = {
 	max_dynamic = 32767;
 	tables = {};
 	functions = {};
+	modules = {};
 	includes = {};
 	tostr = tostring;
 	tonum = tonumber;
@@ -30,6 +31,7 @@ stead = {
 	next = next;
 	loadfile = loadfile;
 	dofile = dofile;
+	doencfile = doencfile;
 	getinfo = debug.getinfo;
 	__mod_hooks = {};
 	files = {};
@@ -944,7 +946,8 @@ function std:done()
 		std.delete('player')
 	end
 	std.files = {}
---	std.includes = {}
+--	std.modules = {}
+	std.includes = {}
 	std.initialized = false
 	std.game = nil
 	std.rawset(_G, 'init', nil)
@@ -2510,6 +2513,22 @@ std.obj {
 		return str
 	end;
 };
+
+function std.loadmod(f)
+	if std.game then
+		std.err("Use loadmod() only in global context", 2)
+	end
+	if type(f) ~= 'string' then
+		std.err("Wrong argument to loadmod(): "..std.tostr(f), 2)
+	end
+	if not f:find("%.lua$") then
+		f = f .. '.lua'
+	end
+	if not std.modules[f] then
+		std.modules[f] = true
+		std.dofile(f)
+	end
+end
 
 function std.include(f)
 	if std.game then

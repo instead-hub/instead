@@ -2,6 +2,7 @@ local std = stead
 local type = std.type
 std.rawset(_G, 'std', stead)
 include = std.include
+loadmod = std.loadmod
 p = std.p
 pr = std.pr
 pn = std.pn
