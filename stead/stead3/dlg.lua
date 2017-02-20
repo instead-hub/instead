@@ -3,6 +3,7 @@ local type = std.type
 local table = std.table
 
 std.phrase_prefix = '-- '
+std.phrase_show = true
 
 local function phr_prefix(d, nr)
 	if type(std.phrase_prefix) == 'string' then
@@ -53,6 +54,9 @@ std.dlg = std.class({
 		return std.par(std.scene_delim, title or false, lact or false, dsc)
 	end;
 	onact = function(s, w) -- show dsc by default
+		if not std.phrase_show then
+			return
+		end
 		local r, v = std.call(w, 'dsc')
 		if type(r) == 'string' then
 			return phr_prefix(r)
