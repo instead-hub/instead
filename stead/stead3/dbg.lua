@@ -791,7 +791,7 @@ std.mod_cmd(function(cmd)
 	end
 end, -1)
 
-std.mod_start(function()
+std.mod_init(function()
 	iface:raw_mode(false)
 	okey = input.key;
 	std.rawset(input, 'key', function(self, ...) return dbg:key(...) or (okey and okey(input, ...)) end)
