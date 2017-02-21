@@ -35,7 +35,6 @@ local snap = std.obj {
 		end
 		std:reset()
 		std.ref 'game':ini(true)
-
 		local f, err = std.eval(s.data[name])
 		if not f then
 			std.err(err, 2)
@@ -56,5 +55,5 @@ std.mod_cmd(function()
 end)
 
 std.mod_done(function()
-	snap.data = {}
+--	snap.data = {}
 end)
