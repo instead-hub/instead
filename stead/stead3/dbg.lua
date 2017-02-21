@@ -546,8 +546,8 @@ local dbg = std.obj {
 	eval = function(s, fn, ...)
 		local st, r, v = std.pcall(fn, ...)
 		if not st then
-			s:printf("%s\n", r)
-			return false
+--			s:printf("%s\n", r)
+			return false, r
 		else
 			s.on = false
 			s:disable()
