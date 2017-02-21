@@ -64,6 +64,8 @@ std.menu = std.class({
 		return true, false -- menu mode
 	end;
 }, std.obj);
+std.setmt(std.phr, std.menu) -- make phrases menus
+std.setmt(std.ref '@', std.menu) -- make xact menu
 
 function iface:xref(str, o, ...)
 	if type(str) ~= 'string' then

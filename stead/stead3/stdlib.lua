@@ -375,7 +375,7 @@ function path(t)
 	}
 end
 
-local xact = (std.menu or std.obj) {
+local xact = std.obj {
 	nam = '@';
 	{
 		methods = {}

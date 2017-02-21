@@ -176,6 +176,9 @@ std.menu = std.class({
 	end;
 }, std.obj);
 
+std.setmt(std.phr, std.menu) -- make phrases menus
+std.setmt(std.ref '@', std.menu) -- make xact menu
+
 function iface:esc(str)
 	str = str:gsub("\\?[\\<>]", { ['\\\\'] = '\\\\\\\\\\', ['>'] = iface:nb('>'), ['<'] = iface:nb('<') })
 	return str

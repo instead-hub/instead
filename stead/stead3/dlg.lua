@@ -339,4 +339,4 @@ std.phr = std.class({
 			o:check()
 		end
 	end;
-}, std.menu or std.obj)
+}, std.obj)
