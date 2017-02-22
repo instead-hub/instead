@@ -2,6 +2,7 @@ local std = stead
 local type = std.type
 
 local SNAPSHOT = false
+local RESTORE = false
 
 local snap = std.obj {
 	nam = '@snaphots';
@@ -41,6 +42,7 @@ local snap = std.obj {
 		end
 		f();
 		std.ref 'game':ini(true)
+		RESTORE = true
 		return std.nop()
 	end;
 }
@@ -54,6 +56,24 @@ std.mod_cmd(function()
 	end
 end)
 
-std.mod_done(function()
---	snap.data = {}
+local ofade
+
+local function fade(fn, ...)
+	if RESTORE then
+		RESTORE = false
+		return (instead and instead.fading) or 4
+	end
+	return fn(...)
+end
+
+local hooked
+
+std.mod_init(function()
+	if not hooked then
+		iface.fading = std.hook(iface.fading, fade)
+		hooked = true
+	end
 end)
+
+-- std.mod_done(function()
+-- end)
