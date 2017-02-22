@@ -24,18 +24,6 @@ dispof = std.dispof
 titleof = std.titleof
 gamefile = std.gamefile
 player = std.player
-
-function std.dprint(...)
-	local a = { ... }
-	for i = 1, #a do
-		if i ~= 1 then
-			std.io.stdout:write(' ')
-		end
-		std.io.stdout:write(std.tostr(a[i]))
-	end
-	std.io.stdout:write('\n')
-	std.io.stdout:flush()
-end
 dprint = std.dprint
 
 function from(ww)
