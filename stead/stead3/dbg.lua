@@ -743,6 +743,37 @@ local dbg = std.obj {
 		end
 	end;
 }
+
+local function utf_bb(b, pos)
+	if type(b) ~= 'string' or b:len() == 0 then
+		return 0
+	end
+	local utf8 = (std.game.codepage == 'UTF-8' or std.game.codepage == 'utf-8')
+	if not utf8 then return 1 end
+	local i = pos or b:len()
+	local l = 0
+	while b:byte(i) >= 0x80 and b:byte(i) <= 0xbf do
+		i = i - 1
+		l = l + 1
+	end
+	return l + 1
+end
+
+local function utf_ff(b, pos)
+	if type(b) ~= 'string' or b:len() == 0 then
+		return 0
+	end
+	local utf8 = (std.game.codepage == 'UTF-8' or std.game.codepage == 'utf-8')
+	if not utf8 then return 1 end
+	local i = pos or 1
+	local l = 0
+	while b:byte(i) >= 0x80 and b:byte(i) <= 0xbf do
+		i = i + 1
+		l = l + 1
+	end
+	return l + 1
+end
+
 local timer = std.ref '@timer'
 
 local function key_xlat(s)
@@ -808,15 +839,12 @@ std.mod_cmd(function(cmd)
 			end
 			local pre, post = dbg:inp_split()
 			if not pre or pre == '' then
-				return
+				std.abort()
+				return std.call(dbg, 'dsc'), true
 			end
-			if dbg.input:byte(pre:len()) >= 128 then
-				dbg.input = dbg.input:sub(1, pre:len() - 2) .. post
-				dbg.cursor = dbg.cursor - 2
-			else
-				dbg.input = dbg.input:sub(1, pre:len() - 1) .. post
-				dbg.cursor = dbg.cursor - 1
-			end
+			local i = utf_bb(dbg.input)
+			dbg.input = dbg.input:sub(1, pre:len() - i) .. post
+			dbg.cursor = dbg.cursor - i
 		elseif key:find '^tab' then
 			dbg:completion()
 		elseif key:find 'home' or (key == 'a' and dbg.key_ctrl) then
@@ -828,20 +856,14 @@ std.mod_cmd(function(cmd)
 			dbg.input = ''
 		elseif key:find '^right' then
 			if dbg.cursor <= dbg.input:len() then
-				if dbg.input:byte(dbg.cursor) >= 128 then
-					dbg.cursor = dbg.cursor + 2
-				else
-					dbg.cursor = dbg.cursor + 1
-				end
+				local i = utf_ff(dbg.input, dbg.cursor)
+				dbg.cursor = dbg.cursor + i
 			end
 			if dbg.cursor > dbg.input:len() then dbg.cursor = dbg.input:len() + 1 end
 		elseif key:find '^left' then
 			if dbg.cursor > 1 then
-				if dbg.input:byte(dbg.cursor - 1) >= 128 then
-					dbg.cursor = dbg.cursor - 2
-				else
-					dbg.cursor = dbg.cursor - 1
-				end
+				local i = utf_bb(dbg.input, dbg.cursor - 1)
+				dbg.cursor = dbg.cursor - i
 			end
 			if dbg.cursor < 1 then dbg.cursor = 1 end
 		elseif key:find '^up' then
