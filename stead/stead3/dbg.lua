@@ -163,7 +163,7 @@ end
 local function show_obj(s, v, pfx, verbose)
 	local wh = v:where()
 	if wh then
-		wh = '@'..std.tostr(std.nameof(wh))..'['..std.titleof(wh)..']'
+		wh = '@'..std.tostr(std.nameof(wh))..'['..(std.titleof(wh) or 'n/a')..']'
 	else
 		wh = ''
 	end
@@ -173,7 +173,7 @@ local function show_obj(s, v, pfx, verbose)
 		v:closed() and '-' or '',
 		std.tostr(std.nameof(v)),
 		wh,
-		std.dispof(v), v.tag or 'n/a')
+		std.dispof(v) or 'n/a', v.tag or 'n/a')
 	if verbose then
 		for k, v in std.pairs(v) do
 			s:printf("*[%s] = %s\n", std.tostr(k), std.dump(v) or 'n/a')
@@ -187,7 +187,7 @@ local function show_obj(s, v, pfx, verbose)
 end
 
 local function show_room(s, v)
-	s:printf("nam: %s | title: %s | disp: %s | tag: %s\n", std.tostr(std.nameof(v)), std.titleof(v), std.dispof(v), v.tag or 'n/a')
+	s:printf("nam: %s | title: %s | disp: %s | tag: %s\n", std.tostr(std.nameof(v)), std.titleof(v) or 'n/a', std.dispof(v) or 'n/a', v.tag or 'n/a')
 	s:printf("    way: ")
 	for k, v in std.ipairs(v.way) do
 		if k ~= 1 then
@@ -498,12 +498,40 @@ Type "help" to see help
 	kbd_alt_xlat = false;
 	__last_disp = false;
 	__nostrict = false;
-	__direct = false;
 };
 
-local old_get_picture
-local old_get_fading
+local theme = {}
 
+local function theme_var(a, b)
+	local ov = instead.theme_var(a)
+	if b then
+		theme[a] = ov
+		return instead.theme_var(a, b)
+	end
+	return ov
+end
+
+local function theme_reset(a)
+	for k, v in std.pairs(theme) do
+		instead.theme_var(k, v)
+	end
+	theme = {}
+end
+
+local funcs = {}
+
+local function instead_func(a)
+	local ov = instead[a]
+	funcs[a] = ov
+	std.rawset(instead, a, function() end)
+end
+
+local function instead_reset(a)
+	for k, v in std.pairs(funcs) do
+		std.rawset(instead, k, v)
+	end
+	funcs = {}
+end
 
 local dbg = std.obj {
 	pri = 16384;
@@ -512,28 +540,38 @@ local dbg = std.obj {
 	{ commands = commands },
 	enable = function(s)
 		local instead = std.ref '@instead'
-		old_get_picture = instead.get_picture
-		old_get_fading = instead.get_fading
-		std.rawset(instead, 'get_picture', function() end)
-		std.rawset(instead, 'get_fading', function() end)
+		instead_func('get_picture')
+		instead_func('get_fading')
+		instead_func('get_title')
+		instead_func('get_ways')
 --		s.last_timer = timer:get()
 --		timer:stop()
 		s.__last_disp = std.game:lastdisp()
 		s.__nostrict = std.nostrict or false
-		s.__direct = (instead.theme_var('scr.gfx.mode') == 'direct')
-		if s.__direct then
-			instead.theme_var('scr.gfx.mode', 'embedded')
-		end
+
+		local w, h = std.tonum(theme_var 'scr.w'), std.tonum(theme_var 'scr.h')
+		theme_var('scr.gfx.mode', 'embedded')
+		theme_var('scr.gfx.bg', '')
+		theme_var('scr.col.bg', 'white')
+		theme_var('win.col.fg', 'black')
+		theme_var('inv.mode', 'disabled')
+		local padw = w > 320 and 16 or 0
+		local padh = h > 320 and 16 or 0
+		theme_var('win.x', padw)
+		theme_var('win.y', padh)
+		theme_var('win.w', w - padw)
+		theme_var('win.h', h - padh)
+		theme_var('menu.button.x', w)
+		theme_var('menu.button.y', h)
+		theme_var('win.fnt.size', 16)
+		theme_var('win.scroll.mode', 3)
 		std.nostrict = true
 		iface:raw_mode(true)
 	end;
 	disable = function(s)
-		if s.__direct then
-			instead.theme_var('scr.gfx.mode', 'direct')
-		end
+		theme_reset()
 		std.nostrict = s.__nostrict
-		std.rawset(instead, 'get_picture', old_get_picture)
-		std.rawset(instead, 'get_fading', old_get_fading)
+		instead_reset()
 		iface:raw_mode(false)
 	--	timer:set(s.last_timer)
 		std.game:lastdisp(s.__last_disp)
@@ -606,7 +644,7 @@ local dbg = std.obj {
 			pr (txt:bold ' ')
 		end
 		local pre, post = s:inp_split()
-		pr (txt:bold '# '.. txt_esc(pre)..txt:bold '|'..txt_esc(post) ..'\n')
+		pr (txt:bold '$ '.. txt:bold(txt_esc(pre))..txt:bold '|'..txt:bold(txt_esc(post)) ..'\n')
 		pr (s.hint..'\n')
 		pr (txt:anchor())
 	end;
@@ -800,6 +838,6 @@ end, -1)
 std.mod_done(function()
 	iface:raw_mode(false)
 	std.rawset(input, 'key', okey)
-end)
+end, -1)
 
 -- std.rawset(_G, 'dbg',  std.ref '@dbg')
