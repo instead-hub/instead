@@ -3,6 +3,8 @@ local type = std.type
 std.rawset(_G, 'std', stead)
 include = std.include
 loadmod = std.loadmod
+rnd = std.rnd
+rnd_seed = std.rnd_seed
 p = std.p
 pr = std.pr
 pn = std.pn

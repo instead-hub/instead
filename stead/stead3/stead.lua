@@ -37,9 +37,25 @@ stead = {
 	files = {};
 	busy = function() end;
 	debug_xref = true;
+	random = instead_random;
+	randomseed = instead_srandom;
 }
 
 local std = stead
+
+std.rnd = function(...)
+	if std.random then
+		return std.random(...)
+	end
+	return std.math.random(...);
+end
+
+std.rnd_seed = function(...)
+	if std.randomseed then
+		return std.randomseed(...)
+	end
+	std.math.randomseed(...)
+end
 
 function stead:abort()
 	self.abort_cmd = true
@@ -935,11 +951,20 @@ function std.for_each_obj(fn, ...)
 	end
 end
 
+local rnd_seed = 1980 + 1978
+
 function std:init()
 	std.rawset(_G, 'iface', std.ref '@iface') -- force iface override
 	std.world { nam = 'game', player = 'player', codepage = 'UTF-8' }
 	std.room { nam = 'main' }
 	std.player { nam = 'player', room = 'main' }
+
+	rnd_seed = (std.os.time(stead.os.date("*t")) + rnd_seed) % 65535
+
+	std.rnd_seed(rnd_seed)
+	std.math.randomseed(rnd_seed)
+	std.math.random(1);  std.math.random(2);  std.math.random(3);
+
 	std.mod_call('init') -- init modules
 	std.initialized = true
 end
