@@ -955,7 +955,7 @@ local rnd_seed = 1980 + 1978
 
 function std:init()
 	std.rawset(_G, 'iface', std.ref '@iface') -- force iface override
-	std.world { nam = 'game', player = 'player', codepage = 'UTF-8' }
+	std.world { nam = 'game', player = 'player', codepage = 'UTF-8', dsc = [[STEAD3, 2017 by Peter Kosyh^http://instead.syscall.ru^^]] };
 	std.room { nam = 'main' }
 	std.player { nam = 'player', room = 'main' }
 
@@ -1544,6 +1544,8 @@ std.world = std.class({
 				start(load) -- start after load
 			--	std.rawset(_G, 'start', nil)
 			end
+			local d = std.method(s, 'dsc')
+			return std.fmt(d)
 		end
 	end;
 	lifeon = function(s, w, ...)

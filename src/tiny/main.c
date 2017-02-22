@@ -51,7 +51,7 @@ int main(int argc, const char **argv)
 		fprintf(stderr, "Can not load game: %s\n", instead_err());
 		exit(1);
 	}
-	printf("%s", str);
+	printf("%s\n", str);
 #if 0 /* no autoload */
 	str = instead_cmd("load autosave", &rc);
 #else
