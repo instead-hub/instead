@@ -697,7 +697,8 @@ local dbg = std.obj {
 		end
 		local pre, post = s:inp_split()
 		pr (txt:bold '$ '.. txt:bold(txt_esc(pre))..txt:bold '|'..txt:bold(txt_esc(post)) ..'\n')
-		pr (s.hint..'\n')
+		if s.hint == '' then s.hint = '?' end
+		pr (s.hint ..'\n')
 		pr (txt:anchor())
 	end;
 	key = function(s, press, key)
@@ -802,7 +803,8 @@ std.mod_cmd(function(cmd)
 			end
 		elseif key:find '^backspace' then
 			if dbg.input == '' then
-				return
+				std.abort()
+				return std.call(dbg, 'dsc'), true
 			end
 			local pre, post = dbg:inp_split()
 			if not pre or pre == '' then
