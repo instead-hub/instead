@@ -47,12 +47,12 @@ function std.dprint(...)
 	local a = { ... }
 	for i = 1, #a do
 		if i ~= 1 then
-			std.io.stdout:write(' ')
+			std.io.stderr:write(' ')
 		end
-		std.io.stdout:write(std.tostr(a[i]))
+		std.io.stderr:write(std.tostr(a[i]))
 	end
-	std.io.stdout:write('\n')
-	std.io.stdout:flush()
+	std.io.stderr:write('\n')
+	std.io.stderr:flush()
 end
 
 std.rnd = function(...)

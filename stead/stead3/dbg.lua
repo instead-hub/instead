@@ -889,14 +889,14 @@ function std.dprint(...)
 	for i = 1, #a do
 		if i ~= 1 then
 			dbg:printf("%s", ' ')
-			std.io.stdout:write(' ')
+			std.io.stderr:write(' ')
 		end
 		dbg:printf("%s", std.tostr(a[i]))
-		std.io.stdout:write(std.tostr(a[i]))
+		std.io.stderr:write(std.tostr(a[i]))
 	end
 	dbg:printf("\n")
-	std.io.stdout:write('\n')
-	std.io.stdout:flush()
+	std.io.stderr:write('\n')
+	std.io.stderr:flush()
 end
 
 dprint = std.dprint
