@@ -883,6 +883,24 @@ std.mod_cmd(function(cmd)
 	end
 end, -1)
 
+function std.dprint(...)
+	local a = { ... }
+	dbg:printf("dbg> ");
+	for i = 1, #a do
+		if i ~= 1 then
+			dbg:printf("%s", ' ')
+			std.io.stdout:write(' ')
+		end
+		dbg:printf("%s", std.tostr(a[i]))
+		std.io.stdout:write(std.tostr(a[i]))
+	end
+	dbg:printf("\n")
+	std.io.stdout:write('\n')
+	std.io.stdout:flush()
+end
+
+dprint = std.dprint
+
 std.mod_start(function()
 	iface:raw_mode(false)
 	okey = input.key;
