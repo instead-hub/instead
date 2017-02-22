@@ -682,7 +682,7 @@ local dbg = std.obj {
 			table.insert(s.history, s.input)
 		end
 		s.history_pos = 0
-		s:printf('======== [ '..s.input..' ] ========\n')
+		s:printf('$ '..s.input..'\n')
 		s.input = ''
 		s.hint = ''
 		s.cursor = 1
