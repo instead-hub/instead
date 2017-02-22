@@ -959,11 +959,8 @@ function std:init()
 	std.room { nam = 'main' }
 	std.player { nam = 'player', room = 'main' }
 
-	rnd_seed = (std.os.time(stead.os.date("*t")) + rnd_seed) % 65535
-
+	rnd_seed = (std.os.time(stead.os.date("*t")) + rnd_seed)
 	std.rnd_seed(rnd_seed)
-	std.math.randomseed(rnd_seed)
-	std.math.random(1);  std.math.random(2);  std.math.random(3);
 
 	std.mod_call('init') -- init modules
 	std.initialized = true

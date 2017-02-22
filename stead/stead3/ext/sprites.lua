@@ -534,6 +534,13 @@ end
 
 std.obj (pixels)
 
+local rnd_seed = 1980 + 1978
+
+stead.mod_init(function()
+	rnd_seed = (std.os.time(stead.os.date("*t")) + rnd_seed + instead.ticks())
+	std.rnd_seed(rnd_seed)
+end)
+
 stead.mod_done(function()
 	instead.sprites_free();
 end)
