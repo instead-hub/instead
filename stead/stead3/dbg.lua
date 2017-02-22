@@ -160,20 +160,30 @@ local function txt_esc(s)
 	return r
 end
 
+local function dispof(v)
+	local d = std.titleof(v) or std.dispof(v)
+	if not d then
+		d = v.tag or 'n/a'
+	else
+		d = d..((v.tag and '/'..v.tag) or '')
+	end
+	return d
+end
+
 local function show_obj(s, v, pfx, verbose)
 	local wh = v:where()
 	if wh then
-		wh = '@'..std.tostr(std.nameof(wh))..'['..(std.titleof(wh) or 'n/a')..']'
+		wh = '@'..std.tostr(std.nameof(wh))..'['..(dispof(wh))..']'
 	else
 		wh = ''
 	end
-	s:printf("%s%s%snam: %s%s | disp:%s | tag:%s\n",
+	s:printf("%s%s%snam: %s%s | disp:%s\n",
 		pfx or '',
 		v:disabled() and '%' or '',
 		v:closed() and '-' or '',
 		std.tostr(std.nameof(v)),
 		wh,
-		std.dispof(v) or 'n/a', v.tag or 'n/a')
+		dispof(v))
 	if verbose then
 		for k, v in std.pairs(v) do
 			s:printf("*[%s] = %s\n", std.tostr(k), std.dump(v) or 'n/a')
@@ -187,13 +197,13 @@ local function show_obj(s, v, pfx, verbose)
 end
 
 local function show_room(s, v)
-	s:printf("nam: %s | title: %s | disp: %s | tag: %s\n", std.tostr(std.nameof(v)), std.titleof(v) or 'n/a', std.dispof(v) or 'n/a', v.tag or 'n/a')
+	s:printf("nam: %s | title: %s | disp: %s\n", std.tostr(std.nameof(v)), std.titleof(v) or 'n/a', dispof(v))
 	s:printf("    way: ")
 	for k, v in std.ipairs(v.way) do
 		if k ~= 1 then
 			s:printf(" | ")
 		end
-		s:printf("%s ", std.tostr(std.nameof(v)))
+		s:printf("%s[%s]", std.tostr(std.nameof(v)), dispof(v))
 	end
 	s:printf("\n")
 end
@@ -207,6 +217,46 @@ local	commands = {
 			s:disable();
 			return std.nop()
 		end;
+	};
+	{ nam = 'find',
+		{ nam = 'obj',
+			act = function(s, par)
+				if not par then
+					return
+				end
+				std.for_each_obj(function(v)
+					if v == s then
+						return
+					end
+					local disp = dispof(v)
+					local nam = std.tostr(std.nameof(v))
+					if disp:find(par, 1, true) or nam:find(par, 1, true) then
+						s:printf("nam: %s disp: %s\n", nam, disp)
+					end
+				end)
+			end
+		};
+		{ nam = 'dsc',
+			act = function(s, par)
+				if not par then
+					return
+				end
+				std.for_each_obj(function(v)
+					if v == s then
+						return
+					end
+					local dsc = std.par(' ', std.call(v, 'dsc'), std.call(v, 'decor')) or ''
+					local st, e = dsc:find(par, 1, true)
+					if st then
+						local nam = std.tostr(std.nameof(v))
+						local disp = dispof(v)
+						st = st - 32
+						if st < 0 then st = 1 end
+						s:printf("nam: %s disp: %s dsc: %s\n", nam, disp, dsc:sub(st, e + 32))
+					end
+				end)
+			end
+		};
 	};
 	{ nam = 'show',
 		{ nam = 'obj',
@@ -416,6 +466,8 @@ Use ctrl-d or f6 to enter/exit debugger.
 Some useful commands:
     show obj * - show all objects
     show room * - show all rooms
+    find obj <string> - search obj
+    find dsc <string> - search obj (in dsc and decor)
     show obj <name> - show object (in verbose mode)
     show room <name> - show room
     show room - show here
