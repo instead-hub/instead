@@ -26,6 +26,12 @@ std.dlg = std.class({
 		v.dlg_enter = v.enter
 		v.enter = nil
 		v.__stack = {}
+		if type(v.phr) == 'table' then
+			if not v.obj then v.obj = {} end
+			if type(v.obj) == 'table' then
+				table.insert(v.obj, 1, v.phr)
+			end
+		end
 		v = std.room(v)
 		std.setmt(v, s)
 		v:__recreate()
@@ -79,7 +85,7 @@ std.dlg = std.class({
 	enter = function(s, ...)
 		s.__llact = false
 		s.__stack = {}
-    		s.current = nil
+		s.current = nil
 		s:for_each(function(s) s:open() end) -- open all phrases
 		local r, v = std.call(s, 'dlg_enter', ...)
 		if std.here() ~= s or #s.__stack > 0 then
