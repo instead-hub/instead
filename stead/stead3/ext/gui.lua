@@ -115,15 +115,18 @@ function instead.get_menu()
 	return instead.__menu
 end
 
+instead.nosave = false
+instead.noautosave = false
+
 function instead.isEnableSave()
 	local s = get_bool(instead, 'nosave')
-	if instead.get_autosave() then
-		return true
-	end
 	return not s
 end
 
 function instead.isEnableAutosave()
+	if instead.get_autosave() then
+		return true
+	end
 	return not get_bool(instead, 'noautosave')
 end
 

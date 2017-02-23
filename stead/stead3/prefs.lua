@@ -3,7 +3,7 @@ local std = stead
 local preferences = std.obj {
 	nam = '@prefs',
 	load = function(s)
-		local name = stead.savepath() .. '/prefs';
+		local name = std.savepath() .. '/prefs';
 		local f, err = std.loadfile(name);
 		if not f then
 			return false, err
@@ -11,15 +11,15 @@ local preferences = std.obj {
 		f();
 		return true
 	end,
-	ini = function(s)
-		std.obj.ini(s)
+	ini = function(s, ...)
+		std.obj.ini(s, ...)
 		s:load()
 	end,
 	store = function(s)
 		return s:save()
 	end,
 	save = function(s) -- save prefs on every save
-		local name = stead.savepath() .. '/prefs';
+		local name = std.savepath() .. '/prefs';
 		local name_tmp = name..'.tmp'
 		local fp, err = std.io.open(name_tmp, "wb");
 		if not fp then
