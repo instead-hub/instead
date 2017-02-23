@@ -585,6 +585,19 @@ local function instead_reset(a)
 	funcs = {}
 end
 
+local std_dbg = {}
+
+local function std_debug(a)
+	if not a then
+		for k, v in pairs(std_dbg) do
+			std['debug_'..k] = v
+		end
+		return
+	end
+	std_dbg[a] = std['debug_'..a]
+	std['debug_'..a] = false
+end
+
 local dbg = std.obj {
 	pri = 16384;
 	nam = '@dbg';
@@ -598,6 +611,9 @@ local dbg = std.obj {
 		instead_func('get_ways')
 --		s.last_timer = timer:get()
 --		timer:stop()
+		std_debug('input')
+		std_debug('output')
+		std_debug('xref')
 		s.__last_disp = std.game:lastdisp()
 		s.__nostrict = std.nostrict or false
 
@@ -622,6 +638,7 @@ local dbg = std.obj {
 	end;
 	disable = function(s)
 		theme_reset()
+		std_debug()
 		std.nostrict = s.__nostrict
 		instead_reset()
 		iface:raw_mode(false)
