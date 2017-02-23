@@ -843,10 +843,10 @@ std.save_table = function(vv, fp, n)
 	std.save_members(vv, fp, n)
 end
 
-function std:reset() -- reset state
+function std:reset(fn) -- reset state
 	self:done()
 	self:init()
-	std.dofile('main3.lua')
+	std.dofile(fn or 'main3.lua')
 end
 
 function std:load(fname) -- load save
@@ -878,7 +878,7 @@ function std.gamefile(fn, reset) -- load game file
 		std.err("Wrong paramter to stead:file: "..std.tostr(f), 2)
 	end
 	if reset then
-		std:reset()
+		std:reset(fn)
 		if fn ~= 'main3.lua' then
 			std.startfile = fn -- another start file
 		end
