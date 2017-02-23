@@ -345,6 +345,7 @@ local	commands = {
 		act = function(s)
 			s:printf([[Use <tab> key to complete words.
 Use <up>/<down> for history.
+Use ctrl-l to clear screen.
 Use ctrl-d or f6 to enter/exit debugger.
 Some useful commands:
     show obj * - show all objects
@@ -754,6 +755,8 @@ std.mod_cmd(function(cmd)
 		elseif (key == 'k' and dbg.key_ctrl) then
 			dbg.cursor = 1
 			dbg.input = ''
+		elseif (key == 'l' and dbg.key_ctrl) then
+			dbg:cls()
 		elseif key:find '^right' then
 			if dbg.cursor <= dbg.input:len() then
 				local i = utf_ff(dbg.input, dbg.cursor)
