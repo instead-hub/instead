@@ -363,7 +363,7 @@ local	commands = {
 			if not par then
 				return
 			end
-			local st, r, v = s:eval(walk, par, true)
+			local st, r, v = s:eval(walk, par, false)
 			if not st then
 				s:printf("%s\n", r)
 				return

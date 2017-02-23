@@ -1683,7 +1683,7 @@ std.world = std.class({
 		elseif cmd[1] == nil or cmd[1] == 'look' then
 			if not s.__started then
 				s.__started = true
-				r, v = s.player:walk(s.player.room, true)
+				r, v = s.player:walk(s.player.room, false)
 			else
 				s.player:need_scene(true)
 				v = true
@@ -1963,15 +1963,17 @@ std.player = std.class ({
 		return r, v
 	end;
 	walkin = function(s, w)
-		return s:walk(w, true, false)
+		return s:walk(w, false)
 	end;
 	walkout = function(s, w)
 		if w == nil then
 			w = s:where():from()
 		end
-		return s:walk(w, false, true)
+		return s:walk(w, true, false)
 	end;
-	walk = function(s, w, noexit, noenter)
+	walk = function(s, w, doexit, doenter)
+		local noexit = (doexit == false)
+		local noenter = (doenter == false)
 		w = std.ref(w)
 		if not w then
 			std.err("Wrong parameter to walk: "..std.tostr(w))
