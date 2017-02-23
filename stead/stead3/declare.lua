@@ -203,6 +203,16 @@ local function mod_init()
 	})
 end
 
+std.obj {
+	nam = '@declare';
+	declarations = function()
+		return declarations;
+	end;
+	variables = function()
+		return variables
+	end;
+}
+
 local function mod_done()
 	std.setmt(_G, {})
 	local decl = {}

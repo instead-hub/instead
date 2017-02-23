@@ -3,6 +3,8 @@ local type = std.type
 local table = std.table
 local input = std.ref '@input'
 local string = std.string
+local pairs = std.pairs
+local ipairs = std.ipairs
 local okey
 local txt = std.ref '@iface'
 local instead = std.ref '@instead'
@@ -92,6 +94,17 @@ local function show_room(s, v)
 end
 
 local take = take
+
+local function show_decl(s, t)
+	local d = std.ref '@declare':declarations()
+	for k, v in pairs(d) do
+		if not t or v["type"] == t then
+			local dump = std.dump(_G[k])
+			if dump == '' then dump = std.tostr(_G[k]) end
+			s:printf("%s %s = %s\n", v["type"], k, dump)
+		end
+	end
+end
 
 local	commands = {
 	{ nam = 'quit',
@@ -217,6 +230,28 @@ local	commands = {
 				end
 			end;
 		};
+		{
+			nam = 'declare',
+			act = function(s, par)
+				if par == '*' then
+					show_decl(s)
+				else
+					show_decl(s, 'declare')
+				end
+			end
+		},
+		{
+			nam = 'global',
+			act = function(s, par)
+				show_decl(s, 'global')
+			end
+		},
+		{
+			nam = 'const',
+			act = function(s, par)
+				show_decl(s, 'const')
+			end
+		}
 	};
 	{ nam = 'take',
 	  act = function(s, par)

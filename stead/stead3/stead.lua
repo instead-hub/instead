@@ -417,6 +417,7 @@ function std.class(s, inh)
 --	s.__parent = function(s)
 --		return inh
 	--	end;
+	s.nam = '*class*';
 	s.type = function(s, t)
 		return std.is_obj(s, t)
 	end;
@@ -2204,7 +2205,7 @@ local function __dump(t, nested)
 			local d = std.deref(t)
 			if type(d) == 'number' then
 				rc = string.format("std(%d)", d)
-			else
+			elseif type(d) == 'string' then
 				rc = string.format("std %q", d)
 			end
 			return rc
