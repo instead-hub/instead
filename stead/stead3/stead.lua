@@ -846,6 +846,9 @@ end
 function std:reset(fn) -- reset state
 	self:done()
 	self:init()
+	if fn ~= 'main3.lua' then
+		std.startfile = fn -- another start file
+	end
 	std.dofile(fn or 'main3.lua')
 end
 
@@ -875,16 +878,16 @@ end
 
 function std.gamefile(fn, reset) -- load game file
 	if type(fn) ~= 'string' then
-		std.err("Wrong paramter to stead:file: "..std.tostr(f), 2)
+		std.err("Wrong paramter to stead:file: "..std.tostr(fn), 2)
 	end
 	if reset then
 		std:reset(fn)
-		if fn ~= 'main3.lua' then
-			std.startfile = fn -- another start file
-		end
 		std.ref 'game':ini()
-		std.game.player:need_scene(true)
-		return
+		local r, v = std.game.player:walk(std.game.player.room, false)
+		if type(r) == 'string' and std.cctx() then
+			std.pr(r)
+		end
+		return r, v
 	end
 	in_section ('gamefile', function() std.dofile(fn) end)
 	std.ref 'game':ini()
@@ -911,6 +914,7 @@ function std:save(fp)
 	-- reset
 	if std.startfile then
 		fp:write(string.format("std:reset(%q)\n", std.startfile))
+		fp:write(string.format("std 'game':ini(false)\n"))
 	end
 	-- files
 	for i = 1, #std.files do
