@@ -6,6 +6,7 @@ local string = std.string
 local okey
 local txt = std.ref '@iface'
 local instead = std.ref '@instead'
+
 local kbden = {
 	shifted = {
 	["1"] = "!",
@@ -31,125 +32,7 @@ local kbden = {
 	}
 }
 
-local kbdru = {
-	["q"] = "й",
-	["w"] = "ц",
-	["e"] = "у",
-	["r"] = "к",
-	["t"] = "е",
-	["y"] = "н",
-	["u"] = "г",
-	["i"] = "ш",
-	["o"] = "щ",
-	["p"] = "з",
-	["["] = "х",
-	["]"] = "ъ",
-	["a"] = "ф",
-	["s"] = "ы",
-	["d"] = "в",
-	["f"] = "а",
-	["g"] = "п",
-	["h"] = "р",
-	["j"] = "о",
-	["k"] = "л",
-	["l"] = "д",
-	[";"] = "ж",
-	["'"] = "э",
-	["z"] = "я",
-	["x"] = "ч",
-	["c"] = "с",
-	["v"] = "м",
-	["b"] = "и",
-	["n"] = "т",
-	["m"] = "ь",
-	[","] = "б",
-	["."] = "ю",
-	["`"] = "ё",
-
-	shifted = {
-	["q"] = "Й",
-	["w"] = "Ц",
-	["e"] = "У",
-	["r"] = "К",
-	["t"] = "Е",
-	["y"] = "Н",
-	["u"] = "Г",
-	["i"] = "Ш",
-	["o"] = "Щ",
-	["p"] = "З",
-	["["] = "Х",
-	["]"] = "Ъ",
-	["a"] = "Ф",
-	["s"] = "Ы",
-	["d"] = "В",
-	["f"] = "А",
-	["g"] = "П",
-	["h"] = "Р",
-	["j"] = "О",
-	["k"] = "Л",
-	["l"] = "Д",
-	[";"] = "Ж",
-	["'"] = "Э",
-	["z"] = "Я",
-	["x"] = "Ч",
-	["c"] = "С",
-	["v"] = "М",
-	["b"] = "И",
-	["n"] = "Т",
-	["m"] = "Ь",
-	[","] = "Б",
-	["."] = "Ю",
-	["`"] = "Ё",
-	["1"] = "!",
-	["2"] = "@",
-	["3"] = "#",
-	["4"] = ";",
-	["5"] = "%",
-	["6"] = ":",
-	["7"] = "?",
-	["8"] = "*",
-	["9"] = "(",
-	["0"] = ")",
-	["-"] = "_",
-	["="] = "+",
-	}
-}
-
-local kbdlower = {
-	['А'] = 'а',
-	['Б'] = 'б',
-	['В'] = 'в',
-	['Г'] = 'г',
-	['Д'] = 'д',
-	['Е'] = 'е',
-	['Ё'] = 'ё',
-	['Ж'] = 'ж',
-	['З'] = 'з',
-	['И'] = 'и',
-	['Й'] = 'й',
-	['К'] = 'к',
-	['Л'] = 'л',
-	['М'] = 'м',
-	['Н'] = 'н',
-	['О'] = 'о',
-	['П'] = 'п',
-	['Р'] = 'р',
-	['С'] = 'с',
-	['Т'] = 'т',
-	['У'] = 'у',
-	['Ф'] = 'ф',
-	['Х'] = 'х',
-	['Ц'] = 'ц',
-	['Ч'] = 'ч',
-	['Ш'] = 'ш',
-	['Щ'] = 'щ',
-	['Ъ'] = 'ъ',
-	['Э'] = 'э',
-	['Ь'] = 'ь',
-	['Ю'] = 'ю',
-	['Я'] = 'я',
-}
-
+local kbdalt = false
 
 local function txt_esc(s)
 	local rep = function(s)
@@ -728,7 +611,7 @@ local dbg = std.obj {
 		elseif key:find 'alt' then
 			s.key_alt = press
 			if s.on then
-				if not press then
+				if not press and kbdalt then
 					s.kbd_alt_xlat = not s.kbd_alt_xlat
 				end
 				return 'look'
@@ -802,8 +685,8 @@ local function key_xlat(s)
 		return
 	end
 
-	if dbg.kbd_alt_xlat and (std.game.codepage == 'UTF-8' or std.game.codepage == 'utf-8') then
-		kbd = kbdru;
+	if dbg.kbd_alt_xlat and (std.game.codepage == 'UTF-8' or std.game.codepage == 'utf-8') and kbdalt then
+		kbd = kbdalt
 	else
 		kbd = kbden
 	end
@@ -939,8 +822,17 @@ function std.dprint(...)
 end
 
 dprint = std.dprint
-
-std.mod_start(function()
+local oldlang
+std.mod_start(function(load)
+	local st, r
+	if oldlang ~= LANG then
+		st, r = std.pcall(function() return require ('dbg-'..LANG) end)
+		if st and r then
+			std.dprint("dbg: Using '"..LANG.."' keyboard layout.")
+			kbden, kbdalt = r.main, r.alt
+		end
+	end
+	oldlang = LANG
 	iface:raw_mode(false)
 	okey = input.key;
 	std.rawset(input, 'key', function(self, ...) return dbg:key(...) or (okey and okey(input, ...)) end)
