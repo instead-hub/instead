@@ -883,6 +883,7 @@ function std.gamefile(fn, reset) -- load game file
 	if reset then
 		std:reset(fn)
 		std.ref 'game':ini()
+		std.ref 'game'.__started = true
 		local r, v = std.game.player:walk(std.game.player.room, false)
 		if type(r) == 'string' and std.cctx() then
 			std.pr(r)
