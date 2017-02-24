@@ -1979,6 +1979,10 @@ std.player = std.class ({
 	walk = function(s, w, doexit, doenter)
 		local noexit = (doexit == false)
 		local noenter = (doenter == false)
+		local moved = s:moved()
+		if moved then
+			s:moved(false)
+		end
 		w = std.ref(w)
 		if not w then
 			std.err("Wrong parameter to walk: "..std.tostr(w))
@@ -1993,6 +1997,7 @@ std.player = std.class ({
 		t = std.par(std.scene_delim, t or false, r)
 
 		if v == false or s:moved() then -- stop walk
+			if not s:moved() then s:moved(moved) end
 			return t, true
 		end
 
@@ -2000,6 +2005,7 @@ std.player = std.class ({
 			r, v = std.call(s, 'onwalk', inwalk)
 			t = std.par(std.scene_delim, t or false, r)
 			if v == false or s:moved() then
+				if not s:moved() then s:moved(moved) end
 				return t, true
 			end
 		end
@@ -2011,6 +2017,7 @@ std.player = std.class ({
 				s.__in_onexit = false
 				t = std.par(std.scene_delim, t or false, r)
 				if v == false or s:moved() then
+					if not s:moved() then s:moved(moved) end
 					return t, true
 				end
 			end
@@ -2018,6 +2025,7 @@ std.player = std.class ({
 				r, v = std.call(inwalk, 'onenter', s:where())
 				t = std.par(std.scene_delim, t or false, r)
 				if v == false or s:moved() then
+					if not s:moved() then s:moved(moved) end
 					return t, true
 				end
 			end
