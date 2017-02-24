@@ -14,10 +14,6 @@ local preferences = std.obj {
 		std.game = g
 		return true
 	end,
-	ini = function(s, ...)
-		std.obj.ini(s, ...)
-		s:load()
-	end,
 	store = function(s)
 		return s:save()
 	end,
@@ -39,5 +35,18 @@ local preferences = std.obj {
 		return std.os.remove(name);
 	end
 };
+
+local loaded
+
+std.mod_start(function()
+	loaded = prefs:load()
+end)
+
+std.mod_done(function()
+	if loaded then
+		prefs:store()
+		loaded = false
+	end
+end)
 
 prefs = preferences
