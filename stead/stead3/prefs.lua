@@ -8,7 +8,10 @@ local preferences = std.obj {
 		if not f then
 			return false, err
 		end
+		local g = std.game
+		std.game = std.ref 'game' -- to make vars rw
 		f();
+		std.game = g
 		return true
 	end,
 	ini = function(s, ...)
@@ -25,7 +28,7 @@ local preferences = std.obj {
 		if not fp then
 			return false
 		end
-		std.obj.save(s, fp, 'prefs')
+		std.obj.save(s, fp, 'std "@prefs"')
 		fp:flush();
 		fp:close();
 		std.os.remove(name)
