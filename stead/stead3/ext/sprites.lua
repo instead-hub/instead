@@ -543,5 +543,5 @@ stead.mod_init(function()
 end)
 
 stead.mod_done(function()
-	instead.sprites_free();
+--	instead.sprites_free();
 end)
