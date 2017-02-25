@@ -293,7 +293,7 @@ function fnt:new(nam)
 end
 
 function fnt:text(text, col, style, ...)
-	return fnt:new(instead.sprite_text(self.fnt, text, col, style, ...))
+	return spr:new(instead.sprite_text(self.fnt, text, col, style, ...))
 end
 
 function fnt:size(...)
@@ -301,7 +301,8 @@ function fnt:size(...)
 end
 
 function fnt:height(...)
-	return self:size()
+	local w, h = self:size()
+	return h
 end
 
 function spr:new(nam)
