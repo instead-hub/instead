@@ -45,7 +45,7 @@ function theme.reset(name)
 	if type(name) ~= 'string' then
 		std.err("Wrong parameter to theme.reset", 2)
 	end
-	v = theme.reset_vars[name]
+	local v = theme.reset_vars[name]
 	if not v then
 		return
 	end
