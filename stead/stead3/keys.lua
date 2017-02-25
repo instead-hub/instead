@@ -52,7 +52,7 @@ std.mod_cmd(function(cmd)
 	if not v then
 		r, v = std.call(std.game, 'onkey', cmd[2], cmd[3])
 	end
-	if r == nil then -- nothing todo
+	if not v then -- nothing todo
 		return nil, false
 	end
 	return r, v
