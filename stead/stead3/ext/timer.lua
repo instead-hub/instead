@@ -52,7 +52,7 @@ std.mod_cmd(function(cmd)
 	if not v then
 		r, v = stead.call(std.game, 'timer');
 	end
-	if r == nil then -- nothing todo
+	if not v then -- nothing todo
 		return nil, false
 	end
 	return r, v
