@@ -92,7 +92,7 @@ end
 
 std.mod_done(function(s)
 	instead.stop_music()
-	instead.set_sound('@-1'); -- halt all
+	instead.stop_sound() -- halt all
 --	instead.sounds_free();
 end)
 
