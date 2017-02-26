@@ -1,11 +1,11 @@
 2.5.0
 
-  * strict module;
+  * refactoring (src/instead);
+  * tiny-instead;
+  * bug fixes;
+  * completely new stead3;
   * sound.load_mem;
   * sprite.pixels;
-  * bug fixes;
-  * refactoring (src/instead);
-  * stead3 new api layer;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 09 Nov 2016 11:38:00 +0300
 

@@ -26,9 +26,7 @@ local fnew = function(f)
 		return
 	end
 	local fn = {
---		nam = f;
 		fnt = f;
---		object_type = true;
 		save = function() end;
 	}
 	setmetatable(fn, font_mt)
@@ -53,9 +51,6 @@ local pixels_m = {
 			self:copy(p)
 		end
 		return pnew(p)
-	end;
-	sprite = function(self) -- make sprite from pixels
-		return sprite.new(self)
 	end;
 }
 

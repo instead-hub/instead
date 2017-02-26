@@ -93,7 +93,7 @@ end
 std.mod_done(function(s)
 	instead.stop_music()
 	instead.set_sound('@-1'); -- halt all
-	instead.sounds_free();
+--	instead.sounds_free();
 end)
 
 std.mod_cmd(function(s)
@@ -127,7 +127,8 @@ function snd:new(a, b, t)
 	if not o.snd then
 		return
 	end
-	return std.setmt(o, self)
+	std.setmt(o, self)
+	return std.proxy(o)
 end
 
 local sound = std.obj {

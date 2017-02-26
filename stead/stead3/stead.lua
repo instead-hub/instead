@@ -19,6 +19,7 @@ stead = {
 	getmt = getmetatable;
 	table = table;
 	math = math;
+	newproxy = newproxy;
 	pairs = pairs;
 	ipairs = ipairs;
 	rawset = rawset;
@@ -89,7 +90,23 @@ local io = std.io;
 if _VERSION == "Lua 5.1" then
 	std.eval = loadstring
 	std.unpack = unpack
+	std.proxy = function(o)
+		local oo = std.newproxy(true)
+		local t = std.getmt(oo)
+		t.__index = o
+		t.__newindex = o
+		t.__gc = function(s)
+			o:__gc()
+		end
+		t.__tostring = function(s)
+			return o:__tostring()
+		end
+		return oo
+	end
 else
+	std.proxy = function(o)
+		return o
+	end
 	std.eval = load
 	std.unpack = table.unpack
 	table.maxn = table_get_maxn

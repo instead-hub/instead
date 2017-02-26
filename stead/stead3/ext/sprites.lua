@@ -275,10 +275,10 @@ local fnt = {
 fnt.__index = fnt
 
 local spr_get = function(s)
-	if type(s) == 'userdata' then
+	if type(s) == 'string' then
 		return s
 	end
-	return stead.tostr(s)
+	return std.tostr(spr)
 end
 
 function fnt:new(nam)
@@ -289,7 +289,8 @@ function fnt:new(nam)
 		fnt = nam;
 		__save = function() end;
 	}
-	return std.setmt(o, self)
+	std.setmt(o, self)
+	return std.proxy(o)
 end
 
 function fnt:text(text, col, style, ...)
@@ -313,7 +314,8 @@ function spr:new(nam)
 		spr = nam;
 		__save = function() end;
 	}
-	return std.setmt(o, self)
+	std.setmt(o, self)
+	return std.proxy(o)
 end;
 
 function spr:alpha(alpha, ...)
@@ -351,7 +353,7 @@ function spr:draw(fx, fy, fw, fh, d, x, y, alpha)
 	if d == nil and x == nil and y == nil then
 		return instead.sprite_draw(self.spr, 0, 0, -1, -1, spr_get(fx), fy, fw, fh);
 	end
-	return instead.sprite_draw(self.spr, fx, fy, fw, fh, get(d), x, y, alpha);
+	return instead.sprite_draw(self.spr, fx, fy, fw, fh, spr_get(d), x, y, alpha);
 end
 
 function spr:copy(fx, fy, fw, fh, d, x, y, alpha)
