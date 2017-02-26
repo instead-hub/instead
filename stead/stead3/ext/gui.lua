@@ -100,7 +100,7 @@ instead.fading = 4 -- default fading
 
 function iface:fading()
 	local pic = instead.get_picture()
-	if std.me():moved() or std.cmd[1] == 'load' or pic ~= last_picture then
+	if std.me():need_scene() or std.cmd[1] == 'load' or pic ~= last_picture then
 		last_picture = pic
 		return instead.fading
 	end
