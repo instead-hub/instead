@@ -3,7 +3,7 @@ local input = std.ref '@input'
 local type = std.type
 local table = table
 
-local finger = std.obj {
+finger = std.obj {
 	nam = '@finger';
 	{
 		fingers_list = { };
@@ -90,5 +90,3 @@ std.mod_cmd(function(cmd)
 	end
 	return r, v
 end)
-
-std.rawset(_G, 'finger', finger)

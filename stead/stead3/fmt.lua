@@ -2,7 +2,7 @@ local std = stead
 local type = std.type
 local iface = std.ref '@iface'
 
-local fmt = std.obj {
+fmt = std.obj {
 	nam = '@format';
 	para = false;
 	nopara = '_';
@@ -47,4 +47,75 @@ std.format = function(r, state)
 
 	return r
 end
-format = fmt
+
+function fmt.em(str)
+	return iface:em(str)
+end
+
+function fmt.c(str)
+	return iface:center(str)
+end
+
+function fmt.j(str)
+	return iface:just(str)
+end
+
+function fmt.l(str)
+	return iface:left(str)
+end
+
+function fmt.r(str)
+	return iface:right(str)
+end
+
+function fmt.b(str)
+	return iface:bold(str)
+end
+
+function fmt.top(str)
+	return iface:top(str)
+end
+
+function fmt.bottom(str)
+	return iface:bottom(str)
+end
+
+function fmt.middle(str)
+	return iface:middle(str)
+end
+
+function fmt.nb(str)
+	return iface:nb(str)
+end
+
+function fmt.anchor()
+	return iface:anchor(str)
+end
+
+function fmt.img(str)
+	return iface:img(str)
+end
+
+function fmt.imgl(str)
+	return iface:imgl(str)
+end
+
+function fmt.imgr(str)
+	return iface:imgr(str)
+end
+
+function fmt.u(str)
+	return iface:under(str)
+end
+
+function fmt.st(str)
+	return iface:st(str)
+end
+
+function fmt.tab(str, al)
+	return iface:tab(str, al)
+end
+
+function fmt.y(str, al)
+	return iface:y(str, al)
+end

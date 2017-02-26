@@ -145,7 +145,6 @@ std.obj { -- input object
 -- some aliases
 menu = std.menu
 stat = std.stat
-txt = iface
 
 -- fake sound
 local sound = std.obj {

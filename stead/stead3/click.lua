@@ -2,7 +2,7 @@ local std = stead
 local input = std.ref '@input'
 local type = std.type
 
-local click = std.obj {
+click = std.obj {
 	nam = '@click';
 	filter = function(s, press, btn, x, y, px, py)
 		return press and px
@@ -34,5 +34,3 @@ std.mod_cmd(function(cmd)
 	end
 	return r, v
 end)
-
-std.rawset(_G, 'click', click)

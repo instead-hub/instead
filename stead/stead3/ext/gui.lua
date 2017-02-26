@@ -396,7 +396,6 @@ std.obj { -- input object
 -- some aliases
 menu = std.menu
 stat = std.stat
-txt = iface
 
 std.mod_init(function()
 	std.rawset(_G, 'instead', instead)

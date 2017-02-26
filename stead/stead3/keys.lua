@@ -2,7 +2,7 @@ local std = stead
 local input = std.ref '@input'
 local type = std.type
 
-local keys = std.obj {
+keys = std.obj {
 	nam = '@keys';
 	{
 		__alt = false;
@@ -57,5 +57,3 @@ std.mod_cmd(function(cmd)
 	end
 	return r, v
 end)
-
-std.rawset(_G, 'keys', keys)
