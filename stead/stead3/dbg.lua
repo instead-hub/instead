@@ -841,7 +841,7 @@ std.mod_cmd(function(cmd)
 		std.abort()
 		return std.call(dbg, 'dsc'), true
 	end
-end, -1)
+end, -100)
 
 function std.dprint(...)
 	local a = { ... }
@@ -874,11 +874,11 @@ std.mod_start(function(load)
 	iface:raw_mode(false)
 	okey = input.key;
 	std.rawset(input, 'key', function(self, ...) return dbg:key(...) or (okey and okey(input, ...)) end)
-end, -1)
+end, -100)
 
 std.mod_done(function()
 	iface:raw_mode(false)
 	std.rawset(input, 'key', okey)
-end, -1)
+end, -100)
 
 -- std.rawset(_G, 'dbg',  std.ref '@dbg')
