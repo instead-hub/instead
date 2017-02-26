@@ -278,7 +278,7 @@ local spr_get = function(s)
 	if type(s) == 'string' then
 		return s
 	end
-	return std.tostr(spr)
+	return std.tostr(s)
 end
 
 function fnt:new(nam)
