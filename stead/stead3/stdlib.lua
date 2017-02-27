@@ -378,6 +378,10 @@ function path(t)
 	}
 end
 
+function time(...)
+	return std.ref 'game':time(...)
+end
+
 local xact = std.obj {
 	nam = '@';
 	{
