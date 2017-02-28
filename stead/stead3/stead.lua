@@ -1932,19 +1932,15 @@ std.player = std.class ({
 		if v == false then
 			return t or r, true, false
 		end
-		if v ~= true then
-			r, v = std.call(s, 'on'..m, w, w2, ...)
-			t = std.par(std.scene_delim, t or false, r)
-			if v == false then
-				return t or r, true, false
-			end
+		r, v = std.call(s, 'on'..m, w, w2, ...)
+		t = std.par(std.scene_delim, t or false, r)
+		if v == false then
+			return t or r, true, false
 		end
-		if v ~= true then
-			r, v = std.call(s:where(), 'on'..m, w, w2, ...)
-			t = std.par(std.scene_delim, t or false, r)
-			if v == false then
-				return t or r, true, false
-			end
+		r, v = std.call(s:where(), 'on'..m, w, w2, ...)
+		t = std.par(std.scene_delim, t or false, r)
+		if v == false then
+			return t or r, true, false
 		end
 		if m == 'use' and w2 then
 			r, v = std.call(w2, 'used', w, ...)
@@ -2018,13 +2014,11 @@ std.player = std.class ({
 			return t, true
 		end
 
-		if v ~= true then
-			r, v = std.call(s, 'onwalk', inwalk)
-			t = std.par(std.scene_delim, t or false, r)
-			if v == false or s:moved() then
-				if not s:moved() then s:moved(moved) end
-				return t, true
-			end
+		r, v = std.call(s, 'onwalk', inwalk)
+		t = std.par(std.scene_delim, t or false, r)
+		if v == false or s:moved() then
+			if not s:moved() then s:moved(moved) end
+			return t, true
 		end
 
 		if v ~= true then
