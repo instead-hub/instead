@@ -666,6 +666,9 @@ std.list = std.class {
 		end
 		if not pos then
 			local o = std.ref(n)
+			if not o then
+				std.err("Wrong argument to list:add(): "..std.tostr(n), 2)
+			end
 			s:__dirty(true)
 			s:__attach(o)
 			table.insert(s, o)
