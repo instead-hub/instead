@@ -1900,10 +1900,6 @@ std.player = std.class ({
 		if r ~= nil then
 			return r, v
 		end
-		r, v = s:where().way:lookup(w)
-		if r and not r:disabled() and not r:closed() then
-			return r, s:where()
-		end
 		r, v = s:seen(w)
 		if r ~= nil then
 			return r, v
