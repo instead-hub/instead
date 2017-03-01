@@ -16,7 +16,7 @@ std.mod_cmd(function(cmd)
 		return
 	end
 	local r, v =  std.call(instead, 'onevent', cmd[2])
-	if r == nil then -- nothing todo
+	if not v then -- nothing todo
 		return nil, false
 	end
 	return r, v

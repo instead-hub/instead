@@ -85,7 +85,7 @@ std.mod_cmd(function(cmd)
 	if not v then
 		r, v = std.call(std.game, 'onfinger', cmd[2], cmd[3], cmd[4], cmd[5], cmd[6], cmd[7])
 	end
-	if r == nil then -- nothing todo
+	if not v then -- nothing todo
 		return nil, false
 	end
 	return r, v
