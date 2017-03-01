@@ -5,6 +5,20 @@ local instead = std.obj { nam = '@instead' }
 local iface = std '@iface'
 local type = std.type
 
+std.obj {
+	nam = '@timer';
+	get = function(s)
+		return s.__timer or 0;
+	end;
+	stop = function(s)
+		return s:set(0)
+	end;
+	set = function(s, v)
+		s.__timer = v
+		return true
+	end;
+}
+
 local dict = {}
 
 local function get_bool(o, nam)
