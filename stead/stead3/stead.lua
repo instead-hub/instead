@@ -575,7 +575,11 @@ std.list = std.class {
 			local k = s[i]
 			s[i] = std.ref(k)
 			if not std.is_obj(s[i]) then
-				std.err("Wrong item in list: "..std.tostr(k).." in "..std.dispof(o), 2)
+				if not o then
+					std.err("Wrong item in list: "..std.tostr(k), 2)
+				else
+					std.err("Wrong item in list: "..std.tostr(k).." in "..std.dispof(o), 2)
+				end
 			end
 			s:__attach(s[i])
 		end
@@ -731,6 +735,17 @@ std.list = std.class {
 	empty = function(s)
 		return (#s == 0)
 	end;
+	cat = function(s, from, pos)
+		if not std.is_obj(from, 'list') then
+			std.err("Wrong argument to list:cat(): "..std.tostr(from), 2)
+		end
+		if not pos then pos = #s + 1 end
+		for k, v in ipairs(from) do
+			s:add(v, pos)
+			pos = pos + 1
+		end
+		return s
+	end;
 	zap = function(s) -- delete all objects
 		local l = {}
 		for i = 1, #s do
@@ -739,6 +754,7 @@ std.list = std.class {
 		for i = 1, #l do
 			s:del(l[i])
 		end
+		return s
 	end;
 	del = function(s, n)
 		local o, i = s:lookup(n)
