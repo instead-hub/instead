@@ -691,6 +691,9 @@ local function utf_bb(b, pos)
 	while b:byte(i) >= 0x80 and b:byte(i) <= 0xbf do
 		i = i - 1
 		l = l + 1
+		if i <= 1 then
+			break
+		end
 	end
 	return l + 1
 end
@@ -703,11 +706,19 @@ local function utf_ff(b, pos)
 	if not utf8 then return 1 end
 	local i = pos or 1
 	local l = 0
+	if b:byte(i) < 0x80 then
+		return 1
+	end
+	i = i + 1
+	l = l + 1
 	while b:byte(i) >= 0x80 and b:byte(i) <= 0xbf do
 		i = i + 1
 		l = l + 1
+		if i > b:len() then
+			break
+		end
 	end
-	return l + 1
+	return l
 end
 
 local timer = std.ref '@timer'
@@ -778,7 +789,7 @@ std.mod_cmd(function(cmd)
 				std.abort()
 				return std.call(dbg, 'dsc'), true
 			end
-			local i = utf_bb(dbg.input)
+			local i = utf_bb(pre)
 			dbg.input = dbg.input:sub(1, pre:len() - i) .. post
 			dbg.cursor = dbg.cursor - i
 		elseif key:find '^tab' then
