@@ -90,9 +90,6 @@ function object(w)
 	if std.is_tag(w) then
 		o = std.here():lookup(w)
 		if not o then
-			o = std.ways():lookup(w)
-		end
-		if not o then
 			o = std.me():lookup(w)
 		end
 		if not o then
