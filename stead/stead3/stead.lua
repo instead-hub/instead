@@ -1913,14 +1913,14 @@ std.player = std.class ({
 		return std.par(std.scene_delim, scene or false, r:display())
 	end;
 	search = function(s, w)
-		local r, v
-		r, v = s:where():seen(w)
+		local r, v, i
+		r, v, i = s:where():seen(w)
 		if r ~= nil then
-			return r, v
+			return r, v, i
 		end
-		r, v = s:seen(w)
+		r, v, i = s:seen(w)
 		if r ~= nil then
-			return r, v
+			return r, v, i
 		end
 		return
 	end;
