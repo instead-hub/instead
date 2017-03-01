@@ -355,10 +355,6 @@ function take(w)
 	return place(w, std.ref(std.me()):inventory())
 end
 
-function was(w, n)
-	return actions(w, n) ~= 0
-end
-
 function drop(w, wh)
 	local o = std.object(w)
 	if o then
