@@ -287,7 +287,7 @@ local function __place(w, wh, remove)
 	end
 	wh = wh or std.here()
 	if type(wh) ~= 'table' then
-		wh = std.ref(wh)
+		wh = std.object(wh)
 	end
 	if o:type 'player' then
 		if not std.is_obj(wh) then
@@ -304,6 +304,39 @@ local function __place(w, wh, remove)
 		std.err("Wrong 2-nd argument to place(): "..std.tostr(wh), 3)
 	end
 	return o
+end
+
+function replace(w, ww, wh)
+	local o = std.object(w)
+	if not o then
+		std.err("Wrong argument to replace(): "..std.tostr(w), 2)
+	end
+	local oo = std.object(ww)
+	if not oo then
+		std.err("Wrong argument to replace(): "..std.tostr(ww), 2)
+	end
+	if not wh then -- replace all
+		local l = o:__where()
+		for k, v in std.ipairs(l) do
+			v:replace(o, oo)
+		end
+		return oo
+	end
+	if type(wh) ~= 'table' then
+		wh = std.object(wh)
+	end
+	if std.is_obj(wh) then
+		local ob, l = wh:lookup(o)
+		if l then
+			l:replace(o, oo)
+			return oo
+		end
+	elseif std.is_obj(wh, 'list') then
+		wh:replace(o, oo)
+		return oo
+	else
+		std.err("Wrong 3-rd argument to replace(): "..std.tostr(wh), 3)
+	end
 end
 
 function place(w, wh)

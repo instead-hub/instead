@@ -1303,7 +1303,7 @@ std.obj = std.class {
 		if w then
 			w = std.ref(w)
 			if not w then
-				std.err ("Wrong where in remove", 2)
+				std.err ("Wrong where in obj:remove()", 2)
 			end
 			local o, l = w:lookup(s)
 			if not o then
