@@ -19,9 +19,9 @@ here = std.here
 from = std.from
 new = std.new
 delete = std.delete
-nameof = std.nameof
-dispof = std.dispof
-titleof = std.titleof
+-- nameof = std.nameof
+-- dispof = std.dispof
+-- titleof = std.titleof
 gamefile = std.gamefile
 player = std.player
 dprint = std.dprint
@@ -220,7 +220,13 @@ function pop(w, ww)
 	return r, v
 end
 
-function push(w)
+function push(w, ww)
+	if not std.is_tag(w) and type(w) == 'string' then
+		return function()
+			p(w)
+			push(ww)
+		end
+	end
 	local wh = std.here()
 	if not std.is_obj(wh, 'dlg') then
 		std.err("Call push() in non-dialog object: "..std.tostr(wh), 2)
@@ -255,7 +261,12 @@ function change_pl(...)
 	return std.game:set_pl(...)
 end
 
-function player_moved()
+function player_moved(pl)
+	pl = pl or std.me()
+	pl = std.ref(pl)
+	if not std.is_obj(pl, 'player') then
+		std.err("Wrong argument to player_moved(): "..std.tostr(pl))
+	end
 	return std.me():moved()
 end
 
