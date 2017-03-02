@@ -406,6 +406,11 @@ std.mod_step(function(state)
 		dict = {}
 	end
 end)
+
+std.mod_start(function()
+	dict = {}
+end)
+
 std.mod_done(function()
 	last_picture = nil
 end)

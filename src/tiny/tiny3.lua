@@ -5,20 +5,6 @@ local instead = std.obj { nam = '@instead' }
 local iface = std '@iface'
 local type = std.type
 
-std.obj {
-	nam = '@timer';
-	get = function(s)
-		return s.__timer or 0;
-	end;
-	stop = function(s)
-		return s:set(0)
-	end;
-	set = function(s, v)
-		s.__timer = v
-		return true
-	end;
-}
-
 local dict = {}
 
 local function get_bool(o, nam)
@@ -173,10 +159,36 @@ sound.stop_music = function() end
 sound.music_fading = function() end
 sound.new = function() return sound end
 
+-- fake timer
+std.obj {
+	nam = '@timer';
+	get = function(s)
+		return s.__timer or 0;
+	end;
+	stop = function(s)
+		return s:set(0)
+	end;
+	set = function(s, v)
+		s.__timer = v
+		return true
+	end;
+}
+
+-- fake sprite
+std.obj {
+	nam = '@sprite';
+	new = function() end;
+	fnt = function() end;
+	scr = function() end;
+	direct = function() return false end;
+}
+
 std.mod_init(function()
 	std.rawset(_G, 'instead', instead)
 end)
-
+std.mod_start(function()
+	dict = {}
+end)
 std.mod_step(function(state)
 	if state then
 		dict = {}

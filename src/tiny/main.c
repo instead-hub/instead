@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "string.h"
 #include "instead/instead.h"
-
+static int log_opt = 0;
 static int tiny_init(void)
 {
 	int rc;
@@ -11,11 +11,9 @@ static int tiny_init(void)
 		return rc;
 	return 0;
 }
-
 static struct instead_ext ext = {
 	.init = tiny_init,
 };
-
 static void footer(void)
 {
 	char *p;
@@ -26,12 +24,9 @@ static void footer(void)
 	if (p && *p)
 		printf("** %s", instead_cmd("inv", NULL));
 }
-
 int main(int argc, const char **argv)
 {
-	int rc;
-	char *str;
-	const char *game = NULL;
+	int rc; char *str; const char *game = NULL;
 	if (argc != 2) {
 		fprintf(stderr, "Usage: %s <game>\n", argv[0]);
 		exit(1);
@@ -64,9 +59,7 @@ int main(int argc, const char **argv)
 	free(str);
 
 	while (1) {
-		char input[128];
-		char *p;
-		char cmd[64];
+		char input[128], *p, cmd[64];
 		p = fgets(input, sizeof(input), stdin);
 		if (!p)
 			break;
@@ -74,6 +67,10 @@ int main(int argc, const char **argv)
 		p[strcspn(p, "\n\r")] = 0;
 		if (!strcmp(p, "quit"))
 			break;
+		if (!strcmp(p, "log")) {
+			log_opt = 1;
+			continue;
+		}
 		snprintf(cmd, sizeof(cmd), "use %s", p);
 		str = instead_cmd(cmd, &rc);
 		if (rc) { /* try go */
@@ -91,8 +88,10 @@ int main(int argc, const char **argv)
 		free(str);
 		if (rc)
 			printf("error!\n");
-		else
+		else {
 			footer();
+			if (log_opt) fprintf(stderr, "%s\n", p);
+		}
 	}
 	instead_cmd("save autosave", NULL);
 	instead_done();
