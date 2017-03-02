@@ -26,6 +26,35 @@ gamefile = std.gamefile
 player = std.player
 dprint = std.dprint
 
+local function _pfn(f1, f2, ...)
+	local a = {...}
+	if type(f2) == 'string' then
+		return function()
+			f1()
+			std.p(f2)
+		end
+	end
+	if type(f2) ~= 'function' then
+		return f1()
+	end
+	return function(f3, ...)
+		return _pfn(function()
+			f1()
+			f2(unpack(a))
+		end, f3, ...)
+	end
+end
+
+function pfn(f, ...)
+	local a = {...}
+	if type(f) == 'function' then
+		return _pfn(function() end, f, ...)
+	end
+	return function()
+		std.p(f, unpack(a))
+	end
+end
+
 function from(ww)
 	local wh
 	ww = ww or std.here()
@@ -203,12 +232,6 @@ function actions(w, t, v)
 end
 
 function pop(w, ww)
-	if not std.is_tag(w) and type(w) == 'string' then
-		return function()
-			p(w)
-			pop(ww)
-		end
-	end
 	local wh = std.here()
 	if not std.is_obj(wh, 'dlg') then
 		std.err("Call pop() in non-dialog object: "..std.tostr(wh), 2)
@@ -221,12 +244,6 @@ function pop(w, ww)
 end
 
 function push(w, ww)
-	if not std.is_tag(w) and type(w) == 'string' then
-		return function()
-			p(w)
-			push(ww)
-		end
-	end
 	local wh = std.here()
 	if not std.is_obj(wh, 'dlg') then
 		std.err("Call push() in non-dialog object: "..std.tostr(wh), 2)
