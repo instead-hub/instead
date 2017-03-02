@@ -31,7 +31,7 @@ local function _pfn(f1, f2, ...)
 	if type(f2) == 'string' then
 		return function()
 			f1()
-			std.p(f2)
+			std.p(f2, std.unpack(a))
 		end
 	end
 	if type(f2) ~= 'function' then
@@ -40,7 +40,7 @@ local function _pfn(f1, f2, ...)
 	return function(f3, ...)
 		return _pfn(function()
 			f1()
-			f2(unpack(a))
+			f2(std.unpack(a))
 		end, f3, ...)
 	end
 end
@@ -51,7 +51,7 @@ function pfn(f, ...)
 		return _pfn(function() end, f, ...)
 	end
 	return function()
-		std.p(f, unpack(a))
+		std.p(f, std.unpack(a))
 	end
 end
 
