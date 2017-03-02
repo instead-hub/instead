@@ -277,6 +277,14 @@ function remove(w, wh)
 	return o:remove(wh)
 end
 
+function purge(w)
+	local o = std.object(w)
+	if not w then
+		std.err("Wrong argument to purge(): "..std.tostr(w), 2)
+	end
+	return o:purge()
+end
+
 local function __place(w, wh, remove)
 	local o = std.object(w)
 	if not o then
@@ -316,9 +324,13 @@ function replace(w, ww, wh)
 		std.err("Wrong argument to replace(): "..std.tostr(ww), 2)
 	end
 	if not wh then -- replace all
-		local l = o:__where()
+		local l = {}
+		o:where(l)
 		for k, v in std.ipairs(l) do
-			v:replace(o, oo)
+			v.obj:replace(o, oo)
+			if std.is_obj(v, 'room') then
+				v.way:replace(o, oo)
+			end
 		end
 		return oo
 	end

@@ -2,6 +2,9 @@ local std = stead
 
 local instead = std.obj { nam = '@instead' }
 
+instead.nosave = false
+instead.noautosave = false
+
 local iface = std '@iface'
 local type = std.type
 
@@ -182,6 +185,123 @@ std.obj {
 	scr = function() end;
 	direct = function() return false end;
 }
+-- fake pixels
+std.obj {
+	nam = '@pixels';
+	fnt = function() end;
+	new = function() end;
+}
+-- fake themes
+local theme = std.obj {
+	nam = '@theme';
+	{
+		win = { gfx = {}};
+		inv = { gfx = {}};
+		menu = { gfx = {}};
+		gfx = {};
+		snd = {};
+	};
+}
+
+function theme.restore()
+end
+
+function theme.set()
+end
+
+function theme.reset()
+end
+
+function theme.name()
+end
+
+function theme.get()
+end
+
+function theme.win.reset()
+end
+
+function theme.win.geom()
+end
+
+function theme.win.color()
+end
+
+function theme.win.font()
+end
+
+function theme.win.gfx.reset()
+end
+
+function theme.win.gfx.up()
+end
+
+function theme.win.gfx.down()
+end
+
+function theme.inv.reset()
+end
+
+function theme.inv.geom()
+end
+
+function theme.inv.color(f)
+end
+
+function theme.inv.font()
+end
+
+function theme.inv.mode()
+end
+
+function theme.inv.gfx.reset()
+end
+
+function theme.inv.gfx.up()
+end
+
+function theme.inv.gfx.down()
+end
+
+function theme.menu.reset()
+end
+
+function theme.menu.bw(w)
+end
+
+function theme.menu.color()
+end
+
+function theme.menu.font()
+end
+
+function theme.menu.gfx.reset()
+end
+
+function theme.menu.gfx.button()
+end;
+
+function theme.gfx.reset()
+end
+
+function theme.gfx.cursor()
+end
+
+function theme.gfx.mode()
+end
+
+function theme.gfx.pad()
+end
+
+function theme.gfx.bg()
+end
+
+function theme.snd.reset()
+end
+
+function theme.snd.click()
+end
+
 
 std.mod_init(function()
 	std.rawset(_G, 'instead', instead)

@@ -1299,6 +1299,13 @@ std.obj = std.class {
 		end
 		return o
 	end;
+	purge = function(s)
+		local list = s:__where()
+		for i = 1, #list do
+			list[i]:del(s)
+		end
+		return s
+	end;
 	remove = function(s, w)
 		if w then
 			w = std.ref(w)
@@ -1314,9 +1321,12 @@ std.obj = std.class {
 		end
 		local where = {}
 		s:where(where)
-		local lists = s:__where()
-		for i = 1, #lists do
-			lists[i]:del(s)
+		for i = 1, #where do
+			local o = where[i]
+			o.obj:del(s)
+			if std.is_obj(o, 'room') then
+				o.way:del(s)
+			end
 		end
 		return s, where
 	end;
@@ -2474,6 +2484,7 @@ std.call = function(v, n, ...)
 	local r, v, c = std.method(v, n, ...)
 	if type(r) == 'string' then
 		r = r:gsub("[%^]+$", "") -- extra trailing ^
+		r = r:gsub("[ \t]+$", "") -- and spaces
 		return r, v, c
 	end
 	return r or nil, v, c
