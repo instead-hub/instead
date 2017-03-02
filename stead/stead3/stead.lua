@@ -2044,9 +2044,9 @@ std.player = std.class ({
 			std.err("Wrong parameter to walk: "..std.tostr(w))
 		end
 
-		if w == std.here() then -- nothing todo
-			return
-		end
+--		if w == std.here() then -- nothing todo
+--			return
+--		end
 
 		local inwalk = w
 
