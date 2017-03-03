@@ -94,6 +94,12 @@ function walk(w, ...)
 	return r, v
 end
 
+function life_walk(w, ...)
+	game:reaction(false)
+	game:events(false, false)
+	return walk(w, ...)
+end
+
 function walkin(w, ...)
 	local r, v = std.me():walkin(walkroom(w), ...)
 	if std.cctx() and type(r) == 'string' then
