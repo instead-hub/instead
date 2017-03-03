@@ -922,6 +922,9 @@ function std.gamefile(fn, reset) -- load game file
 	if type(fn) ~= 'string' then
 		std.err("Wrong paramter to stead:file: "..std.tostr(fn), 2)
 	end
+	if not fn:find("%.lua$") then
+		fn = fn .. '.lua'
+	end
 	if reset then
 		std:reset(fn)
 		std.ref 'game':ini()
