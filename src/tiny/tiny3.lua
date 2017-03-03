@@ -151,7 +151,7 @@ stat = std.stat
 
 -- fake sound
 local sound = std.obj {
-	nam = '@sound';
+	nam = '@snd';
 }
 
 sound.set = function() end
