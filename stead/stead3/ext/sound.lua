@@ -21,7 +21,7 @@ end
 
 function instead.set_music(mus, loop)
 	instead.__music = mus or nil
-	instead.__loop = loop or 0
+	instead.__music_loop = loop or 0
 end
 
 function instead.get_music_fading()
