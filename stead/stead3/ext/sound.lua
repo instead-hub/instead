@@ -139,6 +139,7 @@ sound.set = instead.set_sound
 sound.play = instead.add_sound
 sound.stop = instead.stop_sound
 sound.music = instead.set_music
+sound.get_music = instead.get_music
 sound.stop_music = instead.stop_music
 sound.music_fading = instead.music_fading
 
