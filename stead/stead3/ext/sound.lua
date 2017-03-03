@@ -20,7 +20,7 @@ function instead.get_music()
 end
 
 function instead.set_music(mus, loop)
-	instead.__music = mus
+	instead.__music = mus or nil
 	instead.__loop = loop or 0
 end
 
@@ -138,10 +138,21 @@ local sound = std.obj {
 sound.set = instead.set_sound
 sound.play = instead.add_sound
 sound.stop = instead.stop_sound
-sound.music = instead.set_music
-sound.get_music = instead.get_music
+sound.music = function(mus, loop)
+	if mus == nil and loop == nil then
+		return instead.get_music()
+	end
+	return instead.set_music(mus, loop)
+end
+
 sound.stop_music = instead.stop_music
-sound.music_fading = instead.music_fading
+
+sound.music_fading = function(o, i)
+	if o == nil and i == nil then
+		return instead.get_music_fading()
+	end
+	return instead.set_music_fading(o, i)
+end
 
 function sound.new(...)
 	return snd:new(...)
