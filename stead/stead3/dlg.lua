@@ -264,6 +264,8 @@ std.phr = std.class({
 		o.ph_act = o.act
 		o.act = nil
 
+		disabled = disabled or (o.hidden == true)
+
 		o = std.obj(o)
 		std.setmt(o, s)
 		if disabled then o = o:disable() end
