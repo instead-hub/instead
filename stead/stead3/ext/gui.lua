@@ -172,10 +172,10 @@ std.menu = std.class({
 	end;
 	inv = function(s, ...)
 		local r, v = std.call(s, 'act', ...)
-		if r ~= nil then
-			return r, v
+		if not v then
+			return true, false -- menu mode
 		end
-		return true, false -- menu mode
+		return r, v
 	end;
 }, std.obj);
 
