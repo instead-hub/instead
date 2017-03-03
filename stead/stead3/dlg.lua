@@ -175,9 +175,9 @@ std.dlg = std.class({
 
 		c:select()
 
-		if c:disabled() then -- select always enables phrase
-			c:enable()
-		end
+		-- if c:disabled() then -- select always enables phrase
+		--	c:enable()
+		-- end
 		s.current = c
 		return c
 	end;
