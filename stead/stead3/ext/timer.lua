@@ -49,10 +49,10 @@ std.mod_cmd(function(cmd)
 		return
 	end
 	local r, v = std.call(stead.here(), 'timer');
-	if not v then
+	if not r and not v then
 		r, v = stead.call(std.game, 'timer');
 	end
-	if not v then -- nothing todo
+	if not r and not v then -- nothing todo
 		return nil, false
 	end
 	return r, v

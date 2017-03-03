@@ -1778,7 +1778,7 @@ std.world = std.class({
 					return nil, false -- wrong input
 				end
 				r, v = s.player:take(o)
-				if not v then
+				if not r and not v then
 					r, v = s.player:action(o)
 				end
 			end

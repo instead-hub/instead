@@ -172,7 +172,7 @@ std.menu = std.class({
 	end;
 	inv = function(s, ...)
 		local r, v = std.call(s, 'act', ...)
-		if not v then
+		if not r and not v then
 			return true, false -- menu mode
 		end
 		return r, v

@@ -49,10 +49,10 @@ std.mod_cmd(function(cmd)
 	end
 	local r, v
 	r, v = std.call(std.here(), 'onkey', cmd[2], cmd[3])
-	if not v then
+	if not r and not v then
 		r, v = std.call(std.game, 'onkey', cmd[2], cmd[3])
 	end
-	if not v then -- nothing todo
+	if not r and not v then -- nothing todo
 		return nil, false
 	end
 	return r, v
