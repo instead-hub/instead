@@ -269,19 +269,19 @@ function empty(w)
 end
 
 function lifeon(w, ...)
-	return std.game:lifeon(w and std.object(w), ...)
+	return std 'game':lifeon(w and std.object(w), ...)
 end
 
 function lifeoff(w, ...)
-	return std.game:lifeoff(w and std.object(w), ...)
+	return std 'game':lifeoff(w and std.object(w), ...)
 end
 
 function live(...)
-	return std.game:live(...)
+	return std 'game':live(...)
 end
 
 function change_pl(...)
-	return std.game:set_pl(...)
+	return std 'game':set_pl(...)
 end
 
 function player_moved(pl)
