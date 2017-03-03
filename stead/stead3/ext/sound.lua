@@ -146,7 +146,6 @@ sound.music = function(mus, loop)
 end
 
 sound.stop_music = instead.stop_music
-
 sound.music_fading = function(o, i)
 	if o == nil and i == nil then
 		return instead.get_music_fading()
@@ -164,6 +163,10 @@ end
 
 function sound.free(key)
 	return instead.sound_free(key);
+end
+
+function sound.music_playing()
+	return instead.__music ~= nil and instead.__music_loop ~= -1
 end
 
 function sound.playing(s,...)
