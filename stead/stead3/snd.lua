@@ -1,0 +1,1 @@
+snd = std.ref '@snd'

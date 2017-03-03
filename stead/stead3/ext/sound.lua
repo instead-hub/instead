@@ -132,7 +132,7 @@ function snd:new(a, b, t)
 end
 
 local sound = std.obj {
-	nam = '@sound';
+	nam = '@snd';
 }
 
 sound.set = instead.set_sound

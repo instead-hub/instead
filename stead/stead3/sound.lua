@@ -1,1 +1,0 @@
-snd = std.ref '@sound'
