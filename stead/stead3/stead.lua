@@ -442,19 +442,19 @@ function std.class(s, inh)
 		if std.is_obj(v) and type(n) == 'string' then
 			-- variable access
 			return function(val)
-				if val == nil then -- get
-					local val = rawget(v, n)
-					if val == nil then
-						val = rawget(v.__ro, n)
+				if val == nil then -- create/get
+					if rawget(v.__var, n) ~= nil or rawget(v.__ro, n) ~= nil then
+						local g = rawget(v, n)
+						if g == nil then g = rawget(v.__ro, n) end
+						return g
 					end
-					return val
 				end
 				if std.game then
 					rawset(v.__var, n, true)
 					rawset(v.__ro, n, nil)
-					return rawset(v, n, val)
+					return rawset(v, n, val or false)
 				end
-				return rawset(v.__ro, n, val)
+				return rawset(v.__ro, n, val or false)
 			end
 		end
 		return v:new(n, ...)
