@@ -56,24 +56,5 @@ std.mod_cmd(function()
 	end
 end)
 
-local ofade
-
-local function fade(fn, ...)
-	if RESTORE then
-		RESTORE = false
-		return (instead and instead.fading) or 4
-	end
-	return fn(...)
-end
-
-local hooked
-
-std.mod_init(function()
-	if not hooked then
-		iface.fading = std.hook(iface.fading, fade)
-		hooked = true
-	end
-end)
-
 -- std.mod_done(function()
 -- end)
