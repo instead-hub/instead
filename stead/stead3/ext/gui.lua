@@ -9,9 +9,9 @@ local type = std.type
 
 local dict = {}
 
-iface.inv_delim = '\n'
-iface.hinv_delim = ' | '
-iface.ways_delim = ' | '
+instead.inv_delim = '\n'
+instead.hinv_delim = ' | '
+instead.ways_delim = ' | '
 
 local function get_bool(o, nam)
 	if type(o[nam]) == 'boolean' then
@@ -23,35 +23,35 @@ local function get_bool(o, nam)
 	return nil
 end
 
-iface.notitle = false
+instead.notitle = false
 
 instead.get_title = std.cacheable('title', function()
-	if get_bool(iface, 'notitle') then
+	if get_bool(instead, 'notitle') then
 		return
 	end
 	return iface:fmt(iface:bold(std.titleof(stead.here())), false)
 end)
 
-iface.noways = false
+instead.noways = false
 
 instead.get_ways = std.cacheable('ways', function()
-	if get_bool(iface, 'noways') then
+	if get_bool(instead, 'noways') then
 		return
 	end
 	local str = iface:cmd("way");
 	if str then
 		str = std.string.gsub(str, '\n$','');
 		str = std.string.gsub(str, '\\?['..std.delim ..']',
-			{ [std.delim] = iface.ways_delim, [ '\\'..std.delim ] = std.delim });
+			{ [std.delim] = instead.ways_delim, [ '\\'..std.delim ] = std.delim });
 		return iface:center(str);
 	end
 	return str
 end)
 
-iface.noinv = false
+instead.noinv = false
 
 instead.get_inv = std.cacheable('inv', function(horiz)
-	if get_bool(iface, 'noinv') then
+	if get_bool(instead, 'noinv') then
 		return
 	end
 	local str = iface:cmd("inv");
@@ -59,19 +59,19 @@ instead.get_inv = std.cacheable('inv', function(horiz)
 		str = std.string.gsub(str, '\n$','');
 		if not horiz then
 			str = std.string.gsub(str, '\\?['.. std.delim ..']',
-				{ [std.delim] = iface.inv_delim, ['\\'..std.delim] = std.delim });
+				{ [std.delim] = instead.inv_delim, ['\\'..std.delim] = std.delim });
 		else
 			str = std.string.gsub(str, '\\?['.. std.delim ..']',
-				{ [std.delim] = iface.hinv_delim, ['\\'..std.delim] = std.delim });
+				{ [std.delim] = instead.hinv_delim, ['\\'..std.delim] = std.delim });
 		end
 	end
 	return str
 end)
 
-iface.nopic = false
+instead.nopic = false
 
 instead.get_picture = std.cacheable('pic', function()
-	if get_bool(iface, 'nopic') then
+	if get_bool(instead, 'nopic') then
 		return
 	end
 	local s = stead.call(std.here(), 'pic')
@@ -83,26 +83,26 @@ end)
 
 local last_picture
 
+instead.fading_value = 4 -- default fading
+
 function instead.get_fading()
-	if not iface.fading or iface.fading == 0 then
+	if not instead.fading or instead.fading == 0 then
 		return false
 	end
-	if type(iface.fading) == 'function' then
-		local n = iface:fading()
+	if type(instead.fading) == 'function' then
+		local n = instead:fading()
 		if not n or n == 0 then return false end
 		return true, n
 	end
 
-	return true, iface.fading
+	return true, instead.fading
 end
 
-instead.fading = 4 -- default fading
-
-function iface:fading()
+function instead:fading()
 	local pic = instead.get_picture()
 	if std.me():need_scene() or std.cmd[1] == 'load' or pic ~= last_picture then
 		last_picture = pic
-		return instead.fading
+		return instead.fading_value
 	end
 end
 

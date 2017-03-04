@@ -20,16 +20,18 @@ local function get_bool(o, nam)
 	return nil
 end
 
-iface.notitle = false
+instead.inv_delim = '\n'
+instead.hinv_delim = ' | '
+instead.ways_delim = ' | '
 
-instead.get_title = std.cacheable('title', function()
-	if get_bool(iface, 'notitle') then
-		return
-	end
-	return std.titleof(stead.here())
-end)
+instead.notitle = false
+instead.noways = false
+instead.noinv = false
+instead.nopic = false
 
-function iface:fading()
+instead.fading_value = 0
+
+function instead:fading()
 end
 
 function instead.autosave(slot)
