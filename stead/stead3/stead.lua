@@ -1796,7 +1796,7 @@ std.world = std.class({
 			end
 			local o1 = std.ref(cmd[2])
 			local o2 = std.ref(cmd[3])
-			o1 = s.player:have(o1)
+			o1 = s.player:seen(o1)
 			if not o1 then
 				return nil, false -- wrong input
 			end
