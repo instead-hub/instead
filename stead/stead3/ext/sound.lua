@@ -29,10 +29,11 @@ function instead.get_music_fading()
 end
 
 function instead.set_music_fading(o, i)
+	if not i then i = o end
 	if o == 0 or not o then o = -1 end
 	if i == 0 or not i then i = -1 end
 	instead.__music_fadeout = o
-	instead.__music_fadein = i or o
+	instead.__music_fadein = i
 end
 
 function instead.finish_music()
