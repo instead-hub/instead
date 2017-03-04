@@ -442,13 +442,6 @@ function std.class(s, inh)
 		if std.is_obj(v) and type(n) == 'string' then
 			-- variable access
 			return function(val)
-				if val == nil then -- create/get
-					if rawget(v.__var, n) ~= nil or rawget(v.__ro, n) ~= nil then
-						local g = rawget(v, n)
-						if g == nil then g = rawget(v.__ro, n) end
-						return g
-					end
-				end
 				if std.game then
 					rawset(v.__var, n, true)
 					rawset(v.__ro, n, nil)
@@ -496,11 +489,7 @@ function std.class(s, inh)
 			v = rawget(ro, k)
 		end
 		if v == nil then
-			if std.nostrict or (type(k) == 'string' and k:find('^__')) or (not ro or std.getmt(s)) then -- not object or have parent
-				return s[k]
-			elseif ro and not t.__var[k] then -- no variable
-				std.err("Read uninitialized variable: "..std.tostr(k).." at "..std.tostr(t), 2)
-			end
+			return s[k]
 		end
 		if ro and std.game and type(v) == 'table' then
 			-- make rw if simple table
