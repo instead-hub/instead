@@ -66,7 +66,8 @@ static void mus_callback(void *aux)
 		snd_free_mus(mus);
 	mus = NULL;
 	if (next_mus) {
-		snd_play_mus(next_mus, next_fadein, next_loop);
+		if (snd_play_mus(next_mus, next_fadein, next_loop) < 0)
+			game_res_err_msg(next_mus, debug_sw);
 		free(next_mus);
 		next_mus = NULL;
 	}
