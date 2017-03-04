@@ -931,6 +931,7 @@ function std.gamefile(fn, reset) -- load game file
 		end
 		return r, v
 	end
+	std.game = nil
 	in_section ('gamefile', function() std.dofile(fn) end)
 	std.ref 'game':ini()
 	table.insert(std.files, fn) -- remember it

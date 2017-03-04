@@ -872,6 +872,7 @@ end
 
 dprint = std.dprint
 local oldlang
+local hooked = false
 std.mod_start(function(load)
 	local st, r
 	if oldlang ~= LANG then
@@ -883,11 +884,15 @@ std.mod_start(function(load)
 	end
 	oldlang = LANG
 	iface:raw_mode(false)
-	okey = input.key;
+	if not hooked then
+		okey = input.key;
+		hooked = true
+	end
 	std.rawset(input, 'key', function(self, ...) return dbg:key(...) or (okey and okey(input, ...)) end)
 end, -100)
 
 std.mod_done(function()
+	hooked = false
 	iface:raw_mode(false)
 	std.rawset(input, 'key', okey)
 end, -100)
