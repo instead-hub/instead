@@ -1866,7 +1866,6 @@ std.world = std.class({
 		s.player:inventory():add(o)
 	end;
 	tak = function(s, w)
-		print "tak"
 		return false -- fallback on act
 	end;
 }, std.obj);
