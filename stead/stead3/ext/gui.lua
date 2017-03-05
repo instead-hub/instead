@@ -171,7 +171,12 @@ std.menu = std.class({
 		return v
 	end;
 	inv = function(s, ...)
-		local r, v = std.call(s, 'act', ...)
+		local r, v
+		if s.menu ~= nil then
+			r, v = std.call(s, 'menu', ...) -- special method while in inv
+		else
+			r, v = std.call(s, 'act', ...) -- fallback to act
+		end
 		if not r and not v then
 			return true, false -- menu mode
 		end
