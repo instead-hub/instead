@@ -450,7 +450,9 @@ function std.class(s, inh)
 				return rawset(v.__ro, n, val or false)
 			end
 		end
-		return v:new(n, ...)
+		n = v:new(n, ...)
+		std.setmt(n, v)
+		return n
 	end;
 	s.__tostring = function(self)
 		if not std.is_obj(self) then
@@ -563,7 +565,7 @@ std.list = std.class {
 			return v
 		end
 		v.__list = {} -- where is attached
-		std.setmt(v, s)
+		-- std.setmt(v, s)
 		return v
 	end;
 	ini = function(s, o)
@@ -1207,7 +1209,7 @@ std.obj = std.class {
 		rawset(v, '__var', vars)
 		rawset(v, '__list', {}) -- in what list(s)
 		oo[ro.nam] = v
-		std.setmt(v, self)
+		-- std.setmt(v, self)
 		return v
 	end;
 	actions = function(s, t, v)
@@ -1519,7 +1521,7 @@ std.room = std.class({
 		v.way = std.list(v.way)
 --		v.way:attach(v)
 		v = std.obj(v)
-		std.setmt(v, self)
+		-- std.setmt(v, self)
 		return v
 	end;
 	visited = function(s)
@@ -1582,7 +1584,7 @@ std.world = std.class({
 		end
 		v.lifes = std.list(v.lifes)
 		v = std.obj(v)
-		std.setmt(v, self)
+		-- std.setmt(v, self)
 		return v
 	end;
 	time = function(s, t)
@@ -1880,7 +1882,7 @@ std.player = std.class ({
 			v.room = 'main'
 		end
 		v = std.obj(v)
-		std.setmt(v, self)
+		-- std.setmt(v, self)
 		return v
 	end;
 	ini = function(s)

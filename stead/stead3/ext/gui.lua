@@ -167,7 +167,7 @@ std.menu = std.class({
 			std.err ("Wrong argument to std.menu:"..std.tostr(v), 2)
 		end
 		v = std.obj(v)
-		std.setmt(v, self)
+--		std.setmt(v, self)
 		return v
 	end;
 	inv = function(s, ...)
