@@ -2117,7 +2117,7 @@ std.player = std.class ({
 		s:moved(true)
 		if not s.__in_afterwalk then
 			s.__in_afterwalk = true
-			r, v = std.call(std.ref 'game', 'afterwalk', inwalk)
+			r, v = std.call(std.ref 'game', 'afterwalk', f)
 			s.__in_afterwalk = false
 			t = std.par(std.scene_delim, t or false, r)
 		end
