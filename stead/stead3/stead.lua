@@ -794,7 +794,8 @@ std.list = std.class {
 				if recurse and not v:closed() then
 					vv = v:__dump(recurse)
 					if vv then
-						rc = rc .. std.delim .. vv
+						if rc then rc = rc .. std.delim else rc = '' end
+						rc = rc .. vv
 					end
 				end
 			end
@@ -1473,12 +1474,15 @@ std.obj = std.class {
 		end
 	end;
 	for_each = function(s, fn, ...)
-		local r, v = s.obj:for_each(fn, ...)
-		if r ~= nil or v == false then
-			return r, v
-		end
+		local r, v
 		for i = 1, #s.obj do
-			r, v = s.obj[i]:for_each(fn, ...)
+			r, v = fn(s.obj[i], ...)
+			if r ~= nil then
+				return r, v
+			end
+			if v ~= false then -- recurse
+				r, v = s.obj[i]:for_each(fn, ...)
+			end
 			if r ~= nil then
 				return r, v
 			end
