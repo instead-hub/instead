@@ -2060,7 +2060,7 @@ std.player = std.class ({
 
 		local r, v, t
 		local f = s:where()
-		r, v = std.call(std.ref 'game', 'onwalk', inwalk)
+		r, v = std.call(std.ref 'game', 'onwalk', f, inwalk)
 
 		t = std.par(std.scene_delim, t or false, r)
 
@@ -2117,7 +2117,7 @@ std.player = std.class ({
 		s:moved(true)
 		if not s.__in_afterwalk then
 			s.__in_afterwalk = true
-			r, v = std.call(std.ref 'game', 'afterwalk', f)
+			r, v = std.call(std.ref 'game', 'afterwalk', f, inwalk)
 			s.__in_afterwalk = false
 			t = std.par(std.scene_delim, t or false, r)
 		end
