@@ -1997,8 +1997,7 @@ std.player = std.class ({
 		end
 		r, v = std.call(w, m, w2, ...)
 		t = std.par(std.scene_delim, t or false, r)
-		if (m == 'use' and v == true) or
-			(m ~= 'use' and type(v) == 'boolean') then
+		if v == true or (m ~= 'use' and v == false and r) then
 			w['__nr_'..m] = (w['__nr_'..m] or 0) + 1
 			return t or r, v
 		end
