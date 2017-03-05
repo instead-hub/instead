@@ -1368,11 +1368,14 @@ std.obj = std.class {
 		if s.__dynamic then -- create
 			local n = std.functions[s.__dynamic.fn]
 			if not n then
-				std.err("Error while saving dynamic object: "..s, 2)
+				std.err("Error while saving dynamic object: "..std.tostr(s), 2)
 			end
 			local arg = s.__dynamic.arg
 			local l = ''
 			for i = 1, #arg do
+				if arg[i] == s then
+					std.err("Error while saving dynamic object: "..std.tostr(s).." Argument is self-obj.", 2)
+				end
 				l = l .. ', '..std.dump(arg[i])
 			end
 			if type(s.nam) == 'number' then
