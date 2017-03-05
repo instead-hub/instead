@@ -2069,13 +2069,6 @@ std.player = std.class ({
 			return t, true
 		end
 
-		r, v = std.call(s, 'onwalk', inwalk)
-		t = std.par(std.scene_delim, t or false, r)
-		if v == false or s:moved() then
-			if not s:moved() then s:moved(moved) end
-			return t, true
-		end
-
 		if v ~= true then
 			if not noexit and not s.__in_onexit then
 				s.__in_onexit = true
@@ -2105,21 +2098,29 @@ std.player = std.class ({
 				return t, true
 			end
 		end
+		-- enter is done
+		s.room = inwalk
+		if f ~= inwalk or not s.room.__from then -- brake self-recursion
+			s.room.__from = f
+		end
+		s.room.__visits = (s.room.__visits or 0) + 1
+
 		if not noenter then
-			s.room = inwalk
-			if f ~= inwalk or not s.room.__from then -- brake self-recursion
-				s.room.__from = f
-			end
 			r, v = std.call(inwalk, 'enter', f)
 			t = std.par(std.scene_delim, t or false, r)
 			if s:moved() then
 				return t, true
 			end
 		end
-		s.room = inwalk
-		s.room.__visits = (s.room.__visits or 0) + 1
+
 		s:need_scene(true)
 		s:moved(true)
+		if not s.__in_afterwalk then
+			s.__in_afterwalk = true
+			r, v = std.call(std.ref 'game', 'afterwalk', inwalk)
+			s.__in_afterwalk = false
+			t = std.par(std.scene_delim, t or false, r)
+		end
 		return t, true
 	end;
 	go = function(s, w)
