@@ -1865,9 +1865,6 @@ std.world = std.class({
 		local o = w:remove()
 		s.player:inventory():add(o)
 	end;
-	tak = function(s, w)
-		return false -- fallback on act
-	end;
 }, std.obj);
 
 local function array_rw(t)
