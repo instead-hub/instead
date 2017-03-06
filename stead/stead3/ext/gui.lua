@@ -70,6 +70,7 @@ end)
 
 instead.nopic = false
 
+local savedpicture
 instead.get_picture = std.cacheable('pic', function()
 	if get_bool(instead, 'nopic') then
 		return
@@ -78,6 +79,7 @@ instead.get_picture = std.cacheable('pic', function()
 	if not s then
 		s = stead.call(std.ref 'game', 'pic')
 	end
+	savedpicture = s -- to save pciture sprite from unload
 	return s and std.tostr(s)
 end)
 
