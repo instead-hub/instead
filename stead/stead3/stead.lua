@@ -723,7 +723,7 @@ std.list = std.class {
 			end
 		end
 	end;
-	seen = function(s, n)
+	srch = function(s, n)
 		local o, i = s:lookup(n)
 		if not o or not o:visible() then
 			return
@@ -1439,7 +1439,7 @@ std.obj = std.class {
 	visible = function(s)
 		return not s:disabled()
 	end;
-	seen = function(s, w)
+	srch = function(s, w)
 		local o, l, i
 
 		if not s:visible() or s:closed() then
@@ -1448,7 +1448,7 @@ std.obj = std.class {
 
 		l = s.obj
 
-		o, i = l:seen(w)
+		o, i = l:srch(w)
 
 		if o then
 			return o, l, i
@@ -1456,7 +1456,7 @@ std.obj = std.class {
 
 		for i = 1, #s.obj do
 			local v = s.obj[i]
-			o, l, i = v:seen(w)
+			o, l, i = v:srch(w)
 			if o then
 				return o, l, i
 			end
@@ -1537,8 +1537,8 @@ std.room = std.class({
 	visits = function(s)
 		return s.__visits or 0
 	end;
-	seen = function(self, w)
-		local r, v, i = std.obj.seen(self, w)
+	srch = function(self, w)
+		local r, v, i = std.obj.srch(self, w)
 		if std.is_obj(r) then
 			return r, v, i
 		end
@@ -1779,7 +1779,7 @@ std.world = std.class({
 				end
 				r, v = std.call(o, 'act', std.unpack(a))
 			else
-				o = s.player:search(o)
+				o = s.player:inspect(o)
 				if not o then
 					return nil, false -- wrong input
 				end
@@ -1795,7 +1795,7 @@ std.world = std.class({
 			end
 			local o1 = std.ref(cmd[2])
 			local o2 = std.ref(cmd[3])
-			o1 = s.player:seen(o1)
+			o1 = s.player:srch(o1)
 			if not o1 then
 				return nil, false -- wrong input
 			end
@@ -1936,13 +1936,13 @@ std.player = std.class ({
 		end
 		return std.par(std.scene_delim, scene or false, r:display())
 	end;
-	search = function(s, w)
+	inspect = function(s, w)
 		local r, v, i
-		r, v, i = s:where():seen(w)
+		r, v, i = s:where():srch(w)
 		if r ~= nil then
 			return r, v, i
 		end
-		r, v, i = s:seen(w)
+		r, v, i = s:srch(w)
 		if r ~= nil then
 			return r, v, i
 		end
@@ -2121,7 +2121,7 @@ std.player = std.class ({
 	end;
 	go = function(s, w)
 		local r, v
-		r, v = s:where():seen(w)
+		r, v = s:where():srch(w)
 		if not std.is_obj(r, 'room') then
 			return nil, false
 		end

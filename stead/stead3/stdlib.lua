@@ -149,12 +149,12 @@ function seen(w, ww)
 	if not std.is_obj(ww, 'list') then
 		wh = std.ref(ww)
 	else
-		return ww:seen(w)
+		return ww:srch(w)
 	end
 	if not std.is_obj(wh) then
 		std.err("Wrong 2-nd argument to seen(): "..std.tostr(ww), 2)
 	end
-	return wh:seen(w)
+	return wh:srch(w)
 end
 
 function lookup(w, ww)
@@ -193,8 +193,8 @@ function objs(ww)
 	return wh.obj
 end
 
-function search(w, ...)
-	return std.me():search(std.object(w), ...)
+function inspect(w, ...)
+	return std.me():inspect(std.object(w), ...)
 end
 
 function have(w, ...)
