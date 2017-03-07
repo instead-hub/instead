@@ -16,9 +16,6 @@ end
 
 std.dlg = std.class({
 	__dlg_type = true;
-	ini = function(s, ...)
-		std.room.ini(s, ...)
-	end;
 	new = function(s, v)
 		if v.current == nil then
 			v.current = false

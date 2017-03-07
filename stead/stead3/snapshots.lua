@@ -35,13 +35,13 @@ local snap = std.obj {
 			return false
 		end
 		std:reset()
-		std.ref 'game':ini(false)
+		std.ref 'game':__ini(false)
 		local f, err = std.eval(s.data[name])
 		if not f then
 			std.err(err, 2)
 		end
 		f();
-		std.ref 'game':ini(true)
+		std.ref 'game':__ini(true)
 		RESTORE = true
 		return std.nop()
 	end;

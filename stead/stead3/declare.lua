@@ -208,12 +208,11 @@ end
 
 std.obj {
 	nam = '@declare';
-	ini = function(s)
+	ini = function(s, ...)
 -- init all list objs
-		std.obj.ini(s)
 		for k, v in pairs(declarations) do
 			if std.is_obj(v.value, 'list') then
-				v.value:ini()
+				v.value:__ini(...)
 			end
 		end
 	end;

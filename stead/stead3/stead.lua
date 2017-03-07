@@ -568,7 +568,7 @@ std.list = std.class {
 		-- std.setmt(v, s)
 		return v
 	end;
-	ini = function(s, o)
+	__ini = function(s, o)
 		for i = 1, #s do
 			local k = s[i]
 			s[i] = std.ref(k)
@@ -895,7 +895,7 @@ end
 
 function std:load(fname) -- load save
 	self:reset()
-	std.ref 'game':ini(false)
+	std.ref 'game':__ini(false)
 
 	local f, err = std.loadfile(fname) -- load all diffs
 	if not f then
@@ -904,7 +904,7 @@ function std:load(fname) -- load save
 
 	local strict = std.nostrict; std.nostrict = true; f(); std.nostrict = strict
 
-	std.ref 'game':ini(true)
+	std.ref 'game':__ini(true)
 	return self.game:lastdisp()
 end
 
@@ -926,7 +926,7 @@ function std.gamefile(fn, reset) -- load game file
 	end
 	if reset then
 		std:reset(fn)
-		std.ref 'game':ini()
+		std.ref 'game':__ini()
 		std.ref 'game'.__started = true
 		local r, v = std.game.player:walk(std.game.player.room, false)
 		if type(r) == 'string' and std.cctx() then
@@ -936,7 +936,7 @@ function std.gamefile(fn, reset) -- load game file
 	end
 	std.game = nil
 	in_section ('gamefile', function() std.dofile(fn) end)
-	std.ref 'game':ini()
+	std.ref 'game':__ini()
 	table.insert(std.files, fn) -- remember it
 end
 
@@ -1240,17 +1240,18 @@ std.obj = std.class {
 		rawset(s, 'nam', new)
 		return s
 	end;
-	ini = function(s)
+	__ini = function(s, ...)
 		for k, v in pairs(s) do
 			if std.is_obj(v, 'list') then
-				v:ini(s)
+				v:__ini(s)
 			end
 		end
 		for k, v in pairs(s.__ro) do
 			if std.is_obj(v, 'list') then
-				v:ini(s)
+				v:__ini(s)
 			end
 		end
+		return std.call(s, 'ini', ...)
 	end;
 	inroom = function(s, r)
 		local rooms = r or {}
@@ -1609,22 +1610,28 @@ std.world = std.class({
 		end
 		return ov
 	end;
+	__ini =  function(s, load)
+		return s:ini(load)
+	end;
 	ini = function(s, load)
---		std.mod_call('init') -- init modules
+		if load ~= false then load = true end
+		if s.__in_ini then
+			return -- break recursion
+		end
+		s.__in_ini = true std.obj.__ini(s, load) s.__in_ini = false
 
 		s.player = std.ref(s.player) -- init game
 		if not s.player then
 			std.err ("Wrong player", 2)
 		end
-		std.obj.ini(s)
 
 		std.for_each_obj(function(v)
 			rawset(v, '__list', {}) -- reset all links
 		end)
 
 		std.for_each_obj(function(v) -- call ini of all objects
-			if v ~= s and type(v.ini) == 'function' then
-				v:ini()
+			if v ~= s then
+				v:__ini(load)
 			end
 		end)
 
@@ -1633,7 +1640,7 @@ std.world = std.class({
 				std.__in_init = {}
 				init()
 				for k, v in ipairs(std.__in_init) do
-					v:ini()
+					v:__ini(load)
 				end
 				std.__in_init = false
 			end
@@ -1908,12 +1915,12 @@ std.player = std.class ({
 		-- std.setmt(v, self)
 		return v
 	end;
-	ini = function(s)
+	__ini = function(s, ...)
 		s.room = std.ref(s.room)
 		if not s.room then
 			std.err ("Wrong player location: "..std.tostr(s), 2)
 		end
-		std.obj.ini(s)
+		std.obj.__ini(s, ...)
 	end;
 	moved = function(s, v)
 		local ov = s.__moved or false
@@ -2386,7 +2393,7 @@ function std.new(fn, ...)
 	end
 	rawset(o, '__dynamic', { fn = fn, arg = {...} })
 	if std.game then
-		o:ini() -- do initialization
+		o:__ini() -- do initialization
 	end
 	return o
 end
