@@ -495,7 +495,7 @@ function sfxr.Sound:generate(rate, depth)
     assert(sfxr.BITDEPTH[depth], "invalid bit depth: " .. tostring(depth))
 
     -- Initialize all locals
-    local fperiod, maxperiod
+    local fperiod, maxperiod, period
     local slide, dslide
     local square_duty, square_slide
     local chg_mod, chg_time, chg_limit
