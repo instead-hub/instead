@@ -113,7 +113,7 @@ local snd = {
 snd.__index = snd;
 
 function snd:play(...)
-	instead.add_sound(self.snd)
+	instead.add_sound(self.snd, ...)
 end
 
 function snd:new(a, b, t)
