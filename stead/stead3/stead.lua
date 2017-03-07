@@ -2490,7 +2490,7 @@ std.method = function(v, n, ...)
 		local c
 		local a, b = v[n](v, ...);
 		c = b
-		if b == nil and type(a) ~= 'string' then
+		if b == nil and (type(a) == 'boolean' or a == nil) then
 			a, b = std.pget(), a
 			c = b
 		end

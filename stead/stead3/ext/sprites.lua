@@ -351,35 +351,46 @@ end
 
 function spr:draw(fx, fy, fw, fh, d, x, y, alpha)
 	if d == nil and x == nil and y == nil then
-		return instead.sprite_draw(self.spr, 0, 0, -1, -1, spr_get(fx), fy, fw, fh);
+		instead.sprite_draw(self.spr, 0, 0, -1, -1, spr_get(fx), fy, fw, fh);
+		return fx
 	end
-	return instead.sprite_draw(self.spr, fx, fy, fw, fh, spr_get(d), x, y, alpha);
+	instead.sprite_draw(self.spr, fx, fy, fw, fh, spr_get(d), x, y, alpha);
+	return d
 end
 
 function spr:copy(fx, fy, fw, fh, d, x, y, alpha)
 	if d == nil and x == nil and y == nil then
-		return instead.sprite_copy(self.spr, 0, 0, -1, -1, spr_get(fx), fy, fw, fh);
+		instead.sprite_copy(self.spr, 0, 0, -1, -1, spr_get(fx), fy, fw, fh);
+		return fx
 	end
-	return instead.sprite_copy(self.spr, fx, fy, fw, fh, spr_get(d), x, y, alpha);
+	instead.sprite_copy(self.spr, fx, fy, fw, fh, spr_get(d), x, y, alpha);
+	return d
 end
 
 function spr:compose(fx, fy, fw, fh, d, x, y, alpha)
 	if d == nil and x == nil and y == nil then
-		return instead.sprite_compose(self.spr, 0, 0, -1, -1, spr_get(fx), fy, fw, fh);
+		instead.sprite_compose(self.spr, 0, 0, -1, -1, spr_get(fx), fy, fw, fh);
+		return fx
 	end
-	return instead.sprite_compose(self.spr, fx, fy, fw, fh, spr_get(d), x, y, alpha);
+	instead.sprite_compose(self.spr, fx, fy, fw, fh, spr_get(d), x, y, alpha);
+	return d
 end
 
 function spr:fill(x, y, w, h, col)
 	if h == nil and col == nil then
-		return instead.sprite_fill(self.spr, 0, 0, -1, -1, x);
+		instead.sprite_fill(self.spr, 0, 0, -1, -1, x);
+		return self
 	end
 	instead.sprite_fill(self.spr, x, y, w, h, col);
 	return self
 end
 
 function spr:pixel(x, y, col, alpha)
-	return instead.sprite_pixel(self.spr, x, y, col, alpha)
+	if not col then
+		return instead.sprite_pixel(self.spr, x, y, col, alpha)
+	end
+	instead.sprite_pixel(self.spr, x, y, col, alpha)
+	return self
 end
 
 local screen = spr:new 'screen'
@@ -458,23 +469,29 @@ end
 
 function pxl:draw_spr(fx, fy, fw, fh, d, x, y, alpha)
 	if d == nil and x == nil and y == nil then
-		return instead.sprite_draw(self, 0, 0, -1, -1, spr_get(fx), fy, fw, fh);
+		instead.sprite_draw(self, 0, 0, -1, -1, spr_get(fx), fy, fw, fh);
+		return fx
 	end
-	return instead.sprite_draw(self, fx, fy, fw, fh, get(d), x, y, alpha);
+	instead.sprite_draw(self, fx, fy, fw, fh, get(d), x, y, alpha);
+	return d
 end
 
 function pxl:copy_spr(fx, fy, fw, fh, d, x, y, alpha)
 	if d == nil and x == nil and y == nil then
-		return instead.sprite_copy(self, 0, 0, -1, -1, spr_get(fx), fy, fw, fh);
+		instead.sprite_copy(self, 0, 0, -1, -1, spr_get(fx), fy, fw, fh);
+		return fx
 	end
-	return instead.sprite_copy(self, fx, fy, fw, fh, spr_get(d), x, y, alpha);
+	instead.sprite_copy(self, fx, fy, fw, fh, spr_get(d), x, y, alpha);
+	return d
 end
 
 function pxl:compose_spr(fx, fy, fw, fh, d, x, y, alpha)
 	if d == nil and x == nil and y == nil then
-		return instead.sprite_compose(self, 0, 0, -1, -1, spr_get(fx), fy, fw, fh);
+		instead.sprite_compose(self, 0, 0, -1, -1, spr_get(fx), fy, fw, fh);
+		return fx
 	end
-	return instead.sprite_compose(self, fx, fy, fw, fh, spr_get(d), x, y, alpha);
+	instead.sprite_compose(self, fx, fy, fw, fh, spr_get(d), x, y, alpha);
+	return d
 end
 
 local function poly(self, fn, t, ...)
