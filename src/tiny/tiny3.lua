@@ -62,9 +62,11 @@ std.menu = std.class({
 		return v
 	end;
 	inv = function(s, ...)
-		local r, v = std.call(s, 'act', ...)
-		if r ~= nil then
-			return r, v
+		local r, v
+		if s.menu ~= nil then
+			r, v = std.call(s, 'menu', ...) -- special method while in inv
+		else
+			r, v = std.call(s, 'act', ...) -- fallback to act
 		end
 		return true, false -- menu mode
 	end;
