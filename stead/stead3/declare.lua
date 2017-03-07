@@ -37,6 +37,9 @@ local function __declare_one(k, v, t)
 	if type(v) == 'function' and not std.functions[v] then
 		std.functions[v] = k
 	end
+	if std.__in_init and std.is_obj(v, 'list') then
+		table.insert(v.__in_init, v)
+	end
 end
 
 local function __declare(n, t)

@@ -1211,6 +1211,9 @@ std.obj = std.class {
 		rawset(v, '__list', {}) -- in what list(s)
 		oo[ro.nam] = v
 		-- std.setmt(v, self)
+		if std.__in_init then
+			table.insert(std.__in_init, v)
+		end
 		return v
 	end;
 	actions = function(s, t, v)
@@ -1243,7 +1246,6 @@ std.obj = std.class {
 				v:ini(s)
 			end
 		end
-
 		for k, v in pairs(s.__ro) do
 			if std.is_obj(v, 'list') then
 				v:ini(s)
@@ -1329,6 +1331,9 @@ std.obj = std.class {
 			o.obj:del(s)
 			if std.is_obj(o, 'room') then
 				o.way:del(s)
+			end
+			if std.is_obj(o, 'player') then
+				o:inventory():del(s)
 			end
 		end
 		return s, where
@@ -1613,7 +1618,7 @@ std.world = std.class({
 		end
 		std.obj.ini(s)
 
-		std.for_each_obj(function(v) -- call ini of all objects
+		std.for_each_obj(function(v)
 			rawset(v, '__list', {}) -- reset all links
 		end)
 
@@ -1625,10 +1630,16 @@ std.world = std.class({
 
 		if not std.game then
 			if type(std.rawget(_G, 'init')) == 'function' then
+				std.__in_init = {}
 				init()
+				for k, v in ipairs(std.__in_init) do
+					v:ini()
+				end
+				std.__in_init = false
 			end
 			std.game = s
 		end
+
 		if load ~= false then
 			std.mod_call('start', load)
 			if type(std.rawget(_G, 'start')) == 'function' then
@@ -2009,10 +2020,13 @@ std.player = std.class ({
 			t = std.par(std.scene_delim, t or false, r)
 			return t or r, true
 		end
+		if r == true and v == false then
+			return r, v -- menu hack
+		end
 		if not v and not r then -- no reaction
 			r, v = std.call(std.ref 'game', m, w, w2, ...)
 			t = std.par(std.scene_delim, t or false, r)
-			if not v then -- nocact!
+			if not v then
 				return
 			end
 		end
