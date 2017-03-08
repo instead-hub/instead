@@ -1614,7 +1614,6 @@ std.world = std.class({
 		return s:ini(load)
 	end;
 	ini = function(s, load)
-		if load ~= false then load = true end
 		if s.__in_ini then
 			return -- break recursion
 		end
