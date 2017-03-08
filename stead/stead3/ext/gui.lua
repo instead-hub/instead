@@ -2,7 +2,20 @@
 
 local std = stead
 
-local instead = std.obj { nam = '@instead' }
+local instead = std.obj {
+	nam = '@instead';
+	ini = function(s) -- after reset always do fade
+		s:need_fading(true)
+	end;
+}
+
+function instead:need_fading(v)
+	local ov = self.__need_fading
+	if v ~= nil then
+		self.__need_fading = v
+	end
+	return ov
+end
 
 local iface = std '@iface'
 local type = std.type
@@ -88,23 +101,28 @@ local last_picture
 instead.fading_value = 4 -- default fading
 
 function instead.get_fading()
-	if not instead.fading or instead.fading == 0 then
+	if not instead.fading then
 		return false
 	end
-	if type(instead.fading) == 'function' then
-		local n = instead:fading()
-		if not n or n == 0 then return false end
-		return true, n
+
+	if type(instead.fading) == 'function' and
+		not instead:fading() then
+		return false
 	end
 
-	return true, instead.fading
+	return true, instead.fading_value
 end
 
 function instead:fading()
 	local pic = instead.get_picture()
-	if std.me():need_scene() or std.cmd[1] == 'load' or pic ~= last_picture then
+
+	if type(pic) == 'string' and pic:find('spr:', 1, true) == 1 then
+		pic = 'spr:'
+	end
+
+	if std.me():need_scene() or instead:need_fading() or pic ~= last_picture then
 		last_picture = pic
-		return instead.fading_value
+		return true
 	end
 end
 
@@ -408,6 +426,11 @@ std.mod_init(function()
 	std.rawset(_G, 'instead', instead)
 	require "ext/sandbox"
 end)
+
+std.mod_cmd(function()
+	instead:need_fading(false)
+end)
+
 std.mod_step(function(state)
 	if state then
 		dict = {}
