@@ -5,7 +5,7 @@ local std = stead
 local instead = std.obj {
 	nam = '@instead';
 	ini = function(s) -- after reset always do fade
-		s:need_fading(true)
+		s.need_fading(true)
 	end;
 }
 
