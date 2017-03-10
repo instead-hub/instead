@@ -188,10 +188,10 @@ std.dlg = std.class({
 			return
 		end
 		w = oo.obj:for_each(function(v) -- aliases
+			v = v:__alias()
 			if not v:visible() then
 				return
 			end
-			v = v:__alias()
 			if v == r then
 				return v
 			end
