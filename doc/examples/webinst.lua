@@ -3,7 +3,6 @@
 -- Usage: instead -lua webinst.lua [<game>]
 -- You must have installed luasocket module.
 --
-
 local http = require("socket.http")
 local ltn12 = require("ltn12")
 

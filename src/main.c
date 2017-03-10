@@ -519,8 +519,9 @@ int instead_main(int argc, char *argv[])
 	}
 
 	if (lua_sw) {
-		standalone_sw = 1;
-		err = instead_init_lua(dirname(lua_sw));
+		instead_set_standalone(1);
+		instead_set_debug(debug_sw);
+		err = instead_init_lua(dirname(lua_sw), 0);
 		if (err)
 			goto out;
 		if (!err)

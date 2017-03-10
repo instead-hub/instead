@@ -76,7 +76,7 @@ extern int  instead_encode(const char *s, const char *d);
 extern int  instead_busy(void);
 
 /* internal use */
-extern int  instead_init_lua(const char *path);
+extern int  instead_init_lua(const char *path, int detect);
 extern int  instead_loadscript(char *name, int argc, char **argv, int exec);
 extern int  instead_loadfile(char *name);
 
