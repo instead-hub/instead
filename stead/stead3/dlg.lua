@@ -183,7 +183,23 @@ std.dlg = std.class({
 		if not oo then
 			return
 		end
-		return oo.obj:srch(w)
+		local r, l, i = s:lookup(w)
+		if not r then
+			return
+		end
+		w = oo.obj:for_each(function(v) -- aliases
+			if not v:visible() then
+				return
+			end
+			v = v:__alias()
+			if v == r then
+				return v
+			end
+		end)
+		if not w then
+			return
+		end
+		return r, l, i
 	end;
 	display = function(s)
 		local deco = std.call(s, 'decor'); -- static decorations
