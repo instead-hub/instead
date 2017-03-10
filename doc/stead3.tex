@@ -1,0 +1,58 @@
+\documentclass[12pt,]{book}
+\usepackage{cmap}
+\usepackage[T2A]{fontenc}
+\usepackage[english,russian]{babel}
+\usepackage{indentfirst}
+\usepackage[russian]{datetime}
+
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+%  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \usepackage{fontspec}
+  \ifxetex
+    \usepackage{xltxtra,xunicode}
+  \fi
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+    \setmainfont{Verdana}
+    \setsansfont{Verdana}
+    \setmonofont{Liberation Mono}
+\fi
+
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \usepackage[unicode=true]{hyperref}
+\fi
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={},
+            pdftitle={ru:gamedev:documentation},
+            colorlinks=true,
+            urlcolor=blue,
+            linkcolor=magenta,
+            pdfborder={0 0 0}}
+
+\usepackage{tocstyle}
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+
+\title{STEAD3}
+\author{Петр Косых}
+\date{09.03.2017}
+\sloppy
+\begin{document}
+\maketitle
+{
+\hypersetup{linkcolor=black}
+\renewcommand{\contentsname}{Оглавление}
+\tableofcontents
+\clearpage
+}
+\input{stead3-manual.tex}
+\end{document}

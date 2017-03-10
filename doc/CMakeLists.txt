@@ -3,10 +3,11 @@ SET(DOC_FILES
 )
 
 SET(GENERATED_DOC_FILES
-	instead-manual-en.html
-	instead-manual.html
-	instead-manual.pdf
-	instead-modules.pdf
+	stead3.pdf
+	stead2.pdf
+	stead2-modules.pdf
+	stead2-en.html
+	stead2.html
 	instead.txt
 )
 

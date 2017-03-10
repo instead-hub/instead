@@ -2,22 +2,29 @@ include ../Rules.make
 include ../config.make
 
 all:
-clean:
 
-pdf:
-	./makepdfs
-#	# try xetex here, and hope it works ;)
-#	pdflatex reference.tex
-#	makeindex reference.idx
-#	pdflatex reference.tex
-#	$(RM) -f reference.aux reference.log reference.toc reference.out reference.idx reference.ind reference.ilg
-#to-do: interpret $PATH
+clean:
+	rm -f *.pdf *.aux *.log *.out *.toc stead3-manual.tex stead2.html stead2-en.html instead.txt
+
+stead3-manual.tex: stead3.md
+	multimarkdown stead3.md -t latex -o stead3-manual.tex
+
+stead3.pdf: stead3.tex stead3-manual.tex
+	xelatex stead3.tex
+	xelatex stead3.tex
+	xelatex stead3.tex
+
+pdf:	stead3.pdf stead2-pdfs
+
+stead2-pdfs:
+	./makepdfs2
+
 man:
 	man ./instead.6 | col -b > instead.txt
 
 wiki:
-	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:documentation&do=export_xhtml" -O instead-manual.html
-	wget "http://instead.syscall.ru/wiki/doku.php?id=en:gamedev:documentation&do=export_xhtml" -O instead-manual-en.html
+	wget "http://instead.syscall.ru/wiki/doku.php?id=ru:gamedev:documentation&do=export_xhtml" -O stead2.html
+	wget "http://instead.syscall.ru/wiki/doku.php?id=en:gamedev:documentation&do=export_xhtml" -O stead2-en.html
 
 docs:	wiki man pdf
 
