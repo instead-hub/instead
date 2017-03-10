@@ -5,14 +5,14 @@ local std = stead
 local instead = std.obj {
 	nam = '@instead';
 	ini = function(s) -- after reset always do fade
-		s:need_fading(true)
+		s.need_fading(true)
 	end;
 }
 
-function instead:need_fading(v)
-	local ov = self.__need_fading
+function instead.need_fading(v)
+	local ov = instead.__need_fading
 	if v ~= nil then
-		self.__need_fading = v
+		instead.__need_fading = v
 	end
 	return ov
 end
@@ -106,21 +106,21 @@ function instead.get_fading()
 	end
 
 	if type(instead.fading) == 'function' and
-		not instead:fading() then
+		not instead.fading() then
 		return false
 	end
 
 	return true, instead.fading_value
 end
 
-function instead:fading()
+function instead.fading()
 	local pic = instead.get_picture()
 
 	if type(pic) == 'string' and pic:find('spr:', 1, true) == 1 then
 		pic = 'spr:'
 	end
 
-	if std.me():need_scene() or instead:need_fading() or pic ~= last_picture then
+	if std.me():need_scene() or instead.need_fading() or pic ~= last_picture then
 		last_picture = pic
 		return true
 	end
@@ -428,7 +428,7 @@ std.mod_init(function()
 end)
 
 std.mod_cmd(function()
-	instead:need_fading(false)
+	instead.need_fading(false)
 end)
 
 std.mod_step(function(state)

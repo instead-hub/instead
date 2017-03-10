@@ -37,15 +37,15 @@ function build_html()
 
 function build_manual()
 {
-	build_html "ru:gamedev:documentation" instead-manual
+	build_html "ru:gamedev:documentation" stead2
 	local d=`date +%d.%m.%y`
-	do_pandoc "instead-manual.html.1" | sed -e 's/\\date{}/\\date{'$d'}/' -e 's/\\author{}/\\author{Петр Косых}/' -e 's/{\\char13}/'"'"'/g' -e 's/ //g' -e 's/\\title{.*}/\\title{Руководство INSTEAD}/' -e 's/WRAPCENTERMAGICSTART/\\begin{Info}/g' -e 's/WRAPCENTERMAGICEND/\\end{Info}/g' > "instead-manual.tex"
-	rm -f instead-manual.html.1
+	do_pandoc "stead2.html.1" | sed -e 's/\\date{}/\\date{'$d'}/' -e 's/\\author{}/\\author{Петр Косых}/' -e 's/{\\char13}/'"'"'/g' -e 's/ //g' -e 's/\\title{.*}/\\title{Руководство INSTEAD}/' -e 's/WRAPCENTERMAGICSTART/\\begin{Info}/g' -e 's/WRAPCENTERMAGICEND/\\end{Info}/g' > "stead2.tex"
+	rm -f stead2.html.1
 	rm -f *.toc *.aux *.out *.log
-	xelatex instead-manual.tex -o instead-manual.pdf
-	xelatex instead-manual.tex -o instead-manual.pdf
-	xelatex instead-manual.tex -o instead-manual.pdf
-	rm -f *.toc *.aux *.out *.log instead-manual.tex
+	xelatex stead2.tex -o stead2.pdf
+	xelatex stead2.tex -o stead2.pdf
+	xelatex stead2.tex -o stead2.pdf
+	rm -f *.toc *.aux *.out *.log stead2.tex
 }
 
 function build_modules()
@@ -71,13 +71,13 @@ function build_modules()
 			if (scr == 0) {
 				print;
 			}
-		}' | sed -e 's/\\date{}/\\date{'$d'}/' -e 's/\\title{.*}/\\title{Модули INSTEAD}/' -e 's/{\\char13}/'"'"'/g'  -e 's/WRAPCENTERMAGICSTART/\\begin{Info}/g' -e 's/WRAPCENTERMAGICEND/\\end{Info}/g' > instead-modules.tex
+		}' | sed -e 's/\\date{}/\\date{'$d'}/' -e 's/\\title{.*}/\\title{Модули INSTEAD}/' -e 's/{\\char13}/'"'"'/g'  -e 's/WRAPCENTERMAGICSTART/\\begin{Info}/g' -e 's/WRAPCENTERMAGICEND/\\end{Info}/g' > stead2-modules.tex
 	rm -f $mod2
 	rm -f *.toc *.aux *.out *.log
-	xelatex instead-modules.tex -o instead-manual.pdf
-	xelatex instead-modules.tex -o instead-manual.pdf
-	xelatex instead-modules.tex -o instead-modules.pdf
-	rm -f *.toc *.aux *.out *.log instead-modules.tex
+	xelatex stead2-modules.tex -o stead2.pdf
+	xelatex stead2-modules.tex -o stead2.pdf
+	xelatex stead2-modules.tex -o stead2-modules.pdf
+	rm -f *.toc *.aux *.out *.log stead2-modules.tex
 }
 build_manual
 build_modules

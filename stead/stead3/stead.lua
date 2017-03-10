@@ -1884,23 +1884,6 @@ std.world = std.class({
 	end;
 }, std.obj);
 
-local function array_rw(t)
-	local ro = rawget(t, '__ro')
-	if not ro then
-		return
-	end
-	for k, v in pairs(ro) do
-		rawset(t, k, v)
-	end
-	for k, v in pairs(t) do
-		if type(k) ~= 'string' or k:find("__", 1, true) ~= 1 then
-			if type(v) == 'table' and std.rawget(v, '__array') then
-				array_rw(v)
-			end
-		end
-	end
-end
-
 std.player = std.class ({
 	__player_type = true;
 	new = function(self, v)
