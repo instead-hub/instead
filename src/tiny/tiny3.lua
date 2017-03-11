@@ -31,7 +31,10 @@ instead.nopic = false
 
 instead.fading_value = 0
 
-function instead:fading()
+function instead.fading()
+end
+
+function instead.need_fading()
 end
 
 function instead.autosave(slot)
