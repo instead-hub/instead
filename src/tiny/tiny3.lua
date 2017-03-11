@@ -100,29 +100,6 @@ function iface:xref(str, o, ...)
 	return str..std.string.format("(%s)", xref)
 end
 
-local function fmt_stub(self, str)
-	return str
-end
-
-iface.em = fmt_stub
-iface.center = fmt_stub
-iface.just = fmt_stub
-iface.left = fmt_stub
-iface.right = fmt_stub
-iface.bold = fmt_stub
-iface.top = fmt_stub
-iface.bottom = fmt_stub
-iface.middle = fmt_stub
-iface.nb = fmt_stub
-iface.anchor = fmt_stub
-iface.img = fmt_stub
-iface.imgl = fmt_stub
-iface.imgr = fmt_stub
-iface.under = fmt_stub
-iface.st = fmt_stub
-iface.tab = fmt_stub
-iface.y = fmt_stub
-
 local iface_cmd = iface.cmd -- save old
 
 function iface:cmd(inp)
