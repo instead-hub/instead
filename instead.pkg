@@ -88,7 +88,7 @@
 ".\symbian_gamedata\stead\stead2\ext\timer.lua" -"!:\data\instead\stead\stead2\ext\timer.lua"
 ".\symbian_gamedata\stead\stead2\ext\gui.lua" -"!:\data\instead\stead\stead2\ext\gui.lua"
 ".\symbian_gamedata\stead\stead2\ext\paths.lua" -"!:\data\instead\stead\stead2\ext\paths.lua"
-".\symbian_gamedata\stead\stead3\aliases.lua" -"!:\data\instead\stead\stead3\aliases.lua"
+".\symbian_gamedata\stead\stead3\stdlib.lua" -"!:\data\instead\stead\stead3\stdlib.lua"
 ".\symbian_gamedata\stead\stead3\click.lua" -"!:\data\instead\stead\stead3\click.lua"
 ".\symbian_gamedata\stead\stead3\dbg.lua" -"!:\data\instead\stead\stead3\dbg.lua"
 ".\symbian_gamedata\stead\stead3\dbg-ru.lua" -"!:\data\instead\stead\stead3\dbg-ru.lua"
