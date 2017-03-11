@@ -112,7 +112,7 @@ struct game *game_lookup(const char *name)
 {
 	int i;
 	if (!name || !*name) {
-		if (games_nr == 1)
+		if (games_nr == 1 && name)
 			return &games[0];
 		return NULL;
 	}

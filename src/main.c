@@ -666,7 +666,7 @@ int instead_main(int argc, char *argv[])
 	if (gfx_video_init() || input_init())
 		return -1;
 
-	if (game_init(opt_game)) {
+	if (game_init(opt_game?opt_game:"")) {
 		game_error();
 	}
 
