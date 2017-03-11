@@ -58,7 +58,7 @@ static int luaB_get_gamespath(lua_State *L) {
 	return 1;
 }
 
-static const luaL_Reg paths_funcs[] = {
+const luaL_Reg paths_funcs[] = {
 	{"instead_savepath", luaB_get_savepath},
 	{"instead_exepath", luaB_get_exepath},
 	{"instead_gamespath", luaB_get_gamespath},

@@ -152,7 +152,7 @@ static int luaB_bit_signed(lua_State *L) {
 	return 1;
 }
 
-static const luaL_Reg bits_funcs[] = {
+const luaL_Reg bits_funcs[] = {
 	{"bit_or", luaB_bit_or},
 	{"bit_and", luaB_bit_and},
 	{"bit_xor", luaB_bit_xor},

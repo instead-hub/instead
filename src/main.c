@@ -43,6 +43,8 @@ extern void	libwince_init(const char* prog, int debug);
 
 extern int debug_init(void);
 extern void debug_done(void);
+extern luaL_Reg paths_funcs[];
+extern luaL_Reg bits_funcs[];
 
 int debug_sw = 0;
 int noauto_sw = 0;
@@ -524,6 +526,8 @@ int instead_main(int argc, char *argv[])
 		err = instead_init_lua(dirname(lua_sw), 0);
 		if (err)
 			goto out;
+		instead_api_register(paths_funcs);
+		instead_api_register(bits_funcs);
 		if (!err)
 			err = instead_loadscript(lua_sw,
 				argc - opt_index,
