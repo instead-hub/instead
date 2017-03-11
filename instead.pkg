@@ -102,7 +102,7 @@
 ".\symbian_gamedata\stead\stead3\nolife.lua" -"!:\data\instead\stead\stead3\nolife.lua"
 ".\symbian_gamedata\stead\stead3\prefs.lua" -"!:\data\instead\stead\stead3\prefs.lua"
 ".\symbian_gamedata\stead\stead3\snapshots.lua" -"!:\data\instead\stead\stead3\snapshots.lua"
-".\symbian_gamedata\stead\stead3\sound.lua" -"!:\data\instead\stead\stead3\sound.lua"
+".\symbian_gamedata\stead\stead3\snd.lua" -"!:\data\instead\stead\stead3\snd.lua"
 ".\symbian_gamedata\stead\stead3\sprite.lua" -"!:\data\instead\stead\stead3\sprite.lua"
 ".\symbian_gamedata\stead\stead3\stead.lua" -"!:\data\instead\stead\stead3\stead.lua"
 ".\symbian_gamedata\stead\stead3\theme.lua" -"!:\data\instead\stead\stead3\theme.lua"
