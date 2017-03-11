@@ -20,6 +20,8 @@ Source: Microsoft.VC80.CRT\*; DestDir: {app}\Microsoft.VC80.CRT
 Source: games\tutorial3\*; DestDir: {app}\games\tutorial3
 Source: icon\*; DestDir: {app}\icon
 Source: doc\*; DestDir: {app}\doc
+Source: stead\stead2\*; DestDir: {app}\stead\stead2
+Source: stead\stead3\*; DestDir: {app}\stead\stead3
 Source: stead\*; DestDir: {app}\stead
 Source: lang\*; DestDir: {app}\lang
 Source: themes\default\*; DestDir: {app}\themes\default
