@@ -28,8 +28,8 @@ diff -Nur instead-2.5/Rules.caanoo instead-2.5-caanoo/Rules.caanoo
 +ZLIB_CFLAGS=
 +ZLIB_LFLAGS=-lz
 +
-+LUA_CFLAGS=-I../caanoo/lua/
-+LUA_LFLAGS=../caanoo/lua/liblua.a
++LUA_CFLAGS=-I./caanoo/lua/
++LUA_LFLAGS=./caanoo/lua/liblua.a
 +
 +SDL_CFLAGS=
 +SDL_LFLAGS=-lSDL -lSDL_mixer -lSDL_image -lSDL_ttf -lm -ldl -lpthread -lz
