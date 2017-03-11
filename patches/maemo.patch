@@ -1,12 +1,12 @@
-diff -Nur instead-2.5/debian/compat instead-2.5-maemo/debian/compat
---- instead-2.5/debian/compat	2017-02-24 19:25:33.000000000 +0300
-+++ instead-2.5-maemo/debian/compat	2017-03-10 21:30:29.855832000 +0300
+diff -Nur instead-2.5.0/debian/compat instead-2.5.0-maemo/debian/compat
+--- instead-2.5.0/debian/compat	2017-03-11 10:34:42.000000000 +0300
++++ instead-2.5.0-maemo/debian/compat	2017-03-11 13:04:27.792981000 +0300
 @@ -1 +1 @@
 -7
 +4
-diff -Nur instead-2.5/debian/control instead-2.5-maemo/debian/control
---- instead-2.5/debian/control	2017-02-24 19:25:33.000000000 +0300
-+++ instead-2.5-maemo/debian/control	2017-03-10 21:30:29.856094000 +0300
+diff -Nur instead-2.5.0/debian/control instead-2.5.0-maemo/debian/control
+--- instead-2.5.0/debian/control	2017-03-11 10:34:42.000000000 +0300
++++ instead-2.5.0-maemo/debian/control	2017-03-11 13:04:27.793261000 +0300
 @@ -1,8 +1,8 @@
  Source: instead
 -Section: games
@@ -23,9 +23,9 @@ diff -Nur instead-2.5/debian/control instead-2.5-maemo/debian/control
  Description: simple text adventures/visual novels engine
   Visual novell/text quest-like engine.
 -
-diff -Nur instead-2.5/debian/rules instead-2.5-maemo/debian/rules
---- instead-2.5/debian/rules	2017-02-24 19:25:33.000000000 +0300
-+++ instead-2.5-maemo/debian/rules	2017-03-10 21:30:29.856362000 +0300
+diff -Nur instead-2.5.0/debian/rules instead-2.5.0-maemo/debian/rules
+--- instead-2.5.0/debian/rules	2017-03-11 10:34:42.000000000 +0300
++++ instead-2.5.0-maemo/debian/rules	2017-03-11 13:04:27.793529000 +0300
 @@ -61,7 +61,7 @@
  install: build
  	dh_testdir
@@ -35,9 +35,9 @@ diff -Nur instead-2.5/debian/rules instead-2.5-maemo/debian/rules
  	dh_installdirs
  
  	# Add here commands to install the package into debian/instead.
-diff -Nur instead-2.5/desktop/instead.desktop.in instead-2.5-maemo/desktop/instead.desktop.in
---- instead-2.5/desktop/instead.desktop.in	2017-02-24 19:25:33.000000000 +0300
-+++ instead-2.5-maemo/desktop/instead.desktop.in	2017-03-10 21:30:29.856908000 +0300
+diff -Nur instead-2.5.0/desktop/instead.desktop.in instead-2.5.0-maemo/desktop/instead.desktop.in
+--- instead-2.5.0/desktop/instead.desktop.in	2017-03-11 10:34:42.000000000 +0300
++++ instead-2.5.0-maemo/desktop/instead.desktop.in	2017-03-11 13:04:27.793840000 +0300
 @@ -13,4 +13,8 @@
  Exec=@BIN@/sdl-instead
  Icon=sdl_instead
@@ -47,9 +47,9 @@ diff -Nur instead-2.5/desktop/instead.desktop.in instead-2.5-maemo/desktop/inste
 +X-HildonDesk-ShowInToolbar=true
 +StartupWMClass=instead
  Categories=Game;LogicGame;
-diff -Nur instead-2.5/desktop/Makefile instead-2.5-maemo/desktop/Makefile
---- instead-2.5/desktop/Makefile	2017-02-24 19:25:33.000000000 +0300
-+++ instead-2.5-maemo/desktop/Makefile	2017-03-10 21:30:29.856581000 +0300
+diff -Nur instead-2.5.0/desktop/Makefile instead-2.5.0-maemo/desktop/Makefile
+--- instead-2.5.0/desktop/Makefile	2017-03-11 10:34:42.000000000 +0300
++++ instead-2.5.0-maemo/desktop/Makefile	2017-03-11 13:04:27.794105000 +0300
 @@ -10,9 +10,9 @@
  	cat instead.desktop.in | sed -e "s|@BIN@|$(BIN)|g" > instead.desktop
  
@@ -63,9 +63,10 @@ diff -Nur instead-2.5/desktop/Makefile instead-2.5-maemo/desktop/Makefile
 -	$(RM) $(DESTDIR)$(PREFIX)/share/applications/instead.desktop
 +	$(RM) $(DESTDIR)$(PREFIX)/share/applications/hildon/instead.desktop
  
-diff -Nur instead-2.5/Rules.make.system instead-2.5-maemo/Rules.make.system
---- instead-2.5/Rules.make.system	2017-02-24 19:25:41.000000000 +0300
-+++ instead-2.5-maemo/Rules.make.system	2017-03-10 21:30:29.855532000 +0300
+diff -Nur instead-2.5.0/patches/maemo.patch instead-2.5.0-maemo/patches/maemo.patch
+diff -Nur instead-2.5.0/Rules.make.system instead-2.5.0-maemo/Rules.make.system
+--- instead-2.5.0/Rules.make.system	2017-03-11 10:34:42.000000000 +0300
++++ instead-2.5.0-maemo/Rules.make.system	2017-03-11 13:04:27.794345000 +0300
 @@ -28,7 +28,7 @@
  SDL_CFLAGS=$(shell sdl-config --cflags)
  SDL_LFLAGS=$(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer -lSDL_image -lm
@@ -75,9 +76,35 @@ diff -Nur instead-2.5/Rules.make.system instead-2.5-maemo/Rules.make.system
  
  INSTALLD=install -d -m 0755
  INSTALLB=install -m 0755
-diff -Nur instead-2.5/themes/default/theme.ini instead-2.5-maemo/themes/default/theme.ini
---- instead-2.5/themes/default/theme.ini	2017-02-24 19:25:33.000000000 +0300
-+++ instead-2.5-maemo/themes/default/theme.ini	2017-03-10 21:30:35.753051000 +0300
+diff -Nur instead-2.5.0/src/instead/util.h instead-2.5.0-maemo/src/instead/util.h
+--- instead-2.5.0/src/instead/util.h	2017-03-11 10:34:44.000000000 +0300
++++ instead-2.5.0-maemo/src/instead/util.h	2017-03-11 13:04:46.785519000 +0300
+@@ -52,7 +52,7 @@
+ #define FREE(v) do { if ((v)) free((v)); v = NULL; } while(0)
+ 
+ #ifdef _USE_SDL
+- #include <SDL_config.h>
++/* #include <SDL_config.h> */
+  #include <SDL_mutex.h>
+  #ifdef _USE_SDL_ICONV
+   #include <SDL_stdinc.h>
+diff -Nur instead-2.5.0/src/sound.c instead-2.5.0-maemo/src/sound.c
+--- instead-2.5.0/src/sound.c	2017-03-11 10:34:44.000000000 +0300
++++ instead-2.5.0-maemo/src/sound.c	2017-03-11 14:28:39.065602000 +0300
+@@ -27,7 +27,9 @@
+ 
+ #include <SDL.h>
+ #include <SDL_mixer.h>
+-
++#define SDL_memcpy memcpy
++#define SDL_calloc calloc
++#define SDL_free free
+ #ifdef S60
+ int audio_rate = 11025;
+ #else
+diff -Nur instead-2.5.0/themes/default/theme.ini instead-2.5.0-maemo/themes/default/theme.ini
+--- instead-2.5.0/themes/default/theme.ini	2017-03-11 10:34:45.000000000 +0300
++++ instead-2.5.0-maemo/themes/default/theme.ini	2017-03-11 13:04:27.794651000 +0300
 @@ -5,7 +5,7 @@
  ; $Name(it): Predefinito$
  
@@ -116,9 +143,9 @@ diff -Nur instead-2.5/themes/default/theme.ini instead-2.5-maemo/themes/default/
  
  snd.click = click.wav ; click.ogg
  
-diff -Nur instead-2.5/themes/wide/theme.ini instead-2.5-maemo/themes/wide/theme.ini
---- instead-2.5/themes/wide/theme.ini	2017-02-24 19:25:33.000000000 +0300
-+++ instead-2.5-maemo/themes/wide/theme.ini	2017-03-10 21:30:35.753216000 +0300
+diff -Nur instead-2.5.0/themes/wide/theme.ini instead-2.5.0-maemo/themes/wide/theme.ini
+--- instead-2.5.0/themes/wide/theme.ini	2017-03-11 10:34:46.000000000 +0300
++++ instead-2.5.0-maemo/themes/wide/theme.ini	2017-03-11 13:04:27.794891000 +0300
 @@ -3,10 +3,3 @@
  ; $Name(uk):Широка$
  ; $Name(es):Amplio$
