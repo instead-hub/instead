@@ -55,7 +55,7 @@ diff -Nur instead-2.5/src/game.c instead-2.5-caanoo/src/game.c
  		game_menu(menu_askquit);
  #endif
 -	} else if ((alt_pressed | control_pressed) && (!is_key(ev, "q") || !is_key(ev, "f4"))) {
-+	} else if (!is_key(&ev, "quit") || ((alt_pressed | control_pressed) && (!is_key(&ev, "q") || !is_key(&ev, "f4")))) {
++	} else if (!is_key(ev, "quit") || ((alt_pressed | control_pressed) && (!is_key(ev, "q") || !is_key(ev, "f4")))) {
  		game_running = 0;
  		return -1;
  	} else if (alt_pressed &&
