@@ -190,7 +190,7 @@ char *open_file_dialog(void)
 	}
 	return NULL;
 }
-
+#if 0
 int setdir(const char *path)
 {
 	return chdir(path);
@@ -212,3 +212,4 @@ int is_absolute_path(const char *path)
 		return 0;
 	return (*path == '/');
 }
+#endif
