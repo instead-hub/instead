@@ -3258,7 +3258,7 @@ end
 
 local build_sandbox_output = function(realpath, error, type, find, gsub, savepath, gamepath)
 	return stead.hook(io.output, function(f, path, ...)
-		if not check_path(realpath, type, find, gsub, savepath, gamepath, path) then
+		if type(path) == 'string' and not check_path(realpath, type, find, gsub, savepath, gamepath, path) then
 			error ("Access denied (output): ".. path, 3);
 			return false
 		end
