@@ -2102,8 +2102,6 @@ std.player = std.class ({
 		if f ~= inwalk or not s.room.__from then -- brake self-recursion
 			s.room.__from = f
 		end
-		s.room.__visits = (s.room.__visits or 0) + 1
-
 		if not noenter then
 			r, v = std.call(inwalk, 'enter', f)
 			t = std.par(std.scene_delim, t or false, r)
@@ -2111,7 +2109,7 @@ std.player = std.class ({
 				return t, true
 			end
 		end
-
+		s.room.__visits = (s.room.__visits or 0) + 1
 		s:need_scene(true)
 		s:moved(true)
 		if not s.__in_afterwalk then
