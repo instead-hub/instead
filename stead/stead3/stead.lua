@@ -894,7 +894,7 @@ function std:reset(fn) -- reset state
 end
 
 function std:load(fname) -- load save
-	if DEBUG or std.ref 'game':time() > 0 then
+	if std.rawget(_G, 'DEBUG') or std.ref 'game':time() > 0 then
 		self:reset()
 		std.ref 'game':__ini(false)
 	end

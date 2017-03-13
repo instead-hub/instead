@@ -450,6 +450,6 @@ std.mod_save(function()
 	instead.__autosave_slot = nil
 end)
 
-if DEBUG then
+if std.rawget(_G, 'DEBUG') then
 	require 'dbg'
 end

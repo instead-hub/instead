@@ -98,7 +98,7 @@ function sandbox()
 		print ("Warning: trying to do os.tmpname");
 	end
 
-	if not DEBUG then
+	if not std.rawget(_G, 'DEBUG') then
 		debug = nil
 	end
 	package.cpath = ""
