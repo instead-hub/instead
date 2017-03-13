@@ -13,7 +13,7 @@ finger = std.obj {
 	end
 }
 
-function finger:add(press, fid, x, y, px, py)
+function finger:event(press, fid, x, y, px, py)
 	local s = self
 	if press then
 		local v = s:lookup(fid)
@@ -35,7 +35,7 @@ function finger:list()
 	local s = self
 	local new = {}
 	for k, v in std.ipairs(s.fingers_list) do
-		local x, y, pressure = stead.finger_pos(v.id)
+		local x, y, pressure = instead.finger_pos(v.id)
 		if x then
 			v.x, v.y, v.pressure = x, y, pressure
 			table.insert(new, v)
@@ -69,6 +69,7 @@ function finger:lookup(fid)
 end
 
 function input:finger(press, fid, x, y, px, py, ...)
+	local a
 	finger:event(press, fid, x, y, px, py, ...)
 	for k, v in std.ipairs {press, fid, x, y, px, py, ...} do
 		a = (a and (a..', ') or ' ') .. std.dump(v)
