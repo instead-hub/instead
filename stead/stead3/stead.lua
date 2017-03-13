@@ -894,9 +894,10 @@ function std:reset(fn) -- reset state
 end
 
 function std:load(fname) -- load save
-	self:reset()
-	std.ref 'game':__ini(false)
-
+	if DEBUG or std.ref 'game':time() > 0 then
+		self:reset()
+		std.ref 'game':__ini(false)
+	end
 	local f, err = std.loadfile(fname) -- load all diffs
 	if not f then
 		std.err(err, 2)
