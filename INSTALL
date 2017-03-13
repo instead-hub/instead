@@ -76,9 +76,8 @@ There is .spec file in tarball.
 ==========================
 
 You have three choices:
-	a) try run ./configure.sh and follow instructions
-or
-	b) try to use experimental cmake rules
+	a) try to use cmake rules
+	b) try run ./configure.sh and follow instructions
 	c) do all things manually
 
 7) Build using cmake
@@ -98,6 +97,19 @@ $ cmake .. -DSTANDALONE=1
 $ make && make install
 $ cd standalone
 $ ./sdl-instead
+
+Some options:
+WITH_SDL2 Use SDL2 instead of SDL 1
+WITH_GTK2 Use GTK2 file open dialog (default on)
+WITH_GTK3 Use GTK3 file open dialog
+
+For example, to build with SDL2, use:
+
+$ cmake .. -DWITH_SDL2=1 -DSTANDALONE=1
+
+To build with GTK3:
+
+$ cmake .. -DWITH_GTK2=1
 
 8) Manual build
 ===============

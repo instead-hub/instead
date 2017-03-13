@@ -30,7 +30,8 @@ OPTION(SYSTEMWIDE "Build for systemwide install" ON)
 OPTION(STANDALONE "Build for standalone package creation" OFF)
 
 IF(WITH_GTK2 AND WITH_GTK3)
-	MESSAGE(FATAL_ERROR "WITH_GTK2 and WITH_GTK3 are mutually exclusive")
+	MESSAGE(WARNING "WITH_GTK2 and WITH_GTK3 are mutually exclusive, disabling WITH_GTK2")
+	SET(WITH_GTK2 OFF)
 ENDIF(WITH_GTK2 AND WITH_GTK3)
 
 IF(SYSTEMWIDE AND STANDALONE)
