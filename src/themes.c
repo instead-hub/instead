@@ -231,9 +231,11 @@ static int parse_include(const char *v, void *data)
 	char cwd[PATH_MAX];
 	if (!strlowcmp(v, DEFAULT_THEME))
 		return 0;
-	if (curtheme_loading && strlowcmp(v, curtheme_loading->dir) &&
-		theme_lookup(v, curtheme_loading->type)) /* internal theme? */
+	if (curtheme_loading && curtheme_loading->type == THEME_GAME
+		&& strlowcmp(v, curtheme_loading->dir)
+		&& theme_lookup(v, THEME_GAME)) { /* internal theme? */
 		return game_theme_load(v, THEME_GAME);
+	}
 	getdir(cwd, sizeof(cwd));
 	setdir(game_cwd);
 	rc = game_theme_load(v, THEME_GLOBAL);
