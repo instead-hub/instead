@@ -32,6 +32,7 @@
 #endif
 #ifdef S60
  #include "snprintf.h"
+ typedef long ssize_t;
 #endif
 #include <math.h>
 
