@@ -12,7 +12,7 @@ MACRO _SDL_MOD_BUG
 SYSTEMINCLUDE  /epoc32/include/libc /epoc32/include/esdl /epoc32/include/mmf/plugin /epoc32/include
 // /epoc32/include/stdapis 
 
-sourcepath ./src/sdl-instead
+sourcepath ./src
 SOURCE symbian.cpp
 SOURCE s60.c
 SOURCE instead/instead.c instead/util.c instead/list.c instead/cache.c instead/idf.c instead/tinymt32.c instead/lfs.c
