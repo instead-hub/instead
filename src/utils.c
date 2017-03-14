@@ -23,7 +23,7 @@
  */
 
 #include "externals.h"
-#include "util.h"
+#include "utils.h"
 
 int process_cmd(char *n, char *v, struct parser *cmd_parser)
 {

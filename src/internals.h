@@ -6,7 +6,7 @@
 #include "ios.h"
 #endif
 
-#include "util.h"
+#include "utils.h"
 #include "graphics.h"
 #include "sound.h"
 #include "game.h"

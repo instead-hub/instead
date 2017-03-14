@@ -11,7 +11,7 @@ INSTEAD_H	:= instead/cache.h instead/system.h instead/instead.h instead/list.h i
 SRC     := graphics.c input.c game.c main.c \
 	instead_bits.c instead_sprites.c instead_timer.c instead_sound.c instead_paths.c \
 	sound.c SDL_rotozoom.c SDL_anigif.c SDL_gfxBlitFunc.c config.c themes.c menu.c \
-	util.c unzip.c ioapi.c unpack.c $(PLATFORM) $(INSTEAD_SRC)
+	utils.c unzip.c ioapi.c unpack.c $(PLATFORM) $(INSTEAD_SRC)
 
 H	:= config.h externals.h game.h graphics.h input.h internals.h ioapi.h iowin32.h \
 	menu.h SDL_rotozoom.h SDL_anigif.h SDL_gfxBlitFunc.h sound.h themes.h unzip.h $(INSTEAD_H)

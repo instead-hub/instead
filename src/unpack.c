@@ -41,7 +41,7 @@
 #endif
 
 #include "unzip.h"
-#include "util.h"
+#include "utils.h"
 
 #define CASESENSITIVITY (0)
 #define WRITEBUFFERSIZE (8192)

@@ -14,7 +14,7 @@ SET(INSTEAD_SRCS
 	themes.c
 	unpack.c
 	unzip.c
-	util.c
+	utils.c
 	instead_bits.c
 	instead_sprites.c
 	instead_timer.c

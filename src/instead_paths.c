@@ -25,7 +25,7 @@
 #include "externals.h"
 #include "internals.h"
 
-#include "util.h"
+#include "utils.h"
 
 static int luaB_get_savepath(lua_State *L) {
 	lua_pushstring(L, dirname(game_save_path(1, 0)));
