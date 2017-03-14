@@ -1,6 +1,10 @@
 #ifndef S60_H
 #define S60_H
+
+#ifndef PATH_MAX
 #define PATH_MAX 256
+#endif
+
 #define VERSION "2.5.0"
 #define DATAPATH "./"
 #define STEAD_PATH DATAPATH"stead/"

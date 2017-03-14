@@ -35,7 +35,7 @@
 
 #include <sys/unistd.h>
 
-#include "snprintf.h"
+#include "instead/snprintf.h"
 #include "internals.h"
 
 #ifndef PATH_MAX

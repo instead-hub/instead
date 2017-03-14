@@ -3224,7 +3224,7 @@ static int kbd_instead(struct inp_event *ev, int *x, int *y)
 		; /* nothing todo */
 	} else if (!alt_pressed && (!is_key(ev, "return") || !is_key(ev, "enter")
 #ifdef S60
-				    || !is_key(&ev, ".")
+				    || !is_key(ev, ".")
 #endif
 				    )) {
 		gfx_cursor(x, y);
