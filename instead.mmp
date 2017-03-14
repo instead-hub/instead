@@ -8,6 +8,7 @@ MACRO unix
 MACRO _HAVE_ICONV
 MACRO _LOCAL_APPDATA
 MACRO _SDL_MOD_BUG
+MACRO _USE_SDL
 
 SYSTEMINCLUDE  /epoc32/include/libc /epoc32/include/esdl /epoc32/include/mmf/plugin /epoc32/include
 // /epoc32/include/stdapis 
@@ -15,11 +16,10 @@ SYSTEMINCLUDE  /epoc32/include/libc /epoc32/include/esdl /epoc32/include/mmf/plu
 sourcepath ./src
 SOURCE symbian.cpp
 SOURCE s60.c
-SOURCE instead/instead.c instead/util.c instead/list.c instead/cache.c instead/idf.c instead/tinymt32.c instead/lfs.c
-SOURCE graphics.c input.c game.c main.c instead.c sound.c SDL_rotozoom.c SDL_anigif.c SDL_gfxBlitFunc.c config.c themes.c menu.c util.c list.c cache.c unzip.c ioapi.c unpack.c lfs.c idf.c tinymt32.c
-SOURCE snprintf.c
+SOURCE graphics.c input.c game.c main.c instead_bits.c instead_paths.c instead_sound.c instead_sprites.c instead_timer.c sound.c SDL_rotozoom.c SDL_anigif.c SDL_gfxBlitFunc.c config.c themes.c menu.c unzip.c ioapi.c unpack.c utils.c
+SOURCE instead/instead.c instead/list.c instead/cache.c instead/idf.c instead/tinymt32.c instead/lfs.c instead/util.c
 
-USERINCLUDE ./src/sdl-instead
+USERINCLUDE ./src ./src/instead
 
 MACRO S60V3
 
