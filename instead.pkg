@@ -43,6 +43,7 @@
 ".\symbian_gamedata\appdata\games\tutorial3\main-pt.lua" -"!:\data\instead\appdata\games\tutorial3\main-pt.lua"
 ".\symbian_gamedata\appdata\games\tutorial3\main-de.lua" -"!:\data\instead\appdata\games\tutorial3\main-de.lua"
 ".\symbian_gamedata\appdata\games\tutorial3\main-fr.lua" -"!:\data\instead\appdata\games\tutorial3\main-fr.lua"
+".\symbian_gamedata\appdata\games\tutorial3\main-nl.lua" -"!:\data\instead\appdata\games\tutorial3\main-nl.lua"
 ".\symbian_gamedata\appdata\games\tutorial3\ru.png" -"!:\data\instead\appdata\games\tutorial3\ru.png"
 ".\symbian_gamedata\appdata\games\tutorial3\uk.png" -"!:\data\instead\appdata\games\tutorial3\uk.png"
 ".\symbian_gamedata\appdata\games\tutorial3\gb.png" -"!:\data\instead\appdata\games\tutorial3\gb.png"
