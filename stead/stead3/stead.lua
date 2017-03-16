@@ -2279,7 +2279,6 @@ local function __dump(t, nested)
 			return string.format("%s", k)
 		end
 	elseif type(t) == 'table' and not t.__visited then
-		t.__visited = true
 		if std.tables[t] and nested then
 			local k = std.tables[t]
 			return string.format("%s", k)
@@ -2292,6 +2291,7 @@ local function __dump(t, nested)
 			end
 			return rc
 		end
+		t.__visited = true
 		local k,v
 		local nkeys = {}
 		local keys = {}
@@ -2335,6 +2335,8 @@ local function __dump(t, nested)
 			end
 		end
 		rc = rc:gsub(",[ \t]*$", "") .. " }"
+	elseif type(t) == 'table' then -- visited!
+		std.err("Can not save table with cross-references.", 2)
 	end
 	return rc
 end
