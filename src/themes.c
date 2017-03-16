@@ -875,7 +875,7 @@ skip:
 	}
 
 	if (t->cursor_name && (t->changed & CHANGED_CURSOR)) {
-		gfx_free_image(t->cursor);	
+		gfx_free_image(t->cursor);
 		if (!(t->cursor = gfx_load_image(t->cursor_name))) {
 			res = t->cursor_name;
 			goto err;

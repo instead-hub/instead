@@ -48,14 +48,14 @@ void game_cursor(int on);
 void game_res_err_msg(const char *filename, int alert)
 {
 	static const char preambule[] = "Can't load: ";
-	char *msg;
-	if (!filename || !*filename)
+	char *msg; unsigned int s;
+	if (!filename || (!*filename && !alert))
 		return;
 	if (alert && curgame_dir) {
-		msg = malloc(sizeof(preambule) + strlen(filename));
+		s = sizeof(preambule) + strlen(filename) + 2;
+		msg = malloc(s);
 		if (msg) {
-			strcpy(msg, preambule);
-			strcat(msg, filename);
+			snprintf(msg, s, "%s\"%s\"", preambule, filename);
 			instead_err_msg(msg);
 			free(msg);
 		}
