@@ -28,6 +28,7 @@ stead = {
 	pcall = pcall;
 	io = io;
 	os = os;
+	readdir = instead_readdir,
 	string = string;
 	next = next;
 	loadfile = loadfile;
