@@ -1500,6 +1500,9 @@ std.obj = std.class {
 		end
 	end;
 	__dump = function(s)
+		if not s:visible() or s:closed() then
+			return
+		end
 		return s.obj:__dump(true)
 	end;
 	lifeon = function(s)
