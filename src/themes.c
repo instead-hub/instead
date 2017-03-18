@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2017 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -955,14 +955,12 @@ int game_theme_init(void)
 				gfx_get_max_mode(&w, &h, MODE_ANY); /* fallback to any mode */
 			}
 		}
-#if defined(ANDROID) || defined(IOS)
 		if (game_theme.w > game_theme.h)
 			rotate_landscape();
 		else if (game_theme.w < game_theme.h)
 			rotate_portrait();
 		else
 			unlock_rotation();
-#endif
 #endif
 	}
 #if defined(ANDROID) || defined(IOS)
