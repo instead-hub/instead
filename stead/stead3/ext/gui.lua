@@ -14,7 +14,7 @@ local instead = std.obj {
 
 function instead.atleast(...)
 	for k, v in std.ipairs {...} do
-		if std.type(k) ~= 'number' then
+		if std.type(v) ~= 'number' then
 			return false
 		end
 		if v > (instead.version_table[k] or 0) then
@@ -34,7 +34,10 @@ function instead.version(...)
 	if not instead.atleast(...) then
 		local v = false
 		for k, n in std.ipairs({...}) do
-			v = (v and (v .. '.') or '').. std.tonum(n)
+			if std.type(n) ~= 'number' then
+				std.err([[Wrong instead.version argument: ]]..std.tostr(n), 2)
+			end
+			v = (v and (v .. '.') or '').. std.tostr(n)
 		end
 		std.err ([[The game requires instead engine of version ]] ..(v or '???').. [[ or higher.
 		http://instead.sourceforge.net]], 2)

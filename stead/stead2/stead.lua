@@ -76,7 +76,7 @@ stead.menu_toggle = instead_menu_toggle
 
 stead.api_atleast = function(...)
 	for k, v in stead.ipairs {...} do
-		if stead.type(k) ~= 'number' then
+		if stead.type(v) ~= 'number' then
 			return false
 		end
 		if v > (stead.api_version_table[k] or 0) then
