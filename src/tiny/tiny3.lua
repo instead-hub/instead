@@ -46,6 +46,13 @@ end
 function instead.restart(v)
 end
 
+function instead.atleast(...)
+	return true
+end
+
+function instead.version(...)
+end
+
 function iface:title(str) -- hide title
 	return str
 end

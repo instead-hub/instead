@@ -4,10 +4,42 @@ local std = stead
 
 local instead = std.obj {
 	nam = '@instead';
+
+	version_table = {3, 0, 0};
+
 	ini = function(s) -- after reset always do fade
 		s.need_fading(true)
 	end;
 }
+
+function instead.atleast(...)
+	for k, v in std.ipairs {...} do
+		if std.type(k) ~= 'number' then
+			return false
+		end
+		if v > (instead.version_table[k] or 0) then
+			return false
+		end
+		if v < (instead.version_table[k] or 0) then
+			return true
+		end
+	end
+	return true
+end
+
+function instead.version(...)
+	if #{...} == 0 then
+		return instead.version_table
+	end
+	if not instead.atleast(...) then
+		local v = false
+		for k, n in std.ipairs({...}) do
+			v = (v and (v .. '.') or '').. std.tonum(n)
+		end
+		std.err ([[The game requires instead engine of version ]] ..(v or '???').. [[ or higher.
+		http://instead.sourceforge.net]], 2)
+	end
+end
 
 function instead.need_fading(v)
 	local ov = instead.__need_fading
