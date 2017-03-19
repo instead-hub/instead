@@ -29,9 +29,12 @@ static LIST_HEAD(sprites);
 
 static LIST_HEAD(fonts);
 
+#define FN_SCALED 1
+
 typedef struct {
 	struct list_node list;
 	char	*name;
+	int	flags;
 	fnt_t	fnt;
 } _fnt_t;
 
@@ -132,6 +135,7 @@ static _fnt_t *font_new(const char *name, fnt_t fnt)
 		return NULL;
 	}
 	fn->fnt = fnt;
+	fn->flags = 0;
 	list_add(&fonts, &fn->list);
 	return fn;
 }
@@ -223,6 +227,7 @@ err:
 }
 
 static int luaB_load_font(lua_State *L) {
+	int scaled = 0;
 	fnt_t fnt = NULL;
 	_fnt_t *fn;
 	const char *key;
@@ -234,9 +239,10 @@ static int luaB_load_font(lua_State *L) {
 	const char *desc = luaL_optstring(L, 3, NULL);
 	if (!fname || sz == 0)
 		return 0;
-	if (sz > 0)
+	if (sz > 0) {
 		sz *= game_theme.scale;
-	else
+		scaled = 1;
+	} else
 		sz = - sz; /* sz < 0 is unscalable */
 	fnt = fnt_load((char*)fname, sz);
 
@@ -252,6 +258,9 @@ static int luaB_load_font(lua_State *L) {
 	fn = font_new(key, fnt);
 	if (!fn)
 		goto err;
+
+	if (scaled)
+		fn->flags |= FN_SCALED;
 
 	lua_pushstring(L, key);
 	return 1;
@@ -276,11 +285,16 @@ static int luaB_text_size(lua_State *L) {
 		return 0;
 	if (!text) {
 		w = 0;
-		h = ceil((float)fnt_height(fn->fnt) / game_theme.scale);
+		if (fn->flags & FN_SCALED)
+			h = ceil((float)fnt_height(fn->fnt) / game_theme.scale);
+		else
+			h = fnt_height(fn->fnt);
 	} else {
 		txt_size(fn->fnt, text, &w, &h);
-		w = ceil((float)w / game_theme.scale);
-		h = ceil((float)h / game_theme.scale);
+		if (fn->flags & FN_SCALED) {
+			w = ceil((float)w / game_theme.scale);
+			h = ceil((float)h / game_theme.scale);
+		}
 	}
 	lua_pushinteger(L, w);
 	lua_pushinteger(L, h);
