@@ -94,6 +94,8 @@ extern int 	game_error(void);
 extern int	game_restart(void);
 extern int	game_select(const char *name);
 
+extern void game_gfx_clip(void);
+
 #define GAME_CMD_CLICK 1
 #define GAME_CMD_FILE  2
 #define GAME_CMD_NOHL  4

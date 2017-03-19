@@ -1271,7 +1271,7 @@ void el_draw(int n)
 	y = o->y;
 	if (!o->p.p)
 		return;
-
+	game_gfx_clip();
 	game_cursor(CURSOR_CLEAR);
 	if (o->type == elt_image)
 		gfx_draw(o->p.img, x, y);
@@ -1282,6 +1282,7 @@ void el_draw(int n)
 		box_update_scrollbar(o->id);
 	}
 	o->drawn = 1;
+	gfx_noclip();
 	return;
 }
 
@@ -1662,6 +1663,13 @@ static void game_pict_clip(void)
 		h = game_theme.max_scene_h;
 	}
 	gfx_clip(x, y, w, h);
+}
+
+void game_gfx_clip(void)
+{
+	gfx_clip(game_theme.xoff, game_theme.yoff,
+		game_theme.w - 2 * game_theme.xoff,
+		game_theme.h - 2 * game_theme.yoff);
 }
 
 static void game_redraw_pic(void)

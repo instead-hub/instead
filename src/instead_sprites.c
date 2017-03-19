@@ -465,7 +465,7 @@ static int luaB_blit_sprite(lua_State *L, int mode) {
 		if (img2)
 			s = img2;
 	}
-	gfx_clip(game_theme.xoff, game_theme.yoff, game_theme.w - 2*game_theme.xoff, game_theme.h - 2*game_theme.yoff);
+	game_gfx_clip();
 
 	switch (mode) {
 	case BLIT_DRAW:
@@ -724,7 +724,7 @@ static int luaB_fill_sprite(lua_State *L) {
 	if (h == -1)
 		h = gfx_img_h(d) - 2 * yoff;
 	game_pict_modify(d);
-	gfx_clip(game_theme.xoff, game_theme.yoff, game_theme.w - 2*game_theme.xoff, game_theme.h - 2*game_theme.yoff);
+	game_gfx_clip();
 	gfx_img_fill(d, x + xoff, y + yoff, w, h, col);
 	gfx_noclip();
 	lua_pushboolean(L, 1);
