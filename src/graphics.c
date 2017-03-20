@@ -1966,17 +1966,6 @@ int gfx_set_mode(int w, int h, int fs)
 	}
 	vid_modes = NULL;
 
-	if (SDL_VideoWindow) {
-		SDL_GetWindowPosition(SDL_VideoWindow, &window_x, &window_y);
-		SDL_DestroyWindow(SDL_VideoWindow);
-		SDL_VideoWindow = NULL;
-		if ((gfx_fs == 1 && !fs) || (window_x == 0 || window_y == 0)) { /* return from fullscreen */
-			window_x = SDL_WINDOWPOS_CENTERED;
-			window_y = SDL_WINDOWPOS_CENTERED;
-		}
-	} else
-		GetEnvironmentWindowPosition(win_w, win_h, &window_x, &window_y);
-
 	if (screen)
 		gfx_free_image(screen);
 	if (SDL_VideoTexture)
@@ -1987,6 +1976,17 @@ int gfx_set_mode(int w, int h, int fs)
 	screen = NULL;
 	Renderer = NULL;
 	SDL_VideoTexture = NULL;
+
+	if (SDL_VideoWindow) {
+		SDL_GetWindowPosition(SDL_VideoWindow, &window_x, &window_y);
+		SDL_DestroyWindow(SDL_VideoWindow);
+		SDL_VideoWindow = NULL;
+		if ((gfx_fs == 1 && !fs) || (window_x == 0 || window_y == 0)) { /* return from fullscreen */
+			window_x = SDL_WINDOWPOS_CENTERED;
+			window_y = SDL_WINDOWPOS_CENTERED;
+		}
+	} else
+		GetEnvironmentWindowPosition(win_w, win_h, &window_x, &window_y);
 
 	if (desktop_mode.w <= win_w || fs)
 		window_x = 0;
@@ -5458,14 +5458,14 @@ int gfx_init(void)
 void gfx_done(void)
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
-	if (SDL_VideoWindow)
-		SDL_DestroyWindow(SDL_VideoWindow);
 	if (screen)
 		gfx_free_image(screen);
 	if (SDL_VideoTexture)
 		SDL_DestroyTexture(SDL_VideoTexture);
 	if (Renderer)
 		SDL_DestroyRenderer(Renderer);
+	if (SDL_VideoWindow)
+		SDL_DestroyWindow(SDL_VideoWindow);
 #endif
 	cache_free(images);
 	images = NULL;
