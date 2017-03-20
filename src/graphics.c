@@ -1968,8 +1968,10 @@ int gfx_set_mode(int w, int h, int fs)
 
 	if (screen)
 		gfx_free_image(screen);
-	if (SDL_VideoTexture)
-		SDL_DestroyTexture(SDL_VideoTexture);
+
+/*	if (SDL_VideoTexture)
+		SDL_DestroyTexture(SDL_VideoTexture); */
+
 	if (Renderer)
 		SDL_DestroyRenderer(Renderer);
 
@@ -5460,8 +5462,8 @@ void gfx_done(void)
 #if SDL_VERSION_ATLEAST(2,0,0)
 	if (screen)
 		gfx_free_image(screen);
-	if (SDL_VideoTexture)
-		SDL_DestroyTexture(SDL_VideoTexture);
+/*	if (SDL_VideoTexture)
+		SDL_DestroyTexture(SDL_VideoTexture); */
 	if (Renderer)
 		SDL_DestroyRenderer(Renderer);
 	if (SDL_VideoWindow)
