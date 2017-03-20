@@ -5457,6 +5457,16 @@ int gfx_init(void)
 
 void gfx_done(void)
 {
+#if SDL_VERSION_ATLEAST(2,0,0)
+	if (SDL_VideoWindow)
+		SDL_DestroyWindow(SDL_VideoWindow);
+	if (screen)
+		gfx_free_image(screen);
+	if (SDL_VideoTexture)
+		SDL_DestroyTexture(SDL_VideoTexture);
+	if (Renderer)
+		SDL_DestroyRenderer(Renderer);
+#endif
 	cache_free(images);
 	images = NULL;
 	SDL_Quit();
