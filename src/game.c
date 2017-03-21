@@ -391,6 +391,7 @@ static int games_add(const char *path, const char *dir)
 int games_replace(const char *path, const char *dir)
 {
 	int rc;
+	int cur = 0;
 	char *p;
 	struct game *g;
 	struct game *new_games;
@@ -398,6 +399,8 @@ int games_replace(const char *path, const char *dir)
 		return -1;
 	g = game_lookup(dir);
 	if (g) {
+		if (curgame_dir == g->dir)
+			cur = 1;
 		if (g->idf)
 			p = getfilepath(path, dir);
 		else
@@ -408,6 +411,8 @@ int games_replace(const char *path, const char *dir)
 		game_fill(g, p, dir);
 		free(p);
 		games_sort();
+		if (cur)
+			curgame_dir = g->dir;
 		return 0;
 	}
 	new_games = realloc(games, sizeof(struct game) * (1 + games_nr));
