@@ -411,8 +411,10 @@ int games_replace(const char *path, const char *dir)
 		game_fill(g, p, dir);
 		free(p);
 		games_sort();
-		if (cur)
+		if (cur) {
 			curgame_dir = g->dir;
+			game_reset_name();
+		}
 		return 0;
 	}
 	new_games = realloc(games, sizeof(struct game) * (1 + games_nr));
@@ -1069,6 +1071,9 @@ void game_done(int err)
 		game_cfg_save();
 	}
 	curgame_dir = NULL;
+
+	gfx_del_timer(timer_han);
+	timer_han = NULL;
 
 	if (menu_shown)
 		menu_toggle(-1);
