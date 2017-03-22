@@ -3060,6 +3060,7 @@ int game_from_disk(void)
 	game_cursor(CURSOR_OFF);
 	browse_dialog = 1;
 	g = p = open_file_dialog();
+	setdir(game_cwd); /* dir can be changed */
 	browse_dialog = 0;
 	game_cursor(CURSOR_ON);
 	mouse_cursor(0);
