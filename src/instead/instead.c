@@ -972,6 +972,7 @@ int instead_init_lua(const char *path, int detect)
 
 	if (detect && (api = instead_detect_api(path)) < 0) {
 		fprintf(stderr, "Can not detect game format: %s\n", path);
+		instead_err_msg("Can not detect game format.");
 		return -1;
 	}
 

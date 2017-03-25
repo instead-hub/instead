@@ -391,7 +391,6 @@ static int games_add(const char *path, const char *dir)
 int games_replace(const char *path, const char *dir)
 {
 	int rc;
-	int cur = 0;
 	char *p;
 	struct game *g;
 	struct game *new_games;
@@ -399,8 +398,6 @@ int games_replace(const char *path, const char *dir)
 		return -1;
 	g = game_lookup(dir);
 	if (g) {
-		if (curgame_dir == g->dir)
-			cur = 1;
 		if (g->idf)
 			p = getfilepath(path, dir);
 		else
@@ -411,10 +408,6 @@ int games_replace(const char *path, const char *dir)
 		game_fill(g, p, dir);
 		free(p);
 		games_sort();
-		if (cur) {
-			curgame_dir = g->dir;
-			game_reset_name();
-		}
 		return 0;
 	}
 	new_games = realloc(games, sizeof(struct game) * (1 + games_nr));
@@ -3059,14 +3052,16 @@ int game_from_disk(void)
 	mouse_cursor(1);
 	game_cursor(CURSOR_OFF);
 	browse_dialog = 1;
+	getdir(dir, sizeof(dir));
 	g = p = open_file_dialog();
-	setdir(game_cwd); /* dir can be changed */
+	setdir(dir); /* dir can be changed */
 	browse_dialog = 0;
 	game_cursor(CURSOR_ON);
 	mouse_cursor(0);
 	gfx_flip();
 	if (!p)
 		return -1;
+	game_done(0);
 	strcpy(dir, p);
 	strcpy(base, p);
 	d = dir; b = base;
@@ -3084,7 +3079,7 @@ int game_from_disk(void)
 	fprintf(stderr,"Trying to install: %s\n", g);
 	if (!unpack(g, p)) {
 		if (!zip_game_dirname[0])
-			return -1;
+			goto err;
 		if (games_replace(p, zip_game_dirname))
 			goto clean;
 		p = zip_game_dirname;
@@ -3094,10 +3089,10 @@ int game_from_disk(void)
 	if (0) {
 #endif
 	} else if (games_replace(d, b)) {
-		return -1;
+		goto err;
 	} else
 		p = b;
-	game_done(0);
+
 	if (game_init(p)) {
 		game_error();
 	}
@@ -3108,6 +3103,8 @@ clean:
 	fprintf(stderr, "Cleaning: '%s'...\n", p);
 	remove_dir(p);
 	free(p);
+err:
+	game_error();
 	return -1;
 #endif
 }
