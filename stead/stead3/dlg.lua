@@ -56,7 +56,7 @@ std.dlg = std.class({
 		end
 		return std.par(std.scene_delim, title or false, lact or false, dsc)
 	end;
-	onact = function(s, w) -- show dsc by default
+	__onact = function(s, w) -- show dsc by default
 		if not std.phrase_show then
 			return
 		end
@@ -319,6 +319,7 @@ std.phr = std.class({
 	act = function(s, ...)
 		local n = s
 --		s = s:__alias()
+		local onact = s:inroom():__onact(s)
 		local w = s:where()
 		if w and w.only then -- only one choice
 			for i = 1, #w.obj do
@@ -333,6 +334,8 @@ std.phr = std.class({
 		local cur = std.here().current
 
 		local r, v = std.call(s, 'ph_act', ...)
+
+		r = std.par(std.scene_delim, onact or false, r or false), v
 
 		if std.me():moved() or cur ~= std.here().current then
 			return r, v
