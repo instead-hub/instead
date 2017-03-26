@@ -1066,7 +1066,7 @@ void game_done(int err)
 	curgame_dir = NULL;
 
 	gfx_del_timer(timer_han);
-	timer_han = NULL;
+	timer_han = NULL_TIMER;
 
 	if (menu_shown)
 		menu_toggle(-1);
