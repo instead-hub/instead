@@ -187,6 +187,9 @@ std.dlg = std.class({
 		if not r then
 			return
 		end
+		if not std.is_obj(r, 'phr') then -- simple object
+			return std.room.srch(s, w)
+		end
 		w = oo.obj:for_each(function(v) -- aliases
 			v = v:__alias()
 			if not v:visible() then
