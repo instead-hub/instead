@@ -1774,6 +1774,9 @@ std.world = std.class({
 	end;
 	cmd = function(s, cmd)
 		local r, v
+		if not std.is_obj(s.player) then
+			std.err("Wrong player object.", 2)
+		end
 		s.player:moved(false)
 		s.player:need_scene(false)
 		std.abort_cmd = false
