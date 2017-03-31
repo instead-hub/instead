@@ -432,6 +432,9 @@ function path(t)
 		end;
 		after = t.after;
 		walk = w;
+		onwalk = function(s, f)
+			return s:onenter(f)
+		end;
 		onenter = function(s)
 			if disabled(s.walk) or closed(s.walk) then
 				return false

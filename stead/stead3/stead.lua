@@ -2077,6 +2077,15 @@ std.player = std.class ({
 			return t, true
 		end
 
+		r, v = std.call(inwalk, 'onwalk', f)
+
+		t = std.par(std.scene_delim, t or false, r)
+
+		if v == false or s:moved() then -- stop walk
+			if not s:moved() then s:moved(moved) end
+			return t, true
+		end
+
 		if not noexit and not s.__in_onexit then
 			s.__in_onexit = true
 			r, v = std.call(s:where(), 'onexit', inwalk)
