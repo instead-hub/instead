@@ -1431,7 +1431,7 @@ room {
 ```
 room {
 	onenter = function(s, f)
-		if f/'main' then
+		if f^'main' then
 			p 'Вы идете из комнаты main.';
 		end
 	end;
@@ -1439,7 +1439,7 @@ room {
 	dsc = 'Вы в огромном зале.';
 	way = { 'main' };
 	onexit = function(s, t)
-		if t/'main' then
+		if t^'main' then
 			p 'Я не хочу назад!'
             return false
 		end
@@ -1448,7 +1448,7 @@ room {
 ```
 Запись вида:
 
-	if f/'main' then
+	if f^'main' then
 
 Это сопоставление объекта с именем. Это альтернатива записям:
 
@@ -1675,7 +1675,7 @@ obj {
 
 ```
 use = function(s, w)
-	if w/'яблоко' then
+	if w^'яблоко' then
 		p [[Я почистил яблоко.]]
 		w.cut = true
 		return
@@ -1691,7 +1691,7 @@ end
 
 ```
 use = function(s, w)
-	if w/'яблоко' then
+	if w^'яблоко' then
 		p [[Я почистил яблоко.]]
 		w.cut = true
 		return
@@ -1709,7 +1709,7 @@ obj {
 	nam = 'мусорка';
 	dsc = [[В угло стоит {мусорка}.]];
 	used = function(s, w)
-		if w/'яблоко' then
+		if w^'яблоко' then
 			p [[Я выбросил яблоко в мусорку.]]
 			remove(w)
 			return
@@ -1921,7 +1921,7 @@ end
 А также, для нахождения объекта в сцене:
 ```
 use = function(s, w)
-	if w/'окно' then
+	if w^'окно' then
 		local ww = lookup 'собака'
 		if not ww then
 			p [[А где моя собака?]]
@@ -2885,7 +2885,7 @@ obj {
 	nam  = 'динамит';
 	timer = 0;
 	used = function(s, w)
-		if w/'спичка' then -- спичка?
+		if w^'спичка' then -- спичка?
 			if live(s) then
 				return "Уже горит!"
 			end
@@ -3546,7 +3546,7 @@ window = function(v)
         end
         if v.used == nil then
                 v.used = function(s, w)
-                        if w/'молоток' then
+                        if w^'молоток' then
                                  if s.broken then
                                          p [[Окно уже разбито.]]
                                  else

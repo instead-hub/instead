@@ -467,7 +467,7 @@ function std.class(s, inh)
 		end
 		return std.dispof(self)
 	end;
-	s.__div = function(s, b)
+	s.__pow = function(s, b)
 		if type(b) == 'string' or type(b) == 'number' then
 			if std.is_tag(b) then
 				return std.rawequal(s.tag, b)
