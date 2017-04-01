@@ -2517,6 +2517,7 @@ std.call = function(v, n, ...)
 	end
 	local r, v, c = std.method(v, n, ...)
 	if std.strip_call and type(r) == 'string' then
+		r = r:gsub("^[%^\n\r\t ]+", "") -- extra heading ^ and spaces
 		r = r:gsub("[%^\n\r\t ]+$", "") -- extra trailing ^ and spaces
 		return r, v, c
 	end
