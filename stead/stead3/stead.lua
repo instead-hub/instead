@@ -45,6 +45,8 @@ stead = {
 
 local std = stead
 
+std.strip_call = true
+
 function std.dprint(...)
 	local a = { ... }
 	for i = 1, #a do
@@ -2514,9 +2516,8 @@ std.call = function(v, n, ...)
 		std.err("Call on non table object: "..std.tostr(n), 2)
 	end
 	local r, v, c = std.method(v, n, ...)
-	if type(r) == 'string' then
-		r = r:gsub("[%^]+$", "") -- extra trailing ^
-		r = r:gsub("[ \t]+$", "") -- and spaces
+	if std.strip_call and type(r) == 'string' then
+		r = r:gsub("[%^\n\r\t ]+$", "") -- extra trailing ^ and spaces
 		return r, v, c
 	end
 	return r or nil, v, c
