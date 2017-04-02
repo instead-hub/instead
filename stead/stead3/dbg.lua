@@ -595,7 +595,11 @@ local dbg = std.obj {
 			return
 		end
 		if #hint == 1 and edit ~= false then
-			s.input = s.input:gsub("[ \t]+[^ \t]+$", " "):gsub("^[^ \t]+$", "")
+			local _, par = s.commands:lookup(s.input)
+			if par then
+				local len = par:len()
+				s.input = s.input:sub(1, s.input:len() - len)
+			end
 			s.input = s.input .. hint[1]..' '
 			s.cursor = #s.input + 1
 			s:completion(edit)
