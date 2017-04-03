@@ -14,7 +14,6 @@ stead = {
 	tostr = tostring;
 	tonum = tonumber;
 	type = type;
-	err = error;
 	setmt = setmetatable;
 	getmt = getmetatable;
 	table = table;
@@ -46,6 +45,16 @@ stead = {
 local std = stead
 
 std.strip_call = true
+
+local error = error
+
+function std.err(msg, lev)
+	if std.noerror then
+		std.dprint(msg)
+	else
+		error(msg, lev)
+	end
+end
 
 function std.dprint(...)
 	local a = { ... }
@@ -906,7 +915,18 @@ function std:load(fname) -- load save
 		std.err(err, 2)
 	end
 
-	local strict = std.nostrict; std.nostrict = true; f(); std.nostrict = strict
+	local strict = std.nostrict; std.nostrict = true;
+	if DEBUG then
+		std.noerror = true
+		local st, r = std.pcall(f)
+		if not st then
+			std.dprint(r)
+		end
+		std.noerror = false
+	else
+		f();
+	end
+	std.nostrict = strict
 
 	std.ref 'game':__ini(true)
 	return self.game:lastdisp()
@@ -2466,6 +2486,10 @@ function std.ref(o)
 	local oo = std.objects
 	if oo[o] then
 		return oo[o]
+	end
+	if std.noerror then
+		std.dprint("Reference to non-existing object: ", std.tostr(o))
+		return {} -- give fake object
 	end
 end
 

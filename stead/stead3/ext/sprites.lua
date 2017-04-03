@@ -543,7 +543,7 @@ local pixels = {
 
 function pixels.fnt(name, sz, ...)
 	if not std.tonum(sz) then
-		error("No font size specified.", 2)
+		std.err("No font size specified.", 2)
 	end
 	return pfnt:new(instead.font_load(name, -sz, ...))
 end
