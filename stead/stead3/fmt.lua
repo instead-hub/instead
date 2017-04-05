@@ -26,7 +26,8 @@ std.format = function(r, state)
 	if utf8 then
 		if fmt.dash then
 			r = r:gsub("%-%-%-*", { ['--'] = '—' })
-		--	r = r:gsub("—[ \t]+", "— "); -- do not break dash
+			r = r:gsub("[ \t]+—", "<w:>—"); -- do not break dash
+--			r = r:gsub("—[ \t]+", "—<w:>");
 			r = r:gsub("^([^ \t]*)—[ \t]+", "%1— ");
 			r = r:gsub("(\n[^ \t]*)—[ \t]+", "%1— ");
 		end

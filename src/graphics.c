@@ -4760,25 +4760,23 @@ out:
 	return eptr;
 }
 
-int get_unbrakable_len(struct layout *layout, const char *ptr)
+int get_unbreakable_len(struct layout *layout, const char *ptr)
 {
 	int w = 0;
 	int ww = 0;
 	char *p, *eptr;
 	while (ptr && *ptr) {
-		int sp, sp2 = 0;
+		int sp;
 		while (gfx_get_token(ptr, &eptr, NULL, &sp)) {
 			if (sp)
-				sp2 ++;
+				return w;
 			ptr = eptr;
 		}
-		if (sp2)
-			return w;
 		p = get_word(ptr, &eptr, &sp);
 		if (!p)
 			return w;
 
-		if (sp || !*p || cjk_here(p) || word_img(p, NULL) || word_token(p, NULL)) {
+		if (sp || !*p || cjk_here(p) || word_img(p, NULL) || (word_token(p, NULL) > 1)) {
 			free(p);
 			return w;
 		}
@@ -4931,7 +4929,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 			break;
 		img = get_img(layout, p, &img_align);
 		if (!img_align) /* margins reset */
-			addlen = get_unbrakable_len(layout, eptr);
+			addlen = get_unbreakable_len(layout, eptr);
 
 		wtok = 0;
 		if (img) {
@@ -4948,6 +4946,8 @@ void _txt_layout_add(layout_t lay, char *txt)
 			}
 		} else {
 			p = get_word_token(p, &wtok);
+			if (wtok && *p == 0)
+				sp = 1;
 			txt_size(layout->fn, p, &w, &h);
 			h *= layout->fn_height;
 		}
