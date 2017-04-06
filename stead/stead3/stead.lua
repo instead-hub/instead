@@ -5,6 +5,7 @@ stead = {
 	call_top = 0,
 	call_ctx = { txt = nil, self = nil },
 	objects = {};
+	tags = {};
 	next_dynamic = -1;
 	max_dynamic = 32767;
 	tables = {};
@@ -1066,6 +1067,7 @@ function std:done()
 		end
 	end)
 	std.objects = objects
+	std.tags = {}
 	std.next_dynamic = -1
 	if std.ref 'game' then
 		std.delete('game')
@@ -1152,6 +1154,16 @@ local function dyn_name()
 	return n
 end
 
+local function tag_name(t)
+	local oo = std.objects
+	local tt = std.tags[t] or {}
+	local n = t:sub(2) .. '#'..std.tonum(#tt)
+	if oo[n] then return #oo + 1 end -- collision
+	table.insert(tt, n)
+	std.tags[t] = tt
+	return n
+end
+
 std.obj = std.class {
 	__obj_type = true;
 	with = function(self, ...)
@@ -1183,11 +1195,16 @@ std.obj = std.class {
 		if v.nam == nil then
 			if std.__in_new then
 				rawset(v, 'nam', dyn_name())
+			elseif std.is_tag(v.tag) then
+				rawset(v, 'nam', tag_name(v.tag))
 			else
 				rawset(v, 'nam', #oo + 1)
 			end
+			rawset(v, '__autoname', true)
 		elseif type(v.nam) ~= 'string' and type(v.nam) ~= 'number' then
 			std.err ("Wrong .nam in object.", 2)
+--		elseif type(v.nam) == 'string' and v.nam:find('#[0-9]+$') then
+--			std.err ("You can not use #<number> in object name: "..v.nam, 2)
 		end
 
 		if oo[v.nam] and not std.is_system(oo[v.nam]) then
@@ -2451,7 +2468,7 @@ function std.dispof(o)
 		local d = std.call(o, 'disp')
 		return d
 	end
-	if type(o.nam) ~= 'string' then
+	if o.__autoname then
 		if std.is_tag(o.tag) then
 			o = o.tag:sub(2)
 			return o
