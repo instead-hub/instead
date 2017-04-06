@@ -1336,12 +1336,16 @@ std.obj = std.class {
 		for i = 1, #list do
 			local l = list[i]
 			local ll = l.__list
-			o = ll[1]
-			if not w then
-				break
-			end
+
 			for k = 1, #ll do
-				table.insert(r, ll[k])
+				local oo = ll[k]
+				if std.is_obj(oo) and oo:lookup(s) then
+					o = o or oo
+					if o and not w then
+						break
+					end
+					table.insert(r, oo)
+				end
 			end
 		end
 		return o
@@ -1370,12 +1374,9 @@ std.obj = std.class {
 		s:where(where)
 		for i = 1, #where do
 			local o = where[i]
-			o.obj:del(s)
-			if std.is_obj(o, 'room') then
-				o.way:del(s)
-			end
-			if std.is_obj(o, 'player') then
-				o:inventory():del(s)
+			local _, l, i = o:lookup(s)
+			if l then
+				l:del(s)
 			end
 		end
 		return s, where
@@ -1992,6 +1993,17 @@ std.player = std.class ({
 		r, v, i = s:srch(w)
 		if r ~= nil then
 			return r, v, i
+		end
+		return
+	end;
+	lookup = function(self, w)
+		local r, v, i = std.obj.lookup(self, w)
+		if std.is_obj(r) then
+			return r, v, i
+		end
+		r, v = self:inventory():lookup(w)
+		if std.is_obj(r) then
+			return r, self:inventory(), v
 		end
 		return
 	end;
