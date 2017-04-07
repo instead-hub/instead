@@ -1069,15 +1069,6 @@ function std:done()
 	std.objects = objects
 	std.tags = {}
 	std.next_dynamic = -1
-	if std.ref 'game' then
-		std.delete('game')
-	end
-	if std.ref 'main' then
-		std.delete('main')
-	end
-	if std.ref 'player' then
-		std.delete('player')
-	end
 	std.files = {}
 --	std.modules = {}
 	std.includes = {}
