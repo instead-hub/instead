@@ -261,11 +261,11 @@ function push(w, ww)
 	return r, v
 end
 
-function empty(w)
+function empty(w, ...)
 	if not w then
 		return std.here():empty()
 	end
-	return std.object(w):empty(w)
+	return std.object(w):empty(...)
 end
 
 function lifeon(w, ...)
