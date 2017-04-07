@@ -370,7 +370,7 @@ std.fmt = function(str, fmt, state)
 	local xref = xref_prep
 	local s = str
 	s = string.gsub(s, '[\t \n]+', std.space_delim);
-	s = string.gsub(s, '\\?[\\^]', { ['^'] = '\n', ['\\^'] = '^'} );
+	s = string.gsub(s, '\\?[\\^]', { ['^'] = '\n', ['\\^'] = '^'} ):gsub("\n[ \t]+", "\n")
 	while true do
 		fmt_refs = {}
 		substs = false
@@ -2105,9 +2105,10 @@ std.player = std.class ({
 		if moved then
 			s:moved(false)
 		end
+		local ww = w
 		w = std.ref(w)
 		if not w then
-			std.err("Wrong parameter to walk: "..std.tostr(w))
+			std.err("Wrong parameter to walk: "..std.tostr(ww))
 		end
 
 --		if w == std.here() then -- nothing todo
