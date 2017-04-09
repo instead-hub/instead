@@ -411,7 +411,7 @@ end
 
 function path(t)
 	if type(t) ~= 'table' then
-		std.err("Wrong path() argument", 2)
+		std.err("Wrong path argument. Use {} as path argument.", 2)
 	end
 	local n, s, w = t[1], t[2], t[3]
 	if not w then
