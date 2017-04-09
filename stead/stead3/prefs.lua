@@ -9,7 +9,7 @@ local preferences = std.obj {
 			return false, err
 		end
 		local g = std.game
-		std.game = std.ref 'game' -- to make vars rw
+		std.game = nil -- to make vars rw
 		f();
 		std.game = g
 		return true
