@@ -8,10 +8,9 @@ local preferences = std.obj {
 		if not f then
 			return false, err
 		end
-		local g = std.game
-		std.game = nil -- to make vars rw
+		local strict = std.nostrict; std.nostrict = true
 		f();
-		std.game = g
+		std.nostrict = strict
 		return true
 	end,
 	store = function(s)
