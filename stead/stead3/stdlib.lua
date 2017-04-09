@@ -409,42 +409,55 @@ function drop(w, wh)
 	return place(w, wh)
 end
 
-function path(t)
-	if type(t) ~= 'table' then
-		std.err("Wrong path argument. Use {} as path argument.", 2)
-	end
-	local n, s, w = t[1], t[2], t[3]
-	if not w then
-		s, w = n, s
-		n = nil
-	end
-	return room {
-		nam = n or t.nam;
-		before = s;
-		disp = function(s)
-			if disabled(s.walk) or closed(s.walk) then
-				return false
+path = std.class({
+	__path_type = true;
+	new = function(self, t)
+		if type(t) ~= 'table' then
+			std.err("Wrong path argument. Use {} as path argument.", 2)
+		end
+		local n, s, w = t[1], t[2], t[3]
+
+		if not w then
+			s, w = n, s
+			n = nil
+		end
+
+		local new = {
+			before = s;
+			walk = w;
+		}
+
+		for k, v in std.pairs(t) do
+			if type(k) == 'string' then
+				new[k] = v
 			end
-			if s.after ~= nil and visited(w) then
-				return std.call(s, 'after')
-			end
-			return std.call(s, 'before')
-		end;
-		after = t.after;
-		walk = w;
-		onwalk = function(s, f)
-			if disabled(s.walk) or closed(s.walk) then
-				return false
-			end
-			if type(s.walk) == 'function' then
-				walk(s.walk())
-			else
-				walk(s.walk)
-			end
+		end
+
+		new.nam = n or new.nam
+
+		return std.room(new)
+	end;
+	disp = function(s)
+		if disabled(s.walk) or closed(s.walk) then
 			return false
 		end
-	}
-end
+		if s.after ~= nil and visited(s.walk) then
+			return std.call(s, 'after')
+		end
+		return std.call(s, 'before')
+	end;
+	onwalk = function(s, f)
+		if disabled(s.walk) or closed(s.walk) then
+			return false
+		end
+		if type(s.walk) == 'function' then
+			walk(s.walk())
+		else
+			walk(s.walk)
+		end
+		return false
+	end;
+}, std.room)
 
 function time(...)
 	return std.ref 'game':time(...)
