@@ -1,11 +1,11 @@
 [Setup]
 AppName=INSTEAD
-AppVerName=INSTEAD 2.5.0
+AppVerName=INSTEAD 3.0.0
 DefaultDirName={pf}\Games\INSTEAD
 DefaultGroupName=Games
 UninstallDisplayIcon={app}\sdl-instead.exe
 OutputDir=.
-OutputBaseFilename=instead-2.5.0
+OutputBaseFilename=instead-3.0.0
 AllowNoIcons=true
 SetupIconFile=icon\sdl_instead.ico
 ChangesAssociations=yes

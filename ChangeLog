@@ -1,4 +1,4 @@
-2.5.0
+3.0.0
 
   * refactoring (src/instead);
   * tiny-instead;
@@ -7,7 +7,7 @@
   * sound.load_mem;
   * sprite.pixels;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 09 Nov 2016 11:38:00 +0300
+ -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 19 Apr 2016 17:45:00 +0300
 
 2.4.1
 
