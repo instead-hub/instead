@@ -12,3 +12,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: simple text adventures/visual novels engine
  Visual novell/text quest-like engine.
 
+Package: instead-doc
+Architecture: all
+Description: instead: text adventures/visual novels engine
+ Documentation.

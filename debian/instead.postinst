@@ -1,0 +1,5 @@
+#!/bin/sh
+
+set -e
+
+ln -s /usr/bin/sdl-instead /usr/games/instead
