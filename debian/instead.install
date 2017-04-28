@@ -1,0 +1,16 @@
+src/sdl-instead usr/bin
+stead/stead2 usr/share/games/instead/stead
+stead/stead3 usr/share/games/instead/stead
+games/tutorial3 usr/share/games/instead/games
+lang/*ini usr/share/games/instead/lang
+desktop/instead.desktop usr/share/applications
+themes/arctic usr/share/games/instead/themes
+themes/bluesteel usr/share/games/instead/themes
+themes/book usr/share/games/instead/themes
+themes/clearlooks usr/share/games/instead/themes
+themes/default usr/share/games/instead/themes
+themes/fantasy usr/share/games/instead/themes
+themes/original usr/share/games/instead/themes
+themes/wide usr/share/games/instead/themes
+icon/*png usr/share/pixmaps
+icon/*svg /usr/share/pixmaps
