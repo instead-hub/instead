@@ -5136,7 +5136,7 @@ end
 ```
 Еще один пример (автор примера, Андрей Лобанов):
 ```
-require "sprites"
+require "sprite"
 require "timer"
 
 sprite.direct(true)
