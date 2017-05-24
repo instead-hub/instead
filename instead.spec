@@ -1,16 +1,16 @@
 Summary:	simple text adventures/visual novels engine and game
 Name:		instead
-Version:	3.0.0
+Version:	3.0.1
 Release:	1%{?dist}
 License:	MIT
 URL:		http://instead.sourceforge.net
 Source0:	%{name}_%{version}.tar.gz
 Group:		Amusements/Games
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n) 
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires: SDL-devel, SDL_mixer-devel, SDL_image-devel, SDL_ttf-devel, lua-devel
 
-%description 
+%description
 Simple text adventures/visual novels engine and game
 Visual novell/text quest-like game in Russian with engine.
 
@@ -38,4 +38,3 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/pixmaps/*
 %{_datadir}/doc/*
 %{_mandir}/*
-

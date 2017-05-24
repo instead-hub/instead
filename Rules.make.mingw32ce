@@ -1,4 +1,4 @@
-VERSION := 3.0.0
+VERSION := 3.0.1
 
 PREFIX=
 DESTDIR=
@@ -18,7 +18,7 @@ ZLIB_LFLAGS=-lz
 LUA_CFLAGS=-I./mingw32ce/
 LUA_LFLAGS=-llua -L./mingw32ce/
 
-SDL_CFLAGS=-I./mingw32ce/SDL 
+SDL_CFLAGS=-I./mingw32ce/SDL
 SDL_LFLAGS=-lmikmod -lpng -L./mingw32ce/SDL
 
 CFLAGS  += -Wall -march=armv4t -Os -static \
@@ -45,4 +45,3 @@ RESOURCES=resources.o
 
 resources.o: resources.rc
 	arm-mingw32ce-windres -i resources.rc -o resources.o
-

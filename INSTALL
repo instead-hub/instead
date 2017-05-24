@@ -1,7 +1,7 @@
-INSTEAD 3.0.0
+INSTEAD 3.0.1
 =============
 
-WARNING! For successfull building you must install these development packages 
+WARNING! For successfull building you must install these development packages
 (names may vary in your distribution):
 
 	sdl, sdl-mixer, sdl-image, sdl-ttf, lua5.1, iconv
@@ -72,7 +72,7 @@ Or build from tarball:
 
 There is .spec file in tarball.
 
-6) For other distributions 
+6) For other distributions
 ==========================
 
 You have three choices:

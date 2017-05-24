@@ -1,3 +1,10 @@
+3.0.1
+
+  * segfault while pause/resume;
+  * start() logic fix;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 24 May 2017 21:03:00 +0300
+
 3.0.0
 
   * refactoring (src/instead);
@@ -7,7 +14,7 @@
   * sound.load_mem;
   * sprite.pixels;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 19 Apr 2016 17:45:00 +0300
+ -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 19 Apr 2017 17:45:00 +0300
 
 2.4.1
 
@@ -147,7 +154,7 @@
   * fix dropf with 2nd parameter;
   * added forgotten function dropto;
   * updated documentation (en/ru);
- 
+
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 1 Jan 2015 10:52:00 +0300
 
 2.1.1
@@ -468,7 +475,7 @@
   * bit_xxx bitwise operations added;
   * visits() added;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 2 May 2011 08:35:00 +0400  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 2 May 2011 08:35:00 +0400
 
 1.3.4
 
@@ -484,14 +491,14 @@
   * languages dir renamed to lang;
   * updated manual.pdf;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 11 Mar 2011 12:10:00 +0300  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 11 Mar 2011 12:10:00 +0300
 
 1.3.3
 
   * bug fix (kbd input);
   * modules docs;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 27 Feb 2011 20:27:00 +0300  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 27 Feb 2011 20:27:00 +0300
 
 1.3.2
 
@@ -503,7 +510,7 @@
   * SDL 1.3 ready;
   * it lang and tutorial;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 24 Feb 2011 13:12:00 +0300  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 24 Feb 2011 13:12:00 +0300
 
 1.3.1
 
@@ -514,7 +521,7 @@
   * bug fix (<w:> tag parsing)
   * visual.lua moved to doc/;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 29 Nov 2010 15:44:00 +0300  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 29 Nov 2010 15:44:00 +0300
 
 1.3.0
 
@@ -535,14 +542,14 @@
   * txttab;
   * tutorial update;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 12 Nov 2010 22:42:00 +0300  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 12 Nov 2010 22:42:00 +0300
 
 1.2.3
 
   * android build;
   * bug in xact;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 2 Oct 2010 16:53:00 +0300  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 2 Oct 2010 16:53:00 +0300
 
 1.2.2
 
@@ -552,7 +559,7 @@
   * wince port;
   * internal cleanups;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 25 Sep 2010 13:59:00 +0300  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 25 Sep 2010 13:59:00 +0300
 
 1.2.1
 
@@ -562,7 +569,7 @@
   * disp fix;
   * savevars optimization;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 28 Aug 2010 19:47:00 +0300  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 28 Aug 2010 19:47:00 +0300
 
 1.2.0
 
@@ -609,7 +616,7 @@
   * many bugfixes...
   * mac os x port
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 04 Aug 2010 20:59:00 +0300  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 04 Aug 2010 20:59:00 +0300
 
 1.1.6
 
@@ -617,7 +624,7 @@
   * bugfix in line breaking with gfx
   * pr() function added in stead
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 19 May 2010 17:31:00 +0300  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 19 May 2010 17:31:00 +0300
 
 1.1.5
 
@@ -625,10 +632,10 @@
   * click in picture event
   * game.action callback
   * bug in <g: > parsing
-  * pause game while minimize (-nopause option added) 
+  * pause game while minimize (-nopause option added)
   * 8 bit scaler fix
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 10 Mar 2010 15:20:51 +0300  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 10 Mar 2010 15:20:51 +0300
 
 1.1.4
 
@@ -636,7 +643,7 @@
   * cursor while menu and lost focus
   * lower cpu usage (no gif logic if no gifs are drawn)
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 05 Mar 2010 18:28:40 +0300  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 05 Mar 2010 18:28:40 +0300
 
 1.1.3
 
@@ -645,13 +652,13 @@
   * \\, in ways and inv
   * 32 bit bmp fix
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 16 Feb 2010 11:10:40 +0300  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 16 Feb 2010 11:10:40 +0300
 
 1.1.2
 
   * bug in saves
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 10 Feb 2010 13:39:47 +0300  
+ -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 10 Feb 2010 13:39:47 +0300
 
 1.1.1
 
@@ -835,40 +842,40 @@
   * ways, objs, drop, take - extra parameters
   * put - function
   * set_music fixes
-  
+
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 24 Aug 2009 08:32:00 +0400
 
 0.8.4
 
   * bug in savevar
   * bug in long strings
-  
+
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 20 Aug 2009 14:09:14 +0400
 
 0.8.3
 
   * sge forgotten
   * set_music with loop argument bug
-  
+
  -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 19 Aug 2009 14:09:14 +0400
 
 0.8.2
 
   * gfx_load_img
-  
+
  -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 15 Aug 2009 14:09:14 +0400
 
 0.8
 
   * key_name attribute!!!!
   * do_ini
-  * version in stead.lua 
+  * version in stead.lua
   * opairs!!!
   * vroom fix
   * typos
   * backtrace
   * list_set
- 
+
  -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 07 Aug 2009 14:09:14 +0400
 
 0.7.7-4
@@ -882,7 +889,7 @@
   * typos in games
   * local games now can be placed in ~/.instead/games
   * console version disabled by default
-  * -- $Name: tag -- full name of games, not only dirname 
+  * -- $Name: tag -- full name of games, not only dirname
   * fix of link color for title/ways
   * bug in text layout logic (last period in line)
   * embedded mode (picture and ways inside text!!!)
@@ -927,4 +934,3 @@
   * Initial release
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 21 May 2009 11:40:29 +0400
-

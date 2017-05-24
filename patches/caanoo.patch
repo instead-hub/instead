@@ -2,7 +2,7 @@ diff -Nur instead-2.5/Rules.caanoo instead-2.5-caanoo/Rules.caanoo
 --- instead-2.5/Rules.caanoo	1970-01-01 03:00:00.000000000 +0300
 +++ instead-2.5-caanoo/Rules.caanoo	2017-03-10 21:49:22.942070000 +0300
 @@ -0,0 +1,45 @@
-+VERSION := 3.0.0
++VERSION := 3.0.1
 +
 +PREFIX  = /home/peter/Devel/GPH_SDK/tools/gcc-4.2.4-glibc-2.7-eabi
 +CC        = $(PREFIX)/bin/arm-gph-linux-gnueabi-gcc
@@ -96,7 +96,7 @@ diff -Nur instead-2.5/src/graphics.c instead-2.5-caanoo/src/graphics.c
  	if (scr == NULL || screen == NULL) {
  		fprintf(stderr, "Unable to set %dx%d video: %s\n", w, h, SDL_GetError());
 @@ -5442,7 +5450,7 @@
- 
+
  int gfx_init(void)
  {
 -	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
@@ -110,7 +110,7 @@ diff -Nur instead-2.5/src/input.c instead-2.5-caanoo/src/input.c
 @@ -54,6 +54,41 @@
  }
  #endif
- 
+
 +#ifdef CAANOO
 +static const char *joy_map(int button)
 +{
@@ -159,7 +159,7 @@ diff -Nur instead-2.5/src/input.c instead-2.5-caanoo/src/input.c
 +	}
  	return 0;
  }
- 
+
 @@ -347,6 +386,20 @@
  	case SDL_QUIT:
  		game_running = 0;
