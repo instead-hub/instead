@@ -395,6 +395,7 @@ void snd_done(void)
 	next_mus = NULL;
 	Mix_CloseAudio();
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
+	sound_on = 0;
 }
 
 int snd_vol_from_pcn(int v)
