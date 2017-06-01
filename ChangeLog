@@ -1,7 +1,7 @@
 3.0.1
 
-  * segfault while pause/resume;
-  * start() logic fix;
+  * fix segfault while pause/resume;
+  * stead3: start() logic fix;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 24 May 2017 21:03:00 +0300
 
