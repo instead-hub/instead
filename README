@@ -9,7 +9,9 @@ Check the INSTALL file for install instructions.
 Web resources:
 	http://instead.sourceforge.net
 	http://instead.syscall.ru
-	https://github.com/instead-hub
+
+Code:
+	https://github.com/instead-hub/instead
 
 Games:
 	http://instead-games.sourceforge.net
@@ -25,14 +27,14 @@ or:
 	press [f4] to open file dialog (build with gtk)
 
 Documentaion for game developers:
-	See the doc/ directory or wiki: 
-		http://instead.syscall.ru/wiki
+	See the doc/ directory or http://instead.syscall.ru/doc
 	$ man instead
 
-XMPP conference:
+Join the chat at:
+	https://gitter.im/instead-hub/instead
+
+Unofficial XMPP conference:
 	instead@conference.jabber.ru
 
 Contacts:
 	Check the AUTHORS file.
-
-Join the chat at https://gitter.im/instead-hub/instead
