@@ -4637,7 +4637,7 @@ mygame/
       bg.png
     widescreen/
       theme.ini
-  main.lua
+  main3.lua
 ```
 
 theme.ini
