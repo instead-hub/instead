@@ -724,7 +724,7 @@ static int luaB_random(lua_State *L) {
 	long a = luaL_optnumber(L, 1, -1);
 	long b = luaL_optnumber(L, 2, -1);
 	r = mt_random();
-	if (a >=0 && b >= a) {
+	if (a >=0 && b > a) {
 		r = a + (r % (b - a + 1));
 		lua_pushinteger(L, r);
 	} else if (a > 0 && b == -1) {
