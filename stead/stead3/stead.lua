@@ -2743,7 +2743,7 @@ iface.tab = fmt_stub
 iface.y = fmt_stub
 
 function std.loadmod(f)
-	if std.game and not not std.__in_gamefile then
+	if std.game and not std.__in_gamefile then
 		std.err("Use loadmod() only in global context", 2)
 	end
 	if type(f) ~= 'string' then
