@@ -2464,8 +2464,13 @@ img_t gfx_rotate(img_t src, float angle, int smooth)
 			x4 = (x + (float)w2) * rcos - (y + (float)h2) * rsin;
 			y4 = (y + (float)h2) * rcos + (x + (float)w) * rsin;
 
-			if (x1 > x2) x1 = x2; if (x1 > x3) x1 = x3; if (x1 > x4) x1 = x4;
-			if (y1 > y2) y1 = y2; if (y1 > y3) y1 = y3; if (y1 > y4) y1 = y4;
+			if (x1 > x2) x1 = x2;
+			if (x1 > x3) x1 = x3;
+			if (x1 > x4) x1 = x4;
+
+			if (y1 > y2) y1 = y2;
+			if (y1 > y3) y1 = y3;
+			if (y1 > y4) y1 = y4;
 
 			w2 = s->w;
 			h2 = s->h;
