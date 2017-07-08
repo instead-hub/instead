@@ -21,7 +21,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 Please see each individual source file for a list of they copyright holders.
 
-INSTEAD binaries may contain code taken from the following projects:
+INSTEAD links with the following libraries/sources:
 
     Lua (MIT)
     SDL (LGPL)
