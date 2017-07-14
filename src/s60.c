@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2017 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -68,7 +68,7 @@ char *game_tmp_path(void)
 	static char tmp[PATH_MAX]="/tmp/instead-games";
 	if (!t) {
 		t = time(NULL);
-		sprintf(tmp, "/tmp/instead-games-%ld", (unsigned long)t);
+		sprintf(tmp, "/tmp/instead-games-%lu", (unsigned long)t);
 	}
 	if (mkdir(tmp, S_IRWXU) && errno != EEXIST)
 		return NULL;

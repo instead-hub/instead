@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2017 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -4184,10 +4184,10 @@ void txt_box_norm(textbox_t tbox)
 {
 	struct textbox *box = (struct textbox *)tbox;
 	struct line  *line;
-	int off = box->off;
-
+	int off;
 	if (!tbox || !box->lay)
 		return;
+	off = box->off;
 	box->line = box->lay->lines;
 	for (line = box->line; line; line = line->next) {
 		if (off < line->h)
@@ -4278,9 +4278,10 @@ void txt_box_scroll_prev(textbox_t tbox, int disp)
 	int off;
 	struct textbox *box = (struct textbox *)tbox;
 	struct line  *line;
-	struct layout *l= box->lay;
+	struct layout *l;
 	if (!tbox)
 		return;
+	l = box->lay;
 	line = box->line;
 	if (!line)
 		return;

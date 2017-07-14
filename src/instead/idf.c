@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2017 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -549,12 +549,10 @@ idff_t idf_open(idf_t idf, const char *fname)
 	if (!p)
 		return NULL;
 	tolow(p);
-	if (idf) {
-		rp = getfilepath(idf->cwd, p);
-		if (rp) {
-			dir = cache_lookup(idf->dir, rp);
-			free(rp);
-		}
+	rp = getfilepath(idf->cwd, p);
+	if (rp) {
+		dir = cache_lookup(idf->dir, rp);
+		free(rp);
 	}
 	free(p);
 	if (!dir)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2017 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -586,7 +586,7 @@ char *getrealpath(const char *path, char *resolved)
 	/* If relative path, start from current working directory. */
 	if (!is_absolute_path(path)) {
 		/* check for resolved pointer to appease coverity */
-		if (resolved && getdir(resolved, PATH_MAX) == NULL) {
+		if (getdir(resolved, PATH_MAX) == NULL) {
 			p[0] = '.';
 			p[1] = '\0';
 			goto out;
