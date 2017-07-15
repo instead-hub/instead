@@ -1,3 +1,12 @@
+3.0.2
+
+  * fix div by zero in rnd;
+  * fix in loadmod (from gamefile);
+  * fixes in doc;
+  * code cleanups (compilation warnings);
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 15 Jul 2017 16:33:00 +0300
+
 3.0.1
 
   * fix segfault while pause/resume;
