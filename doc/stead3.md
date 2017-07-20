@@ -4313,12 +4313,12 @@ instead.mouse_pos([x, y])
 require "click"
 function click:filter(press, btn, x, y, px, py)
 	dprint(press, btn, x, y, px, py)
-	return press and px -- ловим нажатия на картинку
+	return press and px -- ловим только нажатия на картинку
 end
 room {
 	nam = 'main';
 	pic = "box:320x200,red";
-	onlick = function(s, press, btn, x, y, px, py)
+	onclick = function(s, press, btn, x, y, px, py)
 		pn("Вы нажали на картинку: ", px, ", ", py)
 		pn("Абсолютные координаты: ", x, ", ", y)
 		p("Кнопка: ", btn)
