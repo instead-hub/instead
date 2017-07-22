@@ -137,7 +137,8 @@ extern void	gfx_compose_from(img_t p, int x, int y, int width, int height, img_t
 
 extern int	gfx_cursor(int *xp, int *yp);
 extern void	gfx_warp_cursor(int x, int y);
-extern void	gfx_change_screen(img_t src, int steps);
+extern void	gfx_change_screen(img_t src, int steps, void (*callback)(void *), void *);
+
 extern int	gfx_fading(void);
 extern void	gfx_img_fill(img_t img, int x, int y, int w, int h, color_t col);
 extern void	gfx_fill(int x, int y, int w, int h, color_t col);

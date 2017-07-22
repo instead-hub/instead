@@ -5347,7 +5347,7 @@ void gfx_warp_cursor(int x, int y)
 #endif
 }
 
-int ALPHA_STEPS = 4;
+static int ALPHA_STEPS = 4;
 static volatile int   fade_step_nr = -1;
 
 int gfx_fading(void)
@@ -5357,11 +5357,15 @@ int gfx_fading(void)
 
 static img_t	fade_bg = NULL;
 static img_t	fade_fg = NULL;
+static void *fade_aux = NULL;
+static void (*fade_cb)(void *) = NULL;
+static SDL_TimerID	fade_timer;
+
 #if SDL_VERSION_ATLEAST(2,0,0)
 static SDL_Texture *fade_bg_texture = NULL;
 static SDL_Texture *fade_fg_texture = NULL;
 #endif
-static void update_gfx(void *aux)
+static void update_gfx(void)
 {
 	img_t img = fade_fg;
 	if (fade_step_nr == -1 || !img || !fade_bg || !fade_fg)
@@ -5373,6 +5377,11 @@ static void update_gfx(void *aux)
 	gfx_draw(img, 0, 0);
 	game_cursor(CURSOR_DRAW);
 	gfx_flip();
+#else
+	SDL_RenderCopy(Renderer, fade_bg_texture, NULL, NULL);
+	SDL_SetTextureAlphaMod(fade_fg_texture, (SDL_ALPHA_OPAQUE * (fade_step_nr)) / ALPHA_STEPS);
+	SDL_RenderCopy(Renderer, fade_fg_texture, NULL, NULL);
+	gfx_draw_cursor();
 #endif
 	fade_step_nr ++;
 	if (fade_step_nr == ALPHA_STEPS) {
@@ -5386,25 +5395,60 @@ static void update_gfx(void *aux)
 		fade_step_nr = -1;
 	}
 }
+
+static void gfx_change_screen_step(void *aux)
+{
+	if (gfx_fading()) {
+		update_gfx();
+#if !SDL_VERSION_ATLEAST(2,0,0)
+		game_cursor(CURSOR_ON);
+		gfx_commit();
+#else
+		SDL_RenderPresent(Renderer);
+#endif
+	}
+	if (gfx_fading())
+		return;
+	SDL_RemoveTimer(fade_timer);
+#if SDL_VERSION_ATLEAST(2,0,0)
+	SDL_DestroyTexture(fade_fg_texture);
+	SDL_DestroyTexture(fade_bg_texture);
+#endif
+	gfx_free_image(fade_bg);
+	fade_bg = NULL;
+	if (fade_cb)
+		fade_cb(fade_aux);
+	return;
+}
+
 static Uint32 update(Uint32 interval, void *aux)
 {
-	push_user_event(update_gfx, aux);
+	if (!gfx_fading())
+		return 0;
+	push_user_event(gfx_change_screen_step, NULL);
+#ifdef __EMSCRIPTEN__
+	SDL_RemoveTimer(fade_timer);
+	fade_timer = SDL_AddTimer(60, update, NULL);
+#endif
 	return interval;
 }
 
-void gfx_change_screen(img_t src, int steps)
+void gfx_change_screen(img_t src, int steps, void (*callback)(void *), void *aux)
 {
 	struct inp_event ev;
-	SDL_TimerID han;
 	if (steps <= 1 || !opt_fading) {
 		gfx_copy(src, 0, 0);
 		game_cursor(CURSOR_ON);
 		gfx_flip();
-/*		gfx_commit(); */
+		if (callback)
+			callback(aux);
 		return;
 	}
 	fade_fg = NULL;
+	fade_aux = aux;
+	fade_cb = callback;
 	fade_bg = gfx_grab_screen(0, 0, gfx_width, gfx_height);
+
 	if (!fade_bg) /* ok, i like kernel logic. No memory, but we must work! */
 		return;
 
@@ -5424,28 +5468,16 @@ void gfx_change_screen(img_t src, int steps)
 	memset(&ev, 0, sizeof(ev));
 	ALPHA_STEPS = steps;
 	fade_step_nr = 0;
-	han = SDL_AddTimer(60, update, NULL);
-	while (input(&ev, 1) >=0 && gfx_fading()) { /* just wait for change */
-#if !SDL_VERSION_ATLEAST(2,0,0)
-		game_cursor(CURSOR_ON);
-		gfx_commit();
-#else
-		SDL_RenderCopy(Renderer, fade_bg_texture, NULL, NULL);
-		SDL_SetTextureAlphaMod(fade_fg_texture, (SDL_ALPHA_OPAQUE * (fade_step_nr)) / ALPHA_STEPS);
-		SDL_RenderCopy(Renderer, fade_fg_texture, NULL, NULL);
-		gfx_draw_cursor();
-		SDL_RenderPresent(Renderer);
-#endif
-	}
-	SDL_RemoveTimer(han);
+	fade_timer = SDL_AddTimer(60, update, NULL);
+	return;
 #if SDL_VERSION_ATLEAST(2,0,0)
-	SDL_DestroyTexture(fade_fg_texture);
 err2:
 	SDL_DestroyTexture(fade_bg_texture);
 err:
-#endif
 	gfx_free_image(fade_bg);
 	fade_bg = NULL;
+	return;
+#endif
 }
 
 int gfx_init(void)

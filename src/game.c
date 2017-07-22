@@ -1707,6 +1707,40 @@ static void game_redraw_pic(void)
 static xref_t hl_xref = NULL;
 static struct el *hl_el = NULL;
 
+static struct {
+	img_t offscreen;
+	int flags;
+	int m_restore;
+} fade_ctx;
+
+static void after_click(int flags, int m_restore)
+{
+#if 1
+	{
+		int x, y;
+		if (!(flags & GAME_CMD_NOHL) &&
+			(!m_restore || mouse_restore())) {
+			gfx_cursor(&x, &y);
+			game_highlight(x, y, 1); /* highlight new scene, to avoid flickering */
+		}
+	}
+#endif
+}
+static void after_cmd(void)
+{
+	game_autosave();
+	game_instead_restart();
+	game_instead_menu();
+}
+
+static void after_fading(void *aux)
+{
+	gfx_start_gif(el_img(el_spic));
+	gfx_free_image(fade_ctx.offscreen);
+	after_click(fade_ctx.flags, fade_ctx.m_restore);
+	after_cmd();
+}
+
 int game_cmd(char *cmd, int flags)
 {
 	int		old_off;
@@ -1754,7 +1788,7 @@ int game_cmd(char *cmd, int flags)
 			game_theme_update();
 			game_theme_changed = 1;
 			offscreen = gfx_screen(oldscreen);
-			gfx_change_screen(offscreen, 1);
+			gfx_change_screen(offscreen, 1, NULL, NULL);
 			gfx_free_image(offscreen);
 		}
 
@@ -2030,38 +2064,20 @@ inv:
 		game_cursor(CURSOR_CLEAR);
 		gfx_stop_gif(el_img(el_spic));
 		offscreen = gfx_screen(oldscreen);
-		gfx_change_screen(offscreen, fading);
-		gfx_start_gif(el_img(el_spic));
-		gfx_free_image(offscreen);
-/*		input_clear(); */
+		fade_ctx.offscreen = offscreen;
+		fade_ctx.flags = flags;
+		fade_ctx.m_restore = m_restore;
+		gfx_change_screen(offscreen, fading, after_fading, offscreen);
+		return 0;
 	}
-	{
-		int x, y;
-		if (!(flags & GAME_CMD_NOHL) &&
-			(!m_restore || mouse_restore())) {
-			gfx_cursor(&x, &y);
-			game_highlight(x, y, 1); /* highlight new scene, to avoid flickering */
-		}
-	}
-
-	if (fading)
-		goto err;
-
+	after_click(flags, m_restore);
 out:
 	game_cursor(CURSOR_DRAW);
 	gfx_flip();
 /*	input_clear(); */
 err:
+	after_cmd();
 
-	game_autosave();
-	game_instead_restart();
-	game_instead_menu();
-#if 0
-	if (instead_err()) {
-		game_menu(menu_warning);
-		return -1;
-	}
-#endif
 	return rc;
 fatal:
 	fprintf(stderr, "Fatal error! (can't alloc offscreen)\n");
@@ -3381,6 +3397,10 @@ static inline int game_cycle(void)
 		game_gfx_commit(1);
 		return rc;
 	}
+
+	if (gfx_fading()) /* just fading */
+		return 0;
+
 	if (rc == -1) {/* close */
 		return -1;
 	} else if (game_input_events(&ev)) { /* kbd, mouse and touch -> pass in game */
