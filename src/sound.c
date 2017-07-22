@@ -121,8 +121,11 @@ int snd_init(int hz)
 		fprintf(stderr, "Unable to init audio!\n");
 		return -1;
 	}
-
+#ifdef EMSCRIPTEN
+	if (Mix_OpenAudioDevice(hz, audio_format, audio_channels, audio_buffers, NULL, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE)) {
+#else
 	if (Mix_OpenAudio(hz, audio_format, audio_channels, audio_buffers)) {
+#endif
 		fprintf(stderr, "Unable to open audio!\n");
 		return -1;
 	}

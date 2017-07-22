@@ -31,10 +31,14 @@
 #ifdef _USE_SDL
 static SDL_mutex *sem;
 void instead_lock(void) {
+#ifndef __EMSCRIPTEN__
 	SDL_LockMutex(sem);
+#endif
 }
 void instead_unlock(void) {
+#ifndef __EMSCRIPTEN__
 	SDL_UnlockMutex(sem);
+#endif
 }
 #else
 void instead_lock(void) {
@@ -1045,9 +1049,11 @@ int instead_init(const char *path)
 		goto err;
 	}
 #ifdef _USE_SDL
+#ifndef __EMSCRIPTEN__
 	sem = SDL_CreateMutex();
 	if (!sem)
 		goto err;
+#endif
 #endif
 
 	if ((!idf && setdir(path))) {
@@ -1094,9 +1100,11 @@ void instead_done(void)
 	if (wasL)
 		extensions_hook(done);
 #ifdef _USE_SDL
+#ifndef __EMSCRIPTEN__
 	if (sem)
 		SDL_DestroyMutex(sem);
 	sem = NULL;
+#endif
 #endif
 #ifdef _HAVE_ICONV
 	if (fromcp)

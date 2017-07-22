@@ -50,7 +50,11 @@ int opt_fs = 0;
 int opt_owntheme = 1;
 int opt_hl = 1;
 #endif
+#ifdef __EMSCRIPTEN__
+int opt_fading = 0;
+#else
 int opt_fading = 1;
+#endif
 #if defined(S60) || defined(MAEMO) || defined(_WIN32_WCE)
 int opt_hz = 22050;
 #else

@@ -890,6 +890,12 @@ int counter_fn(int interval, void *p)
 	timer_counter ++;
 	if (gfx_is_drawn_gifs() && !DIRECT_MODE)
 		push_user_event(anigif_do, NULL);
+#ifdef __EMSCRIPTEN__
+	if (timer_han) { /* emscripten SDL bug? */
+		gfx_del_timer(timer_han);
+		timer_han = gfx_add_timer(HZ, counter_fn, NULL);
+	}
+#endif
 	return interval;
 }
 
@@ -3373,7 +3379,7 @@ static inline int game_cycle(void)
 	/* game_cursor(CURSOR_CLEAR); */ /* release bg */
 	if (((rc = input(&ev, 1)) == AGAIN) && !need_restart) {
 		game_gfx_commit(1);
-		return 0;
+		return rc;
 	}
 	if (rc == -1) {/* close */
 		return -1;
@@ -3411,11 +3417,16 @@ static inline int game_cycle(void)
 	game_gfx_commit(0);
 	return 0;
 }
-
+#ifdef __EMSCRIPTEN__
+static void game_void_cycle(void)
+{
+	while (game_cycle() == AGAIN);
+}
+#endif
 int game_loop(void)
 {
 #ifdef __EMSCRIPTEN__
-	emscripten_set_main_loop(game_cycle, 30, 1);
+	emscripten_set_main_loop(game_void_cycle, 0, 1);
 #else
 	while (game_running) {
 		if (game_cycle() < 0)
