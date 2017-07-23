@@ -156,6 +156,6 @@ cd instead-em-js
 ln -f -s ../instead-em/src/sdl-instead sdl-instead.bc
 ln -f -s ../lib lib
 
-emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_mixer.a lib/libmodplug.a lib/libmad.a -s USE_OGG=1 -s USE_VORBIS=1 -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2  -o project.html -s SAFE_HEAP=0  -s TOTAL_MEMORY=167772160 -s ALLOW_MEMORY_GROWTH=0 --use-preload-plugins --preload-file fs@/
+emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_mixer.a lib/libmodplug.a lib/libmad.a -s 'SDL2_IMAGE_FORMATS=["png","jpeg","gif"]' -s USE_OGG=1 -s USE_VORBIS=1 -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2  -o project.html -s SAFE_HEAP=0  -s TOTAL_MEMORY=167772160 -s ALLOW_MEMORY_GROWTH=0 --use-preload-plugins --preload-file fs@/
 echo "Happy hacking"
 python2.7 -m SimpleHTTPServer 8000
