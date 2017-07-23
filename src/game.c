@@ -3416,6 +3416,9 @@ static inline int game_cycle(void)
 		return -1;
 	}
 
+	if (gfx_fading()) /* just fading */
+		return 0;
+
 	if (need_restart) {
 		need_restart = 0;
 		game_menu_act("/new");
