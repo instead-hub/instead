@@ -29,7 +29,9 @@
 
 #define DATA_IDF INSTEAD_IDF
 #ifdef _USE_SDL
+#ifndef __EMSCRIPTEN__
 static SDL_mutex *sem;
+#endif
 void instead_lock(void) {
 #ifndef __EMSCRIPTEN__
 	SDL_LockMutex(sem);
