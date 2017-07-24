@@ -3451,10 +3451,12 @@ static void game_void_cycle(void)
 	int rc;
 	while ((rc = game_cycle()) == AGAIN);
 	if (rc < 0) {
+		cfg_save();
+		if (curgame_dir)
+			game_done(0);
 		gfx_clear(0, 0, game_theme.w, game_theme.h);
 		gfx_flip();
 		gfx_commit();
-		cfg_save();
 		emscripten_cancel_main_loop();
 		emscripten_force_exit(1);
 	}
@@ -3464,6 +3466,7 @@ int game_loop(void)
 {
 #ifdef __EMSCRIPTEN__
 	emscripten_set_main_loop(game_void_cycle, 0, 1);
+	return -1;
 #else
 	while (game_running) {
 		if (game_cycle() < 0)
