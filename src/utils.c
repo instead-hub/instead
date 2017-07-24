@@ -490,3 +490,18 @@ void trunc_lines(char *pp, int max)
 		pp ++;
 	}
 }
+
+#ifdef __EMSCRIPTEN__
+void data_sync(void)
+{
+	EM_ASM(FS.syncfs(function(error) {
+		if (error) {
+			console.log("Error while syncing", error);
+		}
+	}););
+}
+#else
+void data_sync(void)
+{
+}
+#endif

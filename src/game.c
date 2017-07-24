@@ -657,41 +657,42 @@ int game_save(int nr)
 	char cmd[PATH_MAX];
 	char *p;
 	int rc;
-	if (s) {
-		if (nr == -1 || nr == 0) {
-			struct instead_args args_1[] = {
-				{ .val = "-1", .type = INSTEAD_NUM },
-				{ .val = NULL, }
-			};
-			struct instead_args args_0[] = {
-				{ .val = "0", .type = INSTEAD_NUM },
-				{ .val = NULL, }
-			};
-			if (nr == -1) {
-				instead_lock();
-				instead_function("instead.autosave", args_1); /* enable saving for -1 */
-			} else if (!game_autosave_enabled())
-				return 0; /* nothing todo */
-			else {
-				instead_lock();
-				instead_function("instead.autosave", args_0); /* enable saving for 0 */
-			}
-			instead_clear();
-			instead_unlock();
+	if (!s)
+		return -1;
+
+	if (nr == -1 || nr == 0) {
+		struct instead_args args_1[] = {
+			{ .val = "-1", .type = INSTEAD_NUM },
+			{ .val = NULL, }
+		};
+		struct instead_args args_0[] = {
+			{ .val = "0", .type = INSTEAD_NUM },
+			{ .val = NULL, }
+		};
+		if (nr == -1) {
+			instead_lock();
+			instead_function("instead.autosave", args_1); /* enable saving for -1 */
+		} else if (!game_autosave_enabled())
+			return 0; /* nothing todo */
+		else {
+			instead_lock();
+			instead_function("instead.autosave", args_0); /* enable saving for 0 */
 		}
-		snprintf(cmd, sizeof(cmd) - 1, "save %s", s);
-		instead_lock();
-		p = instead_file_cmd(cmd, &rc);
+		instead_clear();
 		instead_unlock();
-		if (p)
-			free(p);
-		if (rc || (!p && instead_err())) {
-			game_menu(menu_warning);
-			return -1;
-		}
-		return 0;
 	}
-	return -1;
+	snprintf(cmd, sizeof(cmd) - 1, "save %s", s);
+	instead_lock();
+	p = instead_file_cmd(cmd, &rc);
+	instead_unlock();
+	if (p)
+		free(p);
+	if (rc || (!p && instead_err())) {
+		game_menu(menu_warning);
+		return -1;
+	}
+	data_sync();
+	return 0;
 }
 
 static int inv_enabled(void)
@@ -1450,6 +1451,10 @@ int game_menu_box(int show, const char *txt)
 	rc = game_menu_box_width(show, txt, w);
 	if (!show)
 		game_event("resume");
+#ifdef __EMSCRIPTEN__
+	if (!show)
+		cfg_save();
+#endif
 	return rc;
 }
 
@@ -3449,6 +3454,7 @@ static void game_void_cycle(void)
 		gfx_clear(0, 0, game_theme.w, game_theme.h);
 		gfx_flip();
 		gfx_commit();
+		cfg_save();
 		emscripten_cancel_main_loop();
 		emscripten_force_exit(1);
 	}

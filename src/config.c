@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2017 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -150,7 +150,6 @@ int cfg_save(void)
 	fp = fopen(p, "w");
 	if (!fp)
 		return -1;
-	
 	fprintf(fp, "fs = %d\nhl = %d\nhz = %d\nvol = %d\nautosave = %d\n\
 game = %s\nfscale = %d\nmotion = %d\n\
 click = %d\nmusic = %d\ntheme = %s\n\
@@ -167,5 +166,6 @@ filter = %d\nowntheme = %d\nlang = %s\nkbd = %d\nmode = %dx%d\njustify = %d\nfad
 	if (opt_resizable != -1)
 		fprintf(fp, "resizable = %d\n", opt_resizable);
 	fclose(fp);
+	data_sync();
 	return 0;
 }

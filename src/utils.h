@@ -66,5 +66,6 @@ extern int remove_dir(const char *path);
 extern void data2hex(const void *d, int len, void *o);
 extern int hex2data(const void *d, void *o, int len);
 extern void trunc_lines(char *pp, int max);
+extern void data_sync(void); /* rw data sync */
 
 #endif

@@ -270,19 +270,19 @@ char *game_cfg_path(void)
 {
 	char *app = appdir();
 	struct passwd *pw;
+	if (app) {
+		snprintf(cfg_path, sizeof(cfg_path) - 1 , "%s/", app);
+		if (mkdir(cfg_path, S_IRWXU) == 0 || errno == EEXIST) {
+			snprintf(cfg_path, sizeof(cfg_path) - 1 , "%s/insteadrc", app);
+			return cfg_path;
+		}
+	}
+
 	pw = getpwuid(getuid());
 	if (!pw) 
 		return NULL;
+
 	snprintf(cfg_path, sizeof(cfg_path) - 1 , "%s/.insteadrc", pw->pw_dir); /* at home */
-	if (!access(cfg_path, R_OK)) 
-		return cfg_path;
-/* no at home? Try in dir */
-	if (app)
-		snprintf(cfg_path, sizeof(cfg_path) - 1 , "%s/", app);
-	if (!app || (mkdir(cfg_path, S_IRWXU) && errno != EEXIST))
-		snprintf(cfg_path, sizeof(cfg_path) - 1 , "%s/.insteadrc", pw->pw_dir); /* fallback to home */
-	else
-		snprintf(cfg_path, sizeof(cfg_path) - 1 , "%s/insteadrc", app);
 	return cfg_path;
 }
 

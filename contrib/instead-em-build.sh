@@ -134,7 +134,7 @@ git pull
 [ -e Rules.make ] || ln -s Rules.standalone Rules.make
 cat <<EOF > config.make
 EXTRA_CFLAGS+= -D_HAVE_ICONV -I../../include
-SDL_CFLAGS=-I../../include/SDL2 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2
+SDL_CFLAGS=-I../../include/SDL2 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 -s SDL2_IMAGE_FORMATS='["png","jpeg","gif"]'
 SDL_LFLAGS=
 LUA_CFLAGS=
 LUA_LFLAGS=
@@ -155,7 +155,15 @@ find instead-em-js/fs/ \( -name '*.svg' -o -name Makefile -o -name CMakeLists.tx
 cd instead-em-js
 ln -f -s ../instead-em/src/sdl-instead sdl-instead.bc
 ln -f -s ../lib lib
-
-emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_mixer.a lib/libmodplug.a lib/libmad.a -s 'SDL2_IMAGE_FORMATS=["png","jpeg","gif"]' -s USE_OGG=1 -s USE_VORBIS=1 -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2  -o project.html -s SAFE_HEAP=0  -s TOTAL_MEMORY=167772160 -s ALLOW_MEMORY_GROWTH=0 --use-preload-plugins --preload-file fs@/
+cat <<EOF > post.js
+FS.mkdir('/appdata');
+FS.mount(IDBFS,{},'/appdata');
+FS.syncfs(true, function (error) {
+	if (error) {
+		console.log("Error while syncing", error);
+	}
+});
+EOF
+emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_mixer.a lib/libmodplug.a lib/libmad.a -s 'SDL2_IMAGE_FORMATS=["png","jpeg","gif"]' -s USE_OGG=1 -s USE_VORBIS=1 -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2  -o project.html -s SAFE_HEAP=0  -s TOTAL_MEMORY=167772160 -s ALLOW_MEMORY_GROWTH=0  --post-js post.js  --use-preload-plugins --preload-file fs@/
 echo "Happy hacking"
 python2.7 -m SimpleHTTPServer 8000
