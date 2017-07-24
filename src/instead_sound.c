@@ -791,7 +791,7 @@ static int sound_done(void)
 		luaL_unref(instead_lua(), LUA_REGISTRYINDEX, callback_ref);
 		callback_ref = 0;
 	}
-	game_stop_mus(500);
+	game_stop_mus(0);
 	sounds_free();
 	snd_done();
 	sound_inited = 0;

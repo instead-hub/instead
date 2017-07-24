@@ -3,8 +3,7 @@
 # build INSTEAD with emscripten
 
 set -e
-export WORKSPACE="$WORKSPACE"
-# /home/peter/Devel/emsdk-portable/env"
+export WORKSPACE="" #/home/peter/Devel/emsdk-portable/env
 if [ ! -f ./emsdk_set_env.sh ]; then
 	echo "Run this script in emsdk directory"
 	exit 1
@@ -65,31 +64,13 @@ cd zlib-1.2.11
 emconfigure ./configure --prefix=$WORKSPACE
 emmake make install
 
-# libmad (with some patches from debian+arch)
-
+# libmikmod
 cd $WORKSPACE
-[ -d libmad-0.15.1b ] || PATCH_MAD=1
-wget -nv -N http://download.sourceforge.net/mad/libmad-0.15.1b.tar.gz
-wget -nv -N http://http.debian.net/debian/pool/main/libm/libmad/libmad_0.15.1b-8.diff.gz
-wget -nv -N https://projects.archlinux.org/svntogit/packages.git/plain/trunk/libmad.patch?h=packages/libmad -O libmad-pkgconfig.patch
-tar xf libmad-0.15.1b.tar.gz
-cd libmad-0.15.1b
-if [ ! -z ${PATCH_MAD+x} ]; then
-  zcat ../libmad_0.15.1b-8.diff.gz | patch -p1
-  patch -p1 -i ../libmad-pkgconfig.patch
-  patch -p1 -i debian/patches/frame_length.diff
-  patch -p1 -i debian/patches/amd64-64bit.diff
-  patch -p1 -i debian/patches/optimize.diff
-fi
-emconfigure ./configure --prefix=$WORKSPACE --disable-shared --enable-static 
-emmake make install
-
-# libmodplug
-cd $WORKSPACE
-rm -rf libmodplug-0.8.9.0/
-[ -f libmodplug-0.8.9.0.tar.gz ] || wget -nv http://downloads.sourceforge.net/project/modplug-xmms/libmodplug/0.8.9.0/libmodplug-0.8.9.0.tar.gz
-tar xf libmodplug-0.8.9.0.tar.gz
-cd libmodplug-0.8.9.0
+rm -rf libmikmod-3.1.12/
+[ -f SDL2_mixer-2.0.1.tar.gz ] || wget -nv https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-2.0.1.tar.gz
+tar xf SDL2_mixer-2.0.1.tar.gz
+mv SDL2_mixer-2.0.1/external/libmikmod-3.1.12/ libmikmod-3.1.12/
+cd libmikmod-3.1.12/
 emconfigure ./configure --prefix=$WORKSPACE --disable-shared --enable-static 
 emmake make install
 
@@ -102,28 +83,18 @@ hg pull -u
 hg up -C
 hg --config "extensions.purge=" purge --all
 
-cat <<EOF > sdl_mixer_mad.patch
-diff -Nur SDL_mixer/music_mad.c SDL_mixer.mad/music_mad.c
---- SDL_mixer/music_mad.c	2017-07-23 16:10:08.569368777 +0300
-+++ SDL_mixer.mad/music_mad.c	2017-07-23 16:13:06.322936929 +0300
-@@ -265,7 +265,7 @@
-       SDL_memcpy(out, mp3_mad->output_buffer + mp3_mad->output_begin, num_bytes);
-     } else {
-       SDL_MixAudioFormat(out, mp3_mad->output_buffer + mp3_mad->output_begin,
--                         mixer.format, num_bytes, mp3_mad->volume);
-+                         mp3_mad->mixer.format, num_bytes, mp3_mad->volume);
-     }
-     out += num_bytes;
-     mp3_mad->output_begin += num_bytes;
-EOF
-patch -p1 -i ./sdl_mixer_mad.patch
-cat configure.in | sed -e 's/AC_CHECK_LIB(\[modplug\], /AC_CHECK_LIB(\[modplug\], \[ModPlug_Load\], /' > configure.in.new
+cat configure.in | sed -e 's/AC_CHECK_LIB(\[modplug\], /AC_CHECK_LIB(\[modplug\], \[ModPlug_Load\], /' -e 's/have_libmikmod=no/have_libmikmod=yes/g' > configure.in.new
 mv -f configure.in.new configure.in
 autoconf
 emconfigure ./configure --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -s USE_VORBIS=1 -s USE_OGG=1" LDFLAGS="-L$WORKSPACE/lib" --disable-sdltest --disable-shared \
-   --enable-music-mp3-mad-gpl --enable-music-ogg --disable-music-ogg-shared --enable-music-mod-modplug --disable-music-mod-modplug-shared \
-   --disable-music-midi-fluidsynth --disable-music-midi-fluidsynth-shared
+   --disable-music-mp3-mad-gpl --enable-music-ogg --disable-music-ogg-shared --enable-music-mod-mikmod --disable-music-mod-mikmod-shared \
+   --disable-music-midi-fluidsynth --disable-music-midi-fluidsynth-shared \
+   --disable-music-mp3-smpeg --disable-music-mp3-smpeg-shared
+
+cat Makefile | sed -e 's| \$(objects)/playwave\$(EXE) \$(objects)/playmus\$(EXE)||g' > Makefile.new
+mv -f Makefile.new Makefile
 emmake make install
+
 
 # INSTEAD
 echo "INSTEAD"
@@ -164,6 +135,6 @@ FS.syncfs(true, function (error) {
 	}
 });
 EOF
-emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_mixer.a lib/libmodplug.a lib/libmad.a -s 'SDL2_IMAGE_FORMATS=["png","jpeg","gif"]' -s USE_OGG=1 -s USE_VORBIS=1 -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2  -o project.html -s SAFE_HEAP=0  -s TOTAL_MEMORY=167772160 -s ALLOW_MEMORY_GROWTH=0  --post-js post.js  --use-preload-plugins --preload-file fs@/
+emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_mixer.a lib/libmikmod.a -s 'SDL2_IMAGE_FORMATS=["png","jpeg","gif"]' -s USE_OGG=1 -s USE_VORBIS=1 -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2  -o project.html -s SAFE_HEAP=0  -s TOTAL_MEMORY=167772160 -s ALLOW_MEMORY_GROWTH=0  --post-js post.js  --use-preload-plugins --preload-file fs@/
 echo "Happy hacking"
 python2.7 -m SimpleHTTPServer 8000
