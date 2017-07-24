@@ -78,6 +78,12 @@ static void mus_callback(void *aux)
 static Uint32 callback(Uint32 interval, void *aux)
 {
 	push_user_event(mus_callback,  aux);
+#ifdef __EMSCRIPTEN__
+	if (timer_id) {
+		SDL_RemoveTimer(timer_id);
+		timer_id = SDL_AddTimer(interval, callback, NULL);
+	}
+#endif
 	return interval;
 }
 
