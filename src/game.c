@@ -3443,7 +3443,14 @@ static inline int game_cycle(void)
 #ifdef __EMSCRIPTEN__
 static void game_void_cycle(void)
 {
-	while (game_cycle() == AGAIN);
+	int rc;
+	while ((rc = game_cycle()) == AGAIN);
+	if (rc < 0) {
+		gfx_clear(0, 0, game_theme.w, game_theme.h);
+		gfx_flip();
+		gfx_commit();
+		emscripten_cancel_main_loop();
+	}
 }
 #endif
 int game_loop(void)
