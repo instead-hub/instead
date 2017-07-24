@@ -3450,6 +3450,7 @@ static void game_void_cycle(void)
 		gfx_flip();
 		gfx_commit();
 		emscripten_cancel_main_loop();
+		emscripten_force_exit(1);
 	}
 }
 #endif
