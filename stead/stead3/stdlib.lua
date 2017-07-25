@@ -438,22 +438,25 @@ path = std.class({
 		return std.room(new)
 	end;
 	disp = function(s)
-		if disabled(s.walk) or closed(s.walk) then
+		local w = s.walk
+		if type(w) == 'function' then
+			w = w()
+		end
+		if disabled(w) or closed(w) then
 			return false
 		end
-		if s.after ~= nil and visited(s.walk) then
+		if s.after ~= nil and visited(w) then
 			return std.call(s, 'after')
 		end
 		return std.call(s, 'before')
 	end;
 	onwalk = function(s, f)
-		if disabled(s.walk) or closed(s.walk) then
-			return false
+		local w = s.walk
+		if type(w) == 'function' then
+			w = w()
 		end
-		if type(s.walk) == 'function' then
-			walk(s.walk())
-		else
-			walk(s.walk)
+		if not disabled(w) and not closed(w) then
+			walk(w)
 		end
 		return false
 	end;
