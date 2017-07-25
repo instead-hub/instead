@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-
 # build INSTEAD with emscripten
 
 set -e
-export WORKSPACE="" #/home/peter/Devel/emsdk-portable/env
+export WORKSPACE="" #"/home/peter/Devel/emsdk-portable/env"
+
 if [ ! -f ./emsdk_set_env.sh ]; then
 	echo "Run this script in emsdk directory"
 	exit 1
@@ -72,7 +72,7 @@ tar xf SDL2_mixer-2.0.1.tar.gz
 mv SDL2_mixer-2.0.1/external/libmikmod-3.1.12/ libmikmod-3.1.12/
 cd libmikmod-3.1.12/
 emconfigure ./configure --prefix=$WORKSPACE --disable-shared --enable-static 
-emmake make install
+emmake make install SHELL="${SHELL}"
 
 # SDL2_mixer
 cd $WORKSPACE
@@ -132,9 +132,12 @@ FS.mount(IDBFS,{},'/appdata');
 FS.syncfs(true, function (error) {
 	if (error) {
 		console.log("Error while syncing", error);
-	}
+	} else {
+		console.log("Config loaded");
+		ccall('cfg_load', 'number');
+	};
 });
 EOF
-emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_mixer.a lib/libmikmod.a -s 'SDL2_IMAGE_FORMATS=["png","jpeg","gif"]' -s USE_OGG=1 -s USE_VORBIS=1 -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2  -o project.html -s SAFE_HEAP=0  -s TOTAL_MEMORY=167772160 -s ALLOW_MEMORY_GROWTH=0  --post-js post.js  --use-preload-plugins --preload-file fs@/
+emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_mixer.a lib/libmikmod.a -s EXPORTED_FUNCTIONS="['_main', '_cfg_load']" -s 'SDL2_IMAGE_FORMATS=["png","jpeg","gif"]' -s USE_OGG=1 -s USE_VORBIS=1 -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2  -o project.html -s SAFE_HEAP=0  -s TOTAL_MEMORY=167772160 -s ALLOW_MEMORY_GROWTH=0  --post-js post.js  --use-preload-plugins --preload-file fs@/
 echo "Happy hacking"
 python2.7 -m SimpleHTTPServer 8000
