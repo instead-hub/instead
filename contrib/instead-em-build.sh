@@ -130,14 +130,58 @@ cat <<EOF > post.js
 var Module;
 FS.mkdir('/appdata');
 FS.mount(IDBFS,{},'/appdata');
+
 Module['postRun'].push(function() {
-	FS.syncfs(true, function (error) {
-		if (error) {
-			console.log("Error while syncing: ", error);
-		};
-		console.log("Running...");
-		Module.ccall('instead_main', 'number');
-	});
+	var argv
+	var req
+	if (typeof window === "object") {
+		argv = window.location.search.substr(1).trim().split('&');
+		if (!argv[0])
+			argv = [];
+	}
+	var url = argv[0];
+	if (!url) {
+		FS.syncfs(true, function (error) {
+			if (error) {
+				console.log("Error while syncing: ", error);
+			};
+			console.log("Running...");
+			Module.ccall('instead_main', 'number');
+		});
+		return;
+	}
+
+	req = new XMLHttpRequest();
+	req.responseType = "arraybuffer";
+	req.open("GET", url, true);
+	console.log("Get: ", url);
+	req.onload = function() {
+		var basename = function(path) {
+			parts = path.split( '/' );
+			return parts[parts.length - 1];
+		}
+		var data = req.response;
+		console.log("Data loaded...", data);
+		FS.syncfs(true, function (error) {
+			if (error) {
+				console.log("Error while syncing: ", error);
+			};
+			url = basename(url)
+			console.log("Unpacking: ", url);
+			FS.writeFile(url, new Int8Array(data), { encoding: 'binary' }, "w");
+			console.log("Running...");
+			var args = [];
+			args.push(allocate(intArrayFromString("instead-em"), 'i8', ALLOC_NORMAL));
+			args.push(0); args.push(0); args.push(0);
+			args.push(allocate(intArrayFromString(url), 'i8', ALLOC_NORMAL));
+			args.push(0); args.push(0); args.push(0);
+			args.push(allocate(intArrayFromString("-standalone"), 'i8', ALLOC_NORMAL));
+			args.push(0); args.push(0); args.push(0);
+			args = allocate(args, 'i32', ALLOC_NORMAL);
+			Module.ccall('instead_main', 'number', ["number", "number"], [3, args ]);
+		});
+	}
+	req.send(null);
 });
 EOF
 emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_mixer.a lib/libmikmod.a \
