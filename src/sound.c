@@ -128,7 +128,7 @@ int snd_init(int hz)
 		return -1;
 	}
 #ifdef __EMSCRIPTEN__
-	if (Mix_OpenAudioDevice(hz, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4096, NULL, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE)) {
+	if (Mix_OpenAudioDevice(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4096, NULL, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE)) {
 #else
 	if (Mix_OpenAudio(hz, audio_format, audio_channels, audio_buffers)) {
 #endif
@@ -403,7 +403,9 @@ void snd_done(void)
 		free(next_mus);
 	next_mus = NULL;
 	Mix_CloseAudio();
+#ifndef __EMSCRIPTEN__
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
+#endif
 	sound_on = 0;
 }
 

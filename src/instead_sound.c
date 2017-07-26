@@ -506,12 +506,14 @@ int game_change_hz(int hz)
 {
 	if (!hz)
 		return -1;
+#ifndef __EMSCRIPTEN__
 	snd_done();
 	free_last_music();
 	snd_init(hz);
 	snd_volume_mus(cur_vol);
 	sounds_reload();
 	game_music_player();
+#endif
 	opt_hz = snd_hz();
 	return 0;
 }
