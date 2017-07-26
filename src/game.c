@@ -3465,7 +3465,7 @@ static void game_void_cycle(void)
 int game_loop(void)
 {
 #ifdef __EMSCRIPTEN__
-	emscripten_set_main_loop(game_void_cycle, 0, 1);
+	emscripten_set_main_loop(game_void_cycle, 0, 0);
 	return -1;
 #else
 	while (game_running) {

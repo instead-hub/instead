@@ -671,6 +671,9 @@ int instead_main(int argc, char *argv[])
 	}
 
 	game_loop();
+#ifdef __EMSCRIPTEN__
+	return 0;
+#endif
 	cfg_save();
 	game_done(0);
 
