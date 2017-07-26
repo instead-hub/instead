@@ -104,7 +104,7 @@ cd instead-em
 git pull
 [ -e Rules.make ] || ln -s Rules.standalone Rules.make
 cat <<EOF > config.make
-EXTRA_CFLAGS+= -D_HAVE_ICONV -I../../include
+EXTRA_CFLAGS+= -DNOMAIN -D_HAVE_ICONV -I../../include
 SDL_CFLAGS=-I../../include/SDL2 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 -s SDL2_IMAGE_FORMATS='["png","jpeg","gif"]'
 SDL_LFLAGS=
 LUA_CFLAGS=
@@ -127,17 +127,26 @@ cd instead-em-js
 ln -f -s ../instead-em/src/sdl-instead sdl-instead.bc
 ln -f -s ../lib lib
 cat <<EOF > post.js
+var Module;
 FS.mkdir('/appdata');
 FS.mount(IDBFS,{},'/appdata');
-FS.syncfs(true, function (error) {
-	if (error) {
-		console.log("Error while syncing", error);
-	} else {
-		console.log("Config loaded");
-		ccall('cfg_load', 'number');
-	};
+Module['postRun'].push(function() {
+	FS.syncfs(true, function (error) {
+		if (error) {
+			console.log("Error while syncing: ", error);
+		};
+		console.log("Running...");
+		Module.ccall('instead_main', 'number');
+	});
 });
 EOF
-emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_mixer.a lib/libmikmod.a -s EXPORTED_FUNCTIONS="['_main', '_cfg_load']" -s 'SDL2_IMAGE_FORMATS=["png","jpeg","gif"]' -s USE_OGG=1 -s USE_VORBIS=1 -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2  -o project.html -s SAFE_HEAP=0  -s TOTAL_MEMORY=167772160 -s ALLOW_MEMORY_GROWTH=0  --post-js post.js  --use-preload-plugins --preload-file fs@/
+emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_mixer.a lib/libmikmod.a \
+-s EXPORTED_FUNCTIONS="['_instead_main']" \
+-s 'SDL2_IMAGE_FORMATS=["png","jpeg","gif"]' \
+-s USE_OGG=1 -s USE_VORBIS=1 -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2 \
+-o project.html -s SAFE_HEAP=0  -s TOTAL_MEMORY=167772160 -s ALLOW_MEMORY_GROWTH=0 \
+--post-js post.js  \
+--preload-file fs@/
+
 echo "Happy hacking"
 python2.7 -m SimpleHTTPServer 8000
