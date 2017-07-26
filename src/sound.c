@@ -402,8 +402,8 @@ void snd_done(void)
 	if (next_mus)
 		free(next_mus);
 	next_mus = NULL;
-	Mix_CloseAudio();
 #ifndef __EMSCRIPTEN__
+	Mix_CloseAudio();
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 #endif
 	sound_on = 0;
