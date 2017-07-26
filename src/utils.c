@@ -497,6 +497,8 @@ void data_sync(void)
 	EM_ASM(FS.syncfs(function(error) {
 		if (error) {
 			console.log("Error while syncing", error);
+		} else {
+			console.log("Config synced");
 		}
 	}););
 }
