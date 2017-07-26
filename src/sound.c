@@ -395,6 +395,7 @@ void snd_done(void)
 		timer_id = NULL_TIMER;
 	}
 	Mix_HaltChannel(-1);
+	Mix_HookMusicFinished(NULL);
 	Mix_HaltMusic();
 	if (mus)
 		snd_free_mus(mus);
