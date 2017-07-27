@@ -35,6 +35,7 @@ export LDSHARED="$LD"
 export RANLIB="emranlib"
 export AR="emar"
 
+
 # Lua
 cd $WORKSPACE
 rm -rf lua-5.1.5
@@ -85,7 +86,7 @@ hg --config "extensions.purge=" purge --all
 
 cat configure.in | sed -e 's/AC_CHECK_LIB(\[modplug\], /AC_CHECK_LIB(\[modplug\], \[ModPlug_Load\], /' -e 's/have_libmikmod=no/have_libmikmod=yes/g' > configure.in.new
 mv -f configure.in.new configure.in
-autoconf
+./autogen.sh
 emconfigure ./configure --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -s USE_VORBIS=1 -s USE_OGG=1" LDFLAGS="-L$WORKSPACE/lib" --disable-sdltest --disable-shared \
    --disable-music-mp3-mad-gpl --enable-music-ogg --disable-music-ogg-shared --enable-music-mod-mikmod --disable-music-mod-mikmod-shared \
    --disable-music-midi-fluidsynth --disable-music-midi-fluidsynth-shared \
@@ -95,6 +96,23 @@ cat Makefile | sed -e 's| \$(objects)/playwave\$(EXE) \$(objects)/playmus\$(EXE)
 mv -f Makefile.new Makefile
 emmake make install
 
+# jpeg lib
+cd $WORKSPACE
+rm -rf jpeg-9b
+[ -f jpegsrc.v9b.tar.gz ] || wget -nv 'http://www.ijg.org/files/jpegsrc.v9b.tar.gz'
+tar xf jpegsrc.v9b.tar.gz
+cd jpeg-9b
+emconfigure ./configure --prefix=$WORKSPACE
+emmake make install
+
+# SDL_image
+cd $WORKSPACE
+rm -rf SDL2_image
+[ -d SDL2_image/.git ] || git clone https://github.com/emscripten-ports/SDL2_image.git SDL2_image
+cd SDL2_image
+./autogen.sh
+emconfigure ./configure --host=asmjs-unknown-linux --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -s USE_SDL=2 -s USE_LIBPNG=1 " LDFLAGS="-L$WORKSPACE/lib -lpng -ljpeg" --disable-sdltest --disable-shared --enable-static --enable-png --disable-png-shared --enable-jpg --disable-jpg-shared
+emmake make install
 
 # INSTEAD
 echo "INSTEAD"
@@ -184,12 +202,11 @@ Module['postRun'].push(function() {
 });
 EOF
 
-emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_mixer.a lib/libmikmod.a \
+emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_mixer.a lib/libmikmod.a lib/libSDL2_image.a lib/libjpeg.a  \
 -s EXPORTED_FUNCTIONS="['_instead_main']" \
 -s 'SDL2_IMAGE_FORMATS=["png","jpeg","gif"]' \
---use-preload-plugins \
 -s QUANTUM_SIZE=4 \
--s USE_OGG=1 -s USE_VORBIS=1 -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2 \
+-s USE_OGG=1 -s USE_VORBIS=1 -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_LIBPNG=1 \
 -o instead-em.html -s SAFE_HEAP=0  -s TOTAL_MEMORY=167772160 -s ALLOW_MEMORY_GROWTH=0 \
 --post-js post.js  \
 --preload-file fs@/
