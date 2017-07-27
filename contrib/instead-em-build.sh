@@ -126,13 +126,14 @@ find instead-em-js/fs/ \( -name '*.svg' -o -name Makefile -o -name CMakeLists.tx
 cd instead-em-js
 ln -f -s ../instead-em/src/sdl-instead sdl-instead.bc
 ln -f -s ../lib lib
+
 cat <<EOF > post.js
 var Module;
 FS.mkdir('/appdata');
 FS.mount(IDBFS,{},'/appdata');
 
 Module['postRun'].push(function() {
-	var argv
+	var argv = []
 	var req
 	if (typeof window === "object") {
 		argv = window.location.search.substr(1).trim().split('&');
@@ -161,22 +162,20 @@ Module['postRun'].push(function() {
 			return parts[parts.length - 1];
 		}
 		var data = req.response;
-		console.log("Data loaded...", data);
+		console.log("Data loaded...");
 		FS.syncfs(true, function (error) {
 			if (error) {
 				console.log("Error while syncing: ", error);
-			};
-			url = basename(url)
-			console.log("Unpacking: ", url);
+			}
+			url = basename(url);
+			console.log("Writing: ", url);
 			FS.writeFile(url, new Int8Array(data), { encoding: 'binary' }, "w");
 			console.log("Running...");
 			var args = [];
-			args.push(allocate(intArrayFromString("instead-em"), 'i8', ALLOC_NORMAL));
-			args.push(0); args.push(0); args.push(0);
-			args.push(allocate(intArrayFromString(url), 'i8', ALLOC_NORMAL));
-			args.push(0); args.push(0); args.push(0);
-			args.push(allocate(intArrayFromString("-standalone"), 'i8', ALLOC_NORMAL));
-			args.push(0); args.push(0); args.push(0);
+			[ "instead-em", url, "-standalone" ].forEach(function(item) {
+				args.push(allocate(intArrayFromString(item), 'i8', ALLOC_NORMAL));
+				args.push(0); args.push(0); args.push(0);
+			})
 			args = allocate(args, 'i32', ALLOC_NORMAL);
 			Module.ccall('instead_main', 'number', ["number", "number"], [3, args ]);
 		});
@@ -184,11 +183,13 @@ Module['postRun'].push(function() {
 	req.send(null);
 });
 EOF
+
 emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_mixer.a lib/libmikmod.a \
 -s EXPORTED_FUNCTIONS="['_instead_main']" \
 -s 'SDL2_IMAGE_FORMATS=["png","jpeg","gif"]' \
+-s QUANTUM_SIZE=4 \
 -s USE_OGG=1 -s USE_VORBIS=1 -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2 \
--o project.html -s SAFE_HEAP=0  -s TOTAL_MEMORY=167772160 -s ALLOW_MEMORY_GROWTH=0 \
+-o instead-em.html -s SAFE_HEAP=0  -s TOTAL_MEMORY=167772160 -s ALLOW_MEMORY_GROWTH=0 \
 --post-js post.js  \
 --preload-file fs@/
 
