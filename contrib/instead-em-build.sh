@@ -174,6 +174,15 @@ Module['postRun'].push(function() {
 	req.responseType = "arraybuffer";
 	req.open("GET", url, true);
 	console.log("Get: ", url);
+
+	setTimeout(function() {
+		var spinnerElement = document.getElementById('spinner');
+		spinnerElement.style.display = 'inline-block';
+		Module['setStatus']('Downloading data file...');
+	}, 3);
+
+	Module.setStatus('Downloading data...');
+
 	req.onload = function() {
 		var basename = function(path) {
 			parts = path.split( '/' );
@@ -195,6 +204,7 @@ Module['postRun'].push(function() {
 				args.push(0); args.push(0); args.push(0);
 			})
 			args = allocate(args, 'i32', ALLOC_NORMAL);
+			Module.setStatus('');
 			Module.ccall('instead_main', 'number', ["number", "number"], [3, args ]);
 		});
 	}
