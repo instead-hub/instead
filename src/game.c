@@ -815,6 +815,9 @@ static void _game_gfx_commit(void *data)
 
 void game_gfx_commit(int sync)
 {
+	if (gfx_fading()) /* to avoid flickering */
+		return;
+
 	if (gfx_pending()) {
 		if (sync) {
 			gfx_commit_event = 0;
