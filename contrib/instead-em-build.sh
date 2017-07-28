@@ -171,8 +171,8 @@ Module['postRun'].push(function() {
 	}
 
 	req = new XMLHttpRequest();
-	req.responseType = "arraybuffer";
 	req.open("GET", url, true);
+	req.responseType = "arraybuffer";
 	console.log("Get: ", url);
 
 	setTimeout(function() {
