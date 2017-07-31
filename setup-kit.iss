@@ -1,6 +1,6 @@
 [Setup]
 AppName=INSTEAD-KIT
-AppVerName=INSTEAD 3.0.2
+AppVerName=INSTEAD 3.1.0
 DefaultDirName={pf}\Games\INSTEAD
 DefaultGroupName=Games
 UninstallDisplayIcon={app}\sdl-instead.exe
