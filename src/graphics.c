@@ -5360,7 +5360,7 @@ static img_t	fade_fg = NULL;
 static void *fade_aux = NULL;
 static void (*fade_cb)(void *) = NULL;
 static SDL_TimerID	fade_timer;
-
+static long gfx_change_nr = 0;
 #if SDL_VERSION_ATLEAST(2,0,0)
 static SDL_Texture *fade_bg_texture = NULL;
 static SDL_Texture *fade_fg_texture = NULL;
@@ -5398,6 +5398,7 @@ static void update_gfx(void)
 
 static void gfx_change_screen_step(void *aux)
 {
+	gfx_change_nr --;
 	if (gfx_fading()) {
 		update_gfx();
 #if !SDL_VERSION_ATLEAST(2,0,0)
@@ -5425,11 +5426,14 @@ static Uint32 update(Uint32 interval, void *aux)
 {
 	if (!gfx_fading())
 		return 0;
-	push_user_event(gfx_change_screen_step, NULL);
 #ifdef __EMSCRIPTEN__
 	SDL_RemoveTimer(fade_timer);
 	fade_timer = SDL_AddTimer(60, update, NULL);
 #endif
+	if (gfx_change_nr > 0)
+		return interval;
+	gfx_change_nr ++;
+	push_user_event(gfx_change_screen_step, NULL);
 	return interval;
 }
 
@@ -5444,6 +5448,7 @@ void gfx_change_screen(img_t src, int steps, void (*callback)(void *), void *aux
 			callback(aux);
 		return;
 	}
+	gfx_change_nr = 0;
 	fade_fg = NULL;
 	fade_aux = aux;
 	fade_cb = callback;
