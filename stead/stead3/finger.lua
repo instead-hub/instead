@@ -8,8 +8,8 @@ finger = std.obj {
 	{
 		fingers_list = { };
 	};
-	filter = function(s, press, btn, x, y, px, py)
-		return press and px
+	filter = function(s, press, fid, x, y, px, py) -- by default, all finger events
+		return true
 	end
 }
 
@@ -71,6 +71,9 @@ end
 function input:finger(press, fid, x, y, px, py, ...)
 	local a
 	finger:event(press, fid, x, y, px, py, ...)
+	if not finger:filter(press, fid, x, y, px, py, ...) then
+		return
+	end
 	for k, v in std.ipairs {press, fid, x, y, px, py, ...} do
 		a = (a and (a..', ') or ' ') .. std.dump(v)
 	end
