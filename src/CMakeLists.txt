@@ -7,6 +7,7 @@ SET(INSTEAD_SRCS
 	game.c
 	graphics.c
 	input.c
+	noise1234.c
 	ioapi.c
 	main.c
 	menu.c

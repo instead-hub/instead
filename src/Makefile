@@ -9,7 +9,7 @@ INSTEAD_SRC	:= instead/instead.c instead/util.c instead/list.c instead/cache.c i
 INSTEAD_H	:= instead/cache.h instead/system.h instead/instead.h instead/list.h instead/util.h instead/tinymt32.h instead/idf.h
 
 SRC     := graphics.c input.c game.c main.c \
-	instead_bits.c instead_sprites.c instead_timer.c instead_sound.c instead_paths.c \
+	instead_bits.c instead_sprites.c instead_timer.c instead_sound.c instead_paths.c noise1234.c \
 	sound.c SDL_rotozoom.c SDL_anigif.c SDL_gfxBlitFunc.c config.c themes.c menu.c \
 	utils.c unzip.c ioapi.c unpack.c $(PLATFORM) $(INSTEAD_SRC)
 

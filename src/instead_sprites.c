@@ -24,6 +24,7 @@
 
 #include "externals.h"
 #include "internals.h"
+#include "noise1234.h"
 
 static LIST_HEAD(sprites);
 
@@ -2271,6 +2272,73 @@ static int pixels_create_meta (lua_State *L) {
 	return 0;
 }
 
+static int luaB_noise1(lua_State *L) {
+	float r;
+	int px;
+	float x = luaL_optnumber(L, 1, 0);
+	if (lua_isnumber(L, 2)) {
+		px = luaL_optnumber(L, 2, 0);
+		r = pnoise1(x, px);
+	} else {
+		r = noise1(x);
+	}
+	lua_pushnumber(L, r);
+	return 1;
+}
+
+static int luaB_noise2(lua_State *L) {
+	float r;
+	int px; int py;
+	float x = luaL_optnumber(L, 1, 0);
+	float y = luaL_optnumber(L, 2, 0);
+	if (lua_isnumber(L, 3)) {
+		px = luaL_optnumber(L, 3, 0);
+		py = luaL_optnumber(L, 4, 0);
+		r = pnoise2(x, y, px, py);
+	} else {
+		r = noise2(x, y);
+	}
+	lua_pushnumber(L, r);
+	return 1;
+}
+
+static int luaB_noise3(lua_State *L) {
+	float r;
+	int px; int py; int pz;
+	float x = luaL_optnumber(L, 1, 0);
+	float y = luaL_optnumber(L, 2, 0);
+	float z = luaL_optnumber(L, 3, 0);
+	if (lua_isnumber(L, 4)) {
+		px = luaL_optnumber(L, 4, 0);
+		py = luaL_optnumber(L, 5, 0);
+		pz = luaL_optnumber(L, 6, 0);
+		r = pnoise3(x, y, z, px, py, pz);
+	} else {
+		r = noise3(x, y, z);
+	}
+	lua_pushnumber(L, r);
+	return 1;
+}
+
+static int luaB_noise4(lua_State *L) {
+	float r;
+	int px; int py; int pz; int pw;
+	float x = luaL_optnumber(L, 1, 0);
+	float y = luaL_optnumber(L, 2, 0);
+	float z = luaL_optnumber(L, 3, 0);
+	float w = luaL_optnumber(L, 4, 0);
+	if (lua_isnumber(L, 5)) {
+		px = luaL_optnumber(L, 5, 0);
+		py = luaL_optnumber(L, 6, 0);
+		pz = luaL_optnumber(L, 7, 0);
+		pw = luaL_optnumber(L, 8, 0);
+		r = pnoise4(x, y, z, w, px, py, pz, pw);
+	} else {
+		r = noise4(x, y, z, w);
+	}
+	lua_pushnumber(L, r);
+	return 1;
+}
 
 static const luaL_Reg sprites_funcs[] = {
 	{"instead_font_load", luaB_load_font},
@@ -2302,6 +2370,10 @@ static const luaL_Reg sprites_funcs[] = {
 	{"instead_mouse_show", luaB_mouse_show},
 	{"instead_finger_pos", luaB_finger_pos},
 	{"instead_themespath", luaB_get_themespath},
+	{"instead_noise1", luaB_noise1},
+	{"instead_noise2", luaB_noise2},
+	{"instead_noise3", luaB_noise3},
+	{"instead_noise4", luaB_noise4},
 	{NULL, NULL}
 };
 

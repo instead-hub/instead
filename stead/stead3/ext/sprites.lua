@@ -250,6 +250,11 @@ instead.mouse_filter = instead_mouse_filter
 
 instead.finger_pos = instead_finger_pos
 
+instead.noise1 = instead_noise1
+instead.noise2 = instead_noise2
+instead.noise3 = instead_noise3
+instead.noise4 = instead_noise4
+
 std.busy = instead_busy
 
 local spr = {
