@@ -339,6 +339,7 @@ static int luaB_text_sprite(lua_State *L) {
 	fnt_style(fn->fnt, style);
 
 	img = fnt_render(fn->fnt, text, col);
+
 	if (img)
 		img = gfx_display_alpha(img); /*speed up */
 
@@ -2123,49 +2124,28 @@ static int pixels_destroy(lua_State *L) {
 	return 0;
 }
 
-static int luaB_pixels_sprite(lua_State *L) {
-	const char *fname;
-	int w, h;
-	float scale;
+static int pixels_new(lua_State *L, int w, int h, float scale, img_t src) {
 	int ww, hh, direct = 0;
+	img_t img2 = NULL, img;
 	size_t size;
 	float v = game_theme.scale;
-	img_t img = NULL, img2 = NULL;
 	struct lua_pixels *hdr;
 
-	if (!lua_isnumber(L, 1)) {
-		fname = luaL_optstring(L, 1, NULL);
-		if (!fname)
-			return 0;
-		img = gfx_load_image((char*)fname);
-		if (!img)
-			return 0;
-//		if (!cache_have(gfx_image_cache(), img))
-//			v = 1.0f; /* do not scale sprites! */
-		w = gfx_img_w(img);
-		h = gfx_img_h(img);
-
+	if (src) {
+		w = gfx_img_w(src);
+		h = gfx_img_h(src);
 		img2 = gfx_new_rgba(w, h);
-		if (!img2) {
-			gfx_free_image(img);
+		if (!img2)
 			return 0;
-		}
-		gfx_copy_from(img, 0, 0, w, h, img2, 0, 0);
-		gfx_free_image(img);
-		scale = luaL_optnumber(L, 2, 1.0f);
-	} else {
-		w = luaL_optnumber(L, 1, -1);
-		h = luaL_optnumber(L, 2, -1);
-		scale = luaL_optnumber(L, 3, 1.0f);
-		if (w < 0 || h < 0)
-			return 0;
+		gfx_copy_from(src, 0, 0, w, h, img2, 0, 0);
 	}
+	if (w <=0 || h <= 0)
+		return 0;
 	ww = w; hh = h;
 	if (v != 1.0f) {
 		ww = ceil((float)w * v);
 		hh = ceil((float)h * v);
 	}
-
 	ww = ceil((float)ww * scale);
 	hh = ceil((float)hh * scale);
 	size = w * h * 4;
@@ -2214,6 +2194,75 @@ static int luaB_pixels_sprite(lua_State *L) {
 	luaL_getmetatable(L, "pixels metatable");
 	lua_setmetatable(L, -2);
 	return 1;
+
+}
+static int luaB_pixels_sprite(lua_State *L) {
+	const char *fname;
+	int w, h, rc;
+	float scale;
+	img_t img = NULL;
+
+	if (!lua_isnumber(L, 1)) {
+		fname = luaL_optstring(L, 1, NULL);
+		if (!fname)
+			return 0;
+		img = gfx_load_image((char*)fname);
+		if (!img)
+			return 0;
+//		if (!cache_have(gfx_image_cache(), img))
+//			v = 1.0f; /* do not scale sprites! */
+		w = 0; h = 0;
+		scale = luaL_optnumber(L, 2, 1.0f);
+	} else {
+		w = luaL_optnumber(L, 1, -1);
+		h = luaL_optnumber(L, 2, -1);
+		scale = luaL_optnumber(L, 3, 1.0f);
+	}
+	rc = pixels_new(L, w, h, scale, img);
+	if (img)
+		gfx_free_image(img);
+	return rc;
+}
+
+static int pixels_scale(lua_State *L) {
+	img_t img, img2;
+	int rc;
+	struct lua_pixels *src = (struct lua_pixels*)lua_touserdata(L, 1);;
+	float xs = luaL_optnumber(L, 2, 0);
+	float ys = luaL_optnumber(L, 3, 0);
+	int smooth = lua_toboolean(L, 4);
+
+	if (!src || src->type != PIXELS_MAGIC)
+		return 0;
+	if (ys == 0)
+		ys = xs;
+	img = gfx_new_from(src->w, src->h, (unsigned char*)(src + 1));
+	if (!img)
+		return 0;
+	img2 = gfx_scale(img, xs, ys, smooth);
+	gfx_free_image(img);
+	rc = pixels_new(L, 0, 0, src->scale, img2);
+	gfx_free_image(img2);
+	return rc;
+}
+
+static int pixels_rotate(lua_State *L) {
+	img_t img, img2;
+	int rc;
+	struct lua_pixels *src = (struct lua_pixels*)lua_touserdata(L, 1);;
+	float angle = luaL_optnumber(L, 2, 0);
+	int smooth = lua_toboolean(L, 3);
+
+	if (!src || src->type != PIXELS_MAGIC)
+		return 0;
+	img = gfx_new_from(src->w, src->h, (unsigned char*)(src + 1));
+	if (!img)
+		return 0;
+	img2 = gfx_rotate(img, angle, smooth);
+	gfx_free_image(img);
+	rc = pixels_new(L, 0, 0, src->scale, img2);
+	gfx_free_image(img2);
+	return rc;
 }
 
 /*
@@ -2264,6 +2313,12 @@ static int pixels_create_meta (lua_State *L) {
 	lua_settable(L, -3);
 	lua_pushstring(L, "fill_poly");
 	lua_pushcfunction (L, pixels_fill_poly);
+	lua_settable(L, -3);
+	lua_pushstring(L, "new_scaled");
+	lua_pushcfunction (L, pixels_scale);
+	lua_settable(L, -3);
+	lua_pushstring(L, "new_rotated");
+	lua_pushcfunction (L, pixels_rotate);
 	lua_settable(L, -3);
 	lua_settable(L, -3);
 	lua_pushstring (L, "__gc");

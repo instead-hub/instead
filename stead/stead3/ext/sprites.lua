@@ -499,6 +499,14 @@ function pxl:compose_spr(fx, fy, fw, fh, d, x, y, alpha)
 	return d
 end
 
+function pxl:scale(...)
+	return pxl:new(self:new_scaled(...))
+end
+
+function pxl:rotate(...)
+	return pxl:new(self:new_rotated(...))
+end
+
 local function poly(self, fn, t, ...)
 	if type(t) ~= 'table' then
 		std.err("Wrong argument to :poly()", 3)
