@@ -5131,6 +5131,7 @@ end
 - :text(текст, цвет(как в спрайтах), стиль) -- создать пиксели с текстом;
 
 Например:
+
 ```
 	local fnt = pixels.fnt("sans.ttf", 64)
 	local t = fnt:text("HELLO, INSTEAD!", 'black')
@@ -5138,7 +5139,9 @@ end
 	pxl2:draw_spr(sprite.scr(), 100, 200);
 	t:draw_spr(sprite.scr(), 200, 400)
 ```
+
 Еще один пример (автор примера, Андрей Лобанов):
+
 ```
 require "sprite"
 require "timer"
