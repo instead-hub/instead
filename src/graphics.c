@@ -3564,6 +3564,7 @@ int gfx_get_token(const char *ptr, char **eptr, char **val, int *sp)
 	switch (*ptr) {
 	case 'y':
 		y_token = 1;
+		/* Fall through */
 	case 'x':
 		if (ptr[1] != ':')
 			return 0;

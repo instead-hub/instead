@@ -150,9 +150,9 @@ extern    "C" {
 #define GFX_DUFFS_LOOP4(pixel_copy_increment, width)			\
 	{ int n = (width+3)/4;							\
 	switch (width & 3) {						\
-	case 0: do {	pixel_copy_increment;				\
-	case 3:		pixel_copy_increment;				\
-	case 2:		pixel_copy_increment;				\
+	case 0: do {	pixel_copy_increment; /* fall through */	\
+	case 3:		pixel_copy_increment; /* fall through */	\
+	case 2:		pixel_copy_increment; /* fall through */	\
 	case 1:		pixel_copy_increment;				\
 	} while ( --n > 0 );					\
 	}								\
