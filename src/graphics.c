@@ -5379,9 +5379,10 @@ static void update_gfx(void)
 	gfx_flip();
 #else
 	SDL_RenderCopy(Renderer, fade_bg_texture, NULL, NULL);
-	SDL_SetTextureAlphaMod(fade_fg_texture, (SDL_ALPHA_OPAQUE * (fade_step_nr)) / ALPHA_STEPS);
+	SDL_SetTextureAlphaMod(fade_fg_texture, (SDL_ALPHA_OPAQUE * (fade_step_nr + 1)) / ALPHA_STEPS);
 	SDL_RenderCopy(Renderer, fade_fg_texture, NULL, NULL);
 	gfx_draw_cursor();
+	SDL_RenderPresent(Renderer);
 #endif
 	fade_step_nr ++;
 	if (fade_step_nr == ALPHA_STEPS) {
@@ -5404,8 +5405,6 @@ static void gfx_change_screen_step(void *aux)
 #if !SDL_VERSION_ATLEAST(2,0,0)
 		game_cursor(CURSOR_ON);
 		gfx_commit();
-#else
-		SDL_RenderPresent(Renderer);
 #endif
 	}
 	if (gfx_fading())
