@@ -1,3 +1,9 @@
+3.1.2
+
+  * regression fix in fading and menu;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 21 Aug 2017 16:45:00 +0300
+
 3.1.1
 
   * regression fix in fading (Android);

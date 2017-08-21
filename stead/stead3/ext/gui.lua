@@ -5,7 +5,7 @@ local std = stead
 local instead = std.obj {
 	nam = '@instead';
 
-	version_table = {3, 1, 1};
+	version_table = {3, 1, 2};
 
 	ini = function(s) -- after reset always do fade
 		s.need_fading(true)
