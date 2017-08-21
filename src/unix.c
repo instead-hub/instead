@@ -147,8 +147,8 @@ char *open_file_dialog(void)
 	file[0] = 0;
 	file_dialog = gtk_file_chooser_dialog_new (BROWSE_MENU, 
 			NULL, GTK_FILE_CHOOSER_ACTION_OPEN,
-			"_Cancel", GTK_RESPONSE_CANCEL,
-			"_Open",   GTK_RESPONSE_ACCEPT, NULL);
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			GTK_STOCK_OPEN,   GTK_RESPONSE_ACCEPT, NULL);
 
 	if (old_dir_set)
 		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(file_dialog),

@@ -174,7 +174,7 @@ local function mod_init()
 			return d.value
 		end
 		local f = std.getinfo(2, "S").source
-		std.err ("Uninitialized global variable: "..n.." in "..f, 2)
+		std.err ("Uninitialized global variable: "..n.." in "..f, 3)
 	end;
 	__newindex = function(t, k, v)
 		if not std.game and std.is_obj(v) then -- autodeclare objects
