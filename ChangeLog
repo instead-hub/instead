@@ -1,3 +1,11 @@
+3.1.1
+
+  * regression fix in fading (Android);
+  * code cleanups;
+  * doc cleanups;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 21 Aug 2017 08:50:00 +0300
+
 3.1.0
 
   * emscripten port;

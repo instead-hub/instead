@@ -5,7 +5,7 @@
 #define PATH_MAX 256
 #endif
 
-#define VERSION "3.1.0"
+#define VERSION "3.1.1"
 #define DATAPATH "./"
 #define STEAD_PATH DATAPATH"stead/"
 #define THEMES_PATH DATAPATH"themes/"
