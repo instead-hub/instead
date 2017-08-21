@@ -1442,6 +1442,7 @@ int game_menu_box_width(int show, const char *txt, int width)
 int game_menu_box(int show, const char *txt)
 {
 	int w = 0, rc;
+	gfx_cancel_change_screen();
 	if (show)
 		game_event("pause");
 	if (cur_menu == menu_games) { /* hack a bit :( */

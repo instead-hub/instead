@@ -5386,16 +5386,8 @@ static void update_gfx(void)
 	SDL_RenderPresent(Renderer);
 #endif
 	fade_step_nr ++;
-	if (fade_step_nr == ALPHA_STEPS) {
-#if SDL_VERSION_ATLEAST(2,0,0)
-		game_cursor(CURSOR_CLEAR);
-		gfx_copy(fade_fg, 0, 0);
-		game_cursor(CURSOR_ON);
-		gfx_flip();
-		gfx_commit();
-#endif
+	if (fade_step_nr == ALPHA_STEPS)
 		fade_step_nr = -1;
-	}
 }
 
 static void gfx_change_screen_step(void *aux)
@@ -5410,15 +5402,7 @@ static void gfx_change_screen_step(void *aux)
 	}
 	if (gfx_fading())
 		return;
-	SDL_RemoveTimer(fade_timer);
-#if SDL_VERSION_ATLEAST(2,0,0)
-	SDL_DestroyTexture(fade_fg_texture);
-	SDL_DestroyTexture(fade_bg_texture);
-#endif
-	gfx_free_image(fade_bg);
-	fade_bg = NULL;
-	if (fade_cb)
-		fade_cb(fade_aux);
+	gfx_cancel_change_screen();
 	return;
 }
 
@@ -5435,6 +5419,29 @@ static Uint32 update(Uint32 interval, void *aux)
 	gfx_change_nr ++;
 	push_user_event(gfx_change_screen_step, NULL);
 	return interval;
+}
+
+void gfx_cancel_change_screen(void)
+{
+	if (!fade_bg)
+		return;
+
+	fade_step_nr = -1;
+
+	SDL_RemoveTimer(fade_timer);
+#if SDL_VERSION_ATLEAST(2,0,0)
+	SDL_DestroyTexture(fade_fg_texture);
+	SDL_DestroyTexture(fade_bg_texture);
+#endif
+	game_cursor(CURSOR_CLEAR);
+	gfx_copy(fade_fg, 0, 0);
+	game_cursor(CURSOR_ON);
+	gfx_flip();
+	gfx_commit();
+	gfx_free_image(fade_bg);
+	fade_bg = NULL;
+	if (fade_cb)
+		fade_cb(fade_aux);
 }
 
 void gfx_change_screen(img_t src, int steps, void (*callback)(void *), void *aux)
