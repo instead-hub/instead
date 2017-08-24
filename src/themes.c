@@ -985,6 +985,10 @@ int game_theme_init(void)
 		return -1;
 	}
 	gfx_fill(0, 0, game_theme.w, game_theme.h, col);
+
+	gfx_flip();
+	gfx_commit();
+
 	if (game_theme_update_data()) {
 		fprintf(stderr, "Can not init theme!\n");
 		game_theme_free();
