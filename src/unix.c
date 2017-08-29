@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "externals.h"
 #include "internals.h"
 
 #ifdef _USE_GTK
