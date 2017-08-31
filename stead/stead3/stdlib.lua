@@ -280,8 +280,8 @@ function live(...)
 	return std 'game':live(...)
 end
 
-function change_pl(...)
-	return std 'game':set_pl(...)
+function change_pl(w, ...)
+	return std 'game':set_pl(w and std.object(w), ...)
 end
 
 function player_moved(pl)
