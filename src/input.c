@@ -30,30 +30,6 @@
 static int m_focus = 0;
 static int m_minimized = 0;
 
-#if SDL_VERSION_ATLEAST(2,0,0)
-extern SDL_Window *SDL_VideoWindow;
-
-#define SDL_APPMOUSEFOCUS 1
-#define SDL_APPACTIVE 2
-#define SDL_APPINPUTFOCUS 4
-static Uint8 SDL_GetAppState(void)
-{
-	Uint8 state = 0;
-	Uint32 flags = 0;
-	flags = SDL_GetWindowFlags(SDL_VideoWindow);
-	if ((flags & SDL_WINDOW_SHOWN) && !(flags & SDL_WINDOW_MINIMIZED)) {
-		state |= SDL_APPACTIVE;
-	}
-	if (flags & SDL_WINDOW_INPUT_FOCUS) {
-		state |= SDL_APPINPUTFOCUS;
-	}
-	if (flags & SDL_WINDOW_MOUSE_FOCUS) {
-		state |= SDL_APPMOUSEFOCUS;
-	}
-	return state;
-}
-#endif
-
 int minimized(void)
 {
 	if (nopause_sw)
@@ -152,7 +128,6 @@ int input_init(void)
 #else
 	SDL_EnableKeyRepeat(INPUT_REP_DELAY_MS, INPUT_REP_INTERVAL_MS);
 #endif
-	m_focus = !!(SDL_GetAppState() & SDL_APPMOUSEFOCUS);
 #ifdef IOS
 	SDL_SetEventFilter(HandleAppEvents, NULL);
 #endif
@@ -296,6 +271,7 @@ int input(struct inp_event *inp, int wait)
 		case SDL_WINDOWEVENT_MINIMIZED:
 #if defined(ANDROID)
 			gfx_set_mode(gfx_width, gfx_height, gfx_fs); /* reset window size */
+			/* Fall through */
 #endif
 		case SDL_WINDOWEVENT_RESTORED:
 			m_minimized = (event.window.event == SDL_WINDOWEVENT_MINIMIZED && !opt_fs);
