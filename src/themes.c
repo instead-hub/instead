@@ -941,7 +941,6 @@ extern void unlock_rotation(void);
 
 int game_theme_init(void)
 {
-	color_t col = { .r = 0, .g = 0, .b = 0, .a = 0 };
 	int w  = opt_mode[0];
 	int h  = opt_mode[1];
 
@@ -984,17 +983,17 @@ int game_theme_init(void)
 		opt_mode[0] = opt_mode[1] = -1; opt_fs = 0; /* safe options */
 		return -1;
 	}
-	gfx_fill(0, 0, game_theme.w, game_theme.h, col);
-
-	gfx_flip();
-	gfx_commit();
-
 	if (game_theme_update_data()) {
 		fprintf(stderr, "Can not init theme!\n");
 		game_theme_free();
 		game_theme_select(DEFAULT_THEME);
 		return -1;
 	}
+	gfx_bg(game_theme.bgcol);
+	if (!DIRECT_MODE)
+		game_clear(0, 0, game_theme.w, game_theme.h);
+	gfx_flip();
+	gfx_commit();
 	return 0;
 }
 

@@ -38,16 +38,16 @@
 extern int	game_running;
 extern int	game_theme_changed;
 
-extern int 	nosound_sw;
+extern int	nosound_sw;
 extern int	debug_sw;
-extern int 	fullscreen_sw;
-extern int 	hires_sw;
-extern int 	window_sw;
+extern int	fullscreen_sw;
+extern int	hires_sw;
+extern int	window_sw;
 extern int	nopause_sw;
-extern int 	game_own_theme; /* current game has own theme */
+extern int	game_own_theme; /* current game has own theme */
 extern char	*games_sw;
-extern char 	game_cwd[PATH_MAX]; /* current game cwd */
-extern char 	*curgame_dir;
+extern char	game_cwd[PATH_MAX]; /* current game cwd */
+extern char	*curgame_dir;
 extern int	vsync_sw;
 extern int	resizable_sw;
 extern int	scale_sw;
@@ -55,15 +55,16 @@ extern int	standalone_sw;
 
 extern char	*appdir(void);
 
-extern char 	*game_local_games_path(int cr);
-extern char 	*game_local_themes_path(void);
-extern char 	*game_tmp_path(void);
-extern int 	game_theme_select(const char *name);
+extern void	game_clear(int x, int y, int w, int h);
+extern char	*game_local_games_path(int cr);
+extern char	*game_local_themes_path(void);
+extern char	*game_tmp_path(void);
+extern int	game_theme_select(const char *name);
 
-extern int 	game_init(const char *game);
+extern int	game_init(const char *game);
 
-extern int 	game_loop(void);
-extern void 	game_done(int err);
+extern int	game_loop(void);
+extern void	game_done(int err);
 extern char	*game_reset_name(void);
 
 extern int	game_load_theme(const char *path);
