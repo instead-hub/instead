@@ -3396,7 +3396,7 @@ static int mouse_instead(struct inp_event *ev, int *x, int *y)
 	return 0;
 }
 
-static inline int game_cycle(void)
+static __inline int game_cycle(void)
 {
 	static int x = 0, y = 0, rc;
 	struct inp_event ev;

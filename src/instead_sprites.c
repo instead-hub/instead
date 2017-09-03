@@ -1007,7 +1007,7 @@ static int pixels_size(lua_State *L) {
 
 #define PXL_BLEND_COPY 1
 #define PXL_BLEND_BLEND 2
-static inline void blend(unsigned char *s, unsigned char *d)
+static __inline void blend(unsigned char *s, unsigned char *d)
 {
 	unsigned int r, g, b, a;
 	unsigned int sa = s[3];
@@ -1022,7 +1022,7 @@ static inline void blend(unsigned char *s, unsigned char *d)
 	d[0] = r; d[1] = g; d[2] = b; d[3] = a;
 }
 
-static inline void draw(unsigned char *s, unsigned char *d)
+static __inline void draw(unsigned char *s, unsigned char *d)
 {
 	unsigned int r, g, b, a;
 	unsigned int sa = s[3];
@@ -1035,7 +1035,7 @@ static inline void draw(unsigned char *s, unsigned char *d)
 		((unsigned int)d[2] * (255 - sa) >> 8);
 	d[0] = r; d[1] = g; d[2] = b; d[3] = a;
 }
-static inline void pixel(unsigned char *s, unsigned char *d)
+static __inline void pixel(unsigned char *s, unsigned char *d)
 {
 	unsigned char a_src = s[3];
 	unsigned char a_dst = d[3];
@@ -1049,7 +1049,7 @@ static inline void pixel(unsigned char *s, unsigned char *d)
 		blend(s, d);
 	}
 }
-static inline void line0(struct lua_pixels *hdr, int x1, int y1, int dx, int dy, int xd, unsigned char *col)
+static __inline void line0(struct lua_pixels *hdr, int x1, int y1, int dx, int dy, int xd, unsigned char *col)
 {
 	int dy2 = dy * 2;
 	int dyx2 = dy2 - dx * 2;
@@ -1094,7 +1094,7 @@ static inline void line0(struct lua_pixels *hdr, int x1, int y1, int dx, int dy,
 	return;
 }
 
-static inline void line1(struct lua_pixels *hdr, int x1, int y1, int dx, int dy, int xd, unsigned char *col)
+static __inline void line1(struct lua_pixels *hdr, int x1, int y1, int dx, int dy, int xd, unsigned char *col)
 {
 	int dx2 = dx * 2;
 	int dxy2 = dx2 - dy * 2;
@@ -1436,12 +1436,12 @@ static void _fill(struct lua_pixels *src, int x, int y, int w, int h,
 	return;
 }
 
-static inline int orient2d(int ax, int ay, int bx, int by, int cx, int cy)
+static __inline int orient2d(int ax, int ay, int bx, int by, int cx, int cy)
 {
 	return (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
 }
 
-static inline int min3(int a, int b, int c)
+static __inline int min3(int a, int b, int c)
 {
 	if (a < b) {
 		if (a < c)
@@ -1454,7 +1454,7 @@ static inline int min3(int a, int b, int c)
 	}
 }
 
-static inline int max3(int a, int b, int c)
+static __inline int max3(int a, int b, int c)
 {
 	if (a > b) {
 		if (a > c)
