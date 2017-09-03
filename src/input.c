@@ -27,7 +27,7 @@
 
 #include <SDL.h>
 
-static int m_focus = 0;
+static int m_focus = 1;
 static int m_minimized = 0;
 
 int minimized(void)
