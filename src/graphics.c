@@ -2256,7 +2256,7 @@ int SDL_Flip(SDL_Surface * screen)
 {
 	SDL_Rect rect;
 	int pitch, psize;
-	void *pixels;
+	unsigned char *pixels;
 	if (!screen)
 		return 0;
 	pitch = screen->pitch;
