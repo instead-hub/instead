@@ -362,7 +362,9 @@ std.phr = std.class({
 		return std.par(std.scene_delim, r or false, rr or false, t or false), v
 	end,
 	select = function(s)
-		s:close()
+		if not s.always then
+			s:close()
+		end
 		for i = 1, #s.obj do
 			local o = s.obj[i]
 			o = o:__alias()
