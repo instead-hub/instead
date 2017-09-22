@@ -41,10 +41,6 @@ typedef uint32_t Uint32;
 #define TINYMT32_MASK UINT32_C(0x7fffffff)
 #define TINYMT32_MUL (1.0f / 4294967296.0f)
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
 /**
  * tinymt32 internal state vector and parameters
  */
@@ -66,7 +62,7 @@ void tinymt32_init_by_array(tinymt32_t * random, Uint32 init_key[],
  * Users should not call this function directly.
  * @param random tinymt internal status
  */
-inline static void tinymt32_next_state(tinymt32_t * random) {
+__inline static void tinymt32_next_state(tinymt32_t * random) {
     Uint32 x;
     Uint32 y;
 
@@ -90,7 +86,7 @@ inline static void tinymt32_next_state(tinymt32_t * random) {
  * @param random tinymt internal status
  * @return 32-bit unsigned pseudorandom number
  */
-inline static Uint32 tinymt32_temper(tinymt32_t * random) {
+__inline static Uint32 tinymt32_temper(tinymt32_t * random) {
     Uint32 t0, t1;
     t0 = random->status[3];
     t1 = random->status[0]
@@ -105,7 +101,7 @@ inline static Uint32 tinymt32_temper(tinymt32_t * random) {
  * @param random tinymt internal status
  * @return 32-bit unsigned integer r (0 <= r < 2^32)
  */
-inline static Uint32 tinymt32_generate_uint32(tinymt32_t * random) {
+__inline static Uint32 tinymt32_generate_uint32(tinymt32_t * random) {
     tinymt32_next_state(random);
     return tinymt32_temper(random);
 }
@@ -118,7 +114,7 @@ inline static Uint32 tinymt32_generate_uint32(tinymt32_t * random) {
  * @param random tinymt internal status
  * @return floating point number r (0.0 <= r < 1.0)
  */
-inline static float tinymt32_generate_float(tinymt32_t * random) {
+__inline static float tinymt32_generate_float(tinymt32_t * random) {
     tinymt32_next_state(random);
     return tinymt32_temper(random) * TINYMT32_MUL;
 }
@@ -131,13 +127,9 @@ inline static float tinymt32_generate_float(tinymt32_t * random) {
  * @param random tinymt internal status
  * @return floating point number r (0.0 < r <= 1.0)
  */
-inline static double tinymt32_generate_32double(tinymt32_t * random) {
+__inline static double tinymt32_generate_32double(tinymt32_t * random) {
     tinymt32_next_state(random);
     return tinymt32_temper(random) * (1.0 / 4294967296.0);
 }
-
-#if defined(__cplusplus)
-}
-#endif
 
 #endif
