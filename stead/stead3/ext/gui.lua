@@ -257,7 +257,7 @@ function iface:xref(str, o, ...)
 	local a = { ... }
 	local args = ''
 	for i = 1, #a do
-		if type(a[i]) ~= 'string' and type(a[i]) ~= 'number' then
+		if type(a[i]) ~= 'string' and type(a[i]) ~= 'number' and type(a[i]) ~= 'boolean' then
 			std.err ("Wrong argument to iface:xref: "..std.tostr(a[i]), 2)
 		end
 		args = args .. ' '..std.dump(a[i])
