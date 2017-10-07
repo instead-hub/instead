@@ -22,7 +22,7 @@
  *
  */
 
-#if defined(__APPLE__) || defined(S60) || defined(ANDROID)
+#if defined(__APPLE__) || defined(S60) || defined(ANDROID) || defined(WINRT)
 #include <SDL.h>
 #endif
 
@@ -270,18 +270,17 @@ int instead_main(int argc, char *argv[])
 #ifdef _WIN32_WCE
 	libwince_init(argv[0], 1);
 	wince_init(argv[0]);
-#else
-#ifdef S60
+#elif defined(WINRT)
+	unix_path(argv[0]);
+	strcpy(game_cwd, argv[0]);
+#elif defined(S60)
 	extern char s60_data[];
 	strcpy(game_cwd, s60_data);
-#else
-#ifdef _WIN32
+#elif defined(_WIN32)
 	strcpy(game_cwd, dirname(argv[0]));
 #else
 	if (!getcwd(game_cwd, sizeof(game_cwd)))
 		fprintf(stderr,"Warning: can not get current dir\n.");
-#endif
-#endif
 #endif
 	if (sdl_extensions() < 0) {
 		fprintf(stderr, "Fatal: can not init SDL extensions\n");

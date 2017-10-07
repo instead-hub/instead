@@ -1939,7 +1939,7 @@ int gfx_set_mode(int w, int h, int fs)
 
 	win_w = w * scale_sw; win_h = h * scale_sw;
 	gfx_get_max_mode(&max_mode_w, &max_mode_h, MODE_ANY); /* get current window size */
-#if defined(IOS) || defined(ANDROID) || defined(MAEMO) || defined(_WIN32_WCE) || defined(S60)
+#if defined(IOS) || defined(ANDROID) || defined(MAEMO) || defined(_WIN32_WCE) || defined(S60) || defined(WINRT)
 	fs = 1; /* always fs for mobiles */
 #endif
 	if (fs && !software_sw) {
@@ -2005,7 +2005,7 @@ int gfx_set_mode(int w, int h, int fs)
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
 #endif
 
-#if defined(IOS) || defined(ANDROID)
+#if defined(IOS) || defined(ANDROID) || defined(WINRT)
 	SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h,
 			SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE);
 	if (!SDL_VideoWindow) {
@@ -2131,7 +2131,7 @@ int gfx_set_mode(int w, int h, int fs)
 	if (scr == NULL) /* ok, fallback to anyformat */
 		scr = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | SDL_SWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
    #else
-    #ifndef _WIN32_WCE
+    #if !defined(_WIN32_WCE) && !defined(WINRT)
 	#if SDL_VERSION_ATLEAST(1,3,0)
 	scr = SDL_SetVideoMode(gfx_width, gfx_height, 32, SDL_DOUBLEBUF | hw | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 	#else

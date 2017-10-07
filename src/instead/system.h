@@ -1,12 +1,14 @@
 #ifndef __INSTEAD_EXTERNAL_H_
 #define __INSTEAD_EXTERNAL_H_
 
-#ifdef _WIN32_WCE
+#if defined (_WIN32_WCE) || defined(WINRT)
  #define PATH_MAX 255
  #define errno 0
- #define strerror(a) ""
  #define putenv(a) ;
+ #ifndef WINRT
+ #define strerror(a) ""
  #define setlocale(a, b) ;
+ #endif
 #endif
 
 #include <lua.h>

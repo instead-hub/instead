@@ -3184,10 +3184,10 @@ static int kbd_modifiers(struct inp_event *ev)
 static int is_key_back(struct inp_event *ev)
 {
 	if (!is_key(ev, "escape")
-#if defined(S60) || defined(_WIN32_WCE)
+#if defined(S60) || defined(_WIN32_WCE) || defined(WINRT)
 	    || !is_key(ev, "space")
 #endif
-#if defined(_WIN32_WCE)
+#if defined(_WIN32_WCE) || defined(WINRT)
 	    || (ev->code >= 0xc0 && ev->code <= 0xcf) ||
 	    !is_key(ev, "f1") ||
 	    !is_key(ev, "f2") ||
@@ -3332,7 +3332,7 @@ static int kbd_instead(struct inp_event *ev, int *x, int *y)
 			else
 				game_scroll_pdown();
 		}
-#if !defined(S60) && !defined(_WIN32_WCE)
+#if !defined(S60) && !defined(_WIN32_WCE) && !defined(WINRT)
 	} else if (!is_key(ev, "left") || !is_key(ev, "[4]")) {
 		select_ref(1, 0);
 	} else if (!is_key(ev, "right") || !is_key(ev, "[6]")) {
