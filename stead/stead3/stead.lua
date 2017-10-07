@@ -2079,18 +2079,19 @@ std.player = std.class ({
 	take = function(s, w, ...)
 		return s:call('tak', w, ...)
 	end;
-	walkin = function(s, w)
-		return s:walk(w, false)
+	walkin = function(s, w, ...)
+		return s:walk(w, false, true, ...)
 	end;
-	walkout = function(s, w)
+	walkout = function(s, w, ...)
 		if w == nil then
 			w = s:where():from()
 		end
-		return s:walk(w, true, false)
+		return s:walk(w, true, false, ...)
 	end;
-	walk = function(s, w, doexit, doenter)
+	walk = function(s, w, doexit, doenter, dofrom)
 		local noexit = (doexit == false)
 		local noenter = (doenter == false)
+		local nofrom = (dofrom == false)
 		local moved = s:moved()
 		if moved then
 			s:moved(false)
@@ -2159,7 +2160,7 @@ std.player = std.class ({
 		end
 		-- enter is done
 		s.room = inwalk
-		if f ~= inwalk or not s.room.__from then -- brake self-recursion
+		if not nofrom and (f ~= inwalk or not s.room.__from) then -- brake self-recursion
 			s.room.__from = f
 		end
 		if not noenter then
