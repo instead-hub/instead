@@ -45,7 +45,7 @@ stead = {
 
 function stead.round(num, n)
 	local m = 10 ^ (n or 0)
-	return math.floor(num * m + 0.5) / m
+	return std.math.floor(num * m + 0.5) / m
 end
 
 local std = stead
@@ -134,6 +134,8 @@ else
 		return std.math.log(a, 10)
 	end
 end
+
+math.round = std.round
 
 local function __mod_callback_reg(f, hook, prio, ...)
 	if type(f) ~= 'function' then
