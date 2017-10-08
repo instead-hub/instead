@@ -43,6 +43,11 @@ stead = {
 	randomseed = instead_srandom;
 }
 
+function stead.round(num, n)
+	local m = 10 ^ (n or 0)
+	return math.floor(num * m + 0.5) / m
+end
+
 local std = stead
 
 std.strip_call = true
