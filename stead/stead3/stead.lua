@@ -318,6 +318,7 @@ local function fmt_post(str)
 end
 
 function std.for_each_xref_outer(s, fn)
+	local orig = s
 	s = string.gsub(s, '\\?[\\{}]',
 			{ ['{'] = '\001', ['}'] = '\002', [ '\\{' ] = '\\{', [ '\\}' ] = '\\}' });
 	local start
@@ -344,6 +345,9 @@ function std.for_each_xref_outer(s, fn)
 			else
 				s = s:sub(1, start - 1)..new..s:sub(n + 1)
 			end
+		else
+			std.err("Unpaired '{' in:"..std.tostr(orig), 2)
+			break
 		end
 	end
 	s = s:gsub('[\001\002]', { ['\001'] = '{', ['\002'] = '}' });
