@@ -43,10 +43,6 @@ stead = {
 	randomseed = instead_srandom;
 }
 
-function stead.round(num, n)
-	local m = 10 ^ (n or 0)
-	return std.math.floor(num * m + 0.5) / m
-end
 
 local std = stead
 
@@ -135,7 +131,10 @@ else
 	end
 end
 
-math.round = std.round
+math.round = function round(num, n)
+	local m = 10 ^ (n or 0)
+	return std.math.floor(num * m + 0.5) / m
+end
 
 local function __mod_callback_reg(f, hook, prio, ...)
 	if type(f) ~= 'function' then
