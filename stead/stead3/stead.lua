@@ -1860,9 +1860,8 @@ std.world = std.class({
 			end
 			local o1 = std.ref(cmd[2])
 			local o2 = std.ref(cmd[3])
-			if not std.is_system(o1) then
-				o1 = s.player:srch(o1)
-			end
+			o1 = s.player:srch(o1)
+
 			if not o1 then
 				return nil, false -- wrong input
 			end
