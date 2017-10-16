@@ -131,7 +131,7 @@ else
 	end
 end
 
-math.round = function round(num, n)
+math.round = function(num, n)
 	local m = 10 ^ (n or 0)
 	return std.math.floor(num * m + 0.5) / m
 end
