@@ -2,7 +2,6 @@ local std = stead
 local type = std.type
 
 local SNAPSHOT = false
-local RESTORE = false
 
 local snap = std.obj {
 	nam = '@snaphots';
@@ -18,8 +17,8 @@ local snap = std.obj {
 		std:save(fp)
 		s.data[name] = fp.data
 	end;
-	make = function(s)
-		SNAPSHOT = true
+	make = function(s, name)
+		SNAPSHOT = name or 'default'
 	end;
 	exist = function(s, name)
 		name = name or 'default'
@@ -42,7 +41,6 @@ local snap = std.obj {
 		end
 		f();
 		std.ref 'game':__ini(true)
-		RESTORE = true
 		return std.nop()
 	end;
 }
@@ -51,7 +49,7 @@ snapshots = snap
 
 std.mod_cmd(function()
 	if SNAPSHOT then
-		snap:write(snap.SNAPSHOT)
+		snap:write(SNAPSHOT)
 		SNAPSHOT = nil
 	end
 end)
