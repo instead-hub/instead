@@ -27,23 +27,16 @@
 #include <limits.h>
 #include <libgen.h>
 #include <sys/types.h>
-#ifdef _MSC_VER
-#include "unistd.h"
-#define PATH_MAX MAX_PATH
-#else
 #include <dir.h>
-#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+
+#include "externals.h"
 #include "internals.h"
 
 #if !defined(_UWP) && defined(_WIN32_WINNT) && _WIN32_WINNT >= 0x0A00
 #define _UWP
-#endif
-
-#ifdef _UWP
-#include "dirent.h"
 #endif
 
 extern char *curgame_dir;

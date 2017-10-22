@@ -22,7 +22,6 @@
  *
  */
 
-#include "winrt.h"
 #include <windows.h>
 #include <limits.h>
 #include <sys/types.h>
@@ -30,8 +29,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include "externals.h"
 #include "internals.h"
-#include <direct.h> 
+#include <direct.h>
 #include "dirent.h"
 
 extern char *curgame;
@@ -119,6 +119,9 @@ char *sdl_path(char *p)
 }
 
 char *appdir( void );
+
+/* must be implemented as extern "C" in winrt cpp code */
+extern void getAppTempDir(char *lpPathBuffer);
 
 char *game_tmp_path(void)
 {

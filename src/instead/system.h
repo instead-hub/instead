@@ -5,7 +5,6 @@
  #define errno 0
  #define putenv(a) ;
  #ifndef WINRT
- #define PATH_MAX 255
  #define strerror(a) ""
  #define setlocale(a, b) ;
  #endif

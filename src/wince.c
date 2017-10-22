@@ -22,7 +22,6 @@
  *
  */
 
-#include "wince.h"
 #include <windows.h>
 #include <shlobj.h>
 #include <limits.h>
@@ -31,6 +30,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include "externals.h"
 #include "internals.h"
 
 extern char *curgame;

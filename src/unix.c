@@ -42,10 +42,6 @@
 #include <gtk/gtk.h>
 #endif
 
-#ifndef PATH_MAX
-#define PATH_MAX 	4096
-#endif
-
 static char save_path[PATH_MAX];
 static char cfg_path[PATH_MAX];
 static char local_games_path[PATH_MAX];

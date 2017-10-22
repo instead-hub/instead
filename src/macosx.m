@@ -11,11 +11,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "externals.h"
 #include "internals.h"
-
-#ifndef PATH_MAX
-#define PATH_MAX 	4096
-#endif
 
 static char save_path[PATH_MAX];
 static char cfg_path[PATH_MAX];
