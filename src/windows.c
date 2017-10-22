@@ -27,7 +27,9 @@
 #include <limits.h>
 #include <libgen.h>
 #include <sys/types.h>
+#ifndef _MSC_VER
 #include <dir.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
