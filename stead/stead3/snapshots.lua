@@ -20,7 +20,7 @@ local snap = std.obj {
 	make = function(s, name)
 		SNAPSHOT = name or 'default'
 	end;
-	exist = function(s, name)
+	exists = function(s, name)
 		name = name or 'default'
 		return s.data[name]
 	end;
@@ -30,7 +30,7 @@ local snap = std.obj {
 	end;
 	restore = function(s, name) -- like std:load()
 		name = name or 'default'
-		if not s:exist(name) then
+		if not s:exists(name) then
 			return false
 		end
 		std:reset()
