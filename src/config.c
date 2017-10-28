@@ -51,7 +51,7 @@ int opt_owntheme = 1;
 int opt_hl = 1;
 #endif
 int opt_fading = 1;
-#if defined(S60) || defined(MAEMO) || defined(_WIN32_WCE) || defined(WINRT)
+#if defined(S60) || defined(MAEMO) || defined(_WIN32_WCE)
 int opt_hz = 22050;
 #else
 int opt_hz = 44100;
