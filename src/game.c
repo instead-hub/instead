@@ -892,6 +892,11 @@ static void anigif_do(void *data)
 int counter_fn(int interval, void *p)
 {
 	timer_counter ++;
+#ifdef SAILFISHOS /* idle response sometimes */
+	if ((timer_counter % 25) == 0) {
+		push_user_event(NULL, NULL);
+	}
+#endif
 	if (gfx_is_drawn_gifs() && !DIRECT_MODE)
 		push_user_event(anigif_do, NULL);
 #ifdef __EMSCRIPTEN__

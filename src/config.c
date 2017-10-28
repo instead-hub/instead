@@ -37,7 +37,7 @@ int opt_fsize = 0;
 int opt_fs = 1;
 int opt_owntheme = 0;
 int opt_hl = 0;
-#elif defined(IOS) || defined(ANDROID)
+#elif defined(IOS) || defined(ANDROID) || defined(SAILFISHOS)
 int opt_fs = 1;
 int opt_owntheme = 1;
 int opt_hl = 0;
@@ -94,14 +94,14 @@ int parse_mode(const char *v, void *data)
 static struct parser cfg_parser[] = {
 	{ "hz", parse_int, &opt_hz, 0 },
 	{ "fs", parse_int, &opt_fs, 0 },
-	{ "vol", parse_int, &opt_vol, 0 }, 
+	{ "vol", parse_int, &opt_vol, 0 },
 	{ "hl", parse_int, &opt_hl, 0 },
 	{ "game", parse_string, &opt_game, 0 },
-	{ "theme", parse_string, &opt_theme, 0 }, 
+	{ "theme", parse_string, &opt_theme, 0 },
 	{ "autosave", parse_int, &opt_autosave, 0 },
-	{ "motion", parse_int, &opt_motion, 0 }, 
-	{ "click", parse_int, &opt_click, 0 }, 
-	{ "music", parse_int, &opt_music, 0 }, 
+	{ "motion", parse_int, &opt_motion, 0 },
+	{ "click", parse_int, &opt_click, 0 },
+	{ "music", parse_int, &opt_music, 0 },
 	{ "fscale", parse_int, &opt_fsize, 0 },
 	{ "filter", parse_int, &opt_filter, 0 },
 	{ "owntheme", parse_int, &opt_owntheme, 0 },
@@ -153,11 +153,11 @@ int cfg_save(void)
 	fprintf(fp, "fs = %d\nhl = %d\nhz = %d\nvol = %d\nautosave = %d\n\
 game = %s\nfscale = %d\nmotion = %d\n\
 click = %d\nmusic = %d\ntheme = %s\n\
-filter = %d\nowntheme = %d\nlang = %s\nkbd = %d\nmode = %dx%d\njustify = %d\nfading = %d\nhires = %d\n", 
-		opt_fs, opt_hl, opt_hz, opt_vol, save_autosave, 
-		curgame_dir?curgame_dir:"", opt_fsize, opt_motion, 
-		opt_click, opt_music, curtheme_dir[THEME_GLOBAL]?curtheme_dir[THEME_GLOBAL]:DEFAULT_THEME, 
-		opt_filter, save_owntheme, opt_lang, opt_kbd, opt_mode[0], opt_mode[1], 
+filter = %d\nowntheme = %d\nlang = %s\nkbd = %d\nmode = %dx%d\njustify = %d\nfading = %d\nhires = %d\n",
+		opt_fs, opt_hl, opt_hz, opt_vol, save_autosave,
+		curgame_dir?curgame_dir:"", opt_fsize, opt_motion,
+		opt_click, opt_music, curtheme_dir[THEME_GLOBAL]?curtheme_dir[THEME_GLOBAL]:DEFAULT_THEME,
+		opt_filter, save_owntheme, opt_lang, opt_kbd, opt_mode[0], opt_mode[1],
 		opt_justify, opt_fading, opt_hires);
 	if (opt_vsync != -1)
 		fprintf(fp, "vsync = %d\n", opt_vsync);

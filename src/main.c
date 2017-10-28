@@ -209,7 +209,7 @@ static int run_game(const char *path)
 }
 static void usage(void)
 {
-	fprintf(stderr, 
+	fprintf(stderr,
 	"INSTEAD "VERSION" - Simple Text Adventure Engine, The Interpreter\n"
 	"Usage:\n"
 	"    sdl-instead [options] [game.zip or game.idf or path to game]\n"
@@ -555,7 +555,7 @@ int instead_main(int argc, char *argv[])
 		goto out;
 	}
 	menu_langs_lookup(dirpath(LANG_PATH));
-	
+
 	if (!langs_nr) {
 		fprintf(stderr, "No languages found in: %s.\n", dirpath(LANG_PATH));
 		err = 1;
@@ -563,13 +563,13 @@ int instead_main(int argc, char *argv[])
 	}
 	if (!opt_lang || !opt_lang[0])
 		opt_lang = game_locale();
-	
+
 	if (menu_lang_select(opt_lang) && menu_lang_select(LANG_DEF)) {
 		fprintf(stderr, "Can not load default language.\n");
 		err = 1;
 		goto out;
 	}
-	
+
 	if (games_sw)
 		games_lookup(games_sw);
 
@@ -605,7 +605,7 @@ int instead_main(int argc, char *argv[])
 			}
 		}
 		if (d)
-			free(d); 
+			free(d);
 		if (b)
 			free(b);
 	}
@@ -640,22 +640,22 @@ int instead_main(int argc, char *argv[])
 
 	if (mode_sw)
 		parse_mode(mode_sw, opt_mode);
-	
+
 	if (game_sw) {
 		FREE(opt_game);
 		opt_game = game_sw;
-	}	
+	}
 
 	if (theme_sw) {
 		FREE(opt_theme);
 		opt_theme = theme_sw;
 	}
-	
+
 	if (opt_theme)
 		game_theme_select(opt_theme);
 	if (!curtheme_dir[THEME_GLOBAL])
 		game_theme_select(DEFAULT_THEME);
-	
+
 	/* Initialize SDL */
 	if (gfx_init() < 0)
 		return -1;
