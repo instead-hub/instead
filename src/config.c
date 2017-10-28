@@ -27,7 +27,7 @@
 
 #if defined(S60) || defined(_WIN32_WCE) || defined(MAEMO)
 int opt_fsize = 12;
-#elif defined(IOS) || defined(SAILFISH) || defined(ANDROID) || defined(WINRT)
+#elif defined(IOS) || defined(SAILFISHOS) || defined(ANDROID) || defined(WINRT)
 int opt_fsize = 5;
 #else
 int opt_fsize = 0;
