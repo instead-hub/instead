@@ -25,6 +25,11 @@
 #include "externals.h"
 #include "internals.h"
 
+#ifdef SAILFISHOS
+#include <audioresource.h>
+#include <glib.h>
+#endif
+
 #include <SDL.h>
 #include <SDL_mixer.h>
 
@@ -34,7 +39,7 @@ int audio_rate = 11025;
 int audio_rate = 22050;
 #endif
 
-Uint16 audio_format = MIX_DEFAULT_FORMAT; 
+Uint16 audio_format = MIX_DEFAULT_FORMAT;
 int audio_channels = 2;
 int audio_buffers = 8192;
 
@@ -98,7 +103,7 @@ int snd_hz(void)
 int nosound_sw = 0;
 void snd_pause(int on)
 {
-	if (!sound_on) 
+	if (!sound_on)
 		return;
 	if (on) {
 		Mix_Pause(-1);
@@ -110,7 +115,7 @@ void snd_pause(int on)
 	return;
 }
 
-int snd_init(int hz) 
+static int _snd_init(int hz)
 {
 	int chunk;
 	if (nosound_sw)
@@ -140,6 +145,35 @@ int snd_init(int hz)
 	return 0;
 }
 
+#ifdef SAILFISHOS
+static audioresource_t *audio_resource = NULL;
+
+static void on_audio_resource_acquired(audioresource_t *ar, bool acquired, void *phz)
+{
+	if (acquired && !sound_on)
+		_snd_init(*(int *)phz);
+}
+
+int snd_init(int hz)
+{
+	if (nosound_sw)
+		return -1;
+	if (!audio_resource)
+		audio_resource = audioresource_init(AUDIO_RESOURCE_GAME,
+	            on_audio_resource_acquired, &hz);
+	while (!sound_on && !nosound_sw) {
+		audioresource_acquire(audio_resource);
+		fprintf(stderr, "Waiting for audio resource to be acquired...\n");
+		g_main_context_iteration(NULL, true);
+	}
+	return 0;
+}
+#else
+int snd_init(int hz)
+{
+	return _snd_init(hz);
+}
+#endif
 int snd_volume_mus(int vol)
 {
 	if (!sound_on)
@@ -222,9 +256,9 @@ wav_t	snd_load_wav(const char *fname)
 }
 
 void	snd_free_wav(wav_t w)
-{	
+{
 	if (!w)
-		return;	
+		return;
 /*	Mix_HaltChannel(-1); */
 	Mix_FreeChunk((Mix_Chunk*)w);
 }
@@ -248,7 +282,7 @@ mus_t snd_load_mus(const char *fname)
 	if (!mus)
 		return NULL;
 	mus->rw = RWFromIdf(instead_idf(), fname);
-	if (!mus->rw) 
+	if (!mus->rw)
 		goto err;
 #if MIXER_VERSION_ATLEAST(2,0,0)
 	mus->mus = Mix_LoadMUS_RW(mus->rw, SDL_FALSE);
@@ -336,7 +370,7 @@ int snd_panning(int channel, int left, int right)
 	if (channel >= MIX_CHANNELS)
 		channel %= MIX_CHANNELS;
 	if (channel < 0)
-		channel = -1;	
+		channel = -1;
 	return Mix_SetPanning(channel, left, right);
 }
 
@@ -369,7 +403,7 @@ int snd_play(void *chunk, int channel, int loop)
 	if (!sound_on)
 		return -1;
 	if (!chunk)
-		return -1;		
+		return -1;
 	if (channel >= MIX_CHANNELS)
 		channel %= MIX_CHANNELS;
 	if (channel < 0)
@@ -408,6 +442,11 @@ void snd_done(void)
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 #endif
 	sound_on = 0;
+#ifdef SAILFISHOS
+	audioresource_release(audio_resource);
+	audioresource_free(audio_resource);
+	audio_resource = NULL;
+#endif
 }
 
 int snd_vol_from_pcn(int v)

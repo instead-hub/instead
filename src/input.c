@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2017 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -65,6 +65,32 @@ void push_user_event(void (*p) (void*), void *data)
 	event.user = uevent;
 	SDL_PushEvent(&event);
 }
+
+#ifdef SAILFISHOS
+static SDL_FingerID finger_mouse = 0;
+
+static void push_mouse_event(SDL_Event *sevent)
+{
+	SDL_Event event;
+	memset(&event, 0, sizeof(event));
+	if (sevent->type == SDL_FINGERDOWN) {
+		finger_mouse = sevent->tfinger.fingerId;
+		event.type = SDL_MOUSEBUTTONDOWN;
+	} else if (sevent->type == SDL_FINGERUP) {
+		finger_mouse = 0;
+		event.type = SDL_MOUSEBUTTONUP;
+	} else if (sevent->type == SDL_FINGERMOTION) {
+		if (sevent->tfinger.fingerId != finger_mouse)
+			return;
+		event.type = SDL_MOUSEMOTION;
+	}
+	event.button.x = sevent->tfinger.x;
+	event.button.y = sevent->tfinger.y;
+	event.button.clicks = 1;
+	event.button.button = 1;
+	SDL_PushEvent(&event);
+}
+#endif
 
 #if SDL_VERSION_ATLEAST(2,0,0)
 static unsigned long last_press_ms = 0;
@@ -150,7 +176,8 @@ void input_uevents(void)
 	while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_EVENTMASK (SDL_USEREVENT)) > 0) {
 #endif
 		void (*p) (void*) = (void (*)(void*)) peek.user.data1;
-		p(peek.user.data2);
+		if (p)
+			p(peek.user.data2);
 	}
 }
 
@@ -175,7 +202,7 @@ static void key_compat(struct inp_event *inp)
 	}
 }
 #endif
-#ifdef IOS
+#if defined(IOS) || defined(SAILFISHOS)
 static unsigned long touch_stamp = 0;
 static int touch_num = 0;
 #endif
@@ -218,7 +245,7 @@ int input(struct inp_event *inp, int wait)
 	memset(&event, 0, sizeof(event));
 	memset(&peek, 0, sizeof(peek));
 
-#ifndef __EMSCRIPTEN__
+#if !defined(__EMSCRIPTEN__)
 	if (wait) {
 		rc = SDL_WaitEvent(&event);
 	} else
@@ -226,6 +253,7 @@ int input(struct inp_event *inp, int wait)
 		rc = SDL_PollEvent(&event);
 	if (!rc)
 		return 0;
+
 	inp->sym[0] = 0;
 	inp->type = 0;
 	inp->count = 1;
@@ -237,13 +265,17 @@ int input(struct inp_event *inp, int wait)
 			return AGAIN;
 		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, event.type, event.type) > 0)
 			return AGAIN; /* to avoid flickering */
+#if defined(SAILFISHOS)
+		push_mouse_event(&event);
+#endif
 		break;
 	case SDL_FINGERUP:
 #ifdef IOS
 		touch_num = 0;
 #endif
 	case SDL_FINGERDOWN:
-#ifdef IOS
+#if defined(IOS) || defined(SAILFISHOS)
+		push_mouse_event(&event);
 		if (event.type == SDL_FINGERDOWN) {
 			if (gfx_ticks() - touch_stamp > 100) {
 				touch_num = 0;
@@ -251,7 +283,7 @@ int input(struct inp_event *inp, int wait)
 			}
 			touch_num ++;
 			if (touch_num >= 3) {
-				inp->type = KEY_DOWN; 
+				inp->type = KEY_DOWN;
 				inp->code = 0;
 				strncpy(inp->sym, "escape", sizeof(inp->sym));
 				break;
@@ -260,12 +292,12 @@ int input(struct inp_event *inp, int wait)
 #endif
 		gfx_finger_pos_scale(event.tfinger.x, event.tfinger.y, &inp->x, &inp->y);
 		inp->type = (event.type == SDL_FINGERDOWN) ? FINGER_DOWN : FINGER_UP;
-		data2hex(&event.tfinger.fingerId, 
-			sizeof(event.tfinger.fingerId), 
+		data2hex(&event.tfinger.fingerId,
+			sizeof(event.tfinger.fingerId),
 			inp->sym);
 		inp->sym[sizeof(event.tfinger.fingerId) * 2] = ':';
-		data2hex(&event.tfinger.touchId, 
-			sizeof(event.tfinger.touchId), 
+		data2hex(&event.tfinger.touchId,
+			sizeof(event.tfinger.touchId),
 			inp->sym + sizeof(event.tfinger.fingerId) * 2 + 1);
 		inp->sym[sizeof(event.tfinger.fingerId) * 2 + 1 + sizeof(event.tfinger.touchId) * 2] = 0;
 		break;
@@ -333,6 +365,8 @@ int input(struct inp_event *inp, int wait)
 #endif
 	case SDL_USEREVENT: {
 		void (*p) (void*) = (void (*)(void*))event.user.data1;
+		if (!p) /* idle cycles */
+			return 0;
 		p(event.user.data2);
 		return AGAIN;
 		}
@@ -354,7 +388,7 @@ int input(struct inp_event *inp, int wait)
 			last_repeat_ms = gfx_ticks();
 		}
 #endif
-		inp->type = KEY_DOWN; 
+		inp->type = KEY_DOWN;
 		inp->code = event.key.keysym.scancode;
 #if SDL_VERSION_ATLEAST(1,3,0)
 		strncpy(inp->sym, SDL_GetScancodeName(inp->code), sizeof(inp->sym));
@@ -369,13 +403,13 @@ int input(struct inp_event *inp, int wait)
 #if SDL_VERSION_ATLEAST(1,3,0) /* strange bug in some SDL2 env, with up/down events storm */
 		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_KEYDOWN, SDL_KEYUP) > 0) {
 			if (peek.key.keysym.scancode == event.key.keysym.scancode &&
-				peek.key.repeat == 0) 
+				peek.key.repeat == 0)
 				return AGAIN;
 		}
 #endif
 		break;
 	case SDL_KEYUP:
-		inp->type = KEY_UP; 
+		inp->type = KEY_UP;
 		inp->code = event.key.keysym.scancode;
 #if SDL_VERSION_ATLEAST(1,3,0)
 		strncpy(inp->sym, SDL_GetScancodeName(inp->code), sizeof(inp->sym));
@@ -389,8 +423,8 @@ int input(struct inp_event *inp, int wait)
 #endif
 #if SDL_VERSION_ATLEAST(1,3,0) /* strange bug in some SDL2 env, with up/down events storm */
 		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_KEYDOWN, SDL_KEYUP) > 0) {
-			if (event.key.keysym.scancode == peek.key.keysym.scancode && 
-				peek.key.repeat == 0) 
+			if (event.key.keysym.scancode == peek.key.keysym.scancode &&
+				peek.key.repeat == 0)
 				return AGAIN;
 		}
 #endif
@@ -411,7 +445,7 @@ int input(struct inp_event *inp, int wait)
 			inp->y = peek.button.y;
 		}
 		break;
-	case SDL_MOUSEBUTTONUP:	
+	case SDL_MOUSEBUTTONUP:
 		inp->type = MOUSE_UP;
 		inp->x = event.button.x;
 		inp->y = event.button.y;
@@ -419,7 +453,7 @@ int input(struct inp_event *inp, int wait)
 		if (event.button.button == 4)
 			inp->type = 0;
 		else if (event.button.button == 5)
-			inp->type = 0;	
+			inp->type = 0;
 		break;
 #if SDL_VERSION_ATLEAST(2,0,0)
 	case SDL_MOUSEWHEEL:

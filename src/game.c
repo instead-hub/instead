@@ -892,6 +892,11 @@ static void anigif_do(void *data)
 int counter_fn(int interval, void *p)
 {
 	timer_counter ++;
+#ifdef SAILFISHOS /* idle response sometimes */
+	if ((timer_counter % 25) == 0) {
+		push_user_event(NULL, NULL);
+	}
+#endif
 	if (gfx_is_drawn_gifs() && !DIRECT_MODE)
 		push_user_event(anigif_do, NULL);
 #ifdef __EMSCRIPTEN__
@@ -2168,7 +2173,7 @@ xref_t look_xref(int x, int y, struct el **elem)
 		xref = txt_layout_xref(o->p.lay, x - o->x, y - o->y);
 	else if (type == elt_box)
 		xref = txt_box_xref(o->p.box, x - o->x, y - o->y);
-#if defined(ANDROID) || defined(IOS)
+#if defined(ANDROID) || defined(IOS) || defined(SAILFISHOS) || defined(WINRT)
 	if (!xref) {
 		int xc, yc, r;
 		xref = get_nearest_xref(o->id, x, y);

@@ -704,7 +704,7 @@ img_t	gfx_grab_screen(int x, int y, int w, int h)
 	img_t img;
 	if (!screen)
 		return NULL;
-	s = SDL_CreateRGBSurface(Surf(screen)->flags, w, h, Surf(screen)->format->BitsPerPixel, 
+	s = SDL_CreateRGBSurface(Surf(screen)->flags, w, h, Surf(screen)->format->BitsPerPixel,
 			Surf(screen)->format->Rmask, Surf(screen)->format->Gmask, Surf(screen)->format->Bmask, Surf(screen)->format->Amask);
 	if (!s)
 		return NULL;
@@ -1777,6 +1777,19 @@ int gfx_get_max_mode(int *w, int *h, int o)
 		return 0;
 	}
   #endif
+#ifdef SAILFISHOS
+	if (!SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode)) {
+		if ((o == MODE_H && desktop_mode.w < desktop_mode.h) ||
+		    (o == MODE_V && desktop_mode.w > desktop_mode.h)) {
+			*w = desktop_mode.h;
+			*h = desktop_mode.w;
+		} else {
+			*w = desktop_mode.w;
+			*h = desktop_mode.h;
+		}
+		return 0;
+	}
+#endif
 	if (o == MODE_ANY && !SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode)) {
 		*w = desktop_mode.w;
 		*h = desktop_mode.h;
@@ -1829,6 +1842,7 @@ static SDL_Surface *icon = NULL;
 extern int software_sw;
 
 #if SDL_VERSION_ATLEAST(2,0,0)
+static int gfx_flip_rotate = 0;
 SDL_Window *SDL_VideoWindow = NULL;
 static SDL_Texture *SDL_VideoTexture = NULL;
 static SDL_Surface *SDL_VideoSurface = NULL;
@@ -1883,6 +1897,35 @@ static int mouse_y = -1;
 
 static int mouse_watcher(void *userdata, SDL_Event *event)
 {
+	if (gfx_flip_rotate) {
+		switch (event->type) {
+		case SDL_MOUSEBUTTONUP:
+		case SDL_MOUSEBUTTONDOWN:
+			mouse_y = gfx_height - event->button.x;
+			mouse_x = event->button.y;
+			event->button.x = mouse_x;
+			event->button.y = mouse_y;
+			break;
+		case SDL_MOUSEMOTION:
+			mouse_y = gfx_height - event->motion.x;
+			mouse_x = event->motion.y;
+			event->motion.x = mouse_x;
+			event->motion.y = mouse_y;
+			break;
+		case SDL_FINGERMOTION:
+		case SDL_FINGERUP:
+		case SDL_FINGERDOWN:
+#ifdef SAILFISHOS /* sailfish has broken touch events */
+			mouse_x = event->tfinger.y;
+			mouse_y = gfx_height - event->tfinger.x;
+#endif
+			break;
+
+		default:
+			break;
+		}
+		return 0;
+	}
 	switch (event->type) {
 	case SDL_MOUSEBUTTONUP:
 	case SDL_MOUSEBUTTONDOWN:
@@ -1898,25 +1941,65 @@ static int mouse_watcher(void *userdata, SDL_Event *event)
 	}
 	return 0;
 }
-
 void gfx_finger_pos_scale(float x, float y, int *ox, int *oy)
 {
+	int xx = 0, yy = 0;
+#ifndef SAILFISHOS
 	int w, h;
 	float sx, sy;
 	SDL_GetWindowSize(SDL_VideoWindow, &w, &h);
 	SDL_Rect rect;
 	SDL_RenderGetViewport(Renderer, &rect);
 	SDL_RenderGetScale(Renderer, &sx, &sy);
-	if (ox && sx != 0) {
+
+	if (sx != 0) {
 		x = x * w;
-		*ox = x / sx - rect.x;
+		xx = x / sx - rect.x;
 	}
-	if (oy && sy != 0) {
+	if (sy != 0) {
 		y = y * h;
-		*oy = y / sy - rect.y;
+		yy = y / sy - rect.y;
 	}
-	return;
+#else
+	xx = (int)x; /* broken touch in SFOS */
+	yy = (int)y;
+#endif
+	if (gfx_flip_rotate) {
+		if (ox)
+			*ox = yy;
+		if (oy)
+			*oy = gfx_height - xx;
+	} else {
+		if (ox)
+			*ox = xx;
+		if (oy)
+			*oy = yy;
+	}
 }
+
+#ifdef SAILFISHOS
+void rotate_landscape(void)
+{
+	SDL_DisplayMode desktop_mode;
+	SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode);
+	gfx_flip_rotate = (desktop_mode.w < desktop_mode.h);
+	SDL_SetHint(SDL_HINT_QTWAYLAND_CONTENT_ORIENTATION, "landscape");
+}
+
+void rotate_portrait(void)
+{
+	SDL_DisplayMode desktop_mode;
+	SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode);
+	gfx_flip_rotate = (desktop_mode.w > desktop_mode.h);
+	SDL_SetHint(SDL_HINT_QTWAYLAND_CONTENT_ORIENTATION, "portrait");
+}
+
+void unlock_rotation(void)
+{
+	gfx_flip_rotate = 0;
+	SDL_SetHint(SDL_HINT_QTWAYLAND_CONTENT_ORIENTATION, "primary");
+}
+#endif
 
 int gfx_set_mode(int w, int h, int fs)
 {
@@ -1936,10 +2019,9 @@ int gfx_set_mode(int w, int h, int fs)
 
 	strcpy(title, "INSTEAD - " );
 	strcat(title, VERSION );
-
 	win_w = w * scale_sw; win_h = h * scale_sw;
 	gfx_get_max_mode(&max_mode_w, &max_mode_h, MODE_ANY); /* get current window size */
-#if defined(IOS) || defined(ANDROID) || defined(MAEMO) || defined(_WIN32_WCE) || defined(S60) || defined(WINRT)
+#if defined(IOS) || defined(ANDROID) || defined(MAEMO) || defined(_WIN32_WCE) || defined(S60) || defined(WINRT) || defined(SAILFISHOS)
 	fs = 1; /* always fs for mobiles */
 #endif
 	if (fs && !software_sw) {
@@ -1954,7 +2036,7 @@ int gfx_set_mode(int w, int h, int fs)
 		if (SDL_VideoWindow && !fs)
 #endif
 			SDL_SetWindowSize(SDL_VideoWindow, win_w, win_h);
-		return 0; /* already done */
+		goto done; /* already done */
 	}
 	SelectVideoDisplay();
 	SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode);
@@ -1997,7 +2079,6 @@ int gfx_set_mode(int w, int h, int fs)
 	t = game_reset_name();
 	if (!t)
 		t = title;
-
 #if defined(ANDROID)
 	/* fix for hackish samsung devices */
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
@@ -2005,22 +2086,22 @@ int gfx_set_mode(int w, int h, int fs)
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
 #endif
 
-#if defined(IOS) || defined(ANDROID) || defined(WINRT)
+#if defined(IOS) || defined(ANDROID) || defined(WINRT) || defined(SAILFISHOS)
 	SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h,
 			SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE);
 	if (!SDL_VideoWindow) {
 		fprintf(stderr, "Fallback to software window.\n");
-		SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h, 
+		SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h,
 			SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE);
 	}
 #else
 	if (!software_sw) /* try to using scale */
-		SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h, 
+		SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h,
 			SDL_WINDOW_SHOWN | ((fs)?SDL_WINDOW_FULLSCREEN:(resizable_sw?SDL_WINDOW_RESIZABLE:0)) | SDL_WINDOW_OPENGL);
 	if (!SDL_VideoWindow) { /* try simple window */
 		fprintf(stderr, "Fallback to software window.\n");
 		win_w = w; win_h = h;
-		SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h, 
+		SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h,
 			SDL_WINDOW_SHOWN | ((fs)?SDL_WINDOW_FULLSCREEN:0));
 	}
 #endif
@@ -2051,7 +2132,7 @@ retry:
 		}
 	}
 	SDL_GetRendererInfo(Renderer, &SDL_VideoRendererInfo);
-	SDL_VideoTexture = SDL_CreateTexture(Renderer, SDL_PIXELFORMAT_ARGB8888/*/*desktop_mode.format*/, 
+	SDL_VideoTexture = SDL_CreateTexture(Renderer, SDL_PIXELFORMAT_ARGB8888,
 		SDL_TEXTUREACCESS_STREAMING, w, h);
 	if (!SDL_VideoTexture) {
 		fprintf(stderr, "Unable to create texture: %s\n", SDL_GetError());
@@ -2062,7 +2143,6 @@ retry:
 		}
 		return -1;
 	}
-/*	SDL_SetTextureBlendMode(SDL_VideoTexture, SDL_BLENDMODE_NONE); */
 	SDL_VideoSurface = CreateVideoSurface(SDL_VideoTexture);
 	if (!SDL_VideoSurface) {
 		fprintf(stderr, "Unable to create screen surface: %s\n", SDL_GetError());
@@ -2091,16 +2171,21 @@ retry:
 		fprintf(stderr, "Can't alloc screen!\n");
 		return -1;
 	}
-	SDL_RenderSetLogicalSize(Renderer, gfx_width, gfx_height);
+
+	if (gfx_flip_rotate)
+		SDL_RenderSetLogicalSize(Renderer, h, w);
+	else
+		SDL_RenderSetLogicalSize(Renderer, w, h);
 #if SDL_VERSION_ATLEAST(2,0,0)
 	SDL_DelEventWatch(mouse_watcher, NULL);
 	SDL_AddEventWatch(mouse_watcher, NULL);
 #endif
 	fprintf(stderr,"Video mode: %dx%d@%dbpp\n", Surf(screen)->w, Surf(screen)->h, Surf(screen)->format->BitsPerPixel);
+done:
 	SDL_SetRenderDrawBlendMode(Renderer, SDL_BLENDMODE_NONE);
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
 	SDL_RenderClear(Renderer);
-	gfx_clear(0, 0, gfx_width, gfx_height);
+	SDL_FillRect(SDL_VideoSurface, NULL, SDL_MapRGB(SDL_VideoSurface->format, 0, 0, 0));
 	return 0;
 }
 #else
@@ -2228,17 +2313,44 @@ void gfx_show_cursor(int on)
 	cursor_on = on;
 }
 
+static void gfx_render_copy(SDL_Texture *texture, SDL_Rect *dst)
+{
+	SDL_Rect r2;
+	SDL_Point r;
+	int w, h;
+	if (gfx_flip_rotate) {
+		SDL_QueryTexture(texture, NULL, NULL, &w, &h);
+		r2.x = 0; r2.y = -h;
+		r2.w = w; r2.h = h;
+		r.x = 0; r.y = h;
+		SDL_RenderCopyEx(Renderer, texture, NULL, &r2, 90, &r, 0);
+		return;
+	}
+	if (SDL_VideoRendererInfo.flags & SDL_RENDERER_ACCELERATED) {
+		SDL_RenderCopy(Renderer, texture, NULL, NULL);
+	} else
+		SDL_RenderCopy(Renderer, texture, NULL, dst);
+}
+
 void gfx_draw_cursor(void)
 {
 	int cursor_x = 0;
 	int cursor_y = 0;
 
 	SDL_Rect rect;
-
+	SDL_Point r;
 	if (!cursor_on || !mouse_focus())
 		return;
 
 	gfx_cursor(&cursor_x, &cursor_y);
+
+	if (gfx_flip_rotate) {
+		int tmp = cursor_x;
+		cursor_x = gfx_height - cursor_y;
+		cursor_y = tmp;
+		r.x = cursor_xc;
+		r.y = cursor_yc;
+	}
 
 	cursor_x -= cursor_xc;
 	cursor_y -= cursor_yc;
@@ -2247,7 +2359,11 @@ void gfx_draw_cursor(void)
 	rect.y = cursor_y;
 	rect.w = cursor_w; /* - 1; */ /* SDL 2.0 hack? */
 	rect.h = cursor_h; /* - 1; */
-	SDL_RenderCopy(Renderer, cursor, NULL, &rect);
+
+	if (gfx_flip_rotate)
+		SDL_RenderCopyEx(Renderer, cursor, NULL, &rect, 90, &r, 0);
+	else
+		SDL_RenderCopy(Renderer, cursor, NULL, &rect);
 }
 
 static void SDL_UpdateRect(SDL_Surface * screen, Sint32 x, Sint32 y, Uint32 w, Uint32 h);
@@ -2270,10 +2386,7 @@ int SDL_Flip(SDL_Surface * screen)
 
 		pixels += pitch * queue_y1 + queue_x1 * psize;
 		SDL_UpdateTexture(SDL_VideoTexture, &rect, pixels, pitch);
-		if (SDL_VideoRendererInfo.flags & SDL_RENDERER_ACCELERATED)
-			SDL_RenderCopy(Renderer, SDL_VideoTexture, NULL, NULL);
-		else
-			SDL_RenderCopy(Renderer, SDL_VideoTexture, &rect, &rect);
+		gfx_render_copy(SDL_VideoTexture, &rect);
 		SDL_RenderPresent(Renderer);
 	}
 	queue_x1 = queue_y1 = queue_x2 = queue_y2 = -1;
@@ -4076,7 +4189,7 @@ static void word_image_render(struct word *word, int x, int y, clear_fn clear, u
 
 	if (clear) {
 		if (word->img) {
-			if (word->img_align) 
+			if (word->img_align)
 				clear(x + word->x, y + line->y + yy, gfx_img_w(word->img), gfx_img_h(word->img));
 			else
 				clear(x + line->x + word->x, y + line->y + yy, gfx_img_w(word->img), gfx_img_h(word->img));
@@ -5338,6 +5451,13 @@ void gfx_warp_cursor(int x, int y)
 #if SDL_VERSION_ATLEAST(2,0,0)
 	float sx, sy;
 	SDL_Rect rect;
+	if (gfx_flip_rotate) {  /* TODO? */
+		int tmp;
+		tmp = y;
+		y = x;
+		x = gfx_height - tmp;
+		return;
+	}
 	SDL_RenderGetViewport(Renderer, &rect);
 	SDL_RenderGetScale(Renderer, &sx, &sy);
 	x = (x + rect.x) * sx;
@@ -5379,9 +5499,9 @@ static void update_gfx(void)
 	game_cursor(CURSOR_DRAW);
 	gfx_flip();
 #else
-	SDL_RenderCopy(Renderer, fade_bg_texture, NULL, NULL);
+	gfx_render_copy(fade_bg_texture, NULL);
 	SDL_SetTextureAlphaMod(fade_fg_texture, (SDL_ALPHA_OPAQUE * (fade_step_nr + 1)) / ALPHA_STEPS);
-	SDL_RenderCopy(Renderer, fade_fg_texture, NULL, NULL);
+	gfx_render_copy(fade_fg_texture, NULL);
 	gfx_draw_cursor();
 	SDL_RenderPresent(Renderer);
 #endif
