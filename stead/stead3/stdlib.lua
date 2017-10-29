@@ -116,6 +116,10 @@ function walkout(w, ...)
 	return r, v
 end
 
+function walkback(w, ...)
+	return walkout(w, false)
+end
+
 std.walkout = walkout
 std.walkin = walkin
 std.walk = walk

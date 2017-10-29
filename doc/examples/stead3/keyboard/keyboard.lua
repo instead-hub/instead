@@ -219,11 +219,8 @@ local hook_keys = {
 	['right shift'] = true, ['shift'] = true, ['return'] = true,
 }
 
-local function walkback()
-	local w = std.me():where():from()
-	local old_from = w:from()
-	walkout(w)
-	w.__from = old_from
+local function walkback(w)
+	walkout(w, false)
 end
 
 obj {
