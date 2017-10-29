@@ -219,6 +219,13 @@ local hook_keys = {
 	['right shift'] = true, ['shift'] = true, ['return'] = true,
 }
 
+local function walkback()
+	local w = std.me():where():from()
+	local old_from = w:from()
+	walkout(w)
+	w.__from = old_from
+end
+
 obj {
 	nam = '@keyboard';
 	act = function(s, w)
@@ -249,9 +256,9 @@ obj {
 	end
 	elseif w == 'cancel' then
 		std.here().text = '';
-		walkout();
+		walkback();
 	elseif w == 'return' then
-		walkout();
+		walkback();
 	else
 		w = kbdxlat(stead.here(), w)
 		std.here().text = std.here().text..w;
