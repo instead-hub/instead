@@ -157,10 +157,22 @@ void input_uevents(void)
 #if SDL_VERSION_ATLEAST(1,3,0)
 static void key_compat(struct inp_event *inp)
 {
+	int len = strlen(inp->sym);
 	if (!strcmp(inp->sym, "pageup"))
 		strcpy(inp->sym, "page up");
-	else if (!strcmp(inp->sym, "pagedown")) 
+	else if (!strcmp(inp->sym, "pagedown"))
 		strcpy(inp->sym, "page down");
+	else if (!strcmp(inp->sym, "numlock"))
+		strcpy(inp->sym, "num lock");
+	else if (!strcmp(inp->sym, "scrolllock"))
+		strcpy(inp->sym, "scroll lock");
+	else if (!strcmp(inp->sym, "capslock"))
+		strcpy(inp->sym, "caps lock");
+	else if (len >= 8 && !strncmp(inp->sym, "keypad ", 7)) {
+		inp->sym[0] = '[';
+		strcpy(inp->sym + 1, inp->sym + 7);
+		strcpy(inp->sym + 1 + len - 7, "]");
+	}
 }
 #endif
 #ifdef IOS
