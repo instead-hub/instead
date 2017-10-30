@@ -19,7 +19,7 @@ Visual novell/text quest-like game in Russian with engine.
 
 echo -e "2\n\/usr" | ./configure.sh
 cat >>config.make <<EOF
-CFLAGS+=\$(shell pkg-config --cflags glib-2.0) \$(shell pkg-config --cflags audioresource) -DSWROTATE=1 -DSAILFISHOS=1
+CFLAGS+=\$(shell pkg-config --cflags glib-2.0) \$(shell pkg-config --cflags audioresource) -D_USE_SWROTATE=1 -DSAILFISHOS=1
 LDFLAGS+=\$(shell pkg-config --libs glib-2.0) \$(shell pkg-config --libs audioresource)
 EOF
 %build

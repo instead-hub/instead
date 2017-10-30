@@ -1777,7 +1777,7 @@ int gfx_get_max_mode(int *w, int *h, int o)
 		return 0;
 	}
   #endif
-#ifdef SWROTATE
+#ifdef _USE_SWROTATE
 	if (!SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode)) {
 		if ((o == MODE_H && desktop_mode.w < desktop_mode.h) ||
 		    (o == MODE_V && desktop_mode.w > desktop_mode.h)) {
@@ -1842,7 +1842,7 @@ static SDL_Surface *icon = NULL;
 extern int software_sw;
 
 #if SDL_VERSION_ATLEAST(2,0,0)
-#ifdef SWROTATE
+#ifdef _USE_SWROTATE
 static int gfx_flip_rotate = 0;
 #endif
 SDL_Window *SDL_VideoWindow = NULL;
@@ -1899,7 +1899,7 @@ static int mouse_y = -1;
 
 static int mouse_watcher(void *userdata, SDL_Event *event)
 {
-#ifdef SWROTATE
+#ifdef _USE_SWROTATE
 	if (gfx_flip_rotate) {
 		switch (event->type) {
 		case SDL_MOUSEBUTTONUP:
@@ -1968,7 +1968,7 @@ void gfx_finger_pos_scale(float x, float y, int *ox, int *oy)
 	xx = (int)x; /* broken touch in SFOS */
 	yy = (int)y;
 #endif
-#ifdef SWROTATE
+#ifdef _USE_SWROTATE
 	if (gfx_flip_rotate) {
 		if (ox)
 			*ox = yy;
@@ -1983,7 +1983,7 @@ void gfx_finger_pos_scale(float x, float y, int *ox, int *oy)
 #endif
 }
 
-#ifdef SWROTATE
+#ifdef _USE_SWROTATE
 void rotate_landscape(void)
 {
 	SDL_DisplayMode desktop_mode;
@@ -2184,7 +2184,7 @@ retry:
 		return -1;
 	}
 
-#ifdef SWROTATE
+#ifdef _USE_SWROTATE
 	if (gfx_flip_rotate)
 		SDL_RenderSetLogicalSize(Renderer, h, w);
 	else
@@ -2332,7 +2332,7 @@ static void gfx_render_copy(SDL_Texture *texture, SDL_Rect *dst)
 	SDL_Rect r2;
 	SDL_Point r;
 	int w, h;
-#ifdef SWROTATE
+#ifdef _USE_SWROTATE
 	if (gfx_flip_rotate) {
 		SDL_QueryTexture(texture, NULL, NULL, &w, &h);
 		r2.x = 0; r2.y = -h;
@@ -2360,7 +2360,7 @@ void gfx_draw_cursor(void)
 
 	gfx_cursor(&cursor_x, &cursor_y);
 
-#ifdef SWROTATE
+#ifdef _USE_SWROTATE
 	if (gfx_flip_rotate) {
 		int tmp = cursor_x;
 		cursor_x = gfx_height - cursor_y;
@@ -2377,7 +2377,7 @@ void gfx_draw_cursor(void)
 	rect.y = cursor_y;
 	rect.w = cursor_w; /* - 1; */ /* SDL 2.0 hack? */
 	rect.h = cursor_h; /* - 1; */
-#ifdef SWROTATE
+#ifdef _USE_SWROTATE
 	if (gfx_flip_rotate)
 		SDL_RenderCopyEx(Renderer, cursor, NULL, &rect, 90, &r, 0);
 	else
@@ -5470,7 +5470,7 @@ void gfx_warp_cursor(int x, int y)
 #if SDL_VERSION_ATLEAST(2,0,0)
 	float sx, sy;
 	SDL_Rect rect;
-#ifdef SWROTATE
+#ifdef _USE_SWROTATE
 	if (gfx_flip_rotate) {  /* TODO? */
 		int tmp;
 		tmp = y;
