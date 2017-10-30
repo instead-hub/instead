@@ -1,22 +1,29 @@
 require "keyboard"
-xact.walk = walk
+
+keyboard.alt_xlat = true
 
 room {
 	title = '?';
 	nam = 'main';
+	name = false;
+	onkbd = function(s, w)
+		if w == 'instead' then
+			walk 'theend'
+			return
+		end
+		s.name = w
+	end;
 	dsc = function(s)
-		if _'read'.text ~= '' then
-			p "Привет, "
-			p (_'read'.text,"!")
+		if s.name then
+			p ("Привет, ", s.name)
 		else
-			p [[Как вас {@ walk read|зовут}?]];
+			p [[Как вас {@keyboard "Имя"|зовут}?]];
 		end
 	end
 }
 
-keyboard {
-	nam = 'read';
-	title = 'Имя:';
-	alt_xlat = true;
-	msg = "Поле ввода:";
+room {
+	nam = 'theend';
+	title = 'Конец';
+	dsc = [[WOW!]];
 }

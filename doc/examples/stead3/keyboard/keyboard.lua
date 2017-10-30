@@ -222,88 +222,85 @@ local hook_keys = {
 local function walkback(w)
 	walkout(w, false)
 end
-
 obj {
-	nam = '@keyboard';
+	nam = '@kbdinput';
 	act = function(s, w)
-	if w == 'comma' then
-		w = ','
-	end
-	if w:find("alt") then
-		std.here().alt_xlat = not std.here().alt_xlat
-		return true
-	end
-
-	if w:find("shift") then
-		std.here().shift = not std.here().shift
-		return true
-	end
-
-	if w == 'space' then
-		w = ' '
-	end
-	if w == 'backspace' then
-		if not std.here().text or std.here().text == '' then
-			return
+		if w == 'comma' then
+			w = ','
 		end
-		if std.here().text:byte(std.here().text:len()) >= 128 then
-			std.here().text = std.here().text:sub(1, std.here().text:len() - 2);
+		if w:find("alt") then
+			std.here().alt_xlat = not std.here().alt_xlat
+			return true
+		end
+
+		if w:find("shift") then
+			std.here().shift = not std.here().shift
+			return true
+		end
+
+		if w == 'space' then
+			w = ' '
+		end
+		if w == 'backspace' then
+			if not std.here().text or std.here().text == '' then
+				return
+			end
+			if std.here().text:byte(std.here().text:len()) >= 128 then
+				std.here().text = std.here().text:sub(1, std.here().text:len() - 2);
+			else
+				std.here().text = std.here().text:sub(1, std.here().text:len() - 1);
+		end
+		elseif w == 'cancel' then
+			std.here().text = '';
+			walkback();
+		elseif w == 'return' then
+			walkback();
+			return std.call(std.here(), 'onkbd', _'@keyboard'.text)
 		else
-			std.here().text = std.here().text:sub(1, std.here().text:len() - 1);
-	end
-	elseif w == 'cancel' then
-		std.here().text = '';
-		walkback();
-	elseif w == 'return' then
-		walkback();
-	else
-		w = kbdxlat(stead.here(), w)
-		std.here().text = std.here().text..w;
-	end
-    end
+			w = kbdxlat(stead.here(), w)
+			std.here().text = std.here().text..w;
+		end
+	end;
 }
 
-keyboard = function(v)
-	v.text = ''
-	v.alt = false
-	v.shift = false
-	if v.alt_xlat == nil then
-		v.alt_xlat = false
-	end
-	v.noinv = true
-	v.keyboard_type = true
-	if not v.cursor then
-		v.cursor = '_'
-	end
-
-	if not v.msg then
-		v.msg = 'Ввод: ';
-	end
-
-	v.ini = function(s, load)
+room {
+	nam = '@keyboard';
+	text = '';
+	alt = false;
+	shift = false;
+	alt_xlat = false;
+	noinv = true;
+	keyboard_type = true;
+	cursor = fmt.b '|';
+	title = false;
+	msg = fmt.b '> ';
+	act = function(s, w)
+		s.title = w or "?"
+		walkin(s)
+	end;
+	ini = function(s, load)
 		s.alt = false
 		if load and std.here() == s then
 			s.__flt = instead.mouse_filter(0)
 		end
 	end;
-
-	v.enter = function(s)
+	enter = function(s)
 		s.text = '';
 		s.alt = false
 		s.shift = false
 		s.__flt = instead.mouse_filter(0)
-	end
-	v.exit = function(s)
+	end;
+	exit = function(s)
 		instead.mouse_filter(s.__flt)
-	end
-
-	v.onkey = function(s, press, key)
+	end;
+	onkey = function(s, press, key)
 		if key:find("alt") then
 			s.alt = press
 			if not press then
 				s.alt_xlat = not s.alt_xlat
 			end
-			return not press
+			s:decor()
+			return false
 		end
 		if s.alt then
 			return false
@@ -318,11 +315,11 @@ keyboard = function(v)
 		if s.alt then
 			return false
 		end
-		return std.call(_'@keyboard', 'act', key);
-	end
-	v.decor = function(s)
+		return std.call(_'@kbdinput', 'act', key);
+	end;
+	decor = function(s)
 		p (s.msg)
-		p (input_esc(s.text..s.cursor))
+		p (input_esc(s.text)..s.cursor)
 		pn()
 		local k,v
 		for k, v in ipairs(keyb) do
@@ -333,14 +330,13 @@ keyboard = function(v)
 				if vv == ',' then
 					vv = 'comma'
 				end
-				row = row.."{@keyboard "..vv.."|"..input_esc(a).."}"..fmt.nb "  ";
+				row = row.."{@kbdinput "..vv.."|"..input_esc(a).."}"..fmt.nb "  ";
 			end
 			pn(fmt.c(row))
 		end
-		pn (fmt.c[[{@keyboard alt|«Alt»}    {@keyboard shift|«Shift»}    {@keyboard cancel|«Отмена»}    {@keyboard backspace|«Забой»}    {@keyboard return|«Ввод»}]]);
+		pn (fmt.c[[{@kbdinput alt|«Alt»}    {@kbdinput shift|«Shift»}    {@kbdinput cancel|«Отмена»}    {@kbdinput backspace|«Забой»}    {@kbdinput return|«Ввод»}]]);
 	end;
-	return room(v)
-end
+}
 
 local hooked
 local orig_filter
@@ -362,3 +358,5 @@ std.mod_done(function(load)
 	hooked = false
 	std.rawset(keys, 'filter', orig_filter)
 end)
+
+keyboard = _'@keyboard'
