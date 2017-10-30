@@ -219,9 +219,15 @@ local hook_keys = {
 	['right shift'] = true, ['shift'] = true, ['return'] = true,
 }
 
-local function walkback(w)
-	walkout(w, false)
+-- instead has function walkback() in stdlib
+-- but for old versions we implement own version
+local function walkback()
+	local w = std.me():where():from()
+	local o = w:from()
+	std.walkout(w)
+	w.__from = o
 end
+
 obj {
 	nam = '@kbdinput';
 	act = function(s, w)
