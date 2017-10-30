@@ -2329,10 +2329,10 @@ void gfx_show_cursor(int on)
 
 static void gfx_render_copy(SDL_Texture *texture, SDL_Rect *dst)
 {
+#ifdef _USE_SWROTATE
 	SDL_Rect r2;
 	SDL_Point r;
 	int w, h;
-#ifdef _USE_SWROTATE
 	if (gfx_flip_rotate) {
 		SDL_QueryTexture(texture, NULL, NULL, &w, &h);
 		r2.x = 0; r2.y = -h;
@@ -2354,7 +2354,9 @@ void gfx_draw_cursor(void)
 	int cursor_y = 0;
 
 	SDL_Rect rect;
+#ifdef _USE_SWROTATE
 	SDL_Point r;
+#endif
 	if (!cursor_on || !mouse_focus())
 		return;
 
