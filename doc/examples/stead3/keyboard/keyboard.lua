@@ -261,7 +261,7 @@ obj {
 			walkback();
 		elseif w == 'return' then
 			walkback();
-			return std.call(std.here(), 'onkbd', _'@keyboard'.text)
+			return std.call(std.here(), 'onkbd', _'@keyboard'.text, std.unpack(_'@keyboard'.args))
 		else
 			w = kbdxlat(stead.here(), w)
 			std.here().text = std.here().text..w;
@@ -279,9 +279,11 @@ room {
 	keyboard_type = true;
 	cursor = fmt.b '|';
 	title = false;
+	args = {};
 	msg = fmt.b '> ';
-	act = function(s, w)
+	act = function(s, w, ...)
 		s.title = w or "?"
+		s.args = { ... }
 		walkin(s)
 	end;
 	ini = function(s, load)
