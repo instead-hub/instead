@@ -271,7 +271,7 @@ keyboard = function(v)
 		v.alt_xlat = false
 	end
 	v.noinv = true
-
+	v.keyboard_type = true
 	if not v.cursor then
 		v.cursor = '_'
 	end
@@ -318,8 +318,7 @@ keyboard = function(v)
 		if s.alt then
 			return false
 		end
-		local o = stead.here():lookup('@keyboard');
-		return std.call(o, 'act', key);
+		return std.call(_'@keyboard', 'act', key);
 	end
 	v.decor = function(s)
 		p (s.msg)
@@ -340,9 +339,6 @@ keyboard = function(v)
 		end
 		pn (fmt.c[[{@keyboard alt|«Alt»}    {@keyboard shift|«Shift»}    {@keyboard cancel|«Отмена»}    {@keyboard backspace|«Забой»}    {@keyboard return|«Ввод»}]]);
 	end;
-	v.obj = {
-		'@keyboard'
-	}
 	return room(v)
 end
 
@@ -354,8 +350,7 @@ std.mod_start(function(load)
 		hooked = true
 		orig_filter = std.rawget(keys, 'filter')
 		std.rawset(keys, 'filter', std.hook(keys.filter, function(f, s, press, key)
-			local kbd = lookup '@keyboard'
-			if kbd then
+			if std.here().keyboard_type then
 				return hook_keys[key]
 			end
 			return f(s, press, key)
