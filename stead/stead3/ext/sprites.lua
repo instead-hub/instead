@@ -23,7 +23,7 @@ function theme.restore(name)
 	if type(name) ~= 'string' then
 		std.err("Wrong parameter to theme.restore", 2)
 	end
-	v = theme.vars[name]
+	local v = theme.vars[name]
 	if not v then
 		return
 	end
