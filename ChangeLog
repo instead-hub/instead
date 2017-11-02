@@ -1,3 +1,20 @@
+3.2.0
+
+  * theme.restore() fix;
+  * SailfishOS port;
+  * walkback() in stdlib;
+  * snapshots module fix;
+  * math.round added;
+  * forever loop bug fix (unpaired {});
+  * xact booleans parameters fix;
+  * chnage_pl with string argument fix;
+  * always = true fix in dialog phrase;
+  * documentation;
+  * code cleanups;
+  * winrt patches;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Thu, 02 Nov 2017 11:11:00 +0300
+
 3.1.2
 
   * regression fix in fading and menu;
