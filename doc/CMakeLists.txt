@@ -4,6 +4,7 @@ SET(DOC_FILES
 
 SET(GENERATED_DOC_FILES
 	stead3.pdf
+	modules3.pdf
 	stead2.pdf
 	stead2-modules.pdf
 	stead2-en.html
