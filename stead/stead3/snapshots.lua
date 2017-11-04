@@ -2,10 +2,15 @@ local std = stead
 local type = std.type
 
 local SNAPSHOT = false
+local INWRITE = false
 
 local snap = std.obj {
-	nam = '@snaphots';
+	nam = '@snapshots';
 	data = {};
+	save = function(s, ...)
+		if INWRITE then return end
+		return std.obj.save(s, ...)
+	end;
 	write = function(s, name)
 		name = name or 'default'
 		local fp = { -- fake file object
@@ -14,7 +19,7 @@ local snap = std.obj {
 				s.data = s.data .. str
 			end;
 		}
-		std:save(fp)
+		INWRITE = true std:save(fp) INWRITE = false
 		s.data[name] = fp.data
 	end;
 	make = function(s, name)

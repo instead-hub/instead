@@ -3,7 +3,7 @@
   * theme.restore() fix;
   * SailfishOS port;
   * walkback() in stdlib;
-  * snapshots module fix;
+  * snapshots module fixes;
   * math.round added;
   * forever loop bug fix (unpaired {});
   * xact booleans parameters fix;
