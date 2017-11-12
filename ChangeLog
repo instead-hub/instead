@@ -4,6 +4,7 @@
   * SailfishOS port;
   * walkback() in stdlib;
   * snapshots module fixes;
+  * gamefile with main3.lua fix;
   * math.round added;
   * forever loop bug fix (unpaired {});
   * xact booleans parameters fix;
