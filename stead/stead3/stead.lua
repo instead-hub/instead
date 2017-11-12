@@ -1079,6 +1079,7 @@ function std:done()
 	std.tags = {}
 	std.next_dynamic = -1
 	std.files = {}
+	std.startfile = false
 --	std.modules = {}
 	std.includes = {}
 	std.initialized = false
