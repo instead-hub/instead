@@ -1975,10 +1975,12 @@ void gfx_finger_pos_scale(float x, float y, int *ox, int *oy)
 		if (oy)
 			*oy = gfx_height - xx;
 	} else {
+#endif
 		if (ox)
 			*ox = xx;
 		if (oy)
 			*oy = yy;
+#ifdef _USE_SWROTATE
 	}
 #endif
 }
