@@ -161,8 +161,8 @@ int snd_init(int hz)
 	if (!audio_resource)
 		audio_resource = audioresource_init(AUDIO_RESOURCE_GAME,
 	            on_audio_resource_acquired, &hz);
-	while (!sound_on && !nosound_sw) {
-		audioresource_acquire(audio_resource);
+	audioresource_acquire(audio_resource);
+	while (!sound_on) {
 		fprintf(stderr, "Waiting for audio resource to be acquired...\n");
 		g_main_context_iteration(NULL, true);
 	}
