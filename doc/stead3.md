@@ -781,7 +781,6 @@ room {
 ```
 room {
     nam = 'Дом';
-	obj = { 'стол' };
 }:with {
 	obj {
 		nam = 'стол';
