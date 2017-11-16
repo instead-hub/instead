@@ -321,6 +321,22 @@ int input(struct inp_event *inp, int wait)
 			m_minimized = (event.window.event == SDL_WINDOWEVENT_MINIMIZED && !opt_fs);
 			snd_pause(!nopause_sw && m_minimized);
 			break;
+#if defined(SAILFISHOS)
+		case SDL_WINDOWEVENT_FOCUS_LOST:
+			snd_pause(!nopause_sw);
+			while (1) { /* pause */
+				SDL_WaitEvent(&event);
+				if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_FOCUS_GAINED) {
+					snd_pause(0);
+					break;
+				}
+				if (event.type == SDL_QUIT) {
+					game_running = 0;
+					return -1;
+				}
+			}
+			break;
+#endif
 		case SDL_WINDOWEVENT_ENTER:
 		case SDL_WINDOWEVENT_FOCUS_GAINED:
 			m_focus = 1;
