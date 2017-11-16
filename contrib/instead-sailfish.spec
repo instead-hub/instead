@@ -1,7 +1,7 @@
 Summary:	simple text adventures/visual novels engine and game
 Name:		instead
 Version:	3.1.2
-Release:	1%{?dist}
+Release:	3%{?dist}
 License:	MIT
 URL:		http://instead.sourceforge.net
 Source0:	%{name}_%{version}.tar.gz
@@ -24,6 +24,19 @@ LDFLAGS+=\$(shell pkg-config --libs glib-2.0) \$(shell pkg-config --libs audiore
 EOF
 %build
 make
+
+%pre
+if test -f /home/nemo/.instead/insteadrc; then
+    rm -rf /home/nemo/.instead/insteadrc
+fi
+install -d -m 0755 -o nemo -g nemo /home/nemo/.instead
+
+cat >/home/nemo/.instead/profile <<EOF
+hires=1
+fullscreen=1
+EOF
+
+chown nemo:nemo /home/nemo/.instead/profile
 
 %install
 rm -rf $RPM_BUILD_ROOT
