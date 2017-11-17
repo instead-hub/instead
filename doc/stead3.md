@@ -3803,7 +3803,7 @@ dsc объектов яблоко и груша будут тоже показа
 -- если объект внутри контейнера, не вызывать его dsc
 std.obj.display = function(self)
 	local w = self:where() -- где объект?
-	if not std.is_ob(w, 'cont') then -- если не в контейнере
+	if not std.is_obj(w, 'cont') then -- если не в контейнере
 		local d = std.call(self, 'dsc')
 		return d
 	end
