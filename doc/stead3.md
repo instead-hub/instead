@@ -3754,7 +3754,7 @@ obj/dlg/room реализованы как классы объектов. Кла
 ```
 -- create own class container
 cont = std.class({ -- создаем класс cont
-    __cont_type = true; -- для определения типа объекта
+	__cont_type = true; -- для определения типа объекта
 	display = function(s) -- переопределяем метод показа предмета
 		local d = std.obj.display(s)
 		if s:closed() or #s.obj == 0 then
