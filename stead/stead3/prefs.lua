@@ -30,7 +30,7 @@ local preferences = std.obj {
 		return std.os.rename(name_tmp, name);
 	end,
 	purge = function(s)
-		local name = stead.savepath() .. '/prefs';
+		local name = std.savepath() .. '/prefs';
 		return std.os.remove(name);
 	end
 };
