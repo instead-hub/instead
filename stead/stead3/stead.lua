@@ -1917,8 +1917,8 @@ std.world = std.class({
 		s:reaction(r or false)
 
 		if v then
-			std.mod_call('step', v)
 			s:step()
+			std.mod_call('step', v)
 		end
 		r = s:display(v)
 		if v then
