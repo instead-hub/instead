@@ -901,7 +901,6 @@ static int instead_set_api(const char *api)
 	char *oa;
 	if (!api || !*api) {
 		FREE(API);
-		API = NULL;
 		snprintf(instead_api_path, sizeof(instead_api_path), "%s", STEAD_PATH);
 	} else {
 		s = strlen(api);
@@ -1113,22 +1112,17 @@ void instead_done(void)
 #endif
 #endif
 #ifdef _HAVE_ICONV
-	if (fromcp)
-		free(fromcp);
+	FREE(fromcp);
 #endif
 	if (L)
 		lua_close(L);
 	L = NULL;
-#ifdef _HAVE_ICONV
-	fromcp = NULL;
-#endif
 	if (data_idf)
 		idf_done(data_idf);
 	data_idf = NULL;
 	if (wasL)
 		setdir(instead_cwd_path);
 	FREE(API);
-	API = NULL;
 }
 
 int  instead_encode(const char *s, const char *d)
