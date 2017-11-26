@@ -659,6 +659,9 @@ int instead_main(int argc, char *argv[])
 	/* Initialize SDL */
 	if (gfx_init() < 0)
 		return -1;
+	/* Initialize Sound */
+	snd_init(opt_hz);
+	snd_volume_mus(opt_vol);
 #ifdef _USE_GTK
 	gtk_init(&argc, &argv); /* must be called AFTER SDL_Init when using SDL2 */
 #endif
@@ -676,8 +679,8 @@ int instead_main(int argc, char *argv[])
 	cfg_save();
 	game_done(0);
 
+	snd_done();
 	gfx_video_done();
-
 #ifndef ANDROID
 	gfx_done();
 #endif

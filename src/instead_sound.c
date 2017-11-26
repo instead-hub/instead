@@ -507,9 +507,9 @@ int game_change_hz(int hz)
 	if (!hz)
 		return -1;
 #ifndef __EMSCRIPTEN__
-	snd_done();
+	snd_close();
 	free_last_music();
-	snd_init(hz);
+	snd_open(hz);
 	snd_volume_mus(cur_vol);
 	sounds_reload();
 	game_music_player();
@@ -795,7 +795,7 @@ static int sound_done(void)
 	}
 	game_stop_mus(0);
 	sounds_free();
-	snd_done();
+	snd_close();
 	sound_inited = 0;
 	return 0;
 }
@@ -858,9 +858,7 @@ static int sound_init(void)
 	rc = instead_loadfile(dirpath(path));
 	if (rc)
 		return rc;
-	if (sound_inited)
-		sound_done();
-	snd_init(opt_hz);
+	snd_open(opt_hz);
 	if (!nosound_sw)
 		game_change_vol(0, opt_vol);
 	sound_inited = 1;

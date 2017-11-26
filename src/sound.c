@@ -115,23 +115,17 @@ void snd_pause(int on)
 	return;
 }
 
-static int _snd_init(int hz)
+static int _snd_open(int hz)
 {
 	int chunk;
-	if (nosound_sw)
-		return -1;
 	if (!hz)
 		hz = audio_rate;
 	else
 		audio_rate = hz;
 	chunk = (chunksize_sw>0)?chunksize_sw:DEFAULT_CHUNKSIZE;
 	audio_buffers = (audio_rate / 11025) * chunk;
-	if (audio_buffers <=0) /* wrong parameter? */
+	if (audio_buffers <= 0) /* wrong parameter? */
 		audio_buffers = DEFAULT_CHUNKSIZE;
-	if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0) {
-		fprintf(stderr, "Unable to init audio!\n");
-		return -1;
-	}
 #ifdef __EMSCRIPTEN__
 	if (Mix_OpenAudioDevice(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4096, NULL, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE)) {
 #else
@@ -151,13 +145,15 @@ static audioresource_t *audio_resource = NULL;
 static void on_audio_resource_acquired(audioresource_t *ar, bool acquired, void *phz)
 {
 	if (acquired && !sound_on)
-		_snd_init(*(int *)phz);
+		_snd_open(*(int *)phz);
 }
 
-int snd_init(int hz)
+int snd_open(int hz)
 {
 	if (nosound_sw)
 		return -1;
+	if (sound_on)
+		snd_close(); /* reopen */
 	if (!audio_resource) {
 		audio_resource = audioresource_init(AUDIO_RESOURCE_GAME,
 	            on_audio_resource_acquired, &hz);
@@ -172,11 +168,25 @@ int snd_init(int hz)
 	return 0;
 }
 #else
-int snd_init(int hz)
+int snd_open(int hz)
 {
-	return _snd_init(hz);
+	if (nosound_sw)
+		return -1;
+	if (sound_on)
+		snd_close(); /* reopen */
+	return _snd_open(hz);
 }
 #endif
+
+int snd_init(int hz)
+{
+	if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0) {
+		fprintf(stderr, "Unable to init audio!\n");
+		return -1;
+	}
+	return snd_open(hz);
+}
+
 int snd_volume_mus(int vol)
 {
 	if (!sound_on)
@@ -422,7 +432,7 @@ void snd_mus_callback(void (*fn)(void *udata, unsigned char *stream, int len), v
 	Mix_HookMusic(fn, arg);
 }
 
-void snd_done(void)
+void snd_close(void)
 {
 	if (!sound_on)
 		return;
@@ -442,7 +452,6 @@ void snd_done(void)
 	next_mus = NULL;
 #ifndef __EMSCRIPTEN__
 	Mix_CloseAudio();
-	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 #endif
 	sound_on = 0;
 #ifdef SAILFISHOS
@@ -450,6 +459,13 @@ void snd_done(void)
 	audioresource_free(audio_resource);
 	audio_resource = NULL;
 #endif
+}
+
+void snd_done(void)
+{
+	if (sound_on)
+		snd_close();
+	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 }
 
 int snd_vol_from_pcn(int v)

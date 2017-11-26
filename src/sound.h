@@ -8,6 +8,7 @@ typedef struct _mus_t *mus_t;
 
 /* extern mus_t	snd_load_mus(const char *path); */
 extern void	snd_free_mus(mus_t mus);
+extern int	snd_open(int hz);
 extern int	snd_init(int hz);
 extern int	snd_hz(void);
 extern int	snd_play(wav_t chunk, int channel, int loop);
@@ -27,7 +28,8 @@ extern void	snd_mus_callback(void (*fn)(void *udata, unsigned char *stream, int 
 extern int	snd_playing_mus();
 extern void     snd_stop_mus(int ms);
 extern int 	snd_volume_mus(int vol);
-extern	void	snd_done(void);
+extern void	snd_done(void);
+extern void	snd_close(void);
 extern int 	snd_vol_from_pcn(int v);
 extern int 	snd_vol_to_pcn(int v);
 extern int 	snd_playing(int channel);

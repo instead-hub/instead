@@ -135,6 +135,7 @@ int HandleAppEvents(void *userdata, SDL_Event *event)
 	case SDL_APP_TERMINATING:
 		cfg_save();
 		game_done(0);
+		snd_done();
 		gfx_video_done();
 		gfx_done();
 		return 0;
