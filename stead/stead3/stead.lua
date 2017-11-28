@@ -908,17 +908,23 @@ std.save_table = function(vv, fp, n)
 end
 
 function std:reset(fn) -- reset state
-	self:done()
-	self:init()
+	local reset
+	if std.ref 'game'.__started or fn then
+		self:done()
+		self:init()
+		reset = true
+	end
 	if fn ~= 'main3.lua' then
 		std.startfile = fn -- another start file
 	end
-	std.dofile(fn or 'main3.lua')
+	if reset then
+		std.dofile(fn or 'main3.lua')
+	end
 end
 
 function std:load(fname) -- load save
 	self:reset()
-	std.ref 'game':__ini(false)
+	std.ref 'game':__ini()
 
 	local f, err = std.loadfile(fname) -- load all diffs
 	if not f then
@@ -938,7 +944,8 @@ function std:load(fname) -- load save
 	end
 	std.nostrict = strict
 
-	std.ref 'game':__ini(true)
+	std.ref 'game':__ini()
+	std.ref 'game':__start(true)
 	return self.game:lastdisp()
 end
 
@@ -961,8 +968,7 @@ function std.gamefile(fn, reset) -- load game file
 	if reset then
 		std:reset(fn)
 		std.ref 'game':__ini()
-		std.ref 'game'.__started = true
-		local r, v = std.game.player:walk(std.game.player.room, false)
+		local r, v = std.ref 'game':__start()
 		if type(r) == 'string' and std.cctx() then
 			std.pr(r)
 		end
@@ -994,7 +1000,7 @@ function std:save(fp)
 	-- reset
 	if std.startfile then
 		fp:write(string.format("std:reset(%q)\n", std.startfile))
-		fp:write(string.format("std 'game':ini(false)\n"))
+		fp:write(string.format("std 'game':ini()\n"))
 	end
 	-- files
 	for i = 1, #std.files do
@@ -1659,6 +1665,17 @@ std.world = std.class({
 	__ini =  function(s, load)
 		return s:ini(load)
 	end;
+	__start = function(s, load)
+		std.mod_call('start', load)
+		if type(std.rawget(_G, 'start')) == 'function' then
+			start(load) -- start after load
+		end
+		s.__started = true
+		if load ~= true then
+			local r, v = std.game.player:walk(std.game.player.room, false)
+			return r, v
+		end
+	end;
 	ini = function(s, load)
 		if s.__in_ini then
 			return -- break recursion
@@ -1692,15 +1709,8 @@ std.world = std.class({
 			std.game = s
 		end
 
-		if load ~= false then
-			std.mod_call('start', load)
-			if type(std.rawget(_G, 'start')) == 'function' then
-				start(load) -- start after load
-			--	std.rawset(_G, 'start', nil)
-			end
-			local d = std.method(s, 'dsc')
-			return std.fmt(d)
-		end
+		local d = std.method(s, 'dsc')
+		return std.fmt(d)
 	end;
 	lifeon = function(s, w, ...)
 		if not w then
@@ -1826,8 +1836,7 @@ std.world = std.class({
 
 		elseif cmd[1] == nil or cmd[1] == 'look' then
 			if not s.__started then
-				s.__started = true
-				r, v = s.player:walk(s.player.room, false)
+				r, v = s:__start()
 			else
 				s.player:need_scene(true)
 				v = true

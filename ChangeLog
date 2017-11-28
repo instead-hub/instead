@@ -5,6 +5,7 @@
   * walkback() in stdlib;
   * snapshots module fixes;
   * gamefile with main3.lua fix;
+  * segfault in std.readdir fix;
   * noinv/nolife modules fix ('step' mod_call error);
   * math.round added;
   * forever loop bug fix (unpaired {});
