@@ -2348,7 +2348,7 @@ static void gfx_render_copy(SDL_Texture *texture, SDL_Rect *dst)
 	if (SDL_VideoRendererInfo.flags & SDL_RENDERER_ACCELERATED) {
 		SDL_RenderCopy(Renderer, texture, NULL, NULL);
 	} else
-		SDL_RenderCopy(Renderer, texture, NULL, dst);
+		SDL_RenderCopy(Renderer, texture, dst, dst);
 }
 
 void gfx_draw_cursor(void)
