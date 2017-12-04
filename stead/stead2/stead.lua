@@ -154,6 +154,7 @@ if _VERSION == "Lua 5.1" then
 else
 	stead.eval = load
 	stead.unpack = table.unpack
+	unpack = table.unpack -- buggy games
 	stead.table.maxn = table_get_maxn
 	string.gfind = string.gmatch
 	math.mod = math.fmod
