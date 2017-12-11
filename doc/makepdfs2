@@ -71,7 +71,7 @@ function build_modules()
 			if (scr == 0) {
 				print;
 			}
-		}' | sed -e 's/\\date{}/\\date{'$d'}/' -e 's/\\title{.*}/\\title{Модули INSTEAD}/' -e 's/{\\char13}/'"'"'/g'  -e 's/WRAPCENTERMAGICSTART/\\begin{Info}/g' -e 's/WRAPCENTERMAGICEND/\\end{Info}/g' > stead2-modules.tex
+		}' | sed -e 's/\\begin{LTR}//' -e 's/\\end{LTR}//' -e 's/\\begin{russian}//' -e 's/\\end{russian}//' -e 's/\\date{}/\\date{'$d'}/' -e 's/\\title{.*}/\\title{Модули INSTEAD}/' -e 's/{\\char13}/'"'"'/g'  -e 's/WRAPCENTERMAGICSTART/\\begin{Info}/g' -e 's/WRAPCENTERMAGICEND/\\end{Info}/g' > stead2-modules.tex
 	rm -f $mod2
 	rm -f *.toc *.aux *.out *.log
 	xelatex stead2-modules.tex -o stead2.pdf
