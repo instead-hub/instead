@@ -2693,7 +2693,7 @@ local iface = std.obj {
 	cmd = function(self, inp)
 		local cmd = cmd_parse(inp)
 		if std.debug_input then
-			dprint("* input: ", inp)
+			std.dprint("* input: ", inp)
 		end
 		if not cmd then
 			return "Error in cmd arguments", false
@@ -2707,7 +2707,7 @@ local iface = std.obj {
 		end
 		r = iface:fmt(r, v) -- to force fmt
 		if std.debug_output then
-			dprint("* output: ", r, v)
+			std.dprint("* output: ", r, v)
 		end
 		return r, v
 	end;
