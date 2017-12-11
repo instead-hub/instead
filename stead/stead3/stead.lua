@@ -274,7 +274,7 @@ local function xref_prep(str)
 		if std.debug_xref then
 			std.err("Wrong object in xref: "..std.tostr(oo), 2)
 		else
-			dprint("Wrong xref: "..std.tostr(oo))
+			std.dprint("Wrong xref: "..std.tostr(oo))
 			return s
 		end
 	end
