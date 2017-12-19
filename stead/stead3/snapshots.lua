@@ -39,13 +39,14 @@ local snap = std.obj {
 			return false
 		end
 		std:reset()
-		std.ref 'game':__ini(false)
+		std.ref 'game':__ini()
 		local f, err = std.eval(s.data[name])
 		if not f then
 			std.err(err, 2)
 		end
 		f();
-		std.ref 'game':__ini(true)
+		std.ref 'game':__ini()
+		std.ref 'game':__start(true)
 		return std.nop()
 	end;
 }
