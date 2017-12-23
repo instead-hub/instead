@@ -4,7 +4,7 @@
 set -e
 export WORKSPACE="" #"/home/peter/Devel/emsdk-portable/env"
 
-if [ ! -f ./emsdk_set_env.sh ]; then
+if [ ! -f ./emsdk_env.sh ]; then
 	echo "Run this script in emsdk directory"
 	exit 1
 fi
@@ -17,9 +17,10 @@ if [ ! -d "$WORKSPACE" ]; then
 	echo "Please, create build directory $WORKSPACE"
 	exit 1
 fi
-. ./emsdk_set_env.sh
+. ./emsdk_env.sh
 
 # some general flags
+export PATH="$WORKSPACE/bin:$PATH"
 export CFLAGS="-g0 -O2"
 export CXXFLAGS="$CFLAGS"
 export EM_CFLAGS="-Wno-warn-absolute-paths"
@@ -34,7 +35,7 @@ export LD="$CC"
 export LDSHARED="$LD"
 export RANLIB="emranlib"
 export AR="emar"
-
+export CC_BUILD=cc
 
 # Lua
 cd $WORKSPACE
@@ -75,6 +76,53 @@ cd libmikmod-3.1.12/
 emconfigure ./configure --prefix=$WORKSPACE --disable-shared --enable-static 
 emmake make install SHELL="${SHELL}"
 
+# SDL2
+cd $WORKSPACE
+rm -rf SDL2
+git clone https://github.com/emscripten-ports/SDL2.git
+cd SDL2
+git checkout merge-2.0.7
+git pull
+
+./autogen.sh
+emconfigure ./configure --host=asmjs-unknown-emscripten --disable-assembly --disable-threads --disable-mmx --disable-sdltest --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include" LDFLAGS="-L$WORKSPACE/lib" --disable-sdltest --disable-shared --disable-joystick --disable-pthreads
+cat <<EOF >em.patch
+--- SDL_audio.c	2017-12-23 14:03:32.965522053 +0300
++++ SDL_audio.c.em	2017-12-23 14:18:03.274008570 +0300
+@@ -1280,7 +1280,7 @@
+ 
+     /* if your target really doesn't need it, set it to 0x1 or something. */
+     /* otherwise, close_audio_device() won't call impl.CloseDevice(). */
+-    SDL_assert(device->hidden != NULL);
++//    SDL_assert(device->hidden != NULL);
+ 
+     /* See if we need to do any conversion */
+     build_stream = SDL_FALSE;
+EOF
+patch -p1 src/audio/SDL_audio.c -i em.patch
+emmake make install
+
+cd $WORKSPACE
+rm -rf freetype-2.8
+wget https://download.savannah.gnu.org/releases/freetype/freetype-2.8.tar.gz
+tar -xvf freetype-2.8.tar.gz
+cd freetype-2.8
+./autogen.sh
+
+emconfigure ./configure --build=amd64-unknown-linux --host=asmjs-unknown-linux --prefix=$WORKSPACE  CPPFLAGS="-I$WORKSPACE/include" LDFLAGS="-L$WORKSPACE/lib" --disable-shared
+emmake make install
+
+# SDL2_ttf
+cd $WORKSPACE
+rm -rf SDL2_ttf
+git clone https://github.com/emscripten-ports/SDL2_ttf.git
+cd SDL2_ttf
+git checkout master
+git pull
+./autogen.sh
+emconfigure ./configure --build=amd64-unknown-linux --host=asmjs-unknown-linux --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -I$WORKSPACE/include/SDL2 -I$WORKSPACE/include/freetype2" LDFLAGS="-L$WORKSPACE/lib" --disable-sdltest --disable-shared
+emmake make install
+
 # SDL2_mixer
 cd $WORKSPACE
 rm -rf SDL_mixer
@@ -87,7 +135,7 @@ hg --config "extensions.purge=" purge --all
 cat configure.in | sed -e 's/AC_CHECK_LIB(\[modplug\], /AC_CHECK_LIB(\[modplug\], \[ModPlug_Load\], /' -e 's/have_libmikmod=no/have_libmikmod=yes/g' > configure.in.new
 mv -f configure.in.new configure.in
 ./autogen.sh
-emconfigure ./configure --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -s USE_VORBIS=1 -s USE_OGG=1" LDFLAGS="-L$WORKSPACE/lib" --disable-sdltest --disable-shared \
+emconfigure ./configure --host=asmjs-unknown-emscripten --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -I$WORKSPACE/include/SDL2 -s USE_VORBIS=1 -s USE_OGG=1" LDFLAGS="-L$WORKSPACE/lib" --disable-sdltest --disable-shared \
    --disable-music-mp3-mad-gpl --enable-music-ogg --disable-music-ogg-shared --enable-music-mod-mikmod --disable-music-mod-mikmod-shared \
    --disable-music-midi-fluidsynth --disable-music-midi-fluidsynth-shared \
    --disable-music-mp3-smpeg --disable-music-mp3-smpeg-shared
@@ -111,7 +159,7 @@ rm -rf SDL2_image
 [ -d SDL2_image/.git ] || git clone https://github.com/emscripten-ports/SDL2_image.git SDL2_image
 cd SDL2_image
 ./autogen.sh
-emconfigure ./configure --host=asmjs-unknown-linux --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -s USE_SDL=2 -s USE_LIBPNG=1 " LDFLAGS="-L$WORKSPACE/lib -lpng -ljpeg" --disable-sdltest --disable-shared --enable-static --enable-png --disable-png-shared --enable-jpg --disable-jpg-shared
+emconfigure ./configure --host=asmjs-unknown-linux --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -I$WORKSPACE/include/SDL2 -s USE_LIBPNG=1" LDFLAGS="-L$WORKSPACE/lib -lpng -ljpeg" --disable-sdltest --disable-shared --enable-static --enable-png --disable-png-shared --enable-jpg --disable-jpg-shared
 emmake make install
 
 # INSTEAD
@@ -123,7 +171,7 @@ git pull
 [ -e Rules.make ] || ln -s Rules.standalone Rules.make
 cat <<EOF > config.make
 EXTRA_CFLAGS+= -DNOMAIN -D_HAVE_ICONV -I../../include
-SDL_CFLAGS=-I../../include/SDL2 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 -s SDL2_IMAGE_FORMATS='["png","jpeg","gif"]'
+SDL_CFLAGS=-I../../include/SDL2
 SDL_LFLAGS=
 LUA_CFLAGS=
 LUA_LFLAGS=
@@ -212,12 +260,13 @@ Module['postRun'].push(function() {
 });
 EOF
 
-emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_mixer.a lib/libmikmod.a lib/libSDL2_image.a lib/libjpeg.a  \
+emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_ttf.a  lib/libfreetype.a lib/libSDL2_mixer.a lib/libSDL2.a lib/libmikmod.a  lib/libSDL2_image.a lib/libjpeg.a  \
 -s EXPORTED_FUNCTIONS="['_instead_main']" \
 -s 'SDL2_IMAGE_FORMATS=["png","jpeg","gif"]' \
+-s 'EXTRA_EXPORTED_RUNTIME_METHODS=["ccall", "Pointer_stringify"]' \
 -s QUANTUM_SIZE=4 \
--s USE_OGG=1 -s USE_VORBIS=1 -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_LIBPNG=1 \
--o instead-em.html -s SAFE_HEAP=0  -s TOTAL_MEMORY=167772160 -s ALLOW_MEMORY_GROWTH=0 \
+-s USE_OGG=1 -s USE_VORBIS=1 -s USE_LIBPNG=1 \
+-o instead-em.html -s SAFE_HEAP=0  -s TOTAL_MEMORY=167772160 -s ALLOW_MEMORY_GROWTH=1 \
 --post-js post.js  \
 --preload-file fs@/
 
