@@ -11,7 +11,7 @@ typedef struct dir_data {
 	int  closed;
 #ifdef _WIN32
 	intptr_t hFile;
-	char pattern[PATH_MAX];
+	char pattern[PATH_MAX + 1];
 #else
 	DIR *dir;
 #endif
@@ -98,7 +98,7 @@ int dir_iter_factory (lua_State *L) {
 	d->hFile = 0L;
 	luaL_getmetatable (L, DIR_METATABLE);
 	lua_setmetatable (L, -2);
-	if (strlen(path) > MAX_PATH-2)
+	if (strlen(path) > PATH_MAX - 2)
 	  luaL_error (L, "path too long: %s", path);
 	else
 	  sprintf (d->pattern, "%s/*", path);
