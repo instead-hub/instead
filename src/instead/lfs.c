@@ -11,7 +11,7 @@ typedef struct dir_data {
 	int  closed;
 #ifdef _WIN32
 	intptr_t hFile;
-	char pattern[MAX_PATH+1];
+	char pattern[PATH_MAX];
 #else
 	DIR *dir;
 #endif
