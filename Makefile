@@ -40,7 +40,7 @@ mingw32ce.tar.gz:
 	wget "http://sourceforge.net/projects/instead/files/instead/build-bin-data/$(@)/download" -O $(@)
 
 windows-sdl2.tar.gz:
-	wget "http://sourceforge.net/projects/instead/files/instead/build-bin-data/$(@)/download" -O $(@)
+	wget "http://sourceforge.net/projects/instead/files/instead/build-bin-data/windows-sdl2-2.0.7.tar.gz/download" -O $(@)
 
 build-bin-data: caanoo.tar.gz mingw32ce.tar.gz windows-sdl2.tar.gz
 
