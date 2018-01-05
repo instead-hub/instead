@@ -1,5 +1,6 @@
 3.2.0
 
+  * segfault on path overflow fix;
   * theme.restore() fix;
   * SailfishOS port;
   * walkback() in stdlib;

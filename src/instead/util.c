@@ -173,7 +173,7 @@ err:
 		free(ss);
 	if (dd)
 		free(dd);
-	return rc; 
+	return rc;
 }
 
 char *getpath(const char *d, const char *n)
@@ -232,41 +232,41 @@ char *decode(iconv_t hiconv, const char *s)
 	char *inbuf, *outbuf, *chs_buf;
 	if (!s || hiconv == (iconv_t)(-1))
 		return NULL;
-	s_size = strlen(s) + 1; 
-	chs_size = s_size * CHAR_MAX_LEN; 
+	s_size = strlen(s) + 1;
+	chs_size = s_size * CHAR_MAX_LEN;
 	if ((chs_buf = malloc(chs_size + CHAR_MAX_LEN))==NULL)
-		goto exitf; 
-	outsz = chs_size; 
-	outbuf = chs_buf; 
-	insz = s_size; 
-	inbuf = (char*)s; 
-	while (insz) { 
-		if (iconv(hiconv, &inbuf, &insz, &outbuf, &outsz) 
-						== (size_t)(-1)) 
-	   	 	goto exitf; 
-	} 
-	*outbuf++ = 0; 
-	return chs_buf; 
-exitf: 
-	if(chs_buf) 
-		free(chs_buf); 
-	return NULL; 
+		goto exitf;
+	outsz = chs_size;
+	outbuf = chs_buf;
+	insz = s_size;
+	inbuf = (char*)s;
+	while (insz) {
+		if (iconv(hiconv, &inbuf, &insz, &outbuf, &outsz)
+						== (size_t)(-1))
+			goto exitf;
+	}
+	*outbuf++ = 0;
+	return chs_buf;
+exitf:
+	if(chs_buf)
+		free(chs_buf);
+	return NULL;
 }
 #endif
 
 static tinymt32_t trandom;
 
-void mt_random_init(void) 
+void mt_random_init(void)
 {
 	tinymt32_init(&trandom, time(NULL));
 }
 
-void mt_random_seed(unsigned long seed) 
+void mt_random_seed(unsigned long seed)
 {
 	tinymt32_init(&trandom, seed);
 }
 
-unsigned long mt_random(void) 
+unsigned long mt_random(void)
 {
 	return tinymt32_generate_uint32(&trandom);
 }
@@ -276,7 +276,7 @@ double mt_random_double(void)
 	return tinymt32_generate_32double(&trandom);
 }
 
-#if defined(S60) 
+#if defined(S60)
 #include "system.h"
 #include <limits.h>
 #include <pwd.h>
@@ -344,7 +344,7 @@ char* basename (char* path)
 	return ptr;
 }
 
-#elif defined(_WIN32_WCE) 
+#elif defined(_WIN32_WCE)
 
 #include "system.h"
 #include <windows.h>
@@ -375,9 +375,8 @@ char *dirpath(const char *path)
 	static char fp[PATH_MAX * 4];
 	if (path[0] == '/')
 		return (char*)path;
-	strcpy(fp, curdir);
-	strcat(fp, "/");
-	strcat(fp, path);
+	snprintf(fp, sizeof(fp), "%s/%s", curdir, path);
+	fp[sizeof(fp) - 1] = 0;
 	unix_path(fp);
 	return fp;
 }
@@ -418,9 +417,8 @@ char *dirpath(const char *path)
 	static char fp[PATH_MAX * 4];
 	if (path[0] == '/' || path[1] == ':')
 		return (char*)path;
-	strcpy(fp, curdir);
-	strcat(fp, "/");
-	strcat(fp, path);
+	snprintf(fp, sizeof(fp), "%s/%s", curdir, path);
+	fp[sizeof(fp) - 1] = 0;
 	unix_path(fp);
 	return fp;
 }
@@ -606,12 +604,11 @@ char *getdir(char *path, size_t size)
 
 char *dirpath(const char *path)
 {
-	static char fp[PATH_MAX];
+	static char fp[PATH_MAX * 4];
 	if (path[0] == '/')
 		return (char*)path;
-	strcpy(fp, curdir);
-	strcat(fp, "/");
-	strcat(fp, path);
+	snprintf(fp, sizeof(fp), "%s/%s", curdir, path);
+	fp[sizeof(fp) - 1] = 0;
 	unix_path(fp);
 	return fp;
 }
@@ -736,8 +733,8 @@ loop:
 		*p = '\0';
 		goto out;
 	}
-	if (p == resolved 
-		&& is_absolute_path(path) 
+	if (p == resolved
+		&& is_absolute_path(path)
 			&& path[0] != '/') { /* win? */
 		memcpy(&p[0], path,
 		    q - path);
