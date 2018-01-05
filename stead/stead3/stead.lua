@@ -1569,6 +1569,14 @@ std.obj = std.class {
 	end;
 };
 
+function std.var(v)
+	if type(v) ~= 'table' then
+		std.err("Wrong std.var() argument", 2)
+	end
+	v.__var_type = true
+	return v
+end
+
 std.room = std.class({
 	__room_type = true;
 	from  = function(s)
