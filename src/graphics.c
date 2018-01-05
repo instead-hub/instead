@@ -5643,6 +5643,9 @@ err:
 
 int gfx_init(void)
 {
+#if defined(_WIN32) /* do not use buggy D3D: fullscreen problem with NVidia */
+	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+#endif
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
 		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
 		return -1;
