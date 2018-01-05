@@ -314,10 +314,6 @@ int input(struct inp_event *inp, int wait)
 			gfx_commit();
 			break;
 		case SDL_WINDOWEVENT_MINIMIZED:
-#if defined(ANDROID)
-			gfx_set_mode(gfx_width, gfx_height, gfx_fs); /* reset window size */
-			/* Fall through */
-#endif
 		case SDL_WINDOWEVENT_RESTORED:
 			m_minimized = (event.window.event == SDL_WINDOWEVENT_MINIMIZED && !opt_fs);
 			snd_pause(!nopause_sw && m_minimized);
