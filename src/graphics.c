@@ -2330,13 +2330,15 @@ void gfx_show_cursor(int on)
 	cursor_on = on;
 }
 
-static void gfx_render_copy(SDL_Texture *texture, SDL_Rect *dst)
+static void gfx_render_copy(SDL_Texture *texture, SDL_Rect *dst, int clear)
 {
 #ifdef _USE_SWROTATE
 	SDL_Rect r2;
 	SDL_Point r;
 	int w, h;
 	if (gfx_flip_rotate) {
+		if (clear)
+			SDL_RenderClear(Renderer);
 		SDL_QueryTexture(texture, NULL, NULL, &w, &h);
 		r2.x = 0; r2.y = -h;
 		r2.w = w; r2.h = h;
@@ -2346,12 +2348,14 @@ static void gfx_render_copy(SDL_Texture *texture, SDL_Rect *dst)
 	}
 #endif
 	if (SDL_VideoRendererInfo.flags & SDL_RENDERER_ACCELERATED) {
+		if (clear)
+			SDL_RenderClear(Renderer);
 		SDL_RenderCopy(Renderer, texture, NULL, NULL);
 	} else
 		SDL_RenderCopy(Renderer, texture, dst, dst);
 }
 
-void gfx_draw_cursor(void)
+static void gfx_render_cursor(void)
 {
 	int cursor_x = 0;
 	int cursor_y = 0;
@@ -2410,7 +2414,7 @@ int SDL_Flip(SDL_Surface * screen)
 
 		pixels += pitch * queue_y1 + queue_x1 * psize;
 		SDL_UpdateTexture(SDL_VideoTexture, &rect, pixels, pitch);
-		gfx_render_copy(SDL_VideoTexture, &rect);
+		gfx_render_copy(SDL_VideoTexture, &rect, 1);
 		SDL_RenderPresent(Renderer);
 	}
 	queue_x1 = queue_y1 = queue_x2 = queue_y2 = -1;
@@ -5524,10 +5528,10 @@ static void update_gfx(void)
 	game_cursor(CURSOR_DRAW);
 	gfx_flip();
 #else
-	gfx_render_copy(fade_bg_texture, NULL);
+	gfx_render_copy(fade_bg_texture, NULL, 1);
 	SDL_SetTextureAlphaMod(fade_fg_texture, (SDL_ALPHA_OPAQUE * (fade_step_nr + 1)) / ALPHA_STEPS);
-	gfx_render_copy(fade_fg_texture, NULL);
-	gfx_draw_cursor();
+	gfx_render_copy(fade_fg_texture, NULL, 0);
+	gfx_render_cursor();
 	SDL_RenderPresent(Renderer);
 #endif
 	fade_step_nr ++;
