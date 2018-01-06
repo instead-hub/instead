@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2017 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2018 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -78,6 +78,7 @@ char *appdata_sw = NULL;
 char *idf_sw = NULL;
 char *start_idf_sw = NULL;
 char *lua_sw = NULL;
+char *render_sw = NULL;
 static int lua_exec = 1;
 static int nocfg_sw = 0;
 
@@ -456,6 +457,16 @@ int instead_main(int argc, char *argv[])
 			|| !strcmp(argv[i], "--help")) {
 			usage();
 			goto out;
+		} else if (!strcmp(argv[i], "-renderer")) {
+			FREE(render_sw);
+			if ((i + 1) < argc)
+				render_sw = strdup(argv[++i]);
+			else {
+				fprintf(stderr, "Parameter required: %s\n", argv[i]);
+				fprintf(stderr, "opengl, opengles2, opengles, software, direct3d\n");
+				err = 1;
+				goto out;
+			}
 		} else if (argv[i][0] == '-') {
 			fprintf(stderr,"Unknown option: %s\n", argv[i]);
 			usage();
@@ -724,6 +735,7 @@ static struct parser profile_parser[] = {
 	{ "mode", parse_string, &mode_sw, 0 },
 	{ "modes", parse_string, &modes_sw, 0 },
 	{ "fontscale", parse_string, &fsize_sw, 0 },
+	{ "renderer", parse_string, &render_sw, 0 },
 	{ NULL, NULL, NULL, 0 },
 };
 

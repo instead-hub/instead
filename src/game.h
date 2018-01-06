@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2017 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2018 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -52,6 +52,7 @@ extern int	vsync_sw;
 extern int	resizable_sw;
 extern int	scale_sw;
 extern int	standalone_sw;
+extern char	*render_sw;
 
 extern char	*appdir(void);
 

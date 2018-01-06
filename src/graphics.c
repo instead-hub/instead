@@ -2196,7 +2196,7 @@ retry:
 	SDL_DelEventWatch(mouse_watcher, NULL);
 	SDL_AddEventWatch(mouse_watcher, NULL);
 #endif
-	fprintf(stderr,"Video mode: %dx%d@%dbpp\n", Surf(screen)->w, Surf(screen)->h, Surf(screen)->format->BitsPerPixel);
+	fprintf(stderr, "Video mode: %dx%d@%dbpp (%s)\n", Surf(screen)->w, Surf(screen)->h, Surf(screen)->format->BitsPerPixel, SDL_VideoRendererInfo.name);
 done:
 	SDL_SetRenderDrawBlendMode(Renderer, SDL_BLENDMODE_NONE);
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
@@ -5643,8 +5643,11 @@ err:
 int gfx_init(void)
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
-#if defined(_WIN32) /* do not use buggy D3D: fullscreen problem with NVidia */
-	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+	if (render_sw)
+		SDL_SetHint(SDL_HINT_RENDER_DRIVER, render_sw);
+#if defined(_WIN32) /* do not use buggy D3D by default: fullscreen problem with NVidia */
+	else
+		SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 #endif
 #endif
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
