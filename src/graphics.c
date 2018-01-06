@@ -2460,7 +2460,6 @@ void gfx_resize(int w, int h)
 	current_gfx_w = w;
 	current_gfx_h = h;
 #endif
-	SDL_RenderClear(Renderer);
 #endif
 }
 
