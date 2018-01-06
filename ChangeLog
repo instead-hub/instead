@@ -18,6 +18,7 @@
   * winrt patches;
   * win: use opengl instead d3d (nvidia fullscreen bug);
   * std.var for variable extensions;
+  * -renderer <opengl|direct3d|software|opengles|opengles2> parameter;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Sun, 17 Dec 2017 11:44:00 +0300
 
