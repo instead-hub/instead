@@ -236,9 +236,21 @@ static void usage(void)
 static int profile_load(const char *path);
 extern int game_instead_extensions(void);
 
+static int luaB_clipboard(lua_State *L) {
+	const char *text = luaL_optstring(L, 1, "");
+	lua_pushboolean(L, system_clipboard(text) == 0);
+	return 1;
+}
+
+static const luaL_Reg sdl_funcs[] = {
+	{"instead_clipboard", luaB_clipboard},
+	{NULL, NULL}
+};
+
 static int sdl_ext_init(void)
 {
 	char path[PATH_MAX];
+	instead_api_register(sdl_funcs);
 	snprintf(path, sizeof(path), "%s/%s", instead_stead_path(), "/ext/gui.lua");
 	return instead_loadfile(dirpath(path));
 }

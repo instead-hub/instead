@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2017 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2018 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -64,6 +64,15 @@ void push_user_event(void (*p) (void*), void *data)
 	uevent.data2 = data;
 	event.user = uevent;
 	SDL_PushEvent(&event);
+}
+
+int system_clipboard(const char *text)
+{
+#if SDL_VERSION_ATLEAST(2,0,0)
+	return SDL_SetClipboardText(text);
+#else
+	return -1;
+#endif
 }
 
 #ifdef SAILFISHOS

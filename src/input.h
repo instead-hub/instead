@@ -58,5 +58,6 @@ int mouse_focus(void);
 extern int minimized(void);
 extern int mouse_cursor(int on);
 extern int finger_pos(const char *finger, int *x, int *y, float *pressure);
+extern int system_clipboard(const char *text);
 
 #endif
