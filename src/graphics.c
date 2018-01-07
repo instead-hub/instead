@@ -1954,7 +1954,8 @@ void gfx_finger_pos_scale(float x, float y, int *ox, int *oy, int norm)
 	SDL_Rect rect;
 
 	if (!norm) { /* do not normalize? */
-		SDL_GetRendererOutputSize(Renderer, &w, &h);
+		w = gfx_width;
+		h = gfx_height;
 		sx = 1.0f;
 		sy = 1.0f;
 		rect.x = 0;
