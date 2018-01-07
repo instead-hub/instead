@@ -237,8 +237,17 @@ static int profile_load(const char *path);
 extern int game_instead_extensions(void);
 
 static int luaB_clipboard(lua_State *L) {
-	const char *text = luaL_optstring(L, 1, "");
-	lua_pushboolean(L, system_clipboard(text) == 0);
+	char *buf = NULL;
+	const char *text = luaL_optstring(L, 1, NULL);
+	if (!text) { /* get */
+		if (system_clipboard(NULL, &buf) == 0) {
+			lua_pushstring(L, buf);
+			free(buf);
+		} else
+			lua_pushboolean(L, 0);
+		return 1;
+	}
+	lua_pushboolean(L, system_clipboard(text, NULL) == 0);
 	return 1;
 }
 

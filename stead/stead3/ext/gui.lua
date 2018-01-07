@@ -12,6 +12,8 @@ local instead = std.obj {
 	end;
 }
 
+instead.clipboard = instead_clipboard
+
 function instead.atleast(...)
 	for k, v in std.ipairs {...} do
 		if std.type(v) ~= 'number' then

@@ -66,9 +66,19 @@ void push_user_event(void (*p) (void*), void *data)
 	SDL_PushEvent(&event);
 }
 
-int system_clipboard(const char *text)
+int system_clipboard(const char *text, char **buf)
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
+	if (buf) {
+		if (!SDL_HasClipboardText())
+			return -1;
+		*buf = SDL_GetClipboardText();
+		if (*buf == NULL)
+			return -1;
+		return 0;
+	}
+	if (!text)
+		return -1;
 	return SDL_SetClipboardText(text);
 #else
 	return -1;
