@@ -972,7 +972,9 @@ int instead_init_lua(const char *path, int detect)
 	setlocale(LC_ALL,"");
 	setlocale(LC_NUMERIC,"C"); /* to avoid . -> , in numbers */	
 	setlocale(LC_CTYPE,"C"); /* to avoid lower/upper problems */	
+#ifdef LC_MESSAGES
 	setlocale(LC_MESSAGES,"C");
+#endif
 /*	strcpy(curcp, "UTF-8"); */
 	getdir(instead_cwd_path, sizeof(instead_cwd_path));
 	unix_path(instead_cwd_path);
