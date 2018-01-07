@@ -1953,14 +1953,14 @@ void gfx_finger_pos_scale(float x, float y, int *ox, int *oy, int norm)
 	float sx, sy;
 	SDL_Rect rect;
 
-	SDL_GetWindowSize(SDL_VideoWindow, &w, &h);
-
 	if (!norm) { /* do not normalize? */
+		SDL_GetRendererOutputSize(Renderer, &w, &h);
 		sx = 1.0f;
 		sy = 1.0f;
 		rect.x = 0;
 		rect.y = 0;
 	} else {
+		SDL_GetWindowSize(SDL_VideoWindow, &w, &h);
 		SDL_RenderGetViewport(Renderer, &rect);
 		SDL_RenderGetScale(Renderer, &sx, &sy);
 	}
