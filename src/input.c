@@ -114,7 +114,7 @@ static void push_mouse_event(SDL_Event *sevent)
 #if SDL_VERSION_ATLEAST(2,0,0)
 static unsigned long last_press_ms = 0;
 static unsigned long last_repeat_ms = 0;
-extern void gfx_finger_pos_scale(float x, float y, int *ox, int *oy);
+extern void gfx_finger_pos_scale(float x, float y, int *ox, int *oy, int norm);
 #endif
 #define INPUT_REP_DELAY_MS 500
 #define INPUT_REP_INTERVAL_MS 30
@@ -248,7 +248,7 @@ int finger_pos(const char *finger, int *x, int *y, float *pressure)
 		if (f->id == fid) {
 			if (pressure)
 				*pressure = f->pressure;
-			gfx_finger_pos_scale(f->x, f->y, x, y);
+			gfx_finger_pos_scale(f->x, f->y, x, y, 1);
 			return 0;
 		}
 	}
@@ -310,7 +310,11 @@ int input(struct inp_event *inp, int wait)
 			}
 		}
 #endif
-		gfx_finger_pos_scale(event.tfinger.x, event.tfinger.y, &inp->x, &inp->y);
+#if SDL_VERSION_ATLEAST(2,0,7) /* broken. normalized by event watcher */
+		gfx_finger_pos_scale(event.tfinger.x, event.tfinger.y, &inp->x, &inp->y, 0);
+#else
+		gfx_finger_pos_scale(event.tfinger.x, event.tfinger.y, &inp->x, &inp->y, 1);
+#endif
 		inp->type = (event.type == SDL_FINGERDOWN) ? FINGER_DOWN : FINGER_UP;
 		data2hex(&event.tfinger.fingerId,
 			sizeof(event.tfinger.fingerId),

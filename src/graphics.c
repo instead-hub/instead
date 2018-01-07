@@ -1945,16 +1945,25 @@ static int mouse_watcher(void *userdata, SDL_Event *event)
 	}
 	return 0;
 }
-void gfx_finger_pos_scale(float x, float y, int *ox, int *oy)
+void gfx_finger_pos_scale(float x, float y, int *ox, int *oy, int norm)
 {
 	int xx = 0, yy = 0;
 #ifndef SAILFISHOS
 	int w, h;
 	float sx, sy;
-	SDL_GetWindowSize(SDL_VideoWindow, &w, &h);
 	SDL_Rect rect;
-	SDL_RenderGetViewport(Renderer, &rect);
-	SDL_RenderGetScale(Renderer, &sx, &sy);
+
+	SDL_GetWindowSize(SDL_VideoWindow, &w, &h);
+
+	if (!norm) { /* do not normalize? */
+		sx = 1.0f;
+		sy = 1.0f;
+		rect.x = 0;
+		rect.y = 0;
+	} else {
+		SDL_RenderGetViewport(Renderer, &rect);
+		SDL_RenderGetScale(Renderer, &sx, &sy);
+	}
 
 	if (sx != 0) {
 		x = x * w;
