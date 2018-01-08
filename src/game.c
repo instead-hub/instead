@@ -3089,9 +3089,13 @@ int game_from_disk(void)
 	game_cursor(CURSOR_OFF);
 	browse_dialog = 1;
 	getdir(dir, sizeof(dir));
+#ifdef LC_MESSAGES
 	setlocale(LC_MESSAGES, "");
+#endif
 	g = p = open_file_dialog();
+#ifdef LC_MESSAGES
 	setlocale(LC_MESSAGES, "C");
+#endif
 	setdir(dir); /* dir can be changed */
 	browse_dialog = 0;
 	game_cursor(CURSOR_ON);
