@@ -969,11 +969,14 @@ int instead_init_lua(const char *path, int detect)
 {
 	int api = 0;
 	busy = 0;
-	setlocale(LC_ALL,"");
-	setlocale(LC_NUMERIC,"C"); /* to avoid . -> , in numbers */	
-	setlocale(LC_CTYPE,"C"); /* to avoid lower/upper problems */	
+	setlocale(LC_ALL, "");
+	setlocale(LC_NUMERIC, "C"); /* to avoid . -> , in numbers */
+	setlocale(LC_CTYPE, "C"); /* to avoid lower/upper problems */
 #ifdef LC_MESSAGES
-	setlocale(LC_MESSAGES,"C");
+	setlocale(LC_MESSAGES, "C");
+#endif
+#ifdef LC_COLLATE
+	setlocale(LC_COLLATE, "C");
 #endif
 /*	strcpy(curcp, "UTF-8"); */
 	getdir(instead_cwd_path, sizeof(instead_cwd_path));
