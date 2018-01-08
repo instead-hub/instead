@@ -402,7 +402,7 @@ function take(w)
 	if o then
 		o:actions('take', 1 + o:actions 'take')
 	end
-	return place(w, std.ref(std.me()):inventory())
+	return place(w, std.me():inventory())
 end
 
 function drop(w, wh)

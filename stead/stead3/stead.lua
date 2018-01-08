@@ -1681,6 +1681,9 @@ std.world = std.class({
 		end
 		s.__started = true
 		if load ~= true then
+			if std.game.player.room.__from then -- already entered
+				return nil, true
+			end
 			local r, v = std.game.player:walk(std.game.player.room, false)
 			return r, v
 		end
@@ -2200,7 +2203,7 @@ std.player = std.class ({
 				return t, true
 			end
 		end
-		s.room.__visits = (s.room.__visits or 0) + 1
+		s:where().__visits = (s:where().__visits or 0) + 1
 		s:need_scene(true)
 		s:moved(true)
 		if not s.__in_afterwalk then
@@ -2221,9 +2224,9 @@ std.player = std.class ({
 	end;
 	where = function(s, where)
 		if type(where) == 'table' then
-			table.insert(where, s.room)
+			table.insert(where, std.ref(s.room))
 		end
-		return s.room
+		return std.ref(s.room)
 	end;
 }, std.obj);
 
@@ -2674,11 +2677,11 @@ end
 std.cmd_parse = cmd_parse
 
 function std.me()
-	return std.ref 'game'.player
+	return std.ref(std.ref 'game'.player)
 end
 
 function std.here()
-	return std.me().room
+	return std.ref(std.me().room)
 end
 
 function std.cacheable(n, f)
