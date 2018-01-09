@@ -119,7 +119,7 @@ extern void gfx_finger_pos_scale(float x, float y, int *ox, int *oy, int norm);
 #define INPUT_REP_DELAY_MS 500
 #define INPUT_REP_INTERVAL_MS 30
 
-#ifdef IOS
+#if defined(IOS) || defined(ANDROID)
 int HandleAppEvents(void *userdata, SDL_Event *event)
 {
 	switch (event->type) {
@@ -174,7 +174,7 @@ int input_init(void)
 #else
 	SDL_EnableKeyRepeat(INPUT_REP_DELAY_MS, INPUT_REP_INTERVAL_MS);
 #endif
-#ifdef IOS
+#if defined(IOS) || defined(ANDROID)
 	SDL_SetEventFilter(HandleAppEvents, NULL);
 #endif
 	return 0;
