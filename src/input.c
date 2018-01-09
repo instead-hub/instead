@@ -138,6 +138,11 @@ int HandleAppEvents(void *userdata, SDL_Event *event)
 		*/
 		/* snd_pause(1); */
 		m_minimized = 1;
+#if defined(ANDROID) /* is it IOS safe? */
+		if (opt_autosave && curgame_dir) /* autosave the game */
+			game_save(0);
+		cfg_save();
+#endif
 		return 0;
 	case SDL_APP_WILLENTERFOREGROUND:
 		/* This call happens when your app is coming back to the foreground.
