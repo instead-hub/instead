@@ -4840,9 +4840,9 @@ end
 начинается с точки, например:
 
 ```
-if theme.name() ~= '.default' then
+if theme.name() == '.default' then
     -- наша встроенная тема default
-elseif theme.name() ~= 'default' then
+elseif theme.name() == 'default' then
     -- стандартная тема default в INSTEAD
 end
 ```
