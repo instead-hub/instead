@@ -2224,7 +2224,7 @@ xref_t look_xref(int x, int y, struct el **elem)
 	return xref;
 }
 
-static xref_t click_xref = NULL;
+static char click_xref[1024];
 static struct el *click_el = NULL;
 static unsigned long click_time = 0;
 static int click_x = -1;
@@ -2239,7 +2239,7 @@ int menu_visible(void)
 int game_paused(void)
 {
 	return browse_dialog || menu_shown ||
-		use_xref || click_xref ||
+		use_xref || /*click_xref ||*/
 		gfx_fading() || minimized() || instead_busy();
 }
 
@@ -2289,7 +2289,8 @@ void mouse_reset(int hl)
 	disable_use();
 
 	motion_mode = 0;
-	click_xref = click_el = NULL;
+	click_el = NULL;
+	click_xref[0] = 0;
 }
 
 
@@ -2361,6 +2362,7 @@ int game_click(int x, int y, int action, int filter)
 	char		buf[1024];
 	xref_t		xref = NULL;
 	char		*xref_txt;
+	xref_t new_xref;
 
 	int was_motion = (motion_mode == 2);
 
@@ -2377,27 +2379,30 @@ int game_click(int x, int y, int action, int filter)
 	if (action)
 		motion_mode = 0;
 
-	if (filter && opt_filter && action == 1) {
-		xref_t new_xref;
+	if (action == 1) {
 		struct el *new_elem;
+		char *link;
+
 		new_xref = look_xref(x, y, &new_elem);
-		if (new_xref != click_xref || new_elem != click_el) {
+		link = (new_xref)?xref_get_text(new_xref):"";
+
+		if (new_elem != click_el || strcmp(link, click_xref)) {
 			click_el = NULL;
-			if (click_xref) {
-				click_xref = NULL;
+			if (click_xref[0]) {
+				click_xref[0] = 0;
 				return 0; /* just filtered */
 			}
-			click_xref = NULL;
 		}
 	}
 
 	if (action == 1) {
-		xref = click_xref;
+		xref = new_xref;
 		elem = click_el;
-		click_xref = NULL;
+		click_xref[0] = 0;
 		click_el = NULL;
 	} else  { /* just press */
 		xref = look_xref(x, y, &elem);
+		click_xref[0] = 0;
 		if (xref) {
 			xref_set_active(xref, 1);
 			game_xref_update(xref, elem->x, elem->y);
@@ -2407,7 +2412,10 @@ int game_click(int x, int y, int action, int filter)
 			motion_id = elem->id;
 			return 0;
 		}
-		click_xref = xref;
+		if (xref) {
+			snprintf(click_xref, sizeof(click_xref), "%s", xref_get_text(xref));
+			click_xref[sizeof(click_xref) - 1] = 0;
+		}
 		click_el = elem;
 		return 0;
 	}
@@ -2482,6 +2490,7 @@ int game_click(int x, int y, int action, int filter)
 			snprintf(buf, sizeof(buf), "%s", xref_txt);
 		if (mouse_filter(filter))
 			return 0;
+		buf[sizeof(buf) - 1] = 0;
 		game_cmd(buf, GAME_CMD_CLICK);
 		return 1;
 	}
@@ -2501,7 +2510,7 @@ int game_click(int x, int y, int action, int filter)
 		return 0;
 
 	disable_use();
-
+	buf[sizeof(buf) - 1] = 0;
 	game_cmd(buf, GAME_CMD_CLICK);
 	return 1;
 }
@@ -3425,7 +3434,8 @@ static int mouse_instead(struct inp_event *ev, int *x, int *y)
 			motion_id = click_el->id;
 			motion_y = click_y;
 			motion_mode = 1;
-			click_xref = click_el = NULL;
+			click_el = NULL;
+			click_xref[0] = 0;
 		}
 		if (motion_mode) {
 			motion_mode = 2;
@@ -3475,7 +3485,7 @@ static __inline int game_cycle(void)
 	}
 
 	if (!DIRECT_MODE || menu_shown) {
-		if (click_xref)
+		if (click_xref[0])
 			game_highlight(x, y, 1);
 		else if (!motion_mode) {
 			int x, y;
