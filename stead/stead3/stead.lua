@@ -1930,7 +1930,7 @@ std.world = std.class({
 		end
 
 		if v == false or std.abort_cmd then
-			std.mod_call('step', false)
+			std.mod_call('step', v)
 			return r, v -- wrong cmd?
 		end
 -- v is true or nil
