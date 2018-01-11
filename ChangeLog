@@ -20,6 +20,7 @@
   * std.var for variable extensions;
   * -renderer <opengl|direct3d|software|opengles|opengles2> parameter;
   * instead.clipboard() added (SDL2 only);
+  * speed improvements while theme updates;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 08 Jan 2018 09:45:00 +0300
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2018 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -138,15 +138,17 @@ struct game_theme {
 #define CHANGED_IFONT	2
 #define CHANGED_MFONT	4
 #define CHANGED_BG	8
-#define CHANGED_CLICK	0x10
-#define CHANGED_CURSOR	0x20
-#define CHANGED_USE	0x40
-#define CHANGED_UP	0x80
-#define CHANGED_DOWN	0x100
-#define CHANGED_IUP	0x200
-#define CHANGED_IDOWN	0x400
-#define CHANGED_BUTTON	0x800
-#define CHANGED_ICON	0x1000
+#define CHANGED_WIN	0x10
+#define CHANGED_INV	0x20
+#define CHANGED_CLICK	0x40
+#define CHANGED_CURSOR	0x80
+#define CHANGED_USE	0x100
+#define CHANGED_UP	0x200
+#define CHANGED_DOWN	0x400
+#define CHANGED_IUP	0x800
+#define CHANGED_IDOWN	0x1000
+#define CHANGED_BUTTON	0x2000
+#define CHANGED_ICON	0x4000
 #define CHANGED_ALL 0xffff
 struct theme {
 	char *path;

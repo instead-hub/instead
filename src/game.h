@@ -71,7 +71,7 @@ extern char	*game_reset_name(void);
 extern int	game_load_theme(const char *path);
 extern int	game_apply_theme(void);
 extern int	game_use_theme(void);
-extern void	game_release_theme(void);
+extern void	game_release_theme(int force);
 extern int	game_reset(void);
 extern int	game_cfg_save(void);
 

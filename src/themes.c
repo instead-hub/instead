@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2017 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2018 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -273,7 +273,7 @@ static int theme_parse_full_path(const char *v, void *data)
 struct parser cmd_parser[] = {
 	{ "scr.w", parse_int, &game_theme.w, 0 },
 	{ "scr.h", parse_int, &game_theme.h, 0 },
-	{ "scr.gfx.scalable", parse_int, &game_theme.gfx_scalable, 0 },
+	{ "scr.gfx.scalable", parse_int, &game_theme.gfx_scalable, CHANGED_WIN | CHANGED_INV },
 	{ "scr.col.bg", parse_color, &game_theme.bgcol, 0 },
 	{ "scr.gfx.icon", theme_parse_full_path, &game_theme.icon_name, CHANGED_ICON },
 	{ "scr.gfx.bg", theme_parse_full_path, &game_theme.bg_name, CHANGED_BG },
@@ -282,56 +282,56 @@ struct parser cmd_parser[] = {
 	{ "scr.gfx.cursor.y", parse_int, &game_theme.cur_y, 0 },
 	{ "scr.gfx.use", theme_parse_full_path, &game_theme.use_name, CHANGED_USE }, /* compat */
 	{ "scr.gfx.cursor.use", theme_parse_full_path, &game_theme.use_name, CHANGED_USE },
-	{ "scr.gfx.pad", parse_int, &game_theme.pad, 0 },
+	{ "scr.gfx.pad", parse_int, &game_theme.pad, CHANGED_WIN | CHANGED_INV },
 	{ "scr.gfx.x", parse_int, &game_theme.gfx_x, 0 },
 	{ "scr.gfx.y", parse_int, &game_theme.gfx_y, 0 },
 	{ "scr.gfx.w", parse_int, &game_theme.max_scene_w, 0 },
 	{ "scr.gfx.h", parse_int, &game_theme.max_scene_h, 0 },
-	{ "scr.gfx.mode", parse_gfx_mode, &game_theme.gfx_mode, 0 },
+	{ "scr.gfx.mode", parse_gfx_mode, &game_theme.gfx_mode, CHANGED_WIN },
 
-	{ "win.align", parse_win_align, &game_theme.win_align, 0 },
-	{ "win.x", parse_int, &game_theme.win_x, 0 },
-	{ "win.y", parse_int, &game_theme.win_y, 0 },
-	{ "win.w", parse_int, &game_theme.win_w, 0 },
-	{ "win.h", parse_int, &game_theme.win_h, 0 },
-	{ "win.ways.mode", parse_ways_mode, &game_theme.ways_mode, 0 },
-	{ "win.scroll.mode", parse_int, &game_theme.win_scroll_mode, 0 },
+	{ "win.align", parse_win_align, &game_theme.win_align, CHANGED_WIN },
+	{ "win.x", parse_int, &game_theme.win_x, CHANGED_WIN },
+	{ "win.y", parse_int, &game_theme.win_y, CHANGED_WIN },
+	{ "win.w", parse_int, &game_theme.win_w, CHANGED_WIN },
+	{ "win.h", parse_int, &game_theme.win_h, CHANGED_WIN },
+	{ "win.ways.mode", parse_ways_mode, &game_theme.ways_mode, CHANGED_WIN },
+	{ "win.scroll.mode", parse_int, &game_theme.win_scroll_mode, CHANGED_WIN },
 
-	{ "win.fnt.name", theme_parse_full_path, &game_theme.font_name, CHANGED_FONT },
-	{ "win.fnt.size", parse_int, &game_theme.font_size, CHANGED_FONT },
-	{ "win.fnt.height", parse_float, &game_theme.font_height, 0 },
+	{ "win.fnt.name", theme_parse_full_path, &game_theme.font_name, CHANGED_FONT | CHANGED_WIN },
+	{ "win.fnt.size", parse_int, &game_theme.font_size, CHANGED_FONT | CHANGED_WIN },
+	{ "win.fnt.height", parse_float, &game_theme.font_height, CHANGED_WIN },
 /* compat mode directive */
-	{ "win.gfx.h", parse_int, &game_theme.max_scene_h, 0 },
+	{ "win.gfx.h", parse_int, &game_theme.max_scene_h, CHANGED_WIN },
 /* here it was */
-	{ "win.gfx.up", theme_parse_full_path, &game_theme.a_up_name, CHANGED_UP },
-	{ "win.gfx.down", theme_parse_full_path, &game_theme.a_down_name, CHANGED_DOWN },
-	{ "win.up.x", parse_int, &game_theme.a_up_x, 0 },
-	{ "win.up.y", parse_int, &game_theme.a_up_y, 0 },
-	{ "win.down.x", parse_int, &game_theme.a_down_x, 0 },
-	{ "win.down.y", parse_int, &game_theme.a_down_y, 0 },
-	{ "win.col.fg", parse_color, &game_theme.fgcol, 0 },
-	{ "win.col.link", parse_color, &game_theme.lcol, 0 },
-	{ "win.col.alink", parse_color, &game_theme.acol, 0 },
+	{ "win.gfx.up", theme_parse_full_path, &game_theme.a_up_name, CHANGED_UP | CHANGED_WIN},
+	{ "win.gfx.down", theme_parse_full_path, &game_theme.a_down_name, CHANGED_DOWN | CHANGED_WIN},
+	{ "win.up.x", parse_int, &game_theme.a_up_x, CHANGED_WIN },
+	{ "win.up.y", parse_int, &game_theme.a_up_y, CHANGED_WIN },
+	{ "win.down.x", parse_int, &game_theme.a_down_x, CHANGED_WIN },
+	{ "win.down.y", parse_int, &game_theme.a_down_y, CHANGED_WIN },
+	{ "win.col.fg", parse_color, &game_theme.fgcol, CHANGED_WIN },
+	{ "win.col.link", parse_color, &game_theme.lcol, CHANGED_WIN },
+	{ "win.col.alink", parse_color, &game_theme.acol, CHANGED_WIN },
 
-	{ "inv.x", parse_int, &game_theme.inv_x, 0 },
-	{ "inv.y", parse_int, &game_theme.inv_y, 0 },
-	{ "inv.w", parse_int, &game_theme.inv_w, 0 },
-	{ "inv.h", parse_int, &game_theme.inv_h, 0 },
-	{ "inv.mode", parse_inv_mode, &game_theme.inv_mode, 0 },
-	{ "inv.horiz", parse_inv_mode, &game_theme.inv_mode, 0 },
+	{ "inv.x", parse_int, &game_theme.inv_x, CHANGED_INV },
+	{ "inv.y", parse_int, &game_theme.inv_y, CHANGED_INV },
+	{ "inv.w", parse_int, &game_theme.inv_w, CHANGED_INV },
+	{ "inv.h", parse_int, &game_theme.inv_h, CHANGED_INV },
+	{ "inv.mode", parse_inv_mode, &game_theme.inv_mode, CHANGED_INV },
+	{ "inv.horiz", parse_inv_mode, &game_theme.inv_mode, CHANGED_INV },
 
-	{ "inv.col.fg", parse_color, &game_theme.icol, 0 },
-	{ "inv.col.link", parse_color, &game_theme.ilcol, 0 },
-	{ "inv.col.alink", parse_color, &game_theme.iacol, 0 },
-	{ "inv.fnt.name", theme_parse_full_path, &game_theme.inv_font_name, CHANGED_IFONT },
-	{ "inv.fnt.size", parse_int, &game_theme.inv_font_size, CHANGED_IFONT },
-	{ "inv.fnt.height", parse_float, &game_theme.inv_font_height, 0 },
-	{ "inv.gfx.up", theme_parse_full_path, &game_theme.inv_a_up_name, CHANGED_IUP },
-	{ "inv.gfx.down", theme_parse_full_path, &game_theme.inv_a_down_name, CHANGED_IDOWN },
-	{ "inv.up.x", parse_int, &game_theme.inv_a_up_x, 0 },
-	{ "inv.up.y", parse_int, &game_theme.inv_a_up_y, 0 },
-	{ "inv.down.x", parse_int, &game_theme.inv_a_down_x, 0 },
-	{ "inv.down.y", parse_int, &game_theme.inv_a_down_y, 0 },
+	{ "inv.col.fg", parse_color, &game_theme.icol, CHANGED_INV },
+	{ "inv.col.link", parse_color, &game_theme.ilcol, CHANGED_INV },
+	{ "inv.col.alink", parse_color, &game_theme.iacol, CHANGED_INV },
+	{ "inv.fnt.name", theme_parse_full_path, &game_theme.inv_font_name, CHANGED_IFONT | CHANGED_INV },
+	{ "inv.fnt.size", parse_int, &game_theme.inv_font_size, CHANGED_IFONT | CHANGED_INV },
+	{ "inv.fnt.height", parse_float, &game_theme.inv_font_height, CHANGED_INV },
+	{ "inv.gfx.up", theme_parse_full_path, &game_theme.inv_a_up_name, CHANGED_IUP | CHANGED_INV },
+	{ "inv.gfx.down", theme_parse_full_path, &game_theme.inv_a_down_name, CHANGED_IDOWN | CHANGED_INV},
+	{ "inv.up.x", parse_int, &game_theme.inv_a_up_x, CHANGED_INV },
+	{ "inv.up.y", parse_int, &game_theme.inv_a_up_y, CHANGED_INV },
+	{ "inv.down.x", parse_int, &game_theme.inv_a_down_x, CHANGED_INV },
+	{ "inv.down.y", parse_int, &game_theme.inv_a_down_y, CHANGED_INV },
 
 	{ "menu.col.bg", parse_color, &game_theme.menu_bg, 0 },
 	{ "menu.col.fg", parse_color, &game_theme.menu_fg, 0 },
@@ -918,9 +918,10 @@ err:
 
 int game_theme_update(void)
 {
-	game_release_theme();
+	game_release_theme(0);
 	if (game_theme_update_data()) {
 		fprintf(stderr, "Can not update theme!\n");
+		game_release_theme(1);
 		game_error();
 		return -1;
 	}
