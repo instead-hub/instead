@@ -2361,8 +2361,9 @@ int game_click(int x, int y, int action, int filter)
 	struct el	*elem = NULL;
 	char		buf[1024];
 	xref_t		xref = NULL;
-	char		*xref_txt;
-	xref_t new_xref;
+	char		*xref_txt = NULL;
+	xref_t		new_xref = NULL;
+	struct el 	*new_elem = NULL;
 
 	int was_motion = (motion_mode == 2);
 
@@ -2380,7 +2381,6 @@ int game_click(int x, int y, int action, int filter)
 		motion_mode = 0;
 
 	if (action == 1) {
-		struct el *new_elem;
 		char *link;
 
 		new_xref = look_xref(x, y, &new_elem);
@@ -2397,7 +2397,7 @@ int game_click(int x, int y, int action, int filter)
 
 	if (action == 1) {
 		xref = new_xref;
-		elem = click_el;
+		elem = new_elem;
 		click_xref[0] = 0;
 		click_el = NULL;
 	} else  { /* just press */
@@ -3419,7 +3419,7 @@ static int mouse_instead(struct inp_event *ev, int *x, int *y)
 			*x = ev->x;
 			*y = ev->y;
 		}
-	} else if (ev->type == MOUSE_UP) {
+	} else if (ev->type == MOUSE_UP && ev->code == 1) {
 		game_highlight(-1, -1, 0);
 		if (game_click(ev->x, ev->y, 1, 1) == -1)
 			return -1;
