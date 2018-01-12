@@ -217,7 +217,7 @@ function theme.snd.reset()
 	theme.reset("snd.click");
 end
 
-function theme.snd.click()
+function theme.snd.click(w)
 	theme.set("snd.click", w);
 end
 
@@ -307,7 +307,7 @@ function fnt:size(...)
 end
 
 function fnt:height(...)
-	local w, h = self:size()
+	local w, h = self:size(...)
 	return h
 end
 
