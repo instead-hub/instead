@@ -199,7 +199,9 @@ local function mod_init()
 		end
 		if std.game or type(v) ~= 'function' then
 			local f = std.getinfo(2, "S").source
-			std.err ("Set uninitialized variable: "..k.." in "..f, 2)
+			if f ~= '=[C]' then
+				std.err ("Set uninitialized variable: "..k.." in "..f, 2)
+			end
 		end
 		rawset(t, k, v)
 	end
