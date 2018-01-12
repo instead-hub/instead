@@ -431,6 +431,8 @@ end
 
 local iface_cmd = iface.cmd -- save old
 
+local real_last = ''
+local last_state = false
 function iface:cmd(inp)
 	local a = std.split(inp)
 	if a[1] == 'act' or a[1] == 'use' or a[1] == 'go' then
@@ -448,7 +450,15 @@ function iface:cmd(inp)
 		end
 		inp = std.join(a)
 	end
-	return iface_cmd(self, inp)
+	local r, v = iface_cmd(self, inp)
+	if last_state then
+		if r ~= '@NOP\n' then
+			real_last = r
+		else
+			r = real_last
+		end
+	end
+	return r, v
 end
 
 std.obj { -- input object
@@ -465,11 +475,13 @@ std.mod_init(function()
 end)
 
 std.mod_cmd(function()
+	last_state = false
 	instead.need_fading(false)
 end)
 
 std.mod_step(function(state)
-	if state then
+	last_state = state
+	if state and not std.abort_cmd then
 		dict = {}
 	end
 end)
@@ -489,4 +501,12 @@ end)
 
 if std.rawget(_G, 'DEBUG') then
 	require 'dbg'
+end
+
+function std.nop()
+	std.abort()
+	if std.cctx() then
+		std.pr '@NOP'
+	end
+	return '@NOP', true
 end
