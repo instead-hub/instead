@@ -70,12 +70,12 @@ local function show_obj(s, v, pfx, verbose)
 		wh,
 		dispof(v))
 	if verbose then
-		for k, v in std.pairs(v) do
+		for k, v in pairs(v) do
 			s:printf("*[%s] = %s\n", std.tostr(k), std.dump(v) or 'n/a')
 		end
 		return
 	end
-	for k, v in std.ipairs(v.obj) do
+	for k, v in ipairs(v.obj) do
 		pfx = (pfx or '' .. '    ')
 		show_obj(s, v, pfx)
 	end
@@ -84,7 +84,7 @@ end
 local function show_room(s, v)
 	s:printf("nam: %s | title: %s | disp: %s\n", std.tostr(std.nameof(v)), std.titleof(v) or 'n/a', dispof(v))
 	s:printf("    way: ")
-	for k, v in std.ipairs(v.way) do
+	for k, v in ipairs(v.way) do
 		if k ~= 1 then
 			s:printf(" | ")
 		end
@@ -191,7 +191,7 @@ local	commands = {
 		{ nam = 'inv',
 			act = function(s)
 				s:printf("[inventory]\n")
-				for k, v in std.ipairs(std.me():inventory()) do
+				for k, v in ipairs(std.me():inventory()) do
 					show_obj(s, v, '    ')
 				end
 			end;
@@ -225,7 +225,7 @@ local	commands = {
 				s:printf("[room]\n    ")
 				show_room(s, v)
 				s:printf("[objects]\n")
-				for k, v in std.ipairs(std.here().obj) do
+				for k, v in ipairs(std.here().obj) do
 					show_obj(s, v, '    ')
 				end
 			end;
@@ -399,9 +399,9 @@ Some useful commands:
 		local cur = s
 		local found
 		local last_found
-		for k, v in std.ipairs(cmd) do
+		for k, v in ipairs(cmd) do
 			found = nil
-			for i, c in std.ipairs(cur) do
+			for i, c in ipairs(cur) do
 				if v == c.nam then
 					cur = c
 					found = k
@@ -483,7 +483,7 @@ local function theme_var(a, b)
 end
 
 local function theme_reset(a)
-	for k, v in std.pairs(theme) do
+	for k, v in pairs(theme) do
 		instead.theme_var(k, v)
 	end
 	theme = {}
@@ -498,7 +498,7 @@ local function instead_func(a)
 end
 
 local function instead_reset(a)
-	for k, v in std.pairs(funcs) do
+	for k, v in pairs(funcs) do
 		std.rawset(instead, k, v)
 	end
 	funcs = {}
@@ -606,7 +606,7 @@ local dbg = std.obj {
 			return
 		end
 		s.hint = ''
-		for k, v in std.ipairs(hint) do
+		for k, v in ipairs(hint) do
 			s.hint = s.hint .. v .. ' '
 		end
 	end;

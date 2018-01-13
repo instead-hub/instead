@@ -307,7 +307,7 @@ function fnt:size(...)
 end
 
 function fnt:height(...)
-	local w, h = self:size(...)
+	local _, h = self:size(...)
 	return h
 end
 
@@ -477,7 +477,7 @@ function pxl:draw_spr(fx, fy, fw, fh, d, x, y, alpha)
 		instead.sprite_draw(self, 0, 0, -1, -1, spr_get(fx), fy, fw, fh);
 		return fx
 	end
-	instead.sprite_draw(self, fx, fy, fw, fh, get(d), x, y, alpha);
+	instead.sprite_draw(self, fx, fy, fw, fh, spr_get(d), x, y, alpha);
 	return d
 end
 

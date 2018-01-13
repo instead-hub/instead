@@ -5,7 +5,7 @@ local instead = std.ref '@instead'
 
 function input:event(...)
 	local a
-	for k, v in std.ipairs {...} do
+	for _, v in std.ipairs {...} do
 		a = (a and (a..', ') or ' ') .. std.dump(v)
 	end
 	return '@user_event'.. a or ''

@@ -34,7 +34,7 @@ end
 function finger:list()
 	local s = self
 	local new = {}
-	for k, v in std.ipairs(s.fingers_list) do
+	for _, v in std.ipairs(s.fingers_list) do
 		local x, y, pressure = instead.finger_pos(v.id)
 		if x then
 			v.x, v.y, v.pressure = x, y, pressure
@@ -74,7 +74,7 @@ function input:finger(press, fid, x, y, px, py, ...)
 	if not finger:filter(press, fid, x, y, px, py, ...) then
 		return
 	end
-	for k, v in std.ipairs {press, fid, x, y, px, py, ...} do
+	for _, v in std.ipairs {press, fid, x, y, px, py, ...} do
 		a = (a and (a..', ') or ' ') .. std.dump(v)
 	end
 	return '@finger'.. (a or '')

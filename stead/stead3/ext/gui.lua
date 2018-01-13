@@ -35,7 +35,7 @@ function instead.version(...)
 	end
 	if not instead.atleast(...) then
 		local v = false
-		for k, n in std.ipairs({...}) do
+		for _, n in std.ipairs({...}) do
 			if std.type(n) ~= 'number' then
 				std.err([[Wrong instead.version argument: ]]..std.tostr(n), 2)
 			end

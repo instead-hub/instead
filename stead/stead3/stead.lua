@@ -136,7 +136,7 @@ math.round = function(num, n)
 	return std.math.floor(num * m + 0.5) / m
 end
 
-local function __mod_callback_reg(f, hook, prio, ...)
+local function __mod_callback_reg(f, hook, prio)
 	if type(f) ~= 'function' then
 		std.err ("Wrong parameter to mod_"..hook..".", 3);
 	end
@@ -165,7 +165,7 @@ function std.mod_unload()
 	local new = {}
 	for k, v in pairs(std.__mod_hooks) do
 		local list = {}
-		for kk, vv in ipairs(v) do
+		for _, vv in ipairs(v) do
 			if not vv.unload then
 				table.insert(list, vv)
 			end
@@ -179,7 +179,7 @@ function std.mod_call(hook, ...)
 	if not std.__mod_hooks[hook] then
 		return
 	end
-	for k, v in ipairs(std.__mod_hooks[hook]) do
+	for _, v in ipairs(std.__mod_hooks[hook]) do
 		local a, b = v.fn(...)
 		if a ~= nil or b ~= nil then
 			return a, b
@@ -377,7 +377,6 @@ std.fmt = function(str, fmt, state)
 	if type(str) ~= 'string' then
 		return
 	end
-	local xref = xref_prep
 	local s = str
 	s = string.gsub(s, '[\t \n]+', std.space_delim);
 	s = string.gsub(s, '\\?[\\^]', { ['^'] = '\n', ['\\^'] = '^'} ):gsub("\n[ \t]+", "\n")
@@ -690,7 +689,7 @@ std.list = std.class {
 			return o -- already here
 		end
 		if not pos then
-			local o = std.ref(n)
+			o = std.ref(n)
 			if not o then
 				std.err("Wrong argument to list:add(): "..std.tostr(n), 2)
 			end
@@ -711,7 +710,7 @@ std.list = std.class {
 		if pos <= 0 then
 			pos = 1
 		end
-		local o = std.ref(n)
+		o = std.ref(n)
 		s:__dirty(true)
 		s:__attach(o)
 		if pos then
@@ -761,7 +760,7 @@ std.list = std.class {
 			std.err("Wrong argument to list:cat(): "..std.tostr(from), 2)
 		end
 		if not pos then pos = #s + 1 end
-		for k, v in ipairs(from) do
+		for _, v in ipairs(from) do
 			s:add(v, pos)
 			pos = pos + 1
 		end
@@ -891,7 +890,6 @@ end
 std.save_members = function(vv, fp, n)
 	local l
 	for k, v in pairs(vv) do
-		l = nil
 		if type(k) == 'number' then
 			l = string.format("%s%s", n, std.varname(k))
 			std.save_var(v, fp, l)
@@ -1007,8 +1005,6 @@ function std:save(fp)
 		fp:write(string.format("std.gamefile(%q)\n", std.files[i]))
 	end
 
-	local oo = std.objects
-
 	std.busy(true)
 	std.for_each_obj(function(v)
 		if v.__dynamic then
@@ -1044,7 +1040,7 @@ end
 
 function std.for_each_obj(fn, ...)
 	local oo = std.objects
-	for k, v in pairs(oo) do
+	for _, v in pairs(oo) do
 		if std.is_obj(v) then
 			local a, b = fn(v, ...)
 			if a ~= nil and b ~= nil then
@@ -1235,7 +1231,7 @@ std.obj = std.class {
 				rawset(v, key, val)
 			end
 		end
-		for i = 1, #v do
+		for _ = 1, #v do
 			table.remove(v, 1)
 		end
 		if not v.obj then
@@ -1290,12 +1286,12 @@ std.obj = std.class {
 		return s
 	end;
 	__ini = function(s, ...)
-		for k, v in pairs(s) do
+		for _, v in pairs(s) do
 			if std.is_obj(v, 'list') then
 				v:__ini(s)
 			end
 		end
-		for k, v in pairs(s.__ro) do
+		for _, v in pairs(s.__ro) do
 			if std.is_obj(v, 'list') then
 				v:__ini(s)
 			end
@@ -1312,7 +1308,7 @@ std.obj = std.class {
 		s:where(ww)
 		while #ww > 0 do
 			local nww = {}
-			for k, v in ipairs(ww) do
+			for _, v in ipairs(ww) do
 				if std.is_obj(v, 'room') then
 					if not o then
 						o = v
@@ -1382,7 +1378,7 @@ std.obj = std.class {
 		s:where(where)
 		for i = 1, #where do
 			local o = where[i]
-			local _, l, i = o:lookup(s)
+			local _, l = o:lookup(s)
 			if l then
 				l:del(s)
 			end
@@ -1441,14 +1437,14 @@ std.obj = std.class {
 			end
 			fp:write(l)
 		end
-		for k, v in pairs(s.__ro) do
+		for k, _ in pairs(s.__ro) do
 			local o = s.__ro[k]
 			if std.dirty(o) then
 				local l = string.format("%s%s", n, std.varname(k))
 				std.save_var(s[k], fp, l)
 			end
 		end
-		for k, v in pairs(s.__var) do
+		for k, _ in pairs(s.__var) do
 			local l = string.format("%s%s", n, std.varname(k))
 			std.save_var(s[k], fp, l)
 		end
@@ -1713,7 +1709,7 @@ std.world = std.class({
 			if type(std.rawget(_G, 'init')) == 'function' then
 				std.__in_init = {}
 				init()
-				for k, v in ipairs(std.__in_init) do
+				for _, v in ipairs(std.__in_init) do
 					v:__ini(load)
 				end
 				std.__in_init = false
@@ -1793,9 +1789,8 @@ std.world = std.class({
 		return ov
 	end;
 	display = function(s, state)
-		local r, l, av, pv
+		local l, av, pv
 		local reaction = s:reaction() or nil
-		r = std.here()
 		if state then
 			reaction = iface:em(reaction)
 			av, pv = s:events()
@@ -2044,7 +2039,6 @@ std.player = std.class ({
 		return s:call('inv', w, ...)
 	end;
 	useon = function(s, w1, w2)
-		local r, v, t
 		w1 = std.ref(w1)
 		w2 = std.ref(w2)
 
@@ -2215,8 +2209,8 @@ std.player = std.class ({
 		return t, true
 	end;
 	go = function(s, w)
-		local r, v
-		r, v = s:where():srch(w)
+		local r
+		r = s:where():srch(w)
 		if not std.is_obj(r, 'room') then
 			return nil, false
 		end
@@ -2267,7 +2261,7 @@ std.cctx = function()
 	return std.call_ctx[std.call_top];
 end
 
-std.callpush = function(v, ...)
+std.callpush = function(v)
 	std.call_top = std.call_top + 1;
 	std.call_ctx[std.call_top] = { txt = nil, self = v };
 end
@@ -2385,10 +2379,9 @@ local function __dump(t, nested)
 			return rc
 		end
 		t.__visited = true
-		local k,v
 		local nkeys = {}
 		local keys = {}
-		for k,v in pairs(t) do
+		for k, v in pairs(t) do
 			if type(v) ~= 'function' and type(v) ~= 'userdata' then
 				if type(k) == 'number' then
 					table.insert(nkeys, { key = k, val = v })
@@ -2399,7 +2392,7 @@ local function __dump(t, nested)
 		end
 		table.sort(nkeys, function(a, b) return a.key < b.key end)
 		rc = "{ "
-		local n
+		local n, v
 		for k = 1, #nkeys do
 			v = nkeys[k]
 			if v.key == k then
@@ -2439,7 +2432,7 @@ local function cleardump(t)
 		return
 	end
 	t.__visited = nil
-	for k, v in pairs(t) do
+	for _, v in pairs(t) do
 		cleardump(v)
 	end
 end

@@ -37,7 +37,7 @@ function input:key(press, key)
 		return
 	end
 
-	for k, v in std.ipairs {press, key} do
+	for _, v in std.ipairs {press, key} do
 		a = (a and (a..', ') or ' ') .. std.dump(v)
 	end
 	return '@key'.. (a or '')

@@ -87,7 +87,7 @@ function fmt.nb(str)
 	return iface:nb(str)
 end
 
-function fmt.anchor()
+function fmt.anchor(str)
 	return iface:anchor(str)
 end
 

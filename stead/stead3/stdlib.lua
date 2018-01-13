@@ -169,7 +169,6 @@ function lookup(w, ww)
 	else
 		return ww:lookup(w)
 	end
-	wh = std.ref(ww)
 	if not std.is_obj(wh) and not std.is_obj(wh, 'list') then
 		std.err("Wrong 2-nd argument to lookup(): "..std.tostr(ww), 2)
 	end
@@ -242,7 +241,7 @@ function actions(w, t, v)
 end
 
 function pop(w, ww)
-	local wh = std.here()
+	local wh = ww or std.here()
 	if not std.is_obj(wh, 'dlg') then
 		std.err("Call pop() in non-dialog object: "..std.tostr(wh), 2)
 	end
@@ -254,7 +253,7 @@ function pop(w, ww)
 end
 
 function push(w, ww)
-	local wh = std.here()
+	local wh = ww or std.here()
 	if not std.is_obj(wh, 'dlg') then
 		std.err("Call push() in non-dialog object: "..std.tostr(wh), 2)
 	end
@@ -364,7 +363,7 @@ function replace(w, ww, wh)
 	if not wh then -- replace all
 		local l = {}
 		o:where(l)
-		for k, v in std.ipairs(l) do
+		for _, v in std.ipairs(l) do
 			v.obj:replace(o, oo)
 			if std.is_obj(v, 'room') then
 				v.way:replace(o, oo)
@@ -376,7 +375,7 @@ function replace(w, ww, wh)
 		wh = std.object(wh)
 	end
 	if std.is_obj(wh) then
-		local ob, l = wh:lookup(o)
+		local _, l = wh:lookup(o)
 		if l then
 			l:replace(o, oo)
 			return oo

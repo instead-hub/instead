@@ -341,7 +341,7 @@ std.phr = std.class({
 
 		local r, v = std.call(s, 'ph_act', ...)
 
-		r = std.par(std.scene_delim, onact or false, r or false), v
+		r = std.par(std.scene_delim, onact or false, r or false)
 
 		if std.me():moved() or cur ~= std.here().current then
 			return r, v
