@@ -22,6 +22,7 @@
   * instead.clipboard() added (SDL2 only);
   * speed improvements while theme updates;
   * click on bg not passed if xref selected;
+  * -nocursor parameter;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 08 Jan 2018 09:45:00 +0300
 
