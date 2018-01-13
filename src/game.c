@@ -2986,6 +2986,7 @@ static int game_pic_click(int x, int y, int *ox, int *oy)
 static int game_bg_click(int mb, int x, int y, int *ox, int *oy)
 {
 	struct el *o = NULL;
+	xref_t xref;
 	struct game_theme *t = &game_theme;
 	int bg = 1;
 	if (x < t->xoff || y < t->yoff || x >= (t->w - t->xoff) || y >= (t->h - t->yoff))
@@ -2998,7 +2999,9 @@ static int game_bg_click(int mb, int x, int y, int *ox, int *oy)
 		o->id == el_iup || o->id == el_idown ||
 		o->id == el_menu_button))
 		return -1; /* ask Odyssey for that ;) */
-
+	xref = look_xref(x, y, NULL);
+	if (xref)
+		return -1;
 	if (bg || mb == EV_CODE_FINGER) /* fingers area may be larger */
 		return 0;
 
