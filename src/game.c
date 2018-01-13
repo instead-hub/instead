@@ -2571,7 +2571,7 @@ void game_cursor(int on)
 		h = gfx_img_h(cur);
 
 		grab = gfx_grab_screen(xc, yc, w, h);
-		if (mouse_focus() && (game_cursor_show || menu_shown))
+		if (!nocursor_sw && mouse_focus() && (game_cursor_show || menu_shown))
 			gfx_draw(cur, xc, yc);
 
 		if (on != CURSOR_DRAW) {

@@ -44,6 +44,7 @@ extern int	fullscreen_sw;
 extern int	hires_sw;
 extern int	window_sw;
 extern int	nopause_sw;
+extern int	nocursor_sw;
 extern int	game_own_theme; /* current game has own theme */
 extern char	*games_sw;
 extern char	game_cwd[PATH_MAX]; /* current game cwd */

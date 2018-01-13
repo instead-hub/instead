@@ -2185,7 +2185,8 @@ retry:
 			SDL_VideoSurface->format->palette->ncolors);
 	}
 #endif
-	SDL_ShowCursor(SDL_DISABLE);
+	if (!nocursor_sw)
+		SDL_ShowCursor(SDL_DISABLE);
 
 	gfx_fs = fs;
 	gfx_width = w;
@@ -2228,7 +2229,8 @@ int gfx_set_mode(int w, int h, int fs)
 	gfx_fs = fs;
 	gfx_width = w;
 	gfx_height = h;
-	SDL_ShowCursor(SDL_DISABLE);
+	if (!nocursor_sw)
+		SDL_ShowCursor(SDL_DISABLE);
 #ifdef S60
 	scr = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | hw | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 #else
@@ -2374,7 +2376,7 @@ static void gfx_render_cursor(void)
 #ifdef _USE_SWROTATE
 	SDL_Point r;
 #endif
-	if (!cursor_on || !mouse_focus())
+	if (!cursor_on || !mouse_focus() || nocursor_sw)
 		return;
 
 	gfx_cursor(&cursor_x, &cursor_y);
@@ -5540,7 +5542,8 @@ static void update_gfx(void)
 	gfx_render_copy(fade_bg_texture, NULL, 1);
 	SDL_SetTextureAlphaMod(fade_fg_texture, (SDL_ALPHA_OPAQUE * (fade_step_nr + 1)) / ALPHA_STEPS);
 	gfx_render_copy(fade_fg_texture, NULL, 0);
-	gfx_render_cursor();
+	if (game_cursor_show)
+		gfx_render_cursor();
 	SDL_RenderPresent(Renderer);
 #endif
 	fade_step_nr ++;

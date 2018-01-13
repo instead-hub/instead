@@ -60,6 +60,7 @@ int vsync_sw = 0;
 int resizable_sw = 0;
 int scale_sw = 1;
 int standalone_sw = 0;
+int nocursor_sw = 0;
 
 static int opt_index = 1;
 
@@ -421,6 +422,8 @@ int instead_main(int argc, char *argv[])
 			version_sw = 1;
 		} else if (!strcmp(argv[i], "-nopause")) {
 			nopause_sw = 1;
+		} else if (!strcmp(argv[i], "-nocursor")) {
+			nocursor_sw = 1;
 		} else if (!strcmp(argv[i], "-software")) {
 			software_sw = 1;
 		} else if (!strcmp(argv[i], "-resizable")) {
@@ -757,6 +760,7 @@ static struct parser profile_parser[] = {
 	{ "modes", parse_string, &modes_sw, 0 },
 	{ "fontscale", parse_string, &fsize_sw, 0 },
 	{ "renderer", parse_string, &render_sw, 0 },
+	{ "nocursor", parse_int, &nocursor_sw, 0 },
 	{ NULL, NULL, NULL, 0 },
 };
 
