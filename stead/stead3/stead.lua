@@ -457,9 +457,6 @@ function std.class(s, inh)
 --		return inh
 	--	end;
 	s.nam = '*class*';
-	s.type = function(s, t)
-		return std.is_obj(s, t)
-	end;
 	s.__call = function(v, n, ...)
 		if std.is_obj(v) and type(n) == 'string' then
 			-- variable access
@@ -1169,6 +1166,9 @@ end
 
 std.obj = std.class {
 	__obj_type = true;
+	type = function(self, t)
+		return std.is_obj(self, t)
+	end;
 	with = function(self, ...)
 		local a = {...}
 		for i = 1, #a do

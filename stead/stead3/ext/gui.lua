@@ -253,7 +253,7 @@ function iface:xref(str, o, ...)
 	if type(str) ~= 'string' then
 		std.err ("Wrong parameter to iface:xref: "..std.tostr(str), 2)
 	end
-	if not std.is_obj(o) or std.is_obj(o, 'stat') or o:disabled() then
+	if not std.is_obj(o) or o:type('stat') or o:disabled() then
 		return str
 	end
 	local a = { ... }
