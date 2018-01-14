@@ -194,7 +194,9 @@ void input_clear(void)
 
 void input_uevents(void)
 {
+	char *g = curgame_dir;
 	SDL_Event peek;
+	curgame_dir = NULL;
 #if SDL_VERSION_ATLEAST(1,3,0)
 	while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_USEREVENT, SDL_USEREVENT) > 0) {
 #else
@@ -204,6 +206,7 @@ void input_uevents(void)
 		if (p)
 			p(peek.user.data2);
 	}
+	curgame_dir = g;
 }
 
 #if SDL_VERSION_ATLEAST(1,3,0)

@@ -1041,6 +1041,7 @@ out:
 
 static void game_release(void)
 {
+	input_uevents(); /* all callbacks */
 	if (last_pict)
 		free(last_pict);
 	if (last_title)
@@ -1050,7 +1051,6 @@ static void game_release(void)
 	last_pict = last_title = last_cmd = NULL;
 	// game_stop_mus(500);
 	// sounds_free();
-	input_uevents(); /* all callbacks */
 }
 
 void game_release_theme(int force)
