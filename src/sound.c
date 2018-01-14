@@ -275,10 +275,15 @@ void	snd_free_wav(wav_t w)
 /*	Mix_HaltChannel(-1); */
 	Mix_FreeChunk((Mix_Chunk*)w);
 }
+
+static int mix_fn = 0;
+
 void snd_halt_chan(int han, int ms)
 {
 	if (han >= MIX_CHANNELS)
 		han %= MIX_CHANNELS;
+	if (han == -1 && mix_fn) /* forever wait */
+		return;
 	if (ms)
 		Mix_FadeOutChannel(han, ms);
 	else {
@@ -350,6 +355,8 @@ int snd_play_mus(char *fname, int ms, int loop)
 void snd_stop_mus(int ms)
 {
 	if (!sound_on)
+		return;
+	if (mix_fn)
 		return;
 	Mix_HookMusicFinished(NULL);
 	if (ms)
@@ -429,6 +436,7 @@ int snd_play(void *chunk, int channel, int loop)
 
 void snd_mus_callback(void (*fn)(void *udata, unsigned char *stream, int len), void *arg)
 {
+	mix_fn = !!fn;
 	Mix_HookMusic(fn, arg);
 }
 
@@ -436,6 +444,7 @@ void snd_close(void)
 {
 	if (!sound_on)
 		return;
+	Mix_HookMusic(NULL, NULL);
 	Mix_ChannelFinished(NULL);
 	if (timer_id) {
 		SDL_RemoveTimer(timer_id);
