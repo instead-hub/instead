@@ -1,6 +1,6 @@
 diff -Nur instead-3.2.0/Rules.caanoo instead-3.2.0-caanoo/Rules.caanoo
 --- instead-3.2.0/Rules.caanoo	1970-01-01 03:00:00.000000000 +0300
-+++ instead-3.2.0-caanoo/Rules.caanoo	2018-01-05 22:22:49.021070560 +0300
++++ instead-3.2.0-caanoo/Rules.caanoo	2018-01-14 09:06:18.044628618 +0300
 @@ -0,0 +1,45 @@
 +VERSION := 3.2.0
 +
@@ -48,9 +48,9 @@ diff -Nur instead-3.2.0/Rules.caanoo instead-3.2.0-caanoo/Rules.caanoo
 +AR=ar rc
 +RANLIB=ranlib
 diff -Nur instead-3.2.0/src/game.c instead-3.2.0-caanoo/src/game.c
---- instead-3.2.0/src/game.c	2018-01-05 22:19:37.000000000 +0300
-+++ instead-3.2.0-caanoo/src/game.c	2018-01-05 22:22:49.021070560 +0300
-@@ -3252,7 +3252,7 @@
+--- instead-3.2.0/src/game.c	2018-01-14 09:04:22.000000000 +0300
++++ instead-3.2.0-caanoo/src/game.c	2018-01-14 09:06:18.044628618 +0300
+@@ -3300,7 +3300,7 @@
  #else
  		game_menu(menu_askquit);
  #endif
@@ -60,9 +60,9 @@ diff -Nur instead-3.2.0/src/game.c instead-3.2.0-caanoo/src/game.c
  		return -1;
  	} else if (alt_pressed &&
 diff -Nur instead-3.2.0/src/graphics.c instead-3.2.0-caanoo/src/graphics.c
---- instead-3.2.0/src/graphics.c	2018-01-05 22:19:37.000000000 +0300
-+++ instead-3.2.0-caanoo/src/graphics.c	2018-01-05 22:23:11.525249324 +0300
-@@ -2208,17 +2208,24 @@
+--- instead-3.2.0/src/graphics.c	2018-01-14 09:04:22.000000000 +0300
++++ instead-3.2.0-caanoo/src/graphics.c	2018-01-14 09:07:34.697288401 +0300
+@@ -2219,18 +2219,25 @@
  #else
  int gfx_set_mode(int w, int h, int fs)
  {
@@ -80,14 +80,15 @@ diff -Nur instead-3.2.0/src/graphics.c instead-3.2.0-caanoo/src/graphics.c
  	gfx_fs = fs;
  	gfx_width = w;
  	gfx_height = h;
- 	SDL_ShowCursor(SDL_DISABLE);
+ 	if (!nocursor_sw)
+ 		SDL_ShowCursor(SDL_DISABLE);
 +#ifdef CAANOO
 + 	scr = SDL_SetVideoMode(gfx_width, gfx_height, maxbpp, ((gfx_fs)?SDL_HWSURFACE:0) | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 +#else
  #ifdef S60
  	scr = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | hw | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
  #else
-@@ -2246,6 +2253,7 @@
+@@ -2258,6 +2265,7 @@
    #endif
   #endif
  #endif
@@ -95,8 +96,8 @@ diff -Nur instead-3.2.0/src/graphics.c instead-3.2.0-caanoo/src/graphics.c
  	screen = GFX_IMG_REL(scr);
  	if (scr == NULL || screen == NULL) {
  		fprintf(stderr, "Unable to set %dx%d video: %s\n", w, h, SDL_GetError());
-@@ -5648,7 +5656,7 @@
- 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+@@ -5663,7 +5671,7 @@
+ 		SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
  #endif
  #endif
 -	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
@@ -105,8 +106,8 @@ diff -Nur instead-3.2.0/src/graphics.c instead-3.2.0-caanoo/src/graphics.c
  		return -1;
  	}
 diff -Nur instead-3.2.0/src/input.c instead-3.2.0-caanoo/src/input.c
---- instead-3.2.0/src/input.c	2018-01-05 22:19:37.000000000 +0300
-+++ instead-3.2.0-caanoo/src/input.c	2018-01-05 22:22:49.025070592 +0300
+--- instead-3.2.0/src/input.c	2018-01-14 09:04:22.000000000 +0300
++++ instead-3.2.0-caanoo/src/input.c	2018-01-14 09:06:18.044628618 +0300
 @@ -30,6 +30,41 @@
  static int m_focus = 1;
  static int m_minimized = 0;
@@ -149,8 +150,8 @@ diff -Nur instead-3.2.0/src/input.c instead-3.2.0-caanoo/src/input.c
  int minimized(void)
  {
  	if (nopause_sw)
-@@ -158,6 +193,10 @@
- #ifdef IOS
+@@ -182,6 +217,10 @@
+ #if defined(IOS) || defined(ANDROID)
  	SDL_SetEventFilter(HandleAppEvents, NULL);
  #endif
 +	if(SDL_NumJoysticks() > 0) {
@@ -160,7 +161,7 @@ diff -Nur instead-3.2.0/src/input.c instead-3.2.0-caanoo/src/input.c
  	return 0;
  }
  
-@@ -386,6 +425,20 @@
+@@ -414,6 +453,20 @@
  	case SDL_QUIT:
  		game_running = 0;
  		return -1;
