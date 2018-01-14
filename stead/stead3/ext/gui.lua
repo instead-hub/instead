@@ -266,10 +266,11 @@ function iface:xref(str, o, ...)
 	end
 	local xref = std.string.format("%s%s", std.deref_str(o), args)
 	-- std.string.format("%s%s", iface:esc(std.deref_str(o)), iface:esc(args))
-
-	table.insert(dict, xref)
-	xref = std.tostr(#dict)
-
+	if not dict[xref] then
+		table.insert(dict, xref)
+		dict[xref] = #dict
+	end
+	xref = std.tostr(dict[xref])
 	if std.cmd[1] == 'way' then
 		return std.string.format("<a:go %s>", xref)..str.."</a>"
 	elseif std.is_obj(o, 'menu') or std.is_system(o) then
