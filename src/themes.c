@@ -727,7 +727,7 @@ static int theme_bg_scale(void)
 			xoff = 0;
 		if (yoff < 0)
 			yoff = 0;
-		if (t->scale != 1.0f || xoff || yoff) {
+		if (gfx_img_w(t->bg) < t->w || gfx_img_h(t->bg) < t->h) {
 			pic = gfx_new(t->w, t->h);
 			if (!pic)
 				return -1;
