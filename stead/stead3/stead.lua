@@ -2323,7 +2323,9 @@ function std.join(a, sep)
 	sep = sep or ' '
 	local rc
 	for i = 1, #a do
-		rc = (rc and rc .. sep or '') .. a[i]
+		if type(a[1]) == 'string' then
+			rc = (rc and rc .. sep or '') .. a[i]
+		end
 	end
 	return rc
 end

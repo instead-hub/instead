@@ -432,8 +432,8 @@ end
 
 local iface_cmd = iface.cmd -- save old
 
-local real_last = ''
-local last_state = false
+local cached_last = false
+local NOP = false
 function iface:cmd(inp)
 	local a = std.split(inp)
 	if a[1] == 'act' or a[1] == 'use' or a[1] == 'go' then
@@ -452,12 +452,10 @@ function iface:cmd(inp)
 		inp = std.join(a)
 	end
 	local r, v = iface_cmd(self, inp)
-	if last_state then
-		if r ~= '@NOP\n' then
-			real_last = r
-		else
-			r = real_last
-		end
+	if NOP then
+		r = cached_last
+	elseif v == true then
+		cached_last = r
 	end
 	return r, v
 end
@@ -476,14 +474,14 @@ std.mod_init(function()
 end)
 
 std.mod_cmd(function()
-	last_state = false
+	NOP = false
 	instead.need_fading(false)
 end)
 
 std.mod_step(function(state)
-	last_state = state
-	if state and not std.abort_cmd then
+	if state and not NOP then
 		dict = {}
+		cached_last = false
 	end
 end)
 
@@ -505,9 +503,15 @@ if std.rawget(_G, 'DEBUG') then
 end
 
 function std.nop()
+-- cached nop
 	std.abort()
-	if std.cctx() then
-		std.pr '@NOP'
+	if cached_last then
+		NOP = true
+		return '@NOP', true
 	end
-	return '@NOP', true
+-- real nop
+	if std.cctx() then
+		std.pr(std.game:lastdisp())
+	end
+	return std.game:lastdisp(), true
 end

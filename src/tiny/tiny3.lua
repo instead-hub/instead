@@ -102,8 +102,12 @@ function iface:xref(str, o, ...)
 	local xref = std.string.format("%s%s", std.deref_str(o), args)
 	-- std.string.format("%s%s", iface:esc(std.deref_str(o)), iface:esc(args))
 
-	table.insert(dict, xref)
-	xref = std.tostr(#dict)
+	if not dict[xref] then
+		table.insert(dict, xref)
+		dict[xref] = #dict
+	end
+	xref = std.tostr(dict[xref])
+
 	return str..std.string.format("(%s)", xref)
 end
 
