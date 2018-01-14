@@ -1023,6 +1023,7 @@ function std:save(fp)
 		fp:close();
 	end
 	std.busy(false)
+	return std.game:lastdisp() -- same scene
 end
 
 function std.for_all(fn, ...)
