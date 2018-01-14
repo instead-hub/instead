@@ -253,7 +253,7 @@ function iface:xref(str, o, ...)
 	if type(str) ~= 'string' then
 		std.err ("Wrong parameter to iface:xref: "..std.tostr(str), 2)
 	end
-	if not std.is_obj(o) or o:type('stat') or o:disabled() then
+	if not std.is_obj(o) or std.is_obj(o, 'stat') or o:disabled() then
 		return str
 	end
 	local a = { ... }
@@ -272,7 +272,7 @@ function iface:xref(str, o, ...)
 
 	if std.cmd[1] == 'way' then
 		return std.string.format("<a:go %s>", xref)..str.."</a>"
-	elseif o:type 'menu' or std.is_system(o) then
+	elseif std.is_obj(o, 'menu') or std.is_system(o) then
 		return std.string.format("<a:act %s>", xref)..str.."</a>"
 	elseif std.cmd[1] == 'inv' then
 		return std.string.format("<a:use %s>", xref)..str.."</a>"
