@@ -733,7 +733,7 @@ static int theme_bg_scale(void)
 				return -1;
 			screen = gfx_screen(pic);
 			gfx_img_fill(pic, 0, 0, t->w, t->h, gfx_col(0,0,0));
-			gfx_draw(t->bg, xoff, yoff);
+			gfx_copy(t->bg, xoff, yoff);
 			gfx_screen(screen);
 			gfx_free_image(t->bg);
 			t->bg = pic;
