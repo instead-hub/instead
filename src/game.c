@@ -2389,6 +2389,7 @@ int game_click(int x, int y, int action, int filter)
 		if (new_elem != click_el || strcmp(link, click_xref)) {
 			click_el = NULL;
 			new_xref = NULL;
+			new_elem = NULL;
 			if (click_xref[0]) {
 				click_xref[0] = 0;
 				return 0; /* just filtered */
