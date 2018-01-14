@@ -299,8 +299,10 @@ int input(struct inp_event *inp, int wait)
 		touch_num = 0;
 #endif
 	case SDL_FINGERDOWN:
-#if defined(IOS) || defined(SAILFISHOS)
+#if defined(SAILFISHOS)
 		push_mouse_event(&event);
+#endif
+#if defined(IOS) || defined(SAILFISHOS)
 		if (event.type == SDL_FINGERDOWN) {
 			if (gfx_ticks() - touch_stamp > 100) {
 				touch_num = 0;
