@@ -255,6 +255,8 @@ instead.noise2 = instead_noise2
 instead.noise3 = instead_noise3
 instead.noise4 = instead_noise4
 
+instead.render_callback = instead_render_callback
+
 std.busy = instead_busy
 
 local spr = {

@@ -2411,6 +2411,34 @@ static int luaB_noise4(lua_State *L) {
 	return 1;
 }
 
+static int callback_ref = 0;
+
+void instead_render_callback(void)
+{
+	if (!callback_ref)
+		return;
+	game_cursor(CURSOR_CLEAR);
+	instead_lock();
+	lua_rawgeti(instead_lua(), LUA_REGISTRYINDEX, callback_ref);
+	if (instead_pcall(instead_lua(), 0)) { /* on any error */
+		luaL_unref(instead_lua(), LUA_REGISTRYINDEX, callback_ref);
+		callback_ref = 0;
+	}
+	instead_clear();
+	instead_unlock();
+	game_cursor(CURSOR_DRAW);
+	return;
+}
+
+static int luaB_after_callback(lua_State *L) {
+	if (callback_ref)
+		luaL_unref(L, LUA_REGISTRYINDEX, callback_ref);
+	callback_ref = 0;
+	if (lua_isfunction(L, 1))
+		callback_ref = luaL_ref(L, LUA_REGISTRYINDEX);
+	return 0;
+}
+
 static const luaL_Reg sprites_funcs[] = {
 	{"instead_font_load", luaB_load_font},
 	{"instead_font_free", luaB_free_font},
@@ -2445,11 +2473,16 @@ static const luaL_Reg sprites_funcs[] = {
 	{"instead_noise2", luaB_noise2},
 	{"instead_noise3", luaB_noise3},
 	{"instead_noise4", luaB_noise4},
+	{"instead_render_callback", luaB_after_callback},
 	{NULL, NULL}
 };
 
 static int sprites_done(void)
 {
+	if (callback_ref) {
+		luaL_unref(instead_lua(), LUA_REGISTRYINDEX, callback_ref);
+		callback_ref = 0;
+	}
 	sprites_free();
 	return 0;
 }

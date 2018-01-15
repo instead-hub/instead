@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2018 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -748,6 +748,7 @@ static void mus_callback(void *udata, unsigned char *stream, int len)
 	err:
 		snd_mus_callback(NULL, NULL);
 		luaL_unref(L, LUA_REGISTRYINDEX, callback_ref);
+		callback_ref = 0;
 	}
 	instead_clear();
 	instead_unlock();
@@ -757,16 +758,18 @@ static void mus_callback(void *udata, unsigned char *stream, int len)
 static int luaB_music_callback(lua_State *L) {
 	if (!sound_inited)
 		return 0;
+
+	snd_mus_callback(NULL, NULL);
+	if (callback_ref)
+		luaL_unref(L, LUA_REGISTRYINDEX, callback_ref);
+	callback_ref = 0;
+
 	if (lua_isfunction(L, 1)) {
 		game_stop_mus(0);
 		callback_ref = luaL_ref(L, LUA_REGISTRYINDEX);
 		snd_mus_callback(mus_callback, L);
-	} else {
-		snd_mus_callback(NULL, NULL);
-		if (callback_ref)
-			luaL_unref(L, LUA_REGISTRYINDEX, callback_ref);
-		callback_ref = 0;
 	}
+
 	return 0;
 }
 

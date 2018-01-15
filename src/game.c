@@ -1782,11 +1782,15 @@ static void after_click(int flags, int m_restore)
 	}
 #endif
 }
+
+extern void instead_render_callback(void);
+
 static void after_cmd(void)
 {
 	game_autosave();
 	game_instead_restart();
 	game_instead_menu();
+	instead_render_callback();
 }
 
 static void after_fading(void *aux)
@@ -2306,7 +2310,7 @@ int game_highlight(int x, int y, int on)
 
 void mouse_reset(int hl)
 {
-	if (hl)
+	if (hl && (menu_shown || !DIRECT_MODE))
 		game_highlight(-1, -1, 0);
 	else
 		hl_xref = hl_el = NULL;

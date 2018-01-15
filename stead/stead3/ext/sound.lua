@@ -92,7 +92,7 @@ function instead.stop_music()
 end
 
 std.mod_done(function(s)
-	instead.music_callback() -- halt music mixer
+--	instead.music_callback() -- halt music mixer
 	instead.stop_music()
 	instead.stop_sound() -- halt all
 --	instead.sounds_free();
