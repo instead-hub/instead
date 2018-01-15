@@ -1861,9 +1861,12 @@ int game_cmd(char *cmd, int flags)
 			game_clear(0, 0, game_theme.w, game_theme.h);
 			el_draw(el_title);
 			el_draw(el_ways);
-			el_draw(el_spic);
+			if (game_theme.gfx_mode != GFX_MODE_EMBEDDED)
+				el_draw(el_spic);
 			el_draw(el_scene);
-			el_draw(el_inv);
+			if (inv_enabled())
+				el_draw(el_inv);
+			el_draw(el_menu_button);
 			gfx_flip();
 		} else if (game_pict_modify(NULL)) /* redraw pic only */
 			game_redraw_pic();
