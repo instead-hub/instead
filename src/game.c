@@ -1688,7 +1688,19 @@ int game_pict_modify(img_t p)
 {
 	static int modify = 0;
 	int last = modify;
+	game_bg_modify(p);
 	if (p && ((el_img(el_spic) == p) || p == gfx_screen(NULL)))
+		modify = 1;
+	else if (!p) /* use NULL to reset modify flag */
+		modify = 0;
+	return last;
+}
+
+int game_bg_modify(img_t p)
+{
+	static int modify = 0;
+	int last = modify;
+	if (p && p == game_theme.bg)
 		modify = 1;
 	else if (!p) /* use NULL to reset modify flag */
 		modify = 0;
@@ -1845,7 +1857,15 @@ int game_cmd(char *cmd, int flags)
 	}
 
 	if (!cmdstr) {
-		if (game_pict_modify(NULL)) /* redraw pic only */
+		if (game_bg_modify(NULL)) {
+			game_clear(0, 0, game_theme.w, game_theme.h);
+			el_draw(el_title);
+			el_draw(el_ways);
+			el_draw(el_spic);
+			el_draw(el_scene);
+			el_draw(el_inv);
+			gfx_flip();
+		} else if (game_pict_modify(NULL)) /* redraw pic only */
 			game_redraw_pic();
 		if (!rc) {
 			if (hl_el == el(el_inv)) {
@@ -1856,6 +1876,8 @@ int game_cmd(char *cmd, int flags)
 		}
 		goto err; /* really nothing to do */
 	}
+	if (game_bg_modify(NULL))
+		game_theme_changed = 2;  /* force redraw */
 
 	m_restore = !(flags & GAME_CMD_CLICK);
 	mouse_reset(0); /* redraw all, so, reset mouse */
@@ -1880,7 +1902,7 @@ int game_cmd(char *cmd, int flags)
 
 	new_pict = check_new_pict(pict);
 
-	if (game_theme_changed == 2 && opt_owntheme && !fading)
+	if (game_theme_changed == 2 && !fading)
 		fading = 1; /* one frame at least */
 
 	if (fading) { /* take old screen */
@@ -1892,7 +1914,7 @@ int game_cmd(char *cmd, int flags)
 		gfx_copy(oldscreen, 0, 0);
 	}
 
-	if (game_theme_changed == 2 && opt_owntheme) {
+	if (game_theme_changed == 2) {
 		game_theme_update();
 		game_theme_changed = 1;
 		new_place = 1;

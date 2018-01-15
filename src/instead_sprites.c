@@ -368,9 +368,22 @@ err:
 
 static img_t grab_sprite(const char *dst, int *xoff, int *yoff)
 {
+	img_t oldscreen;
 	img_t d;
-	if (DIRECT_MODE && dst && !strcmp(dst, "screen")) {
+	if (!dst)
+		return NULL;
+	if (DIRECT_MODE && !strcmp(dst, "screen")) {
 		d = gfx_screen(NULL);
+		*xoff = game_theme.xoff;
+		*yoff = game_theme.yoff;
+	} else if (opt_owntheme && !strcmp(dst, "screen")) {
+		if (!game_theme.bg) { /* create on the fly */
+			game_theme.bg = gfx_new(game_theme.w, game_theme.h);
+			oldscreen = gfx_screen(game_theme.bg);
+			gfx_clear(0, 0, game_theme.w, game_theme.h);
+			gfx_screen(oldscreen);
+		}
+		d = game_theme.bg;
 		*xoff = game_theme.xoff;
 		*yoff = game_theme.yoff;
 	} else {

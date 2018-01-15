@@ -129,6 +129,8 @@ extern char	*open_file_dialog(void);
 extern int	game_from_disk(void);
 
 extern int	game_pict_modify(img_t p);
+extern int	game_bg_modify(img_t p);
+
 extern int game_pict_coord(int *x, int *y, int *w, int *h);
 extern void menu_toggle(int menu);
 extern int menu_visible(void);

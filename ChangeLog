@@ -25,6 +25,7 @@
   * new: -nocursor parameter;
   * new: SailfishOS port;
   * new: WinRT patches for upcoming port;
+  * new: sprite.scr() returns background in non direct mode;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Sun, 14 Jan 2018 16:54:00 +0300
 
