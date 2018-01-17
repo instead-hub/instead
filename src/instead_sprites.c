@@ -2445,7 +2445,7 @@ static int render_callback_dirty = 0;
 int instead_render_callback_dirty(int fl)
 {
 	int rc = render_callback_dirty;
-	if (!curgame_dir || !callback_ref || game_paused() || DIRECT_MODE)
+	if (!callback_ref || game_paused() || DIRECT_MODE)
 		return 0;
 	if (fl != -1)
 		render_callback_dirty = fl;
@@ -2454,7 +2454,7 @@ int instead_render_callback_dirty(int fl)
 
 void instead_render_callback(void)
 {
-	if (!curgame_dir || !callback_ref || game_paused() || render_callback_dirty == -1)
+	if (!callback_ref || game_paused() || render_callback_dirty == -1)
 		return;
 
 	game_cursor(CURSOR_CLEAR);
@@ -2473,12 +2473,17 @@ void instead_render_callback(void)
 }
 
 static int luaB_after_callback(lua_State *L) {
+	if (!opt_owntheme) {
+		lua_pushboolean(L, 0);
+		return 1;
+	}
 	if (callback_ref)
 		luaL_unref(L, LUA_REGISTRYINDEX, callback_ref);
 	callback_ref = 0;
 	if (lua_isfunction(L, 1))
 		callback_ref = luaL_ref(L, LUA_REGISTRYINDEX);
-	return 0;
+	lua_pushboolean(L, 0);
+	return 1;
 }
 
 static const luaL_Reg sprites_funcs[] = {

@@ -1820,12 +1820,15 @@ static void after_cmd(void)
 
 static void after_fading(void *aux)
 {
-	game_render_callback_redraw();
-
 	gfx_start_gif(el_img(el_spic));
 	gfx_free_image(fade_ctx.offscreen);
+	game_render_callback_redraw();
+
 	after_click(fade_ctx.flags, fade_ctx.m_restore);
 	after_cmd();
+	game_cursor(CURSOR_DRAW);
+	game_flip();
+
 }
 
 static void game_redraw_all(void)
@@ -1846,7 +1849,7 @@ static void game_redraw_all(void)
 
 static int game_render_callback_redraw(void)
 {
-	if (instead_render_callback_dirty(0)) {
+	if (instead_render_callback_dirty(0) == -1) {
 		instead_render_callback_dirty(1);
 		game_redraw_all();
 		return 1;
@@ -2183,7 +2186,7 @@ inv:
 
 	if (fading) {
 		img_t offscreen;
-		game_cursor(CURSOR_CLEAR);
+		game_cursor(CURSOR_OFF);
 		gfx_stop_gif(el_img(el_spic));
 		instead_render_callback();
 		offscreen = gfx_screen(oldscreen);
@@ -2630,7 +2633,6 @@ void game_cursor(int on)
 		cur = (use_xref) ? game_theme.use:game_theme.cursor;
 	if (!cur)
 		goto out;
-
 	do {
 		int ox = xc;
 		int oy = yc;
@@ -3546,6 +3548,7 @@ static __inline int game_cycle(void)
 	} else if ((rc = mouse_instead(&ev, &x, &y)) < 0) { /* ui mouse */
 		goto out;
 	}
+
 	if (gfx_fading()) /* just fading */
 		return 0;
 
