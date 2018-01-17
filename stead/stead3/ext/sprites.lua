@@ -257,6 +257,8 @@ instead.noise4 = instead_noise4
 
 instead.render_callback = instead_render_callback
 
+instead.direct = instead_direct
+
 std.busy = instead_busy
 
 local spr = {
@@ -426,20 +428,7 @@ function sprite.scr()
 end
 
 function sprite.direct(v)
-	local ov = theme.get('scr.gfx.mode') == 'direct'
-	if v then
-		if ov then
-			return true
-		end
-		theme.set ('scr.gfx.mode', 'direct')
-		return theme.get('scr.gfx.mode') == 'direct'
-	elseif v == false then
-		if ov then
-			theme.reset ('scr.gfx.mode')
-		end
-		return true
-	end
-	return ov
+	return instead.direct(v)
 end
 
 function sprite.font_scaled_size(size)

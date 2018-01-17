@@ -918,6 +918,7 @@ err:
 
 int game_theme_update(void)
 {
+	game_theme_changed = 0;
 	game_release_theme(0);
 	if (game_theme_update_data()) {
 		fprintf(stderr, "Can not update theme!\n");
@@ -990,7 +991,7 @@ int game_theme_init(void)
 	}
 	gfx_bg(game_theme.bgcol);
 	if (!DIRECT_MODE)
-		game_clear(0, 0, game_theme.w, game_theme.h);
+		game_clear_all();
 	gfx_flip();
 	gfx_commit();
 	return 0;

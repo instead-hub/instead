@@ -45,6 +45,30 @@ static	char *last_cmd = NULL;
 
 void game_cursor(int on);
 
+extern void instead_render_callback(void);
+extern int instead_render_callback_dirty(int reset);
+
+void game_flip(void)
+{
+	instead_render_callback();
+	gfx_flip();
+}
+
+static void _game_update(int x, int y, int w, int h)
+{
+	if (instead_render_callback_dirty(-1))
+		return;
+	gfx_update(x, y, w, h);
+}
+
+static void game_update(int x, int y, int w, int h)
+{
+	if (instead_render_callback_dirty(-1) == 1)
+		return;
+	game_cursor(CURSOR_DRAW);
+	gfx_update(x, y, w, h);
+}
+
 void game_res_err_msg(const char *filename, int alert)
 {
 	static const char preambule[] = "Can't load: ";
@@ -496,9 +520,11 @@ static int menu_shown = 0;
 static int browse_dialog = 0;
 
 int game_cmd(char *cmd, int click);
+
 void game_clear(int x, int y, int w, int h)
 {
 	game_cursor(CURSOR_CLEAR);
+
 	if (game_theme.bg)
 		gfx_draw_bg(game_theme.bg, x, y, w, h);
 	else
@@ -510,6 +536,11 @@ void game_clear(int x, int y, int w, int h)
 		gfx_copy_from(menubg, xx, yy, w, h, NULL, x, y);
 		gfx_draw_from(menu, xx, yy, w, h, NULL, x, y);
 	}
+}
+
+void game_clear_all(void)
+{
+	game_clear(0, 0, game_theme.w, game_theme.h);
 }
 
 void game_clear(int x, int y, int w, int h);
@@ -714,7 +745,7 @@ int game_apply_theme(void)
 
 	gfx_bg(game_theme.bgcol);
 	if (!DIRECT_MODE)
-		game_clear(0, 0, game_theme.w, game_theme.h);
+		game_clear_all();
 	gfx_flip();
 	if (opt_justify == JUST_NO && align == ALIGN_JUSTIFY)
 		align = ALIGN_LEFT;
@@ -828,11 +859,9 @@ void game_gfx_commit(int sync)
 {
 	if (gfx_fading()) /* to avoid flickering */
 		return;
-
 	if (gfx_pending()) {
 		if (sync) {
-			gfx_commit_event = 0;
-			gfx_commit();
+			_game_gfx_commit(NULL);
 		} else {
 			if (!gfx_commit_event) {
 				gfx_commit_event ++;
@@ -849,12 +878,10 @@ static void anigif_do(void *data)
 
 	if (browse_dialog || menu_shown || gfx_fading() || minimized())
 		return;
-
 	game_cursor(CURSOR_CLEAR);
 
 	if (gfx_frame_gif(el_img(el_spic))) { /* scene */
-		game_cursor(CURSOR_DRAW);
-		gfx_update_gif(el_img(el_spic));
+		gfx_update_gif(el_img(el_spic), game_update);
 	}
 
 	game_cursor(CURSOR_CLEAR);
@@ -862,8 +889,7 @@ static void anigif_do(void *data)
 	for (v = NULL; (img = txt_layout_images(txt_box_layout(el_box(el_scene)), &v)); ) { /* scene */
 		game_cursor(CURSOR_CLEAR);
 		if ((img != el_img(el_spic)) && gfx_frame_gif(img)) {
-			game_cursor(CURSOR_DRAW);
-			gfx_update_gif(img);
+			gfx_update_gif(img, game_update);
 		}
 	}
 
@@ -872,8 +898,7 @@ static void anigif_do(void *data)
 	for (v = NULL; (img = txt_layout_images(txt_box_layout(el_box(el_inv)), &v)); ) { /* inv */
 		game_cursor(CURSOR_CLEAR);
 		if (gfx_frame_gif(img)) {
-			game_cursor(CURSOR_DRAW);
-			gfx_update_gif(img);
+			gfx_update_gif(img, game_update);
 		}
 	}
 
@@ -882,8 +907,7 @@ static void anigif_do(void *data)
 	for (v = NULL; (img = txt_layout_images(el_layout(el_title), &v)); ) { /* title */
 		game_cursor(CURSOR_CLEAR);
 		if (gfx_frame_gif(img)) {
-			game_cursor(CURSOR_DRAW);
-			gfx_update_gif(img);
+			gfx_update_gif(img, game_update);
 		}
 	}
 
@@ -892,11 +916,12 @@ static void anigif_do(void *data)
 	for (v = NULL; (img = txt_layout_images(el_layout(el_ways), &v)); ) { /* ways */
 		game_cursor(CURSOR_CLEAR);
 		if (gfx_frame_gif(img)) {
-			game_cursor(CURSOR_DRAW);
-			gfx_update_gif(img);
+			gfx_update_gif(img, game_update);
 		}
 	}
 	game_cursor(CURSOR_ON);
+	if (instead_render_callback_dirty(-1) == 1)
+		game_flip();
 	game_gfx_commit(0);
 }
 
@@ -1095,10 +1120,11 @@ void game_release_theme(int force)
 	if (menubg)
 		gfx_free_image(menubg);
 	menu = menubg = NULL;
-	gfx_update(0, 0, game_theme.w, game_theme.h);
+	_game_update(0, 0, game_theme.w, game_theme.h);
 }
 
 static int game_event(const char *ev);
+static int game_render_callback_redraw(void);
 
 void game_done(int err)
 {
@@ -1108,11 +1134,8 @@ void game_done(int err)
 			game_save(0);
 		game_cfg_save();
 	}
-	curgame_dir = NULL;
-
 	gfx_del_timer(timer_han);
 	timer_han = NULL_TIMER;
-
 	if (menu_shown)
 		menu_toggle(-1);
 	game_release(); /* here all lost user callback are */
@@ -1122,6 +1145,8 @@ void game_done(int err)
 	input_clear();
 
 	instead_done();
+	curgame_dir = NULL;
+
 /* #ifndef ANDROID
 	gfx_video_done();
 #endif */
@@ -1192,8 +1217,7 @@ static void el_update(int n)
 	x = o->x;
 	y = o->y;
 	el_size(n, &w, &h);
-	game_cursor(CURSOR_DRAW);
-	gfx_update(x, y, w, h);
+	game_update(x, y, w, h);
 	return;
 }
 
@@ -1478,8 +1502,10 @@ int game_menu_box(int show, const char *txt)
 {
 	int w = 0, rc;
 	gfx_cancel_change_screen();
-	if (show)
+	if (show) {
+		instead_render_callback();
 		game_event("pause");
+	}
 	if (cur_menu == menu_games) { /* hack a bit :( */
 		w = games_menu_maxw();
 		game_menu_gen();
@@ -1488,8 +1514,10 @@ int game_menu_box(int show, const char *txt)
 		game_menu_gen();
 	}
 	rc = game_menu_box_width(show, txt, w);
-	if (!show)
+	if (!show) {
+		game_render_callback_redraw();
 		game_event("resume");
+	}
 #ifdef __EMSCRIPTEN__
 	if (!show)
 		cfg_save();
@@ -1783,22 +1811,47 @@ static void after_click(int flags, int m_restore)
 #endif
 }
 
-extern void instead_render_callback(void);
-
 static void after_cmd(void)
 {
 	game_autosave();
 	game_instead_restart();
 	game_instead_menu();
-	instead_render_callback();
 }
 
 static void after_fading(void *aux)
 {
+	game_render_callback_redraw();
+
 	gfx_start_gif(el_img(el_spic));
 	gfx_free_image(fade_ctx.offscreen);
 	after_click(fade_ctx.flags, fade_ctx.m_restore);
 	after_cmd();
+}
+
+static void game_redraw_all(void)
+{
+	if (menu_shown)
+		return;
+	game_clear_all();
+	el_draw(el_title);
+	el_draw(el_ways);
+	if (GFX_MODE(game_theme.gfx_mode) != GFX_MODE_EMBEDDED)
+		el_draw(el_spic);
+	el_draw(el_scene);
+	if (inv_enabled())
+		el_draw(el_inv);
+	el_draw(el_menu_button);
+	_game_update(0, 0, game_theme.w, game_theme.h);
+}
+
+static int game_render_callback_redraw(void)
+{
+	if (instead_render_callback_dirty(0)) {
+		instead_render_callback_dirty(1);
+		game_redraw_all();
+		return 1;
+	}
+	return 0;
 }
 
 int game_cmd(char *cmd, int flags)
@@ -1816,13 +1869,12 @@ int game_cmd(char *cmd, int flags)
 	char		*title = NULL;
 	char		*pict = NULL;
 	img_t		oldscreen = NULL;
-	int	dd = (DIRECT_MODE);
+	int		dd = (DIRECT_MODE);
 	int		rc = 0;
 	int		new_scene = 0;
 	int		m_restore = 0;
 	if (menu_shown)
 		return -1;
-
 /*	if (dd) */
 		game_cursor(CURSOR_CLEAR);
 	instead_lock();
@@ -1839,14 +1891,13 @@ int game_cmd(char *cmd, int flags)
 		if (cmdstr)
 			free(cmdstr);
 
-		if (game_theme_changed == 2) { /* cursor change only? */
+		if (game_theme_changed) { /* cursor change only? */
 			img_t offscreen = gfx_new(game_theme.w, game_theme.h);
 			if (!offscreen)
 				goto fatal;
 			oldscreen = gfx_screen(offscreen);
 			gfx_copy(oldscreen, 0, 0);
 			game_theme_update();
-			game_theme_changed = 1;
 			offscreen = gfx_screen(oldscreen);
 			gfx_change_screen(offscreen, 1, NULL, NULL);
 			gfx_free_image(offscreen);
@@ -1856,22 +1907,13 @@ int game_cmd(char *cmd, int flags)
 			goto out;
 		return rc;
 	} else if (dd) { /* disable direct mode on the fly */
-		game_theme_changed = 2;  /* force redraw */
+		game_theme_changed = 1;  /* force redraw */
 		game_cursor(CURSOR_DRAW);
 	}
 
 	if (!cmdstr) {
 		if (game_bg_modify(NULL)) {
-			game_clear(0, 0, game_theme.w, game_theme.h);
-			el_draw(el_title);
-			el_draw(el_ways);
-			if (game_theme.gfx_mode != GFX_MODE_EMBEDDED)
-				el_draw(el_spic);
-			el_draw(el_scene);
-			if (inv_enabled())
-				el_draw(el_inv);
-			el_draw(el_menu_button);
-			gfx_flip();
+			game_redraw_all();
 		} else if (game_pict_modify(NULL)) /* redraw pic only */
 			game_redraw_pic();
 		if (!rc) {
@@ -1881,10 +1923,15 @@ int game_cmd(char *cmd, int flags)
 			}
 			goto inv; /* hackish? ok, yes  it is... */
 		}
+		if (instead_render_callback_dirty(-1) == 1) {
+			game_cursor(CURSOR_DRAW);
+			game_flip();
+		}
 		goto err; /* really nothing to do */
 	}
+
 	if (game_bg_modify(NULL))
-		game_theme_changed = 2;  /* force redraw */
+		game_theme_changed = 1;  /* force redraw */
 
 	m_restore = !(flags & GAME_CMD_CLICK);
 	mouse_reset(0); /* redraw all, so, reset mouse */
@@ -1909,10 +1956,13 @@ int game_cmd(char *cmd, int flags)
 
 	new_pict = check_new_pict(pict);
 
-	if (game_theme_changed == 2 && !fading)
+	if (game_theme_changed && !fading)
 		fading = 1; /* one frame at least */
 
 	if (fading) { /* take old screen */
+/*		game_render_callback_redraw();
+		instead_render_callback();
+		instead_render_callback_dirty(0); */
 		game_cursor(CURSOR_CLEAR);
 		img_t offscreen = gfx_new(game_theme.w, game_theme.h);
 		if (!offscreen)
@@ -1921,9 +1971,8 @@ int game_cmd(char *cmd, int flags)
 		gfx_copy(oldscreen, 0, 0);
 	}
 
-	if (game_theme_changed == 2) {
+	if (game_theme_changed) {
 		game_theme_update();
-		game_theme_changed = 1;
 		new_place = 1;
 		if (pict)
 			new_pict = 1;
@@ -2028,7 +2077,7 @@ int game_cmd(char *cmd, int flags)
 			waystr[l - 1] = 0;
 	}
 
-	if (game_theme.gfx_mode != GFX_MODE_EMBEDDED) {
+	if (GFX_MODE(game_theme.gfx_mode) != GFX_MODE_EMBEDDED) {
 		txt_layout_set(el_layout(el_ways), waystr);
 		txt_layout_size(el_layout(el_ways), NULL, &ways_h);
 		if ((ways_h == 0 || WAYS_BOTTOM) && pict_h != 0)
@@ -2095,7 +2144,7 @@ int game_cmd(char *cmd, int flags)
 	if (new_place)
 		el_draw(el_title);
 
-	if (game_theme.gfx_mode != GFX_MODE_EMBEDDED) {
+	if (GFX_MODE(game_theme.gfx_mode) != GFX_MODE_EMBEDDED) {
 		el_draw(el_ways);
 		if (redraw_pict) {
 			game_pict_clip();
@@ -2136,6 +2185,7 @@ inv:
 		img_t offscreen;
 		game_cursor(CURSOR_CLEAR);
 		gfx_stop_gif(el_img(el_spic));
+		instead_render_callback();
 		offscreen = gfx_screen(oldscreen);
 		fade_ctx.offscreen = offscreen;
 		fade_ctx.flags = flags;
@@ -2146,22 +2196,23 @@ inv:
 	after_click(flags, m_restore);
 out:
 	game_cursor(CURSOR_DRAW);
-	gfx_flip();
+	game_flip();
 /*	input_clear(); */
 err:
 	after_cmd();
-
 	return rc;
 fatal:
 	fprintf(stderr, "Fatal error! (can't alloc offscreen)\n");
 	exit(1);
 }
 
+
+/*
 void game_update(int x, int y, int w, int h)
 {
 	game_cursor(CURSOR_DRAW);
 	gfx_update(x, y, w, h);
-}
+}*/
 
 void game_xref_update(xref_t xref, int x, int y)
 {
@@ -2310,9 +2361,9 @@ int game_highlight(int x, int y, int on)
 
 void mouse_reset(int hl)
 {
-	if (hl && (menu_shown || !DIRECT_MODE))
+	if (hl && (menu_shown || !DIRECT_MODE)) {
 		game_highlight(-1, -1, 0);
-	else
+	} else
 		hl_xref = hl_el = NULL;
 
 	disable_use();
@@ -2342,12 +2393,8 @@ static int scroll_pup(int id)
 	int hh;
 	if (box_isscroll_up(id))
 		return -1;
-/*	game_highlight(-1, -1, 0);
-	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) { */
-		el_size(el_scene, NULL, &hh);
-		txt_box_scroll(el_box(id), -hh);
-/*	} else
-		txt_box_prev(el_box(id)); */
+	el_size(el_scene, NULL, &hh);
+	txt_box_scroll(el_box(id), -hh);
 	el_clear(id);
 	el_draw(id);
 	el_update(id);
@@ -2359,12 +2406,8 @@ static int scroll_pdown(int id)
 	int hh;
 	if (box_isscroll_down(id))
 		return -1;
-/*	game_highlight(-1, -1, 0);
-	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) { */
-		el_size(el_scene, NULL, &hh);
-		txt_box_scroll(el_box(id), hh);
-/*	} else
-		txt_box_next(el_box(id)); */
+	el_size(el_scene, NULL, &hh);
+	txt_box_scroll(el_box(id), hh);
 	el_clear(id);
 	el_draw(id);
 	el_update(id);
@@ -2452,6 +2495,7 @@ int game_click(int x, int y, int action, int filter)
 	}
 	/* now look only second press */
 
+
 	if (!xref) {
 		if (elem) {
 			if (elem->id == el_menu_button) {
@@ -2475,6 +2519,7 @@ int game_click(int x, int y, int action, int filter)
 		return 0;
 	}
 /* second xref */
+
 	if (elem->id == el_menu) {
 /*		xref_set_active(xref, 0);
 		txt_layout_update_links(elem->p.lay, elem->x, elem->y, game_clear); */
@@ -2574,7 +2619,7 @@ void game_cursor(int on)
 	}
 
 	if (on == CURSOR_OFF) {
-		gfx_update(xc, yc, w, h);
+		_game_update(xc, yc, w, h);
 		goto out;
 	}
 
@@ -2606,8 +2651,8 @@ void game_cursor(int on)
 			gfx_draw(cur, xc, yc);
 
 		if (on != CURSOR_DRAW) {
-			gfx_update(xc, yc, w, h);
-			gfx_update(ox, oy, ow, oh);
+			_game_update(xc, yc, w, h);
+			_game_update(ox, oy, ow, oh);
 		}
 	} while (0);
 out:
@@ -2621,12 +2666,7 @@ static void scroll_up(int id, int count)
 /*	int i; */
 	if (box_isscroll_up(id))
 		return;
-/*	game_highlight(-1, -1, 0);
-	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) */
-		txt_box_scroll(el_box(id), -(FONT_SZ(game_theme.font_size)) * count);
-/*	else
-		for (i = 0; i < count; i++)
-			txt_box_prev_line(el_box(id)); */
+	txt_box_scroll(el_box(id), -(FONT_SZ(game_theme.font_size)) * count);
 	el_clear(id);
 	el_draw(id);
 	el_update(id);
@@ -2637,12 +2677,7 @@ static void scroll_down(int id, int count)
 /*	int i; */
 	if (box_isscroll_down(id))
 		return;
-/*	game_highlight(-1, -1, 0);
-	if (game_theme.gfx_mode == GFX_MODE_EMBEDDED) */
-		txt_box_scroll(el_box(id), (FONT_SZ(game_theme.font_size)) * count);
-/*	else
-		for (i = 0; i < count; i++)
-			txt_box_next_line(el_box(id)); */
+	txt_box_scroll(el_box(id), (FONT_SZ(game_theme.font_size)) * count);
 	el_clear(id);
 	el_draw(id);
 	el_update(id);
@@ -2686,7 +2721,7 @@ static void frame_next(void)
 		sel_el = el_inv;
 		break;
 	case el_inv:
-		if (game_theme.gfx_mode != GFX_MODE_EMBEDDED &&
+		if (GFX_MODE(game_theme.gfx_mode) != GFX_MODE_EMBEDDED &&
 			txt_layout_xrefs(el_layout(el_ways)))
 			sel_el = el_ways;
 		else
@@ -2709,7 +2744,7 @@ static void frame_prev(void)
 		sel_el = el_inv;
 		break;
 	case el_scene:
-		if (game_theme.gfx_mode != GFX_MODE_EMBEDDED &&
+		if (GFX_MODE(game_theme.gfx_mode) != GFX_MODE_EMBEDDED &&
 			txt_layout_xrefs(el_layout(el_ways)))
 			sel_el = el_ways;
 		else
@@ -2956,7 +2991,7 @@ int game_pict_coord(int *x, int *y, int *w, int *h)
 	img = el_img(el_spic);
 	if (!img)
 		return -1;
-	if (game_theme.gfx_mode != GFX_MODE_EMBEDDED) {
+	if (GFX_MODE(game_theme.gfx_mode) != GFX_MODE_EMBEDDED) {
 		xx = el(el_spic)->x;
 		yy = el(el_spic)->y;
 		ww = gfx_img_w(img);
@@ -3486,30 +3521,31 @@ static __inline int game_cycle(void)
 	static int x = 0, y = 0, rc;
 	struct inp_event ev;
 	ev.x = -1;
+
+	game_render_callback_redraw();
+
 	/* game_cursor(CURSOR_CLEAR); */ /* release bg */
 	if (((rc = input(&ev, 1)) == AGAIN) && !need_restart) {
 		game_gfx_commit(1);
 		return rc;
 	}
-
 	if (gfx_fading()) /* just fading */
 		return 0;
 
 	if (rc == -1) {/* close */
-		return -1;
+		goto out;
 	} else if (game_input_events(&ev)) { /* kbd, mouse and touch -> pass in game */
 		; /* all is done in game_input */
 	} else if (kbd_modifiers(&ev)) { /* ctrl, alt, shift */
 		; /* got modifiers */
 	} else if ((rc = kbd_instead(&ev, &x, &y))) { /* ui keys */
 		if (rc < 0)
-			return -1;
+			goto out;
 	} else if (DIRECT_MODE && !menu_shown) {
 		; /* nothing todo */
-	} else if (mouse_instead(&ev, &x, &y) < 0) { /* ui mouse */
-		return -1;
+	} else if ((rc = mouse_instead(&ev, &x, &y)) < 0) { /* ui mouse */
+		goto out;
 	}
-
 	if (gfx_fading()) /* just fading */
 		return 0;
 
@@ -3517,11 +3553,10 @@ static __inline int game_cycle(void)
 		need_restart = 0;
 		game_menu_act("/new");
 	}
-
-	if (!DIRECT_MODE || menu_shown) {
-		if (click_xref[0])
+	if ((!DIRECT_MODE || menu_shown)) {
+		if (click_xref[0]) {
 			game_highlight(x, y, 1);
-		else if (!motion_mode) {
+		} else if (!motion_mode) {
 			int x, y;
 			gfx_cursor(&x, &y);
 			game_highlight(x, y, 1);
@@ -3531,8 +3566,13 @@ static __inline int game_cycle(void)
 	if (instead_err()) {
 		game_menu(menu_warning);
 	}
-	game_gfx_commit(0);
-	return 0;
+	rc = 0;
+out:
+	game_flip();
+	game_gfx_commit(rc < 0 || instead_render_callback_dirty(-1) == -1);
+	if (rc < 0)
+		game_render_callback_redraw();
+	return rc;
 }
 #ifdef __EMSCRIPTEN__
 static void game_void_cycle(void)
@@ -3558,8 +3598,9 @@ int game_loop(void)
 	return -1;
 #else
 	while (game_running) {
-		if (game_cycle() < 0)
+		if (game_cycle() < 0) {
 			break;
+		}
 	}
 #endif
 	return 0;

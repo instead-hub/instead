@@ -191,13 +191,16 @@ extern int	theme_scalable_mode(int w, int h);
 
 extern int theme_relative;
 
-#define GFX_MODE_FLOAT 0
-#define GFX_MODE_FIXED 1
-#define GFX_MODE_EMBEDDED 2
-#define GFX_MODE_DIRECT 3
-#define GFX_MODE(v) ((v)&0xff)
-#define GFX_ALIGN(v) ((v)>>8)
-#define GFX_ALIGN_SET(v) ((v)<<8)
+#define GFX_MODE_FLOAT 1
+#define GFX_MODE_FIXED 2
+#define GFX_MODE_EMBEDDED 4
+#define GFX_MODE_DIRECT 0x100
+#define GFX_MODE(v) ((v) & 0x1ff)
+#define GFX_DIRECT(v) (!!((v) & 0x100))
+#define GFX_DIRECT_SET(v) ((v)|0x100)
+#define GFX_DIRECT_CLR(v) ((v)&(~0x100))
+#define GFX_ALIGN(v) ((v)>>16)
+#define GFX_ALIGN_SET(v) ((v)<<16)
 
 #define INV_MODE_DISABLED -1
 #define INV_MODE_VERT 0
@@ -207,7 +210,7 @@ extern int theme_relative;
 #define INV_ALIGN_SET(v) ((v)<<8)
 
 #define WAYS_BOTTOM (game_theme.ways_mode == ALIGN_BOTTOM)
-#define DIRECT_MODE (game_theme.gfx_mode == GFX_MODE_DIRECT)
+#define DIRECT_MODE (GFX_DIRECT(game_theme.gfx_mode))
 
 #define SCALABLE_FONT (!(game_theme.gfx_scalable & 4))
 #define SCALABLE_THEME (game_theme.gfx_scalable & 3)

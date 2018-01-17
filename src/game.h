@@ -58,13 +58,15 @@ extern char	*render_sw;
 extern char	*appdir(void);
 
 extern void	game_clear(int x, int y, int w, int h);
+extern void	game_clear_all(void);
+
 extern char	*game_local_games_path(int cr);
 extern char	*game_local_themes_path(void);
 extern char	*game_tmp_path(void);
 extern int	game_theme_select(const char *name);
 
 extern int	game_init(const char *game);
-
+extern void	game_flip(void);
 extern int	game_loop(void);
 extern void	game_done(int err);
 extern char	*game_reset_name(void);

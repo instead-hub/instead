@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2017 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2018 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -868,7 +868,7 @@ static int luaB_theme_var(lua_State *L) {
 		return 0;
 	if (!theme_setvar((char*)var, (char*)val)) {
 		if (strcmp(var, "win.scroll.mode")) /* let change scroll mode w/o theme reload */
-			game_theme_changed = 2;
+			game_theme_changed = 1;
 	}
 	return 0;
 }
@@ -888,6 +888,34 @@ static int luaB_theme_name(lua_State *L) {
 		}
 	} else
 		lua_pushstring(L, curtheme_dir[THEME_GLOBAL]);
+	return 1;
+}
+
+static int luaB_instead_direct(lua_State *L) {
+	int direct = -1;
+	int old = DIRECT_MODE;
+
+	if (lua_isboolean(L, 1))
+		direct = lua_toboolean(L, 1);
+
+	if (direct == -1) {
+		lua_pushboolean(L, old);
+		return 1;
+	}
+
+	if (!opt_owntheme) {
+		lua_pushboolean(L, 0);
+		return 1;
+	}
+
+	if (direct)
+		game_theme.gfx_mode = GFX_DIRECT_SET(game_theme.gfx_mode);
+	else {
+		if (game_theme.gfx_mode != GFX_MODE_DIRECT) {
+			game_theme.gfx_mode = GFX_DIRECT_CLR(game_theme.gfx_mode);
+		}
+	}
+	lua_pushboolean(L, old);
 	return 1;
 }
 
@@ -2412,11 +2440,23 @@ static int luaB_noise4(lua_State *L) {
 }
 
 static int callback_ref = 0;
+static int render_callback_dirty = 0;
+
+int instead_render_callback_dirty(int fl)
+{
+	int rc = render_callback_dirty;
+	if (!curgame_dir || !callback_ref || game_paused())
+		return 0;
+	if (fl != -1)
+		render_callback_dirty = fl;
+	return rc;
+}
 
 void instead_render_callback(void)
 {
-	if (!callback_ref)
+	if (!curgame_dir || !callback_ref || game_paused() || render_callback_dirty == -1)
 		return;
+
 	game_cursor(CURSOR_CLEAR);
 	instead_lock();
 	lua_rawgeti(instead_lua(), LUA_REGISTRYINDEX, callback_ref);
@@ -2426,6 +2466,8 @@ void instead_render_callback(void)
 	}
 	instead_clear();
 	instead_unlock();
+	if (game_pict_modify(NULL))
+		render_callback_dirty = -1;
 	game_cursor(CURSOR_DRAW);
 	return;
 }
@@ -2464,6 +2506,7 @@ static const luaL_Reg sprites_funcs[] = {
 	{"instead_theme_name", luaB_theme_name},
 	{"instead_ticks", luaB_get_ticks},
 	{"instead_busy", luaB_stead_busy},
+	{"instead_direct", luaB_instead_direct},
 	{"instead_mouse_pos", luaB_mouse_pos},
 	{"instead_mouse_filter", luaB_mouse_filter},
 	{"instead_mouse_show", luaB_mouse_show},

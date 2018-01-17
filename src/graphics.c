@@ -1465,7 +1465,7 @@ int gfx_is_drawn_gifs(void)
 	return anigif_drawn_nr;
 }
 
-void gfx_update_gif(img_t img)
+void gfx_update_gif(img_t img, update_fn update)
 {
 	int i = 0;
 	anigif_t ag;
@@ -1475,7 +1475,7 @@ void gfx_update_gif(img_t img)
 	if (!ag->drawn || !ag->active)
 		return;
 	for (i = 0; i < ag->spawn_nr; i++) {
-		gfx_update(ag->spawn[i].x, ag->spawn[i].y,
+		update(ag->spawn[i].x, ag->spawn[i].y,
 			gfx_img_w(img), gfx_img_h(img));
 	}
 }
