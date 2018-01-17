@@ -2445,7 +2445,7 @@ static int render_callback_dirty = 0;
 int instead_render_callback_dirty(int fl)
 {
 	int rc = render_callback_dirty;
-	if (!callback_ref || game_paused() || DIRECT_MODE)
+	if (!callback_ref || game_paused())
 		return 0;
 	if (fl != -1)
 		render_callback_dirty = fl;

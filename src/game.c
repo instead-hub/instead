@@ -56,7 +56,7 @@ void game_flip(void)
 
 static void _game_update(int x, int y, int w, int h)
 {
-	if (instead_render_callback_dirty(-1))
+	if (instead_render_callback_dirty(-1) == 1)
 		return;
 	gfx_update(x, y, w, h);
 }
@@ -1833,7 +1833,7 @@ static void after_fading(void *aux)
 
 static void game_redraw_all(void)
 {
-	if (menu_shown)
+	if (menu_shown || DIRECT_MODE)
 		return;
 	game_clear_all();
 	el_draw(el_title);
