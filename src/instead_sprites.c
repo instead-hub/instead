@@ -2545,9 +2545,19 @@ static int sprites_init(void)
 	return instead_loadfile(dirpath(path));
 }
 
+static int sprites_err(void)
+{
+	if (callback_ref) {
+		luaL_unref(instead_lua(), LUA_REGISTRYINDEX, callback_ref);
+		callback_ref = 0;
+	}
+	return 0;
+}
+
 static struct instead_ext ext = {
 	.init = sprites_init,
 	.done = sprites_done,
+	.err = sprites_err,
 };
 
 int instead_sprites_init(void)
