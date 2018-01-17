@@ -915,7 +915,7 @@ static int luaB_instead_direct(lua_State *L) {
 			game_theme.gfx_mode = GFX_DIRECT_CLR(game_theme.gfx_mode);
 		}
 	}
-	lua_pushboolean(L, old);
+	lua_pushboolean(L, 1);
 	return 1;
 }
 
