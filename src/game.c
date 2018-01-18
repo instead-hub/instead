@@ -1510,7 +1510,6 @@ int game_menu_box(int show, const char *txt)
 	gfx_cancel_change_screen();
 	if (show) {
 		game_event("pause");
-		instead_render_callback();
 	}
 	if (cur_menu == menu_games) { /* hack a bit :( */
 		w = games_menu_maxw();
@@ -1523,6 +1522,10 @@ int game_menu_box(int show, const char *txt)
 	if (!show) {
 		game_render_callback_redraw();
 		game_event("resume");
+	} else {
+		menu_shown = 0;
+		instead_render_callback();
+		menu_shown = 1;
 	}
 #ifdef __EMSCRIPTEN__
 	if (!show)
