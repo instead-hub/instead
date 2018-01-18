@@ -432,8 +432,6 @@ end
 
 local iface_cmd = iface.cmd -- save old
 
-local cached_last = false
-local NOP = false
 function iface:cmd(inp)
 	local a = std.split(inp)
 	if a[1] == 'act' or a[1] == 'use' or a[1] == 'go' then
@@ -451,13 +449,7 @@ function iface:cmd(inp)
 		end
 		inp = std.join(a)
 	end
-	local r, v = iface_cmd(self, inp)
-	if NOP then
-		r = cached_last
-	elseif v == true then
-		cached_last = r
-	end
-	return r, v
+	return iface_cmd(self, inp)
 end
 
 std.obj { -- input object
@@ -474,14 +466,12 @@ std.mod_init(function()
 end)
 
 std.mod_cmd(function()
-	NOP = false
 	instead.need_fading(false)
 end)
 
 std.mod_step(function(state)
-	if state and not NOP then
+	if state then
 		dict = {}
-		cached_last = false
 	end
 end)
 
@@ -500,18 +490,4 @@ end)
 
 if std.rawget(_G, 'DEBUG') then
 	require 'dbg'
-end
-
-function std.nop()
--- cached nop
-	std.abort()
-	if cached_last then
-		NOP = true
-		return '@NOP', true
-	end
--- real nop
-	if std.cctx() then
-		std.pr(std.game:lastdisp())
-	end
-	return std.game:lastdisp(), true
 end
