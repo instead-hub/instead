@@ -13,6 +13,7 @@ local instead = std.obj {
 }
 
 instead.clipboard = instead_clipboard
+instead.wait_use = instead_wait_use
 
 function instead.atleast(...)
 	for k, v in std.ipairs {...} do

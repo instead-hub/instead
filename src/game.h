@@ -35,6 +35,7 @@
 
 #define HZ 		100
 
+extern int	game_wait_use;
 extern int	game_running;
 extern int	game_theme_changed;
 

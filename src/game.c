@@ -31,6 +31,7 @@ int game_running = 1;
 char	game_cwd[PATH_MAX];
 char	*curgame_dir = NULL;
 
+int game_wait_use = 1;
 int game_own_theme = 0;
 int game_theme_changed = 0;
 unsigned int mouse_filter_delay = 400;
@@ -2328,7 +2329,7 @@ int menu_visible(void)
 int game_paused(void)
 {
 	return browse_dialog || menu_shown ||
-		use_xref || /*click_xref ||*/
+		(use_xref && game_wait_use) ||
 		gfx_fading() || minimized() || instead_busy();
 }
 

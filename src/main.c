@@ -252,8 +252,30 @@ static int luaB_clipboard(lua_State *L) {
 	return 1;
 }
 
+static int luaB_wait_use(lua_State *L) {
+	int v = -1;
+	int old = game_wait_use;
+
+	if (lua_isboolean(L, 1))
+		v = lua_toboolean(L, 1);
+
+	if (v == -1) {
+		lua_pushboolean(L, old);
+		return 1;
+	}
+
+	if (!opt_owntheme) {
+		lua_pushboolean(L, 0);
+		return 1;
+	}
+	game_wait_use = v;
+	lua_pushboolean(L, old);
+	return 1;
+}
+
 static const luaL_Reg sdl_funcs[] = {
-	{"instead_clipboard", luaB_clipboard},
+	{ "instead_clipboard", luaB_clipboard },
+	{ "instead_wait_use", luaB_wait_use },
 	{NULL, NULL}
 };
 

@@ -435,6 +435,8 @@ function sprite.font_scaled_size(size)
 	return instead.font_scaled_size(size);
 end
 
+sprite.render_callback = instead.render_callback
+
 std.obj(sprite)
 
 instead.sprite_pixels = instead_sprite_pixels
