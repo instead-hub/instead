@@ -366,13 +366,15 @@ err:
 	return 0;
 }
 
+static int in_callback = 0;
+
 static img_t grab_sprite(const char *dst, int *xoff, int *yoff)
 {
 	img_t oldscreen;
 	img_t d;
 	if (!dst)
 		return NULL;
-	if (DIRECT_MODE && !strcmp(dst, "screen")) {
+	if ((DIRECT_MODE || in_callback) && !strcmp(dst, "screen")) {
 		d = gfx_screen(NULL);
 		*xoff = game_theme.xoff;
 		*yoff = game_theme.yoff;
@@ -2460,10 +2462,12 @@ void instead_render_callback(void)
 	game_cursor(CURSOR_CLEAR);
 	instead_lock();
 	lua_rawgeti(instead_lua(), LUA_REGISTRYINDEX, callback_ref);
+	in_callback ++;
 	if (instead_pcall(instead_lua(), 0)) { /* on any error */
 		luaL_unref(instead_lua(), LUA_REGISTRYINDEX, callback_ref);
 		callback_ref = 0;
 	}
+	in_callback --;
 	instead_clear();
 	instead_unlock();
 	if (game_pict_modify(NULL))
