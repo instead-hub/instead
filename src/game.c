@@ -3538,7 +3538,7 @@ static __inline int game_cycle(void)
 		return rc;
 	}
 
-	if (gfx_fading()) /* just fading */
+	if (!rc || gfx_fading()) /* just skip */
 		return 0;
 
 	game_render_callback_redraw();
