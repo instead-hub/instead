@@ -21,13 +21,13 @@ INSTEAD с написания простой игры!
 STEAD2. INSTEAD поддерживает работу игр написанных как на STEAD2, так
 и на STEAD3. Это руководство описывает STEAD3.
 
-Если у вас возникают вопросы, вы можете зарегистрироваться на форуме
-INSTEAD и задавать их там:
+Если у вас возникают вопросы, вы можете посетить сайт INSTEAD:
 
-http://instead.syscall.ru/talk
+http://instead.syscall.ru
 
-Также, вы можете посетить Jabber конференцию:
-instead@conference.jabber.ru
+Или подключиться к чату на Gitter:
+
+https://gitter.im/instead-hub/instead
 
 ### История создания
 
