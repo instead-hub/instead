@@ -871,6 +871,8 @@ void game_gfx_commit(int sync)
 	}
 }
 
+static int game_render_callback_redraw(void);
+
 static void anigif_do(void *data)
 {
 	void *v;
@@ -878,9 +880,11 @@ static void anigif_do(void *data)
 
 	if (browse_dialog || menu_shown || gfx_fading() || minimized())
 		return;
+
 	game_cursor(CURSOR_CLEAR);
 
 	if (gfx_frame_gif(el_img(el_spic))) { /* scene */
+		game_render_callback_redraw();
 		gfx_update_gif(el_img(el_spic), game_update);
 	}
 
@@ -889,15 +893,16 @@ static void anigif_do(void *data)
 	for (v = NULL; (img = txt_layout_images(txt_box_layout(el_box(el_scene)), &v)); ) { /* scene */
 		game_cursor(CURSOR_CLEAR);
 		if ((img != el_img(el_spic)) && gfx_frame_gif(img)) {
+			game_render_callback_redraw();
 			gfx_update_gif(img, game_update);
 		}
 	}
-
 	game_cursor(CURSOR_CLEAR);
 
 	for (v = NULL; (img = txt_layout_images(txt_box_layout(el_box(el_inv)), &v)); ) { /* inv */
 		game_cursor(CURSOR_CLEAR);
 		if (gfx_frame_gif(img)) {
+			game_render_callback_redraw();
 			gfx_update_gif(img, game_update);
 		}
 	}
@@ -907,6 +912,7 @@ static void anigif_do(void *data)
 	for (v = NULL; (img = txt_layout_images(el_layout(el_title), &v)); ) { /* title */
 		game_cursor(CURSOR_CLEAR);
 		if (gfx_frame_gif(img)) {
+			game_render_callback_redraw();
 			gfx_update_gif(img, game_update);
 		}
 	}
@@ -916,12 +922,12 @@ static void anigif_do(void *data)
 	for (v = NULL; (img = txt_layout_images(el_layout(el_ways), &v)); ) { /* ways */
 		game_cursor(CURSOR_CLEAR);
 		if (gfx_frame_gif(img)) {
+			game_render_callback_redraw();
 			gfx_update_gif(img, game_update);
 		}
 	}
 	game_cursor(CURSOR_ON);
-	if (instead_render_callback_dirty(-1) == 1)
-		game_flip();
+	game_flip();
 	game_gfx_commit(0);
 }
 
@@ -1124,7 +1130,6 @@ void game_release_theme(int force)
 }
 
 static int game_event(const char *ev);
-static int game_render_callback_redraw(void);
 
 void game_done(int err)
 {
@@ -1880,6 +1885,7 @@ int game_cmd(char *cmd, int flags)
 		return -1;
 /*	if (dd) */
 		game_cursor(CURSOR_CLEAR);
+	game_render_callback_redraw();
 	instead_lock();
 	if (flags & GAME_CMD_FILE) /* file command */
 		cmdstr = instead_file_cmd(cmd, &rc);
@@ -3524,15 +3530,17 @@ static __inline int game_cycle(void)
 	struct inp_event ev;
 	ev.x = -1;
 
-	game_render_callback_redraw();
 
 	/* game_cursor(CURSOR_CLEAR); */ /* release bg */
 	if (((rc = input(&ev, 1)) == AGAIN) && !need_restart) {
 		game_gfx_commit(1);
 		return rc;
 	}
+
 	if (gfx_fading()) /* just fading */
 		return 0;
+
+	game_render_callback_redraw();
 
 	if (rc == -1) {/* close */
 		goto out;
@@ -3572,7 +3580,7 @@ static __inline int game_cycle(void)
 	rc = 0;
 out:
 	game_flip();
-	game_gfx_commit(rc < 0 || instead_render_callback_dirty(-1) == -1);
+	game_gfx_commit(rc < 0);
 	if (rc < 0)
 		game_render_callback_redraw();
 	return rc;
