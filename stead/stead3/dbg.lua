@@ -674,7 +674,7 @@ local dbg = std.obj {
 				return
 			end
 		end
-		if key == 'f7' or (s.key_ctrl and key == 'd') then
+		if (key == 'f7'and not s.key_ctrl and not s.key_alt) or (s.key_ctrl and key == 'd') then
 			return '@dbg toggle'
 		end
 
