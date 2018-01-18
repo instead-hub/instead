@@ -1434,7 +1434,6 @@ int game_menu_box_width(int show, const char *txt, int width)
 	int pad = game_theme.pad;
 	layout_t lay = NULL;
 
-	menu_shown = show;
 	el(el_menu)->drawn = 0;
 
 	if (el_layout(el_menu)) {
@@ -1462,10 +1461,14 @@ int game_menu_box_width(int show, const char *txt, int width)
 	}
 
 	if (!show) {
+		menu_shown = 0;
 		game_cursor(CURSOR_DRAW);
 		gfx_flip();
 		return 0;
 	}
+	instead_render_callback();
+	menu_shown = 1;
+
 	if (!lay) {
 		lay = txt_layout(game_theme.menu_font, ALIGN_CENTER, game_theme.w - 2 * (b + pad), 0);
 		txt_layout_color(lay, game_theme.menu_fg);
@@ -1493,8 +1496,8 @@ int game_menu_box_width(int show, const char *txt, int width)
 	my = y - b - pad;
 	mw = w + (b + pad) * 2;
 	mh = h + (b + pad) * 2;
-	game_cursor(CURSOR_CLEAR);
 
+	game_cursor(CURSOR_CLEAR);
 	menubg = gfx_grab_screen(mx, my, mw, mh);
 	gfx_draw(menu, mx, my);
 	el_set(el_menu, elt_layout, /*game_theme.win_x*/  x, y, lay);
@@ -1508,9 +1511,8 @@ int game_menu_box(int show, const char *txt)
 {
 	int w = 0, rc;
 	gfx_cancel_change_screen();
-	if (show) {
+	if (show)
 		game_event("pause");
-	}
 	if (cur_menu == menu_games) { /* hack a bit :( */
 		w = games_menu_maxw();
 		game_menu_gen();
@@ -1522,10 +1524,6 @@ int game_menu_box(int show, const char *txt)
 	if (!show) {
 		game_render_callback_redraw();
 		game_event("resume");
-	} else {
-		menu_shown = 0;
-		instead_render_callback();
-		menu_shown = 1;
 	}
 #ifdef __EMSCRIPTEN__
 	if (!show)
