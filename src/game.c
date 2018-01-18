@@ -1509,8 +1509,8 @@ int game_menu_box(int show, const char *txt)
 	int w = 0, rc;
 	gfx_cancel_change_screen();
 	if (show) {
-		instead_render_callback();
 		game_event("pause");
+		instead_render_callback();
 	}
 	if (cur_menu == menu_games) { /* hack a bit :( */
 		w = games_menu_maxw();
