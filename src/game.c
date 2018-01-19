@@ -1851,7 +1851,7 @@ static void game_redraw_all(void)
 	if (inv_enabled())
 		el_draw(el_inv);
 	el_draw(el_menu_button);
-	_game_update(0, 0, game_theme.w, game_theme.h);
+	game_update(0, 0, game_theme.w, game_theme.h);
 }
 
 static int game_render_callback_redraw(void)
