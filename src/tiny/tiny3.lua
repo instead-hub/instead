@@ -5,6 +5,14 @@ local instead = std.obj { nam = '@instead' }
 instead.nosave = false
 instead.noautosave = false
 
+function instead.render_callback()
+	return false
+end
+
+function instead.wait_use()
+	return true
+end
+
 local iface = std '@iface'
 local type = std.type
 
@@ -179,6 +187,7 @@ std.obj {
 	fnt = function() end;
 	scr = function() end;
 	direct = function() return false end;
+	render_callback = instead.render_callback;
 }
 -- fake pixels
 std.obj {
