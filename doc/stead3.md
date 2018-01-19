@@ -5051,8 +5051,8 @@ declare {
 }
 
 const {
-   w = theme.get 'scr.w',
-   h = theme.get 'scr.h',
+   w = tonumber(theme.get 'scr.w'),
+   h = tonumber(theme.get 'scr.h'),
 }
 
 instead.fading = false
@@ -5060,6 +5060,11 @@ instead.fading = false
 local bg, red, green
 
 function init()
+   theme.set('scr.col.bg', '#000000')
+   theme.set('win.col.fg', '#aaaaaa')
+   theme.set('win.col.link', '#ffaa00')
+   theme.set('win.col.alink', '#ffffff')
+
    bg = sprite.new(w, h)
    bg:fill('black')
    red = sprite.new(w, h)
@@ -5077,12 +5082,12 @@ function game:timer()
    red:draw(sprite.scr(), x, 0, 128)
    green:draw(sprite.scr(), 0, y, 64)
    x = x + dx
-   if x == w or x == 0 then
-	  dx = -dx
+   if x >= w or x == 0 then
+      dx = -dx
    end
    y = y + dy
-   if y == g or y == 0 then
-	  dy = -dy
+   if y >= h or y == 0 then
+      dy = -dy
    end
    return false -- Важно!
 end
@@ -5092,6 +5097,7 @@ room {
    disp = 'Test. Test? Test!',
    decor = 'Lorem ipsum';
 }
+
 ```
 
 _Внимание!_ Интерпретатор INSTEAD в режиме использования предмета на
