@@ -517,6 +517,8 @@ local function std_debug(a)
 	std['debug_'..a] = false
 end
 
+local render_callback = false
+
 local dbg = std.obj {
 	pri = 16384;
 	nam = '@dbg';
@@ -528,6 +530,7 @@ local dbg = std.obj {
 		instead_func('get_fading')
 		instead_func('get_title')
 		instead_func('get_ways')
+		render_callback = _'@sprite'.render_callback(false)
 --		s.last_timer = timer:get()
 --		timer:stop()
 		std_debug('input')
@@ -560,6 +563,7 @@ local dbg = std.obj {
 		std_debug()
 		std.nostrict = s.__nostrict
 		instead_reset()
+		_'@sprite'.render_callback(render_callback)
 		iface:raw_mode(false)
 	--	timer:set(s.last_timer)
 		std.game:lastdisp(s.__last_disp)

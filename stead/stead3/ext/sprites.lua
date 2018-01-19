@@ -435,7 +435,13 @@ function sprite.font_scaled_size(size)
 	return instead.font_scaled_size(size);
 end
 
-sprite.render_callback = instead.render_callback
+local render_cb = nil
+function sprite.render_callback(fn)
+	local old = render_cb
+	render_cb = fn
+	instead.render_callback(render_cb)
+	return old
+end
 
 std.obj(sprite)
 
