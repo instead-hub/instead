@@ -425,7 +425,6 @@ static int luaB_sprite_size(lua_State *L) {
 
 static int luaB_blit_sprite(lua_State *L, int mode) {
 	img_t s = NULL, d = NULL;
-	img_t img2 = NULL;
 	float v;
 	struct lua_pixels *pixels = lua_touserdata(L, 1);
 	const char *src = NULL;
@@ -477,16 +476,14 @@ static int luaB_blit_sprite(lua_State *L, int mode) {
 
 	game_pict_modify(d);
 
-	if (alpha != 255) {
-		img2 = gfx_alpha_img(s, alpha);
-		if (img2)
-			s = img2;
-	}
 	game_gfx_clip();
 
 	switch (mode) {
 	case BLIT_DRAW:
-		gfx_draw_from(s, x + xoff0, y + yoff0, w, h, d, xx + xoff, yy + yoff);
+		if (alpha != 255)
+			gfx_draw_from_alpha(s, x + xoff0, y + yoff0, w, h, d, xx + xoff, yy + yoff, alpha);
+		else
+			gfx_draw_from(s, x + xoff0, y + yoff0, w, h, d, xx + xoff, yy + yoff);
 		break;
 	case BLIT_COPY:
 		gfx_copy_from(s, x + xoff0, y + yoff0, w, h, d, xx + xoff, yy + yoff);
@@ -499,7 +496,6 @@ static int luaB_blit_sprite(lua_State *L, int mode) {
 	}
 
 	gfx_noclip();
-	gfx_free_image(img2);
 	lua_pushboolean(L, 1);
 	return 1;
 }

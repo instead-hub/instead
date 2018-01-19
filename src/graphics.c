@@ -1289,6 +1289,28 @@ void gfx_draw_bg(img_t p, int x, int y, int width, int height)
 	gfx_set_alpha(p, a);
 }
 
+void gfx_draw_from_alpha(img_t s, int x, int y, int w, int h, img_t d, int xx, int yy, int alpha)
+{
+#if SDL_VERSION_ATLEAST(1,3,0)
+	SDL_BlendMode  blendMode;
+	Uint8	sdl_alpha = SDL_ALPHA_OPAQUE;
+	SDL_GetSurfaceBlendMode(Surf(s), &blendMode);
+	SDL_GetSurfaceAlphaMod(Surf(s), &sdl_alpha);
+
+	SDL_SetSurfaceAlphaMod(Surf(s), alpha);
+	SDL_SetSurfaceBlendMode(Surf(s), SDL_BLENDMODE_BLEND);
+
+	gfx_draw_from(s, x, y, w, h, d, xx, yy);
+	SDL_SetSurfaceBlendMode(Surf(s), blendMode);
+	SDL_SetSurfaceAlphaMod(Surf(s), sdl_alpha);
+#else
+	img_t img;
+	img = gfx_alpha_img(s, alpha);
+	gfx_draw_from((img)?img:s, x, y, w, h, d, xx, yy);
+	gfx_free_image(img);
+#endif
+}
+
 void gfx_draw_from(img_t p, int x, int y, int width, int height, img_t to, int xx, int yy)
 {
 	SDL_Surface *pixbuf = Surf(p);

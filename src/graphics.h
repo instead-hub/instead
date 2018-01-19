@@ -133,6 +133,7 @@ extern img_t	gfx_rotate(img_t src, float angle, int smooth);
 
 extern void	gfx_draw_bg(img_t p, int x, int y, int width, int height);
 extern void	gfx_draw_from(img_t p, int x, int y, int width, int height, img_t to, int xx, int yy);
+extern void	gfx_draw_from_alpha(img_t s, int x, int y, int w, int h, img_t d, int xx, int yy, int alpha);
 extern void	gfx_compose_from(img_t p, int x, int y, int width, int height, img_t to, int xx, int yy);
 
 extern int	gfx_cursor(int *xp, int *yp);
