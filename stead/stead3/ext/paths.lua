@@ -1,6 +1,9 @@
 local std = stead
 local instead = std.ref '@instead'
-
+-- luacheck: read globals instead_savepath
+-- luacheck: read globals instead_gamepath
+-- luacheck: read globals instead_exepath
+-- luacheck: globals io
 instead.savepath = instead_savepath
 std.savepath = instead_savepath
 instead.gamepath = instead_gamepath

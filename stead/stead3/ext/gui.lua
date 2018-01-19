@@ -12,6 +12,10 @@ local instead = std.obj {
 	end;
 }
 
+-- luacheck: read globals instead_clipboard
+-- luacheck: read globals instead_wait_use
+-- luacheck: no self
+
 instead.clipboard = instead_clipboard
 instead.wait_use = instead_wait_use
 
@@ -121,7 +125,9 @@ end)
 
 instead.nopic = false
 
+-- luacheck: push ignore savedpicture
 local savedpicture
+-- luacheck: pop
 instead.get_picture = std.cacheable('pic', function()
 	if get_bool(instead, 'nopic') then
 		return
@@ -214,13 +220,15 @@ function iface:title() -- hide title
 	return
 end
 
+-- luacheck: globals stat
 std.stat = std.class({
 	__stat_type = true;
 }, std.obj);
 
+-- luacheck: globals menu
 std.menu = std.class({
 	__menu_type = true;
-	new = function(self, v)
+	new = function(_, v)
 		if type(v) ~= 'table' then
 			std.err ("Wrong argument to std.menu:"..std.tostr(v), 2)
 		end

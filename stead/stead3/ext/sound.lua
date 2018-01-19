@@ -4,6 +4,16 @@ local std = stead
 
 local instead = std.ref '@instead'
 
+-- luacheck: globals instead_sound_load
+-- luacheck: globals instead_sound_free
+-- luacheck: globals instead_sounds_free
+-- luacheck: globals instead_sound_channel
+-- luacheck: globals instead_sound_volume
+-- luacheck: globals instead_sound_panning
+-- luacheck: globals instead_sound_load_mem
+-- luacheck: globals instead_music_callback
+-- luacheck: globals instead_sound
+
 instead.sound_load = instead_sound_load
 instead.sound_free = instead_sound_free
 instead.sounds_free = instead_sounds_free
@@ -91,7 +101,7 @@ function instead.stop_music()
 	instead.set_music(nil, -1);
 end
 
-std.mod_done(function(s)
+std.mod_done(function(_)
 	instead.music_callback() -- halt music mixer
 	instead.stop_music()
 	instead.stop_sound() -- halt all
@@ -100,7 +110,7 @@ end)
 
 local sounds = {}
 
-std.mod_cmd(function(s)
+std.mod_cmd(function(_)
 	if std 'game':time() > 0 then
 		sounds = {}
 		instead.set_sound(); -- empty sound

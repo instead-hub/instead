@@ -2,6 +2,7 @@
 local std = stead
 local input = std.ref '@input'
 local table = table
+local instead = std.ref '@instead'
 
 finger = std.obj {
 	nam = '@finger';

@@ -1,5 +1,5 @@
 -- raw iface to timer
-
+-- luacheck: read globals instead_timer
 local std = stead
 local type = std.type
 
@@ -28,7 +28,7 @@ local timer = std.obj {
 		instead.timer(s.__timer)
 		return true
 	end;
-	callback = function(s)
+	callback = function(_)
 		return '@timer'
 	end
 }
@@ -40,7 +40,7 @@ std.timer = function() -- sdl part call this one
 	return
 end
 
-std.mod_done(function(s)
+std.mod_done(function(_)
 	timer:stop()
 end)
 
