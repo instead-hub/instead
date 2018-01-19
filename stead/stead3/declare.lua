@@ -1,3 +1,5 @@
+-- luacheck: globals const global declare
+
 local declarations = {}
 local variables = {}
 local std = stead
@@ -77,14 +79,14 @@ function std.declare(n)
 	return __declare(n, 'declare')
 end
 
-local function depends(t, tables, deps)
+local function do_depends(t, tables, deps)
 	if type(t) ~= 'table' then return end
 	if tables[t] then
 		deps[t] = tables[t]
 	end
 	for _, v in pairs(t) do
 		if type(v) == 'table' and not std.getmt(v) then
-			depends(v, tables, deps)
+			do_depends(v, tables, deps)
 		end
 	end
 end
@@ -135,7 +137,7 @@ local function mod_save(fp)
 	for k, _ in pairs(variables) do
 		local d = {}
 		local o = rawget(_G, k)
-		depends(o, tables, d)
+		do_depends(o, tables, d)
 		if k == tables[o] then -- self depend
 			d[o] = nil
 		end
@@ -210,7 +212,7 @@ end
 
 std.obj {
 	nam = '@declare';
-	ini = function(s, ...)
+	ini = function(_, ...)
 -- init all list objs
 		for _, v in pairs(declarations) do
 			if std.is_obj(v.value, 'list') then

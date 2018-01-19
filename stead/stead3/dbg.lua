@@ -1,3 +1,6 @@
+-- luacheck: globals dprint
+-- luacheck: read globals walk disable enable drop take remove
+
 local std = stead
 local type = std.type
 local table = std.table
@@ -8,6 +11,7 @@ local ipairs = std.ipairs
 local okey
 local txt = std.ref '@iface'
 local instead = std.ref '@instead'
+local iface = txt
 
 local kbden = {
 	shifted = {
@@ -37,8 +41,8 @@ local kbden = {
 local kbdalt = false
 
 local function txt_esc(s)
-	local rep = function(s)
-		return txt:nb(s)
+	local rep = function(self)
+		return txt:nb(self)
 	end
 	if not s then return end
 	local r = s:gsub("[<>]+", rep):gsub("[ \t]", rep);
@@ -55,8 +59,8 @@ local function dispof(v)
 	return d
 end
 
-local function show_obj(s, v, pfx, verbose)
-	local wh = v:where()
+local function show_obj(s, o, pfx, verbose)
+	local wh = o:where()
 	if wh then
 		wh = '@'..std.tostr(std.nameof(wh))..'['..(dispof(wh))..']'
 	else
@@ -64,27 +68,28 @@ local function show_obj(s, v, pfx, verbose)
 	end
 	s:printf("%s%s%snam: %s%s | disp:%s\n",
 		pfx or '',
-		v:disabled() and '%' or '',
-		v:closed() and '-' or '',
-		std.tostr(std.nameof(v)),
+		o:disabled() and '%' or '',
+		o:closed() and '-' or '',
+		std.tostr(std.nameof(o)),
 		wh,
-		dispof(v))
+		dispof(o))
 	if verbose then
-		for k, v in pairs(v) do
+		for k, v in pairs(o) do
 			s:printf("*[%s] = %s\n", std.tostr(k), std.dump(v) or 'n/a')
 		end
 		return
 	end
-	for k, v in ipairs(v.obj) do
+	for _, v in ipairs(o.obj) do
 		pfx = (pfx or '' .. '    ')
 		show_obj(s, v, pfx)
 	end
 end
 
-local function show_room(s, v)
-	s:printf("nam: %s | title: %s | disp: %s\n", std.tostr(std.nameof(v)), std.titleof(v) or 'n/a', dispof(v))
+local function show_room(s, o)
+	s:printf("nam: %s | title: %s | disp: %s\n",
+		std.tostr(std.nameof(o)), std.titleof(o) or 'n/a', dispof(o))
 	s:printf("    way: ")
-	for k, v in ipairs(v.way) do
+	for k, v in ipairs(o.way) do
 		if k ~= 1 then
 			s:printf(" | ")
 		end
@@ -191,7 +196,7 @@ local	commands = {
 		{ nam = 'inv',
 			act = function(s)
 				s:printf("[inventory]\n")
-				for k, v in ipairs(std.me():inventory()) do
+				for _, v in ipairs(std.me():inventory()) do
 					show_obj(s, v, '    ')
 				end
 			end;
@@ -225,8 +230,8 @@ local	commands = {
 				s:printf("[room]\n    ")
 				show_room(s, v)
 				s:printf("[objects]\n")
-				for k, v in ipairs(std.here().obj) do
-					show_obj(s, v, '    ')
+				for _, o in ipairs(std.here().obj) do
+					show_obj(s, o, '    ')
 				end
 			end;
 		};
@@ -242,13 +247,13 @@ local	commands = {
 		},
 		{
 			nam = 'global',
-			act = function(s, par)
+			act = function(s, _)
 				show_decl(s, 'global')
 			end
 		},
 		{
 			nam = 'const',
-			act = function(s, par)
+			act = function(s, _)
 				show_decl(s, 'const')
 			end
 		}
@@ -401,7 +406,7 @@ Some useful commands:
 		local last_found
 		for k, v in ipairs(cmd) do
 			found = nil
-			for i, c in ipairs(cur) do
+			for _, c in ipairs(cur) do
 				if v == c.nam then
 					cur = c
 					found = k
@@ -430,13 +435,13 @@ Some useful commands:
 		end
 		if #cmd == 0 then
 			if par then
-				local var = {}
+				local vars = {}
 				std.for_each_obj(function(v, var)
 					if std.tostr(v.nam):find(par, 1, true) == 1 and std.tostr(v.nam) ~= par then
 						table.insert(var, std.tostr(v.nam))
 					end
-				end, var)
-				return var
+				end, vars)
+				return vars
 			end
 			return
 		end
@@ -454,7 +459,6 @@ Some useful commands:
 local embed =	{
 	on = false;
 	key_shift = false;
-	key_ctrl = false;
 	cursor = 1;
 	input = '';
 	output = [[INSTEAD dbg 0.1
@@ -482,7 +486,7 @@ local function theme_var(a, b)
 	return ov
 end
 
-local function theme_reset(a)
+local function theme_reset()
 	for k, v in pairs(theme) do
 		instead.theme_var(k, v)
 	end
@@ -497,7 +501,7 @@ local function instead_func(a)
 	std.rawset(instead, a, function() end)
 end
 
-local function instead_reset(a)
+local function instead_reset()
 	for k, v in pairs(funcs) do
 		std.rawset(instead, k, v)
 	end
@@ -525,12 +529,11 @@ local dbg = std.obj {
 	embed;
 	{ commands = commands },
 	enable = function(s)
-		local instead = std.ref '@instead'
 		instead_func('get_picture')
 		instead_func('get_fading')
 		instead_func('get_title')
 		instead_func('get_ways')
-		render_callback = _'@sprite'.render_callback(false)
+		render_callback = (std.ref '@sprite').render_callback(false)
 --		s.last_timer = timer:get()
 --		timer:stop()
 		std_debug('input')
@@ -563,7 +566,7 @@ local dbg = std.obj {
 		std_debug()
 		std.nostrict = s.__nostrict
 		instead_reset()
-		_'@sprite'.render_callback(render_callback)
+		std.ref('@sprite').render_callback(render_callback)
 		iface:raw_mode(false)
 	--	timer:set(s.last_timer)
 		std.game:lastdisp(s.__last_disp)
@@ -574,7 +577,7 @@ local dbg = std.obj {
 		return pre, post
 	end;
 	eval = function(s, fn, ...)
-		local st, r, v = std.pcall(fn, ...)
+		local st, r, _ = std.pcall(fn, ...)
 		if not st then
 --			s:printf("%s\n", r)
 			return false, r
@@ -610,7 +613,7 @@ local dbg = std.obj {
 			return
 		end
 		s.hint = ''
-		for k, v in ipairs(hint) do
+		for _, v in ipairs(hint) do
 			s.hint = s.hint .. v .. ' '
 		end
 	end;
@@ -633,17 +636,17 @@ local dbg = std.obj {
 		return c.act(s, par)
 	end;
 	dsc = function(s) -- display debugger
-		pr (txt_esc(s.output))
+		std.pr (txt_esc(s.output))
 		if s.kbd_alt_xlat then
-			pr (txt:bold '&')
+			std.pr (txt:bold '&')
 		else
-			pr (txt:bold ' ')
+			std.pr (txt:bold ' ')
 		end
 		local pre, post = s:inp_split()
-		pr (txt:bold '$ '.. txt:bold(txt_esc(pre))..txt:bold '|'..txt:bold(txt_esc(post)) ..'\n')
+		std.pr (txt:bold '$ '.. txt:bold(txt_esc(pre))..txt:bold '|'..txt:bold(txt_esc(post)) ..'\n')
 		if s.hint == '' then s.hint = '?' end
-		pr (s.hint ..'\n')
-		pr (txt:anchor())
+		std.pr (s.hint ..'\n')
+		std.pr (txt:anchor())
 	end;
 	key = function(s, press, key)
 		if key:find 'shift' then
@@ -728,8 +731,6 @@ local function utf_ff(b, pos)
 	end
 	return l
 end
-
-local timer = std.ref '@timer'
 
 local function key_xlat(s)
 	local kbd
@@ -881,7 +882,7 @@ end
 dprint = std.dprint
 local oldlang
 local hooked = false
-std.mod_start(function(load)
+std.mod_start(function(_)
 	local st, r
 	if oldlang ~= LANG then
 		st, r = std.pcall(function() return require ('dbg-'..LANG) end)
@@ -896,7 +897,7 @@ std.mod_start(function(load)
 		okey = input.key;
 		hooked = true
 	end
-	std.rawset(input, 'key', function(self, ...) return dbg:key(...) or (okey and okey(input, ...)) end)
+	std.rawset(input, 'key', function(_, ...) return dbg:key(...) or (okey and okey(input, ...)) end)
 end, -100)
 
 std.mod_done(function()

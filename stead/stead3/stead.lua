@@ -1,7 +1,8 @@
 -- STEAD3 API
 
--- luacheck: globals iface init start stead DEBUG
--- luacheck: globals doencfile instead_readdir instead_random table_get_maxn instead_srandom
+-- luacheck: globals iface init start stead
+-- luacheck: read globals DEBUG doencfile instead_readdir instead_random table_get_maxn instead_srandom
+
 stead = {
 	space_delim = ' ',
 	scene_delim = '^^',

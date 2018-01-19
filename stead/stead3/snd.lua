@@ -1,1 +1,2 @@
-snd = std.ref '@snd'
+-- luacheck: globals snd
+snd = stead.ref '@snd'

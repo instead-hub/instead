@@ -1,6 +1,7 @@
 local std = stead
 local input = std.ref '@input'
-local type = std.type
+
+-- luacheck: globals keys
 
 keys = std.obj {
 	nam = '@keys';
@@ -23,7 +24,9 @@ keys = std.obj {
 		end
 		s.__state[key] = press
 	end;
+-- luacheck: no unused args
 	filter = function(s, press, key)
+-- luacheck: unused args
 		return false
 	end
 }

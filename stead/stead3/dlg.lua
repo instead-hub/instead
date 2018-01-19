@@ -1,3 +1,5 @@
+-- luacheck: read globals iface
+
 local std = stead
 local type = std.type
 local table = std.table
@@ -56,7 +58,7 @@ std.dlg = std.class({
 		end
 		return std.par(std.scene_delim, title or false, lact or false, dsc)
 	end;
-	ph_onact = function(s, w) -- show dsc by default
+	ph_onact = function(_, w) -- show dsc by default
 		if not std.phrase_show then
 			return
 		end
@@ -83,7 +85,7 @@ std.dlg = std.class({
 		s.__llact = false
 		s.__stack = {}
 		s.current = nil
-		s:for_each(function(s) s:open() end) -- open all phrases
+		s:for_each(function(self) self:open() end) -- open all phrases
 		local r, v = std.call(s, 'dlg_enter', ...)
 		if std.here() ~= s or #s.__stack > 0 then
 			return r, v
@@ -240,9 +242,9 @@ std.dlg = std.class({
 
 std.phr = std.class({
 	__phr_type = true;
-	new = function(s, v)
+	new = function(s, t)
 		local disabled
-		local a = v
+		local a = t
 		local o = {
 			obj = {}
 		}
@@ -320,6 +322,7 @@ std.phr = std.class({
 		return not s:disabled() and not s:closed()
 	end;
 	act = function(s, ...)
+		local r, _
 		local n = s
 --		s = s:__alias()
 		local onact, v = std.call(std.here(), 'ph_onact', s)
@@ -339,7 +342,7 @@ std.phr = std.class({
 		end
 		local cur = std.here().current
 
-		local r, v = std.call(s, 'ph_act', ...)
+		r, _ = std.call(s, 'ph_act', ...)
 
 		r = std.par(std.scene_delim, onact or false, r or false)
 

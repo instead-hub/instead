@@ -1,10 +1,13 @@
 local std = stead
 local input = std.ref '@input'
-local type = std.type
+
+-- luacheck: globals click
 
 click = std.obj {
 	nam = '@click';
+-- luacheck: no unused args
 	filter = function(s, press, btn, x, y, px, py)
+-- luacheck: unused args
 		return press and px
 	end
 }

@@ -1,29 +1,53 @@
+-- luacheck: read globals declare
+
 local std = stead
 local type = std.type
+-- luacheck: read globals game
 std.rawset(_G, 'std', stead)
+-- luacheck: globals include
 include = std.include
+-- luacheck: globals loadmod
 loadmod = std.loadmod
+-- luacheck: globals rnd
 rnd = std.rnd
+-- luacheck: globals rnd_seed
 rnd_seed = std.rnd_seed
+-- luacheck: globals p
 p = std.p
+-- luacheck: globals pr
 pr = std.pr
+-- luacheck: globals pn
 pn = std.pn
+-- luacheck: globals pf
 pf = std.pf
+-- luacheck: globals obj
 obj = std.obj
+-- luacheck: globals stat
 stat = std.stat
+-- luacheck: globals room
 room = std.room
+-- luacheck: globals menu
 menu = std.menu
+-- luacheck: globals dlg
 dlg = std.dlg
+-- luacheck: globals me
 me = std.me
+-- luacheck: globals here
 here = std.here
+-- luacheck: globals from
 from = std.from
+-- luacheck: globals new
 new = std.new
+-- luacheck: globals delete
 delete = std.delete
 -- nameof = std.nameof
 -- dispof = std.dispof
 -- titleof = std.titleof
+-- luacheck: globals gamefile
 gamefile = std.gamefile
+-- luacheck: globals player
 player = std.player
+-- luacheck: globals dprint
 dprint = std.dprint
 
 local function _pfn(f1, f2, ...)
@@ -45,6 +69,7 @@ local function _pfn(f1, f2, ...)
 	end
 end
 
+-- luacheck: globals pfn
 function pfn(f, ...)
 	local a = {...}
 	if type(f) == 'function' then
@@ -55,6 +80,7 @@ function pfn(f, ...)
 	end
 end
 
+-- luacheck: globals from
 function from(ww)
 	local wh
 	ww = ww or std.here()
@@ -76,16 +102,19 @@ local function walkroom(w)
 	return w
 end
 
+-- luacheck: globals visits
 function visits(w)
 	if not w then return std.here():visits() end
 	return std.object(walkroom(w)):visits()
 end
 
+-- luacheck: globals visited
 function visited(w)
 	if not w then return std.here():visited() end
 	return std.object(walkroom(w)):visited()
 end
 
+-- luacheck: globals walk
 function walk(w, ...)
 	local r, v = std.me():walk(walkroom(w), ...)
 	if std.cctx() and type(r) == 'string' then
@@ -94,12 +123,14 @@ function walk(w, ...)
 	return r, v
 end
 
+-- luacheck: globals life_walk
 function life_walk(w, ...)
 	game:reaction(false)
 	game:events(false, false)
 	return walk(w, ...)
 end
 
+-- luacheck: globals walkin
 function walkin(w, ...)
 	local r, v = std.me():walkin(walkroom(w), ...)
 	if std.cctx() and type(r) == 'string' then
@@ -108,6 +139,7 @@ function walkin(w, ...)
 	return r, v
 end
 
+-- luacheck: globals walkout
 function walkout(w, ...)
 	local r, v = std.me():walkout(walkroom(w), ...)
 	if std.cctx() and type(r) == 'string' then
@@ -116,15 +148,16 @@ function walkout(w, ...)
 	return r, v
 end
 
+-- luacheck: globals walkback
 function walkback(w, ...)
-	return walkout(w, false)
+	return walkout(w, false, ...)
 end
 
 std.walkout = walkout
 std.walkin = walkin
 std.walk = walk
 
-function object(w)
+local function object(w)
 	local o
 	if std.is_tag(w) then
 		o = std.here():lookup(w)
@@ -143,10 +176,14 @@ function object(w)
 	return o
 end
 std.object = object
+
+-- luacheck: globals _
 _ = std.object
 
+-- luacheck: globals for_all
 for_all = std.for_all
 
+-- luacheck: globals seen
 function seen(w, ww)
 	local wh
 	ww = ww or std.here()
@@ -161,6 +198,7 @@ function seen(w, ww)
 	return wh:srch(w)
 end
 
+-- luacheck: globals lookup
 function lookup(w, ww)
 	local wh
 	ww = ww or std.here()
@@ -175,6 +213,7 @@ function lookup(w, ww)
 	return wh:lookup(w)
 end
 
+-- luacheck: globals ways
 function ways(ww)
 	local wh
 	ww = ww or std.here()
@@ -186,6 +225,7 @@ function ways(ww)
 end
 std.ways = ways
 
+-- luacheck: globals objs
 function objs(ww)
 	local wh
 	ww = ww or std.here()
@@ -196,50 +236,62 @@ function objs(ww)
 	return wh.obj
 end
 
+-- luacheck: globals inspect
 function inspect(w, ...)
 	return std.me():inspect(std.object(w), ...)
 end
 
+-- luacheck: globals have
 function have(w, ...)
 	return std.me():have(std.object(w), ...)
 end
 
+-- luacheck: globals inroom
 function inroom(w, ...)
 	return std.object(w):inroom(...)
 end
 
+-- luacheck: globals where
 function where(w, ...)
 	return std.object(w):where(...)
 end
 
+-- luacheck: globals closed
 function closed(w)
 	return std.object(w):closed()
 end
 
+-- luacheck: globals disabled
 function disabled(w)
 	return std.object(w):disabled()
 end
 
+-- luacheck: globals enable
 function enable(w)
 	return std.object(w):enable()
 end
 
+-- luacheck: globals disable
 function disable(w)
 	return std.object(w):disable()
 end
 
+-- luacheck: globals open
 function open(w)
 	return std.object(w):open()
 end
 
+-- luacheck: globals close
 function close(w)
 	return std.object(w):close()
 end
 
+-- luacheck: globals actions
 function actions(w, t, v)
 	return std.object(w):actions(t, v)
 end
 
+-- luacheck: globals pop
 function pop(w, ww)
 	local wh = ww or std.here()
 	if not std.is_obj(wh, 'dlg') then
@@ -252,6 +304,7 @@ function pop(w, ww)
 	return r, v
 end
 
+-- luacheck: globals push
 function push(w, ww)
 	local wh = ww or std.here()
 	if not std.is_obj(wh, 'dlg') then
@@ -264,6 +317,7 @@ function push(w, ww)
 	return r, v
 end
 
+-- luacheck: globals empty
 function empty(w, ...)
 	if not w then
 		return std.here():empty()
@@ -271,22 +325,27 @@ function empty(w, ...)
 	return std.object(w):empty(...)
 end
 
+-- luacheck: globals lifeon
 function lifeon(w, ...)
 	return std 'game':lifeon(w and std.object(w), ...)
 end
 
+-- luacheck: globals lifeoff
 function lifeoff(w, ...)
 	return std 'game':lifeoff(w and std.object(w), ...)
 end
 
+-- luacheck: globals live
 function live(...)
 	return std 'game':live(...)
 end
 
+-- luacheck: globals change_pl
 function change_pl(w, ...)
 	return std 'game':set_pl(w and std.object(w), ...)
 end
 
+-- luacheck: globals player_moved
 function player_moved(pl)
 	pl = pl or std.me()
 	pl = std.ref(pl)
@@ -296,6 +355,7 @@ function player_moved(pl)
 	return std.me():moved()
 end
 
+-- luacheck: globals inv
 function inv(pl)
 	pl = pl or std.me()
 	pl = std.ref(pl)
@@ -305,6 +365,7 @@ function inv(pl)
 	return pl:inventory()
 end
 
+-- luacheck: globals remove
 function remove(w, wh)
 	local o = std.object(w)
 	if not w then
@@ -314,6 +375,7 @@ function remove(w, wh)
 	return o:remove(wh)
 end
 
+-- luacheck: globals purge
 function purge(w)
 	local o = std.object(w)
 	if not w then
@@ -351,6 +413,7 @@ local function __place(w, wh, remove)
 	return o
 end
 
+-- luacheck: globals replace
 function replace(w, ww, wh)
 	local o = std.object(w)
 	if not o then
@@ -388,14 +451,17 @@ function replace(w, ww, wh)
 	end
 end
 
+-- luacheck: globals place
 function place(w, wh)
 	return __place(w, wh, true)
 end
 
+-- luacheck: globals put
 function put(w, wh)
 	return __place(w, wh, false)
 end
 
+-- luacheck: globals take
 function take(w)
 	local o = std.object(w)
 	if o then
@@ -404,6 +470,7 @@ function take(w)
 	return place(w, std.me():inventory())
 end
 
+-- luacheck: globals drop
 function drop(w, wh)
 	local o = std.object(w)
 	if o then
@@ -412,9 +479,10 @@ function drop(w, wh)
 	return place(w, wh)
 end
 
+-- luacheck: globals path
 path = std.class({
 	__path_type = true;
-	new = function(self, t)
+	new = function(_, t)
 		if type(t) ~= 'table' then
 			std.err("Wrong path argument. Use {} as path argument.", 2)
 		end
@@ -453,7 +521,7 @@ path = std.class({
 		end
 		return std.call(s, 'before')
 	end;
-	onwalk = function(s, f)
+	onwalk = function(s, _)
 		local w = s.walk
 		if type(w) == 'function' then
 			w = w()
@@ -465,6 +533,7 @@ path = std.class({
 	end;
 }, std.room)
 
+-- luacheck: globals time
 function time(...)
 	return std.ref 'game':time(...)
 end

@@ -1,5 +1,6 @@
+-- luacheck: globals snapshots
+
 local std = stead
-local type = std.type
 
 local SNAPSHOT = false
 local INWRITE = false
@@ -15,14 +16,14 @@ local snap = std.obj {
 		name = name or 'default'
 		local fp = { -- fake file object
 			data = '';
-			write = function(s, str)
-				s.data = s.data .. str
+			write = function(self, str)
+				self.data = self.data .. str
 			end;
 		}
 		INWRITE = true std:save(fp) INWRITE = false
 		s.data[name] = fp.data
 	end;
-	make = function(s, name)
+	make = function(_, name)
 		SNAPSHOT = name or 'default'
 	end;
 	exists = function(s, name)

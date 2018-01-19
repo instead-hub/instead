@@ -2,6 +2,8 @@ local std = stead
 local type = std.type
 local iface = std.ref '@iface'
 
+-- luacheck: globals fmt
+
 fmt = std.obj {
 	nam = '@format';
 	para = false;
@@ -13,7 +15,7 @@ fmt = std.obj {
 }
 
 std.format = function(r, state)
-	local utf8 = (game.codepage == 'UTF-8' or game.codepage == 'utf-8')
+	local utf8 = (std.ref 'game'.codepage == 'UTF-8' or std.ref 'game'.codepage == 'utf-8')
 
 	if type(r) ~= 'string' then
 		return r

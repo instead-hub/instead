@@ -1,6 +1,6 @@
+-- luacheck: globals finger
 local std = stead
 local input = std.ref '@input'
-local type = std.type
 local table = table
 
 finger = std.obj {
@@ -8,7 +8,9 @@ finger = std.obj {
 	{
 		fingers_list = { };
 	};
+-- luacheck: no unused args
 	filter = function(s, press, fid, x, y, px, py) -- by default, all finger events
+-- luacheck: unused args
 		return true
 	end
 }
@@ -25,7 +27,7 @@ function finger:event(press, fid, x, y, px, py)
 		end
 		return
 	end
-	local v, k = s:lookup(fid)
+	local _, k = s:lookup(fid)
 	if k then
 		table.remove(s.fingers_list, k)
 	end
@@ -47,10 +49,10 @@ end
 
 function finger:get(fid)
 	local s = self
-	local v, k
+	local _, k
 	local x, y, pressure = instead.finger_pos(fid)
 	if not x then
-		v, k = s:lookup(fid)
+		_, k = s:lookup(fid)
 		if k then
 			table.remove(s.fingers_list, k)
 		end

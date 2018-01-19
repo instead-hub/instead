@@ -1,8 +1,10 @@
+-- luacheck: globals prefs
+
 local std = stead
 
 local preferences = std.obj {
 	nam = '@prefs',
-	load = function(s)
+	load = function(_)
 		local name = std.savepath() .. '/prefs';
 		local f, err = std.loadfile(name);
 		if not f then
@@ -19,7 +21,7 @@ local preferences = std.obj {
 	save = function(s) -- save prefs on every save
 		local name = std.savepath() .. '/prefs';
 		local name_tmp = name..'.tmp'
-		local fp, err = std.io.open(name_tmp, "wb");
+		local fp, _ = std.io.open(name_tmp, "wb");
 		if not fp then
 			return false
 		end
@@ -29,7 +31,7 @@ local preferences = std.obj {
 		std.os.remove(name)
 		return std.os.rename(name_tmp, name);
 	end,
-	purge = function(s)
+	purge = function(_)
 		local name = std.savepath() .. '/prefs';
 		return std.os.remove(name);
 	end
