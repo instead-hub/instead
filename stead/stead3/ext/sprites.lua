@@ -574,5 +574,6 @@ stead.mod_init(function()
 end)
 
 stead.mod_done(function()
+	sprite.render_callback() -- stop render
 --	instead.sprites_free();
 end)
