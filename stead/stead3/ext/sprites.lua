@@ -52,6 +52,7 @@ local theme = std.obj {
 		menu = { gfx = {}};
 		gfx = {};
 		snd = {};
+		scr = {};
 	};
 }
 
@@ -96,6 +97,14 @@ end
 
 function theme.get(...)
 	return instead.theme_var(...);
+end
+
+function theme.scr.w()
+	return tonumber(theme.get 'scr.w')
+end
+
+function theme.scr.h()
+	return tonumber(theme.get 'scr.h')
 end
 
 function theme.win.reset()
