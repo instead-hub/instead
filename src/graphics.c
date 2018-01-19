@@ -731,24 +731,6 @@ img_t	gfx_grab_screen(int x, int y, int w, int h)
 #if SDL_VERSION_ATLEAST(2,0,0)
 static SDL_RendererInfo SDL_VideoRendererInfo;
 
-SDL_Surface *SDL_DisplayFormatAlpha(SDL_Surface * surface)
-{
-/*	SDL_PixelFormat *format; */
-	SDL_Surface *converted;
-	if (!screen) {
-		fprintf(stderr, "No video mode has been set.\n");
-		return NULL;
-	}
-/*	format = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB8888);
-	if (surface->format->Amask == 0 && surface->format->palette)
-		SDL_SetColorKey(surface, SDL_TRUE, *(Uint8*)surface->pixels); */
-	converted = SDL_ConvertSurface(surface, Surf(screen)->format, 0); /* SDL_RLEACCEL); */
-	if (converted)
-		SDL_SetSurfaceBlendMode(converted, SDL_BLENDMODE_BLEND);
-/*	SDL_FreeFormat(format); */
-	return converted;
-}
-
 SDL_Surface *SDL_DisplayFormat(SDL_Surface * surface)
 {
 	SDL_PixelFormat *format;
@@ -759,12 +741,19 @@ SDL_Surface *SDL_DisplayFormat(SDL_Surface * surface)
 		return NULL;
 	}
 	format = Surf(screen)->format;
-/*	format = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB8888); */
-	converted = SDL_ConvertSurface(surface, format, 0);/* SDL_RLEACCEL); */
-	/* Set the flags appropriate for copying to display surface */
-/*	SDL_FreeFormat(format); */
+	converted = SDL_ConvertSurface(surface, format, 0);
 	return converted;
 }
+
+SDL_Surface *SDL_DisplayFormatAlpha(SDL_Surface * surface)
+{
+	SDL_Surface *converted;
+	converted = SDL_DisplayFormat(surface);
+	if (converted)
+		SDL_SetSurfaceBlendMode(converted, SDL_BLENDMODE_BLEND);
+	return converted;
+}
+
 #endif
 img_t gfx_display_alpha(img_t src)
 {
@@ -775,6 +764,12 @@ img_t gfx_display_alpha(img_t src)
 		return src;
 	if (is_anigif(src)) /* already optimized */
 		return src;
+#if SDL_VERSION_ATLEAST(2,0,0)
+	if (Surf(screen)->format == Surf(src)->format) { /* fast path! */
+		SDL_SetSurfaceBlendMode(Surf(src), SDL_BLENDMODE_BLEND);
+		return src;
+	}
+#endif
 	res = SDL_DisplayFormatAlpha(Surf(src));
 	if (!res)
 		return src;
