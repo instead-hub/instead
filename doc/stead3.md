@@ -4923,7 +4923,7 @@ theme.inv.mode 'disabled'
 У созданного спрайтового объекта существуют следующие методы:
 
 - :alpha(alpha) - создает новый спрайт с заданной прозрачностью alpha
-  (255 - не прозрачно);
+  (255 - не прозрачно). Это очень медленная функция;
 - :dup() - создает копию спрайта;
 - :scale(xs, ys, [smooth]) -- масштабирует спрайт, для отражений
   используйте масштаб -1.0 (медленно! не для реального времени). Создает
@@ -5014,7 +5014,7 @@ function game:timer()
 	local col = { 'red', 'green', 'blue'}
 	col = col[rnd(3)]
 	spr:fill(col)
-	return false
+	return false -- Важно! Так, сцена не будет изменена
 end
 
 game.pic = spr
@@ -5026,6 +5026,71 @@ end
 room {
 	nam = 'main';
 	decor = [[ГИПНОЗ!]];
+}
+```
+
+#### Отрисовка в фон
+
+Функция sprite.scr() возвращает спрайт - фон. Вы можете выполнять
+отрисовку в этот спрайт в любом обработчике, например, в таймере. Тем
+самым добиваясь изменения фона на лету, без применения модуля theme.
+Например:
+
+```
+--$Author: Andrew Lobanov
+
+require 'sprite'
+require 'theme'
+require 'timer'
+
+declare {
+   x = 0,
+   y = 0,
+   dx = 10,
+   dy = 10,
+}
+
+const {
+   w = theme.get 'scr.w',
+   h = theme.get 'scr.h',
+}
+
+instead.fading = false
+
+local bg, red, green
+
+function init()
+   bg = sprite.new(w, h)
+   bg:fill('black')
+   red = sprite.new(w, h)
+   red:fill('#ff0000')
+   red = red:alpha(128)
+   green = sprite.new(w, h)
+   green:fill('#00ff00')
+   green = green:alpha(64)
+   bg:copy(sprite.scr())
+   timer:set(25)
+end
+
+function game:timer()
+   bg:copy(sprite.scr())
+   red:draw(sprite.scr(), x, 0, 128)
+   green:draw(sprite.scr(), 0, y, 64)
+   x = x + dx
+   if x == w or x == 0 then
+	  dx = -dx
+   end
+   y = y + dy
+   if y == g or y == 0 then
+	  dy = -dy
+   end
+   return false -- Важно!
+end
+
+room {
+   nam = 'main',
+   disp = 'Test. Test? Test!',
+   decor = 'Lorem ipsum';
 }
 ```
 
@@ -5064,7 +5129,7 @@ room {
 	scr.gfx.mode = direct
 
 Этот параметр можно заранее выставить в theme.ini, или воспользоваться
-модулем theme. Или, специальной функцией:
+модулем theme. Или (что лучше), специальной функцией:
 
 	sprite.direct(true)
 
