@@ -11,7 +11,7 @@ ENDIF("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 SET(INSTEAD_VERSION "3.2.0")
 
 # options
-OPTION(WITH_SDL2 "Use SDL2 instead of SDL 1" OFF)
+OPTION(WITH_SDL2 "Use SDL2 instead of SDL 1" ON)
 OPTION(WITH_GTK2 "Use GTK2 file open dialog" ON)
 OPTION(WITH_GTK3 "Use GTK3 file open dialog" OFF)
 OPTION(WITH_ICONV "Build with iconv support" ON)
