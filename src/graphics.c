@@ -5673,6 +5673,7 @@ err:
 int gfx_init(void)
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 	if (render_sw)
 		SDL_SetHint(SDL_HINT_RENDER_DRIVER, render_sw);
 #if defined(_WIN32) /* do not use buggy D3D by default: fullscreen problem with NVidia */

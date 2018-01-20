@@ -4893,6 +4893,13 @@ theme.win.geom (0,0, theme.get 'scr.w', theme.get 'scr.h');
 theme.inv.mode 'disabled'
 ```
 
+Получить размеры текущей темы:
+
+```
+theme.scr.w() -- ширина
+theme.scr.w() -- высота
+```
+
 ### Модуль sprite
 
 Модуль sprite позволяет работать с графическими изображениями.
@@ -5051,8 +5058,8 @@ declare {
 }
 
 const {
-   w = tonumber(theme.get 'scr.w'),
-   h = tonumber(theme.get 'scr.h'),
+   w = theme.scr.w(),
+   h = theme.scr.h(),
 }
 
 instead.fading = false
@@ -5199,7 +5206,7 @@ function game:timer()
 end
 
 function start()
-	w, h = theme.get 'scr.w', theme.get 'scr.h'
+	w, h = theme.scr.w(), theme.scr.h()
 
 	w = std.tonum(w)
 	h = std.tonum(h)
