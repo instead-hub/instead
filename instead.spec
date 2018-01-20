@@ -8,7 +8,7 @@ Source0:	%{name}_%{version}.tar.gz
 Group:		Amusements/Games
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires: SDL-devel, SDL_mixer-devel, SDL_image-devel, SDL_ttf-devel, lua-devel
+BuildRequires: SDL2-devel, SDL2_mixer-devel, SDL2_image-devel, SDL2_ttf-devel, lua-devel
 
 %description
 Simple text adventures/visual novels engine and game

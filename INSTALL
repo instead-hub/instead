@@ -34,7 +34,7 @@ Or use ppa with latest version:
 2) On Debian based systems you can build deb package
 ====================================================
 
-	$ sudo apt-get install liblua5.2-dev libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev libsdl2-mixer-dev
+	$ sudo apt-get install liblua5.1-dev libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev libsdl2-mixer-dev
 	$ sudo apt-get install build-essential debhelper
 	$ debuild
 	$ cd ..
