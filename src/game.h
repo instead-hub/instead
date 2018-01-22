@@ -60,6 +60,7 @@ extern char	*appdir(void);
 
 extern void	game_clear(int x, int y, int w, int h);
 extern void	game_clear_all(void);
+extern void	game_redraw_all(void);
 
 extern char	*game_local_games_path(int cr);
 extern char	*game_local_themes_path(void);

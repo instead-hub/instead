@@ -916,9 +916,16 @@ static int luaB_instead_direct(lua_State *L) {
 	lua_pushboolean(L, 1);
 	return 1;
 }
+static unsigned long busy_time = 0;
 
+void instead_ready(void)
+{
+	if (menu_visible() == menu_wait) {
+		menu_toggle(-1);
+	}
+	busy_time = 0;
+}
 static int luaB_stead_busy(lua_State *L) {
-	static unsigned long busy_time = 0;
 	int busy = lua_toboolean(L, 1);
 	if (busy) {
 		struct inp_event ev;
@@ -926,6 +933,8 @@ static int luaB_stead_busy(lua_State *L) {
 		memset(&ev, 0, sizeof(ev));
 
 		if (!game_freezed()) {
+			if (game_bg_modify(NULL))
+				game_redraw_all();
 			game_flip();
 		}
 
@@ -944,10 +953,7 @@ static int luaB_stead_busy(lua_State *L) {
 			game_gfx_commit(0);
 		return 0;
 	}
-	if (menu_visible() == menu_wait) {
-		menu_toggle(-1);
-	}
-	busy_time = 0;
+	instead_ready();
 	return 0;
 }
 

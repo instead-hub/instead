@@ -1818,6 +1818,7 @@ static void after_click(int flags, int m_restore)
 #endif
 }
 
+extern void instead_ready(void);
 static void after_cmd(void)
 {
 	game_autosave();
@@ -1835,10 +1836,9 @@ static void after_fading(void *aux)
 	after_cmd();
 	game_cursor(CURSOR_DRAW);
 	game_flip();
-
 }
 
-static void game_redraw_all(void)
+void game_redraw_all(void)
 {
 	if (menu_shown || DIRECT_MODE)
 		return;
@@ -1894,7 +1894,7 @@ int game_cmd(char *cmd, int flags)
 	else
 		cmdstr = instead_cmd(cmd, &rc);
 	instead_unlock();
-
+	instead_ready();
 	if (opt_click && (flags & GAME_CMD_CLICK) && !rc)
 		sound_play_click();
 
