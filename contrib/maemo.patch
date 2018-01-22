@@ -1,30 +1,29 @@
 diff -Nur instead-3.2.0/debian/compat instead-3.2.0-maemo/debian/compat
---- instead-3.2.0/debian/compat	2017-12-22 21:31:51.000000000 +0300
-+++ instead-3.2.0-maemo/debian/compat	2018-01-20 11:44:31.036495289 +0300
+--- instead-3.2.0/debian/compat	2018-01-22 09:40:55.000000000 +0300
++++ instead-3.2.0-maemo/debian/compat	2018-01-22 09:51:26.888674608 +0300
 @@ -1 +1 @@
 -7
 +4
 diff -Nur instead-3.2.0/debian/control instead-3.2.0-maemo/debian/control
---- instead-3.2.0/debian/control	2018-01-20 11:41:26.000000000 +0300
-+++ instead-3.2.0-maemo/debian/control	2018-01-20 11:44:51.325005668 +0300
-@@ -2,7 +2,8 @@
+--- instead-3.2.0/debian/control	2018-01-22 09:40:55.000000000 +0300
++++ instead-3.2.0-maemo/debian/control	2018-01-22 09:51:37.144725842 +0300
+@@ -2,7 +2,7 @@
  Section: games
  Priority: optional
  Maintainer: Peter Kosyh <p.kosyh@gmail.com>
 -Build-Depends: debhelper (>= 7), pkg-config, liblua5.1-dev, libsdl2-dev, libsdl2-ttf-dev, libsdl2-image-dev, libsdl2-mixer-dev, zlib1g-dev
 +Build-Depends: debhelper (>= 5), pkg-config, liblua5.1-dev, libsdl1.2-dev, libsdl-ttf2.0-dev, libsdl-image1.2-dev, libsdl-mixer1.2-dev, zlib1g-dev
-+
  Standards-Version: 3.8.3
  Homepage: http://instead.sourceforge.net
  
-@@ -11,4 +12,3 @@
+@@ -11,4 +11,3 @@
  Depends: ${shlibs:Depends}, ${misc:Depends}
  Description: simple text adventures/visual novels engine
   Visual novell/text quest-like engine.
 -
 diff -Nur instead-3.2.0/debian/rules instead-3.2.0-maemo/debian/rules
---- instead-3.2.0/debian/rules	2017-12-22 21:31:51.000000000 +0300
-+++ instead-3.2.0-maemo/debian/rules	2018-01-20 11:44:31.040495392 +0300
+--- instead-3.2.0/debian/rules	2018-01-22 09:40:55.000000000 +0300
++++ instead-3.2.0-maemo/debian/rules	2018-01-22 09:51:26.888674608 +0300
 @@ -61,7 +61,7 @@
  install: build
  	dh_testdir
@@ -35,8 +34,8 @@ diff -Nur instead-3.2.0/debian/rules instead-3.2.0-maemo/debian/rules
  
  	# Add here commands to install the package into debian/instead.
 diff -Nur instead-3.2.0/desktop/instead.desktop.in instead-3.2.0-maemo/desktop/instead.desktop.in
---- instead-3.2.0/desktop/instead.desktop.in	2017-12-22 21:31:51.000000000 +0300
-+++ instead-3.2.0-maemo/desktop/instead.desktop.in	2018-01-20 11:44:31.040495392 +0300
+--- instead-3.2.0/desktop/instead.desktop.in	2018-01-22 09:40:55.000000000 +0300
++++ instead-3.2.0-maemo/desktop/instead.desktop.in	2018-01-22 09:51:26.888674608 +0300
 @@ -13,4 +13,8 @@
  Exec=@BIN@/sdl-instead
  Icon=sdl_instead
@@ -47,8 +46,8 @@ diff -Nur instead-3.2.0/desktop/instead.desktop.in instead-3.2.0-maemo/desktop/i
 +StartupWMClass=instead
  Categories=Game;LogicGame;
 diff -Nur instead-3.2.0/desktop/Makefile instead-3.2.0-maemo/desktop/Makefile
---- instead-3.2.0/desktop/Makefile	2017-12-22 21:31:51.000000000 +0300
-+++ instead-3.2.0-maemo/desktop/Makefile	2018-01-20 11:44:31.040495392 +0300
+--- instead-3.2.0/desktop/Makefile	2018-01-22 09:40:55.000000000 +0300
++++ instead-3.2.0-maemo/desktop/Makefile	2018-01-22 09:51:26.888674608 +0300
 @@ -10,9 +10,9 @@
  	cat instead.desktop.in | sed -e "s|@BIN@|$(BIN)|g" > instead.desktop
  
@@ -63,8 +62,8 @@ diff -Nur instead-3.2.0/desktop/Makefile instead-3.2.0-maemo/desktop/Makefile
 +	$(RM) $(DESTDIR)$(PREFIX)/share/applications/hildon/instead.desktop
  
 diff -Nur instead-3.2.0/Rules.make.system instead-3.2.0-maemo/Rules.make.system
---- instead-3.2.0/Rules.make.system	2017-12-22 21:31:51.000000000 +0300
-+++ instead-3.2.0-maemo/Rules.make.system	2018-01-20 11:44:31.040495392 +0300
+--- instead-3.2.0/Rules.make.system	2018-01-22 09:40:55.000000000 +0300
++++ instead-3.2.0-maemo/Rules.make.system	2018-01-22 09:51:26.888674608 +0300
 @@ -28,7 +28,7 @@
  SDL_CFLAGS=$(shell sdl-config --cflags)
  SDL_LFLAGS=$(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer -lSDL_image -lm
@@ -75,8 +74,8 @@ diff -Nur instead-3.2.0/Rules.make.system instead-3.2.0-maemo/Rules.make.system
  INSTALLD=install -d -m 0755
  INSTALLB=install -m 0755
 diff -Nur instead-3.2.0/src/instead/util.h instead-3.2.0-maemo/src/instead/util.h
---- instead-3.2.0/src/instead/util.h	2017-12-22 21:31:51.000000000 +0300
-+++ instead-3.2.0-maemo/src/instead/util.h	2018-01-20 11:44:31.040495392 +0300
+--- instead-3.2.0/src/instead/util.h	2018-01-22 09:40:55.000000000 +0300
++++ instead-3.2.0-maemo/src/instead/util.h	2018-01-22 09:51:26.888674608 +0300
 @@ -52,7 +52,7 @@
  #define FREE(v) do { if ((v)) free((v)); v = NULL; } while(0)
  
@@ -87,8 +86,8 @@ diff -Nur instead-3.2.0/src/instead/util.h instead-3.2.0-maemo/src/instead/util.
   #ifdef _USE_SDL_ICONV
    #include <SDL_stdinc.h>
 diff -Nur instead-3.2.0/src/sound.c instead-3.2.0-maemo/src/sound.c
---- instead-3.2.0/src/sound.c	2018-01-14 21:09:18.000000000 +0300
-+++ instead-3.2.0-maemo/src/sound.c	2018-01-20 11:44:31.048495597 +0300
+--- instead-3.2.0/src/sound.c	2018-01-22 09:40:55.000000000 +0300
++++ instead-3.2.0-maemo/src/sound.c	2018-01-22 09:51:26.888674608 +0300
 @@ -32,7 +32,9 @@
  
  #include <SDL.h>
@@ -101,8 +100,8 @@ diff -Nur instead-3.2.0/src/sound.c instead-3.2.0-maemo/src/sound.c
  int audio_rate = 11025;
  #else
 diff -Nur instead-3.2.0/themes/default/theme.ini instead-3.2.0-maemo/themes/default/theme.ini
---- instead-3.2.0/themes/default/theme.ini	2017-12-22 21:31:51.000000000 +0300
-+++ instead-3.2.0-maemo/themes/default/theme.ini	2018-01-20 11:44:31.048495597 +0300
+--- instead-3.2.0/themes/default/theme.ini	2018-01-22 09:40:56.000000000 +0300
++++ instead-3.2.0-maemo/themes/default/theme.ini	2018-01-22 09:51:26.888674608 +0300
 @@ -5,7 +5,7 @@
  ; $Name(it): Predefinito$
  
@@ -142,8 +141,8 @@ diff -Nur instead-3.2.0/themes/default/theme.ini instead-3.2.0-maemo/themes/defa
  snd.click = click.wav ; click.ogg
  
 diff -Nur instead-3.2.0/themes/wide/theme.ini instead-3.2.0-maemo/themes/wide/theme.ini
---- instead-3.2.0/themes/wide/theme.ini	2017-12-22 21:31:51.000000000 +0300
-+++ instead-3.2.0-maemo/themes/wide/theme.ini	2018-01-20 11:44:31.048495597 +0300
+--- instead-3.2.0/themes/wide/theme.ini	2018-01-22 09:40:57.000000000 +0300
++++ instead-3.2.0-maemo/themes/wide/theme.ini	2018-01-22 09:51:26.888674608 +0300
 @@ -3,10 +3,3 @@
  ; $Name(uk):Широка$
  ; $Name(es):Amplio$
