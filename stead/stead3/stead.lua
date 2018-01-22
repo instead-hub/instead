@@ -1936,8 +1936,12 @@ std.world = std.class({
 		end
 
 		if v == false or std.abort_cmd then
-			std.mod_call('step', false)
-			return r, v -- wrong cmd?
+			if cmd[1] == 'save' then
+				std.mod_call('step', nil)
+			else
+				std.mod_call('step', v)
+			end
+			return r, v
 		end
 -- v is true or nil
 		s = std.game -- after reset game is recreated
@@ -1945,8 +1949,8 @@ std.world = std.class({
 
 		if v then
 			s:step()
-			std.mod_call('step', v)
 		end
+		std.mod_call('step', v)
 		r = s:display(v)
 		if v then
 			s:lastreact(s:reaction() or false)
