@@ -2327,11 +2327,15 @@ int menu_visible(void)
 	return 0;
 }
 
+int game_freezed(void)
+{
+	return browse_dialog || menu_shown || gfx_fading() || minimized();
+}
+
+
 int game_paused(void)
 {
-	return browse_dialog || menu_shown ||
-		(use_xref && game_wait_use) ||
-		gfx_fading() || minimized() || instead_busy();
+	return game_freezed() || (use_xref && game_wait_use) || instead_busy();
 }
 
 void menu_update(struct el *elem)

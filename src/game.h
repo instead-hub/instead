@@ -125,6 +125,8 @@ extern char 	*game_save_path(int rc, int nr);
 
 extern char 	*game_locale(void);
 
+extern int	game_freezed(void);
+
 extern int	game_paused(void);
 
 extern char	*open_file_dialog(void);

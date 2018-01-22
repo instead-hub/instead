@@ -924,6 +924,11 @@ static int luaB_stead_busy(lua_State *L) {
 		struct inp_event ev;
 		int dirty = 0;
 		memset(&ev, 0, sizeof(ev));
+
+		if (!game_freezed()) {
+			game_flip();
+		}
+
 		while (input(&ev, 0) == AGAIN);
 		if (ev.type == MOUSE_MOTION) {
 			game_cursor(CURSOR_ON); /* to make all happy */
@@ -2443,7 +2448,7 @@ static int render_callback_dirty = 0;
 int instead_render_callback_dirty(int fl)
 {
 	int rc = render_callback_dirty;
-	if (!callback_ref || game_paused())
+	if (!callback_ref || game_freezed())
 		return 0;
 	if (fl != -1)
 		render_callback_dirty = fl;
@@ -2452,7 +2457,7 @@ int instead_render_callback_dirty(int fl)
 
 void instead_render_callback(void)
 {
-	if (!callback_ref || game_paused() || render_callback_dirty == -1)
+	if (!callback_ref || game_freezed() || render_callback_dirty == -1)
 		return;
 
 	game_cursor(CURSOR_CLEAR);
