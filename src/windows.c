@@ -140,9 +140,11 @@ extern void unix_path(char *);
 
 char *sdl_path(char *p)
 {
+#if 0
 	char *r = mbs2utf8(p);
 	if (p)
 		free(p);
+#endif
 	unix_path(r);
 	return r;
 }

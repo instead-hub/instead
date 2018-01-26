@@ -290,7 +290,35 @@ int parse_path(const char *v, void *data)
 	unix_path(*p);
 	return 0;
 }
+#ifdef _WIN32
+static char *wchar2utf(const wchar_t *wc)
+{
+	char *buf;
+	int size = WideCharToMultiByte (CP_UTF8, 0, wc, -1, NULL, 0, NULL, NULL);
+	if (!size)
+		return NULL;
+	buf = malloc(size);
+	WideCharToMultiByte (CP_UTF8, 0, wc, -1, buf, size, NULL, NULL);
+	return buf;
+}
 
+char *w32_getdir(char *path, size_t size)
+{
+	wchar_t *wp;
+	char *p = NULL;
+	path[0] = 0;
+	wp = _getcwd(NULL, 0);
+	if (!wp)
+		return path;
+	p = wchar2utf(wp);
+	free(wp);
+	if (!p)
+		return path;
+	snprintf(path, size, "%s", p);
+	free(p);
+	return path;
+}
+#endif
 int parse_full_path(const char *v, void *data)
 {
 	char cwd[PATH_MAX];
@@ -302,7 +330,11 @@ int parse_full_path(const char *v, void *data)
 		*p = strdup("");
 		return (*p)?0:-1;
 	}
+#ifdef _WIN32
+	w32_getdir(cwd, sizeof(cwd));
+#else
 	getdir(cwd, sizeof(cwd));
+#endif
 	*p = malloc(strlen(v) + strlen(cwd) + 2);
 	if (!*p)
 		return -1;
