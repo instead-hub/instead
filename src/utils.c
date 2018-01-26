@@ -292,6 +292,8 @@ int parse_path(const char *v, void *data)
 }
 #ifdef _WIN32
 #include <wchar.h>
+#include <windows.h>
+
 static char *wchar2utf(const wchar_t *wc)
 {
 	char *buf;
@@ -308,7 +310,7 @@ char *w32_getdir(char *path, size_t size)
 	wchar_t *wp;
 	char *p = NULL;
 	path[0] = 0;
-	wp = _getcwd(NULL, 0);
+	wp = _wgetcwd(NULL, 0);
 	if (!wp)
 		return path;
 	p = wchar2utf(wp);

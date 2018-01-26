@@ -144,9 +144,12 @@ char *sdl_path(char *p)
 	char *r = mbs2utf8(p);
 	if (p)
 		free(p);
-#endif
 	unix_path(r);
 	return r;
+#else
+	unix_path(p);
+	return p;
+#endif
 }
 
 char *appdir( void );
