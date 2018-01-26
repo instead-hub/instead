@@ -1908,7 +1908,8 @@ int game_cmd(char *cmd, int flags)
 				goto fatal;
 			oldscreen = gfx_screen(offscreen);
 			gfx_copy(oldscreen, 0, 0);
-			game_theme_update();
+			if ((rc = game_theme_update()))
+				goto out;
 			offscreen = gfx_screen(oldscreen);
 			gfx_change_screen(offscreen, 1, NULL, NULL);
 			gfx_free_image(offscreen);
@@ -1983,7 +1984,8 @@ int game_cmd(char *cmd, int flags)
 	}
 
 	if (game_theme_changed) {
-		game_theme_update();
+		if ((rc = game_theme_update()))
+			goto out;
 		new_place = 1;
 		if (pict)
 			new_pict = 1;
