@@ -291,6 +291,7 @@ int parse_path(const char *v, void *data)
 	return 0;
 }
 #ifdef _WIN32
+#include <wchar.h>
 static char *wchar2utf(const wchar_t *wc)
 {
 	char *buf;
