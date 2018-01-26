@@ -286,7 +286,8 @@ int parse_path(const char *v, void *data)
 	*p = strdup(v);
 	if (!*p)
 		return -1;
-	*p = sdl_path(*p);
+	/* *p = sdl_path(*p); note: do not convert relative paths to avoid double encoding */
+	unix_path(*p);
 	return 0;
 }
 
