@@ -458,14 +458,22 @@ function sprite.new(w, h, ...)
 		local t = 'blank:'..std.tostr(std.math.floor(w))..'x'..std.tostr(std.math.floor(h))
 		return spr:new(instead.sprite_load(t))
 	end
-	return spr:new(instead.sprite_load(w, h, ...))
+	local sp = instead.sprite_load(w, h, ...)
+	if not sp then
+		std.err("Can not load sprite: "..std.tostr(w), 2);
+	end
+	return spr:new(sp)
 end
 
 function sprite.fnt(name, sz, ...)
 	if not std.tonum(sz) then
 		std.err("No font size specified in sprite:fnt().", 2)
 	end
-	return fnt:new(instead.font_load(name, sz, ...))
+	local fn = instead.font_load(name, sz, ...)
+	if not fn then
+		std.err("Can not load font: "..std.tostr(name), 2);
+	end
+	return fnt:new(fn)
 end
 
 function sprite.scr()
