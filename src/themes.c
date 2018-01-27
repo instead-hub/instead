@@ -273,7 +273,7 @@ static int theme_parse_full_path(const char *v, void *data)
 struct parser cmd_parser[] = {
 	{ "scr.w", parse_int, &game_theme.w, 0 },
 	{ "scr.h", parse_int, &game_theme.h, 0 },
-	{ "scr.gfx.scalable", parse_int, &game_theme.gfx_scalable, CHANGED_WIN | CHANGED_INV },
+	{ "scr.gfx.scalable", parse_int, &game_theme.gfx_scalable, CHANGED_WIN | CHANGED_INV | CHANGED_FONT | CHANGED_IFONT | CHANGED_MFONT },
 	{ "scr.col.bg", parse_color, &game_theme.bgcol, 0 },
 	{ "scr.gfx.icon", theme_parse_full_path, &game_theme.icon_name, CHANGED_ICON },
 	{ "scr.gfx.bg", theme_parse_full_path, &game_theme.bg_name, CHANGED_BG },
