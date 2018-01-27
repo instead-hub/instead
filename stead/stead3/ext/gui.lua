@@ -18,6 +18,7 @@ local instead = std.obj {
 
 instead.clipboard = instead_clipboard
 instead.wait_use = instead_wait_use
+instead.grab_events = instead_grab_events
 
 function instead.atleast(...)
 	for k, v in std.ipairs {...} do

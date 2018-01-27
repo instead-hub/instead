@@ -31,6 +31,7 @@ int game_running = 1;
 char	game_cwd[PATH_MAX];
 char	*curgame_dir = NULL;
 
+int game_grab_events = 0;
 int game_wait_use = 1;
 int game_own_theme = 0;
 int game_theme_changed = 0;
@@ -3068,7 +3069,6 @@ static int game_pic_click(int x, int y, int *ox, int *oy)
 static int game_bg_click(int mb, int x, int y, int *ox, int *oy)
 {
 	struct el *o = NULL;
-	xref_t xref;
 	struct game_theme *t = &game_theme;
 	int bg = 1;
 	if (x < t->xoff || y < t->yoff || x >= (t->w - t->xoff) || y >= (t->h - t->yoff))
@@ -3077,16 +3077,15 @@ static int game_bg_click(int mb, int x, int y, int *ox, int *oy)
 		o = look_obj(x, y);
 	*ox = (int)((float)(x - t->xoff) / (float)t->scale);
 	*oy = (int)((float)(y - t->yoff) / (float)t->scale);
-	if (o && (o->id == el_sup || o->id == el_sdown ||
+
+	if (!game_grab_events && ((o && (o->id == el_sup || o->id == el_sdown ||
 		o->id == el_iup || o->id == el_idown ||
-		o->id == el_menu_button))
+		o->id == el_menu_button)) ||
+		look_xref(x, y, NULL)))
 		return -1; /* ask Odyssey for that ;) */
-	xref = look_xref(x, y, NULL);
-	if (xref)
-		return -1;
+
 	if (bg || mb == EV_CODE_FINGER) /* fingers area may be larger */
 		return 0;
-
 	return -1;
 }
 

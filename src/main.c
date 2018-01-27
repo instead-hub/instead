@@ -273,9 +273,19 @@ static int luaB_wait_use(lua_State *L) {
 	return 1;
 }
 
+static int luaB_grab_events(lua_State *L) {
+	int grab = lua_toboolean(L, 1);
+	int ov = game_grab_events;
+	if (lua_isboolean(L, 1))
+		game_grab_events = grab;
+	lua_pushboolean(L, ov);
+	return 1;
+}
+
 static const luaL_Reg sdl_funcs[] = {
 	{ "instead_clipboard", luaB_clipboard },
 	{ "instead_wait_use", luaB_wait_use },
+	{"instead_grab_events", luaB_grab_events},
 	{NULL, NULL}
 };
 
@@ -283,6 +293,8 @@ static int sdl_ext_init(void)
 {
 	char path[PATH_MAX];
 	instead_api_register(sdl_funcs);
+	game_wait_use = 1;
+	game_grab_events = 0;
 	snprintf(path, sizeof(path), "%s/%s", instead_stead_path(), "/ext/gui.lua");
 	return instead_loadfile(dirpath(path));
 }
