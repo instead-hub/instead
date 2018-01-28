@@ -2713,7 +2713,7 @@ end
 local iface = std.obj {
 	nam = '@iface';
 	cmd = function(_, inp)
-		local cmd = cmd_parse(inp)
+		local cmd = std.cmd_parse(inp)
 		if std.debug_input then
 			std.dprint("* input: ", inp)
 		end
