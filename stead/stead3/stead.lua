@@ -2590,8 +2590,11 @@ std.method = function(v, n, ...)
 		std.callpop()
 		return a, b, c
 	end
-	if type(v[n]) == 'boolean'  or type(v[n]) == 'table' or type(v[n]) == 'userdata' then
+	if type(v[n]) == 'boolean' or type(v[n]) == 'table' then
 		return v[n], true
+	end
+	if type(v[n]) == 'userdata' then
+		return std.tostr(v[n]), true
 	end
 	std.err ("Method not string nor function:"..std.tostr(n), 2);
 end
