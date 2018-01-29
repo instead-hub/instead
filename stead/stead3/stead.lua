@@ -539,7 +539,7 @@ function std.class(self, inh)
 
 		t:__dirty(true)
 		if ro then
-			if (type(v) == 'function' and not std.functions[v]) or type(v) == 'userdata' then
+			if (type(v) == 'function' and not std.functions[v]) then
 				std.err("Wrong variable operation: "..std.tostr(k).. " at "..std.tostr(t), 2)
 			end
 			if std.nostrict or (type(k) == 'string' and k:find('^__')) or t.__var[k] or ro[k] ~= nil then
@@ -2592,9 +2592,6 @@ std.method = function(v, n, ...)
 	end
 	if type(v[n]) == 'boolean' or type(v[n]) == 'table' then
 		return v[n], true
-	end
-	if type(v[n]) == 'userdata' then
-		return std.tostr(v[n]), true
 	end
 	std.err ("Method not string nor function:"..std.tostr(n), 2);
 end

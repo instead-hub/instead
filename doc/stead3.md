@@ -5024,7 +5024,8 @@ function game:timer()
 	return false -- Важно! Так, сцена не будет изменена
 end
 
-game.pic = spr
+game.pic = function() return spr end -- функция: так как
+-- спрайт это особый объект (не строка)
 
 function start()
 	timer:set(30)
