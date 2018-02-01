@@ -1998,7 +1998,7 @@ int game_cmd(char *cmd, int flags)
 	if (new_place)
 		el_clear(el_title);
 
-	win_spacing = FONT_SZ(game_theme.font_size) * game_theme.font_height / 2;
+	win_spacing = game_theme.font_size * game_theme.font_height / 2;
 
 	if (title && *title) {
 		snprintf(buf, sizeof(buf), "<a:look>%s</a>", title);
