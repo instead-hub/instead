@@ -1885,6 +1885,8 @@ int game_cmd(char *cmd, int flags)
 	int		rc = 0;
 	int		new_scene = 0;
 	int		m_restore = 0;
+	int		win_spacing;
+
 	if (menu_shown)
 		return -1;
 /*	if (dd) */
@@ -1996,11 +1998,13 @@ int game_cmd(char *cmd, int flags)
 	if (new_place)
 		el_clear(el_title);
 
+	win_spacing = FONT_SZ(game_theme.font_size) * game_theme.font_height / 2;
+
 	if (title && *title) {
 		snprintf(buf, sizeof(buf), "<a:look>%s</a>", title);
 		txt_layout_set(el_layout(el_title), buf);
 		txt_layout_size(el_layout(el_title), NULL, &title_h);
-		title_h += game_theme.font_size * game_theme.font_height / 2; /* todo?	*/
+		title_h += win_spacing;
 	} else
 		txt_layout_set(el_layout(el_title), NULL);
 
@@ -2096,7 +2100,7 @@ int game_cmd(char *cmd, int flags)
 		txt_layout_set(el_layout(el_ways), waystr);
 		txt_layout_size(el_layout(el_ways), NULL, &ways_h);
 		if ((ways_h == 0 || WAYS_BOTTOM) && pict_h != 0)
-			pict_h += game_theme.font_size * game_theme.font_height / 2;
+			pict_h += win_spacing;
 	}
 	old_off = txt_box_off(el_box(el_scene));
 
