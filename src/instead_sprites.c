@@ -2541,6 +2541,7 @@ static int sprites_done(void)
 	if (callback_ref) {
 		luaL_unref(instead_lua(), LUA_REGISTRYINDEX, callback_ref);
 		callback_ref = 0;
+		render_callback_dirty = 0;
 	}
 	sprites_free();
 	return 0;
