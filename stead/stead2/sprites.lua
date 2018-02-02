@@ -80,19 +80,34 @@ sprite = {
 	end;
 	draw = function(s, fx, fy, fw, fh, d, x, y, alpha)
 		if d == nil and x == nil and y == nil then
-			return stead.sprite_draw(s, 0, 0, -1, -1, fx, fy, fw, fh);
+			d, x, y, alpha = fx, fy, fw, fh
+			fx, fy, fw, fh = 0, 0, -1, -1
 		end
 		return stead.sprite_draw(s, fx, fy, fw, fh, d, x, y, alpha);
 	end;
 	copy = function(s, fx, fy, fw, fh, d, x, y, alpha)
 		if d == nil and x == nil and y == nil then
-			return stead.sprite_copy(s, 0, 0, -1, -1, fx, fy, fw, fh);
+			d, x, y, alpha = fx, fy, fw, fh
+			fx, fy, fw, fh = 0, 0, -1, -1
+		end
+		if alpha then -- legacy undocumented feature ;)
+			local ss = sprite.alpha(s, alpha)
+			local r = stead.sprite_copy(ss, fx, fy, fw, fh, d, x, y, alpha);
+			sprite.free(ss)
+			return r
 		end
 		return stead.sprite_copy(s, fx, fy, fw, fh, d, x, y, alpha);
 	end;
 	compose = function(s, fx, fy, fw, fh, d, x, y, alpha)
 		if d == nil and x == nil and y == nil then
-			return stead.sprite_compose(s, 0, 0, -1, -1, fx, fy, fw, fh);
+			d, x, y, alpha = fx, fy, fw, fh
+			fx, fy, fw, fh = 0, 0, -1, -1
+		end
+		if alpha then -- legacy undocumented feature ;)
+			local ss = sprite.alpha(s, alpha)
+			local r = stead.sprite_compose(ss, fx, fy, fw, fh, d, x, y, alpha);
+			sprite.free(ss)
+			return r
 		end
 		return stead.sprite_compose(s, fx, fy, fw, fh, d, x, y, alpha);
 	end;
