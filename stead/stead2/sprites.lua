@@ -90,10 +90,10 @@ sprite = {
 			d, x, y, alpha = fx, fy, fw, fh
 			fx, fy, fw, fh = 0, 0, -1, -1
 		end
-		if alpha then -- legacy undocumented feature ;)
-			local ss = sprite.alpha(s, alpha)
+		if alpha then
+			local ss = stead.sprite_alpha(s, alpha)
 			local r = stead.sprite_copy(ss, fx, fy, fw, fh, d, x, y, alpha);
-			sprite.free(ss)
+			stead.sprite_free(ss)
 			return r
 		end
 		return stead.sprite_copy(s, fx, fy, fw, fh, d, x, y, alpha);
@@ -103,10 +103,10 @@ sprite = {
 			d, x, y, alpha = fx, fy, fw, fh
 			fx, fy, fw, fh = 0, 0, -1, -1
 		end
-		if alpha then -- legacy undocumented feature ;)
-			local ss = sprite.alpha(s, alpha)
+		if alpha then
+			local ss = stead.sprite_alpha(s, alpha)
 			local r = stead.sprite_compose(ss, fx, fy, fw, fh, d, x, y, alpha);
-			sprite.free(ss)
+			stead.sprite_free(ss)
 			return r
 		end
 		return stead.sprite_compose(s, fx, fy, fw, fh, d, x, y, alpha);

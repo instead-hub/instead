@@ -405,28 +405,28 @@ end
 
 function spr:draw(fx, fy, fw, fh, d, x, y, alpha)
 	if d == nil and x == nil and y == nil then
-		instead.sprite_draw(self.spr, 0, 0, -1, -1, spr_get(fx), fy, fw, fh);
-		return fx
+		d, x, y, alpha = fx, fy, fw, fh
+		fx, fy, fw, fh = 0, 0, -1, -1
 	end
 	instead.sprite_draw(self.spr, fx, fy, fw, fh, spr_get(d), x, y, alpha);
 	return d
 end
 
-function spr:copy(fx, fy, fw, fh, d, x, y, alpha)
+function spr:copy(fx, fy, fw, fh, d, x, y)
 	if d == nil and x == nil and y == nil then
-		instead.sprite_copy(self.spr, 0, 0, -1, -1, spr_get(fx), fy, fw, fh);
-		return fx
+		d, x, y = fx, fy, fw
+		fx, fy, fw, fh = 0, 0, -1, -1
 	end
-	instead.sprite_copy(self.spr, fx, fy, fw, fh, spr_get(d), x, y, alpha);
+	instead.sprite_copy(self.spr, fx, fy, fw, fh, spr_get(d), x, y);
 	return d
 end
 
-function spr:compose(fx, fy, fw, fh, d, x, y, alpha)
+function spr:compose(fx, fy, fw, fh, d, x, y)
 	if d == nil and x == nil and y == nil then
-		instead.sprite_compose(self.spr, 0, 0, -1, -1, spr_get(fx), fy, fw, fh);
-		return fx
+		d, x, y = fx, fy, fw
+		fx, fy, fw, fh = 0, 0, -1, -1
 	end
-	instead.sprite_compose(self.spr, fx, fy, fw, fh, spr_get(d), x, y, alpha);
+	instead.sprite_compose(self.spr, fx, fy, fw, fh, spr_get(d), x, y);
 	return d
 end
 
