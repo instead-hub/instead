@@ -495,7 +495,7 @@ static int luaB_blit_sprite(lua_State *L, int mode) {
 		break;
 	}
 
-	gfx_noclip();
+	game_gfx_noclip();
 	lua_pushboolean(L, 1);
 	return 1;
 }
@@ -739,7 +739,7 @@ static int luaB_fill_sprite(lua_State *L) {
 	game_pict_modify(d);
 	game_gfx_clip();
 	gfx_img_fill(d, x + xoff, y + yoff, w, h, col);
-	gfx_noclip();
+	game_gfx_noclip();
 	lua_pushboolean(L, 1);
 	return 1;
 }

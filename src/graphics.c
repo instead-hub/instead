@@ -529,10 +529,6 @@ int	gfx_img_h(img_t pixmap)
 	return Surf(pixmap)->h;
 }
 
-void gfx_noclip(void)
-{
-	SDL_SetClipRect(Surf(screen), NULL);
-}
 
 void gfx_getclip(int *x, int *y, int *w, int *h)
 {
@@ -550,14 +546,29 @@ void gfx_getclip(int *x, int *y, int *w, int *h)
 		*h = clip.h;
 }
 
-void gfx_clip(int x, int y, int w, int h)
+void gfx_img_noclip(img_t img)
+{
+	SDL_SetClipRect(Surf(img), NULL);
+}
+
+void gfx_noclip(void)
+{
+	gfx_img_noclip(screen);
+}
+
+void gfx_img_clip(img_t img, int x, int y, int w, int h)
 {
 	SDL_Rect src;
 	src.x = x;
 	src.y = y;
 	src.w = w;
 	src.h = h;
-	SDL_SetClipRect(Surf(screen), &src);
+	SDL_SetClipRect(Surf(img), &src);
+}
+
+void gfx_clip(int x, int y, int w, int h)
+{
+	gfx_img_clip(screen, x, y, w, h);
 }
 
 #define GFX_IMG(v) gfx_new_img(v, 0, NULL, 0)

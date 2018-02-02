@@ -1361,7 +1361,7 @@ void el_draw(int n)
 		box_update_scrollbar(o->id);
 	}
 	o->drawn = 1;
-	gfx_noclip();
+	game_gfx_noclip();
 	return;
 }
 
@@ -1769,9 +1769,22 @@ static void game_pict_clip(void)
 
 void game_gfx_clip(void)
 {
+	if (game_theme.bg) {
+		gfx_img_clip(game_theme.bg, game_theme.xoff, game_theme.yoff,
+		game_theme.w - 2 * game_theme.xoff,
+		game_theme.h - 2 * game_theme.yoff);
+	}
 	gfx_clip(game_theme.xoff, game_theme.yoff,
 		game_theme.w - 2 * game_theme.xoff,
 		game_theme.h - 2 * game_theme.yoff);
+}
+
+void game_gfx_noclip(void)
+{
+	if (game_theme.bg) {
+		gfx_img_noclip(game_theme.bg);
+	}
+	gfx_noclip();
 }
 
 static void game_redraw_pic(void)
