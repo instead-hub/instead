@@ -31,7 +31,7 @@
   * new: instead.wait_use();
   * new: theme.scr.w(), theme.scr.h() (read only);
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 20 Jan 2018 13:35:00 +0300
+ -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 2 Feb 2018 17:01:00 +0300
 
 3.1.2
 
