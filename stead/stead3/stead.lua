@@ -2399,7 +2399,7 @@ local function __dump(t, nested)
 		local nkeys = {}
 		local keys = {}
 		for k, v in pairs(t) do
-			if type(v) ~= 'function' and type(v) ~= 'userdata' then
+			if (type(v) ~= 'function' or std.functions[v]) and type(v) ~= 'userdata' then
 				if type(k) == 'number' then
 					table.insert(nkeys, { key = k, val = v })
 				elseif k:find("__", 1, true) ~= 1 then
