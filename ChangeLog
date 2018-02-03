@@ -21,17 +21,18 @@
   * new: walkback() in stdlib;
   * new: math.round;
   * new: std.var for variable extensions;
-  * new: instead.clipboard() added (SDL2 only);
   * new: -renderer <opengl|direct3d|software|opengles|opengles2> parameter;
   * new: -nocursor parameter;
   * new: SailfishOS port;
   * new: WinRT patches for upcoming port;
   * new: sprite.scr() returns background in non direct mode;
   * new: sprite.render_callback() (yahoooo!);
+  * new: instead.clipboard() added (SDL2 only);
   * new: instead.wait_use();
+  * new: instead.grab_events();
   * new: theme.scr.w(), theme.scr.h() (read only);
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 2 Feb 2018 17:01:00 +0300
+ -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 3 Feb 2018 12:24:00 +0300
 
 3.1.2
 
