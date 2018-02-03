@@ -172,12 +172,16 @@ function instead.fading()
 end
 
 function instead.get_restart()
-	return instead.__restart or false
+	local restart = instead.__restart or false
+	instead.__restart = nil
+	return restart
 end
 
 
 function instead.get_menu()
-	return instead.__menu
+	local menu = instead.__menu
+	instead.__menu = nil
+	return menu
 end
 
 instead.nosave = false
@@ -207,14 +211,15 @@ end
 function instead.menu(n)
 	if n == nil then
 		n = 'main'
-	elseif type(n) ~= 'string' then
+	elseif type(n) ~= 'string' and n ~= false then
 		n = 'toggle'
 	end
 	instead.__menu = n
 end
 
 function instead.restart(v)
-	instead.__restart = (v == false) and false or true
+	if v == false then v = false else v = true end
+	instead.__restart = v
 end
 
 function iface:title() -- hide title

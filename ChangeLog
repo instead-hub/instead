@@ -13,6 +13,7 @@
   * fix: always = true in dialog phrase;
   * fix: use opengl on Windows instead d3d (nvidia fullscreen bug);
   * fix: win32 and path encoding problem;
+  * fix: instead.menu();
   * enh: Android port improvements;
   * enh: click on bg not passed when xref selected (module click);
   * enh: documentation;
