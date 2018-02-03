@@ -1524,7 +1524,6 @@ int game_menu_box(int show, const char *txt)
 	}
 	rc = game_menu_box_width(show, txt, w);
 	if (!show) {
-		game_render_callback_redraw();
 		game_event("resume");
 	}
 #ifdef __EMSCRIPTEN__
@@ -1872,7 +1871,7 @@ void game_redraw_all(void)
 static int game_render_callback_redraw(void)
 {
 	if (instead_render_callback_dirty(0) == -1) {
-		instead_render_callback_dirty(1);
+		instead_render_callback_dirty(1); /* disable updates */
 		game_redraw_all();
 		return 1;
 	}
@@ -1904,7 +1903,7 @@ int game_cmd(char *cmd, int flags)
 		return -1;
 /*	if (dd) */
 		game_cursor(CURSOR_CLEAR);
-	game_render_callback_redraw();
+
 	instead_lock();
 	if (flags & GAME_CMD_FILE) /* file command */
 		cmdstr = instead_file_cmd(cmd, &rc);
@@ -1941,6 +1940,7 @@ int game_cmd(char *cmd, int flags)
 	}
 
 	if (!cmdstr) {
+		game_render_callback_redraw();
 		if (game_bg_modify(NULL)) {
 			game_redraw_all();
 		} else if (game_pict_modify(NULL)) /* redraw pic only */
@@ -1989,9 +1989,6 @@ int game_cmd(char *cmd, int flags)
 		fading = 1; /* one frame at least */
 
 	if (fading) { /* take old screen */
-/*		game_render_callback_redraw();
-		instead_render_callback();
-		instead_render_callback_dirty(0); */
 		game_cursor(CURSOR_CLEAR);
 		img_t offscreen = gfx_new(game_theme.w, game_theme.h);
 		if (!offscreen)
@@ -1999,6 +1996,8 @@ int game_cmd(char *cmd, int flags)
 		oldscreen = gfx_screen(offscreen);
 		gfx_copy(oldscreen, 0, 0);
 	}
+
+	game_render_callback_redraw();
 
 	if (game_theme_changed) {
 		if ((rc = game_theme_update()))
@@ -2248,6 +2247,8 @@ void game_update(int x, int y, int w, int h)
 
 void game_xref_update(xref_t xref, int x, int y)
 {
+	if (instead_render_callback_dirty(-1) == -1)
+		return;
 	game_cursor(CURSOR_CLEAR);
 	xref_update(xref, x, y, game_clear, game_update);
 }
@@ -3555,7 +3556,6 @@ static __inline int game_cycle(void)
 	struct inp_event ev;
 	ev.x = -1;
 
-
 	/* game_cursor(CURSOR_CLEAR); */ /* release bg */
 	if (((rc = input(&ev, 1)) == AGAIN) && !need_restart) {
 		game_gfx_commit(1);
@@ -3564,8 +3564,6 @@ static __inline int game_cycle(void)
 
 	if (!rc || gfx_fading()) /* just skip */
 		return 0;
-
-	game_render_callback_redraw();
 
 	if (rc == -1) {/* close */
 		goto out;
@@ -3585,6 +3583,7 @@ static __inline int game_cycle(void)
 	if (gfx_fading()) /* just fading */
 		return 0;
 
+	game_render_callback_redraw();
 	if (need_restart) {
 		need_restart = 0;
 		game_menu_act("/new");
