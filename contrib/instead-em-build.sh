@@ -245,15 +245,17 @@ Module['postRun'].push(function() {
 			FS.writeFile(url, new Int8Array(data), { encoding: 'binary' }, "w");
 			console.log("Running...");
 			var args = [];
-			[ "instead-em", url, "-standalone" ].forEach(function(item) {
+			[ "instead-em", url, "-standalone", "-window", "-resizable", "-mode" ].forEach(function(item) {
 				args.push(allocate(intArrayFromString(item), 'i8', ALLOC_NORMAL));
 				args.push(0); args.push(0); args.push(0);
 			})
 			args = allocate(args, 'i32', ALLOC_NORMAL);
 			setTimeout(function() {
 				Module.setStatus('');
+				document.getElementById('status').style.display = 'none';
 			}, 3);
-			Module.ccall('instead_main', 'number', ["number", "number"], [3, args ]);
+			window.onclick = function(){ window.focus() };
+			Module.ccall('instead_main', 'number', ["number", "number"], [6, args ]);
 		});
 	}
 	req.send(null);
