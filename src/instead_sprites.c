@@ -276,6 +276,7 @@ static int luaB_text_size(lua_State *L) {
 
 	const char *font = luaL_optstring(L, 1, NULL);
 	const char *text = luaL_optstring(L, 2, NULL);
+	int style = luaL_optnumber(L, 3, 0);
 
 	if (!font)
 		return 0;
@@ -291,6 +292,7 @@ static int luaB_text_size(lua_State *L) {
 		else
 			h = fnt_height(fn->fnt);
 	} else {
+		fnt_style(fn->fnt, style);
 		txt_size(fn->fnt, text, &w, &h);
 		if (fn->flags & FN_SCALED) {
 			w = ceil((float)w / game_theme.scale);
