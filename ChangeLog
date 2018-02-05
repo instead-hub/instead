@@ -15,6 +15,7 @@
   * fix: win32 and path encoding problem;
   * fix: instead.menu();
   * fix: save declared functions in tables;
+  * fix: sprite font:size with style;
   * enh: Android port improvements;
   * enh: click on bg not passed when xref selected (module click);
   * enh: documentation;
