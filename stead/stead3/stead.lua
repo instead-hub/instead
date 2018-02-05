@@ -83,10 +83,10 @@ std.rnd = function(...)
 end
 
 std.rnd_seed = function(...)
+	std.math.randomseed(...)
 	if std.randomseed then
 		return std.randomseed(...)
 	end
-	std.math.randomseed(...)
 end
 
 function stead:abort()
@@ -2460,6 +2460,16 @@ function std.dump(t)
 	return rc
 end
 
+function std.clone(src)
+	if type(src) ~= 'table' then return src end
+	local dst = {}
+	local k, v
+	for k, v in pairs(src) do
+		dst[std.clone(k)] = std.clone(src[k])
+	end
+	return dst
+end
+
 function std.new(fn, ...)
 	if not std.game then
 		std.err ("You can not use new() from global context.", 2)
@@ -2471,7 +2481,11 @@ function std.new(fn, ...)
 		std.err ("Function is not declared in 1-st argument of std.new", 2)
 	end
 	local arg = { ... }
-
+	for i = 1, #arg do
+		if type(arg[i]) == 'table' then -- do clone
+			arg[i] = std.clone(arg[i])
+		end
+	end
 	local o = in_section ('new', function() return fn(std.unpack(arg)) end)
 
 	if type(o) ~= 'table' then
