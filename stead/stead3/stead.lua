@@ -2381,6 +2381,8 @@ local function __dump(t, nested)
 		if std.functions[t] then
 			local k = std.functions[t]
 			return string.format("%s", k)
+		else
+			std.err("Can not save undeclared function", 2)
 		end
 	elseif type(t) == 'table' and not t.__visited then
 		if std.tables[t] and nested then
@@ -2399,12 +2401,17 @@ local function __dump(t, nested)
 		local nkeys = {}
 		local keys = {}
 		for k, v in pairs(t) do
+			if type(k) ~= 'number' and type(k) ~= 'string' then
+				std.err("Wrong key type in table: "..type(k), 2)
+			end
 			if (type(v) ~= 'function' or std.functions[v]) and type(v) ~= 'userdata' then
 				if type(k) == 'number' then
 					table.insert(nkeys, { key = k, val = v })
 				elseif k:find("__", 1, true) ~= 1 then
 					table.insert(keys, { key = k, val = v })
 				end
+			elseif type(k) ~= 'string' or k:find("__", 1, true) ~= 1 then
+				std.err("Can not save table item ("..std.tostr(k)..") with type: "..type(v), 2)
 			end
 		end
 		table.sort(nkeys, function(a, b) return a.key < b.key end)
