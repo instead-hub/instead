@@ -2378,7 +2378,7 @@ local function __dump(t, nested)
 	elseif type(t) == 'boolean' then
 		rc = std.tostr(t)
 	elseif type(t) == 'function' then
-		if std.functions[t] and nested then
+		if std.functions[t] then
 			local k = std.functions[t]
 			return string.format("%s", k)
 		end
