@@ -888,6 +888,10 @@ std.save_var = function(vv, fp, n)
 		end
 	elseif vv == nil then
 		fp:write(string.format("%s = nil\n", n))
+	elseif type(vv) == 'userdata' and type(vv.__save) == 'function' then
+		vv:__save(fp, n)
+	else
+		std.err("Can not save var: "..n, 2)
 	end
 end
 
@@ -1438,7 +1442,7 @@ std.obj = std.class {
 				if arg[i] == s then
 					std.err("Error while saving dynamic object: "..std.tostr(s).." Argument is self-obj.", 2)
 				end
-				l = l .. ', '..std.dump(arg[i])
+				l = l .. ', '..std.dump(arg[i], true, true) -- strict, nested
 			end
 			if type(s.nam) == 'number' then
 				l = string.format("std.new(%s%s):__renam(%d)\n", nn, l, s.nam)
@@ -2369,7 +2373,7 @@ function std.unesc(s, sym)
 	return s
 end
 
-local function __dump(t, nested)
+local function __dump(t, strict, nested)
 	local rc = '';
 	if type(t) == 'string' then
 		rc = string.format("%q", t):gsub("\\\n", "\\n")
@@ -2381,7 +2385,7 @@ local function __dump(t, nested)
 		if std.functions[t] then
 			local k = std.functions[t]
 			return string.format("%s", k)
-		else
+		elseif strict ~= false then
 			std.err("Can not save undeclared function", 2)
 		end
 	elseif type(t) == 'table' and not t.__visited then
@@ -2397,21 +2401,26 @@ local function __dump(t, nested)
 			end
 			return rc
 		end
+		if strict ~= false and std.getmt(t) then
+			std.err("Can not save classes", 2)
+		end
 		t.__visited = true
 		local nkeys = {}
 		local keys = {}
 		for k, v in pairs(t) do
-			if type(k) ~= 'number' and type(k) ~= 'string' then
+			if strict ~= false and type(k) ~= 'number' and type(k) ~= 'string' then
 				std.err("Wrong key type in table: "..type(k), 2)
 			end
-			if (type(v) ~= 'function' or std.functions[v]) and type(v) ~= 'userdata' then
-				if type(k) == 'number' then
-					table.insert(nkeys, { key = k, val = v })
-				elseif k:find("__", 1, true) ~= 1 then
-					table.insert(keys, { key = k, val = v })
+			if type(k) ~= 'string' or k:find("__", 1, true) ~= 1 then
+				if (type(v) ~= 'function' or std.functions[v]) and type(v) ~= 'userdata' then
+					if type(k) == 'number' then
+						table.insert(nkeys, { key = k, val = v })
+					elseif type(k) == 'string' then
+						table.insert(keys, { key = k, val = v })
+					end
+				elseif strict ~= false then
+					std.err("Can not save table item ("..std.tostr(k)..") with type: "..type(v), 2)
 				end
-			elseif type(k) ~= 'string' or k:find("__", 1, true) ~= 1 then
-				std.err("Can not save table item ("..std.tostr(k)..") with type: "..type(v), 2)
 			end
 		end
 		table.sort(nkeys, function(a, b) return a.key < b.key end)
@@ -2420,7 +2429,7 @@ local function __dump(t, nested)
 		for k = 1, #nkeys do
 			v = nkeys[k]
 			if v.key == k then
-				rc = rc .. __dump(v.val, true)..", "
+				rc = rc .. __dump(v.val, strict, true)..", "
 			else
 				n = k
 				break
@@ -2429,19 +2438,19 @@ local function __dump(t, nested)
 		if n then
 			for k = n, #nkeys do
 				v = nkeys[k]
-				rc = rc .. "["..std.tostr(v.key).."] = "..__dump(v.val, true)..", "
+				rc = rc .. "["..std.tostr(v.key).."] = "..__dump(v.val, strict, true)..", "
 			end
 		end
 		for k = 1, #keys do
 			v = keys[k]
 			if type(v.key) == 'string' then
 				if v.key:find("^[a-zA-Z_]+[a-zA-Z0-9_]*$") and not lua_keywords[v.key] then
-					rc = rc .. v.key .. " = "..__dump(v.val, true)..", "
+					rc = rc .. v.key .. " = "..__dump(v.val, strict, true)..", "
 				else
-					rc = rc .. "[" .. string.format("%q", v.key) .. "] = "..__dump(v.val, true)..", "
+					rc = rc .. "[" .. string.format("%q", v.key) .. "] = "..__dump(v.val, strict, true)..", "
 				end
 			else
-				rc = rc .. std.tostr(v.key) .. " = "..__dump(v.val, true)..", "
+				rc = rc .. std.tostr(v.key) .. " = "..__dump(v.val, strict, true)..", "
 			end
 		end
 		rc = rc:gsub(",[ \t]*$", "") .. " }"
@@ -2461,8 +2470,8 @@ local function cleardump(t)
 	end
 end
 
-function std.dump(t)
-	local rc = __dump(t)
+function std.dump(t, strict)
+	local rc = __dump(t, strict)
 	cleardump(t)
 	return rc
 end
@@ -2501,15 +2510,14 @@ function std.new(fn, ...)
 	if not std.functions[fn] then
 		std.err ("Function is not declared in 1-st argument of std.new", 2)
 	end
-	local arg = { ... }
-	local saved_arg = std.clone(arg)
+	local arg = std.clone({...})
 
 	local o = in_section ('new', function() return fn(std.unpack(arg)) end)
 
 	if type(o) ~= 'table' then
 		std.err ("Constructor did not return object:"..std.functions[fn], 2)
 	end
-	rawset(o, '__dynamic', { fn = fn, arg = saved_arg })
+	rawset(o, '__dynamic', { fn = fn, arg = {...} })
 	if std.game then
 		o:__ini() -- do initialization
 	end
