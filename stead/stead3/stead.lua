@@ -2460,14 +2460,28 @@ function std.dump(t)
 	return rc
 end
 
-function std.clone(src)
+local function clone(src)
 	if type(src) ~= 'table' then return src end
+	if std.is_obj(src) then return src end
+	if src.__visited then
+		std.err("Recursive tables not supported by std.clone")
+	end
+	src.__visited = true
 	local dst = {}
 	local k, v
 	for k, v in pairs(src) do
-		dst[std.clone(k)] = std.clone(src[k])
+		if k ~= '__visited' then
+			dst[std.clone(k)] = clone(src[k])
+		end
 	end
 	return dst
+end
+
+function std.clone(src)
+	cleardump(src)
+	local t = clone(src)
+	cleardump(src)
+	return t
 end
 
 function std.new(fn, ...)
@@ -2481,17 +2495,14 @@ function std.new(fn, ...)
 		std.err ("Function is not declared in 1-st argument of std.new", 2)
 	end
 	local arg = { ... }
-	for i = 1, #arg do
-		if type(arg[i]) == 'table' then -- do clone
-			arg[i] = std.clone(arg[i])
-		end
-	end
+	local saved_arg = std.clone(arg)
+
 	local o = in_section ('new', function() return fn(std.unpack(arg)) end)
 
 	if type(o) ~= 'table' then
 		std.err ("Constructor did not return object:"..std.functions[fn], 2)
 	end
-	rawset(o, '__dynamic', { fn = fn, arg = {...} })
+	rawset(o, '__dynamic', { fn = fn, arg = saved_arg })
 	if std.game then
 		o:__ini() -- do initialization
 	end
