@@ -1433,7 +1433,7 @@ std.obj = std.class {
 	end;
 	save = function(s, fp, n)
 		if std.debug_save then
-			std.dprint("Saveing: "..std.nameof(s))
+			std.dprint("Saving: "..std.nameof(s))
 		end
 		if s.__dynamic then -- create
 			local nn = std.functions[s.__dynamic.fn]
