@@ -44,6 +44,7 @@ stead = {
 	files = {};
 	busy = function() end;
 	debug_xref = true;
+	debug_save = false;
 	random = instead_random;
 	randomseed = instead_srandom;
 }
@@ -488,7 +489,7 @@ function std.class(self, inh)
 			self.__tostring = os
 			return t
 		end
-		return std.dispof(self)
+		return std.dispof(s)
 	end;
 	self.__pow = function(s, b)
 		if type(b) == 'string' or type(b) == 'number' then
@@ -1431,6 +1432,9 @@ std.obj = std.class {
 		return true
 	end;
 	save = function(s, fp, n)
+		if std.debug_save then
+			std.dprint("Saveing: "..std.nameof(s))
+		end
 		if s.__dynamic then -- create
 			local nn = std.functions[s.__dynamic.fn]
 			if not nn then
@@ -2484,8 +2488,7 @@ local function clone(src)
 	end
 	src.__visited = true
 	local dst = {}
-	local k, v
-	for k, v in pairs(src) do
+	for k, _ in pairs(src) do
 		if k ~= '__visited' then
 			dst[std.clone(k)] = clone(src[k])
 		end
