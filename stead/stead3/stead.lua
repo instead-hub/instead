@@ -884,7 +884,7 @@ std.save_var = function(vv, fp, n)
 		elseif type(vv.__save) == 'function' then
 			vv:__save(fp, n)
 		else
-			fp:write(string.format("%s = %s\n", n,  std.dump(vv)))
+			fp:write(string.format("%s = %s\n", n,  std.dump(vv, true)))
 --			std.save_table(vv, fp, n)
 		end
 	elseif vv == nil then
@@ -2389,7 +2389,7 @@ local function __dump(t, strict, nested)
 		if std.functions[t] then
 			local k = std.functions[t]
 			return string.format("%s", k)
-		elseif strict ~= false then
+		elseif strict then
 			std.err("Can not save undeclared function", 2)
 		end
 	elseif type(t) == 'table' and not t.__visited then
@@ -2405,14 +2405,14 @@ local function __dump(t, strict, nested)
 			end
 			return rc
 		end
-		if strict ~= false and std.getmt(t) then
+		if strict and std.getmt(t) then
 			std.err("Can not save classes", 2)
 		end
 		t.__visited = true
 		local nkeys = {}
 		local keys = {}
 		for k, v in pairs(t) do
-			if strict ~= false and type(k) ~= 'number' and type(k) ~= 'string' then
+			if strict and type(k) ~= 'number' and type(k) ~= 'string' then
 				std.err("Wrong key type in table: "..type(k), 2)
 			end
 			if type(k) ~= 'string' or k:find("__", 1, true) ~= 1 then
@@ -2422,7 +2422,7 @@ local function __dump(t, strict, nested)
 					elseif type(k) == 'string' then
 						table.insert(keys, { key = k, val = v })
 					end
-				elseif strict ~= false then
+				elseif strict then
 					std.err("Can not save table item ("..std.tostr(k)..") with type: "..type(v), 2)
 				end
 			end
@@ -2474,8 +2474,8 @@ local function cleardump(t)
 	end
 end
 
-function std.dump(t, strict)
-	local rc = __dump(t, strict)
+function std.dump(t, strict, nested)
+	local rc = __dump(t, strict, nested)
 	cleardump(t)
 	return rc
 end
