@@ -14,6 +14,7 @@ local instead = std.obj {
 
 -- luacheck: read globals instead_clipboard
 -- luacheck: read globals instead_wait_use
+-- luacheck: read globals instead_grab_events
 -- luacheck: no self
 
 instead.clipboard = instead_clipboard
