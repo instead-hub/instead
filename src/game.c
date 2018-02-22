@@ -1820,6 +1820,8 @@ static struct {
 
 static void after_click(int flags, int m_restore)
 {
+	if (DIRECT_MODE)
+		return;
 #if 1
 	{
 		int x, y;
@@ -1845,7 +1847,6 @@ static void after_fading(void *aux)
 	gfx_start_gif(el_img(el_spic));
 	gfx_free_image(fade_ctx.offscreen);
 	game_render_callback_redraw();
-
 	after_click(fade_ctx.flags, fade_ctx.m_restore);
 	after_cmd();
 	game_cursor(CURSOR_DRAW);
