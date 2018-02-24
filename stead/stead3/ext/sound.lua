@@ -71,7 +71,7 @@ function instead.add_sound(s, chan, loop)
 	if std.tonum(loop) then
 		s = s..','..std.tostr(loop)
 	end
-	instead.set_sound(instead.__sound..';'..s, instead.__sound_channel, instead.__sound);
+	instead.set_sound(instead.__sound..';'..s, instead.__sound_channel, instead.__sound_loop);
 end
 
 function instead.set_sound(sound, chan, loop)
