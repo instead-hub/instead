@@ -473,6 +473,7 @@ Type "help" to see help
 	kbd_alt_xlat = false;
 	__last_disp = false;
 	__nostrict = false;
+	last_timer = false;
 };
 
 local theme = {}
@@ -534,8 +535,9 @@ local dbg = std.obj {
 		instead_func('get_title')
 		instead_func('get_ways')
 		render_callback = (std.ref '@sprite').render_callback(false)
---		s.last_timer = timer:get()
---		timer:stop()
+		local timer = stead.ref '@timer'
+		s.last_timer = timer:get()
+		timer:stop()
 		std_debug('input')
 		std_debug('output')
 		std_debug('xref')
@@ -568,7 +570,8 @@ local dbg = std.obj {
 		instead_reset()
 		std.ref('@sprite').render_callback(render_callback)
 		iface:raw_mode(false)
-	--	timer:set(s.last_timer)
+		local timer = stead.ref '@timer'
+		timer:set(s.last_timer)
 		std.game:lastdisp(s.__last_disp)
 	end;
 	inp_split = function(s)
