@@ -14,8 +14,6 @@ rnd = std.rnd
 rnd_seed = std.rnd_seed
 -- luacheck: globals p
 p = std.p
--- luacheck: globals pclr
-pclr = std.pclr
 -- luacheck: globals pr
 pr = std.pr
 -- luacheck: globals pn
