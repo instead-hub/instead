@@ -2529,12 +2529,12 @@ phr = {
 	{ '#что?', 'Что это у вас?', 'Таблетки. Красная и синяя. Вам какую?',
 		{'#красная', 'Красную', 'Держите!'
 			cond = function(s)
-				return opened '#синяя'
+				return not closed('#синяя')
 			end
 		},
 		{'#синяя', 'Синюю', 'Вот!',
 			cond = function(s)
-				return opened '#красная'
+				return not closed('#красная')
 			end
 		},
 	},
