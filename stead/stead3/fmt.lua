@@ -16,11 +16,11 @@ fmt = std.obj {
 
 std.obj {
 	nam = '$fmt';
-	act = function(s, w, t)
+	act = function(s, w, ...)
 		if type(w) ~= 'string' or not fmt[w] then
-			return t
+			return w
 		end
-		return fmt[w](t)
+		return fmt[w](...)
 	end
 }
 
