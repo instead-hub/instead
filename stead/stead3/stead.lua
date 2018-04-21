@@ -121,10 +121,12 @@ if _VERSION == "Lua 5.1" then
 		t.__tostring = function(_)
 			return o:__tostring()
 		end
+		o.__proxy_type = true
 		return oo
 	end
 else
 	std.proxy = function(o)
+		o.__proxy_type = true
 		return o
 	end
 	std.eval = load
@@ -2377,6 +2379,10 @@ function std.unesc(s, sym)
 	return s
 end
 
+function std.is_proxy(t)
+	return (type(t) == 'userdata') or (type(t) == 'table' and t.__proxy_type)
+end
+
 local function __dump(t, strict, nested)
 	local rc = '';
 	if type(t) == 'string' then
@@ -2416,7 +2422,7 @@ local function __dump(t, strict, nested)
 				std.err("Wrong key type in table: "..type(k), 2)
 			end
 			if type(k) ~= 'string' or k:find("__", 1, true) ~= 1 then
-				if (type(v) ~= 'function' or std.functions[v]) and type(v) ~= 'userdata' then
+				if (type(v) ~= 'function' or std.functions[v]) and not std.is_proxy(v) then
 					if type(k) == 'number' then
 						table.insert(nkeys, { key = k, val = v })
 					elseif type(k) == 'string' then
