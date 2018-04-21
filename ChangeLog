@@ -1,3 +1,13 @@
+3.2.1
+
+  * fix: save in lua 5.2 (proxy objects);
+  * new: {$fmt ... } substitution;
+  * fix: instead.set_sound() and snd.play();
+  * fix: direct mode fix;
+  * fix: bugs in documentation.
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 21 Apr 2018 15:37:00 +0300
+
 3.2.0
 
   * fix: segfault on path overflow fix;
