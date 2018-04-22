@@ -3089,7 +3089,7 @@ function stead_version(v)
 
 	if not stead.atleast(stead.unpack(stead.api_version_table)) then
 		error ([[The game requires instead engine of version ]] ..v.. [[ or higher.
-		http://instead.sourceforge.net]], 2)
+		https://instead-hub.github.io]], 2)
 	end
 
 	stead.api_version = v

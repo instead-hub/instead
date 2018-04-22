@@ -7,15 +7,13 @@ Check the COPYING file for license.
 Check the INSTALL file for install instructions.
 
 Web resources:
-	http://instead.sf.net
-	http://instead.syscall.ru
+	https://instead-hub.github.io
 
 Code:
 	https://github.com/instead-hub/instead
 
 Games:
 	http://instead-games.sf.net
-	http://instead-games.ru
 
 To install games you may:
 	Unzip game archive into ~/.instead/games/
@@ -27,7 +25,8 @@ or:
 	press [f4] to open file dialog (build with gtk)
 
 Documentaion for game developers:
-	See the doc/ directory or http://instead.syscall.ru/doc
+	See the doc/ directory or https://instead-hub.github.io/#doc
+
 	$ man instead
 
 Join the chat at:
