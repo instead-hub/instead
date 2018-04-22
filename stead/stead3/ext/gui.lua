@@ -49,7 +49,7 @@ function instead.version(...)
 			v = (v and (v .. '.') or '').. std.tostr(n)
 		end
 		std.err ([[The game requires instead engine of version ]] ..(v or '???').. [[ or higher.
-		http://instead.sourceforge.net]], 2)
+		https://instead-hub.github.io]], 2)
 	end
 end
 

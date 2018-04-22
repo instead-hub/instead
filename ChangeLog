@@ -5,6 +5,7 @@
   * fix: instead.set_sound() and snd.play();
   * fix: direct mode fix;
   * fix: bugs in documentation.
+  * new: project moved to https://instead-hub.github.io
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Sun, 22 Apr 2018 13:34:00 +0300
 
