@@ -4,7 +4,8 @@ include ../config.make
 all:
 
 clean:
-	rm -f *.pdf *.aux *.log *.out *.toc stead3-manual.tex modules3-manual.tex instead.txt
+	rm -f *.aux *.log *.out *.toc stead3-manual.tex modules3-manual.tex
+	rm -f *.pdf instead.txt
 
 stead3-manual.tex: stead3.md
 	multimarkdown stead3.md -t latex -o stead3-manual.tex
@@ -23,6 +24,7 @@ modules3.pdf: modules3.tex modules3-manual.tex
 	xelatex modules3.tex
 
 pdf:	stead3.pdf modules3.pdf
+	rm -f *.aux *.log *.out *.toc stead3-manual.tex modules3-manual.tex
 
 man:
 	man ./instead.6 | col -b > instead.txt
