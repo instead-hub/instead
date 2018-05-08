@@ -1990,8 +1990,9 @@ int game_cmd(char *cmd, int flags)
 		fading = 1; /* one frame at least */
 
 	if (fading) { /* take old screen */
+		img_t offscreen;
 		game_cursor(CURSOR_CLEAR);
-		img_t offscreen = gfx_new(game_theme.w, game_theme.h);
+		offscreen = gfx_new(game_theme.w, game_theme.h);
 		if (!offscreen)
 			goto fatal;
 		oldscreen = gfx_screen(offscreen);
