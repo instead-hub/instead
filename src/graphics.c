@@ -1794,8 +1794,6 @@ int gfx_get_max_mode(int *w, int *h, int o)
 	*w = 800;
 	*h = 480;
 #else
-	*w = 0;
-	*h = 0;
  #if SDL_VERSION_ATLEAST(2,0,0)
 	SDL_DisplayMode desktop_mode;
   #if defined(ANDROID) || defined(IOS)
@@ -1824,6 +1822,9 @@ int gfx_get_max_mode(int *w, int *h, int o)
 		return 0;
 	}
  #endif
+	*w = 0;
+	*h = 0;
+
 	if (!vid_modes)
 		gfx_modes();
 
