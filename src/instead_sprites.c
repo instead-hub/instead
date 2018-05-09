@@ -2279,7 +2279,7 @@ static int luaB_pixels_sprite(lua_State *L) {
 static int pixels_scale(lua_State *L) {
 	img_t img, img2;
 	int rc;
-	struct lua_pixels *src = (struct lua_pixels*)lua_touserdata(L, 1);;
+	struct lua_pixels *src = (struct lua_pixels*)lua_touserdata(L, 1);
 	float xs = luaL_optnumber(L, 2, 0);
 	float ys = luaL_optnumber(L, 3, 0);
 	int smooth = lua_toboolean(L, 4);
@@ -2301,7 +2301,7 @@ static int pixels_scale(lua_State *L) {
 static int pixels_rotate(lua_State *L) {
 	img_t img, img2;
 	int rc;
-	struct lua_pixels *src = (struct lua_pixels*)lua_touserdata(L, 1);;
+	struct lua_pixels *src = (struct lua_pixels*)lua_touserdata(L, 1);
 	float angle = luaL_optnumber(L, 2, 0);
 	int smooth = lua_toboolean(L, 3);
 
