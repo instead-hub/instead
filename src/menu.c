@@ -845,9 +845,10 @@ int game_menu_act(const char *a)
 		char *p;
 		p = strdup(a);
 		if (p) {
+			char *og;
 			if (game_theme_select(p))
 				fprintf(stderr, "Can't select theme:%s:%s\n", p, strerror(errno));
-			char *og = curgame_dir;
+			og = curgame_dir;
 			game_save(-1);
 			game_done(0);
 			if (game_init(og)) {
