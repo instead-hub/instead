@@ -160,7 +160,7 @@ int game_reset(void)
 		goto out;
 	return 0;
 out:
-	game_done(0);
+	game_done(1);
 	if (game_init(NULL)) {
 		game_error();
 		return -1;
@@ -1135,8 +1135,8 @@ static int game_event(const char *ev);
 
 void game_done(int err)
 {
-	game_event("quit");
 	if (curgame_dir && !err) {
+		game_event("quit");
 		if (opt_autosave)
 			game_save(0);
 		game_cfg_save();

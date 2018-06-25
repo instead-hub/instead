@@ -345,7 +345,7 @@ const char *password;
 int unpack(const char *zipfilename, const char *dirname)
 {
 	char game_cwd[PATH_MAX];
-
+	unzFile uf;
 	char filename_try[MAXFILENAME + 16] = "";
 	int ret_value = 0;
 
@@ -354,7 +354,7 @@ int unpack(const char *zipfilename, const char *dirname)
 		return -1;
 	}
 	
-	unzFile uf = NULL;
+	uf = NULL;
 	zip_game_dirname[0] = 0;
 #        ifdef USEWIN32IOAPI
 	zlib_filefunc64_def ffunc;
