@@ -390,17 +390,19 @@ std.fmt = function(str, fmt, state)
 	local s = str
 	s = string.gsub(s, '[\t \n]+', std.space_delim);
 	s = string.gsub(s, '\\?[\\^]', { ['^'] = '\n', ['\\^'] = '^'} ):gsub("\n[ \t]+", "\n")
+	local first = true
 	while true do
 		fmt_refs = {}
 		substs = false
 		s = std.for_each_xref(s, fmt_prep) -- rename all {}
-		if type(fmt) == 'function' then
+		if first and type(fmt) == 'function' then
 			s = fmt(s, state)
 		end
 		s = std.for_each_xref(s, fmt_post) -- rename and xref
 		if not substs then
 			break
 		end
+		first = false
 	end
 	s = s:gsub('\\?'..'[{}]', { ['\\{'] = '{', ['\\}'] = '}' })
 	if state then
