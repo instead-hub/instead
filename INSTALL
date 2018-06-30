@@ -100,10 +100,11 @@ Some options:
 WITH_SDL2 Use SDL2 instead of SDL 1 (default on)
 WITH_GTK2 Use GTK2 file open dialog (default on)
 WITH_GTK3 Use GTK3 file open dialog
+WITH_LUAJIT Use LuaJIT instead of Lua (recommended, but off by default)
 
 For example, to build with SDL2, use:
 
-$ cmake .. -DWITH_SDL2=1 -DSTANDALONE=1
+$ cmake .. -DWITH_SDL2=1 -DWITH_LUAJIT=1 -DSTANDALONE=1
 $ cmake .. -DWITH_SDL2=0 -DSTANDALONE=1 # build with SDL1
 
 To build with GTK3:
