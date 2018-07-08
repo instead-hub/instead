@@ -182,8 +182,8 @@ if [ ! -z "$gtk_cflags" ]; then
 fi
 if [ -z "$zlib_cflags" ]; then
 	echo "SUBDIRS=src/zlib" >> config.make
-	echo "ZLIB_CFLAGS=-I../zlib" >> config.make
-	echo "ZLIB_LFLAGS=../zlib/libz.a" >> config.make
+	echo "ZLIB_CFLAGS=-Izlib" >> config.make
+	echo "ZLIB_LFLAGS=zlib/libz.a" >> config.make
 elif [ "$zlib_cflags" = "x" ]; then
 	echo "ZLIB_CFLAGS=" >> config.make
 	echo "ZLIB_LFLAGS=-lz" >> config.make
