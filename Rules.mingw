@@ -13,8 +13,8 @@ LANGPATH=$(PREFIX)lang
 MANPATH=$(PREFIX)doc
 WINDOWS=yes
 
-ZLIB_CFLAGS=-I./zlib
-ZLIB_LFLAGS=./zlib/libz.a
+ZLIB_CFLAGS=-Izlib
+ZLIB_LFLAGS=zlib/libz.a
 
 LUA_CFLAGS=-I./windows/
 LUA_LFLAGS=-llua5.1 -L./windows/
