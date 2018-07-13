@@ -16,7 +16,7 @@ fmt = std.obj {
 
 std.obj {
 	nam = '$fmt';
-	act = function(s, w, ...)
+	act = function(_, w, ...)
 		if type(w) ~= 'string' or not fmt[w] then
 			return w
 		end

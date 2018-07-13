@@ -1,7 +1,7 @@
 #ifndef S60_H
 #define S60_H
 
-#define VERSION "3.2.1"
+#define VERSION "3.2.2"
 #define DATAPATH "./"
 #define STEAD_PATH DATAPATH"stead/"
 #define THEMES_PATH DATAPATH"themes/"
