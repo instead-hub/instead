@@ -1842,6 +1842,8 @@ int gfx_get_max_mode(int *w, int *h, int o)
 		i ++;
 	}
 #endif
+	if (*w == 0 || *h == 0) /* no suitable mode */
+		return -1;
 	return 0;
 }
 
