@@ -143,7 +143,6 @@
 ".\symbian_gamedata\themes\clearlooks\cursor.png" -"!:\data\instead\themes\clearlooks\cursor.png"
 ".\symbian_gamedata\themes\clearlooks\cursor-use.png" -"!:\data\instead\themes\clearlooks\cursor-use.png"
 ".\symbian_gamedata\themes\clearlooks\adown.png" -"!:\data\instead\themes\clearlooks\adown.png"
-".\symbian_gamedata\themes\original\theme.ini" -"!:\data\instead\themes\original\theme.ini"
 ".\symbian_gamedata\themes\default\click.wav" -"!:\data\instead\themes\default\click.wav"
 ".\symbian_gamedata\themes\default\aup.png" -"!:\data\instead\themes\default\aup.png"
 ".\symbian_gamedata\themes\default\menu.png" -"!:\data\instead\themes\default\menu.png"

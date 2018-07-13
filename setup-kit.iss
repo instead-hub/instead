@@ -29,7 +29,6 @@ Source: stead\stead3\ext\*; DestDir: {app}\stead\stead3\ext
 Source: lang\*; DestDir: {app}\lang
 Source: themes\default\*; DestDir: {app}\themes\default
 Source: themes\book\*; DestDir: {app}\themes\book
-Source: themes\original\*; DestDir: {app}\themes\original
 Source: themes\fantasy\*; DestDir: {app}\themes\fantasy
 Source: themes\arctic\*; DestDir: {app}\themes\arctic
 Source: themes\bluesteel\*; DestDir: {app}\themes\bluesteel
