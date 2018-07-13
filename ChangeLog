@@ -1,3 +1,15 @@
+3.2.2
+
+  * new: mobile theme;
+  * enh: themes cleanups;
+  * new: cmake and LuaJIT build (-DWITH_LUAJIT=1);
+  * fix: build with zlib;
+  * fix: std.fmt and substitutions ($);
+  * fix: segfault on restart;
+  * fix: build with old gcc;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 14 Jul 2018 19:29:00 +0300
+
 3.2.1
 
   * fix: save in lua 5.2 (proxy objects);
