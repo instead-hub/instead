@@ -80,6 +80,7 @@ char *idf_sw = NULL;
 char *start_idf_sw = NULL;
 char *lua_sw = NULL;
 char *render_sw = NULL;
+char *lang_sw = NULL;
 static int lua_exec = 1;
 static int nocfg_sw = 0;
 
@@ -525,6 +526,11 @@ int instead_main(int argc, char *argv[])
 				err = 1;
 				goto out;
 			}
+		} else if (!strcmp(argv[i], "-lang")) {
+			if ((i + 1) < argc)
+				lang_sw = strdup(argv[++i]);
+			else
+				lang_sw = strdup("en");
 		} else if (argv[i][0] == '-') {
 			fprintf(stderr,"Unknown option: %s\n", argv[i]);
 			usage();
@@ -630,7 +636,9 @@ int instead_main(int argc, char *argv[])
 		err = 1;
 		goto out;
 	}
-	if (!opt_lang || !opt_lang[0])
+	if (lang_sw)
+		opt_lang = strdup(lang_sw);
+	else if (!opt_lang || !opt_lang[0])
 		opt_lang = game_locale();
 
 	if (menu_lang_select(opt_lang) && menu_lang_select(LANG_DEF)) {
@@ -785,6 +793,7 @@ static struct parser profile_parser[] = {
 	{ "themespath", parse_string, &themes_sw, 0 },
 	{ "game", parse_string, &game_sw, 0 },
 	{ "owntheme", parse_int, &owntheme_sw, 0 },
+	{ "lang", parse_string, &lang_sw, 0 },
 	{ "appdata", parse_string, &appdata_sw, 0 },
 	{ "fullscreen", parse_int, &fullscreen_sw, 0 },
 	{ "hires", parse_int, &hires_sw, 0 },

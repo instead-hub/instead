@@ -1,6 +1,7 @@
 3.2.2
 
   * new: mobile theme;
+  * new: -lang parameter;
   * enh: themes cleanups;
   * new: cmake and LuaJIT build (-DWITH_LUAJIT=1);
   * fix: build with zlib;
