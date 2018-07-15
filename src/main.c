@@ -405,14 +405,12 @@ int instead_main(int argc, char *argv[])
 				theme_sw = strdup("");
 		} else if (!strcmp(argv[i], "-nostdgames")) {
 			nostdgames_sw = 1;
-#ifdef _LOCAL_APPDATA
 		} else if (!strcmp(argv[i], "-appdata")) {
 			FREE(appdata_sw);
 			if ((i + 1) < argc)
 				appdata_sw = strdup(argv[++i]);
 			else
 				appdata_sw = strdup("");
-#endif
 		} else if (!strcmp(argv[i], "-chunksize")) {
 			if ((i + 1) < argc)
 				chunksize_sw = atoi(argv[++i]);

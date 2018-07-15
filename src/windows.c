@@ -218,15 +218,15 @@ char *appdir( void )
 {
 	static char dir[PATH_MAX]="";
 #ifdef _LOCAL_APPDATA
-	if (appdata_sw)
-		strcpy(dir, appdata_sw);
-	else {
+	if (!appdata_sw) {
 		strcpy(dir, game_cwd);
 		strcat(dir, "/appdata");
 	}
-	if (!access(dir, W_OK))
-		return dir;
 #endif
+	if (appdata_sw)
+		strcpy(dir, appdata_sw);
+	if (dir[0] && !access(dir, W_OK))
+		return dir;
 #ifdef _UWP
 	/* TODO: always define _LOCAL_APPDATA on UWP??? */
 	return NULL;
