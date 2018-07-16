@@ -955,7 +955,7 @@ function std:load(fname) -- load save
 	end
 	std.nostrict = strict
 
-	std.ref 'game':__ini()
+	std.ref 'game':__ini(true)
 	std.ref 'game':__start(true)
 	return self.game:lastdisp()
 end
