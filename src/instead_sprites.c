@@ -926,6 +926,7 @@ void instead_ready(void)
 		menu_toggle(-1);
 	}
 	busy_time = 0;
+	game_gfx_commit(0);
 }
 static int luaB_stead_busy(lua_State *L) {
 	int busy = lua_toboolean(L, 1);
