@@ -110,8 +110,7 @@ player can interact with objects of the inventory and to act the objects of
 the inventory on other objects in the scene or inventory.
 
 > It should be noted that the "inventory" is conditional. For example,
-> equipment can be such objects as "open",
-> "inspect", "use", etc.
+> equipment can be such objects as "open", "inspect", "use", etc.
 
 Deystviyami of the player can be:
 
@@ -796,7 +795,8 @@ The more usual method of output are functions:
 - pn ("text") -- output text with line break;
 - pr ("text") -- output text as-is.
 
-> If "p"/"pn"/"pr" is invoked with a single text parameter, the parentheses can be omitted.
+> If "p"/"pn"/"pr" is invoked with a single text parameter, the parentheses
+> can be omitted.
 
 	pn "No brackets!"
 
@@ -1858,13 +1858,14 @@ end
 ...
 ```
 
-> The question may arise, what is the difference between lookup function and _ ()?
-> The fact that lookup() looks up the object and if the object is not found
-> -- just did not return. And the record is _ () assumes that you just
-> you know that the item you get. In other words, _ () is
-> unconditional receipt of the object by name. This function does not in General
-> does poiskom. Only if the specified tag> will be searched from the available objects. If you use
-> _ () on a non-existent object or unavailable -- you will get an error!
+> The question may arise, what is the difference between lookup function and _
+> ()? The fact that lookup() looks up the object and if the object is not
+> found -- just did not return. And the record is _ () assumes that you just
+> you know that the item you get. In other words, _ () is unconditional
+> receipt of the object by name. This function does not in General does
+> poiskom. Only if the specified tag> will be searched from the available
+> objects. If you use _ () on a non-existent object or unavailable -- you will
+> get an error!
 
 ## Other standard library functions
 
@@ -2084,10 +2085,10 @@ manually!
 
 __Important!__
 
-> I recommend to use module 'noinv' and set the 'noinv'
-> in the dialogs. The dialogs will look more beautiful and you will protect your> game from mistakes and unexpected reactions when using equipment
-> inside the dialog (as usual, the author does not imply such
-> things). For example:
+> I recommend to use module 'noinv' and set the 'noinv' in the dialogs. The
+> dialogs will look more beautiful and you will protect your game from
+> mistakes and unexpected reactions when using equipment inside the dialog (as
+> usual, the author does not imply such things). For example:
 
 ```
 require "noinv"
@@ -2212,11 +2213,10 @@ dlg {
 As you can see, the dialogue -- it is a room, the phrase-special objects! Now
 you will understand the subsequent presentation.
 
-> Attention! By default, when the player clicks on one of the questions in
-> the list, the engine repeats it in the conclusion and then displays> response. This is done to ensure that the dialogue seemed related. If
-> you want to disable this behavior, use the option
-> std.phrase_show:
-
+> Attention! By default, when the player clicks on one of the questions in the
+> list, the engine repeats it in the conclusion and then displays response.
+> This is done to ensure that the dialogue seemed related. If you want to
+> disable this behavior, use the option std.phrase_show:
 
 ```
 std.phrase_show = false -- don't display the passphrase question when choosing
@@ -2551,10 +2551,10 @@ starting phrase, for example:
 		s:reset '#start'
 	end
 
-> It should be noted that when you make a enable/disable/open/close
-> phrase, then you perform the action exactly over this phrase, not over> phrases included inside. But since the showing phrases engine
-> stop on/off / closed facility-phrase and will not be included
-> inside, that's enough.
+> It should be noted that when you make a enable/disable/open/close phrase,
+> then you perform the action exactly over this phrase, not over phrases
+> included inside. But since the showing phrases engine stop on/off / closed
+> facility-phrase and will not be included inside, that's enough.
 
 ## Special objects
 
@@ -3063,9 +3063,8 @@ To stop playback you can use 'snd.stop()'. For stop sound in a certain channel
 
 __Important!__
 
-> If you're using looped sounds, you will have
-> to reset their state (run again with
-> 'snd.sound()') in function 'start()'
+> If you're using looped sounds, you will have to reset their state (run again
+> with 'snd.sound()') in function 'start()'
 
 For example:
 
@@ -4541,11 +4540,12 @@ instead.mouse_filter(old_filter) -- restored
 
 The theme module allows you to change the theme settings on the fly.
 
-> Keep in mind that changing the theme settings on the fly for games
-> which does not contain its own subject-a source of potential
-> problems! The fact that your game needs to be ready
-> to work with any permissions and settings the fact that it is extremely difficult
-> to achieve. So if you are going to change the theme settings from code> -- create your own theme and turn it into a game!
+> Keep in mind that changing the theme settings on the fly for games which
+> does not contain its own subject-a source of potential problems! The fact
+> that your game needs to be ready to work with any permissions and settings
+> the fact that it is extremely difficult to achieve. So if you are going to
+> change the theme settings from code -- create your own theme and turn it
+> into a game!
 
 In this case, the saving changes topic to save file not supported. The author
 of the game should restore the theme settings in function start () as you do
