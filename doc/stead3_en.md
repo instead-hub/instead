@@ -335,7 +335,7 @@ To access the object by name, you can use the following entry:
 
 	dprint("Object: ", _'main')
 
-Each object has attribute and obrabotki sobytiy. Inthis example has two
+Each object has _attributes_ and _event handlers_. In this example has two
 attributes: nam and dsc. The attributes are separated the delimiter (in this
 example -- a symbol, the semicolon ';').
 
@@ -767,7 +767,7 @@ You can choose the way that's clearer for you.
 
 ## The attributes and handlers as functions
 
-Most attributes and handlers can be funkciami. So, for example:
+Most attributes and handlers can be _functions_. So, for example:
 
 ```
 disp = function()
