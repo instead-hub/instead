@@ -778,7 +778,7 @@ end
 Not a very good example, as it would be easier to write disp = 'Apple', but it
 shows the syntax of the entry function.
 
-The main objective of such a function -- it returns a string or Booleanvalues.
+The main objective of such a function -- it returns a string or boolean values.
 Now we see the return line. To return a string you can use an explicit entry
 in the form:
 
