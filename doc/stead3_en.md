@@ -31,28 +31,28 @@ https://gitter.im/instead-hub/instead
 When we say "text adventure" most of the people there one of the two familiar
 images. It's either text, action buttons, for example:
 
-	You see a table in front. On the table lies an Apple. What to do?
+	You see a table in front of you. There is an apple on the table. What to do?
 
-	1) Take the Apple
-	2) step Away from the table
+	1) Take the apple
+	2) Step away from the table
 
 Or much less, this is a classic game with a text input where game control was
 necessary to introduce actions with the keyboard.
 
 	You in the kitchen. There is a table.
 	> inspect the table.
-	On the table is an Apple.
+	There is an apple on the table.
 
 Both approaches have their advantages and disadvantages.
 
 If we talk about the first approach, it is close to the genre of books, games
-and more convenient for literary texts that describe sobytiya, what is
+and more convenient for literary texts that describe events, what is
 happening with the main character, and not very easy to create classic quests,
-where the main character explores modelirovanii in the game Mir, moving freely
+where the main character explores modeled in-game world, moving freely
 on it and interacting with objects this world.
 
 The second approach models the world, but requires considerable effort from
-the authorgame, and more importantly, more prepared player. Especially when we
+the game author, and more importantly, more prepared player. Especially when we
 are dealing with the Russian language.
 
 INSTEAD the project was created for writing other types of games
@@ -63,7 +63,7 @@ The world of the game INSTEAD is modeled as the second approach, that is, in
 the game there are places (scenes or rooms) which can have access to the main
 the hero and the objects with which it interacts (including living
 characters). The player is freely exploring the world and manipulates objects.
-Moreover, actions with objects is not spelled out explicitly inmenu items, but
+Moreover, actions with objects is not spelled out explicitly menu items, but
 rather reminiscent of the classic graphic quests in the style of the 90s.
 
 Actually, INSTEAD there are many invisible at first glance things that are
@@ -73,7 +73,7 @@ including the fact that the engine was released a lot of great games, the
 interest show not only the fans of word games as such, but people do not
 familiar with this genre.
 
-Before you read this guide, I recommend to playclassic game INSTEAD to
+Before you read this guide, I recommend to play classic INSTEAD games to
 understand what was going on. On the other hand, since you're here, you
 probably did it.
 
@@ -91,16 +91,16 @@ https://instead-hub.github.io/article/2010-05-09-history/
 
 So, it looks like a classic INSTEAD of a game?
 
-_Glavnoe okno_ games contain a narrative, information about the static and
+_Main game window_ contain a narrative, information about the static and
 dynamic parts of the scene, active events and a picture the scene (in the
 graphic interpreter) with possible transitions to other scene.
 
-Obizatelna part scene appears only once, when showing scene, or with explicit
+_Descriptive part of the scene_ appears only once, when showing scene, or with explicit
 inspection of the scene (in the graphic interpreter -- Staticheskaya part
 scene contains information about static objects scene (usually scenery) and is
 always displayed. This part written by the author of the game.
 
-Dinamicheskaja part scene is composed of descriptions of objects in the scene,
+_Dynamic part of the scene_ is composed of descriptions of objects in the scene,
 which are present in the moment on stage. This part is generated automatically
 and always displays. Usually, it presents objects that can change its
 location.
@@ -109,10 +109,10 @@ The player is available the features available on any stage -- Inventory. The
 player can interact with objects of the inventory and to act the objects of
 the inventory on other objects in the scene or inventory.
 
-> It should be noted that the "inventory" is conditional. For example,
+> It should be noted that the "inventory" is a conventionalism. For example,
 > equipment can be such objects as "open", "inspect", "use", etc.
 
-Deystviyami of the player can be:
+_Actions_ of the player can be:
 
 - inspection of the scene;
 - the effect on the object scene;
@@ -126,7 +126,7 @@ Deystviyami of the player can be:
 The game is the directory in which the script should be placed (text file)
 main3.lua. (Note, the presence of the file main3.lua means that you write the
 game on STEAD3!) Other game resources (lua scripts, images, and music) should
-be in thisdirectory. All links to resources are given relative to this
+be inside the game directory. All links to resources are given relative to this
 directory -- the directory of the game.
 
 At the beginning of the file main3.lua can be defined header consisting of
@@ -172,7 +172,7 @@ game.act, game.use, game.inv, which are also discussed below.
 	game.use = 'It does not help.';
 	game.inv = 'Why?';
 
-Initializatio of the game should be defined in the init function, which called
+_Initialization_ of the game should be defined in the init function, which called
 by the engine in the beginning. In this function conveniently to initialize
 the state of the player at the beginning of the game, or any other the steps
 needed for initial configuration of the game world. However,the function
@@ -259,7 +259,7 @@ the state of the game. You can use the standard mechanism of saving via menu
 (or via keys f2/f3), or use the quick saving/loading (press f8/f9).
 
 Mode '-debug' you can restart the game with 'alt-r'. In combination with f8/f9
-this enables you to quickly seechanges to the game after it changes.
+this enables you to quickly see changes to the game after it changes.
 
 > Attention! If you just restart INSTEAD, it is likely
 > you will see the old state of the game, as the default running mode
@@ -354,7 +354,7 @@ room {
 
 In this case, the engine itself will give the name of the object, and this
 name is a kind of number. Because you do not know this number, you can
-contactthe object clearly. It is sometimes convenient to create unnamed
+contact the object clearly. It is sometimes convenient to create unnamed
 objects, for example, for decoration. When the object is created, even if it
 is nameless, you unable to create variable object reference, for example:
 
@@ -388,7 +388,7 @@ the attribute nam = 'main' to create the main room and we begin our adventure!
 
 In our example, when displaying the scene, the title scene will be used the
 attribute 'disp'. In fact, if we hadn't asked it's in the title we would see
-'nam'. But nam is not always convenient to dothe title of the scene,
+'nam'. But nam is not always convenient to do the title of the scene,
 especially if it is a string like 'main' or if it numeric ID that the engine
 assigned to the object automatically.
 
@@ -451,7 +451,7 @@ I recommend to always use [[ and ]] to 'dsc'.
 Let me remind you again that the name 'nam' of object and display it (in this
 the case of how the scene will look like for the player in the form of
 lettering at the top) you can (and often should!) share. For this there are
-attributes 'disp' and 'title'. 'title' is only in the rooms and works ashandle
+attributes 'disp' and 'title'. 'title' is only in the rooms and works as handle
 when the player is inside this room. In other cases, use the 'disp' (if any).
 
 If 'disp' and 'title' is not specified, it is considered that the display
@@ -490,7 +490,7 @@ Still, the table came to us in the inventory.
 You can hide items in the inventory, if 'disp' the attribute will be 'false'.
 
 'dsc' -- description of the object. It will be displayed in the dynamic
-partthe scene in the presence of the object in the scene. The braces displayed
+part the scene in the presence of the object in the scene. The braces displayed
 a fragment of the text to be a link in the window INSTEAD. If objects in the
 scene a lot, all descriptions are displayed one after the other, using the
 spacebar
@@ -592,7 +592,7 @@ obj = {
 };
 ```
 
-Another way of placing objects is to call functionswhich the objects are
+Another way of placing objects is to call functions which the objects are
 placed in the required room. This will be discussed in further.
 
 ## Decorations
@@ -636,7 +636,7 @@ room {
 ### Use tags instead of names
 
 If you don't like to come up with unique names for the same type decorative
-objects you can use for such objectstags. Tags are set by the tag attribute
+objects you can use for such objects tags. Tags are set by the tag attribute
 and always begin with a '#'symbol:
 
 ```
@@ -1188,7 +1188,7 @@ Usually, there is no sense to return false from the act, but there are other
 handlers, which will be discussed further, for which the described behaviour
 is exactly the same.
 
-Actually, besides 'game.act' and 'act' -- the object attribute existshandler
+Actually, besides 'game.act' and 'act' -- the object attribute exists handler
 'onact' of the game object, which can interrupt execution handler 'act'.
 
 Before calling the handler 'act' of an object is called onact have game. If
@@ -1297,7 +1297,7 @@ obj {
 ## Transitions
 
 The traditional transitions into INSTEAD appear as links above the description
-scene. To determine the transitions between scenes is usedattribute scene --
+scene. To determine the transitions between scenes is used attribute scene --
 list 'way'. In the list are determined by the room in the form of of the room
 names or variable references, similar to the list 'obj'. For example:
 
@@ -1402,7 +1402,7 @@ You can also return another way, if it seems you comfortable:
 
 	return "I don't want to go back", false
 
-If you use the function 'p'/'pn'/'pr', then just returnthe status of a
+If you use the function 'p'/'pn'/'pr', then just return the status of a
 transaction with the final 'return', as shown in the example above.
 
 __Important!__
@@ -1415,7 +1415,7 @@ __Important!__
 > need to forbid the transition.
 
 Sometimes there is a need to name the transformation differed from the name of
-the room in which this transition leads. There are severalways to do this. For
+the room in which this transition leads. There are sever always to do this. For
 example, using 'path'.
 
 ```
@@ -1468,7 +1468,7 @@ onenter' the scene inside the house, we check whether a character key? And if
 the key no, talking about the fact that the door is closed, and prohibit the
 transition. It increases interactivity and simplifies the code. If you want to
 do the door object in the scene, place it in the room, but in the 'act'
-handlerdo the inspection doors, or allow the player to open it with a key (how
+handlerd o the inspection doors, or allow the player to open it with a key (how
 to do it - we will look at later), but the transition itself give make the
 player in the usual way through the line transitions.
 
@@ -1494,14 +1494,14 @@ room {
 };
 ```
 
-In this example, we created otklucheny transition, by calling method 'disable'
+In this example, we created _disabled_ transition, by calling method 'disable'
 of the room created using the 'path'. Method 'disable' have all items (not
 only rooms), it translates the object in disabled state, which means that the
 object ceases to be available to the player. A remarkable property disabled
-facility is that it can vkljuciti with 'enable()';
+facility is that it can _enabled_ with 'enable()';
 
 Further, when the player clicks on the link that describes the watch, called
-handler, 'act', using the function 'enable()' makes the transitionvisible.
+handler, 'act', using the function 'enable()' makes the transition visible.
 
 The alternative is not in shutdown and 'close' object:
 
@@ -1592,7 +1592,7 @@ In this example, used handler returns false. Why? If you remember, returning
 false means that the handler instructs the engine about what event he is not
 treated. If we would have returned false, the queue to handler 'use' of object
 'knife' simply would not come. In fact, the reality is usually you will use or
-use or used, it is unlikelyit makes sense to do both the handler during the
+use or used, it is unlikely it makes sense to do both the handler during the
 action of the subject on the subject of.
 
 Another example, when it is convenient to return false:
@@ -1692,7 +1692,7 @@ Usually you don't work with this object directly, but sometimes you can call
 its methods, or change variable values in this object.
 
 For example, the variable game.codepage contains the encoding of the source
-code games, and by default to "UTF-8". I do not recommend usingother
+code games, and by default to "UTF-8". I do not recommend using other
 encodings, but sometimes, the choice of encoding can be necessity.
 
 The variable game.player -- contains the current player.
@@ -1720,7 +1720,7 @@ action.
 
 Attributes-lists (such as 'way' or 'obj') allow you to work with its content
 with a set of methods. Attributes-a list designed keep a list of objects. In
-fact, you can createlists for their own needs, and place them in objects, for
+fact, you can create lists for their own needs, and place them in objects, for
 example:
 
 ```
@@ -1763,7 +1763,7 @@ Of course, you can refer to the lists directly:
 	pl.obj:add 'knife'
 
 The objects in the lists are stored in the order in which they add. However,
-if the object is present numeric attribute pri he plays the role of prioriteta
+if the object is present numeric attribute pri he plays the role of priority
 in the list. If pri is not specified, the value priority 0 is considered.
 Thus, if you want some the object was first on the list, give priority pri <
 0. If the end of the list -- > 0.
@@ -1811,7 +1811,7 @@ Thus, the main function:
 - 'live ()' returns the object if it is present among the living objects (
   described below);
 
-These functions are mostly used in the conditions, or to searchobject from
+These functions are mostly used in the conditions, or to search object from
 further modification. For example, you can use 'seen' for writing terms:
 
 ```
@@ -1860,8 +1860,8 @@ end
 > ()? The fact that lookup() looks up the object and if the object is not
 > found -- just did not return. And the record is _ () assumes that you just
 > you know that the item you get. In other words, _ () is unconditional
-> receipt of the object by name. This function does not in General does
-> poiskom. Only if the specified tag> will be searched from the available
+> receipt of the object by name. This function does not, in general, makes
+> the search. Only if the specified tag> will be searched from the available
 > objects. If you use _ () on a non-existent object or unavailable -- you will
 > get an error!
 
@@ -2235,7 +2235,7 @@ phr = {
 }
 ```
 
-If you run this dialog, after you select, say, redpills, we will have another
+If you run this dialog, after you select, say, red pills, we will have another
 choice of the blue pill. But our the idea, obviously not this! There are
 several ways to make the dialogue correct.
 
@@ -2347,7 +2347,7 @@ phr = {
 }
 ```
 
-Please note that when there is a method onempty, automaticreturn to the
+Please note that when there is a method onempty, automatic return to the
 previous branch is not performed, it is assumed that the method onempty will
 do everything you need.
 
@@ -2428,17 +2428,17 @@ stack history. You can specify a specific tag phrase that must be in history,
 in this case, the refund will be credited to her.
 
 It should be noted that when you click on a push, we move not one the phrase,
-and the phrase list the phrase. That is, disclose it, as well asthis is done
+and the phrase list the phrase. That is, disclose it, as well as this is done
 for the main phrase phr. For example:
 
 ```
 phr = {
 	{ 'What have you got?', 'Pills. The red and blue. You what?',
 		only = true,
-		{'Red', 'Hold!', next = '#tabletke' },
-		{ 'Blue', 'Here!', next = '#tabletke' },
+		{'Red', 'Hold!', next = '#aboutpill' },
+		{ 'Blue', 'Here!', next = '#aboutpill' },
 	},
-	{ false, '#tabletke',
+	{ false, '#aboutpill',
 		{'I made the right choice?', 'Time will tell.'}
 	},
 }
@@ -2449,12 +2449,12 @@ Here we see several techniques:
 - next attribute, instead of explicit descriptions of reaction as a function
 with push. next is a simple way to record push.
 
-- false at the beginning of the phrase makes the phrase off. She islocked off
+- false at the beginning of the phrase makes the phrase off. She is locked off
 until you do an explicit enable. However, inside the phrase we can go and show
 the contents of the elections. Alternative entry possible with the use of the
 hidden attribute:
 
-	{ hidden = true, '#tabletke',
+	{ hidden = true, '#aboutpill',
 		{'I made the right choice?', 'Time will tell.'}
 	},
 
@@ -2466,17 +2466,17 @@ reaction, when the transition is triggered by the title phrase:
 phr = {
 	{ 'What have you got?', 'Pills. The red and blue. You what?',
 		only = true,
-		{'Red', 'Hold!', next = '#tabletke' },
-		{ 'Blue', 'Here!', next = '#tabletke' },
+		{'Red', 'Hold!', next = '#aboutpill' },
+		{ 'Blue', 'Here!', next = '#aboutpill' },
 	},
-	{ false, '#tabletke', [[I took the pill and the wizard smiled slyly.]],
+	{ false, '#aboutpill', [[I took the pill and the wizard smiled slyly.]],
 		{'I made the right choice?', 'Time will tell.'},
 		{'What next?', 'You're free.'},
 	},
 }
 ```
 
-When choosing a tablet, will be called the method header phrase '#tabletke',
+When choosing a tablet, will be called the method header phrase '#aboutpill',
 and then will be presented choice.
 
 If you like linear, you might prefer the following option:
@@ -2487,12 +2487,12 @@ dlg {
 	phr = {
 		{ 'What have you got?', 'Pills. The red and blue. You what?',
 			only = true,
-			{'Red', 'Hold!', next = '#tabletke' },
-			{ 'Blue', 'Here!', next = '#tabletke' },
+			{'Red', 'Hold!', next = '#aboutpill' },
+			{ 'Blue', 'Here!', next = '#aboutpill' },
 		}
 	}
 }: with {
-	{ '#tabletke', [[I took the pill and the wizard smiled slyly.]],
+	{ '#aboutpill', [[I took the pill and the wizard smiled slyly.]],
 		{'I made the right choice?', 'Time will tell.'},
 		{'What next?', 'You're free.'},
 	},
@@ -2502,7 +2502,7 @@ dlg {
 The fact that the attribute phr defines the first object of the room. But you
 can fill the room objects in the usual way: by setting the obj or with. Since
 entering the dialogue reveals the 1st phrase, then the rest phrase you will
-not see (pay attention to the phrase '#tabletke' not worth itfalse), but you
+not see (pay attention to the phrase '#aboutpill' not worth itfalse), but you
 will be able to do transitions on these phrases.
 
 ### Methods
@@ -2510,8 +2510,8 @@ will be able to do transitions on these phrases.
 As you already know, objects in an INSTEAD may be able open/closed off/turned
 on. This corresponds to the phrase dialogue?
 
-For common phrases, after activation of the choice phrase zakryvaetsya. When
-re-entering the dialogue, the phrases otkryvayutsya.
+For common phrases, after activation of the choice phrase _closes_. When
+re-entering the dialogue, the phrases get _opened_.
 
 For phrases with always = true (or true at the beginning of the definition) --
 this the closing does not occur.
@@ -2528,7 +2528,7 @@ functions: disable / enable / empty / open / close / closed / disabled and so
 on...
 
 However, to do this you can only in the dialogue, as all the phrases
-identifitseerida by tags. If you want to modify condition/parse phrases from
+get identified by tags. If you want to modify condition/parse phrases from
 other rooms you can:
 
 - to give the phrase name is { nam = 'name' }...
@@ -2564,7 +2564,7 @@ objects can be divided into two class:
 
 System objects are objects whose name begins with the character '@' or '$'.
 Such objects are usually modular. They are not destroyed at the death of the
-game world (for example, when uploading gamefile, whenloading the game from
+game world (for example, when uploading game file, when loading the game from
 save, and so on). Examples of objects: @timer, @prefs, @snd.
 
 Such objects, in addition to their special functions, can be used the link,
@@ -2638,7 +2638,7 @@ room {
 ### Lookup
 
 Objects whose name begins with the character '$' are also considered
-systemobjects, but they work differently.
+system objects, but they work differently.
 
 If the output text is found on the link:
 
@@ -2655,7 +2655,7 @@ Thus, the objects play the role of a wildcard.
 
 Why is it necessary? Imagine that you developed a module, which turns write
 from a text view in the graphics. You write object $math which in its act
-method converts text to a graphicimage (sprite) and returns it in the text
+method converts text to a graphic image (sprite) and returns it in the text
 stream. Then to use this module extremely simple example:
 
 	{$math|(2+3*x)/y^2}
@@ -2862,7 +2862,7 @@ it as the path to the picture, for example:
 
 __Important!__
 
-Use in ways only direct '/'. Also, it is stronglyit is recommended to use the
+Use in ways only direct '/'. Also, it is strongly recommended to use the
 names of directories and files only Latin lowercase characters. This way you
 will protect your game from compatibility problems and it will work on all
 architectural platforms where ported INSTEAD.
@@ -2894,8 +2894,8 @@ obj {
 That, at least, the scene picture always should be made in the form of 'pic'
 attribute, not insertion 'fmt.img' to 'dsc'.
 
-The fact that the picture of the scene scales on other algorithm.Pictures
-'fmt.img' massturbate in accordance with the settings INSTEAD (the scale
+The fact that the picture of the scene scales on other algorithm. Pictures
+'fmt.img' get scaled in accordance with the settings INSTEAD (the scale
 theme), and 'pic' -- also takes into account the size of the image.
 
 In addition, the images 'pic' have other properties, for example, the ability
@@ -2978,7 +2978,7 @@ To work with music and sounds you will need the snd module.
 
 	require "snd"
 
-The interpreter plays in the cycle of the current music that is setusing the function: 'snd.music(music file)'.
+The interpreter plays in the cycle of the current music that is set using the function: 'snd.music(music file)'.
 
 __Important!__
 
@@ -3039,7 +3039,7 @@ all music files.
 For playback of sounds using snd.play()'. Highly it is recommended to use the
 format 'ogg', although most common sound formats will also work.
 
-The distinction between music and sound file is that the enginemonitoring the
+The distinction between music and sound file is that the engine monitoring the
 process of playing music and saves/restores the currently played track.
 Exiting the game and downloading it again, the player hear the same music that
 you heard when you exit. Sounds generally indicate short-term effects, and the
@@ -3048,7 +3048,7 @@ time to listen the sound of the shot and left the game, after downloading the
 file, save it not hear the sound (or end) again.
 
 However, if you consider the fact that 'snd.play()' allows you to run looped
-sounds, the difference between music and sound becomesnot so unambiguous.
+sounds, the difference between music and sound becomes not so unambiguous.
 
 So, the definition of the function: 'snd.play(file [channel], [loop])', where:
 
@@ -3165,10 +3165,10 @@ undefined. Or abuse the text into paragraphs with '^' or 'pn()'.
 
 INSTEAD in the derivation removes the extra spaces. This means that no matter
 how many spaces you insert between words, are all the same at the conclusion
-theywill not be counted for calculating the distance between words. Sometimes
+they will not be counted for calculating the distance between words. Sometimes
 it could be a problem.
 
-You can create nerazryvno stroke using: fmt.nb(row). For example, the module
+You can create _non-breaking line_ using: fmt.nb(row). For example, the module
 "fmt" uses a continuous line to create indentation at the beginning of
 paragraphs. Also, 'fmt.nb' can to be useful to output special characters. We
 can say that the whole string parameter 'fmt.nb' is perceived by the engine as
@@ -3183,7 +3183,7 @@ positioning in the line (tab delimited).
 
 	fmt.tab(position, [center])
 
-Pozicija, is a text or numeric parameter. If you specify a numeric parameter,
+_Position_, is a text or numeric parameter. If you specify a numeric parameter,
 it is treated as position in pixels. If it is set in a string parameter
 'number%', it is perceived as position, expressed in percentage of the width
 of the output window scene.
@@ -3239,7 +3239,7 @@ this, use the vertical tab:
 
 	fmt.y(position, [center])
 
-As in the case of fmt.tab pozicija is text or numeric parameter. Here it is
+As in the case of fmt.tab position is text or numeric parameter. Here it is
 perceived as a position of the line expressed in pixels or percentage of the
 height region of the scene. For example, 100% -- corresponds to the lower
 boundary region of the scene. 200% corresponds --  the lower boundary of the
@@ -3269,7 +3269,7 @@ You cannot change this variable in the handlers, as it is not remains, but you
 can set it for the entire game, or fix it manually in the function 'start()'.
 
 If you absolutely do not like how INSTEAD forms conclusion (sequence of
-paragraphs), you can override the function'game.display()', which by default
+paragraphs), you can override the function 'game.display()', which by default
 looks like the following:
 
 ```
@@ -3321,7 +3321,7 @@ room {
 
 > Using the function 'fmt.u' and 'fmt.st' on strings containing spaces
 > you will get broken lines in these places. What to avoid it, 
-> to turn the text into nerazryvno stroke:
+> to turn the text into _non-breaking string_:
 
 	fmt.u(fmt.nb "now the unabridged" )
 
@@ -3336,7 +3336,7 @@ require a more flexible output control, you can do the following:
 
 ## Constructors and inheritance
 
-__Внимание!__
+__Caution!__
 
 If you write your first game, it would be better if she was simple. For a
 simple game, the information in this Chapter do not need. Moreover, 90% say
@@ -3504,7 +3504,7 @@ principle, depends only on you. Choose the most simple and intuitive way.
 When writing constructors, it is sometimes useful to make a call handler the
 way it does INSTEAD. To do this, use 'std.call(object, method, options)', this
 function will return the reaction of the attribute as a string. For example,
-consider a modification'window', which is that you can define your own the
+consider a modification 'window', which is that you can define your own the
 reaction to the inspection window, which will be executed after the standard
 posts about what is the broken window (if it is broken).
 
@@ -3618,7 +3618,7 @@ classes.
 
 When your game gets large, the location of its code entirely in 'main3.lua' -- bad idea.
 
-To break the text of the game files you can use'include'. You must use
+To break the text of the game files you can use 'include'. You must use
 'include' in a global context so that while loading 'main3.lua' is loaded and
 all the remaining fragments of the game, for example.
 
@@ -3674,7 +3674,7 @@ games. Then you may need menu.
 
 Menu is an element of inventory, which is triggered on the first click. When
 this menu can inform the engine that the action is not a game tact. Thus,
-using the menus you can create in the areainventory management a game of any
+using the menus you can create in the area inventory management a game of any
 complexity. For example, there is module "proxymenu" that implements control
 of the game style quests on the ZX-spectrum. In the game "Mansion" his
 control, which introduces a few action modifiers, etc.
@@ -3846,7 +3846,7 @@ You can also return a special status:
 
 	return true, false
 
-In this mode perrished only equipment (but not stage). This status is useful
+In this mode only equipment (but not stage) will be redrawn. This status is useful
 for implementing menu the field inventory.
 
 There is another special status: std.nop(). It can be used just like a
@@ -3923,7 +3923,7 @@ You can return from timer special status:
 
 	return true, false
 
-In this mode perrished only the area of inventory. It is possible use of
+In this mode only the area of inventory will be redrawn. It is possible use of
 statuses like hours.
 
 In addition, INSTEAD there is the ability to track intervals the time in
@@ -4069,7 +4069,7 @@ take(new(box 'In the corner {box}'))
 ```
 
 'new' takes first argument is declared as a constructor function, and all
-other parameters-as argumentsconstructor. The result of the constructor should
+other parameters-as arguments constructor. The result of the constructor should
 be object.
 
 ```
@@ -4186,7 +4186,7 @@ Graphic interpreter supports the theme engine. Tema is a directory, the file
 The theme, which is the minimum required -- is the theme 'default'. This topic
 is always loaded first. All other topics inherit from it and can partially or
 completely replace it settings. Themes are chosen by the user via
-menusettings, but the game may contain its own subject and thus the influence
+menu settings, but the game may contain its own subject and thus the influence
 on your appearance. In this case, the directory the game should be a file
 'theme.ini'. However, the user is free to disable this mechanism, while the
 interpreter will warn about violation of the creative concept the author of
@@ -4486,7 +4486,7 @@ timer:set(30)
 ### Module click
 
 You can track in your game clicks on the picture of the scene, and background.
-To do this, use the module "click". Also, you cankeep track of the mouse state
+To do this, use the module "click". Also, you can keep track of the mouse state
 by the function:
 
 	instead.mouse_pos([x, y])
@@ -4775,7 +4775,9 @@ change background on the fly, without the use of the module theme. For
 example:
 
 ```
---$Author: Andrew Lobanovrequire 'sprite'
+--$Author: Andrew Lobanov 
+
+require 'sprite'
 require 'theme'
 require 'timer'
 
@@ -4835,8 +4837,8 @@ room {
 }
 ```
 
-_Внимание!_ Interpreter INSTEAD to use item on the object transforms itself
-into the mode "pause". This means that at the momentwhen the selected item
+_Caution!_ Interpreter INSTEAD to use item on the object transforms itself
+into the mode "pause". This means that at the moment when the selected item
 from inventory (the cursor change gear) timer events will not be processed
 until the until the player apply the subject. This is done in order to not
 break the beat game. If your creative idea this is an obstacle (for example,
@@ -4849,7 +4851,7 @@ As usual, place the call in the init() or start() function.
 
 #### Lookup
 
-You can create your system object - substitution, and forminggraphics output
+You can create your system object - substitution, and forming graphics output
 of the game, with img, for example:
 
 ```
@@ -5001,7 +5003,7 @@ function game:timer(s)
 end
 ```
 
-_Внимание!_ direct mode can be used to create a simple arcade games. In some
+_Caution!_ direct mode can be used to create a simple arcade games. In some
 cases, you may want to remove the pointer mouse. For example, when the game is
 controlled only with keyboard.
 
@@ -5045,7 +5047,7 @@ Examples:
 local p1 = pixels.new(320, 200) -- has created a 320x200 pixels
 local p2 = pixels.new 'gfx/apple.png' -- created pixels from image
 local p3 = pixels.new(320, 200, 2) -- created a 320x200 pixels,
--- that when you render them to a sprite-will smasshtabirovannogo to
+-- that when you render them to a sprite -- will be scaled to
 -- 640x400
 ```
 
@@ -5132,7 +5134,7 @@ function start(load)
 end
 ```
 
-When the procedural generation using pixels whether to use a noise Perlina. In
+When the procedural generation using pixels it is conveniently to use Perlin noise. In
 INSTEAD there are functions:
 
 - instead.noise1(x) - 1D Perlin noise;
@@ -5281,7 +5283,7 @@ state of the game.
 To create a snapshot use: snapshots:make(). In the parameter can be set to the
 name of the slot.
 
-_Внимание!!!_ Snapshot will be generated after completing the current step of
+_Caution!!!_ Snapshot will be generated after completing the current step of
 game, because only in this case, the guaranteed consistency the saved game
 state.
 
@@ -5436,7 +5438,7 @@ computer games. That genre the greater part of the non-profit -- even a plus.
 
 History INSTEAD, in my opinion, good proof of this. It released many games
 that can safely be called great! Their authors may retire, but they
-createdworks are already living their lives, reflected in the consciousness of
+created works are already living their lives, reflected in the consciousness of
 people, who play them or remember. Let the "circulation" of these games is not
 so great but what I saw completely "justified" all efforts spent on engine. I
 know it's time well spent. So I found a power, and made the engine even
