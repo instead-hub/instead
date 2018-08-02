@@ -3612,6 +3612,17 @@ out:
 	return rc;
 }
 #ifdef __EMSCRIPTEN__
+const char *em_beforeunload(int eventType, const void *reserved, void *userData)
+{
+	if (curgame_dir) {
+		game_event("quit");
+		if (opt_autosave)
+			game_save(0);
+		game_cfg_save();
+	}
+	return NULL;
+}
+
 static void game_void_cycle(void)
 {
 	int rc;
@@ -3631,6 +3642,7 @@ static void game_void_cycle(void)
 int game_loop(void)
 {
 #ifdef __EMSCRIPTEN__
+	emscripten_set_beforeunload_callback(NULL, em_beforeunload);
 	emscripten_set_main_loop(game_void_cycle, 0, 0);
 	return -1;
 #else
