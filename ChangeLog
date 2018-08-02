@@ -4,6 +4,7 @@
   * new: -lang parameter;
   * enh: themes cleanups;
   * new: cmake and LuaJIT build (-DWITH_LUAJIT=1);
+  * enh: autosave in emscripten build;
   * fix: ini method and load parameter;
   * fix: -appdata and system build;
   * fix: build with zlib;
