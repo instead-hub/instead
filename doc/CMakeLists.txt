@@ -3,8 +3,9 @@ SET(DOC_FILES
 )
 
 SET(GENERATED_DOC_FILES
+	stead3-ru.pdf
+	modules3-ru.pdf
 	stead3.pdf
-	modules3.pdf
 	instead.txt
 )
 
