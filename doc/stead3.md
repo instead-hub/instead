@@ -1,1159 +1,1098 @@
-## Общие сведения
+## General information
 
-Код игр под INSTEAD пишется на языке Lua (5.1), поэтому, знание этого
-языка полезно, хотя и не необходимо.  Ядро движка также написано на
-lua, поэтому знание Lua может быть полезным для углубленного понимания
-принципов его работы, конечно, при условии, если вам интересно этим
-заниматься.
+The engine for INSTEAD is written in Lua language (5.1), therefore knowing
+this language is useful, though not necessary. The core engine also written in
+lua, so the Lua knowledge can be useful for in depth understanding principles
+of operation, of course, if you are interested this to do.
 
-За время своего развития, INSTEAD получил множество новых
-функций. Теперь с его помощью можно делать игры разных жанров (от
-аркад, до игр с текстовым вводом). А также, в INSTEAD можно запускать
-игры, написанные на некоторых других движках, но основой INSTEAD
-остается первоначальное ядро, которое ориентировано на создание
-текстографических приключенческих игр. В данной документации описана
-именно эта базовая часть, изучение которой необходимо даже в том
-случае, если вы хотите написать что-то другое... Начните свое изучение
-INSTEAD с написания простой игры!
+During its development, INSTEAD got loads of new functions. Now you can make
+games of different genres (from arcade, to games text). And also, INSTEAD you
+can run games written in some other engines, but the Foundation INSTEAD
+remains of the original core, which is focused on creating text and graphic
+adventure games. This documentation describes the this basic skills is
+necessary, even if you want to write something else... so let's Start learning
+INSTEAD by writing a simple game!
 
-В феврале 2017 года, после 8 лет разработки, INSTEAD (версия 3.0)
-вышел с поддержкой нового ядра STEAD3.  Старое ядро получило название
-STEAD2. INSTEAD поддерживает работу игр написанных как на STEAD2, так
-и на STEAD3. Это руководство описывает STEAD3.
+In February of 2017, after 8 years of development, INSTEAD (version 3.0) came
+with support for new kernel STEAD3. The old kernel got the name STEAD2.
+INSTEAD supports games written as STEAD2,  and STEAD3.
 
-Если у вас возникают вопросы, вы можете посетить сайт INSTEAD:
+This manual describes STEAD3. If you have any questions, you can visit the
+website INSTEAD:
 
 https://instead-hub.github.io
 
-Или подключиться к чату на gitter:
+Or connect to the chat room on gitter:
 
 https://gitter.im/instead-hub/instead
 
-### История создания
+### The story of creation
 
-Когда мы говорим "текстовое приключение" у большинства людей возникает
-один из двух привычных образов.  Это либо текст с кнопками действий,
-например:
+When we say "text adventure" most of the people there one of the two familiar
+images. It's either text, action buttons, for example:
 
-    Вы видите перед собой стол. На столе лежит яблоко. Что делать?
+	You see a table in front of you. There is an apple on the table. What to do?
 
-    1) Взять яблоко
-    2) Отойти от стола
+	1) Take the apple
+	2) Step away from the table
 
-Или, гораздо реже, это классические игры с текстовым вводом, где для
-управления игрой необходимо было вводить действия с клавиатуры.
+Or much less, this is a classic game with a text input where game control was
+necessary to introduce actions with the keyboard.
 
-    Вы на кухне. Тут есть стол.
-    > осмотреть стол.
-    На столе есть яблоко.
+	You in the kitchen. There is a table.
+	> inspect the table.
+	There is an apple on the table.
 
-У обоих подходов есть свои преимущества и недостатки.
+Both approaches have their advantages and disadvantages.
 
-Если говорить про первый подход, то он близок к жанру книг-игр и
-удобен больше для литературных текстов, которые описывают _события_,
-происходящие с главным героем, и не очень удобен для создания
-классических квестов, где главный герой исследует _смоделированный_ в
-игре _мир_, свободно перемещаясь по нему и взаимодействуя с объектами
-этого мира.
+If we talk about the first approach, it is close to the genre of books, games
+and more convenient for literary texts that describe events, what is
+happening with the main character, and not very easy to create classic quests,
+where the main character explores modeled in-game world, moving freely
+on it and interacting with objects this world.
 
-Второй подход моделирует мир, но требует значительных усилий от автора
-игры, и, что более важно, более подготовленного игрока. Особенно,
-когда мы имеем дело с русским языком.
+The second approach models the world, but requires considerable effort from
+the game author, and more importantly, more prepared player. Especially when we
+are dealing with the Russian language.
 
-Проект INSTEAD был создан для написания другого типа игр, которые
-совмещают преимущества обоих подходов, одновременно пытаясь избежать
-их недостатков.
+INSTEAD the project was created for writing other types of games
+combine the advantages of both approaches while trying to avoid
+their disadvantages.
 
-Мир игры на INSTEAD моделируется как при втором подходе, то есть в
-игре есть места (сцены или комнаты) которые может посещать главный
-герой и объекты, с которыми он взаимодействует (включая живых
-персонажей). Игрок свободно изучает мир и манипулирует
-объектами. Причем, действия с объектами не прописаны в виде явных
-пунктов меню, а скорее напоминают классические графические квесты в
-стиле 90-х.
+The world of the game INSTEAD is modeled as the second approach, that is, in
+the game there are places (scenes or rooms) which can have access to the main
+the hero and the objects with which it interacts (including living
+characters). The player is freely exploring the world and manipulates objects.
+Moreover, actions with objects is not spelled out explicitly menu items, but
+rather reminiscent of the classic graphic quests in the style of the 90s.
 
-На самом деле, в INSTEAD есть множество незаметных на первый взгляд
-вещей, которые направлены на развитие выбранного подхода, и который
-делает процесс игры максимально динамичным и непохожим на привычные
-"текстовые квесты".  Это подтверждается в том числе и тем, что на
-движке было выпущено множество замечательных игр, интерес к которым
-проявляют не только любители текстовых игр как таковых, но и люди не
-знакомые с данным жанром.
+Actually, INSTEAD there are many invisible at first glance things that are
+aimed at the development of the approach chosen, and which makes the game as
+dynamic and different from the usual "text quests". This is confirmed by
+including the fact that the engine was released a lot of great games, the
+interest show not only the fans of word games as such, but people do not
+familiar with this genre.
 
-Перед изучением данного руководства, я рекомендую поиграть в
-классические игры INSTEAD, чтобы понять о чем идет речь.  С другой
-стороны, раз вы здесь, то наверное вы уже сделали это.
+Before you read this guide, I recommend to play classic INSTEAD games to
+understand what was going on. On the other hand, since you're here, you
+probably did it.
 
-Правда, не стоит пока изучать код этих игр, так как старые игры очень
-часто написаны неоптимально, с использованием устаревших
-конструкций. Текущая версия INSTEAD позволяет реализовывать код
-лаконичнее, проще и понятнее. Об этом и рассказывается в данном
-документе.
+However, not worth while to examine the code of these games, because old games
+are very often behave inefficiently, with outdated designs. Current version
+INSTEAD allows you to implement code shorter, simpler and easier. About this
+and tells this document.
 
-Если вас интересует история создания движка, то вы можете прочитать
-статью о том, как все начиналось: https://instead-hub.github.io/article/2010-05-09-history/
+If you are interested in the history of the engine, then you can read
+an article about how it all began:
 
-### Как выглядит классическая INSTEAD игра
+https://instead-hub.github.io/article/2010-05-09-history/
 
-Итак, как выглядит классическая INSTEAD игра?
+### Looks like a classic INSTEAD game
 
-_Главное окно_ игры содержит описательную часть, информацию о
-статической и динамической части сцены, активные события и картинку
-сцены (в графическом интерпретаторе) с возможными переходами в другие
-сцены.
+So, it looks like a classic INSTEAD of a game?
 
-_Описательная часть сцены_ отображается только один раз, при показе
-сцены, или при явном осмотре сцены (в графическом интерпретаторе --
-_Статическая часть сцены_ содержит информацию о статических объектах
-сцены (обычно, это декорации) и отображается всегда. Эта часть
-написана автором игры.
+_Main game window_ contain a narrative, information about the static and
+dynamic parts of the scene, active events and a picture the scene (in the
+graphic interpreter) with possible transitions to other scene.
 
-_Динамическая часть сцены_ составлена из описаний объектов сцены,
-которые присутствуют в данный момент на сцене. Эта часть генерируется
-автоматически и отображается всегда. Обычно, в ней представлены
-объекты, которые могут менять свое местоположение.
+_Descriptive part of the scene_ appears only once, when showing scene, or with explicit
+inspection of the scene (in the graphic interpreter -- Staticheskaya part
+scene contains information about static objects scene (usually scenery) and is
+always displayed. This part written by the author of the game.
 
-Игроку доступны объекты, доступные на любой сцене --
-_инвентарь_. Игрок может взаимодействовать с объектами инвентаря и
-действовать объектами инвентаря на другие объекты сцены или инвентаря.
+_Dynamic part of the scene_ is composed of descriptions of objects in the scene,
+which are present in the moment on stage. This part is generated automatically
+and always displays. Usually, it presents objects that can change its
+location.
 
-> Следует отметить, что понятие инвентаря является условным. Например,
-> в "инвентаре" могут находиться такие объекты как "открыть",
-> "осмотреть", "использовать" и т.д.
+The player is available the features available on any stage -- Inventory. The
+player can interact with objects of the inventory and to act the objects of
+the inventory on other objects in the scene or inventory.
 
-_Действиями_ игрока могут быть:
+> It should be noted that the "inventory" is a conventionalism. For example,
+> equipment can be such objects as "open", "inspect", "use", etc.
 
-- осмотр сцены;
-- действие на объект сцены;
-- действие на объект инвентаря;
-- действие объектом инвентаря на объект инвентаря;
-- действие объектом инвентаря на объект сцены;
-- переход в другую сцену.
+_Actions_ of the player can be:
 
-### Как создавать игру
+- inspection of the scene;
+- the effect on the object scene;
+- the effect on the inventory object;
+- the action object inventory on the inventory object;
+- the unfolding of the object scene;
+- switch to another scene.
 
-Игра представляет из себя каталог, в котором должен находиться скрипт
-(текстовый файл) main3.lua. (Обратите внимание, наличие файла
-main3.lua означает, что вы пишите игру на STEAD3!) Другие ресурсы игры
-(скрипты на lua, графика и музыка) должны находиться в рамках этого
-каталога. Все ссылки на ресурсы делаются относительно текущего
-каталога -- каталога игры.
+### How to create a game
 
-В начале файла main3.lua может быть определен заголовок, состоящий из
-тегов (строк специального вида). Теги должны начинаться с символов:
-два минуса.
+The game is the directory in which the script should be placed (text file)
+main3.lua. (Note, the presence of the file main3.lua means that you write the
+game on STEAD3!) Other game resources (lua scripts, images, and music) should
+be inside the game directory. All links to resources are given relative to this
+directory -- the directory of the game.
 
-    --
+At the beginning of the file main3.lua can be defined header consisting of
+tags (strings of a special form). Tags must start with the characters: two
+minuses.
 
-Два минуса это комментарий с точки зрения Lua. На данный момент
-существуют следующие теги.
+	--
 
-Тег $Name: содержит название игры в кодировке UTF-8. Пример
-использования тега:
+Two dashes is a comment from the point of view of Lua. At the moment there are
+the following tags.
 
-    -- $Name: Самая интересная игра!$
+The $Name tag contains the name of the game in UTF-8. Example use the tag:
 
-Затем следует (желательно) задать версию игры:
+	-- $Name: the Most interesting game!$
 
-    -- $Version: 0.5$
+Then you should (preferably) ask version of the game:
 
-И указать авторство:
+	-- $Version: 0.5$
 
-    -- $Author: Анонимный любитель текстовых приключений$
+And to indicate the authorship:
 
-Дополнительную информацию об игре, можно задать тегом Info:
+	-- $Author: Anonymous fan of text adventures$
 
-    -- $Info: Это ремейк старой игры\nС ZX specturm$
+For more information about the game, you can set the tag Info:
 
-Обратите внимание на \n в Info, это станет переводом строки, когда вы
-выберете пункт "Информация" в INSTEAD.
+	-- $Info: This remake of the old game\PS ZX specturm$
 
-Если вы разрабатываете игру в Windows, то убедитесь, что ваш редактор
-поддерживает кодировку UTF-8 _без BOM_.  Именно эту кодировку следует
-использовать при написании игры!
+Note the \n in the Info, it will be a line when you select "Info" INSTEAD.
 
-Далее, обычно следует указать модули, которые требуются игре. О
-модулях будет рассказано отдельно.
+If you are developing a game in Windows make sure your editor supports UTF-8
+encoding but _without BOM_. This encoding should to use when writing games!
 
-    require "fmt" -- некоторые функции форматирования
-	fmt.para = true -- включить режим параграфов (отступы)
+Next, you should typically specify modules that are required by the game. On
+modules will be discussed separately.
 
-Кроме того, обычно стоит определить обработчики по-умолчанию:
-game.act, game.use, game.inv, о которых также будет рассказано ниже.
+	require "fmt" -- some formatting functions
+	fmt.para = true -- enable the paragraphs (indents)
 
-    game.act = 'Не работает.';
-    game.use = 'Это не поможет.';
-    game.inv = 'Зачем мне это?';
+In addition, it is usually worthwhile to define handlers by default:
+game.act, game.use, game.inv, which are also discussed below.
 
-_Инициализацию_ игры следует описывать в функции init, которая
-вызывается движком в самом начале.  В этой функции удобно
-инициализировать состояние игрока на начало игры, или какие-то другие
-действия, нужные для первоначальной настройки мира игры.  Впрочем,
-функция ''init'' может быть и не нужна.
+	game.act = 'Not running.';
+	game.use = 'It does not help.';
+	game.inv = 'Why?';
 
-    function init() -- добавим в инвентарь нож и бумагу
-        take 'нож'
-        take 'бумага'
-    end
+_Initialization_ of the game should be defined in the init function, which called
+by the engine in the beginning. In this function conveniently to initialize
+the state of the player at the beginning of the game, or any other the steps
+needed for initial configuration of the game world. However,the function
+"init" may not be needed.
 
-После того как игра проинициализирована, выполняется запуск игры. Вы
-можете определить функцию start(), которая запускается непосредственно
-перед запуском игры. Это значит, например, что в случае загрузки
-сохраненной игры, start() вызовется после того, как сохранение будет
-прочитано,
+	function init() -- add to the inventory the knife and paper
+		take 'the knife'
+		take 'paper'
+	end
+
+Once the game is initialized, run the game. You can define a function start ()
+that runs directly before starting the game. This means, for example, in the
+case of download saved games, start() will be called after the save read
 
 
-    function start(load) -- восстановить состояние?
+	function start(load) -- to restore the original state?
 		if load then
-			dprint "Это загрузка состояния."
+			dprint "It's a load state."
 		else
-			dprint "Это старт игры."
+			dprint "This is the start of the game."
 		end
-		-- нам сейчас не нужно ничего делать
-    end
+		-- we don't need to do anything
+	end
 
 
-Графический интерпретатор ищет доступные игры в каталоге
-games. Unix-версия интерпретатора кроме этого каталога просматривает
-также игры в каталоге ~/.instead/games. Windows-версия: Documents and
-Settings/USER/Local Settings/Application Data/instead/games.  В
-Windows- и standalone-Unix-версии игры ищутся в каталоге
-./appdata/games, если он существует.
+The graphic interpreter looks for available games in the directory games. The
+Unix version of the interpreter in addition, the catalog scans also games in
+the directory ~/.instead/games. Windows version: Documents and
+Settings/USER/Local Settings/Application Data/instead/games. In Windows -
+standalone-Unix-version of the game are searched in the directory
+./appdata/games, if it exists.
 
-В некоторых сборках INSTEAD (в Windows, в Linux если проект собран с
-gtk и др.) можно открывать игру по любому пути из меню "Выбор игры".
-Либо, нажать f4. Если в каталоге с играми присутствует только одна
-игра, INSTEAD запустит ее автоматически, это удобно, если вы хотите
-распространять свою игру вместе с движком.
+In some assemblies, INSTEAD (in Windows, in Linux if the project is built with
+gtk etc.), you can open the game in any way from the menu "Choice of
+games".Or, press f4. If in the directory with the game there is only one the
+game, INSTEAD it will be launched automatically, which is handy if you want
+distribute your game with the engine.
 
-Таким образом, вы кладете игру в свой каталог и запускаете INSTEAD.
+So you put the game in your directory and run INSTEAD.
 
-__Важно!__
+__Important!__
 
-При написании игры, настоятельно рекомендуется использовать отступы
-для оформления кода игры, как это сделано в примере из данного
-руководства, этим самым вы сократите количество ошибок и сделаете свой
-код наглядней!
+When writing games, it is strongly recommended to use indentation for coding
+games, as in the example from the leadership, thereby you will reduce the
+number of errors and will make your code graphically!
 
-Ниже приводится минимальный шаблон для вашей первой игры:
+Below is a minimal template for your first game:
 
 ```
--- $Name: Моя первая игра$
+-- $Name: My first game$
 -- $Version: 0.1$
--- $Author: Анонимный автор$
+-- $Author: Anonymous$
 
 require "fmt"
 fmt.para = true
 
-game.act = 'Гм...';
-game.use = 'Не сработает.';
-game.inv = 'Зачем это мне?';
+game.act = 'Hm...';
+game.use = 'does Not work.';
+game.inv = 'Why me?';
 
 function init()
--- инициализация, если она нужна
+-- initialization if it is needed
 end
 ```
 
-### Основы отладки
+### The basics of debugging
 
-Во время отладки (проверки работоспособности вашей игры) удобно, чтобы
-INSTEAD был запущен с параметром -debug, тогда в случае ошибок будет
-показана более подробная информация о проблеме в виде стека
-вызовов. Параметр -debug можно задать в ярлыке (если вы работаете в
-Windows), а для других систем, я думаю вы и так знаете как передавать
-параметры командной строки.
+During debugging (check the health of your game) it is convenient to
+INSTEAD was started with-debug option, then in case of error
+shows more detailed information about the problem in the form of a stack
+calls. The-debug option can be set in the shortcut (if you are working in
+Windows) and for other systems, I think you already know how to pass
+command-line options.
 
-Кроме того, в режиме -debug автоматически подключается отладчик. Вы
-можете активировать его с помощью клавиш ctrl-d или f7. Вы можете
-подключить отладчик и явно указав:
+In addition, the mode is debug, the debugger automatically connects. You can
+activate it with ctrl-d or f7. You can to connect the debugger and explicitly:
 
-    require "dbg"
+	require "dbg"
 
-В коде вашей игры.
+In the code of your game.
 
-При отладке игры обычно нужно часто сохранять игру и загружать
-состояние игры. Вы можете использовать стандартный механизм сохранений
-через меню (или по клавишам f2/f3), или воспользоваться быстрым
-сохранением/загрузкой (клавиши f8/f9).
+When you debug a game, you usually need to frequently save the game and load
+the state of the game. You can use the standard mechanism of saving via menu
+(or via keys f2/f3), or use the quick saving/loading (press f8/f9).
 
-В режиме '-debug' вы можете перезапускать игру клавишами
-'alt-r'. В комбинации с f8/f9 это дает возможность быстро посмотреть
-изменения в игре после ее правки.
+Mode '-debug' you can restart the game with 'alt-r'. In combination with f8/f9
+this enables you to quickly see changes to the game after it changes.
 
-> Внимание! Если вы просто перезапустите INSTEAD, то скорее всего
-> увидите старое состояние игры, так как по умолчанию работает режим
-> автозагрузки автосохранения! Либо отключите эту настройку в меню
-> (автосохранение), либо явно перезапускайте игру после правок.
-> Перезапуск возможен через меню (начать заново) или 'alt-r' в режиме
-> '-debug' как это описано выше.
+> Attention! If you just restart INSTEAD, it is likely
+> you will see the old state of the game, as the default running mode
+> startup AutoSave! Either disable this setting in the menu
+> (AutoSave), or explicitly reset the game after the edits.
+> Restart is possible through the menu (to start over) or the 'alt-r' in mode
+> '-debug' as described above.
 
-В режиме '-debug' Windows-версия INSTEAD создает консольное окно (в
-Unix версии, если вы запускаете INSTEAD из консоли, вывод будет
-направлен в нее) в которое будет осуществляться вывод ошибок. Кроме
-того, используя функцию 'print()' вы сможете порождать свои
-сообщения с отладочным выводом. Например:
+Mode '-debug' Windows version INSTEAD creates a console window (in Unix
+version, if you start INSTEAD from the console, the output will bedirected to
+it) which will be implemented by the error output. In addition using the
+function 'print ()', you can generate your messages with debug output. For
+example:
 
 ```
 act = function(s)
 	print ("Act is here! ");
-    ...
+	...
 end;
 ```
 
-Не пугайтесь, когда вы прочитаете все руководство и начнете писать
-свою игру, вы, скорее всего, взглянете на этот пример с большим
-воодушевлением.
+Don't be alarmed when you read all the guidance and start writing your game,
+you will most likely take a look at this example with a large enthusiasm.
 
-Вы также можете использовать функцию dprint(), которая посылает вывод
-в окно отладчика, и вы сможете посмотреть его при входе в режим
-отладки.
+You can also use the function dprint(), which sends the output in the debugger
+window, and you can see it when logged in mode debug.
 
 ```
 act = function(s)
 	dprint ("Act is here! ");
-    ...
+	...
 end;
 ```
 
-Во время отладки бывает удобно изучать файлы сохранений, которые
-содержат состояние переменных игры. Чтобы не искать каждый раз файлы
-сохранений, создайте каталог saves в директории с вашей игрой (в том
-каталоге, где содержится main3.lua) и игра будет сохраняться в
-saves. Этот механизм также будет удобен для переноса игры на другие
-компьютеры.
+During debugging, it is useful to examine the save file, which contain the
+state variables of the game. Not to search every time files saves, create a
+saves directory in the directory of your game ( the directory that contains
+main3.lua) and the game will persist saves. This mechanism will also be useful
+for transferring games to other computers.
 
-Возможно (особенно, если вы пользуетесь Unix системами) вам понравится
-идея проверки синтаксиса ваших скриптов через запуск компилятора
-''luac''.  В Windows это тоже возможно, нужно только установить
-выполняемые файлы lua для Windows
-(http://luabinaries.sourceforge.net)/ и воспользоваться luac52.exe.
+It is possible (especially if you use Unix systems) you will like it the idea
+of checking the syntax of your script through the compiler "luac". In Windows
+it is also possible, you only need to install execute the lua file for Windows
+(http://luabinaries.sourceforge.net)/ and use luac52.exe.
 
-Вы можете проверить синтаксис и с помощью INSTEAD, для этого
-воспользуйтесь параметром -luac:
+You can check the syntax and use INSTEAD, for this use the parameter -luac:
 
-    sdl-instead -debug -luac <пусть к скрипту.lua>
+	sdl-instead-debug-luac <path to the script.>
 
-## Сцена
+## Scene
 
-_Сцена_ (или комната) -- это единица игры, в рамках которой игрок
-может изучать все объекты сцены и взаимодействовать с ними. Например,
-сценой может быть комната, в которой находится герой. Или участок
-леса, доступный для наблюдения.
+Scene (or room) -- is a unit game in which the player can examine all the
+objects in the scene and interact with them. For example, the scene can be a
+room in which the hero is. Or plot forest available for observation.
 
-В любой игре должна быть сцена с именем ''main''. Именно с нее
-начнется и ваша игра!
+In any game should be a scene called "main". It will start and your game!
 
 ```
 room {
 	nam = 'main';
-	disp = "Главная комната";
-	dsc = [[Вы в большой комнате.]];
+	disp = "Main room";
+	dsc = [[You are in a large room.]];
 }
 ```
 
-Запись означает создание объекта (так как почти все сущности в INSTEAD
-это объекты) main типа room (комната). Атрибут объекта nam хранит имя
-комнаты 'main', по которому можно обращаться к комнате из кода. Каждый
-объект имеет свое уникальное имя. Если вы попробуете создать два
-объекта с одинаковыми именами, вы получите сообщение об ошибке.
+The record means creation of an object (as almost all entities. objects) main
+room type (room). The object attribute stores the name nam room 'main', which
+you can access room from your code. Each object has its unique name. If you
+try to create two object with the same name, you will receive an error
+message.
 
-Для обращения к объекту по имени, вы можете использовать следующую
-запись:
+To access the object by name, you can use the following entry:
 
-```
-dprint("Объект: ", _'main')
-```
+	dprint("Object: ", _'main')
 
-У каждого объекта игры есть _атрибуты_ и _обработчики событий_. В
-данном примере есть два атрибута: nam и dsc. Атрибуты разделяются
-разделителем (в данном примере -- символом точка с запятой ';').
+Each object has _attributes_ and _event handlers_. In this example has two
+attributes: nam and dsc. The attributes are separated the delimiter (in this
+example -- a symbol, the semicolon ';').
 
-Обычно, атрибуты могут быть текстовыми строками,
-функциями-обработчиками и булевыми значениями. Однако, атрибут nam
-всегда должен быть текстовой строкой, если он задан.
+Usually, the attributes can be text strings, functions-handlers and Boolean
+values. However, the attribute nam should always be a text string, if
+specified.
 
-На самом деле, вы можете не указывать имя при создании объекта:
+In fact, you may not specify the name when creating the object:
 
 ```
 room {
-	disp = "Главная комната";
-	dsc = [[Вы в большой комнате.]];
+	disp = "Main room";
+	dsc = [[You are in a large room.]];
 }
 ```
 
-В таком случае, движок сам даст имя объекту, и это имя будет неким
-числом. Так как вы не знаете это число, вы не можете обратиться к
-объекту явно.  Иногда удобно создавать безымянные объекты, например,
-для декораций. При создании объекта, даже если он "безымянный", вы
-можете создать переменную - ссылку на объект, например:
+In this case, the engine itself will give the name of the object, and this
+name is a kind of number. Because you do not know this number, you can
+contact the object clearly. It is sometimes convenient to create unnamed
+objects, for example, for decoration. When the object is created, even if it
+is nameless, you unable to create variable object reference, for example:
 
 ```
 myroom = room {
-	disp = "Чулан";
-	dsc = [[Вы в чулане.]];
+	disp = "Closet";
+	dsc = [[You in the closet.]];
 }
 ```
 
-Переменная myroom в таком случае становится синонимом объекта (ссылкой
-на сам объект).
+Myroom variable in this case becomes a synonym of object (link on the object
+itself).
 
-```
-dprint("Объект: ", myroom)
-```
+	dprint("Object: ", myroom)
 
-Вы можете придерживаться какого-то одного способа, или применять
-оба. Например, вы можете задать и имя и переменную-ссылку:
+You can stick to any one method or to apply both. For example, you can specify
+the name and the variable link:
 
 ```
 main_room = room {
 	nam = 'main';
-	disp = "Главная комната";
-	dsc = [[Вы в большой комнате.]];
+	disp = "Main room";
+	dsc = [[You are in a large room.]];
 }
 ```
-Важно понять, что движок в любом случае работает с именами объектов, а
-переменные-ссылки -- это просто способ упростить доступ к часто
-используемым объектам. Поэтому, для нашей первой игры мы обязаны
-указать атрибут nam = 'main', чтобы создать комнату main с которой и
-начнется наше приключение!
 
-В нашем примере, при показе сцены, в качестве заголовка сцены будет
-использован атрибут 'disp'. На самом деле, если бы мы его не задали,
-то в заголовке мы бы увидели 'nam'. Но nam не всегда удобно делать
-заголовком сцены, особенно если это строка вроде 'main', или если это
-числовой идентификатор, который движок присвоил объекту автоматически.
+It is important to understand that the engine is in any case working with
+object names,  variables are just references-it's just a way to simplify
+access to frequently used objects. So, for our first game, we owe to specify
+the attribute nam = 'main' to create the main room and we begin our adventure!
 
-Есть еще более понятный атрибут 'title'. Если он задан, то при
-отображении комнаты в качестве заголовка будет указан именно он.
-title используется тогда, когда игрок находится _внутри_ комнаты. Во
-всех остальных случаях (при показе переходов в эту комнату)
-используется 'disp' или 'nam'.
+In our example, when displaying the scene, the title scene will be used the
+attribute 'disp'. In fact, if we hadn't asked it's in the title we would see
+'nam'. But nam is not always convenient to do the title of the scene,
+especially if it is a string like 'main' or if it numeric ID that the engine
+assigned to the object automatically.
+
+There is a more intuitive attribute 'title'. If it is set, when the display
+room as the title will indicate it. title is used when the player is inside
+one of the room. In all other cases (when showing transitions in this room)
+use the 'disp' or 'nam'.
 
 ```
 mroom = room {
 	nam = 'main';
-	title = 'Начало приключения';
-	disp = "Главная комната";
-	dsc = [[Вы в большой комнате.]];
+	title = 'Start of adventure';
+	disp = "Main room";
+	dsc = [[You are in a large room.]];
 }
 ```
-Атрибут 'dsc' -- это описание сцены, которое выводится один раз при
-входе в сцену или при явном осмотре сцены.  В нем нет описаний
-объектов, присутствующих в сцене.
 
-Вы можете использовать символ ',' вместо ';' для разделения
-атрибутов. Например:
+Attribute 'dsc' is the description of the scene that is displayed once when
+entering the scene or when an explicit examination of the scene. There are no
+descriptions of objects present in the scene.
+
+You can use the symbol ',' instead of ';' to separate attributes. For example:
 
 ```
 room {
 	nam = 'main',
-	disp = 'Главная комната',
-	dsc = 'Вы в большой комнате.',
+	disp = 'Main room',
+	dsc = 'You are in a large room.',
 }
 ```
-В данном примере все атрибуты -- строковые. Строка может быть записана
-в одинарных или двойных кавычках:
+
+In this example, all attributes -- a string. The string can be written in
+single or double quotation marks:
 
 ```
 room {
 	nam = 'main';
-	disp = 'Главная комната';
-	dsc = "Вы в большой комнате.";
+	disp = 'Main room';
+	dsc = "You are in a large room.";
 }
 ```
 
-Для длинных описаний удобно использовать запись вида:
+For long descriptions it is convenient to use the following:
 
+	dsc = [[ Very long description... ]];
 
-```
-dsc = [[ Очень длинное описание... ]];
-```
-
-При этом переводы строк игнорируются. Если вы хотите, чтобы в выводе
-описания сцены присутствовали абзацы -- используйте символ '^'.
+The newlines are ignored. If you want in the output the description of the
+scene was attended by paragraphs -- use the '^'symbol.
 
 ```
-dsc = [[ Первый абзац. ^^
-Второй Абзац.^^
+dsc = [[ First paragraph. ^^
+The Second Paragraph.^^
 
-Третий абзац.^
-На новой строке.]];
+Third paragraph.^
+On a new line.]];
 ```
 
-Я рекомендую всегда использовать [[ и ]] для 'dsc'.
+I recommend to always use [[ and ]] to 'dsc'.
 
-Напомню еще раз, что имя 'nam' объекта и его отображение (в данном
-случае то, как сцена будет выглядеть для игрока в виде надписи сверху)
-можно (и, часто, нужно!) разделять. Для этого существуют атрибуты
-'disp' и 'title'. 'title' бывает только у комнат и работает как
-описатель, когда игрок находится внутри данной комнаты. В остальных
-случаях используется 'disp' (если он есть).
+Let me remind you again that the name 'nam' of object and display it (in this
+the case of how the scene will look like for the player in the form of
+lettering at the top) you can (and often should!) share. For this there are
+attributes 'disp' and 'title'. 'title' is only in the rooms and works as handle
+when the player is inside this room. In other cases, use the 'disp' (if any).
 
-Если 'disp' и 'title' не заданы, то считается, что отображение
-равняется имени.
+If 'disp' and 'title' is not specified, it is considered that the display
+equals name.
 
-'disp' и 'title' могут принимать значение false, в таком случае,
-отображения не будет.
+'disp' and 'title' can be set to false in this case display will not.
 
-## Объекты
+## Objects
 
-_Объекты_ -- это единицы сцены, с которыми взаимодействует игрок.
+_Objects_ -- this one scene interacting with the player.
 
 ```
 obj {
-    nam = 'стол';
-    dsc = 'В комнате стоит {стол}.';
-    act = 'Гм... Просто стол...';
+	nam = 'table';
+	dsc = 'In the {table}.';
+	act = 'Hm... Just a table...';
 };
 ```
 
-Имя объекта ''nam'' используется при попадании его в инвентарь. Хотя,
-в нашем случае, стол вряд ли туда попадет. Если у объекта определен
-'disp', то при попадании в инвентарь для его отображения будет
-использоваться именно этот атрибут. Например:
+Object name "nam" is used when it gets to your inventory. Thoughin our case,
+the table hardly gets there. If the object is defined 'disp', when it enters
+the inventory to display it will make use of this attribute. For example:
 
 ```
 obj {
-    nam = 'стол';
-    disp = 'угол стола';
-    dsc = 'В комнате стоит {стол}.';
-    tak = 'Я взялся за угол стола';
-    inv = 'Я держусь за угол стола.';
+	nam = 'table';
+	disp = 'table angle';
+	dsc = 'In the {table}.';
+	tak = 'I took the corner of the table';
+	inv = 'I hold the corner of the table.';
 };
 ```
-Все-таки стол попал к нам в инвентарь.
 
-Вы можете скрывать отображение предмета в инвентаре, если 'disp'
-атрибут будет равен 'false'.
+Still, the table came to us in the inventory.
 
-'dsc' -- описание объекта. Оно будет выведено в динамической части
-сцены, при наличии объекта в сцене. Фигурными скобками отображается
-фрагмент текста, который будет являться ссылкой в окне INSTEAD. Если
-объектов в сцене много, то все описания выводятся одно за другим,
-через пробел,
+You can hide items in the inventory, if 'disp' the attribute will be 'false'.
 
-'act' -- это обработчик события, который вызывается при действии
-пользователя (действие на объект сцены, обычно -- клик мышкой по
-ссылке). Его основная задача -- вывод (возвращение) строки текста,
-которая станет частью событий сцены, и изменение состояния игрового
-мира.
+'dsc' -- description of the object. It will be displayed in the dynamic
+part the scene in the presence of the object in the scene. The braces displayed
+a fragment of the text to be a link in the window INSTEAD. If objects in the
+scene a lot, all descriptions are displayed one after the other, using the
+spacebar
 
-## Добавляем объекты в сцену
+'act' is an event handler that is called when the action user (action on
+object in the scene, usually -- click the mouse on the the link). Its main
+task-the output (return) line of text which will become part of scene events,
+and state change to playing world.
 
-Для того, чтобы поместить в сцену объекты, существует несколько путей.
+## Add objects to the scene
 
-Во-первых, при создании комнаты можно определить список 'obj',
-состоящий из имен объектов:
+In order to put in scene objects, there are several ways.
+
+First, when a room is created, you can define a list of 'obj', consisting of
+names of objects:
 
 ```
-obj { -- объект с именем, но без переменной
-	nam = 'ящик';
-	dsc = [[На полу я вижу {ящик}.]];
-	act = [[Тяжелый!]];
+obj { -- an object with a name but without a variable
+	nam = 'box';
+	dsc = [[On the floor I see the {box}.]];
+	act = [[Hard!]];
 }
 
 room {
 	nam = 'main';
-	disp = 'Большая комната';
-	dsc = [[Вы в большой комнате.]];
-	obj = { 'ящик' };
+	disp = 'Big room';
+	dsc = [[You are in a large room.]];
+	obj = { 'box' };
 };
 ```
-Теперь, при отображении сцены мы увидим объект "ящик" в динамической
-части.
 
-Вместо имени объекта, вы можете использовать переменную-ссылку, если
-только она была определена заранее:
+Now, when rendering the scene, we will see the object "box" in a dynamic part.
+
+Instead of the object name, you can use a variable-reference if she was the
+only one determined in advance:
 
 ```
-apple = obj { -- объект с переменной, но без имени
-	dsc = [[Тут есть {яблоко}.]];
-	act = [[Красное!!]];
+apple = obj { -- object variable, but without a name
+	dsc = [[there is {Apple}.]];
+	act = [[Red!!]];
 }
 
 room {
-    nam = 'main';
-	disp = 'Большая комната';
-	dsc = [[Вы в большой комнате.]];
+	nam = 'main';
+	disp = 'Big room';
+	dsc = [[You are in a large room.]];
 	obj = { apple };
 };
 ```
 
-Альтернативной формой записи является конструкция with:
+An alternative form of record is design with:
 
 ```
 room {
 	nam = 'main';
-	disp = 'Большая комната';
-	dsc = [[Вы в большой комнате.]];
+	disp = 'Big room';
+	dsc = [[You are in a large room.]];
 }:with {
-    'ящик',
+	'box',
 }
 ```
-Конструкция with позволяет избавиться от лишнего уровня вложенности в
-коде игры.
 
-Во-вторых, вы можете объявлять объекты прямо внутри obj или with,
-описывая их определение:
+Design with allows you to get rid of extra nesting level in the code of the
+game.
+
+Second, you can declare objects directly within obj, or with describing their
+definition:
 
 ```
 room {
 	nam = 'main';
-	disp = 'Большая комната';
-	dsc = [[Вы в большой комнате.]];
+	disp = 'Big room';
+	dsc = [[You are in a large room.]];
 }:with {
 	obj {
-		nam = 'ящик';
-		dsc = [[На полу я вижу {ящик}.]];
-		act = [[Тяжелый!]];
+		nam = 'box';
+		dsc = [[On the floor I see the {box}.]];
+		act = [[Hard!]];
 	}
 };
 ```
-Это удобно делать для объектов - декораций. Но в таком случае, вы не
-сможете создавать объекты с переменной-ссылкой. К счастью, для
-декораций это и не нужно.
 
-Если в комнату помещаются несколько объектов, разделяйте их ссылки
-запятыми, например:
+This is useful for objects and scenery. But in this case, you are will be able
+to create objects with a variable link. Fortunately, for decorations don't
+have to.
 
-    obj = { 'ящик', apple };
+If the room is placed a few objects, separate the links with commas, for
+example:
 
-Вы можете вставлять переводы строк для наглядности, когда объектов
-много, например, так:
+	obj = { 'box', apple };
+
+You can insert line breaks for clarity, when objects many, for example:
 
 ```
 obj = {
-    'tabl',
-    'apple',
-    'knife',
+	'tabl',
+	'apple',
+	'knife',
 };
 ```
 
-Еще один способ размещения предметов заключается в вызове функций,
-которые поместят объекты в требуемые комнаты. Он будет рассмотрен в
-дальнейшем.
+Another way of placing objects is to call functions which the objects are
+placed in the required room. This will be discussed in further.
 
-## Декорации
+## Decorations
 
-Объекты, которые могут быть перенесены из одной сцены в другую (или
-попадать в инвентарь), обычно имеют имя и/или переменную-ссылку. Так
-как таким образом вы всегда можете найти объект где угодно и работать
-с ним.
+Objects that can be migrated from one scene to another (or get into the
+inventory), typically have a name and/or variable link. So as thus you can
+always find the object anywhere and work with him.
 
-Но немалую часть игрового мира составляют объекты, которые занимают
-конкретную локацию и служат в качестве декораций.
+But a large part of the game world consists of objects which occupy the
+specific location and serve as decorations.
 
-Таких объектов может быть очень много, и более того, обычно это
-однотипные объекты вроде деревьев и тому подобных объектов.
+Such objects can be very much, and moreover, it is usually the same type of
+objects like trees and such objects.
 
-Для создания декораций можно использовать различные подходы.
+To create decorations you can use different approaches.
 
-### Один и тот же объект в нескольких комнатах
+### The same object in multiple rooms
 
-Вы можете создать один объект, например, 'дерево' и помещать их в
-разные комнаты.
+You can create a single object, e.g. 'tree' and place them in the different
+rooms.
 
 ```
 obj {
-	nam = 'дерево';
-	dsc = [[Тут стоит {дерево}.]];
-	act = [[Все деревья выглядят похожими.]];
+	nam = 'tree';
+	dsc = [[There is a {tree}.]];
+	act = [[All the trees look alike.]];
 }
 
 room {
-	nam = 'Лес';
-	obj = { 'дерево' };
+	nam = 'Forest';
+	obj = { 'tree' };
 }
 
 room {
-	nam = 'Улица';
-	obj = { 'дерево' };
+	nam = 'Street';
+	obj = { 'tree' };
 }
 
 ```
-### Использование тегов вместо имен
 
-Если вам не нравится придумывать уникальные имена для однотипных
-декоративных объектов, вы можете использовать для таких объектов
-теги. Теги задаются атрибутом tag и всегда начинаются с символа '#':
+### Use tags instead of names
+
+If you don't like to come up with unique names for the same type decorative
+objects you can use for such objects tags. Tags are set by the tag attribute
+and always begin with a '#'symbol:
+
+```
+obj {
+	tag = '#flowers';
+	dsc = [[there is {flowers}.]]
+}
+```
+
+In this example, the name object will be created automatically, but to access
+the object you will be able to tag. The object will be be searched for in the
+current room. For example:
+
+```
+-- searching in the current room the first object with the tag '#flowers'
+dprint(_'#flowers')
+```
+
+Tags that is, in a sense, synonymous with local names, so there is an
+alternative account of the creation of the object tag:
 
 
 ```
 obj {
-	tag = '#цветы';
-	dsc = [[Тут есть {цветы}.]]
+ nam = '#flowers';
+ dsc = [[there is {flowers}.]]
 }
 ```
 
-В данном примере, имя у объекта будет сформировано автоматически, но
-обращаться к объекту вы сможете по тегу. При этом объект будет
-искаться в текущей комнате. Например:
+If the name of the object begins with the character '#', then the object gets
+tag and automatically generated numeric name.
 
-```
-dprint(_'#цветы') -- ищем в текущей комнате первый объект с тегом '#цветы'
-```
+### Attribute usage scene decor
 
-Теги, это в каком то смысле, синоним локальных имен, поэтому
-существует альтернативная запись создания предмета с тегом:
-
-
-```
-obj {
-	nam = '#цветы';
-	dsc = [[Тут есть {цветы}.]]
-}
-```
-
-Если имя у объекта начинается с символа '#', то такой объект получает
-тег и автоматически сгенерированное числовое имя.
-
-### Использование атрибута сцены decor
-
-Так как декорации не меняют свое место-положение, есть смысл сделать
-их частью описания сцены, а не динамической области. Это делается с
-помощью атрибута сцены 'decor'. decor показывается всегда и его
-основная функция -- описание декораций сцены.
+Since the scenery does not change its location, it makes sense to do them part
+of the description of the scene and not dynamic. This is done attribute scene
+'decor'. decor is always shown and the main function-description of the
+scenery of the stage.
 
 ```
 room {
-	nam = 'Дом';
-	dsc = [[Я у себя дома.]];
-	decor = [[Тут я вижу много интересных вещей. Например, на {#стена|стене}
-	висит {#картина|картина}.]];
+	nam = 'House';
+	dsc = [[I am at home.]];
+	decor = [[I see a lot of interesting things. For example, {#wall|wall}
+	hanging {#picture|picture}.]];
 }: with {
 	obj {
-		nam = '#стена';
-		act = [[Стена как стена!]];
+		nam = '#wall';
+		act = [[the Wall like a wall!]];
 	};
 	obj {
-		nam = '#картина';
-		act = [[Ван-Гог?]];
+		nam = '#pattern';
+		act = [[van Gogh?]];
 	}
 }
 ```
-Здесь мы видим сразу несколько приемов:
 
-1. В decor в виде связанного текста описаны декорации;
-2. В качестве ссылок используются конструкции с явным заданием
-   объектов, к которым они относятся {имя объекта|текст};
-3. В качестве имен объектов используются теги, чтобы не думать над их
-   уникальностью;
-4. У объектов-декораций в сцене отсутствуют атрибуты dsc, так как их
-   роль играет decor.
+Here we see several techniques:
 
-Конечно, вы можете комбинировать все описанные приемы между собой в
-любых пропорциях.
+1. To as a related text describes the scenery;
+2. As references are used design with a clear mission  objects to which they
+   belong {the name of the object|text};
+3. As the names of objects are tags, not to think about them uniqueness;
+4. The objects of the scenery in the scene has no attributes dsc, as their
+   the role of decor.
 
-## Объекты, связанные с другими объектами
+Of course, you can combine all of the techniques among themselves any
+proportions.
 
-Объекты тоже могут содержать в себе атрибут 'obj' (или конструкцию
-'with').  При этом, при выводе объектов, INSTEAD будет разворачивать
-списки последовательно.  Такая техника может использоваться для
-создания объектов-контейнеров или просто для связывания нескольких
-описаний вместе. Например, поместим на стол яблоко.
+## Objects associated with other objects
+
+Objects can also contain the attribute 'obj' (or design 'with'). In this case,
+when outputting the objects, INSTEAD be deployed lists consistently. This
+technique can be used to create container objects or just to link a few
+descriptions together. For example, put on the table an Apple.
 
 ```
 obj {
-	nam = 'яблоко';
-	dsc = [[На столе лежит {яблоко}.]];
-	act = 'Взять что-ли?';
+	nam = 'Apple';
+	dsc = [[On the table is {Apple}.]];
+	act = 'Take what?';
 };
 
 obj {
-	nam = 'стол';
-	dsc = [[В комнате стоит {стол}.]];
-	act = 'Гм... Просто стол...';
-	obj = { 'яблоко' };
+	nam = 'table';
+	dsc = [[the room is a {table}.]];
+	act = 'Hm... Just a table...';
+	obj = { 'Apple' };
 };
 
 room {
-    nam = 'Дом';
-	obj = { 'стол' };
+	nam = 'House';
+	obj = { 'table' };
 }
 ```
 
-При этом, в описании сцены мы увидим описание объектов 'стол' и
-'яблоко', так как 'яблоко' -- связанный со столом объект и движок при
-выводе объекта 'стол' вслед за его 'dsc' выведет последовательно
-''dsc'' всех вложенных в него объектов.
+Thus, in the scene description we'll see descriptions of objects 'table' and
+'Apple', because 'Apple' is associated with a table object and the engine in
+the output of the object 'table' after 'dsc' will consistently "dsc" and all
+its nested objects.
 
-Также, следует отметить, что оперируя объектом 'стол' (например,
-перемещая его из комнаты в комнату) мы автоматически будем перемещать
-и вложенный в него объект 'яблоко'.
+Also, it should be noted that in terms of object 'table' (for example, moving
+it from room to room) we will automatically move and invested in an object
+'Apple'.
 
-Конечно, данный пример мог бы быть написан и по другому, например,
-так:
-
+Of course, this example could also be written differently, for example,
+so:
 
 ```
 room {
-	nam = 'Дом';
-}:with {
+	nam = 'House';
+}: with {
 	obj {
-		nam = 'стол';
-		dsc = [[В комнате стоит {стол}.]];
-		act = 'Гм... Просто стол...';
+		nam = 'table';
+		dsc = [[the room is a {table}.]];
+		act = 'Hm... Just a table...';
 	}: with {
 		obj {
-			nam = 'яблоко';
-			dsc = [[На столе лежит {яблоко}.]];
-			act = 'Взять что-ли?';
+			nam = 'Apple';
+			dsc = [[On the table is {Apple}.]];
+			act = 'Take what?';
 		};
 	}
 }
 ```
-Выбирайте тот способ, который для вас понятней.
 
-## Атрибуты и обработчики как функции
+You can choose the way that's clearer for you.
 
-Большинство атрибутов и обработчиков могут быть _функциями_. Так,
-например:
+## The attributes and handlers as functions
+
+Most attributes and handlers can be _functions_. So, for example:
 
 ```
 disp = function()
-	p 'яблоко';
+	p 'Apple';
 end
 ```
 
-Пример не очень удачен, так как проще было бы написать disp =
-'яблоко', но показывает синтаксис записи функции.
+Not a very good example, as it would be easier to write disp = 'Apple', but it
+shows the syntax of the entry function.
 
-Основная задача такой функции -- это возврат строки или булевого
-значения. Сейчас мы рассматриваем возврат строки. Для возврата строки
-вы можете использовать явную запись в виде:
+The main objective of such a function -- it returns a string or boolean values.
+Now we see the return line. To return a string you can use an explicit entry
+in the form:
 
-```
- return "яблоко";
-```
+	return "Apple";
 
-При этом ход выполнения кода функции прекращается и она возвращает
-движку строку. В данном случае "яблоко".
+The flow of code execution function stops and it returns the engine line. In
+this case, "Apple".
 
-Более привычным способом вывода являются функции:
+The more usual method of output are functions:
 
-- p ("текст") -- вывод текста и пробела;
-- pn ("текст") -- вывод текста с переводом строки;
-- pr ("текст") -- вывод текста "как есть".
+- p ("text") -- output text and white space;
+- pn ("text") -- output text with line break;
+- pr ("text") -- output text as-is.
 
-> Если ''p''/''pn''/''pr'' вызывается с одним текстовым параметром, то скобки можно опускать.
+> If "p"/"pn"/"pr" is invoked with a single text parameter, the parentheses
+> can be omitted.
 
-    pn "Нет скобкам!"
+	pn "No brackets!"
 
-Все эти функции дописывают текст в буфер и при возврате из функции
-возвращают его движку.  Таким образом, вы можете постепенно
-формировать вывод за счет последовательного выполнения p/pn/pr. Имейте
-в виду, что автору крайне редко необходимо явно форматировать текст,
-особенно, если это описание объектов, движок сам расставляет
-необходимые переводы строк и пробелы для разделения информации разного
-рода и делает это унифицированным способом.
+All these functions append text to the clipboard and when you return from the
+function return it to the engine. Thus, you can gradually to form a conclusion
+due to the sequential execution of p/pn/pr. Keep in mind that the author very
+rarely need to explicitly format the text, especially if it is a description
+of the objects, the engine itself puts the necessary line breaks and spaces to
+separate the information by different kind and does it in a unified fashion.
 
-Вы можете использовать '..' или ',' для склейки строк. Тогда '(' и ')'
-обязательны. Например:
+You can use '..' or ',' for string concatenation. Then '(' and ')' required.
+For example:
 
-```
-pn ("Строка 1".." Строка 2");
-pn ("Строка 1", "Строка 2");
-```
+	pn ("String 1".." Line 2");
+	pn ("String 1" "String 2");
 
-> Основное отличие атрибутов от обработчиков событий состоит в том,
-> что обработчики событий могут менять состояние игрового мира, а
-> атрибуты нет.  Поэтому, если вы оформляете атрибут (например, 'dsc')
-> в виде функции, помните, что задача атрибута это возврат значения, а
-> не изменение состояния игры!  Дело в том, что движок обращается к
-> атрибутам в те моменты времени, которые обычно четко не определены,
-> и не связаны явно с какими-то игровыми процессами!
+> The main difference of the attributes from the event handlers is that
+> what event handlers can change the state of the game world, and
+> no attributes. So, if you make your attribute (e.g. 'dsc')
+> in a function, remember that the goal attribute is the return value, and
+> do not change the state of the game! The fact that the engine turns to
+> attributes in those moments of time that are usually not clearly defined,
+> and are not associated clearly with some gameplay!
 
-__Важно!__
+__Important!__
 
-> Еще одной особенностью обработчиков является тот факт, что вы не
-> должны ждать каких то событий внутри обработчика. То есть, не должно
-> быть каких-то циклов ожидания, или организации задержек (пауз). Дело
-> в том, что задача обработчика -- изменить игровое состояние и отдать
-> управление INSTEAD, который визуализирует эти изменения и снова
-> перейдет в ожидание действий пользователя. Если вам требуется
-> организовать задержки вывода, вам придется воспользоваться модулем
-> "timer".
+> Another feature of handlers is the fact that you are not> have to wait for some event inside the handler. That is, should not
+> be any cycles waiting or delays (pauses). Case
+> that the processor task-to change the game state and give
+> controls INSTEAD, which visualizes these changes and again
+> go into a pending user action. If you need
+> to organize the output timing, you'll have to use the module
+> the "timer".
 
-Функции практически всегда содержат условия и работу с
-переменными. Например:
+Functions almost always contain conditions and work with
+variables. For example:
 
 ```
 obj {
-	nam = 'яблоко';
+	nam = 'Apple';
 	seen = false;
 	dsc = function(s)
 		if not s.seen then
-			p 'На столе {что-то} лежит.';
+			p 'On the table {something} is.';
 		else
-			p 'На столе лежит {яблоко}.';
+			p 'lies On the table {Apple}.';
 		end
 	end;
 	act = function(s)
 		if s.seen then
-			p 'Это яблоко!';
+			p 'It's an Apple!';
 		else
 			s.seen = true;
-			p 'Гм... Это же яблоко!';
+			p 'Um... It's an Apple!';
 		end
 	end;
 };
 ```
 
-Если атрибут или обработчик оформлен как функция, то всегда _первый
-аргумент_ функции (s) -- сам объект. То-есть, в данном примере, 's'
-это синоним _'яблоко'. Когда вы работаете с самим объектом в функции,
-удобнее использовать параметр, а не явное обращение к объекту по
-имени, так как при переименовании объекта вам не придется переписывать
-вашу игру. Да и запись будет короче.
+If the attribute or handler is laid out as a function, it is always Pervy
+argument function (s) -- the object itself. That is, in this example, 's' is
+synonymous with _'Apple'. When you work with the object itself in a function
+it is more convenient to use the parameter rather than the explicit call to
+the object name because when you rename an object you don't have to rewrite
+your game. And entry will be shorter.
 
-В данном примере при показе сцены в динамической части сцены будет
-выведен текст: 'На столе что-то лежит'. При взаимодействии с 'что-то',
-переменная 'seen' объекта 'яблоко' будет установлена в true -- истина,
-и мы увидим, что это было яблоко.
+In this example, when showing scenes in the dynamic parts of the scene will be
+removed text: 'the table something is'. When interacting with 'something',
+variable 'seen' object 'Apple' will be set to true -- true and we see that it
+was an Apple.
 
-Как видим, синтаксис оператора 'if' довольно очевиден. Для
-наглядности, несколько примеров.
+As you can see, the syntax of the 'if' operator is quite obvious. For clarity,
+a few examples.
 
+	if <expression> then <actions> end
 
-	if <выражение> then <действия> end
-
-	if have 'яблоко' then
-		p 'У меня есть яблоко!'
+	if have 'Apple' then
+		p 'I Have an Apple!'
 	end
 
-	if <выражение> then <действия> else <действия иначе> end
+	if <expression> then <actions> else <actions otherwise> end
 
-	if have 'яблоко' then
-		p 'У меня есть яблоко!'
+	if have 'Apple' then
+		p 'I Have an Apple!'
 	else
-		p 'У меня нет яблока!'
+		p 'I Have no apples!'
 	end
 
-	if <выражение> then <действия> elseif <выражение 2> then <действия 2> else <иначе> end --  и т.д.
+	if <expression> then <action> elseif <expression 2> then <action 2>
+	else <otherwise> end -- etc.
 
-	if have 'яблоко' then
-		p 'У меня есть яблоко!'
-	elseif have 'вилка' then
-		p 'У меня нет яблока, но есть вилка!'
+	if have 'Apple' then
+		p 'I Have an Apple!'
+	elseif have 'fork' then
+		p 'I Have no Apple, but there is a fork!'
 	else
-		p 'У меня нет ни яблока, ни вилки!'
+		p 'I Have neither Apple nor fork!'
 	end
 
-Выражение в операторе if может содержать логическое "и" (and), "или"
-(or), "отрицание" (not) и скобки ( ) для задания приоритетов. Запись
-вида if <переменная> then означает, что переменная не равна
-false. Равенство описывается как '==', неравенство '~='.
+The expression in the if statement can contain a logical "and" (and), "or"
+(or), "negation" (not) and parentheses ( ) to define priorities. Entry of the
+form if <variable> then means that the variable is not equal to false.
+Equality is described as '==', inequality '~='.
 
 ```
-if not have 'яблоко' and not have 'вилка' then
-    p 'У меня нет ни яблока, ни вилки!'
+if not have 'Apple' and not have 'fork' then
+	p 'I Have neither Apple nor fork!'
 end
 
 ...
 if w ~= apple then
-   p 'Это не яблоко.';
+	p 'This is not an Apple.';
 end
 ...
 
 if time() == 10 then
-   p '10 й ход настал!'
+	p '10 th move has come!'
 end
 ```
 
-__Важно!__
+__Important!__
 
-В ситуации когда переменная не была определена, но используется в
-условии, INSTEAD даст ошибку. Вам придется заранее определять
-переменные, которые вы используете.
+In a situation when a variable was not defined but used in the condition,
+INSTEAD will give an error. You will have to determine in advance variables
+that you use.
 
+### Object variables
 
-### Переменные объекта
+The entry's.seen' means that the variable 'seen' is placed in the object 's'
+(i.e. 'Apple'). Remember, we have called the first parameter of the function
+'s' (self) as the first parameter -- is the current object itself.
 
-Запись 's.seen' означает, что переменная 'seen' размещена в объекте
-'s' (то есть 'яблоко').  Помните, мы назвали первый параметр функции
-'s' (от self), а первый параметр -- это сам текущий объект.
-
-Переменные объекта должны быть определены заранее, если вы собираетесь
-их модифицировать. Примерно так, как мы поступили с seen. Но
-переменных может быть много.
-
+Object variables must be defined in advance if you are to modify them.
+Something like we did with the seen. But variables can be many.
 
 ```
 obj {
-	nam = 'яблоко';
+	nam = 'Apple';
 	seen = false;
 	eaten = false;
-	color = 'красный';
+	color = 'red';
 	weight = 10;
 	...
 };
 ```
 
-Все переменные объекта, при их изменении, попадают в файл сохранения
-игры.
+All variables of an object when it changes, enter the save file game.
 
-Если вы не хотите, чтобы переменная попала в файл сохранения, вы
-можете объявить такие переменные в специальном блоке:
-
+If you don't want the variable was in a save file, you you can declare such
+variables in a special block:
 
 ```
 obj {
-	nam = 'яблоко';
+	nam = 'Apple';
 	{
-	   t = 1; -- эта переменная не попадет в сохранения
-	   x = false; -- и эта тоже
+		t = 1; -- this variable will not get to save
+		x = false; -- and this too
 	}
 };
 ```
-Обычно, вам не стоит так делать. Однако есть ситуация, при которой
-этот прием будет полезным. Дело в том, что массивы и таблицы объекта
-всегда сохраняются. Если вы используете массивы для хранения
-неизменяемых значений, вы можете написать так:
 
+Normally you don't need to do that. However, there is a situation in which
+this technique will be useful. The fact that arrays and tables object are
+always saved. If you use arrays to store immutable values, you can write:
 
 ```
 obj {
-	nam = 'яблоко';
+	nam = 'Apple';
 	{
-	   text = { "раз", "два", "три" }; -- никогда не попадет в файл сохранения
+		text = { "one", "two", "three" }; -- never go to a save file
 	}
 	...
 };
 ```
 
-Вы можете обращаться к переменным объекта через s -- если это сам
-объект. или по переменной - ссылке, например:
+You can access the variables of an object via s-if it is himself object. or
+variable - reference, for example:
 
 ```
 apple = obj {
-    color = 'красный';
+	color = 'red';
 }
 ...
--- где-то в другом месте
-    apple.color = 'зеленый'
+-- somewhere in another place
+	apple.color = 'green'
 ```
 
-Или по имени:
-
+Or by name:
 
 ```
 obj {
-    nam = 'яблоко';
-    color = 'красный';
+	nam = 'Apple';
+	color = 'red';
 }
 ...
--- где-то в другом месте
-    _'яблоко'.color = 'зеленый'
-```
-На самом деле, вы можете создавать переменные-объекта на лету (без
-предварительного их определения), хотя обычно в этом нет смысла.
-Например:
-
-```
-apple 'xxx' (10) -- создали переменную xxx у объекта apple по ссылке
-(_'яблоко') 'xxx' (10) -- то же самое, но по имени объекта
-
+-- somewhere in another place
+	_'Apple'.color = 'green'
 ```
 
-### Локальные переменные
+In fact, you can create variables of the object on the fly (without pre-define
+them), although usually it makes no sense. For example:
 
-Кроме переменных объекта вы можете использовать локальные и глобальные
-переменные.
+```
+apple 'xxx' (10) -- create a variable xxx, the object apple on the link
+(_'Apple') 'xxx' (10) -- same but in the name of the object
+```
 
-Локальные переменные создаются с помощью служебного слова local:
+### Local variables
+
+In addition to object variables you can use local and global variables.
+
+Local variables are created by using office word local:
 
 ```
 act = function(s)
-    local w = _'лампочка'
-    w.light = true
-    p [[Я нажал на кнопку и лампочка загорелась.]]
+	local w = _'light bulb'
+	w.light = true
+	p [[I pressed the button and the bulb lit up.]]
 end
 ```
 
-В данном примере, переменная w существует только в теле
-функции-обработчика act. Мы создали временную ссылку-переменную w,
-которая ссылается на объект 'лампочка', чтобы изменить
-свойство-переменную light у этого объекта.
+In this example, the variable w exists only in the body the handler function
+act. We created a temporary reference variable w, which refers to the object
+'light' to change feature-variable light this object.
 
-Конечно, мы могли написать и:
+Of course, we could write:
 
-	_'лампочка'.light = true
+	_'light bulb'.light = true
 
-Но представьте себе, если нам нужно произвести несколько действий с
-объектом, в таких случаях проще воспользоваться временной переменной.
+But imagine if we need to execute multiple actions with a the object in such
+cases is easier to use a temporary variable.
 
-Локальные переменные никогда не попадают в файл-сохранение и играют
-роль временных вспомогательных переменных.
+Local variables are never displayed in the file-save and play the role of
+temporary auxiliary variables.
 
-Локальные переменные можно создавать и вне функций, тогда данная
-переменная видима только в пределах данного lua файла и не попадает в
-файл сохранения.
+Local variables can be created outside of functions, then this the variable is
+visible only within a given lua file and misses a save file.
 
-Еще один пример использования локальных переменных:
+Another example of using local variables:
 
 ```
 obj {
-	nam = 'котенок';
+	nam = 'kitten';
 	state = 1;
 	act = function(s)
 		s.state = s.state + 1
 		if s.state > 3 then
 			s.state = 1
 		end
-		p [[Муррр!]]
+		p [[Purr!]]
 	end;
 	dsc = function(s)
 		local dsc = {
-			"{Котенок} мурлычет.",
-			"{Котенок} играет.",
-			"{Котенок} облизывается.",
+			"The{kitten} purrs.",
+			"The{kitten} is playing.",
+			"The{kitten} is licked.",
 		};
 		p(dsc[s.state])
 	end;
 end
 ```
 
-Как видим, в функции dsc мы определили массив dsc. 'local' указывает
-на то, что он действует в пределах функции dsc.  Конечно, данный
-пример можно было написать и так:
+As you can see, in dsc, we determined the array dsc. 'local' indicates that it
+operates within the dsc. Of course, this example you could write it as:
 
 ```
 dsc = function(s)
-    if s.state == 1 then
-        p "{Котенок} мурлычет."
-    elseif s.state == 2 then
-        p "{Котенок} играет."
-    else
-        p "{Котенок} облизывается.",
-    end
+	if s.state == 1 then
+		p "the{Kitten} is purring."
+	elseif s.state == 2 then
+		p "the{Kitten} is playing."
+	else
+		p "the{Kitten} is licked.",
+	end
 end
 ```
 
-### Глобальные переменные
+### Global variables
 
-Вы также можете создать глобальную переменную:
+You can also create a global variable:
 
 ```
-global { -- определение глобальных переменных
-    global_var = 1; -- число
-    some_number = 1.2; -- число
-    some_string = 'строка';
-    know_truth = false; -- булево значение
-    array = {1, 2, 3, 4}; -- массив
+global { -- definition of global variables
+	global_var = 1; -- number
+	some_number = 1.2; -- number some_string = 'string';
+	know_truth = false; -- a Boolean value
+	array = {1, 2, 3, 4}; -- array
 }
 ```
 
-Еще одна форма записи, удобная для одиночных определений:
+Another form, convenient for single definitions:
 
+	global 'global_var' (1)
 
-```
-global 'global_var' (1)
-```
+Global variables always get to the file-save.
 
-Глобальные переменные всегда попадают в файл-сохранение.
-
-Кроме глобальных переменных вы можете задавать константы. Синтаксис
-аналогичен глобальным переменным:
+In addition to global variables you can define constants. Syntax similar to
+global variables:
 
 ```
 const {
@@ -1163,14 +1102,12 @@ const {
 const 'Aflag' (false)
 ```
 
-Движок будет контролировать неизменность констант. Константы не
-попадают в файл-сохранение.
+The engine will control the consistency of constants. The constants are not
+enter the file-save.
 
-Иногда вам нужно работать с переменной, которая не определена как
-local (и видима во всех ваших lua файлах игры), но не должна попадать
-в файл сохранения. Для таких переменных вы можете использовать
-декларации:
-
+Sometimes you need to work with a variable that is not defined aslocal (and
+visible in all of your lua files), but should not get in the save file. For
+such variables you can use Declaration:
 
 ```
 declare {
@@ -1180,9 +1117,8 @@ declare {
 declare 'Z' (false)
 ```
 
-Декларации не попадают в файл сохранения. Одно из важных свойств
-деклараций состоит в том, что вы можете декларировать функции,
-например:
+The Declaration is not stored in the save file. One of the important
+properties declarations is that you can declare functions for example:
 
 ```
 declare 'test' (function()
@@ -1190,89 +1126,82 @@ declare 'test' (function()
 end)
 
 global 'f' (test)
-
 ```
 
-В таком случае, вы можете присваивать значение функции 'test' другим
-переменным и состояние этих переменных может быть сохранено в файле
-сохранения. То-есть, декларированную функцию можно использовать как
-значение переменной!
+In such case, you can assign the value of the function 'test' others variables
+and the state of these variables may be stored in the filesave. That is, a
+declared function can be used as the value of the variable!
 
-Вы можете декларировать ранее определенные функции, например:
+You can declare a previously defined function, for example:
 
-```
-declare 'dprint' (dprint)
+	declare 'dprint' (dprint)
 
-```
-Тем самым делая такие недекларированные функции -- декларированными.
+Thereby making such undeclared functions -- declared.
 
-Декларация функции, по сути, это присвоение функции имени, благодаря
-чему мы можем сохранить эту функцию как ссылку.
+The function Declaration, in fact, is the assignment of the function name,
+thanks what can we retain this feature as a link.
 
+### Helper functions
 
-### Вспомогательные функции
-
-Вы можете писать свои вспомогательные функции и использовать их из
-своей игры, например:
+You can write your helper functions and use them from your game, for example:
 
 ```
 function mprint(n, ...)
-	local a = {...}; -- временный массив с аргументами к функции
-	p(a[n]) -- выведем n-й элемент массива
+	local a = {...}; -- temporary array with the arguments to the function
+	p(a[n]) -- get the n-th element of the array
 end
 ...
 dsc = function(s)
-	mprint(s.state, {
-		"{Котенок} мурлычет.",
-		"{Котенок} играет.",
-		"{Котенок} облизывается." });
+	mprint(s.state {
+		"The{kitten} purrs.",
+		"The{kitten} is playing.",
+		"The{kitten} is licked." });
 end;
 ```
-Пока не обращайте внимания на данный пример, если он кажется вам сложным.
+Don't pay attention to this example, if it seems to you difficult.
 
-### Возвращаемые значения обработчиков
+### The return value handlers
 
-Если необходимо показать, что действие не выполнено (обработчик не
-сделал ничего полезного), возвращайте значение false. Например:
+If you want to show that the action is not executed (handler did anything
+useful), return false. For example:
 
 ```
 act = function(s)
 	if broken_leg then
 		return false
 	end
-	p [[Я ударил ногой по мячу.]]
+	p [[I kicked the ball.]]
 end
 ```
-При этом будет отображено описание по умолчанию, заданное с помощью
-обработчика 'game.act'.  Обычно описание по умолчанию содержит
-описание невыполнимых действий. Что-то вроде:
 
-	game.act = 'Гм... Не получается...';
+This displays the default description is specified using ahandler 'game.act'.
+Usually the default description contains description of the undoable action.
+Something like:
 
-Итак, если вы не задали обработчик act или вернули из него false --
-считается, что реакции нет и движок выполнит аналогичный обработчик у
-объекта 'game'.
+	game.act = 'Hm... does Not work...';
 
-Обычно, нет никакого смысла возвращать false из act, но существуют
-другие обработчики, о которых будет рассказано дальше, для которых
-описанное поведение точно такое же.
+So, if you don't set the handler act or returned from it false -- it is
+believed that there is no reaction and the engine will perform the same
+handler from object 'game'.
 
-На самом деле, кроме 'game.act' и 'act' -- атрибута объекта существует
-обработчик 'onact' у объекта game, который может прервать выполнение
-обработчика 'act'.
+Usually, there is no sense to return false from the act, but there are other
+handlers, which will be discussed further, for which the described behaviour
+is exactly the same.
 
-Перед тем как вызвать обработчик 'act' у объекта, вызывается onact у
-game. Если обработчик вернет false, выполнение 'act' обрывается.
-'onact' удобно использовать, для контроля
-событий в комнате или игре, например:
+Actually, besides 'game.act' and 'act' -- the object attribute exists handler
+'onact' of the game object, which can interrupt execution handler 'act'.
+
+Before calling the handler 'act' of an object is called onact have game. If
+the handler returns false, the execution of the 'act' dropped. 'onact'
+convenient to use for control events in the game, for example:
 
 ```
--- вызываем onact комнат, если они есть
--- для действий на любой объект
+-- called onact rooms, if they are
+-- for the actions on any object
 
 game.onact = function(s, ...)
 	local r, v = std.call(here(), 'onact', ...)
-	if v == false then -- если false, обрубаем цепочку
+	if v == false then -- if false, chop off the chain
 		return r, v
 	end
 	return
@@ -1280,449 +1209,433 @@ end
 
 room {
 	nam = 'shop';
-	disp = 'Магазин';
+	disp = 'Shop';
 	onact = function(s, w)
-		p [[В магазине нельзя воровать!]]
-		p ([[Даже, если это всего-лишь ]], w, '.')
+		p [[In the store, you can not steal!]]
+		p ([[Even if it's only a ]], w, '.')
 		return false
 	end;
-	obj = { 'мороженное', 'хлеб' };
+	obj = { 'ice cream', 'bread' };
 }
 ```
 
-В данном примере, при попытке "потрогать" любой предмет, будет
-выведено сообщение о запрете данного действия.
+In this example, when trying to "touch" any item, will be display a message
+prohibiting this action.
 
-Все, что описано выше на примере 'act' действует и для других
-обработчиков: tak, inv, use, а также при переходах, о чем будет
-рассказано далее.
+All that is described above on the example of the 'act' applies for other
+handlers: tak, inv, use, and transitions, as will be is discussed later.
 
-> Иногда возникает необходимость вызвать функцию - обработчик вручную.
-> Для этого используется синтаксис вызова метода
-> объекта. 'Объект:метод(параметры)'.  Например:
+> Sometimes you need to call the handler function manually.
+> It uses the syntax of a method call
+> object. 'Object:method(parameters)'. For example:
 
-	apple:act() -- вызовем обработчик 'act' у объекта 'apple' (если он
-	определен как функция!).  _'яблоко':act() -- то же самое, но по
-	имени, а не по переменной-ссылке
+	apple:act() -- call handler 'act' of object 'apple' (if it defined as a
+	function!). _'Apple':act() -- same, but name, not a variable reference
 
-Такой метод работает только в том случае, если вызываемый метод
-оформлен как функция.  Вы можете воспользоваться 'std.call()' для
-вызова обработчика тем способом, каким это делает сам INSTEAD. (Будет
-описано в дальнейшем).
+This method works only if the called method designed as a feature. You can use
+'std.call()' for a handler is invoked in the way that it makes itself INSTEAD.
+(To be described in the future).
 
-## Инвентарь
+## Inventory
 
-Простейший вариант сделать объект, который можно брать -- определить
-обработчик 'tak'.
+The easiest way to create an object that can be taken-to define handler 'tak'.
 
-Например:
+For example:
 
 ```
 obj {
-	nam = 'яблоко';
-	dsc = 'На столе лежит {яблоко}.';
+	nam = 'Apple';
+	dsc = 'On the table is {Apple}.';
 	inv = function(s)
-		p 'Я съел яблоко.'
-		remove(s); -- удалить яблоко из инвентаря
+		p 'I ate the Apple.'
+		remove(s); -- remove an Apple from the inventory
 	end;
-	tak = 'Вы взяли яблоко.';
+	tak = 'You took the Apple.';
 };
 ```
 
-При этом, при действии игрока на объект "яблоко" (щелчок мыши на
-ссылку в сцене) -- яблоко будет убрано из сцены и добавлено в
-инвентарь. При действии игрока на инвентарь (двойной щелчок мыши на
-названии объекта) -- вызывается обработчик 'inv'.
+In this case, the player object is "Apple" (click on link in the scene) -- the
+Apple is removed from the scene and added to inventory. When the player uses
+the inventory (double click on the name of the object) -- call the handler
+'inv'.
 
-В нашем примере, при действии игроком на яблоко в инвентаре -- яблоко
-будет съедено.
+In our example, when the player uses the Apple in the inventory -- Apple be
+eaten.
 
-Конечно, мы могли бы реализовать код взятия объекта в ''act'',
-например, так:
+Of course, we could implement the code takes object to "act", for example:
 
 ```
 obj {
-	nam = 'яблоко';
-	dsc = 'На столе лежит {яблоко}.';
+	nam = 'Apple';
+	dsc = 'On the table is {Apple}.';
 	inv = function(s)
-		p 'Я съел яблоко.'
-		remove(s); -- удалить яблоко из инвентаря
+		p 'I ate the Apple.'
+		remove(s); -- remove an Apple from the inventory
 	end;
 	act = function(s)
 		take(s)
-		p 'Вы взяли яблоко.';
+	 	p 'You took the Apple.';
 	end
 };
 ```
 
-Если у объекта в инвентаре не объявлен обработчик 'inv', будет вызван 'game.inv'.
+If the object in the inventory is not declared a handler for the 'inv', will be called 'game.inv'.
 
-Если обработчик 'tak' вернет false, то предмет не будет взят, например:
-
+If the handler is 'tak' will return false, the item will not be taken, for example:
 
 ```
 obj {
-	nam = 'яблоко';
-	dsc = 'На столе лежит {яблоко}.';
+	nam = 'Apple';
+	dsc = 'On the table is {Apple}.';
 	tak = function(s)
-		p "Оно же червивое!"
+		p "It is wormy!"
 		return false
 	end;
 };
 ```
 
-## Переходы между сценами
+## Transitions
 
-Традиционные переходы в INSTEAD выглядят как ссылки над описанием
-сцены. Для определения таких переходов между сценами используется
-атрибут сцены -- список 'way'.  В списке определяются комнаты, в виде
-имен комнат или переменных-ссылок, аналогично списку 'obj'. Например:
-
-```
-room {
-	nam = 'room2';
-	disp = 'Зал';
-	dsc = 'Вы в огромном зале.';
-	way = { 'main' };
-};
-
-room {
-    nam = 'main';
-	disp = 'Главная комната';
-	dsc = 'Вы в большой комнате.';
-	way = { 'room2' };
-};
-```
-
-При этом, вы сможете переходить между сценами 'main' и 'room2'. Как вы
-помните, 'disp' может быть функцией, и вы можете генерировать имена
-переходов на лету. Или использовать title, для разделения имени сцены
-как заголовка и как имени перехода:
+The traditional transitions into INSTEAD appear as links above the description
+scene. To determine the transitions between scenes is used attribute scene --
+list 'way'. In the list are determined by the room in the form of of the room
+names or variable references, similar to the list 'obj'. For example:
 
 ```
 room {
 	nam = 'room2';
-	disp = 'В зал';
-	title = 'В зале';
-	dsc = 'Вы в огромном зале.';
+	disp = 'Hall';
+	dsc = 'You are in a huge hall.';
 	way = { 'main' };
 };
 
 room {
-    nam = 'main';
-	title = 'В главной комнате';
-	disp = 'В главную комнату';
-	dsc = 'Вы в большой комнате.';
+	nam = 'main';
+	disp = 'Main room';
+	dsc = 'You are in a large room.';
 	way = { 'room2' };
 };
 ```
 
-При переходе между сценами движок вызывает обработчик 'onexit' из
-текущей сцены и 'onenter' в той сцене, куда идет игрок. Например:
+With this, you'll be able to go between scenes 'main' and 'room2'. As you
+remember, 'disp' can be a function, and you can generate names transitions on
+the fly. Or use title, to separate the name of the scene as the title and how
+the transition name:
 
 ```
 room {
-	onenter = 'Вы заходите в зал.';
-	nam = 'Зал';
-	dsc = 'Вы в огромном зале.';
+	nam = 'room2';
+	disp = 'hall';
+	title = 'hall';
+	dsc = 'You are in a huge hall.';
 	way = { 'main' };
-	onexit = 'Вы выходите из зала.';
+};
+
+room {
+	nam = 'main';
+	title = 'the main room';
+	disp = 'the main room';
+	dsc = 'You are in a large room.';
+	way = { 'room2' };
 };
 ```
 
-Конечно, как и все обработчики, 'onexit' и 'onenter' могут быть
-функциями. Тогда первый параметр это (как всегда) сам объект -
-комната, а второй -- это комната куда игрок собирается идти (для
-'onexit') или из которой собирается уйти (для 'onenter'). Например:
+When passing between rooms the engine calls the handler for the 'onexit' of
+the current scene and 'the onenter' in that scene where is the player. For
+example:
+
+```
+room {
+	the onenter = 'You enter the room.';
+	nam = 'Hall';
+	dsc = 'You are in a huge hall.';
+	way = { 'main' };
+	onexit = 'You exit the room.';
+};
+```
+
+Of course, like all handlers, 'onexit' and 'the onenter' can be functions.
+Then the first parameter is (as always) the object itself - room and the
+second room is where the player is going to go (for 'onexit') or from which is
+going to leave (for 'the onenter'). For example:
 
 ```
 room {
 	onenter = function(s, f)
 		if f^'main' then
-			p 'Вы идете из комнаты main.';
+			p 'You go from room to main.';
 		end
 	end;
-	nam = 'Зал';
-	dsc = 'Вы в огромном зале.';
+	nam = 'Hall';
+	dsc = 'You are in a huge hall.';
 	way = { 'main' };
 	onexit = function(s, t)
-		if t^'main' then
-			p 'Я не хочу назад!'
-            return false
+		if t^a'main' then
+			p 'I don't want to go back!'
+			return false
 		end
 	end;
 };
 ```
-Запись вида:
+
+Writing:
 
 	if f^'main' then
 
-Это сопоставление объекта с именем. Это альтернатива записям:
+This mapping of the object name. This alternative records:
 
-    if f == _'main' then
+	if f == _'main' then
 
-Или:
+Or:
 
-    if f.nam == 'main' then
+	if f.nam == 'main' then
 
-Или:
+Or:
 
-    if std.nameof(f) == 'main' then
+	if std.nameof(f) == 'main' then
 
+As you can see, for example, onexit, these handlers other than line can return
+a Boolean status value. Similarly, the processor onact, we can cancel the
+transition by returning false from onexit/the onenter.
 
-Как видим на примере onexit, эти обработчики, кроме строки могут
-возвращать булевое значение статуса. Аналогично обработчику onact, мы
-может отменить переход, вернув false из onexit/onenter.
+You can also return another way, if it seems you comfortable:
 
+	return "I don't want to go back", false
 
-Вы можете сделать возврат статуса и другим способом, если это кажется
-вам удобным:
+If you use the function 'p'/'pn'/'pr', then just return the status of a
+transaction with the final 'return', as shown in the example above.
 
-```
-	return "Я не хочу назад", false
-```
+__Important!__
 
-Если же вы используете функции 'p'/'pn'/'pr', то просто возвращайте
-статус операции с помощью завершающего 'return', как показано в
-примере выше.
+> It should be noted that when calling the handler 'the onenter' pointer to
+> current scene (here()) **not yet changed**!!! In there INSTEAD
+> handlers 'exit' (leaving the room) and 'enter' (entering the room),
+> which are called already _posle_ how the transition happened. These
+> handlers are recommended when there is no
+> need to forbid the transition.
 
-__Важно!__
-
-> Следует отметить, что при вызове обработчика 'onenter' указатель на
-> текущую сцену (here()) **еще не изменен**!!! В INSTEAD есть
-> обработчики 'exit' (уход из комнаты) и 'enter' (заход в комнату),
-> которые вызываются уже _после_ того, как переход произошел.  Эти
-> обработчики рекомендованы к использованию всегда, когда нет
-> необходимости запрещать переход.
-
-Иногда есть необходимость, чтобы название перехода отличалось от
-названия комнаты, в которую ведет этот переход. Существует несколько
-способов сделать это. Например, с помощью 'path'.
+Sometimes there is a need to name the transformation differed from the name of
+the room in which this transition leads. There are sever always to do this. For
+example, using 'path'.
 
 ```
 room {
 	nam = 'room2';
-	title = 'Зал';
-	dsc = 'Вы в огромном зале.';
-	way = { path { 'В главную комнату', 'main'} };
+	title = 'Hall';
+	dsc = 'You are in a huge hall.';
+	way = { path { 'main room', 'main'} };
 };
 
 room {
 	nam = 'main';
-    title = 'Главная комната';
-	dsc = 'Вы в большой комнате.';
-	way = { path {'В зал', 'room2'} };
+	title = 'Main room';
+	dsc = 'You are in a large room.';
+	way = { path {'room', 'room2'} };
 };
 ```
 
-На самом деле, 'path' создает комнату с атрибутом 'disp', который
-равен первому параметру, и специальной функцией 'onenter', которая
-перенаправляет игрока в комнату заданную вторым параметром 'path'.
+Actually, 'path' creates a room with the attribute 'disp', which equal to the
+first parameter, and special feature 'the onenter', which redirects the player
+to the room specified by the second argument of 'path'.
 
-Если вы укажете три параметра:
+If you specify three parameters:
 
-	way = { path {'#взал', 'В зал', 'room2'} };
+	way = { path {'#hall', 'room', 'room2'} };
 
-То первый параметр станет именем (или тегом, как в приведенном
-примере) такой комнаты.
+The first parameter will be the name (or tag, as in the example) for such a
+room.
 
-Альтернативная форма записи с явным заданием атрибута nam:
+Alternative form of entry with the explicit task attribute nam:
 
-	way = { path { nam = '#взал', 'В зал', 'room2'} };
+	way = { path { nam = '#hall', 'room', 'room2'} };
 
-Вы можете менять название перехода, после того, как переход происходил
-хотя бы раз, и вы узнали, что же это за комната:
+You can change the name of the transition, after the transition occurred at
+least once, and you know, what is this room:
 
-	way = { path {'#вдверь', 'В дверь', after = 'В гостиную', 'room2'} };
+	way = { path {'#udvari', 'door', after = 'living room', 'room2'} };
 
-Все параметры, кроме имени перехода, могут быть функциями.
+All parameters except the transition name, can be functions.
 
-Таким образом, 'path' позволяет именовать переходы удобным способом.
+Thus, the 'path' allows you to call a transitions convenient way.
 
-Иногда вам может потребоваться включать и выключать переходы. На самом
-деле это требуется не часто. Идея переходов состоит в том, что переход
-виден даже тогда, когда он невозможен. Например, представим себе сцену
-перед домом у входной двери. Войти в дом нельзя, так как дверь
-закрыта.
+Sometimes you may need to turn on and off transitions. Reallyit is not often
+required. The idea of transitions is that the transition visible even when
+it's impossible. For example, imagine the scene in front of the house by the
+front door. To enter the house because the door closed.
 
-Нет особого смысла прятать переход "дверь". Просто в функции 'onenter'
-сцены внутри дома мы проверяем, а есть ли у героя ключ? И если ключа
-нет, говорим о том, что дверь закрыта и запрещаем переход. Это
-повышает интерактивность и упрощает код. Если же вы хотите сделать
-дверь объектом сцены, поместите ее в комнату, но в 'act' обработчике
-сделайте осмотр двери, или дайте возможность игроку открыть ее ключом
-(как это сделать - мы рассмотрим позже), но сам переход дайте сделать
-игроку привычным способом через строку переходов.
+It makes little sense to hide the transition. Just in the function of 'the
+onenter' the scene inside the house, we check whether a character key? And if
+the key no, talking about the fact that the door is closed, and prohibit the
+transition. It increases interactivity and simplifies the code. If you want to
+do the door object in the scene, place it in the room, but in the 'act'
+handlerd o the inspection doors, or allow the player to open it with a key (how
+to do it - we will look at later), but the transition itself give make the
+player in the usual way through the line transitions.
 
-Тем не менее, бывают ситуации, когда переход не очевиден и он
-появляется в результате каких-то событий. Например, мы осмотрели часы
-и увидели там секретный лаз.
+However, there are times when the transition is not obvious and it appears as
+a result of some events. For example, a clock and saw a secret tunnel behind
+it.
 
 ```
 obj {
-	nam = 'часы';
-	dsc = [[Тут есть старинные {часы}.]];
+	nam = 'clock';
+	dsc = [[you see an old {clock}.]];
 	act = function(s)
-		enable '#часы'
-		p [[Вы видите, что в часах есть потайной ход!]];
+		enable '#clock'
+		p [[You see that the watch is a secret passage!]];
 	end;
 }
 
 room {
-	nam = 'Зал';
-	dsc = 'Вы в огромном зале.';
-	obj = { 'часы' };
-	way = { path { '#часы', 'В часы', 'inclock' }:disable() };
+	nam = 'Hall';
+	dsc = 'You are in a huge hall.';
+	obj = { 'clock' };
+	way = { path { '#watch', 'watch', 'inclock' }:disable() };
 };
 ```
 
-В данном примере, мы создали _отключенный_ переход, за счет вызова
-метода 'disable' у комнаты созданной с помощью 'path'. Метод 'disable'
-есть у всех объектов (не только комнат), он переводит объект в
-отключенное состояние, которое означает, что объект перестает быть
-доступным игроку.  Замечательным свойством отключенного объекта
-является то, что его можно _включить_ с помощью 'enable()';
+In this example, we created _disabled_ transition, by calling method 'disable'
+of the room created using the 'path'. Method 'disable' have all items (not
+only rooms), it translates the object in disabled state, which means that the
+object ceases to be available to the player. A remarkable property disabled
+facility is that it can _enabled_ with 'enable()';
 
-Далее, когда игрок нажимает на ссылку, описывающую часы, вызывается
-обработчик 'act', который с помощью функции 'enable()' делает переход
-видимым.
+Further, when the player clicks on the link that describes the watch, called
+handler, 'act', using the function 'enable()' makes the transition visible.
 
-Альтернативный вариант заключается не в выключении, а 'закрытии'
-объекта:
+The alternative is not in shutdown and 'close' object:
 
 ```
 obj {
-	nam = 'часы';
-	dsc = [[Тут есть старинные {часы}.]];
+	nam = 'clock';
+	dsc = [[you see an old {clock}.]];
 	act = function(s)
-		open '#часы'
-		p [[Вы видите, что в часах есть потайной ход!]];
+		open '#clock'
+		p [[You see that the watch is a secret passage!]];
 	end;
 }
 
 room {
-	nam = 'Зал';
-	dsc = 'Вы в огромном зале.';
-	obj = { 'часы' };
-	way = { path { '#часы', 'В часы', 'inclock' }:close() };
+	nam = 'Hall';
+	dsc = 'You are in a huge hall.';
+	obj = { 'clock' };
+	way = { path { '#watch', 'watch', 'inclock' }:close() };
 };
 ```
-В чем разница? Выключение объекта означает то, что объект перестает
-быть доступным для игрока.  Если в объекте вложены другие объекты, то
-и эти объекты становятся недоступными.
 
-Закрытие объекта делает недоступным содержимое данного объекта, но не
-сам объект.
+What's the difference? Disabling an object means that the object ceases to be
+available to the player. If the object is nested other objects,  and these
+objects become inaccessible.The closure of the facility makes unavailable the
+contents of this object, but not the object itself.
 
-Однако, в случае комнат, и закрытие комнаты и отключенные комнаты
-приводят к одному результату -- переход на них становится недоступным.
+However, in the case of rooms and closing rooms, and disabled room lead to the
+same result -- the transition to them is not available.
 
-Еще один вариант:
-
+Another option:
 
 ```
 room {
 	nam = 'inclock';
-	dsc = [[Я в часах.]];
+	dsc = [[I in hours.]];
 }:close()
 
 obj {
-	nam = 'часы';
-	dsc = [[Тут есть старинные {часы}.]];
+	nam = 'clock';
+	dsc = [[you see an old {clock}.]];
 	act = function(s)
 		open 'inclock'
-		p [[Вы видите, что в часах есть потайной ход!]];
+		p [[You see that the watch is a secret passage!]];
 	end;
 }
 
 room {
-	nam = 'Зал';
-	dsc = 'Вы в огромном зале.';
-	obj = { 'часы' };
-	way = { path { 'В часы', 'inclock' } };
+	nam = 'Hall';
+	dsc = 'You are in a huge hall.';
+	obj = { 'clock' };
+	way = { path { 'watch', 'inclock' } };
 };
 ```
 
-Здесь мы закрываем и открываем не переход, а комнату, в которую ведет
-переход. path не показывает себя, если комната в которую он ведет
-отключена или закрыта.
+Here we close and open did not move, and the room, which is transition. path
+shows himself if the room in which he leads disabled or closed.
 
-## Действие объектов друг на друга
+## The effect of objects on each other
 
-Игрок может действовать объектом инвентаря на другие объекты. Для
-этого он щелкает мышью на предмет инвентаря, а затем, на предмет
-сцены. При этом вызывается обработчик 'used' у объекта, на который
-действуют, и обработчик 'use' объекта, которым действуют.
+The player may use an inventory object on other objects. For he clicks the
+mouse on the item and then for scene. When this handler is invoked 'used'
+object which function, and handler 'use' of the object which apply.
 
-Например:
+For example:
+
 ```
 obj {
-	nam = 'нож';
-	dsc = 'На столе лежит {нож}';
-	inv = 'Острый!';
-	tak = 'Я взял нож!';
-	use = 'Вы пытаетесь использовать нож.';
+	nam = 'knife';
+	dsc = 'On the table is a {knife}';
+	inv = 'Sharp!';
+	tak = 'I took the knife!';
+	use = 'You try to use the knife.';
 };
 
 obj {
-	nam = 'стол';
-	dsc = 'В комнате стоит {стол}.';
-	act = 'Гм... Просто стол...';
-	obj = { 'нож' };
+	nam = 'table';
+	dsc = 'In the {table}.';
+	act = 'Hm... Just a table...';
+	obj = { 'knife' };
 	used = function(s)
-		p 'Вы пытаетесь сделать что-то со столом...';
+		p 'You are trying to do something with a table...';
 		return false
 	end;
 };
 ```
-В данном примере, обработчик used возвращает false. Зачем? Если вы
-помните, возврат false означает, что обработчик сообщает движку о том,
-что событие он не обработал. Если бы мы не вернули бы false, очередь
-до обработчика 'use' объекта 'нож' просто бы не дошла. На самом деле,
-в реальности обычно вы будете пользоваться или use или used, вряд ли
-имеет смысл выполнять оба обработчика во время действия предмета
-на предмет.
 
-Еще один пример, когда удобно вернуть false:
+In this example, used handler returns false. Why? If you remember, returning
+false means that the handler instructs the engine about what event he is not
+treated. If we would have returned false, the queue to handler 'use' of object
+'knife' simply would not come. In fact, the reality is usually you will use or
+use or used, it is unlikely it makes sense to do both the handler during the
+action of the subject on the subject of.
 
-```
-use = function(s, w)
-	if w^'яблоко' then
-		p [[Я почистил яблоко.]]
-		w.cut = true
-		return
-	end
-	return false;
-end
-```
-В данном случае use у яблока обрабатывает только одну ситуацию --
-действие на яблоко. В остальных случаях, обработчик возвращает false и
-движок вызовет метод по-умолчанию: game.use.
-
-Но лучше, если вы пропишете действие по-умолчанию для ножа:
+Another example, when it is convenient to return false:
 
 ```
 use = function(s, w)
-	if w^'яблоко' then
-		p [[Я почистил яблоко.]]
+	if w^'Apple' then
+		p [[I cleaned up the Apple.]]
 		w.cut = true
 		return
 	end
-	p [[Не стоит размахивать ножом!]]
+		return false;
 end
 ```
-Этот пример также демонстрирует тот факт, что вторым параметром у use
-является предмет на который мы действуем. У метода 'used',
-соответственно, второй параметр -- это объект, который действует на
-нас:
+
+In this case, use Apple only handles one situation -- effect on Apple. In
+other cases, the handler returns false and the engine will call the default:
+game.use.
+
+But it is better if you will register the action in default of a knife:
+
+```
+use = function(s, w)
+	if w^'Apple' then
+		p [[I cleaned up the Apple.]]
+		w.cut = true
+		return
+	end
+	p [[it is Not necessary to brandish a knife!]]
+end
+```
+
+This example also demonstrates the fact that the second argument u use is the
+subject on which we act. The method 'used' accordingly, the second -- argument
+is the entity that acts on us:
 
 ```
 obj {
-	nam = 'мусорка';
-	dsc = [[В углу стоит {мусорка}.]];
+	nam = 'trash';
+	dsc = [[In the corner is a {trash bin}.]];
 	used = function(s, w)
-		if w^'яблоко' then
-			p [[Я выбросил яблоко в мусорку.]]
+		if w^'Apple' then
+			p [[I threw the Apple in the trash.]]
 			remove(w)
 			return
 		end
@@ -1731,992 +1644,943 @@ obj {
 }
 ```
 
-Как вы помните, перед вызовом use вызывается обработчик onuse у
-объекта game, потом у объекта 'игрок', а потом у текущей комнаты. Вы
-можете блокировать 'use', вернув из любого из перечисленных методов
-'onuse' -- false.
+As you remember, before calling use onuse handler is invoked from of the game
+object, then the object 'player', and then my current room. Youcan block
+'use', returning from any of the following methods 'onuse' -- false.
 
-Использовать 'use' или 'used' (или оба) это вопрос личных
-предпочтений, однако, метод used вызывается раньше и, следовательно,
-имеет больший приоритет.
+Use 'use' or 'used' (or both) is a matter of personal preference, however, the
+method used is called earlier and therefore has a higher priority.
 
-## Объект "Игрок"
+## The Object "Player"
 
-Игрок в мире INSTEAD представлен объектом типа 'player'. Вы можете
-создавать несколько игроков, но один игрок присутствует по-умолчанию.
+Player in the world INSTEAD represented by an object of type 'player'. You can
+to create multiple players, but one player is present by default.
 
-Имя этого объекта -- 'player'. Существует переменная-ссылка pl,
-которая указывает на этот объект.
+The name of this object is 'player'. There is a variable-reference pl which
+points to this object.
 
-Обычно, вам не нужно работать с этим объектом напрямую. Но иногда это
-может быть необходимым.
+Usually, you do not need to work with this object directly. But sometimes it
+may be necessary.
 
-По умолчанию, атрибут 'obj' у игрока представляет собой инвентарь.
-Обычно, нет смысла переопределять объект типа player, однако, вы
-можете это сделать:
+By default, the attribute 'obj', the player represents the inventory. Usually,
+it makes no sense to override an object of type player, however, you can do
+it:
 
 ```
 game.player = player {
-	nam = "Василий";
-	room = 'кухня'; -- стартовая комната игрока
+	nam = "Basil";
+	room = 'kitchen'; -- the starting room of the player
 	power = 100;
-	obj = { 'яблоко' }; -- заодно добавим яблоко в инвентарь
+	obj = { 'Apple' }; -- let's give him an Apple
 };
 ```
 
-В INSTEAD есть возможность создавать нескольких игроков и
-переключаться между ними.  Для этого служит функция 'change_pl()'. В
-качестве параметра передайте функции требуемый объект типа 'player'
-(или его имя). Функция переключит текущего игрока, и при
-необходимости, осуществит переход в комнату, где находится новый
-игрок.
+To INSTEAD have the ability to create multiple players and to switch between
+them. This is the 'change_pl()'. In as parameter pass function required an
+object of type 'player' (or his name). Function will switch the current
+player, andnecessary, will move into the room where the new player.
 
-Функция 'me()' всегда возвращает текущего игрока. Следовательно, в
-большинстве игр me() == pl.
+The 'me()' always returns the current player. Therefore, in most games and
+me() == pl.
 
-## Объект "Мир"
+## The Object "World"
 
-Игровой мир представлен объектом типа world. Имя такого объекта
- 'game'. Существует ссылка-переменная, которая также называется game.
+The game world is represented by an object of type world. The name of this
+object  the 'game'. There is a reference variable, also called game.
 
-Обычно вы не работаете с этим объектом напрямую, однако иногда вы
-можете вызывать его методы, или менять значения переменных этого
-объекта.
+Usually you don't work with this object directly, but sometimes you can call
+its methods, or change variable values in this object.
 
-Например, переменная game.codepage содержит кодировку исходного кода
-игры, и по-умолчанию равна "UTF-8". Я не рекомендую использовать
-другие кодировки, но иногда, выбор кодировки может стать
-необходимостью.
+For example, the variable game.codepage contains the encoding of the source
+code games, and by default to "UTF-8". I do not recommend using other
+encodings, but sometimes, the choice of encoding can be necessity.
 
-Переменная game.player -- содержит текущего игрока.
+The variable game.player -- contains the current player.
 
-Кроме того, как вы уже знаете, объект 'game' может содержать
-обработчики по умолчанию: 'act', 'inv', 'use', 'tak', которые будут
-вызваны, если в результате действий пользователя не будут найдены
-никакие другие обработчики (или все они вернули false). Например, вы
-можете написать в начале игры:
+In addition, as you already know, the object of the 'game' may contain default
+handlers: 'act', 'inv', 'use', 'tak', which will called if the actions of the
+user are not found no other handlers (or all of them returned false). For
+example, you you can write in the beginning of the game:
 
-```
-game.act = 'Не получается.';
-game.inv = 'Гм.. Странная штука..';
-game.use = 'Не сработает...';
-game.tak = 'Не нужно мне это...';
-```
+	game.act = 'does Not work.';
+	game.inv = 'hmm ... Odd thing...';
+	game.use = 'does Not work...';
+	game.tak = 'I don't need this...';
 
-Конечно, все они могут быть функциями.
+Of course, they can all be functions.
 
-Также, объект game может содержать обработчики: onact, ontak, onuse,
-oninv, onwalk -- которые могут прерывать действия, в случае возврата
-false.
+Also, the game object may contain handlers: onact, ontak, onuse, oninv, onwalk
+-- which can interrupt the action, in case of return false.
 
-Еще, у объекта game можно задать обработчики: afteract, afterinv,
-afteruse, afterwalk -- которые вызываются в случае успешного
-выполнения соответствующего действия.
+Still, the game object you can set handlers: afteract, afterinv, afteruse,
+afterwalk -- that are invoked in case of successful to perform the appropriate
+action.
 
-## Атрибуты-списки
+## The attributes-lists
 
-Атрибуты-списки (такие как 'way' или 'obj') позволяют работать со
-своим содержимым с помощью набора методов. Атрибуты-списки призваны
-сохранять в себе списки объектов. На самом деле, вы можете создавать
-списки для собственных нужд, и размещать их в объектах, например:
+Attributes-lists (such as 'way' or 'obj') allow you to work with its content
+with a set of methods. Attributes-a list designed keep a list of objects. In
+fact, you can create lists for their own needs, and place them in objects, for
+example:
 
 ```
 room {
-	nam = 'холодильник';
-	frost = std.list { 'мороженное' };
+	nam = 'fridge';
+	frost = std.list { 'ice cream' };
 }
 ```
 
-Хотя, обычно, это не требуется.
-Ниже перечислены методы объектов типа 'список'. Вы можете вызывать их
-для любых списков, хотя обычно это будут way и obj, например:
+Although usually it is not needed. Listed below are methods for objects of
+type 'list'. You can call them for any lists, although these will usually be
+way and obj, for example:
 
-	ways():disable() -- отключить все переходы
+	ways():disable() -- disable all transitions
 
-- disable() - отключает все объекты списка;
-- enable() - включает все объекты списка;
-- close() - закрыть все объекты списка;
-- open() - открыть все объекты списка;
-- add(объект|имя, [позиция]) - добавить объект;
-- for_each(функция, аргументы) - вызвать для каждого объекта функцию с
-  аргументами;
-- lookup(имя/тег или объект) - поиск объекта в списке. Возвращает
-объект и индекс;
-- srch(имя/тег или объект) - поиск видимого объекта в списке;
-- empty() - вернет true, если список пуст;
-- zap() - очистить список;
-- replace(что, на что) - заменить объект в списке;
-- cat(список, [позиция]) - добавить содержимое списка в текущий список
-  по позиции;
-- del(имя/объект) - удалить объект из списка.
+- disable() - disables all objects in the list;
+- enable() - enables all objects of the list.
+- close() - close all objects of the list.
+- open() - open the list objects;
+- add(object|name [position]) - add an object;
+- for_each(function, args) - to call for each object feature arguments;
+- lookup(name/tag or object) is object search in the list. Returns the object 
+  and the index;
+- srch(name/tag or the object) - the search for a visible object in the list;
+- empty() - returns true if the list is empty;
+- zap() - clear the list;
+- replace(what, what) - replace the object in the list;
+- cat(list, [position]) - add the contents of the list into the current list
+  position;
+- del(name/object) - delete object from the list.
 
-Существуют функции, возвращающие объекты-списки:
+There are functions that return the objects lists:
 
-- inv([игрок]) - вернуть инвентарь игрока;
-- objs([комната]) - вернуть объекты комнаты;
-- ways([комната]) - вернуть переходы комнаты.
+- inv([player]) - return the player's inventory;
+- objs([where]) - return objects of the room;
+- ways([room]) - return transitions of the room.
 
-Конечно, вы можете обращаться к спискам и напрямую:
+Of course, you can refer to the lists directly:
 
-```
-	pl.obj:add 'нож'
+	pl.obj:add 'knife'
 
-```
-
-Объекты в списках хранятся в том порядке, в котором вы их
-добавите. Однако, если у объекта присутствует числовой атрибут pri, то
-он играет роль _приоритета_ в списке. Если pri не задан, значением
-приоритета считается 0. Таким образом, если вы хотите, чтобы какой-то
-объект был первым в списке, давайте ему приоритет pri < 0. Если в
-конце списка -- > 0.
+The objects in the lists are stored in the order in which they add. However,
+if the object is present numeric attribute pri he plays the role of priority
+in the list. If pri is not specified, the value priority 0 is considered.
+Thus, if you want some the object was first on the list, give priority pri <
+0. If the end of the list -- > 0.
 
 ```
 obj {
 	pri = -100;
-	nam = 'штука';
-	disp = 'Очень важный предмет инвентаря';
-	inv = [[Осторожней с этим предметом.]];
+	nam = 'thing';
+	disp = 'Very important item';
+	inv = [[Careful with this subject.]];
 }
-
 ```
 
-## Функции, которые возвращают объекты
+## Functions that return objects
 
-В INSTEAD определены некоторые функции, которые возвращают различные объекты.
-При описании функции используются следующие соглашения о параметрах.
+To INSTEAD define some functions that return different objects. In the
+description of the function uses the following parameters agreement.
 
-- в символах [ ] описаны необязательные параметры;
-- 'что' или 'где' - означает объект (в том числе комнату), заданный тегом,
-  именем или переменной-ссылкой;
+- the characters [ ] describe the optional parameters;
+- 'what' or 'where' - means an object (including the room) is specified by the
+  tag name or a variable reference;
 
-Итак, основные функции:
+Thus, the main function:
 
-- '_(что)' - получить объект;
-- 'me()' возвращает текущего объекта-игрока;
-- 'here()' возвращает текущую сцену;
-- 'where(что)' возвращает комнату или объект в котором находится
- заданный объект, если объект находится в нескольких местах, то можно
- передать второй параметр -- таблицу Lua, в которую будут добавлены
- эти объекты;
-- 'inroom(что)' аналогично where(), но вернет комнату, в которой
-  расположен объект (это важно для объектов в объектах);
-- 'from([где])' возвращает прошлую комнату, из которой игрок перешел в
-заданную комнату. Необязательный параметр -- получить прошлую комнату
-не для текущей комнаты, а для заданной;
-- 'seen(что, [где])' возвращает объект или переход, если он
-присутствует и видим, есть второй необязательный параметр -- выбрать
-сцену или объект/список в котором искать;
-- 'lookup(что, [где])' возвращает объект или переход, если он
-существует в сцене или объекте/списке;
-- 'inspect(что)' возвращает объект, если он виден/доступен на
-  сцене. Поиск производится по переходам и объектам, в том числе, в
-  объектах игрока;
-- 'have(что)' возвращает объект, если он есть в инвентаре и не
-  отключен;
-- 'live(что)' возвращает объект, если он присутствует среди живых
-  объектов (описано далее);
+- '_() ' - get the object;
+- 'me()' returns the current object to the player;
+- 'here()' returns the current scene.
+- 'where ()' returns a room or an object which is the specified object if the
+  object is in multiple places, you can  pass in a second parameter -- a Lua
+  table that will be added  these objects;
+- 'inroom ()' similar to where(), but returns the room in which the facility 
+  is located (this is important for objects in the objects);
+- 'from([where])' returns the last room the player goes into given room.
+  Optional parameter -- to the last room not for the current room, and for a
+  given;
+- 'seen(what [, where])' returns an object or transition, if itis present and
+  can see, there is a second optional parameter -- select the scene or
+  object/list in which to search;
+- 'lookup(what, [where])' returns an object or transition, if it there is in 
+  the scene or object/list;
+- 'inspect ()' returns the object if it is visible/available on stage. The
+  search is performed for transitions and objects, including, in the object of
+  the player;
+- 'have ()' returns the object if it is in the inventory and not disabled;
+- 'live ()' returns the object if it is present among the living objects (
+  described below);
 
-Эти функции в основном используются в условиях, либо для поиска
-объекта с последующей модификацией. Например, вы можете использовать
-'seen' для написания условия:
+These functions are mostly used in the conditions, or to search object from
+further modification. For example, you can use 'seen' for writing terms:
 
 ```
 onexit = function(s)
-	if seen 'монстр' then -- если у функции 1 параметр,
-		--- скобки писать не обязательно
-		p 'Монстр загораживает проход!'
+	if seen 'monster' then -- if a function has 1 parameter
+		--- I'm not hungry ... 
+		p 'the Monster's in the way!'
 		return false
 	end
 end
 ```
 
-А также, для нахождения объекта в сцене:
+And also, for finding the object in the scene:
+
 ```
 use = function(s, w)
-	if w^'окно' then
-		local ww = lookup 'собака'
+	if w^'window' then
+		local ww = lookup 'dog'
 		if not ww then
-			p [[А где моя собака?]]
+			p [[where's my dog?]]
 			return
 		end
-		place(ww, 'улица')
-		p 'Я разбил окно! Моя собака выпрыгнула на улицу.'
+		place(ww, 'street')
+		p 'I broke the window! My dog jumped on the street.'
 		return
 	end
 	return false
 end
 ```
 
-Пример с функцией 'have':
+Example with 'have':
 
 ```
 ...
 act = function(s)
-	if have 'нож' then
-		p 'Но у меня же есть нож!';
-        return
+	if have a 'knife' then
+		p 'But I have a knife!';
+		return
 	end
-	take 'нож'
+	take 'the knife'
 end
 ...
 ```
-> Может возникнуть вопрос, в чем разница между функциями lookup и _ ()?
-> Дело в том, что lookup() ищет объект, и в случае, если объект не найден
-> -- просто ничего не вернет. А запись _ () предполагает, что вы точно
-> знаете, что за предмет вы получаете. Другими словами, _ () это
-> безусловное получение объекта по имени. Эта функция в общем случае не
-> занимается _поиском_. Только если в качестве параметра задан тег,
-> будет осуществлен поиск среди доступных объектов. Если вы используете
-> _ () на несуществующий объект или недоступный тег -- вы получите ошибку!
 
-## Другие функции стандартной библиотеки
+> The question may arise, what is the difference between lookup function and _
+> ()? The fact that lookup() looks up the object and if the object is not
+> found -- just did not return. And the record is _ () assumes that you just
+> you know that the item you get. In other words, _ () is unconditional
+> receipt of the object by name. This function does not, in general, makes
+> the search. Only if the specified tag> will be searched from the available
+> objects. If you use _ () on a non-existent object or unavailable -- you will
+> get an error!
 
-В INSTEAD в модуле stdlib, который всегда подключается автоматически,
-определены функции, которые предлагаются автору как основной рабочий
-инструмент по работе с миром игры. Рассмотрим их в этой главе.
+## Other standard library functions
 
-При описании функции в большинстве функций под параметром 'w'
-понимается объект или комната, заданная именем, тегом или по
-переменной-ссылке. [ wh ] - означает необязательный параметр.
+In the stdlib module INSTEAD, which always connects automatically defined the
+functions offered by the author as the main work tool for working with the
+game world. Let us consider them in this Chapter.
 
-- include(файл) - включить файл в игру;
+In the description of the functions most of the functions under the parameter
+'w' refers to an object or room, specified by name, tag or variable link. [ wh
+] - indicates an optional parameter.
 
-		include "lib" -- включит файл lib.lua из текущего каталога с игрой;
+- include(file) - file to include in the game;
+		include "lib" -- will include the lib file.lua from the current directory with the game;
 
-- loadmod(модуль) - подключить модуль игры;
+- loadmod(module) to connect the module of the game;
 
-		loadmod "module" -- включит модуль module.lua из текущего каталога;
-
-- rnd(m) - случайное целочисленное значение от '1' до 'm';
-- rnd(a, b) - случайное целочисленное значение от 'a' до 'b', где 'a'
-  и 'b' целые >= 0;
-- rnd\_seed(что) - задать зерно генератора случайных чисел;
-- p(...) - вывод строки в буфер обработчика/атрибута (с пробелом в конце);
-- pr(...) - вывод строки в буфер обработчика/атрибута "как есть";
-- pn(...) - вывод строки в буфер обработчика/атрибута (с переводом строки в конце);
-- pf(fmt, ...) - вывод форматной строки в буфер обработчика/атрибута;
+		loadmod "module" -- will include the module module.lua from the current directory;
+- rnd(m) - a random integer value from '1' to 'm';
+- rnd(a, b) - a random integer value from 'a' to 'b' where 'a'
+  and 'b' are integers >= 0;
+- rnd\_seed () - set seed of random number generator;
+- p (...) output a string to the buffer handler/attribute (with a space at the
+  end);
+- pr (...) output a string to the buffer handler/attribute "as is";- pn (...) 
+  output a string to the buffer handler/attribute (with a newline at the end);
+- pf(fmt, ...) - output formatted string to the buffer handler/attribute;
 
 		local text = 'hello';
-		pf("Строка: %q Число: %d\n", text, 10);
+		pf("String: %q: %d\n", text, 10);
 
-- pfn(...)(...)... "строка" - формирование простого обработчика;
-  Данная функция упрощает создание простых обработчиков:
+- pfn(...)(...)... "line" - creating a simple handler; This feature simplifies 
+  the creation of simple handlers:
 
-		act = pfn(walk, 'ванная') "Я решил зайти в ванную.";
-		act = pfn(enable, '#переход') "Я заметил отверстие в стене!";
+		act = pfn(walk, 'bathroom') "I decided to go to the bathroom.";
+		act = pfn(enable, '#transition') "I noticed a hole in the wall!";
 
-- obj {} - создание объекта;
-- stat {} - создание статуса;
-- room {} - создание комнаты;
-- menu {} - создание меню;
-- dlg {} - создание диалога;
-- me() - возвращает текущего игрока;
-- here() - возвращает текущую сцену;
-- from([w]) - возвращает комнату из которой осуществлен переход в
-текущую сцену;
-- new(конструктор, аргументы) - создание нового _динамического_
-  объекта (будет описано далее);
-- delete(w) - удаление динамического объекта;
-- gamefile(файл, [сбросить состояние?]) - подгрузить динамически файл
-  с игрой;
+- obj {} - create object;
+- stat {} - create status;
+- room {} - create a room;
+- menu {} - create a menu;- dlg {} - create a dialogue;
+- me() - returns the current player;
+- here() - returns the current scene.
+- from([w]) - returns the room from which the transition to your current scene.
+- new(constructor, arguments) - creates a new dinamicheskogo object (to be 
+  described later);
+- delete(w) - deletes the dynamic object;
+- gamefile(file, [reset?]) - load dynamically the file with the game;
 
-		gamefile("part2.lua", true) -- сбросить состояние игры (удалить
-		объекты и переменные), подгрузить  part2.lua и начать с main комнаты.
+		gamefile("part2.lua", true) -- reset the game state (remove
+		objects and variables), load part2.lua and start with the main room.
 
-- player {} - создать игрока;
-- dprint(...) - отладочный вывод;
-- visits([w]) - число визитов в данную комнату (или 0, если визитов не было);
-- visited([w]) - число визитов в комнату или false, если визитов не
-было;
+- player {} - create a player;- dprint(...) - debug output;
+- visits([w]) - the number of visits to the bathroom (or 0 if visits);
+- visited([w]) - the number of visits to the room, or false if not visits was;
 
 		if not visited() then
-			p [[Я тут первый раз.]]
+			p [[it's my first time.]]
 		end
 
-- walk(w, [булевое exit], [булевое enter], [булевое менять from]) - переход
-  в сцену;
+- walk(w, [Boolean exit], [enter Boolean], [Boolean to change from]) - 
+  transition in the scene;
 
-		walk('конец', false, false) -- безусловный переход (игнорировать
-		onexit/onenter/exit/enter);
+		-- unconditional jump (to ignore onexit/the onenter/exit/enter);
+		walk('end', false, false)
 
-- walkin(w) - переход в под-сцену (без вызова exit/onexit текущей комнаты);
-- walkout([w], [dofrom]) - возврат из под-сцены (без вызова
-  enter/onenter);
-- walkback([w]) - синоним walkout([w], false);
-- \_(w) - получение объекта;
-- for_all(fn, ....) - выполнить функцию для всех аргументов;
+- walkin(w) is a transition in the scene (without calling exit/onexit current);
+- walkout([w], [dofrom]) - return from sub-scene (without calling
+  enter/the onenter);
+- walkback([w]) - a synonym walkout([w], false);
+- \_(w) - receiving object;
+- for_all(fn, ....) - to perform the function for all arguments;
 
-		for_all(enable, 'окно', 'дверь');
+		for_all(enable, 'window', 'door');
 
-- seen(w, [где]) - поиск видимого объекта;
-- lookup(w, [где]) - поиск объекта;
-- ways([где]) - получить список переходов;
-- objs([где]) - получить список объектов;
-- search(w) - поиск доступного игроку объекта;
-- have(w) - поиск предмета в инвентаре;
-- inroom(w) - возврат комнаты/комнат, в которой находится объект;
-- where(w, [таблица]) - возврат объекта/объектов, в котором находится объект;
+- seen(w, [where]) - search for the visible object;
+- lookup(w, [where]) is a search object;
+- ways([where]) - get list of transitions;
+- objs([where]) - get the list of objects;
+- search(w) - search for the player object;
+- have(w) - search for items in the inventory;
+- inroom(w) - the return of the room/rooms, in which the object resides;
+- where(w, [table]) - return the object/objects in which the object resides;
 
 		local list = {}
-		local w = where('яблоко', list)
-		-- если яблоко находится в более, чем одном месте, то
-		-- list будет содержать массив этих мест.
-		-- Если вам достаточно одного местоположения, то:
-		where 'яблоко' -- будет достаточно
+		local w = where('Apple', list)
+		-- if the Apple is in more than one place, then list will contain an 
+		-- array of these places. If you only need one location, then:
+		where 'Apple' -- will be enough
 
-- closed(w) - true если объект закрыт;
-- disabled(w) - true если объект выключен;
-- enable(w) - включить объект;
-- disable(w) - выключить объект;
-- open(w) - открыть объект;
-- close(w) - закрыть объект;
-- actions(w, строка, [значение]) - возвращает (или устанавливает)
-  число действий типа t для объекта w.
+- closed(w) - true if the object is closed;
+- disabled(w) - true if the object is off;
+- enable(w) is to include an object;
+- disable(w) - off object;
+- open(w) - open;
+- close(w) - close the object;
+- actions(w, string, [value]) - returns (or sets)
+  the number of actions of type t to an object w. 
 
-		if actions(w, 'tak') > 0 then -- предмет w был взят хотя бы 1 раз;
-		if actions(w) == 1 then -- act у предмета w был вызван 1 раз;
+		if actions(w, 'tak') > 0 then -- object w was taken at least 1 time;
+		if actions(w) == 1 then -- act it w was called 1 times;
 
-- pop(тег) - возврат в прошлую ветвь диалога;
-- push(тег) - переход в следующую ветвь диалога
-- empty([w]) - пуста ли ветвь диалога? (или объект)
-- lifeon(w) - добавить объект в список живых;
-- lifeoff(w) - убрать объект из списка живых;
-- live(w) - объект жив?;
-- change\_pl(w) - смена игрока;
-- player\_moved([pl]) - текущий игрок перемещался в этом такте?;
-- inv([pl]) - получить список-инвентарь;
-- remove(w, [wh]) - удалить объект из объекта или комнаты; Удаляет
-  объект из списков obj и way (оставляя во всех остальных, например,
-  game.lifes);
-- purge(w) - уничтожить объект (из всех списков); Удаляет объект из
-  _всех_ списков, в которых он присутствует;
-- replace(w, ww, [wh]) - заменить один объект на другой;
-- place(w, [wh]) - поместить объект в объект/комнату (удалив его из
- старого объекта/комнаты);
-- put(w, [wh]) - поместить объект без удаления из старого местоположения;
-- take(w) - забрать объект;
-- drop(w, [wh]) - выбросить объект;
-- path {} - создать переход;
-- time() - число ходов от начала игры.
+- pop(tag) - return to the last branch of the dialog;
+- push(tag) - the transition to the next branch of dialogue
+- empty([w]) - empty right branch of the dialogue? (or object)
+- lifeon(w) - add an object to the list of the living;
+- lifeoff(w) - to remove an object from the list of the living;
+- live(w) - object is alive?;
+- change\_pl(w) - change a player;
+- player\_moved([pl]) is the current player moved in this manner?;
+- inv([pl]) - get a list of the inventory;
+- remove(w, [wh]) - delete the object from object or room; Removes
+  object obj from list and way (leaving all the rest, for example, game.lifes);
+- purge(w) - destroy the object (from all lists); Removes the object from
+  Vseh lists in which it is present;
+- replace(w, ww, [wh]) is to replace one object to another;
+- place(w, [wh]) is to put the object in the object/room (removing it from
+  the old object/rooms);
+- put(w, [wh]) - put object without removing it from the old location;
+- take(w) - pick up object;
+- drop(w, [wh]) - to throw object;
+- path {} - create a transition;
+- time () is the number of moves from the beginning of the game.
 
+__Important!__
 
-__Важно!__
+In fact, many of these functions also are able to work not only with rooms and
+facilities, but also with lists. That is, 'remove(apple inv())' works like
+'remove(apple, me())"; However, remove(apple) also work and remove the object
+from the places where he present.
 
-На самом деле, многие из этих функций также умеют работать не только с
-комнатами и объектами, но и со списками. То есть 'remove(apple,
-inv())' сработает также как и 'remove(apple, me())''; Впрочем,
-remove(apple) тоже сработает и удалит объект из тех мест, где он
-присутствует.
-
-Рассмотрим несколько примеров.
+Consider a few examples.
 
 ```
 act = function()
-	pn "Я иду в следующую комнату..."
+	pn "I'm going to next room..."
 	walk (nextroom);
 end
 
 obj {
-	nam = 'моя машина';
-	dsc = 'Перед хижиной стоит мой старенький {пикап} Toyota.';
+	nam = 'my car';
+	dsc = 'in Front of the cabin is my old {pickup} Toyota.';
 	act = function(s)
 		walk 'inmycar';
 	end
 };
 ```
-__Важно!__
 
-> После вызова 'walk' выполнение обработчика продолжится до его
-> завершения. Поэтому обычно, после 'walk' всегда следует
-> 'return', если только это не последняя строка функции, хотя и в
-> этом случае безопасно поставить 'return'.
+__Important!__
+
+> After a call to 'walk' the execution of the handler continues until it
+> completed. Therefore, usually, after the 'walk' is always followed
+> 'return', unless it is the last line of the function, although in
+> this case, it is safe to put 'return'.
 
 ```
 act = function()
-        pn "Я иду в следующую комнату..."
-        walk (nextroom);
-        return
+	pn "I'm going to next room..."
+	walk (nextroom);
+	return
 end
 ```
 
-Не забывайте также, что при вызове 'walk' вызовутся обработчики
-'onexit/onenter/exit/enter'' и если они запрещают переход, то он не
-произойдет.
+Don't forget also that when you call 'walk' will be called handlers
+'onexit/the onenter/exit/enter" and if they forbid the transition, it is not
+will happen.
 
+## Dialogue
 
-## Диалоги
+Dialogues-the scene of a special type 'dlg' containing objects --phrase. When
+entering the dialogue the player sees a list of phrases that can to choose,
+getting some kind of reaction game. The default is already selected phrase
+hidden. The exhaustion of all options, the conversation ends exit to the
+previous room (of course, if in the dialogue there is constantly visible
+phrases, which usually occurs something like 'Finish the conversation' or 'Ask
+again'). When re-entering the dialog, all the hidden phrase again become
+visible and the dialogue is reset to the initial state (unless, of course, the
+author of the game specifically make an effort to change the form of a
+dialogue).
 
-Диалоги -- это сцены специального типа 'dlg', содержащие объекты --
-фразы. При входе в диалог игрок видит перечень фраз, которые может
-выбирать, получая какую-то реакцию игры.  По умолчанию, уже выбранные
-фразы скрываются. При исчерпании всех вариантов, диалог завершается
-выходом в предыдущую комнату (конечно, если в диалоге нет постоянно
-видимых фраз, среди которых обычно встречается что-то типа 'Завершить
-разговор' или 'Спросить еще раз'). При повторном входе в диалог, все
-скрытые фразы снова становятся видимыми и диалог сбрасывается в
-начальное состояние (если, конечно, автор игры специально не
-прикладывал усилия по изменению вида диалога).
-
-Переход в диалог в игре осуществляется как переход на сцену:
+The transition in the dialogue of the game is how the transition to the stage:
 
 ```
 obj {
-	nam = 'повар';
-	dsc = 'Я вижу {повара}.';
+	nam = 'cook';
+	dsc = 'I see a {cook}.';
 	act = function()
 		walk 'povardlg'
-	end,
+	end
 };
 ```
 
-Хотя я рекомендую использовать 'walkin', так как в случае 'walkin' не
-вызываются 'onexit/exit' текущей комнаты, а персонаж, с которым мы
-можем поговорить, обычно находиться в этой же комнате, где и главный
-герой. То есть:
+Although I recommend to use 'walkin', as in the case of 'walkin' not called
+'onexit/exit' the current room, and the character with which we can talk,
+usually to be in the same room, where the main hero. That is:
 
 ```
 obj {
-	nam = 'повар';
-	dsc = 'Я вижу {повара}.';
+	nam = 'cook';
+	dsc = 'I see a {cook}.';
 	act = function()
 		walkin 'povardlg'
-	end,
+	end
 };
 ```
 
-Если вам не нравится префикс у фраз в виде дефиса, вы можете определить строковую переменную:
+If you don't like the prefix of phrases in the form of a hyphen you can specify a string variable:
 
-```
-std.phrase_prefix = '+';
-```
+	std.phrase_prefix = '+';
 
-И получить префикс в виде '+' перед каждой фразой. Вы также можете
-сделать префикс функцией. На вход функции в таком случае будет
-поступать в виде параметра номер фразы. Задача функции -- вернуть
-строковый префикс.
+And get prefixed with a '+' before each phrase. You can also to make a prefix
+function. The function in this case will be to enter a parameter the number of
+the phrase. The purpose of the function -- to return a string prefix.
 
-Обратите внимание, что 'std.phrase_prefix' не сохраняется, если вам
-нужно переопределять ее на лету, вам придется восстанавливать ее
-состояние в 'start()' функции вручную!
+Please note that 'std.phrase_prefix' is not saved if you you need to override
+it on the fly, you will have to restore it state in 'start()' function
+manually!
 
-__Важно!__
+__Important!__
 
-> Я рекомендую использовать модуль 'noinv' и задавать свойство 'noinv'
-> в диалогах. Диалоги будут выглядеть красивей и вы обезопасите свою
-> игру от ошибок и непредсказуемых реакций при использовании инвентаря
-> внутри диалога (так как обычно автор не подразумевает такие
-> вещи). Например:
+> I recommend to use module 'noinv' and set the 'noinv' in the dialogs. The
+> dialogs will look more beautiful and you will protect your game from
+> mistakes and unexpected reactions when using equipment inside the dialog (as
+> usual, the author does not imply such things). For example:
 
 ```
 require "noinv"
 ...
 dlg {
-        nam = 'Охранник';
-        -- в диалогах обычно не нужен инвентарь
-        noinv = true;
-        ...
+	nam = 'Guard';
+	-- in the dialogues typically do not require inventory
+	noinv = true;
+	...
 }
 ```
 
-### Фразы
+### Phrase
 
-Центральным понятием в диалогах является _фраза_. Фразы это не просто
-вопрос-ответ, как можно подумать. Фраза является деревом, и в этом
-смысле, весь диалог может быть реализован единственной
-фразой. Например:
+The Central concept in dialogue is fraza. The phrase is not just the question-
+answer as you might think. The phrase is a tree, and in this the sense of the
+whole dialogue can be implemented only phrase. For example:
 
 ```
 dlg {
-	nam = 'разговор';
-	title = [[Разговор с продавцом]];
-	enter = [[Я обратился к продавцу.]];
+	nam = 'conversation';
+	title = [[the Conversation with the seller]];
+	enter = [[I asked the seller.]];
 	phr = {
-		{ 'У вас есть бобы?', '-- Нет.'},
-		{ 'У вас есть шоколад?', '-- Нет.'},
-		{ 'У вас есть квас?', '-- Да',
-			{ 'А сколько он стоит?', '-- 50 рублей.' },
-			{ 'А он холодный?', '-- Холодильник сломался.',
-				{ 'Беру два!', 'Остался один.',
-					{ 'Дайте один!', function() p [[Ок!]]; take 'квас'; end };
+		{ 'You have beans?', '-- No.'},
+		{ 'You have chocolate?', '-- No.'},
+		{ 'You have a brew?', '-- Yes',
+			{ 'How much is it worth?', '-- 50 rubles.' },
+			{ 'He is cold?', '-- Fridge was broken.',
+				{ 'Take two!', 'Left one.',
+					{ 'Give me one!', function() p [[OK!]]; take 'brew'; end };
 				}
 			}
 		}
 	}
 }
 ```
-Как видно из примера, фраза задается атрибутом phr и может содержать
-разветвленный диалог. Фраза содержит в себе выборы, каждый из которых
-тоже может содержать в себе выборы и так далее...
 
-Фраза имеет формат пары: описатель -- реакция. В простейшем случае,
-это строки. Но они могут быть и функциями. Обычно, функцией бывает
-реакция, которая может содержать код по изменению игрового мира.
+As you can see, the phrase is specified by the attribute phr and can contain
+branched dialogue. The phrase contains elections, each of which can also
+contain choices and so on...
 
-Пара может быть простой:
+The phrase is in the format of pairs: descriptor -- reaction. In the simplest
+case, this a-line. But they can also be functions. Usually, the function is
+reaction, which can contain code to change the game world.
 
-	{'Вопрос', 'Ответ }
+Steam can be as simple as:
 
-А может содержать в себе массив пар:
+	{'Question', 'Response }
 
-	{'Вопрос', 'Ответ',
-		{'Под-вопрос1', 'Под-ответ1' },
-		{'Под-вопрос2', 'Под-ответ2' },
+And can contain an array of pairs:
+
+	{'Question', 'Answer',
+		{'Sub-question1', 'Under-ответ1' },
+		{'Under-вопрос2', 'Under-ответ2' },
 	}
 
-На самом деле, если вы посмотрите внимательно на атрибут phr, то вы
-заметите, что массив выборов тоже является вложенным в главную фразу
-phr, но только первоначальная пара отсутствует:
-
+In fact, if you look carefully at the attribute phr, you notice that the array
+of choices is also embedded in the main sentence phr, but only the original
+pair is missing:
 
 ```
 dlg {
-	nam = 'разговор';
-	title = [[Разговор с продавцом]];
-	enter = [[Я обратился к продавцу.]];
+	nam = 'conversation'; title = [[the Conversation with the seller]];
+	enter = [[I asked the seller.]];
 	phr = {
-	-- тут мог бы быть вопрос ответ 1-го уровня!
-	-- 'Главный вопрос', 'Главный ответ',
-		{ 'У вас есть бобы?', '-- Нет.'},
-		{ 'У вас есть шоколад?', '-- Нет.'},
-		{ 'У вас есть квас?', '-- Да',
-			{ 'А сколько он стоит?', '-- 50 рублей.' },
-			{ 'А он холодный?', '-- Холодильник сломался.',
-				{ 'Беру два!', 'Остался один.',
-					{ 'Дайте один!', function() p [[Ок!]]; take 'квас'; end };
+	-- there could be question answer 1 level!
+	-- 'The main issue', 'Main',
+		{ 'You have beans?', '-- No.'},
+		{ 'You have chocolate?', '-- No.'},
+		{ 'You have a brew?', '-- Yes',
+			{ 'How much is it worth?', '-- 50 rubles.' },
+			{ 'He is cold?', '-- Fridge was broken.',
+				{ 'Take two!', 'Left one.',
+					{ 'Give me one!', function() p [[OK!]]; take 'brew'; end };
 				}
 			}
 		}
 	}
 }
 ```
-На самом деле, так и есть. И вы можете добавить 'Главный вопрос' и
-'Главный ответ', но только вы не увидите этот главный вопрос. Дело в
-том, что при входе в диалог фраза phr автоматически раскрывается, так
-как обычно нет никакого смысла в диалогах из одной единственной фразы.
-И гораздо проще понять диалог как набор выборов, чем как единственную
-древовидную фразу. Так что у phr никогда нет первоначальной пары
-вопрос-ответ, но мы сразу попадаем в массив вариантов, что более
-понятно.
 
-Когда мы говорим о том, что диалог на самом деле реализован одной
-фразой, мы не совсем правы. Дело в том, что мы имеем дело с фразой,
-внутри которой находятся другие фразы... Это напоминает нам ситуацию с
-объектами. Действительно, фразы -- это объекты! Которые могут
-находиться внутри друг-друга. Итак, взглянем на диалог свежим взглядом:
+Actually, it is. And you can add the 'Main question' and'The answer', but you
+will not see this question. The thing that when entering into dialogue phrase
+phr automatically opens, so as usual there is no point in the dialogues of a
+single phrase. And it is much easier to understand the dialogue as a set of
+election than as the only tree phrase. So there is never a phr of the initial
+pair question-answer, but we immediately find ourselves in the array of
+options that more clear.
+
+When we talk about what the dialogue actually implemented one phrase, we are
+not quite right. The fact that we are dealing with the phrase,which is located
+inside the other phrase... It reminds us of the situation objects. Indeed,
+expressions are objects! Which can to be inside each other. So, take a look at
+the dialogue from a fresh perspective:
 
 ```
 dlg {
-	nam = 'разговор';
-	title = [[Разговор с продавцом]];
-	enter = [[Я обратился к продавцу.]];
-	phr = { -- это объект типа фраза, без dsc и act
-		-- это 1-я фраза, внутри фразы с dsc и act
-		{ 'У вас есть бобы?', '-- Нет.'},
-		-- это 2-я фраза, внутри фразы с dsc и act
-		{ 'У вас есть шоколад?', '-- Нет.'},
-		-- это 3-я фраза, внутри фразы с dsc и act
-		{ 'У вас есть квас?', '-- Да',
-		-- это 1-я фраза внутри 3й фразы с dsc и act
-		{ 'А сколько он стоит?', '-- 50 рублей.' },
-			{ 'А он холодный?', '-- Холодильник сломался.',
-				{ 'Беру два!', 'Остался один.',
-				    -- здесь act в виде функции
-					{ 'Дайте один!', function() p [[Ок!]]; take 'квас'; end };
+	nam = 'conversation';
+	title = [[the Conversation with the seller]];
+	enter = [[I asked the seller.]];
+	phr = { -- is a phrase without dsc and act
+ 		-- is the 1st phrase inside the phrase with dsc and act
+ 		{ 'You have beans?', '-- No.'},
+ 		--is the 2nd phrase within a phrase with dsc and act
+ 		{ 'You have chocolate?', '-- No.'},
+ 		-- it's a 3rd phrase within a phrase with dsc and act
+ 		{ 'You have a brew?', '-- Yes',
+ 		-- is the 1st phrase inside the 3rd phrase with dsc and act
+ 		{ 'How much is it worth?', '-- 50 rubles.' },
+ 			{ 'He is cold?', '-- Fridge was broken.',
+ 				{ 'Take two!', 'Left one.',
+ 					-- act here as a function
+ 					{ 'Give me one!', function() p [[OK!]]; take 'brew'; end };
 				}
 			}
 		}
 	}
 }
 ```
-Как видим, диалог -- это комната, а фразы -- специальные объекты!
-Теперь вам станет понятным дальнейшее изложение.
 
-> Внимание! По умолчанию, когда игрок нажимает на один из вопросов в
-> списке, движок повторяет его в выводе и только потом выводит
-> ответ. Это сделано для того, чтобы диалог выглядел связанным. Если
-> вы хотите отключить такое поведение, используйте настройку
-> std.phrase_show:
+As you can see, the dialogue -- it is a room, the phrase-special objects! Now
+you will understand the subsequent presentation.
 
+> Attention! By default, when the player clicks on one of the questions in the
+> list, the engine repeats it in the conclusion and then displays response.
+> This is done to ensure that the dialogue seemed related. If you want to
+> disable this behavior, use the option std.phrase_show:
 
 ```
-std.phrase_show = false -- не выводить фразу-вопрос при выборе
+std.phrase_show = false -- don't display the passphrase question when choosing
 ```
 
-Эта настройка действует на все диалоги, устанавливайте ее в init() или
-start() функции.
+This setting affects all dialogs, set it in init() or the start() function.
 
-### Атрибуты фраз
+### The attributes of the phrases
 
-Рассмотрим вариант фразы:
+Consider the phrase:
+
 ```
 phr = {
-	{ 'Что это у вас?', 'Таблетки. Красная и синяя. Вам какую?',
-		{'Красную', 'Держите!' },
-		{'Синюю', 'Вот!' },
+	{ 'What have you got?', 'Pills. The red and blue. You what?',
+		{'Red', 'Hold!' },
+		{'Blue', 'Here!' },
 	}
 }
 ```
 
-Если запустить этот диалог, то в после выбора, скажем, красной
-таблетки, у нас останется еще один выбор синей таблетки. Но наш
-замысел, явно не в этом! Существует несколько способов сделать диалог
-правильным.
+If you run this dialog, after you select, say, red pills, we will have another
+choice of the blue pill. But our the idea, obviously not this! There are
+several ways to make the dialogue correct.
 
-Во первых, вы можете воспользоваться pop() -- возвратом на предыдущий
-уровень диалога:
+First, you can use pop() -- return to the previous the level of dialogue:
 
 ```
 phr = {
-	{ 'Что это у вас?', 'Таблетки. Красная и синяя. Вам какую?',
-		{'Красную', function() p 'Держите!'; pop() end; },
-		{'Синюю', function() p 'Вот!'; pop() end; },
+	{ 'What have you got?', 'Pills. The red and blue. You what?',
+		{'Red', function() p 'Hold!'; pop() end; },
+		{'Blue', function() p 'Here!'; pop() end; },
 	}
 }
 ```
-Или, в другой записи:
+
+Or, in another entry:
 
 ```
 phr = {
-	{ 'Что это у вас?', 'Таблетки. Красная и синяя. Вам какую?',
-		{'Красную', pfn(pop) 'Держите!' },
-		{'Синюю', pfn(pop) 'Вот!' },
+	{ 'What have you got?', 'Pills. The red and blue. You what?',
+		{'Red', pfn(pop) 'Hold up!' },
+		{'Blue', pfn(pop) 'Here!' },
 	}
 }
 ```
-Но это не слишком удобно, кроме того, что если эти фразы содержат в
-себе новые фразы? В случаях, когда вариант предлагает выбор, и этот
-выбор должен быть единственным, вы можете задать у фразы атрибут only:
 
+But it is not too convenient, besides, what if these phrases contain a new
+phrase? In cases where the option offers a choice, and this the choice should
+be the only thing you can ask from the phrase attribute only:
 
 ```
 phr = {
-	{ 'Что это у вас?', 'Таблетки. Красная и синяя. Вам какую?',
+	{ 'What have you got?', 'Pills. The red and blue. You what?',
 		only = true,
-		{'Красную', 'Держите!' },
-		{'Синюю', 'Вот!' },
-	}
-}
-```
-В таком случае, после выбора фразы, все фразы текущего контекста будут
-закрыты.
-
-Еще одна частая ситуация, вы хотите, чтобы фраза не пряталась после ее
-активации. Это делается заданием флага true:
-
-```
-phr = {
-	{ 'Что это у вас?', 'Таблетки. Красная и синяя. Вам какую?',
-		only = true,
-		{'Красную', 'Держите!' },
-		{'Синюю', 'Вот!' },
-		{ true, 'А какая лучше?', 'Тебе выбирать.' }, -- фраза
-		-- которая никогда не будет скрыта
-	}
-}
-```
-Альтернативная запись, с явным заданием атрибута always:
-
-```
-phr = {
-	{ 'Что это у вас?', 'Таблетки. Красная и синяя. Вам какую?',
-		only = true,
-		{'Красную', 'Держите!' },
-		{'Синюю', 'Вот!' },
-		{ always = true, 'А какая лучше?', 'Тебе выбирать.' }, -- фраза
-		-- которая никогда не будет скрыта
+		{'Red', 'Hold!' },
+		{'Blue', 'Here!' },
 	}
 }
 ```
 
-Еще один пример. Что-если мы хотим, чтобы фраза была показана(или
-спрятана) по какому-либо условию? Для этого есть функция-обработчик
-cond.
+In this case, after the choice of the phrase, all phrase of the current
+context will be closed.
+
+Another common situation, you want the phrase was not hiding after her
+activation. This is done by setting flag to true:
 
 ```
 phr = {
-	{ 'Что это у вас?', 'Таблетки. Красная и синяя. Вам какую?',
+	{ 'What have you got?', 'Pills. The red and blue. You what?',
 		only = true,
-		{'Красную', 'Держите!' },
-		{'Синюю', 'Вот!' },
-		{ true, 'А какая лучше?', 'Тебе выбирать.' }, -- фраза
-		-- которая никогда не будет скрыта
+		{'Red', 'Hold!' },
+		{'Blue', 'Here!' },
+		{ true, 'And which is better?', 'You choose.' }, -- phrase
+		-- which will never be hidden
+	}
+}
+```
+
+An alternative notation, with the explicit task attribute always:
+
+```
+phr = {
+	{ 'What have you got?', 'Pills. The red and blue. You what?',
+		only = true,
+		{'Red', 'Hold!' },
+		{'Blue', 'Here!' },
+		{ always = true, 'And which is better?', 'You choose.' }, -- phrase
+		-- which will never be hidden
+	}
+}
+```
+
+Another example. What if we want the phrase was presented(or hidden) on any
+condition? This is the handler function cond.
+
+```
+phr = {
+	{ 'What have you got?', 'Pills. The red and blue. You what?',
+		only = true,
+		{'Red', 'Hold!' },
+		{'Blue', 'Here!' },
+		{ true, 'And which is better?', 'You choose.' }, -- phrase
+		-- which will never be hidden
 	},
-	{ cond = function() return have 'яблоко' end,
-		'А хотите яблоко?', 'Спасибо, нет.' };
+	{ cond = function() return have 'Apple' end
+		'Do you want an Apple?', 'Thank you, no.' };
 }
 ```
-В данном примере, только при наличии у игрока яблока, покажется ветка
-диалога 'А хотите яблоко?'.
 
-Иногда бывает удобно выполнить действие в тот момент, когда варианты
-текущего уровня(контекста) диалога исчерпаны. Для этого служит
-функция-обработчик onempty.
+In this example, only when the player has an Apple, seem branch dialog 'do you
+want an Apple?'.
 
+It is sometimes convenient to perform an action at the moment when the options
+current level(context) of the dialogue is exhausted. For this purpose the
+handler function onempty.
 
 ```
 phr = {
-	{ 'Что это у вас?', 'Таблетки. Красная и синяя. Вам какую?',
+	{ 'What have you got?', 'Pills. The red and blue. You what?',
 		only = true,
-		{'Красную', 'Держите!' },
-		{'Синюю', 'Вот!' },
+		{'Red', 'Hold!' },
+		{'Blue', 'Here!' },
 		onempty = function()
-			p [[Ты сделал свой выбор.]]
+			p [[You made your choices.]]
 			pop()
 		end;
 	},
-	{ cond = function() return have 'яблоко' end,
-		'А хотите яблоко?', 'Спасибо, нет.' };
+	{ cond = function() return have 'Apple' end
+		'Do you want an Apple?', 'Thank you, no.' };
 }
 ```
-Обратите внимание, что когда есть метод onempty, автоматический
-возврат в предыдущую ветку не производится, предполагается, что метод
-onempty сделает все, что нужно.
 
-Все описанные атрибуты могут быть установлены у любой фразы. В том
-числе и на 1-м уровне:
+Please note that when there is a method onempty, automatic return to the
+previous branch is not performed, it is assumed that the method onempty will
+do everything you need.
+
+All the above attributes can be set with any phrase. In fact on the 1st level:
 
 ```
 phr = {
 	onempty = function()
-		p [[Вот и поговорили.]]
+		p [[end of conversation.]]
 		walkout()
 	end;
-	{ 'Что это у вас?', 'Таблетки. Красная и синяя. Вам какую?',
+	{ 'What have you got?', 'Pills. The red and blue. You what?',
 		only = true,
-		{'Красную', 'Держите!' },
-		{'Синюю', 'Вот!' },
+		{'Red', 'Hold!' },
+		{'Blue', 'Here!' },
 		onempty = function()
-			p [[Ты сделал свой выбор.]]
+			p [[You made your choices.]]
 			pop()
 		end;
 	},
-	{ cond = function() return have 'яблоко' end,
-		'А хотите яблоко?', 'Спасибо, нет.' };
+	{ cond = function() return have 'Apple' end
+		'Do you want an Apple?', 'Thank you, no.' };
 }
 ```
 
-### Теги
+### Tags
 
-Только что мы рассмотрели механизмы диалогов, которые уже позволяют
-создавать довольно сложные диалоги. Однако, и этих средств может не
-хватить. Иногда нам нужно уметь обращаться к фразам из других мест
-диалога. Например, выборочно включать их, или анализировать их
-состояние. А также делать переходы из одних ветвей диалога в другие.
+We have considered mechanisms dialogues, which already allow to create quite
+complex dialogs. However, these funds may not be enough. Sometimes we need to
+be able refer to phrases from other places dialogue. For example, to
+selectively enable them, or analyze them state. And make transitions from one
+of the branches of dialogue in others.
 
-Все это возможно для фраз, у которых есть тег. Создать фразу с тегом
-очень просто:
-
+All this is possible for phrases that have the tag. Create a sentence with tag
+very simple:
 
 ```
 phr = {
-	{ '#что?', 'Что это у вас?', 'Таблетки. Красная и синяя. Вам какую?',
-		{'#красная', 'Красную', 'Держите!' },
-		{'#синяя', 'Синюю', 'Вот!' },
+	{'#?', 'What have you got?', 'Pills. The red and blue. You what?',
+		{'#red', 'Red', 'Hold!' },
+		{'#blue', 'Blue', 'Here!' },
 	},
 }
 ```
-Как видим, наличие в начале фразы строки, которая начинается на символ
-'#' - означает наличие тега.
 
-Для таких фраз работают стандартные методы, такие как seen или
-enable/disable. Например, мы могли бы обойтись без атрибута only
-следующим образом:
+As you can see, the presence at the beginning of the phrase string, starting
+with symbol '#' - indicates the presence of the tag.
 
-
+For such phrases employs standard methods, such as seen or enable/disable. For
+example, we could do without the attribute only as follows:
 
 ```
 phr = {
-	{ '#что?', 'Что это у вас?', 'Таблетки. Красная и синяя. Вам какую?',
-		{'#красная', 'Красную', 'Держите!'
+	{'#?', 'What have you got?', 'Pills. The red and blue. You what?',
+		{'#red', 'Red', 'Hold!'
 			cond = function(s)
-				return not closed('#синяя')
+				return not closed('#blue')
 			end
 		},
-		{'#синяя', 'Синюю', 'Вот!',
+		{'#blue', 'Blue', 'Here!',
 			cond = function(s)
-				return not closed('#красная')
+				return not closed('#red')
 			end
 		},
 	},
 }
 ```
 
-Теги, кроме того, что позволяют узнавать и менять состояние конкретных
-фраз, делают возможным переходы между фразами. Для этого используются
-функции push и pop.
+Tags, except that allow you to learn and to change the status of a particular
+phrases, making possible the transitions between phrases. For this purpose the
+functions push and pop.
 
-push(куда) -- делает переход на фразу с запоминанием позиции в стеке.
+push(to) -- makes the transition to the phrase about remembering the position
+in the stack.
 
-pop([куда]) -- вызванная без параметра, поднимается на 1 позицию в
-стеке истории. Можно указать конкретный тег фразы, которая должна быть
-в истории, в таком случае возврат будет осуществлен на нее.
+pop([where]) -- invoked without a parameter, goes up by 1 position in the
+stack history. You can specify a specific tag phrase that must be in history,
+in this case, the refund will be credited to her.
 
-Нужно отметить, что при переходе по push, мы переходим не на одну
-фразу, а на список фраз этой фразы. То-есть раскрываем ее, также как
-это сделано для главной фразы phr. Например:
-
-
-```
-phr = {
-	{ 'Что это у вас?', 'Таблетки. Красная и синяя. Вам какую?',
-		only = true,
-		{'Красную', 'Держите!', next = '#отаблетке' },
-		{ 'Синюю', 'Вот!', next = '#отаблетке' },
-	},
-	{ false, '#отаблетке',
-		{'Я сделал верный выбор?', 'Время покажет.'}
-	},
-}
-```
-Тут мы видим сразу несколько приемов:
-
-- атрибут next, вместо явного описания реакции в виде функции с
-push. next -- это простой способ записать push.
-
-- false в начале фразы, делает фразу выключенной. Она находится в
-состоянии выключена, пока не сделать явный enable. Однако внутрь фразы
-мы можем перейти, и показать содержимое выборов. Альтернативная запись
-возможна с использованием атрибута hidden:
-
-
-```
-	{ hidden = true, '#отаблетке',
-		{'Я сделал верный выбор?', 'Время покажет.'}
-	},
-```
-
-Таким образом можно записывать диалоги не древовидно, а линейно. Еще
-одна особенность переходов состоит в том, что если у фразы не описана
-реакция, то при переходе будет вызван заголовок фразы:
+It should be noted that when you click on a push, we move not one the phrase,
+and the phrase list the phrase. That is, disclose it, as well as this is done
+for the main phrase phr. For example:
 
 ```
 phr = {
-	{ 'Что это у вас?', 'Таблетки. Красная и синяя. Вам какую?',
+	{ 'What have you got?', 'Pills. The red and blue. You what?',
 		only = true,
-		{'Красную', 'Держите!', next = '#отаблетке' },
-		{ 'Синюю', 'Вот!', next = '#отаблетке' },
+		{'Red', 'Hold!', next = '#aboutpill' },
+		{ 'Blue', 'Here!', next = '#aboutpill' },
 	},
-	{ false, '#отаблетке', [[Я взял таблетку и мастер хитро улыбнулся.]],
-		{'Я сделал верный выбор?', 'Время покажет.'},
-		{'Что делать дальше?', 'Ты свободен.'},
+	{ false, '#aboutpill',
+		{'I made the right choice?', 'Time will tell.'}
 	},
 }
 ```
-При выборе таблетки, будет вызван заголовочный метод фразы
-'#отаблетке', а уже потом будет представлен выбор.
 
-Если вам нравится линейная запись, вы можете предпочесть следующий
-вариант:
+Here we see several techniques:
 
+- next attribute, instead of explicit descriptions of reaction as a function
+with push. next is a simple way to record push.
+
+- false at the beginning of the phrase makes the phrase off. She is locked off
+until you do an explicit enable. However, inside the phrase we can go and show
+the contents of the elections. Alternative entry possible with the use of the
+hidden attribute:
+
+	{ hidden = true, '#aboutpill',
+		{'I made the right choice?', 'Time will tell.'}
+	},
+
+Thus it is possible to record conversations is not a tree, and linear. More
+one feature of the transitions is that if the phrase is not described the
+reaction, when the transition is triggered by the title phrase:
+
+```
+phr = {
+	{ 'What have you got?', 'Pills. The red and blue. You what?',
+		only = true,
+		{'Red', 'Hold!', next = '#aboutpill' },
+		{ 'Blue', 'Here!', next = '#aboutpill' },
+	},
+	{ false, '#aboutpill', [[I took the pill and the wizard smiled slyly.]],
+		{'I made the right choice?', 'Time will tell.'},
+		{'What next?', 'You're free.'},
+	},
+}
+```
+
+When choosing a tablet, will be called the method header phrase '#aboutpill',
+and then will be presented choice.
+
+If you like linear, you might prefer the following option:
 
 ```
 dlg {
-	nam = 'диалог';
+	nam = 'dialog';
 	phr = {
-		{ 'Что это у вас?', 'Таблетки. Красная и синяя. Вам какую?',
+		{ 'What have you got?', 'Pills. The red and blue. You what?',
 			only = true,
-			{'Красную', 'Держите!', next = '#отаблетке' },
-			{ 'Синюю', 'Вот!', next = '#отаблетке' },
+			{'Red', 'Hold!', next = '#aboutpill' },
+			{ 'Blue', 'Here!', next = '#aboutpill' },
 		}
 	}
-}:with {
-	{ '#отаблетке', [[Я взял таблетку и мастер хитро улыбнулся.]],
-		{'Я сделал верный выбор?', 'Время покажет.'},
-		{'Что делать дальше?', 'Ты свободен.'},
+}: with {
+	{ '#aboutpill', [[I took the pill and the wizard smiled slyly.]],
+		{'I made the right choice?', 'Time will tell.'},
+		{'What next?', 'You're free.'},
 	},
 }
 ```
-Дело в том, что атрибут phr диалога задает первый объект комнаты. Но
-вы можете заполнить объекты комнаты обычным образом: задав obj или
-with. Так как при входе в диалог раскрывается 1-я фраза, то остальные
-фразы вы не увидите (обратите внимания, у фразы '#отаблетке' не стоит
-false), но вы сможете делать переходы на эти фразы.
 
-### Методы
+The fact that the attribute phr defines the first object of the room. But you
+can fill the room objects in the usual way: by setting the obj or with. Since
+entering the dialogue reveals the 1st phrase, then the rest phrase you will
+not see (pay attention to the phrase '#aboutpill' not worth itfalse), but you
+will be able to do transitions on these phrases.
 
-Как вы уже знаете, объекты в INSTEAD могут находиться в состоянии
-открыт/закрыт и выключен/включен. Как это соответствует фразам
-диалога?
+### Methods
 
-Для обычных фраз, после активации выбора фраза _закрывается_. При
-повторном входе в диалог все фразы _открываются_.
+As you already know, objects in an INSTEAD may be able open/closed off/turned
+on. This corresponds to the phrase dialogue?
 
-Для фраз с always = true (или true в начале определения) -- такого
-закрытия не происходит.
+For common phrases, after activation of the choice phrase _closes_. When
+re-entering the dialogue, the phrases get _opened_.
 
-Для фраз с hidden = true (или false в начале определения) -- фраза
-будет создана как выключенная. Она не будет видима до тех пор, пока не
-будет явно включена.
+For phrases with always = true (or true at the beginning of the definition) --
+this the closing does not occur.
 
-Для фраз с cond(), каждый раз при просмотре фраз вызывается этот
-метод, и в зависимости от возвращаемого значения (true/не true) фраза
-включается или выключается.
+For phrases with hidden = true (or false at the beginning of the definition)
+-- the phrase will be created as disabled. It will not be visible until until
+is explicitly enabled.
 
-Зная это поведение, вы можете прятать/показывать и анализировать фразы
-обычными функциями вида: disable / enable / empty / open / close /
-closed / disabled и так далее...
+For phrases with cond(), every time you browse phrases is called this method,
+and depending on the return value (true/not true) phrase turns on or off.
 
-Однако, делать вы это можете только в самом диалоге, так как все фразы
-идентифицируются по тегам. Если вы хотите модифицировать
-состояние/анализировать фразы из других комнат вы можете:
+Knowing this behavior, you can hide/show and analyze phrase standard
+functions: disable / enable / empty / open / close / closed / disabled and so
+on...
 
-- дать фразе имя { nam = 'имя' }...
-- искать фразу по тегу в другой комнате: local ph = lookup('#тег',
-  'диалог') и потом работать с ней;
+However, to do this you can only in the dialogue, as all the phrases
+get identified by tags. If you want to modify condition/parse phrases from
+other rooms you can:
 
-Что касается функций push/pop, то вы можете вызывать их явно как
-методы диалога, например:
+- to give the phrase name is { nam = 'name' }...
+- search for the phrase on the tag in the other room: local ph = lookup('#tag',
+  'dialogue') and then work with it;
 
-```
-	_'диалог':push '#новая'
-```
+With regard to functions push/pop then you can call it explicitly as methods
+of dialogue, for example:
 
-Но лучше это делать в самом диалоге, например, в enter.
+	_'dialog':push '#new'
 
-Кроме того есть метод :reset, который сбрасывает стек переходов и
-устанавливает стартовую фразу, например:
+But better to do it in the dialogue, for example, in enter.
 
-```
-enter = function(s)
-	s:reset '#начало'
-end
-```
-> Следует отметить, что когда вы делаете enable/disable/open/close
-> фразы, то вы выполняете действие именно над этой фразой, а не над
-> фразами включенными внутрь. Но так как при показе фраз движок
-> остановится на выключенном/закрытом объекте-фразе и не войдет
-> внутрь, этого достаточно.
+In addition, there is a method :reset, which resets the stack and sets the
+starting phrase, for example:
 
+	enter = function(s)
+		s:reset '#start'
+	end
 
-## Специальные объекты
+> It should be noted that when you make a enable/disable/open/close phrase,
+> then you perform the action exactly over this phrase, not over phrases
+> included inside. But since the showing phrases engine stop on/off / closed
+> facility-phrase and will not be included inside, that's enough.
 
-В STEAD3 существуют специальные объекты, которые выполняют
-специфические функции. Все такие объекты можно разделить на два
-класса:
+## Special objects
 
-1. Системные объекты @;
-2. Подстановки $.
+In STEAD3 there are special objects that perform specific functions. All such
+objects can be divided into two class:
 
-Системные объекты, это объекты, чье имя начинается с символа
-'@' или '$'. Такие объекты обычно создаются в _модулях_. Они не уничтожаются
-при смерти игрового мира (например, при подгрузке gamefile, при
-загрузке игры из сохранения, и так далее). Примеры объектов: @timer,
-@prefs, @snd.
+1. System objects @;
+2. Substitution.
 
-Такие объекты, кроме своих специальных функций, могут быть
-использованы по ссылке, без явного помещения объекта в сцену или
-инвентарь, но механизм действия таких объектов -- особенный.
+System objects are objects whose name begins with the character '@' or '$'.
+Such objects are usually modular. They are not destroyed at the death of the
+game world (for example, when uploading game file, when loading the game from
+save, and so on). Examples of objects: @timer, @prefs, @snd.
 
-### Объект '@'
+Such objects, in addition to their special functions, can be used the link,
+without explicitly putting the object on the stage or the stock, but the
+mechanism of action of these objects are special.
 
-Обычно, вам не нужно работать с такими объектами, но в качестве
-примера рассмотрим реализацию 'ссылок'.
+### The object '@'
 
-Пусть мы хотим сделать ссылку, при нажатии на которую мы перейдем в
-другую комнату. Конечно, мы могли бы добавить объект в сцену, но стоит
-ли это делать в таком простом случае?
+Usually, you do not need to work with such objects, but as example, consider
+the implementation of 'links'.
 
-Как нам может помочь системный объект?
+Suppose we want to make a link, clicking on which we will move in the other
+room. Of course, we could add the object to the scene, but it's worth we do it
+in such a simple case?
+
+How we can help the system object?
 
 ```
 obj {
@@ -2727,38 +2591,37 @@ obj {
 }
 room {
 	nam = 'main';
-	title = 'Начало';
-	decor = [[Начать {@walk старт|приключение}]];
+	title = 'Home';
+	decor = [[Start {@start walk|adventure}]];
 }
 ```
-При нажатии на ссылку "приключение" будет вызван метод act объекта
-'@walk' с параметром "старт".
 
-На самом деле, в стандартной библиотеке stdlib уже есть объект, с
-именем '@', который позволяет делать свои обработчики ссылок следующим
-образом:
+When you click on the link "adventure" method will be called act-object
+'@walk' with the parameter "start".
 
+In fact, in the standard library stdlib is already the object filename with
+'@' which allows you to do your handlers the following links follows:
 
 ```
 xact.walk = walk
 
 room {
 	nam = 'main';
-	title = 'Начало';
-	decor = [[Начать {@ walk старт|приключение}]];
+	title = 'Home';
+	decor = [[Start {@ start walk|adventure}]];
 }
 ```
 
-Обратите внимание, на пробел после @. Данная запись делает следующее:
+Note the space after @. This entry does the following:
 
-- берет объект '@' (такой объект создан библиотекой stdlib);
-- берет его act;
-- вызывает act с параметрами walk и старт;
-- act объекта '@' смотрит в массив xact;
-- walk определяет метод, который будет вызван из массива xact;
-- старт -- параметр этого метода.
+- takes an object with '@' (this object is created by the library stdlib);
+- takes his act;
+- causes act with the parameters of the walk and start;
+- act object the '@' looks at the array xact;
+- walk detects a method that will be called from the array xact;
+- start is a parameter of this method.
 
-Другой пример:
+Another example:
 
 ```
 xact.myprint = function(w)
@@ -2767,134 +2630,125 @@ end
 
 room {
 	nam = 'main';
-	title = 'Начало';
-	decor = [[Нажми {@ myprint "hello world"|на кнопку}]];
+	title = 'Home';
+	decor = [[Push {@ myprint "hello world"|the button}]];
 }
 ```
-### Подстановки
 
-Объекты, чье имя начинается на символ '$' тоже считаются системными
-объектами, но работают они по-другому.
+### Lookup
 
-Если в выводе текста встречается "ссылка" вида:
+Objects whose name begins with the character '$' are also considered
+system objects, but they work differently.
 
-```
-{$my a b c|текст}
+If the output text is found on the link:
 
-```
-То происходит следующее:
+	{$my a b c|text}
 
-1. Берется объект $my;
-2. Берется act объекта $my;
-3. Вызывается act: _'$my':(a, b, c, текст);
-4. Возвращаемая строка заменяет собой всю конструкцию {...}.
+The following happens:
 
-Таким образом, объекты играют роль подстановки.
+1. Does the object $my;
+2. Taken act the object $my;
+3. Act is called: _'$my'(a, b, c, text);
+4. The returned string replaces the entire structure {...}.
 
-Зачем это нужно? Представьте себе, что вы разработали модуль, который
-превращает записи формул из текстового вида в графические. Вы пишете
-объект $math который в своем act методе превращает текст в графическое
-изображение (спрайт) и возвращает его в текстовый поток. Тогда
-пользоваться таким модулем крайне просто, например:
+Thus, the objects play the role of a wildcard.
 
-```
+Why is it necessary? Imagine that you developed a module, which turns write
+from a text view in the graphics. You write object $math which in its act
+method converts text to a graphic image (sprite) and returns it in the text
+stream. Then to use this module extremely simple example:
+
 	{$math|(2+3*x)/y^2}
-```
 
-## Динамические события
+## Dynamic events
 
-Вы можете определять обработчики, которые выполняются каждый раз,
-когда время игры увеличивается на 1. Обычно, это имеет смысл для живых
-персонажей, или каких-то фоновых процессов игры. Алгоритм шага игры
-выглядит примерно так:
-  - Игрок нажимает на ссылку;
-  - Реакция 'act', 'use'', 'inv', 'tak', осмотр сцены (клик по названию
-    сцены) или переход в другую сцену;
-  - Динамические события;
-  - Вывод нового состояния сцены.
+You can define handlers that run every time when the game time increments by
+one. Usually, it makes sense for the living characters, or any background
+processes of the game. The algorithm of step games looks like this:
+  - The player clicks on the link;
+  - Reaction, 'act', 'use", 'inv', 'tak', the inspection of the scene (click 
+    on the name scene) or transition into another scene;
+  - Dynamic events;
+  - Output a new state of the scene.
 
-Например, сделаем Барсика живым:
+For example, make a snow leopard alive:
 
 ```
 obj {
-	nam = 'Барсик';
-	{ -- не сохранять массив lf
+	nam = 'Barsik';
+	{- do not save the array lf
 		lf = {
-			[1] = 'Барсик шевелится у меня за пазухой.',
-			[2] = 'Барсик выглядывает из-за пазухи.',
-			[3] = 'Барсик мурлычит у меня за пазухой.',
-			[4] = 'Барсик дрожит у меня за пазухой.',
-			[5] = 'Я чувствую тепло Барсика у себя за пазухой.',
-			[6] = 'Барсик высовывает голову из-за пазухи и осматривает местность.',
+			[1] = 'Barsik is moving in my bosom.',
+			[2] = 'Barsik looks out from his bosom.',
+			[3] = 'Barsik purring in my bosom.',
+			[4] = 'Barsik shivers in my bosom.',
+			[5] = 'I feel Barsik heat in his bosom.',
+			[6] = 'Barsik sticks his head out of his pocket and looks around.',
 		};
 	};
 	life = function(s)
 		local r = rnd(5);
-		if r > 2 then -- делать это не всегда
+		if r > 2 then -- doing this is not always
 			return;
 		end
-		r = rnd(#s.lf); -- символ # -- число элементов в массиве
-		p(s.lf[r]); -- выводим одно из 6 состояний Барсика
+		r = rnd(#s.lf); -- the # symbol is the number of elements in the array
+		p(s.lf[	r]); -- derive one of the 6 States of the snow leopard
 	end;
 ....
 ```
 
-И вот момент в игре, когда Барсик попадает к нам за пазуху!
+And here is the point in the game, when snow leopard gets to us in thy bosom.
 
-```
-take 'Барсик' -- добавить в инвентарь
-lifeon 'Барсик' -- оживить Барсика!
-```
+	take 'snow leopard' -- add it to your inventory
+	lifeon 'Barsik' -- to revive the cat!
 
-Любой объект (в том числе и сцена) могут иметь свой обработчик 'life',
-который вызывается каждый такт игры, если объект был добавлен в список
-живых объектов с помощью 'lifeon'. Не забывайте удалять живые объекты
-из списка с помощью 'lifeoff', когда они больше не нужны. Это можно
-сделать, например, в обработчике 'exit', или любым другим способом.
+Any object (including the stage) can have its own handler, 'life', called each
+tick of the game if the object was added to the list live objects using the
+'lifeon'. Don't forget to remove live objects from the list using the
+'lifeoff' when they are no longer needed. It is possible to do this, for
+example, in the handler of 'exit' or by any other method.
 
+> If your game is a lot of "live" objects, you can ask them
+> a clear position in the list, adding. For this, use
+> second numerical parameter (non-negative integer) 'lifeon',
+> the lower the number the higher the priority. 1 -- the highest. Or you
+> you can use the attribute of the pri object. However, this attribute
+> will affect the priority of the object in any list.
 
-> Если в вашей игре много "живых" объектов, вы можете задавать им
-> явную позицию в списке, при добавлении. Для этого, воспользуйтесь
-> вторым числовым параметром (целое неотрицательное число) 'lifeon',
-> чем меньше число, тем выше приоритет. 1 -- самый высокий. Или вы
-> можете использовать атрибут pri у объекта. Правда, этот атрибут
-> будет влиять на приоритет объекта в любом списке.
-
-
-Если вам нужен фоновый процесс в какой-то комнате, запускайте его в
-'enter' и удаляйте в 'exit', например:
+If you need a background process in some room, send it in 'enter' and remove
+the 'exit', for example:
 
 ```
 room {
-        nam  = 'В подвале';
-        dsc = [[Тут темно!]];
-        enter = function(s)
-                lifeon(s);
-        end;
-        exit = function(s)
-                lifeoff(s);
-        end;
-        life = function(s)
-                if rnd(10) > 8 then
-                        p [[Я слышу какие-то шорохи!]];
-                        -- изредка пугать игрока шорохами
-                end
-        end;
-        way =  { 'Дом' };
+	nam = 'In the basement';
+	dsc = [[it's dark in Here!]];
+	enter = function(s)
+		lifeon(s);
+	end;
+	exit = function(s)
+		lifeoff(s);
+	end;
+	life = function(s)
+		if rnd(10) > 8 then
+			p [[I heard something rustling!]];
+			-- occasionally to scare the player rustles
+		end
+	end;
+	way = { 'Home' };
 }
 ```
 
-Если вам нужно определить, был ли переход игрока из одной сцены в
-другую,  воспользуйтесь 'player\_moved()'.
+If you need to determine whether the transfer of the player from one scene to
+another, use 'player\_moved()'.
 
 ```
 obj {
-	nam  = 'фонарик';
+	nam = 'flashlight';
 	on = false;
 	life = function(s)
-		if player_moved() then -- гасить фонарик при переходах
+		if player_moved() then -- put out the torch transitions
 			s.on = false
-			p "Я выключил фонарик."
+			p "I turned off the flashlight."
 			return
 		end;
 	end;
@@ -2902,285 +2756,252 @@ obj {
 }
 ```
 
-Для отслеживания протекающих во времени событий, используйте 'time()'
-или вспомогательную переменную-счетчик. Для определения местоположения
-игрока -- 'here()'. Для определения факта, что объект "живой" --
-'live()'.
-
+For tracking moving events, use 'time()' or an auxiliary counter variable. To
+determine the location player -- 'here()'. For determining that the object is
+"alive" -- the 'live()'.
 
 ```
 obj {
-	nam  = 'динамит';
+	nam = 'dynamite';
 	timer = 0;
 	used = function(s, w)
-		if w^'спичка' then -- спичка?
+		if w^'match' then -- match?
 			if live(s) then
-				return "Уже горит!"
+				return "it's Already lit!"
 			end
-			p "Я поджег динамит."
+			p "I have lit the dynamite."
 			lifeon(s)
 			return
 		end
-		return false -- если не спичка
+		return false-if not match
 	end;
 	life = function(s)
 		s.timer = s.timer + 1
 		if s.timer == 5 then
-			lifeoff(s)
-			if here() == where(s) then
-				p [[Динамит взорвался рядом со мной!]]
-			else
-				p [[Я услышал, как взорвался динамит.]];
-			end
+			lifeoff(s) if here() == where(s) then
+			p [[the Dynamite exploded right next to me!]]
+		else
+			p [[I heard an explosion somewhere.]];
 		end
-	end;
+	end
+end;
 ...
 }
 ```
 
-Если 'life' обработчик возвращает текст события, он печатается после
-описания сцены.
+If 'life' handler returns the event text, it is printed after the description
+of the scene.
 
-Вы можете вернуть из обработчика 'life' второй код возврата, ('true'
-или 'false'). Если вы вернете true -- то это будет признаком важного
-события, которое выведется до описания объектов сцены, например:
+You can return from a handler for 'life' second return code ('true' or
+'false'). If you return true-it is a sign of important the event, which will
+be displayed to describe the objects in the scene, for example:
 
-```
-p 'В комнату вошел охранник.'
-return true
-```
+	p 'In walked the guard.'
+	return true
 
-Или:
-```
-return 'В комнату вошел охранник.', true
-```
+Or:
 
-Если вы вернете false, то цепочка life методов прервется на вас. Это
-удобно делать при выполнении walk из метода life, например:
+	return 'you entered the room the security guard.', true
 
+If you return false, the chain of life methods will fail on you. It easy to do
+when performing a walk from the life, for example:
 
-```
-life = function()
-	walk 'theend'
-	return false -- это последний life
-end
-```
+	life = function()
+		walk 'theend'
+		return false -- this is the last life
+	end
 
-Если вы хотите блокировать 'life' обработчики в какой-то из комнат,
-воспользуйтесь модулем 'nolife'. Например:
+If you want to block 'life' handlers in some of the rooms, use the module
+'nolife'. For example:
 
 ```
 require "noinv"
 require "nolife"
 
 dlg {
-        nam = 'Охранник';
-        noinv = true;
-        nolife = true;
+	nam = 'Guard';
+	noinv = true;
+	nolife = true;
 ...
 }
 ```
 
-Отдельно стоит рассмотреть вопрос перехода игрока из 'life'
-обработчика. Если вы собираетесь использовать функции 'walk' внутри
-'life', то вам следует учитывать следующее поведение.
+We should also consider the transition of the player from 'life' handler. If
+you are going to use the function 'walk' inside'life', then you should
+consider the following behavior.
 
-Если 'life' переносит игрока в новую локацию, то обычно предполагается
-что вы:
+If 'life' takes the player to a new location, it is usually assumed you:
 
-1. Очищаете вывод реакций: game:reaction(false);
-2. Очищаете вывод живых методов на данный момент: game:events(false,
-false)
-3. Делаете walk.
-4. Останавливаете цепочку life вызовов с помощью return false;
+1. Clear withdrawal reactions: game:reaction(false);
+2. Cleanse withdrawal live methods at the moment: game:events(false, false)
+3. Do the walk.
+4. Stop the chain of life of the call using return false;
 
-Некоторые моменты требуют пояснений.
+Some points required clarification.
 
-game:reaction() -- позволяет взять/изменить вывод реакции
-пользователя, если задать его в false это означает сбросить реакцию.
+game:reaction() -- allows you to take/modify the output of the reaction
+user, if set to false this means to reset the reaction.
 
-game:events() -- позволяет взять/изменить вывод life методов. В
-качестве параметров принимаются приоритетные и не приоритетные
-сообщения, задав false, false мы отменили весь вывод предыдущих life
-методов.
+game:events () -- allows you to take/change / withdrawal of life methods. Inas
+choices are made a priority and not a priority criteria false we cancelled the
+whole output of the previous life methods.
 
-В стандартной библиотеке уже есть функция life_walk(), которая делает
-описанные действия. Вам остается только вернуть false.
+The standard library has a function life_walk(), which makes the described
+actions. You just have to return false.
 
-## Графика
+## Graphics
 
-Графический интерпретатор INSTEAD анализирует атрибут сцены 'pic', и
-воспринимает его как путь к картинке, например:
+Graphic interpreter INSTEAD analyzes the attribute of the scene 'pic', sees
+it as the path to the picture, for example:
 
-```
-room {
-	pic = 'gfx/home.png';
-	nam = 'Дома';
-	dsc = 'Я у себя дома';
-};
-```
+	room {
+		pic = 'gfx/home.png';
+		nam = 'Home';
+		dsc = 'I am home';
+	};
 
-__Важно!__
+__Important!__
 
-Используйте в путях только прямые '/'. Также, настоятельно
-рекомендуется использовать в именах каталогов и файлов только
-латинские строчные символы. Этим самым вы обезопасите свою игру от
-проблем с совместимостью и она будет работать на всех архитектурных
-платформах, куда портирован INSTEAD.
+Use in ways only direct '/'. Also, it is strongly recommended to use the
+names of directories and files only Latin lowercase characters. This way you
+will protect your game from compatibility problems and it will work on all
+architectural platforms where ported INSTEAD.
 
-Конечно, 'pic' может быть функцией, расширяя возможности разработчика.
-Если в текущей сцене не определен атрибут 'pic', то берется атрибут
-'game.pic'. Если не определен и он, то картинка не отображается.
+Of course, 'pic' can be function, expanding the possibilities of the
+developer. If the current scene does not defined the attribute 'pic' attribute
+is taken 'game.pic'. If the picture is not displayed.
 
-Поддерживаются все наиболее распространенные форматы изображений, но я
-рекомендую вам использовать 'png' и (когда важен размер) 'jpg'.
+Supports all common image formats, but I I recommend you to use 'png' and
+where () 'jpg'.
 
-Вы можете использовать в качестве картинок анимированные gif файлы.
+You can use as images animated gif files.
 
-Вы можете встраивать графические изображения прямо в текст, в том
-числе в инвентарь, переходы, заглавия комнат и 'dsc' с помощью
-функции 'fmt.img' (Для этого включите модуль fmt).
+You can embed the graphic images right in the text in the inventory,
+transitions, titles rooms and 'dsc' using the function 'fmt.img' (this will
+switch on the module fmt).
 
-Например:
+For example:
 
 ```
 require "fmt"
 
 obj {
-	nam = 'яблоко'
-	disp = 'Яблоко'..fmt.img('img/apple.png');
+	nam = 'Apple'
+	disp = 'Apple'..fmt.img('img/apple.png');
 }
 ```
 
-Тем-не менее, картинку сцены всегда следует оформлять в виде 'pic'
-атрибута, а не вставки 'fmt.img' в 'dsc' комнаты.
+That, at least, the scene picture always should be made in the form of 'pic'
+attribute, not insertion 'fmt.img' to 'dsc'.
 
-Дело в том, что картинка сцены масштабируется по другому алгоритму.
-Картинки 'fmt.img' масштабируются в соответствии с настройками INSTEAD
-(масштаб темы), а 'pic' -- учитывает также размер картинки.
+The fact that the picture of the scene scales on other algorithm. Pictures
+'fmt.img' get scaled in accordance with the settings INSTEAD (the scale
+theme), and 'pic' -- also takes into account the size of the image.
 
-Кроме того, картинки 'pic' обладают и другими свойствами, например,
-возможностью отслеживания координат кликов мышью.
+In addition, the images 'pic' have other properties, for example, the ability
+to track coordinates of mouse clicks.
 
-Если вы поместите 'fmt.img' внутрь { и }, то получите графическую ссылку.
+If you put 'fmt.img' inside { and }, you get a graphical link.
 
-```
+``
 obj {
-	nam = 'яблоко';
-	disp = 'яблоко ' ..img('img/apple.png');
+	nam = 'Apple';
+	disp = 'Apple' ..img('img/apple.png');
 	dsc = function(s)
-		p ("На полу лежит {яблоко",fmt.img 'img/apple.png', "}");
-		-- другие варианты:
-		-- return "На полу лежит {яблоко"..fmt.img('img/apple.png').."}";
-		-- p "На полу лежит {яблоко"..fmt.img('img/apple.png').."}";
-		-- или dsc = "На полу лежит {яблоко"..fmt.img('img/apple.png').."}";
+		p ("the floor is {Apple",fmt.img 'img/apple.png', "}");
+		-- other options:
+		-- return "On the floor lies {Apple"..fmt.img('img/apple.png').."}";
+		-- p "On the floor lies {Apple"..fmt.img('img/apple.png').."}";
+		-- or dsc = "the floor is {Apple"..fmt.img('img/apple.png').."}";
 	end;
 }
-```
+``
 
-INSTEAD поддерживает обтекание картинок текстом. Если картинка
-вставляется с помощью функции 'fmt.imgl'/'fmt.imgr', она будет
-расположена у левого/правого края.
+INSTEAD supports wrapping images with text. If the picture is inserted using
+the function 'fmt.imgl'/'fmt.imgr', it will located at the left/right edge.
 
-__Важно!__
+__Important!__
 
-> Картинки, вставленные в текст с помощью 'fmt.imgl/fmt.imgr' не могут быть
-> ссылками!!! Используйте их только в декоративных целях.
+> Images inserted into text using 'fmt.imgl/fmt.imgr' can't be
+> links!!! Use them only for decorative purposes.
 
-Для задания отступов вокруг изображения используйте 'pad', например:
+To set spacing around an image, use the 'pad' example:
 
-```
-fmt.imgl 'pad:16,picture.png' -- отступы по 16 от каждого края
-fmt.imgl 'pad:0 16 16 4,picture.png' -- отступы: вверху 0, справа 16, внизу 16, слева 4
-fmt.imgl 'pad:0 16,picture.png' -- отступы: вверху 0, справа 16, внизу 0, слева 16
-```
+	-- indentation 16 from each edge
+	fmt.imgl 'pad:16,picture.png'
+	-- margins: top 0, right 16, bottom 16, left 4
+	fmt.imgl 'pad:0 16 16 4,picture.png'
+	-- margins: top 0, right 16, bottom 0, left 16
+	fmt.imgl 'pad:0 16,picture.png'
 
-Вы можете использовать псевдо-файлы для изображений прямоугольников и
-пустых областей:
-
-```
-dsc = fmt.img 'blank:32x32'..[[Строка с пустым изображением.]];
-dsc = fmt.img 'box:32x32,red,128'..[[Строка красным полупрозрачным квадратом.]];
-```
-
-INSTEAD может обрабатывать составные картинки, например:
+You can use pseudo-files for images and rectangles empty areas:
 
 ```
-pic = 'gfx/mycat.png;gfx/milk.png@120,25;gfx/fish.png@32,32';
+dsc = fmt.img 'blank:32x32'..[[Line with blank image.]];
+dsc = fmt.img 'box:32x32,red,128'..[[Line with red semi-transparent square.]];
 ```
 
-Таким образом, составная картинка представляет собой набор путей к
-изображениям, разделенных символом ';'. Вторая и последующие
-компоненты могут содержать постфикс в виде
-@x\_координата,y\_координата%, где координате 0,0 соответствует левый
-верхний угол всего изображения. Общий размер картинки считается равным
-общему размеру первой компоненте составной картинки, то есть, первый
-компонент (в нашем примере -- gfx/mycat.png) играет роль холста, а
-последующие компоненты накладываются на этот холст.
+INSTEAD can process compound images, for example:
 
-Наложение происходит для левого верхнего угла накладываемой
-картинки. Если вам нужно, чтобы наложение происходило относительно
-центра накладываемой картинки, используйте перед координатами префикс
-''c'', например:
+	pic = 'gfx/mycat.png;gfx/milk.png@120,25;gfx/fish.png@32,32';
 
-```
-pic = 'gfx/galaxy.png;gfx/star.png@c128,132';
-```
+Thus, the composite image is a set of paths to images, separated by ';'. The
+second and subsequent components can contain Postfix in the form
+@x\coordinate,y\coordinate%, where the coordinate 0,0 corresponds to the left
+the top corner of the image. The total size of the image is considered equal
+to the total amount of the first component of the composite image, that is,
+the first component (in our example-gfx/mycat.png) plays the role of canvas,
+and subsequent components are superimposed on this canvas.
 
-Оформив в виде функции формирование пути составной картинки, вы можете
-генерировать изображение на основе игрового состояния.
+The overlay is for the upper left corner of the overlaypictures. If you need
+to overlay was the center of the overlay images, use before the coordinate
+prefix "c", for example:
 
-Если вы в своей игре привязываетесь к каким-то координатам
-изображений, или к их размерам, делайте это относительно оригинальных
-размеров изображений. При масштабировании темы под заданное игроком
-разрешение, INSTEAD сам будет осуществлять пересчёт координат (при
-этом координаты для игры выглядят так, как будто игра запущена без
-масштабирования). Однако, возможны небольшие погрешности вычислений.
+	pic = 'gfx/galaxy.png;gfx/star.png@c128,132';
 
-Если вам не хватает функций, описанных в этой главе, изучите модуль
-"sprite", который предоставляет более широкие возможности по
-графическому оформлению. Но я крайне не рекомендую делать это в своей
-первой игре.
+Having as a function the formation of the path of the composite pictures, you
+can generate an image based on the game state.
 
-## Музыка
+If you are in the game tied to any coordinates images or their sizes, do it in
+relation to the original of image sizes. Scaling topic under specified
+playerthe resolution INSTEAD he will convert the coordinates (with the
+coordinates for the game look like the game is running without scaling).
+However, there may be a small error of computation.
 
-Для работы с музыкой и звуками вам понадобится модуль snd.
+If you do not have enough of the features described in this Chapter, I examine
+the module "sprite", which provides more opportunities for graphic design. But
+I highly recommend not to do it in his the first game.
 
-```
-require "snd"
+## Music
 
-```
+To work with music and sounds you will need the snd module.
 
-Интерпретатор проигрывает в цикле текущую музыку, которая задается
-с помощью функции: 'snd.music(путь к музыкальному файлу)'.
+	require "snd"
 
-__Важно!__
+The interpreter plays in the cycle of the current music that is set using the function: 'snd.music(music file)'.
 
-Используйте в путях только прямые '/'. Также, настоятельно
-рекомендуется использовать в именах каталогов и файлов только
-латинские строчные символы. Этим самым вы обезопасите свою игру от
-проблем с совместимостью и она будет работать на всех архитектурных
-платформах, куда портирован INSTEAD.
+__Important!__
 
-Поддерживается большинство музыкальных форматов, но настоятельно
-рекомендуется использовать формат 'ogg', так как именно он
-поддерживается наилучшим образом во всех версиях INSTEAD (для
-различных платформ).
+Use in ways only direct '/'. Also, it is strongly it is recommended to use the
+names of directories and files only Latin lowercase characters. This way you
+will protect your game from compatibility problems and it will work on all
+architectural platforms where ported INSTEAD.
 
-__Важно!__
+Supports most music formats, but we strongly it is recommended to use the
+format 'ogg' as it supported in the best way in all versions INSTEAD (for
+different platforms).
 
-Следует проявлять осторожность при использовании трекерной музыки, так
-как в некоторых дистрибутивах Linux могут быть проблемы при
-проигрывании определенных файлов (ошибки в связке библиотек SDL_mixer
-и libmikmod).
+__Important!__
 
-Также, если вы используете 'mid' файлы, будьте готовы к тому, что
-игрок услышит их только в Windows версии INSTEAD (так как в
-большинстве случаев, Unix версии SDL_mixer собраны без поддержки
-''timidity'').
+Caution should be exercised when using tracker music as some Linux
+distributions can be a problem when playing certain files (error in bundle
+libraries SDL_mixer and libmikmod).
 
-В качестве частоты музыкальных файлов используйте частоты кратные
-11025.
+Also, if you use the 'mid' files, be prepared for the fact that the player
+will hear them only in the Windows version INSTEAD (as in most cases Unix
+version of SDL_mixer compiled without support "timidity").
+
+As the frequency of the music files, use a frequency multiple of 11025.
 
 ```
 room {
@@ -3188,74 +3009,62 @@ room {
 	enter = function()
 		snd.music 'mus/rain.ogg'
 	end;
-	nam = 'на улице';
-	dsc = 'На улице идет дождь.';
+	nam = 'on the street';
+	dsc = 'it is raining outside.';
 };
 ```
 
-'snd.music()' без параметра возвращает текущее имя трека.
+'snd.music()' without a parameter returns the current track name.
 
-В функцию 'snd.music()' можно передавать второй параметр -- количество
-проигрываний (циклов). Получить текущий счетчик можно с помощью
-'snd.music()' без параметров -- второе возвращаемое значение. 0 --
-означает вечный цикл. 1..n -- количество проигрываний. -1 --
-проигрывание текущего трека закончено.
+In function 'snd.music()' you can pass second parameter-the number playout
+(cycles). To get the current counter you can use 'snd.music()' no parameters
+-- the second return value. 0 -- it is eternal cycle. 1..n-the number of
+playbacks. -1 -- the playback of the current track is finished.
 
-Для того, чтобы отменить проигрывание музыки, вы можете использовать
-'snd.stop\_music()'
+In order to cancel the music, you can use 'snd.stop\_music()'
 
-Для того, чтобы узнать, играет ли музыка:
+In order to know if the music is:
 
+	snd.music_playing()
 
-```
-snd.music_playing()
-```
+You can set the rise time and attenuation of music, by calling:
 
-Вы можете задавать время нарастания и затухания музыки, с помощью вызова:
+	snd.music_fading(o [i])
 
+Here o is the time in milliseconds. for attenuation and i is the time in
+milliseconds. to rise music. If you specify only one parameter -- both times
+are considered as same. After the call, the settings will affect playback of
+all music files.
 
-```
-snd.music_fading(o, [i])
-```
+For playback of sounds using snd.play()'. Highly it is recommended to use the
+format 'ogg', although most common sound formats will also work.
 
-Здесь o - время в мс. для затухания и i - время в мс. для нарастания
-музыки. Если задан только один параметр -- оба времени считаются
-одинаковыми. После вызова, установленные параметры будут влиять на
-проигрывание всех музыкальных файлов.
+The distinction between music and sound file is that the engine monitoring the
+process of playing music and saves/restores the currently played track.
+Exiting the game and downloading it again, the player hear the same music that
+you heard when you exit. Sounds generally indicate short-term effects, and the
+engine does not store or restores sound events. So, if a player did not have
+time to listen the sound of the shot and left the game, after downloading the
+file, save it not hear the sound (or end) again.
 
-Для проигрывания звуков используйте 'snd.play()'. Настоятельно
-рекомендуется использовать формат 'ogg', хотя большинство
-распространенных звуковых форматов также будет работать.
+However, if you consider the fact that 'snd.play()' allows you to run looped
+sounds, the difference between music and sound becomes not so unambiguous.
 
-Различие между музыкой и звуковым файлом заключается в том, что движок
-следит за процессом проигрывания музыки и сохраняет/восстанавливает
-текущий проигрываемый трек. Выйдя из игры и загрузив ее снова, игрок
-услышит то же музыкальное оформление, что слышал при выходе. Звуки
-обычно означают кратковременные эффекты, и движок не сохраняет и не
-восстанавливает звуковые события. Так, если игрок не успел дослушать
-звук выстрела и вышел из игры, после загрузки файла сохранения он не
-услышит звук (или его окончание) снова.
+So, the definition of the function: 'snd.play(file [channel], [loop])', where:
 
-Тем не менее, если учесть то, что 'snd.play()' позволяет запускать
-зацикленные звуки, то различие между музыкой и звуками становится уже
-не таким однозначным.
+- file -- path and / or name of the sound file;
+- channel -- channel number [0..7]; If not specified, get first free.
+- cycle -- the number of playbacks 1..n, 0 -- looping.
 
-Итак, определение функции: 'snd.play(файл, [канал], [цикл])', где:
+To stop playback you can use 'snd.stop()'. For stop sound in a certain channel
+'snd.stop(channel)'.
 
-- файл -- путь и\или имя звукового файла;
-- канал -- номер канала [0..7]; Если не указан, то выберется первый свободный.
-- цикл -- количество проигрываний 1..n, 0 -- зацикливание.
+__Important!__
 
-Для остановки проигрывания звука можно использовать 'snd.stop()'. Для
-остановки звука в определенном канале 'snd.stop(канал)'.
+> If you're using looped sounds, you will have to reset their state (run again
+> with 'snd.sound()') in function 'start()'
 
-__Важно!__
-
-> Если вы используете зацикленные звуки, вам придется самим
-> восстанавливать их состояние (запускать снова с помощью
-> 'snd.sound()') в функции 'start()'
-
-Например:
+For example:
 
 ```
 global 'wind_blow' (false)
@@ -3267,320 +3076,306 @@ function start()
 end
 ```
 
-Если вам не достаточно описанных здесь функций по работе со звуком,
-используйте полное описание модуля "snd".
+If you are not fairly described here functions for working with sound use the
+full description of the module "snd".
 
-## Форматирование и оформление вывода
+## The formatting of the output
 
-Обычно INSTEAD сам занимается форматированием и оформлением
-вывода. Например, отделяет статическую сцену от динамической. Выделяет
-курсивом действия игрока. Переводит фокус на изменение в тексте и
-т.д. Модули вроде "fmt" улучшают качество вывода игры без
-дополнительных усилий со стороны автора.
+Usually INSTEAD deals with formatting and design output. For example, the
+stage separates static from dynamic. Highlights italicize the actions of the
+player. Moves focus to the change in the text and etc Modules like "fmt"
+improve the output quality of the game without additional effort on the part
+of the author.
 
-Например:
+For example:
 
-```
-require 'fmt'
-fmt.para = true -- включить отступы параграфов
-```
+	require 'fmt'
+	fmt.para = true -- enable indentation of paragraphs
 
-И ваша игра будет выглядеть гораздо лучше. Если вам нужна какая-то
-автоматическая обработка выводимого текста, вы можете включить модуль
-"fmt" и определить функцию 'fmt.filter'. Например:
-
+And your game will look much better. If you need some automatic processing of
+the displayed text, you can enable the module "fmt" and define the function
+'fmt.filter'. For example:
 
 ```
 require "fmt"
 fmt.filter = function(s, state)
-	-- s -- вывод
-	-- state -- true, если это такт игры (вывод сцены)
+	-- s -- output
+	-- state -- true if this is the beat game (output stage)
 	if state then
-		return 'Эта строка будет добавлена к началу вывода\n'..s;
+		return 'This string will be added to the beginning of output\n'..s;
 	end
 	return s
 end
 ```
 
-Многие хорошие игры на INSTEAD никак не занимаются своим оформлением,
-кроме разбиения текста 'dsc' на параграфы с помощью символов '^^',
-поэтому подумайте, а так ли вам хочется заниматься оформлением своей
-игры вручную?
+A good game for INSTEAD not do your design in addition to splitting the text
+'dsc' paragraphs using the characters '^^',so think, and whether you want to
+design your games manually?
 
-Тем не менее, иногда это все-таки необходимо.
+However, sometimes it's still necessary.
 
-> Внимание! По умолчанию, все конечные и начальные переводы строк,
-> пробелы и символы табуляции вырезаются из вывода обработчиков. Так
-> как обычно они не имеют смысла и даже вредны. В редких случаях,
-> автору может понадобиться более полный контроль над выводом, тогда он
-> может задать std.strip\_call как false в init() или start(),
-> например:
+> Attention! By default, all trailing and starting newlines,
+> spaces and tabs are cut from the output handlers. So
+> as usual, they are meaningless and even harmful. In rare cases,
+> the author may want more control over the output, then it
+> maybe ask std.strip\_call as false in init() or start(),
+> for example:
 
 ```
 std.strip_call = false
 
 obj {
-	dsc = [[Тут лежит {яблоко}.^^^^]] -- теперь переводы строк
-	-- не будут вырезаны, хотя это странное желание
+	dsc = [[There is {Apple}.^^^^]] --- now the line
+	-- will not be clipped, even though it's weird
 }
 ```
 
-> Но обычно такое ручное форматирование свидетельствует о плохом
-> стиле. Для оформления сцены лучше использовать decor и/или
-> подстановки $.
+> But usually such manual formatting indicates a bad
+> the style. For the design stage it is better to use decor and/or
+> substitution.
 
-### Форматирование
+### Formatting
 
-Вы можете делать простое форматирование текста с помощью функций:
+You can do simple text formatting using the functions:
 
-- fmt.c(строка) - разместить по центру;
-- fmt.r(строка) - разместить справа;
-- fmt.l(строка) - разместить слева;
-- fmt.top(строка) - сверху строки;
-- fmt.bottom(строка) - снизу строки;
-- fmt.middle(строка) - середина строки (по умолчанию).
+- fmt.c(string) - place in the center.
+- fmt.r(string) - place right;
+- fmt.l(line) - place left;
+- fmt.top(row) - top row;
+- fmt.bottom(string) - the bottom line;
+- fmt.middle(line) - middle line (default).
 
-Например:
+For example:
+
 ```
 room {
 	nam = 'main';
-	title = 'Добро пожаловать';
-	dsc = fmt.c 'Добро пожаловать!'; -- если у функции только 1 параметр,
-	-- скобки можно опускать;
+	title = 'Welcome';
+	dsc = fmt.c 'Welcome!'; -- if a function has only 1 parameter,
+	-- you can omit the parentheses;
 }
 ```
 
-Вышеописанные функции влияют не только на текст, но и на изображения,
-вставленные с помощью ''fmt.img()'.
+These features affect not only text but also images, inserted using
+"fmt.img()'.
 
-Следует отметить, что если вы используете несколько функций
-форматирования, то предполагается, что они относятся к разным строкам
-(параграфам). В противном случае, результат не определен. Разбивайте
-текст на абзацы символами '^' или 'pn()'.
+It should be noted that if you use several functions formatting, it is assumed
+that they belong to different rows (paragraphs). Otherwise, the result is
+undefined. Or abuse the text into paragraphs with '^' or 'pn()'.
 
-INSTEAD при выводе удаляет лишние пробелы. Это значит, что неважно
-сколько пробелов вы вставляете между словами, все равно при выводе они
-не будут учитываться для расчета расстояния между словами. Иногда это
-может стать проблемой.
+INSTEAD in the derivation removes the extra spaces. This means that no matter
+how many spaces you insert between words, are all the same at the conclusion
+they will not be counted for calculating the distance between words. Sometimes
+it could be a problem.
 
-Вы можете создавать _неразрывные строки_ с помощью:
-fmt.nb(строка). Например, модуль "fmt" использует неразрывные строки
-для создания отступов в начале параграфов. Также, 'fmt.nb' может
-оказаться удобной для вывода служебных символов. Можно сказать, что
-вся строка-параметр 'fmt.nb' воспринимается движком как одно большое
-слово.
+You can create _non-breaking line_ using: fmt.nb(row). For example, the module
+"fmt" uses a continuous line to create indentation at the beginning of
+paragraphs. Also, 'fmt.nb' can to be useful to output special characters. We
+can say that the whole string parameter 'fmt.nb' is perceived by the engine as
+one big word.
 
-Еще один пример. Если вы используете подчеркивание текста, то
-промежутки между словами не будут подчеркнуты. При использовании
-'fmt.nb' промежутки также будут подчеркнуты.
+Another example. If you use the underline text,  the spaces between words are
+not underlined. When using 'fmt.nb' the gaps will also be highlighted.
 
-INSTEAD не поддерживает отображение таблиц, однако для вывода простых
-табличных данных можно воспользоваться 'fmt.tab()'. Эта функция
-используется для абсолютного позиционирования в строке (табулятор).
+INSTEAD not support the display of tables, but the conclusion is simple
+tabular data you can use 'fmt.tab()'. This function used for absolute
+positioning in the line (tab delimited).
 
-	fmt.tab(позиция, [центр])
+	fmt.tab(position, [center])
 
-_Позиция_, это текстовый или числовой параметр. Если задан числовой
-параметр, он воспринимается как позиция в пикселях. Если он задан в
-виде строкового параметра 'число%', то он воспринимается как
-позиция, выраженная в процентах от ширины окна вывода сцены.
+_Position_, is a text or numeric parameter. If you specify a numeric parameter,
+it is treated as position in pixels. If it is set in a string parameter
+'number%', it is perceived as position, expressed in percentage of the width
+of the output window scene.
 
-Необязательный строковой параметр _центр_ задает позицию в следующем
-за 'fmt.tab' слове, которая будет размещена по указанному смещению в
-строке. Позиции могут быть следующими:
+The optional parameter center specifies the position in the following'fmt.tab'
+word that will be placed at the specified offset in the line. Positions can be
+as follows:
 
 - left;
 - right;
 - center.
 
-По-умолчанию считается что задан параметр "left".
+By default, it is considered that the option "left".
 
-Так, например:
+So, for example:
 
 ```
 room {
 	nam = 'main';
-	disp = 'Начало';
-	-- размещение 'Начало!' по центру строки
-	dsc = fmt.tab('50%', 'center')..'Начало!';
+	disp = 'Start';
+	-- the location of the 'Start!' in the middle of the line
+	dsc = fmt.tab('50%', 'center')..'Start!';
 }
 ```
 
-Конечно, не очень удачный пример, так как то же самое можно было
-сделать с помощью 'fmt.c()'. Более удачный пример.
+Of course, not a very good example, as the same could make using 'fmt.c()'. A
+more successful example.
 
-    dsc = function(s)
-        p(fmt.tab '0%')
-        p "Слева";
-        p(fmt.tab '100%', 'right')
-        p "Справа";
-    end
+	 dsc = function(s)
+		p(fmt.tab '0%')
+		p "Left";
+		p(fmt.tab '100%', 'right')
+		p Right;
+	end
 
-На самом деле, единственная ситуация, когда применение 'fmt.tab()'
-оправдано -- это вывод табличных данных.
+In fact, the only situation where the use of 'fmt.tab()' justified -- is the
+output of table data.
 
-Следует отметить, что в ситуации, когда мы пишем что-то вроде:
+It should be noted that in a situation when we write something like:
 
-```
--- размещение 'Раз' по центру строки
-dsc = fmt.tab('50%', 'center')..'Раз два три!';
-```
+	-- the location of the 'Times' on the center line
+	dsc = fmt.tab('50%', 'center')..'one two three!';
 
-Только слово 'Раз' будет помещено в центр строки, остальные слова
-будут дописаны справа от этого слова. Если вы хотите центрировать 'Раз
-два три!' как одно целое, воспользуйтесь 'fmt.nb()'.
+Only the word 'Time' is placed in the centre of the line, the rest of the words
+will be appended to the right of this word. If you want to center the 'Times
+two, three!' as one unit, use 'fmt.nb()'.
 
-```
--- размещение 'Раз два три!' по центру строки
-dsc = fmt.tab('50%', 'center')..fmt.nb ('Раз два три!');
-```
+	-- place 'one two three!' on the center line
+	dsc = fmt.tab('50%', 'center')..fmt.nb ('one two three!');
 
-В INSTEAD также существует возможность выполнять простое вертикальное
-форматирование. Для этого используйте вертикальный табулятор:
+To INSTEAD it is also possible to perform a simple vertical formatting. To do
+this, use the vertical tab:
 
-	fmt.y(позиция, [центр])
+	fmt.y(position, [center])
 
-Как и в случае с fmt.tab _позиция_, это текстовый или числовой
-параметр. Здесь он воспринимается как позиция строки, выраженная в
-пикселях или процентах от высоты области сцены. Например, 100% --
-соответствует нижней границе области сцены. 200% -- соответствует
-нижней границе второй страницы вывода (две высоты области вывода
-сцены).
+As in the case of fmt.tab position is text or numeric parameter. Here it is
+perceived as a position of the line expressed in pixels or percentage of the
+height region of the scene. For example, 100% -- corresponds to the lower
+boundary region of the scene. 200% corresponds --  the lower boundary of the
+second page of output (two the height of the output pane scene).
 
-Необязательный строковой параметр _центр_ задает позицию внутри
-строки, относительно которой выполняется позиционирование:
+The optional parameter center specifies the position withinline on which you
+position:
 
-- top (по верхнему краю);
-- middle (по центру);
-- bottom (по нижнему краю -- значение по умолчанию).
+- top (upper edge);
+- middle (center);
+- bottom (for bottom-the default).
 
-Следует отметить, что 'fmt.y' работает целиком для строки. Если в
-строке встретится несколько fmt.y, действовать будет последний из
-табуляторов.
+It should be noted that 'fmt.y' works entirely for the line. If the line will
+meet a few of fmt.y, act will be the last one tab.
 
-```
--- размещение 'ГЛАВА I' - в центре сцены
-dsc = fmt.y('100%').."ГЛАВА I";
-```
-_Если позиция, указанная табулятором, уже занята другой строкой, табулятор игнорируется._
+	-- the location of the 'CHAPTER I' - center stage
+	dsc = fmt.y('100%').."CHAPTER I";
 
-По умолчанию, статическая часть сцены отделяется от динамической двойным переводом строки. Если вам это не подходит, вы можете переопределить 'std.scene_delim', например:
+_Esli position specified by the tab, is already occupied by another row, the tab is ignored._
 
-	std.scene_delim = '^' -- одинарный перевод строки
+By default, the static part of the scene is separated from the dynamic double
+newline. If you do not fit, you can override 'std.scene_delim', for example:
 
-Вы не можете менять эту переменную в обработчиках, так как она не
-сохраняется, но вы можете задать ее для игры целиком, или
-восстанавливать ее вручную в функции 'start()'.
+	std.scene_delim = '^' -- single line
 
-Если вас категорически не устраивает то, как INSTEAD формирует вывод
-(последовательность абзацов текста), вы можете переопределить функцию
-'game.display()', которая по умолчанию выглядит следующим образом:
+You cannot change this variable in the handlers, as it is not remains, but you
+can set it for the entire game, or fix it manually in the function 'start()'.
 
+If you absolutely do not like how INSTEAD forms conclusion (sequence of
+paragraphs), you can override the function 'game.display()', which by default
+looks like the following:
 
 ```
 game.display = function(s, state)
 	local r, l, av, pv
-	local reaction = s:reaction() or nil -- реакция
+	local reaction = s:reaction() or nil -- reaction
 	r = std.here()
-	if state then -- такт игры?
-		reaction = iface:em(reaction) -- курсив
+	if state then -- the beat of the game?
+		reaction = iface:em(reaction) -- italic font
 		av, pv = s:events()
-		av = iface:em(av) -- вывод "важных" life
-		pv = iface:em(pv) -- вывод фоновых life
-		l = s.player:look() -- objects [and scene] -- объекты и сцена
+		av = iface:em(av) - the output of "important" life
+		pv = iface:em(pv) - output background life
+		l = s.player:look() -- objects [and scene] -- the objects and scene
 	end
 	l = std.par(std.scene_delim,
-		reaction or false, av or false, l or false,
-		pv or false) or ''
+		reaction or false, av or false, l or false
+		pv or false) or "
 	return l
 end;
 ```
 
-Тот факт, что я привел здесь этот код, не означает, что я рекомендую
-переопределять эту функцию. Напротив, я категорически против такой
-сильной привязки к форматированию текста. Тем не менее, иногда
-возникает ситуация, когда полный контроль за последовательностью
-вывода необходим. Если вы пишите свою первую игру, просто пропустите
-этот текст.
+The fact that I have brought here this code does not mean that I recommend to
+override this feature. On the contrary, I categorically against such strong
+binding to the text formatting. However, sometimes there is a situation where
+full control over the sequence output needed. If you write your first game,
+just skip this text.
 
-### Оформление
+### Making
 
-Вы можете менять начертание текста с помощью комбинаций функций:
+You can change the font style of text using combinations of features:
 
-- fmt.b(строка) - жирный текст;
-- fmt.em(строка) - курсив;
-- fmt.u(строка) - подчеркнутый текст;
-- fmt.st(строка) - перечеркнутый текст.
+- fmt.b(string) - bold text;
+- fmt.em(string) - italic;
+- fmt.u(string) - text that is underlined;
+- fmt.st(string) - text crossed out.
 
-Например:
+For example:
+
 ```
 room {
 	nam = 'Intro';
 	title = false;
 	dsc = function(s)
-		p ('Вы находитесь в комнате: ')
+		p ('You are in a room: ')
 		p (fmt.b(s))
 	end;
 }
 ```
 
-> Используя функции 'fmt.u' и 'fmt.st' на строках, содержащих пробелы,
-> вы получите разрывы линий в этих местах.  Что избежать этого, можно
-> превратить текст в _неразрывную строку_:
+> Using the function 'fmt.u' and 'fmt.st' on strings containing spaces
+> you will get broken lines in these places. What to avoid it, 
+> to turn the text into _non-breaking string_:
 
-	fmt.u(fmt.nb "теперь текст без пропусков" )
+	fmt.u(fmt.nb "now the unabridged" )
 
-Строго говоря, INSTEAD не поддерживает одновременный вывод разными шрифтами в окно сцены (если не считать разное начертание), поэтому если вам все-таки требуется более гибкий контроль вывода, вы можете сделать следующее:
+Strictly speaking, INSTEAD does not support simultaneous display of different
+fonts in the window scene (except for the different font styles), so if you
+require a more flexible output control, you can do the following:
 
-- Использовать графические вставки 'fmt.img()';
-- Использовать модуль 'fonts', в котором реализована отрисовка
-  разными шрифтами за счет модуля 'sprite';
-- Использовать другой движок, так как скорее всего вы используете INSTEAD не по назначению.
+- Use the graphic insert 'fmt.img()';
+- Use the module 'fonts', which implements the rendering different fonts at 
+  the expense module 'sprite';
+- Use another engine, because most likely you use INSTEAD for other purposes.
 
-##  Конструкторы и наследование
+## Constructors and inheritance
 
-__Внимание!__
+__Caution!__
 
-Если вы пишите свою первую игру, было бы лучше, если бы она была
-простая. Для простой игры информация из этой главы не
-понадобится. Более того, 90% игр на INSTEAD не использует вещей,
-описанных в этой главе!
+If you write your first game, it would be better if she was simple. For a
+simple game, the information in this Chapter do not need. Moreover, 90% say
+it's not a good described in this Chapter!
 
-Если вы пишите игру, в которой много однотипных объектов, возможно,
-вам захочется упростить их создание. Это можно сделать одним из
-следующих способов:
+If you're writing a game, where many similar objects mayyou will want to
+simplify their creation. You can do one of the following ways:
 
-- Создать свой конструктор;
-- Создать новый класс объектов.
+- Create your designer;
+- Create a new feature class.
 
-### Конструкторы
+### Designers
 
-Конструктор -- это функция, которая создает за вас объект и заполняет
-его атрибуты так, как вам это нужно.  Рассмотрим пример. Допустим, в
-вашей игре будет много окон.  Нужно создавать окна, любое окно можно
-разбить. Мы можем написать конструктор 'window'.
+Constructor-a function that creates the object for you and fills his
+attributes as you need it. Let's consider an example. For example, in your
+game will be a lot of Windows. You need to create a window, any window can be
+break. We can write constructor 'window'.
 
 ```
 window = function(v)
 	v.window = true
 		v.broken = false
 	if v.dsc == nil then
-		v.dsc = 'Здесь есть {окно}.'
+		v.dsc = 'there is a {window}.'
 	end
 	v.act = function(s)
 		if s.broken then
-			p [[Окно разбито.]]
+			p [[broken Window.]]
 		else
-			p [[За окном темно.]]
+			p [[it's dark outside.]]
 		end
 	end
 	if v.used == nil then
 		v.used = function(s, w)
-			if w^'молоток' then
+			if w^'hammer' then
 				if s.broken then
-					p [[Окно уже разбито.]]
+					p [[the Window is already broken.]]
 				else
-					p [[Я разбил окно.]]
+					p [[I broke the window.]]
 					s.broken = true;
 				end
 				return
@@ -3591,188 +3386,178 @@ window = function(v)
 	return obj(v)
 end
 ```
-Как видим, идея конструкторов проста. Вы просто создаете функцию,
-которая получает на вход таблицу с атрибутами {}, которую конструктор
-может дозаполнить нужными атрибутами. Затем эта таблица передается
-конструктору obj/room/dlg и возвращается полученный объект.
 
-Теперь, создавать окна стало легко:
+As you can see, the idea of the designers is simple. You just create the
+function which receives the input of the table with the attributes {} which is
+the constructor can fill out the desired attributes. Then this table is passed
+constructor obj/room/dlg and returns the resulting object.
 
-```
-window {
-	dsc = [[Тут есть {окно}.]];
-}
-```
+Now, create a window was easy:
 
-Или, так как окно это обычно статический объект, можно создавать его
-прямо в 'obj'.
-
-```
-obj = { window {
-		dsc = 'В восточной стене есть {окно}.';
+	window {
+		dsc = [[there is a {window}.]];
 	}
-};
-```
 
-У нашего окна будет готовый used метод и act метод. Вы можете
-проверить тот факт, что объект окно -- просто проверив признак window:
+Or, because the window is usually a static object, you can create it
+directly in 'obj'.
 
-```
-use = function(s, w)
-	if w.window then
-		p [[Действие на окно.]]
-		return
+	obj = { window {
+			dsc = 'In the Eastern wall there is a {window}.';
+		}
+	};
+
+Our window will be ready used method and act method. You can
+to check the fact that the object is a window-just checking the attribute window:
+
+	use = function(s, w)
+		if w.window then
+		p [[the Action.]]
+	return
 	end
-	return false
-end
-```
+		return false
+	end
 
-Состояние "разбитости" окна, это атрибут broken.
+The condition "weakness" of the window, this attribute is broken.
 
-Как реализовать наследование в конструкторах?
+How to implement inheritance in the constructors?
 
-На самом деле, в примере выше уже используется
-наследование. Действительно, ведь конструктор 'window'' вызывает
-другой конструктор 'obj', тем самым получая все свойства обычного
-объекта. Также, 'window' определяет переменную признак 'window',
-чтобы в игре мы могли понять, что мы имеем дело с окном. Например:
+In fact, in the example above is already used inheritance. Indeed, the
+designer 'window" causes the other constructor 'obj', thus obtaining all the
+properties of conventional object. Also, the 'window' defines a variable
+attribute 'window', to the game, we could understand that we are dealing with
+a window. For example:
 
-Для иллюстрации механизма наследования создадим класс объектов
-'treasure', те. сокровищ.
+To illustrate the inheritance mechanism, create a class of objects 'treasure',
+those. treasures.
 
 ```
 global { score = 0 }
 treasure = function()
-        local v = {}
-        v.disp = 'сокровище'
-        v.treasure = true
-        v.points = 100
-        v.dsc = function(s)
-                p ('Здесь есть {', std.dispof(s), '}.')
-        end;
-        v.inv = function(s)
-                p ('Это же ', std.dispof(s), '.');
-        end;
-        v.tak = function(s)
-                score = score + s.points; -- увеличим счет
-                p [[Дрожащими руками я забрал сокровища.]];
-        end
-        return obj(v)
+	local v = {}
+	v.disp = 'treasure'
+	v.treasure = true
+	v.points = 100
+	v.dsc = function(s)
+		p ('there is {', std.dispof(s), '}.')
+	end;
+	v.inv = function(s)
+		p ('This is ', std.dispof(s), '.');
+	end;
+	v.tak = function(s)
+		score = score + s.points; -- increase the score
+		p [[Trembling hand I took the treasure.]];
+	end
+	return obj(v)
 end
 ```
 
-А теперь, на его основе создадим золото, алмаз и сундук.
+Now, let's create gold, diamond and treasure chest.
 
 ```
 gold = function(dsc)
-        local v = treasure();
-        v.disp = 'золото';
-        v.gold = true;
-        v.points = 50;
-        v.dsc = dsc;
-        return v
+	local v = treasure();
+	v.disp = 'gold';
+	v.gold = true;
+	v.points = 50;
+	v.dsc = dsc;
+	return v
 end
 
 diamond = function(dsc)
-        local v = treasure();
-        v.disp = 'алмаз';
-        v.diamond = true;
-        v.points = 200;
-        v.dsc = dsc;
-        return v
+	local v = treasure();
+	v.disp = 'diamond';
+	v.diamond = true;
+	v.points = 200;
+	v.dsc = dsc;
+	return v
 end
 
 chest = function(dsc)
-        local v = treasure();
-        v.disp = 'сундук';
-        v.chest = true
-        v.points = 1000;
-        v.dsc = dsc;
-        return v
+	local v = treasure();
+	v.disp = 'chest';
+	v.chest = true
+	v.points = 1000;
+	v.dsc = dsc;
+	return v
 end
 ```
 
-Теперь, в игре можно создавать сокровища через конструкторы:
+Now, in the game you can create a treasure using constructors:
 
 ```
-diamond1 = diamond("В грязи я заметил {алмаз}.")
-diamond2 = diamond(); -- тут будет стандартное описание алмаза
-gold1 = gold("В углу я заметил блеск {золота}.");
+diamond1 = diamond("In the mud, I noticed {the diamond}.")
+diamond2 = diamond(); -- here is the standard description of the diamond
+gold1 = gold("In the corner I noticed the glitter {gold}.");
 
-room {
-        nam = 'пещера';
-        obj = {
-                diamond1,
-                gold1,
-                chest("А еще я вижу {сундук}!")
-        };
+room { nam = 'cave';
+	obj = {
+		diamond1,
+		gold1,
+		chest("I can see {chest}!")
+	};
 }
 ```
 
-На самом деле, как именно писать функции-конструкторы и реализовывать
-принцип наследования, зависит только от вас. Выберете наиболее простой
-и понятный способ.
+In fact, how to write constructor functions and implement the inheritance
+principle, depends only on you. Choose the most simple and intuitive way.
 
-При написании конструкторов иногда бывает полезным сделать вызов
-обработчика так, как это делает INSTEAD. Для этого используется
-'std.call(объект, метод, параметры)', при этом эта функция вернет
-реакцию атрибута в виде строки. Например, рассмотрим модификацию
-'window', которая заключается в том, что можно определять свою
-реакцию на осмотр окна, которая будет выполнена после стандартного
-сообщения о том, что это разбитое окно (если оно разбито).
+When writing constructors, it is sometimes useful to make a call handler the
+way it does INSTEAD. To do this, use 'std.call(object, method, options)', this
+function will return the reaction of the attribute as a string. For example,
+consider a modification 'window', which is that you can define your own the
+reaction to the inspection window, which will be executed after the standard
+posts about what is the broken window (if it is broken).
 
 ```
 window = function(nam, dsc, what)
-    local v = {} -- создаем пустую таблицу
-    -- заполняем ее
-    v.window = true
-    v.what = what
-    v.broken = false
-    if dsc == nil then
-        v.dsc = 'Здесь есть {окно}'
-    end
-    v.act = function(s)
-        if s.broken then
-                p [[Окно разбито.]]
-        end
-        local r, v = stead.call(s, 'what')
-        if v then -- обработчик выполнился?
-                p(r)
-        else
-                p [[За окном темно.]]
-        end
-    end
-    return obj(v)
+	local v = {} -- creates an empty table
+	-- fill it
+	v.window = true
+	v.what = what
+	v.broken = false
+	if dsc == nil then
+		v.dsc = 'there is a {window}'
+	end
+	v.act = function(s)
+		if s.broken then
+			p [[broken Window.]]
+		end
+		local r, v = stead.call(s, 'what')
+		if v then -- the handler is executed?
+			p(r)
+		else
+			p [[it's dark outside.]]
+		end
+	end
+	return obj(v)
 end
 ```
 
-Таким образом, мы можем при создании окна задать третий параметр, в
-котором определить функцию или строку, которая будет реакцией во время
-осмотра окна. При этом сообщение о том, что окно разбито (если оно
-действительно разбито), будет выведено перед этой реакцией.
+Thus, we can create a window to specify the third parameter,  where to define
+a function or a string that will be occurring at the same time the inspection
+window. The message that the window was broken (if it really broken), you will
+see before this response.
 
+### Feature class
 
-### Класс объектов
-
-Конструкторы объектов широко использовались в STEAD2. В STEAD3
-obj/dlg/room реализованы как классы объектов. Класс объектов удобно
-создавать для тех случаев, когда поведение создаваемого объекта не
-укладывается в стандартные объекты obj/room/dlg и вы хотите поменять
-методы класса. Изменив метод класса, например, вы можете вообще
-изменить то, как выглядит предмет в сцене. В качестве примера,
-рассмотрим создание класса "контейнер". Контейнер может хранить в себе
-другие объекты, быть закрытым и открытым.
+The constructors of objects are widely used in STEAD2. IN STEAD3 obj/dlg/room
+are implemented as object classes. Class of objects isto create for those
+occasions when the behavior of the created object is not fits into standard
+objects obj/room/dlg and you want to change methods of the class. Changing a
+class method, for example, you can generally to change how the object looks in
+the scene. As an example, consider creating a class "container". The container
+can store other objects to be closed and open.
 
 ```
 -- create own class container
-cont = std.class({ -- создаем класс cont
-	__cont_type = true; -- для определения типа объекта
-	display = function(s) -- переопределяем метод показа предмета
+cont = std.class({ -- create the class cont
+	__cont_type = true; -- to determine the type of the object
+	display = function(s) -- overridable method of displaying the subject
 		local d = std.obj.display(s)
 		if s:closed() or #s.obj == 0 then
 			return d
 		end
-		local c = s.cont or 'Внутри: ' -- описатель содержимого
+		local c = s.cont or 'Inside:' -- descriptor content
 		local empty = true
 		for i = 1, #s.obj do
 			local o = s.obj[i]
@@ -3788,59 +3573,58 @@ cont = std.class({ -- создаем класс cont
 		c = c .. '.'
 		return std.par(std.space_delim, d, c)
 	end;
-}, std.obj) -- мы наследуемся от стандартного объекта
-
+} std.obj) -- we inherit from the default object
 ```
-После этого, вы можете создавать контейнеры так:
+
+After that, you can create containers like this:
 
 ```
 cont {
-	nam = 'ящик';
-	dsc = [[Тут есть {ящик}.]];
-	cont = 'В ящике: ';
+	nam = 'box';
+	dsc = [[there is {box}.]];
+	cont = 'box: ';
 }: with {
-	'яблоко', 'груша';
+	'Apple', 'pear';
 }
 ```
 
-Когда контейнер будет открыт, вы увидите описание ящика, а также
-содержимое ящика в виде строки ссылок: В ящике: яблоко, груша.
-dsc объектов яблоко и груша будут тоже показаны, если они заданы.
+When the container is opened, you will see a description box, and the contents
+of the box in the row of links: In the box: Apple, pear. dsc objects Apple and
+pear are also shown if they are set.
 
-Если необходимо прятать dsc объектов при открытии контейнера, оставляя
-лишь имена объектов, то можно выполнить следующую модификацию:
+If you want to hide dsc objects when opening the container, leaving only the
+names of the objects, you can perform the following modification:
 
 ```
--- заменим функцию показа любого объекта
--- если объект внутри контейнера, не вызывать его dsc
+-- replace the function of display of any object
+-- if the object is inside the container, don't call it dsc
 std.obj.display = function(self)
-	local w = self:where() -- где объект?
-	if not std.is_obj(w, 'cont') then -- если не в контейнере
+	local w = self:where () - where is the object?
+	if not std.is_obj(w, 'cont') then -- if not in a container
 		local d = std.call(self, 'dsc')
 		return d
 	end
 end
 ```
 
-К сожалению, подробное описание классов выходит за рамки данного
-руководства, эти вещи будут описаны в другом руководстве для
-разработчиков модулей. А пока, для вашей первой игры, вам не стоит
-писать свои классы объектов.
+Unfortunately, a detailed description of classes is beyond the scope of this
+manual, these things will be discussed in another guide module developers. In
+the meantime, for your first game, you don't need to write your own object
+classes.
 
-## Полезные советы
+## Useful tips
 
-### Разбиение на файлы
+### Split files
 
-Когда ваша игра становится большой, размещение ее кода целиком в 'main3.lua' -- плохая идея.
+When your game gets large, the location of its code entirely in 'main3.lua' -- bad idea.
 
-Для разбиения текста игры на файлы вы можете использовать
-'include'. Вы должны использовать 'include' в глобальном контексте
-таким образом, чтобы во время загрузки 'main3.lua' загрузились и все
-остальные фрагменты игры, например.
+To break the text of the game files you can use 'include'. You must use
+'include' in a global context so that while loading 'main3.lua' is loaded and
+all the remaining fragments of the game, for example.
 
 ```
 -- main3.lua
-include "episode1" -- .lua можно опускать
+include "episode1" -- .lua can be omitted
 include "npc"
 include "start"
 
@@ -3849,291 +3633,260 @@ room {
 ....
 ```
 
-Как именно разбивать исходный текст на файлы зависит только от вас. Я
-использую файлы в соответствии с эпизодами игры (которые обычно слабо
-связаны между собой), но можно создавать файлы, хранящие отдельно
-комнаты, объекты, диалоги и т.д. Это вопрос личного удобства.
+How to split a source text file depends on you. I use the files in accordance
+with the episodes of the game (which is usually mild linked), but you can
+create files to store separately rooms, objects, dialogues, etc. Is a matter
+of personal convenience.
 
-Также есть возможность динамически подгружать части игры (с
-возможностью доопределять объекты). Для этого вы
-можете воспользоваться функцией 'gamefile':
-
+There is also the possibility to dynamically load parts of the game (with the
+ability to redefine objects). To do this, you you can use the 'gamefile':
 
 ```
 ...
-act = function() gamefile ("episode2") end -- .lua можно опускать
+act = function() gamefile ("episode2") end -- .lua can be omitted
 ...
 ```
 
-> Внимание! Если в вашей игре определена функция init(), то в
-> подгружаемых частях она также должна присутствовать!  В противном
-> случае, после подгрузки файла, будет вызвана текущая функция init(),
-> что обычно не является желательным.
+> Attention! If your game defines a function init(), 
+> loadable parts of it must be present! Otherwise
+> case, after uploading the file, will be called the current function init ()
+> that is not usually desirable.
 
-'gamefile()' также позволяет загрузить новый файл и забыть стек
-предыдущих загрузок, запустив этот новый файл как самостоятельную
-игру. Для этого, задайте второй параметр функции как 'true'. Имейте в
-виду, что существующие модули остаются и переживают операцию gamefile
-в обоих случаях. 'gamefile()' можно использовать только в
-обработчиках.
+'gamefile()' also allows you to upload a new file and forget stackprevious
+downloads by launching this new file as an independent game. To do this, set
+the second parameter as 'true'. Keep in mind that existing modules remain and
+survive the operation gamefile in both cases. 'gamefile()' can only be used in
+handlers.
 
-
-```
 	act = function() gamefile ("episode3.lua", true); end;
-```
 
-Во втором варианте 'gamefile()' можно использовать для оформления
-мультиязычных игр или игр-сборников, где фактически из оболочки
-выполняется запуск самостоятельной игры.
+In the second option 'gamefile()' can be used to design multilingual games, or
+game collections, where the actual shell running a standalone game.
 
-### Меню
+### Menu
 
-Стандартное поведение предмета инвентаря состоит в том, что игрок
-должен сделать два щелчка мышью. Это необходимо потому, что каждый
-предмет инвентаря может быть использован на другой предмет сцены или
-инвентаря. После второго щелчка происходит игровой такт игры. Иногда
-такое поведение может быть нежелательным. Возможно, вы захотите
-сделать игру в которой игровая механика отличается от классических
-INSTEAD игр. Тогда вам может понадобится меню.
+The default behavior of the item of inventory is that the playerneed to make
+two mouse clicks. This is necessary because each any inventory item can be
+used on another object or scene inventory. After the second click happens
+games the beat games. Sometimes this behavior may be undesirable. You might
+want to make a game in which game mechanics differs from the classical INSTEAD
+games. Then you may need menu.
 
-Меню -- это элемент инвентаря, который срабатывает на первый клик. При
-этом меню может сообщить движку, что действие не является игровым
-тактом. Таким образом, используя меню вы можете создать в зоне
-инвентаря управление игрой любой сложности. Например, существует
-модуль "proxymenu", который реализует управление игрой в стиле квестов
-на ZX-"Спектрум". В игре "Особняк" свое управление, которое вводит
-несколько модификаторов действий, и т.д.
+Menu is an element of inventory, which is triggered on the first click. When
+this menu can inform the engine that the action is not a game tact. Thus,
+using the menus you can create in the area inventory management a game of any
+complexity. For example, there is module "proxymenu" that implements control
+of the game style quests on the ZX-spectrum. In the game "Mansion" his
+control, which introduces a few action modifiers, etc.
 
-Итак, вы можете делать меню в области инвентаря, определяя объекты с
-типом 'menu'. При этом, обработчик меню ('act') будет вызван
-после одного клика мыши. Если обработчик возвращает false, то
-состояние игры не изменяется. Например, реализация кармана:
+So, you can do the menu in the inventory area, identifying objects with type
+'menu'. In this case, the menu handler ('act') will be called after one click
+of the mouse. If the handler returns false, the game state does not change.
+For example, the implementation of the pocket:
 
 ```
 menu {
 	state = false;
-	nam = 'карман';
+	nam = 'pocket';
 	disp = function(s)
 		if s.state then
-			return fmt.u('карман'); -- подчеркиваем активный карман
+			return fmt.u('pocket'); -- emphasize active pocket
 		end
-		return 'карман';
+		return 'pocket';
 	end;
 	gen = function(s)
 		if s.state then
-			s:open(); -- показать все предметы в кармане
+			s:open(); -- show all the items in the pocket
 		else
-			s:close(); -- спрятать все предметы в кармане
+			s:close(); -- hide all the items in the pocket
 		end
 		return s
 	end;
 	act = function(s)
-		s.state = not s.state -- изменить состояние
-		s:gen(); -- открыть или закрыть карман
+		s.state = not s.state -- change state
+		s:gen (); - to open or close the pocket
 	end;
 }: with {
 	obj {
-		nam = 'нож';
-		inv = 'Это нож';
+		nam = 'knife';
+		inv = 'This is knife';
 	};
 }
 
 function init()
-	take 'карман':gen()
+ take 'pocket':gen()
 end
 ```
 
-### Статус игрока
+### The status of the player
 
-Иногда возникает желание выводит какой-нибудь статус. Например,
-количество игровых очков, состояние героя или, наконец, время
-суток. INSTEAD не предоставляет каких-то других областей вывода, кроме
-сцены и инвентаря, поэтому, самым простым способом вывода статуса
-является вывод его в зону инвентаря.
+Sometimes there is a desire displays some status. For example,the number of
+points the state of the hero or finally time days. INSTEAD does not provide
+any other areas of withdrawal, except scenes and inventory, therefore, the
+simplest way to output the status is output to the zone equipment.
 
-Ниже представлена реализация статуса игрока в виде текста, который
-появляется в инвентаре, но не может быть выбран, то есть, выглядит
-просто как текст.
+Below is an implementation of player status as a text that appears in the
+inventory, but cannot be selected, that is, looks just as text.
 
 ```
 global {
-    life = 10;
-    power = 10;
+	life = 10;
+	power = 10;
 }
 
-stat { -- stat -- объект "статус"
-	nam = 'статус';
+stat { -- stat-object status
+	nam = 'status';
 	disp = function(s)
-		pn ('Жизнь: ', life)
-		pn ('Сила: ', power)
+		pn ('Life: ', life)
+		pn ('Power: ', power)
 	end
 };
 
 function init()
-	take 'статус'
+	take the 'status'
 end
 ```
 
-### walk из обработчиков onexit и onenter
+### walk from handlers to the onenter and onexit
 
-Вы можете делать 'walk' из обработчиков 'onenter' и
-'onexit'. Например, 'path' реализован как комната с обработчиком
-'onenter', который переносит игрока в другую комнату.
+You can do the 'walk' of the handlers 'the onenter' and 'onexit'. For example,
+'path' implemented with a handler 'the onenter', which puts the player in the
+other room.
 
-Рекомендуется возвращать из onexit/onenter false в случае, если вы
-делаете walk из этих обработчиков.
+It is recommended to return from onexit/false in the onenter event, if you do
+the walk of these handlers.
 
-### Кодирование исходного кода игры
+### Encoding of the source code of the game
 
-Если вы не хотите показывать исходный код своих игр, вы можете
-закодировать исходный код с помощью параметра командной строки
-'-encode':
+If you do not want to show the source code of their games, you can to encode
+source code using the command-line option the '-encode':
 
+	sdl-instead-encode <file path> [output path]
 
-	sdl-instead -encode <путь к файлу> [выходной путь]
+And use the encoded file using the normal include/gamefile. However, for this
+you have to write at the beginning of main3.lua:
 
-И использовать закодированный файл с помощью обычных include/gamefile.
-Однако, для этого вы должны написать в начале main3.lua:
+	std.dofile = std.doencfile
 
-```
-std.dofile = std.doencfile
-```
-
-При этом главный файл 'main3.lua' необходимо оставлять открытым. Таким
-образом, схема выглядит следующим образом ('game.lua' -- закодированный
-файл):
+The main file 'main3.lua' must be left open. This by the way, the diagram
+looks as follows ('game.lua' -- encoded file):
 
 
-```
--- $Name: Моя закрытая игра!$
-std.dofile = std.doencfile
-include "game"; -- никто не узнает, как ее пройти!
-```
+	-- $Name: My closed game!$
+	std.dofile = std.doencfile
+	include "game"; -- no one knows how to pass it!
 
-__Важно!__
+__Important!__
 
-> Не используйте компиляцию игр с помощью 'luac', так как 'luac' создает
-> платформозависимый код!  Однако, компиляция игр может быть
-> использована для поиска ошибок в коде.
+> Do not use the following with 'luac', as 'luac' creates
+> platform-dependent code! However, the following can be
+> used to find errors in your code.
 
+### Boxing resources
 
-### Запаковка ресурсов
+You can package the game resources (graphics, music, themes) in the file
+resources '.idf' placing all the resources in the directory 'data' and start
+INSTEAD:
 
-Вы можете упаковать ресурсы игры (графику, музыку, темы) в файл
-ресурсов '.idf', для этого поместите все ресурсы в каталог 'data'
-и запустите INSTEAD:
+	sdl-instead-idf <path to data>
 
-	sdl-instead -idf <путь к data>
+Thus, in the current directory will be created file 'data.idf'. Place it in
+the directory with the game. Now resources game separate files can be removed
+(of course leaving himself the original files).
 
-При этом, в текущем каталоге должен будет создастся файл
-'data.idf'. Поместите его в каталог с игрой. Теперь ресурсы игры в
-виде отдельных файлов можно удалить (конечно, оставив себе
-оригинальные файлы).
+You can pack in format.idf' the whole game:
 
-Вы можете запаковать в формат '.idf' всю игру:
+	sdl-instead-idf <path to game>
 
-	sdl-instead -idf <путь к игре>
-
-Игры в формате 'idf' можно запускать как обычные игры 'instead' (как
-если бы это были каталоги) а также из командной строки:
+Game 'idf' can be run as a normal game 'instead' (as if it were a directory)
+and also from the command line:
 
 	sdl-instead game.idf
 
-### Переключение между игроками
+### Switching between players
 
-Вы можете создать игру с несколькими персонажами и время от времени
-переключаться между ними (см. 'change_pl()'). Но вы можете также
-использовать этот трюк для того, чтобы иметь возможность переключаться
-между разными типами инвентаря.
+You can create a game with multiple characters and from time to time to switch
+between them (see 'change_pl()'). But you can also to use this trick in order
+to be able to switch between different types of inventory.
 
-### Использование параметров обработчика
+### Use settings handler
 
-Пример кода.
+The code example.
 
-```
-obj {
-	nam = 'камень';
-	dsc = 'На краю лежит {камень}.';
-	act = function()
-		remove 'камень';
-		p 'Я толкнул камень, он сорвался и улетел вниз...';
+	obj {
+		nam = 'stone';
+		dsc = 'On the edge of lies {rock}.';
+		act = function()
+			remove 'stone';
+			p 'I pushed the stone, it fell and flew down...';
 	end
-```
 
-Обработчик act мог бы выглядеть проще:
+Act handler could look simpler:
 
-```
 	act = function(s)
 		remove(s);
-		p 'Я толкнул камень, он сорвался и улетел вниз...';
+		p 'I pushed the stone, it fell and flew down...';
 	end
-```
 
-### Специальные статусы обработчиков
+### Special status handlers
 
-Из обработчика обычно возвращается текст, в виде return "текст
-сообщения". Или с помощью функций p()/pr()/pn()/pf(). Кроме этого,
-есть специальные статусы, которые могут пригодиться при разработке
-игры.
+Handler usually returns the text in the form return "text messages." Or with
+the functions p()/pr()/pn()/pf(). In addition, there are special statuses that
+can be useful when developing game.
 
-Возвращение статуса false:
+The return status is false:
 
-    return false
+	return false
 
-Такой статус означает что обработчик не выполнил свою функцию и должен
-быть проигнорирован. Обычно движок в таком случае вызовет обработчик
-по умолчанию.
+This status means that the handler has not fulfilled its function and needsto
+be ignored. Typically, the engine in this case, it will call the handler by
+default.
 
-Вы можете также вернуть специальный статус:
+You can also return a special status:
 
 	return true, false
 
-В этом режиме перерисуется только область инвентаря (но не
-сцена). Данный статус удобно использовать для реализации меню в
-области инвентаря.
+In this mode only equipment (but not stage) will be redrawn. This status is useful
+for implementing menu the field inventory.
 
-Существует еще один специальный статус: std.nop(). Он может быть
-использован просто как вызов функции в конце обработчика или
-совместно с return.
+There is another special status: std.nop(). It can be used just like a
+function call at the end of the handler or together with the return.
 
-    return std.nop()
-	-- ... или ...
+	return std.nop()
+	-- ... or ...
 	std.nop()
-    -- далее конец функции или return
+	-- then the end of the function or return
 
-В этом случае, содержимое сцены останется таким же, как и в прошлый
-такт игры (даже строка реакции останется старой). Данный статус удобно
-использовать совместно с модулем theme, когда нужно изменить
-оформление игры на лету и перерисовать кадр с учетом новых параметров
-темы.
+In this case, the contents of the scene will remain the same as lastthe beat
+game (even string a reaction will be old). This status conveniently be used in
+conjunction with the module theme, when you need to change the design of the
+game on the fly and redraw the frame with the new parameters theme.
 
-### Таймер
+### Timer
 
-Для асинхронных событий, привязанных к реальному времени, в INSTEAD
-есть возможность использовать таймер. На самом деле, вам следует
-хорошо подумать, стоит ли в приключенческой игре использовать
-таймер. Обычно, игроком это воспринимается не слишком благосклонно. С
-другой стороны, таймер вполне можно использовать для управления
-музыкой или в оформительских целях.
+For asynchronous events bound to real time. it is possible to use the timer.
+In fact, you should have a good think about whether in the adventure game to
+use timer. Usually, it is not perceived too favorably. With the other hand,
+the timer can be used to control music or design purposes.
 
-Для использования таймера, вам следует подключить модуль "timer".
+To use the timer, you should connect the module "timer".
 
 	require "timer"
 
-Таймер программируется с помощью объекта 'timer'.
+The timer is programmed using the object "timer".
 
-- timer:set(мс) -- задать интервал таймера в миллисекундах;
-- timer:stop() -- остановить таймер.
+- timer:set(MS) -- set timer interval in milliseconds;
+- timer:stop() -- stop the timer.
 
-При срабатывании таймера, вызывается обработчик game.timer. Если
-game.timer возвращает false, сцена не перерисовывается. В
-противном случае, возвращаемое значение выводится как реакция.
+When the timer fires, calls a handler game.timer. If game.timer returns false,
+the scene is not redrawn. In otherwise, the return value is output as the
+response.
 
-Вы можете делать локальные для комнаты обработчики 'timer'. Если в
-комнате объявлен обработчик 'timer', он вызывается вместо
-'game.timer'. Если он возвращает false -- вызывается game.timer.
+You can do local for room handlers 'timer'. If the room declared the handler
+"timer", it is invoked instead'game.timer'. If it returns false -- the game is
+called.timer.
 
-Например:
+For example:
 
 ```
 game.timer = function(s)
@@ -4145,68 +3898,67 @@ game.timer = function(s)
 end
 
 function init()
-	timer:set(1000) -- раз в секунду
+	timer:set(1000) -- time in second
 end
 ```
 
 ```
-room  {
-    enter = function(s)
-        timer:set(1000);
-    end;
-    timer = function(s)
-        timer:stop();
-        walk 'комната2';
-    end;
-    nam = 'Проверка таймера';
-    dsc = [[Ждите.]];
+room {
+	enter = function(s)
+		timer:set(1000);
+	end;
+	timer = function(s)
+		timer:stop();
+		walk 'комната2';
+	end;
+	nam = 'timer Test';
+	dsc = [[Wait.]];
 }
 ```
 
-Состояние таймера попадает в файл сохранения, таким образом, вам не
-нужно заботиться о его восстановлении.
+As the timer gets to the save file, so you don't you need to take care to
+restore it.
 
-Вы можете вернуть из таймера специальный статус:
+You can return from timer special status:
 
 	return true, false
 
-В этом режиме перерисуется только область инвентаря. Это можно
-использовать для статусов вроде часов.
+In this mode only the area of inventory will be redrawn. It is possible use of
+statuses like hours.
 
-Кроме того, в INSTEAD существует возможность отслеживать интервалы
-времени в миллисекундах. Для этого используйте функцию
-instead.ticks(). Функция возвращает число миллисекунд, прошедшее с
-момента старта игры.
+In addition, INSTEAD there is the ability to track intervals the time in
+milliseconds. To do this, use the function instead.ticks(). The function
+returns the number of milliseconds elapsed since the start of the game.
 
+### Music player
 
-### Музыкальный плеер
-
-Вы можете написать для игры свой проигрыватель музыки, создав его на основе живого объекта, например:
+You can write your game music player, created on the basis of a living object,
+for example:
 
 ```
--- играет треки в случайном порядке
+-- playing tracks in random order
 require "snd"
+
 obj {
 	{
-	tracks = {"mus/astro2.mod",
-		"mus/aws_chas.xm",
-		"mus/dmageofd.xm",
-		"mus/doomsday.s3m"};
+		tracks = {"mus/astro2.mod",
+			"mus/aws_chas.xm",
+			"mus/dmageofd.xm",
+			"mus/doomsday.s3m"};
 	};
-	nam = 'плеер';
+	nam = 'player';
 	life = function(s)
 		if not snd.music_playing() then
-	        local n = s.tracks[rnd(#s.tracks)]
+			local n = s.tracks[rnd(#s.tracks)]
 			snd.music(n, 1);
 		end
 	end;
 }:lifeon();
 ```
 
-Ниже приводится пример более сложного плеера. Меняем трек только если
-он закончился или прошло более 2 минут и игрок перешел из комнаты в
-комнату. В каждом треке можно указать число проигрываний (0 -
-зацикленный трек):
+Below is an example of a more complex player. Change the track if it ended or
+it has been more than 2 minutes and the player goes from room to room. In each
+track you can specify the number of playbacks (0 - a looped track):
 
 ```
 require "timer"
@@ -4251,17 +4003,16 @@ function init()
 end
 ```
 
-### Живые объекты
+### Live objects
 
-Если вашему герою нужен друг, одним из способов может стать метод
-'life' этого персонажа, который всегда переносит объект в локацию
-игрока:
+If your hero needs a friend, one of the ways can be a method 'life' of this
+character, which always moves the object to the location player:
 
 ```
 obj {
-	nam = 'лошадь';
-	dsc = 'Рядом со мной стоит {лошадь}.';
-	act = [[Моя лошадка.]];
+	nam = 'horse';
+	dsc = 'I am standing Next to {the horse}.';
+	act = [[My horse.]];
 	life = function(s)
 		if player_moved() then
 			place(s);
@@ -4270,37 +4021,36 @@ obj {
 }
 
 function init()
-	lifeon 'лошадь'; -- сразу оживим лошадь
+	lifeon 'horse'; -- immediately revive the horse
 end
 ```
 
-### Вызов меню
+### Menu
 
-Вы можете вызвать из игры меню INSTEAD с помощью функции
-'istead.menu()'. Если в качестве параметра задать: 'save', 'load' или
-'quit', то будет вызван соответствующий подраздел меню.
+You can call from the game menu INSTEAD of using the function'istead.menu()'.
+If the option ask: 'save', 'load' or 'quit', it will be caused by the relevant
+section on the menu.
 
-### Динамическое создание объектов
+### Dynamic object creation
 
-Обычные объекты и комнаты нельзя создавать "на лету". Обычно вы
-создаете их в глобальном пространстве lua файла. Однако, существуют
-игры в которых количество объектов неизвестно заранее, или количество
-объектов велико и они добавляются по ходу игры.
+Ordinary objects and rooms cannot be created "on the fly". Usually you create
+them in the global namespace lua file. However, there are games in which the
+number of objects is unknown in advance, or the number objects large and they
+are added as the game progresses.
 
-В INSTEAD существует способ создания любого объекта на лету. Для этого
-вам понадобится написать _конструктор_ вашего объекта и
-воспользоваться функцией 'new'.
+In INSTEAD, there is a way to create any object on the fly. For this you will
+need to write constructor your object and to use the function 'new'.
 
-Конструктор должен быть декларирован.
+The constructor must be declared.
 
-Итак, вы можете использовать функции 'new' и 'delete' для создания
-и удаления динамических объектов.  Примеры:
+So, you can use the functions 'new' and 'delete' for creating and removal of
+dynamic objects. Examples:
 
 ```
 declare 'box' (function()
 	return obj {
-		dsc = [[Тут лежит {коробка}.]];
-		tak = [[Я взял коробку.]];
+		dsc = [[There is {box}.]];
+		tak = [[I picked up a box.]];
 	}
 end)
 
@@ -4312,281 +4062,265 @@ take(o);
 declare 'box' (function(dsc)
 	return obj {
 		dsc = dsc;
-		tak = [[Я взял коробку.]];
+		tak = [[I picked up a box.]];
 	}
 end)
-take(new(box, 'В углу стоит {коробка}'))
+take(new(box 'In the corner {box}'))
 ```
 
-'new' воспринимает первый аргумент -- как задекларированную
-функцию-конструктор, а все остальные параметры -- как аргументы
-конструктору. Результатом выполнения конструктора должен быть
-объект.
+'new' takes first argument is declared as a constructor function, and all
+other parameters-as arguments constructor. The result of the constructor should
+be object.
 
 ```
 function myconstructor()
 	local v = {}
-	v.disp = 'тестовый объект'
-	v.act = 'Тестовая реакция'
+	v.disp = 'test object'
+	v.act = 'Test response'
 	return obj(v)
 end
 ```
 
-> Внимание! При создании объекта конструктор должен опираться только
-> на информацию, полученную из параметров! Дело в том, что создание
-> объекта при загрузке происходит в самом начале, когда окружение мира
-> еще не загружено полностью! В качестве параметров поддерживаются
-> простые типы: строки, таблицы, числа, булевые
-> значения. Недекларированные функции и списки не будут работать.
+> Attention! When the object is created the constructor should only rely
+> on information derived from parameters! The fact that the creation of
+> object when loading occurs in the beginning, when the environment of the world
+> still not fully loaded! As parameters are supported
+> simple types: strings, tables, numbers, Booleans
+> values. Undeclared functions and lists will not work.
 
-Если вы хотите уничтожить объект по его имени или ссылке-переменной,
-воспользуйтесь:
+If you want to destroy the object by its name or the link-variable use:
 
-```
-	purge(o) -- удалить из всех списков
-	delete(o) -- освободить объект
-```
+	purge(o) -- remove from all lists
+	delete(o) - release the object
 
-При этом, delete это именно удаление объекта из INSTEAD, а не аналог
-remove() или purge(). Обычно, нет особого смысла делать delete. Только
-если предмет больше никогда не понадобится в игре, или вы собираетесь
-пересоздать объект с тем же именем, имеет смысл освободить его с
-помощью delete().
+In this case, delete this is the delete the object from INSTEAD, rather than
+analogue remove() or purge(). Usually, it makes little sense to do the delete.
+Only if the subject will never be needed in a game, or are you going to
+recreate an object with the same name, it makes sense to release it with using
+delete().
 
-Более практически-полезный пример:
+A more practically useful example:
 
 ```
--- декларируем конструктор
--- path
+-- declare the constructor path
 
 declare 'make_path' (function(v) return path(v) end)
 
--- динамический переход
--- создали новый объект
--- и положили его в ways()
+-- dynamic transition
+-- create a new object
+-- and put it in a ways()
 
-put( new (make_path, { 'переход', 'комната2'}, ways())
+put( new (make_path, { 'transition', 'комната2'}, ways())
 ```
 
-### Запрет на сохранение игры
+### The ban on saving a game
 
-Иногда может понадобиться запретить игроку делать сохранения в
-игре. Например, если речь идет о сценах, где важный элемент составляет
-случай, или для коротких игр, в которых проигрыш должен быть фатальным
-и требовать перезапуска игры.
+Sometimes you may want to forbid the player to do conservation in game. For
+example, if we are talking about scenes where an important element is case, or
+for short games where the loser needs to be fatal and require restarting the
+game.
 
-Для управлением функции сохранения используется атрибут 'instead.nosave'.
+To control the save function uses the attribute 'instead.nosave'.
 
-Например:
+For example:
 
-instead.nosave = true  -- запретить сохранения
+instead.nosave = true -- disable the preservation of
 
-Если вы хотите запрещать сохранения не везде, а в некоторых сценах,
-оформите 'instead.nosave' в виде функции, или же меняйте состояние
-атрибута на лету -- он попадает в файл сохранений.
+If you want to prevent save not everywhere, but in some scenes, make
+'instead.nosave' to the view function or change the condition attribute on the
+fly -- it gets to a file saves.
 
 ```
--- запретить
--- сохранения в комнатах, которые содержат атрибут nosave.
+-- prohibit
+-- save the rooms that contain the nosave attribute.
 instead.nosave = function()
 	return here().nosave
 end
 ```
 
-Следует отметить, что запрет на сохранения не означает запрета на
-автосохранение. Для управления автосохранением воспользуйтесь
-аналогичным атрибутом 'instead.noautosave'.
+It should be noted that the ban on conservation does not mean prohibition
+AutoSave. To control the AutoSave, use the same attribute
+'instead.noautosave'.
 
-> Вы можете явно сохранять игру с помощью вызова:
-> 'instead.autosave([номер слота])'; Если номер слота не задан, то
-> игра будет сохранена под слотом 'автосохранение'. Имейте в виду, что
-> сохраняется состояние __после__ завершение текущего такта игры.
+> You can explicitly save a game with a call to:
+> 'instead.autosave([slot number])'; If the slot number is not specified, then
+> the game will be saved under slot 'AutoSave'. Keep in mind that
+> saves the state of __after__ the completion of the current step of game.
 
-### Определение типа объекта
+### Definition of an object type
 
-В INSTEAD существует два способа определить тип объекта.
-Первый - с помощью функции std.is_obj(переменная, [тип]).
+In INSTEAD, there are two ways to determine the type of the object. First -
+using the function std.is_obj(variable, [type]).
 
-Например:
-```
-a = room {
-	nam = 'объект';
-};
-
-dprint(std.is_obj(a)) -- выведет true
-dprint(std.is_obj('объект')) -- выведет false
-dprint(std.is_obj(a, 'room')) -- выведет true
-dprint(std.is_obj(a.obj, 'list')) -- выведет true
-```
-
-std.is_obj() удобная для определения типа пременной или аргумента
-функции.
-
-Второй способ связан с использованием метода type:
+For example:
 
 ```
 a = room {
-	nam = 'объект';
+	nam = 'object';
 };
 
-dprint(a:type 'room') -- выведет true
+dprint(std.is_obj(a)) -- will print true
+dprint(std.is_obj('object')) -- will print false
+dprint(std.is_obj(a, 'room')) -- will print true
+dprint(std.is_obj(a.obj, 'list')) -- will print true
 ```
 
-## Темы для sdl-instead
+std.is_obj() is useful for determining the type of variable or argument
+function.
 
-Графический интерпретатор поддерживает механизм тем. _Тема_
-представляет из себя каталог, с файлом 'theme.ini' внутри.
-
-Тема, которая является минимально необходимой -- это тема
-'default'. Эта тема всегда загружается первой. Все остальные темы
-наследуются от нее и могут частично или полностью заменять ее
-параметры. Выбор темы осуществляется пользователем через меню
-настроек, однако конкретная игра может содержать собственную тему и
-таким образом влиять на свой внешний вид. В этом случае в каталоге с
-игрой должен находиться свой файл 'theme.ini'. Тем не менее,
-пользователь свободен отключить данный механизм, при этом
-интерпретатор будет предупреждать о нарушении творческого замысла
-автора игры.
-
-Синтаксис 'theme.ini' очень прост.
-
-	<параметр> = <значение>
-или
-
-	; комментарий
-
-Значения могут быть следующих типов: строка, цвет, число.
-
-Цвет задается в форме #rgb, где r g и b компоненты цвета в
-шестнадцатеричном виде. Кроме того некоторые основные цвета
-распознаются по своим именам. Например: yellowgreen, или
-violet.
-
-Параметры могут принимать значения:
-
-- scr.w = ширина игрового пространства в пикселях (число)
-- scr.h = высота игрового пространства в пикселях (число)
-- scr.col.bg = цвет фона
-- scr.gfx.scalable = [0|1|2] (0 - не масштабируемая тема, 1 -
-  масштабируемая, 2 - масштабируемая без сглаживания), начиная с
-  версии 2.2.0 доступны дополнительно [4|5|6]: 4 - полностью не
-  масштабируемая (с не масштабируемыми шрифтами), 5 - масштабируемая,
-  с не масштабируемыми шрифтами, 6 - масштабируемая без сглаживания, с
-  не масштабируемыми шрифтами
-- scr.gfx.bg = путь к картинке фонового изображения  (строка)
-- scr.gfx.cursor.x = x координата центра курсора (число)
-- scr.gfx.cursor.y = y координата центра курсора (число)
-- scr.gfx.cursor.normal = путь к картинке-курсору (строка)
-- scr.gfx.cursor.use = путь к картинке-курсору режима использования (строка)
-- scr.gfx.use = путь к картинке-индикатору режима использования (строка)
-- scr.gfx.pad = размер отступов к скролл-барам и краям меню (число)
-- scr.gfx.x, scr.gfx.y, scr.gfx.w, scr.gfx.h = координаты, ширина и
-  высота окна изображений. Области в которой располагается картинка
-  сцены. Интерпретация зависит от режима расположения (числа)
-- win.gfx.h - синоним scr.gfx.h (для совместимости)
-- scr.gfx.icon = пусть к файлу-иконке игры (ОС зависимая опция, может
-  работать некорректно в некоторых случаях)
-- scr.gfx.mode = режим расположения (строка fixed, embedded или
-  float). Задает режим изображения. embedded -- картинка является
-  частью содержимого главного окна, параметры scr.gfx.x, scr.gfx.y,
-  scr.gfx.w игнорируются. float -- картинка расположена по указанным
-  координатам (scr.gfx.x, scr.gfx.y) и масштабируется к размеру
-  scr.gfx.w x scr.gfx.h если превышает его. fixed -- картинка является
-  частью сцены как в режиме embedded, но не скроллируется вместе с
-  текстом а расположена непосредственно над ним. Доступны модификации
-  режима float с модификаторами 'left/right/center/middle/bottom/top',
-  указывающими как именно размещать картинку в области
-  scr.gfx. Например: float-top-left;
-- win.scroll.mode = [0|1|2|3] режим прокрутки области сцены. 0 - нет
-  автоматической прокрутки, 1 - прокрутка на изменение в тексте, 2
-  прокрутка на изменение, только если изменение не видно, 3 - всегда
-  в конец;
-- win.x, win.y, win.w, win.h = координаты, ширина и высота главного
-  окна. Области в которой располагается описание сцены (числа)
-- win.fnt.name = путь к файлу-шрифту (строка). Здесь и далее, шрифт
-  может содержать описание всех начертаний, например:
-  {sans,sans-b,sans-i,sans-bi}.ttf (заданы начертания для regular,
-  bold, italic и bold-italic). Вы можете опускать какие-то начертания,
-  и движок сам сгенерирует их на основе обычного начертания, например:
-  {sans,,sans-i}.ttf (заданы только regular и italic);
-- win.align = center/left/right/justify (выравнивание текста в окне
-  сцены);
-- win.fnt.size = размер шрифта главного окна (размер)
-- win.fnt.height = междустрочный интервал как число с плавающей
-  запятой (1.0 по умолчанию)
-- win.gfx.up, win.gfx.down = пути к файлам-изображениям скорллеров
-  вверх/вниз для главного окна (строка)
-- win.up.x, win.up.y, win.down.x, win.down.y = координаты скроллеров
-  (координата или -1)
-- win.col.fg = цвет текста главного окна (цвет)
-- win.col.link = цвет ссылок главного окна (цвет)
-- win.col.alink = цвет активных ссылок главного окна (цвет)
-- win.ways.mode = top/bottom (задать расположение списка переходов, по
-  умолчанию top -- сверху сцены)
-- inv.x, inv.y, inv.w, inv.h = координаты, высота и ширина области
-  инвентаря. (числа)
-- inv.mode = строка режима инвентаря (horizontal или vertical). В
-горизонтальном режиме инвентаря в одной строке могут быть несколько
-предметов. В вертикальном режиме, в каждой строке инвентаря содержится
-только один предмет. Существуют модификации
-(-left/right/center). Вы можете задать режим disabled если в вашей
-игре не нужен инвентарь;
-- inv.col.fg = цвет текста инвентаря (цвет)
-- inv.col.link = цвет ссылок инвентаря (цвет)
-- inv.col.alink = цвет активных ссылок инвентаря (цвет)
-- inv.fnt.name = путь к файлу-шрифту инвентаря (строка)
-- inv.fnt.size = размер шрифта инвентаря (размер)
-- inv.fnt.height = междустрочный интервал как число с плавающей
-  запятой (1.0 по умолчанию)
-- inv.gfx.up, inv.gfx.down = пути к файлам-изображениям скорллеров
-  вверх/вниз для инвентаря (строка)
-- inv.up.x, inv.up.y, inv.down.x, inv.down.y = координаты скроллеров
-  (координата или -1)
-- menu.col.bg = фон меню (цвет)
-- menu.col.fg = цвет текста меню (цвет)
-- menu.col.link = цвет ссылок меню (цвет)
-- menu.col.alink = цвет активных ссылок меню (цвет)
-- menu.col.alpha = прозрачность меню 0-255 (число)
-- menu.col.border = цвет бордюра меню (цвет)
-- menu.bw = толщина бордюра меню (число)
-- menu.fnt.name = путь к файлу-шрифту меню (строка)
-- menu.fnt.size = размер шрифта меню (размер)
-- menu.fnt.height = междустрочный интервал как число с плавающей
-  запятой (1.0 по умолчанию)
-- menu.gfx.button = путь к файлу изображению значка меню (строка)
-- menu.button.x, menu.button.y = координаты кнопки меню (числа)
-- snd.click = путь к звуковому файлу щелчка (строка)
-- include = имя темы (последний компонент в пути каталога) (строка)
-
-Кроме того, заголовок темы может включать в себя комментарии с
-тегами. На данный момент существует только один тег: $Name:,
-содержащий UTF-8 строку с именем темы. Например:
+The second method is to use the type method:
 
 ```
-; $Name:Новая тема$
-; модификация темы book
-include = book -- использовать тему Книга
-scr.gfx.h = 500 -- заменить в ней один параметр
+a = room {
+	nam = 'object';
+};
+
+dprint(a:type 'room') -- will print true
 ```
 
-> Интерпретатор выполняет поиск тем в каталоге themes. Unix версия
-> кроме этого каталога, просматривает также каталог ~/.instead/themes/
-> Windows версия -- Documents and Settings/USER/Local
+## Topics for sdl-instead
+
+Graphic interpreter supports the theme engine. Tema is a directory, the file
+'theme.ini' inside.
+
+The theme, which is the minimum required -- is the theme 'default'. This topic
+is always loaded first. All other topics inherit from it and can partially or
+completely replace it settings. Themes are chosen by the user via
+menu settings, but the game may contain its own subject and thus the influence
+on your appearance. In this case, the directory the game should be a file
+'theme.ini'. However, the user is free to disable this mechanism, while the
+interpreter will warn about violation of the creative concept the author of
+the game.
+
+The syntax of 'theme.ini' is very simple.
+
+	<parameter> = <value>
+or
+
+	; comment
+
+Values can be of the following types: string, color, number.
+
+The color is specified in the form #rgb where r g and b color components in
+hexadecimal. Additionally, some basic colorsrecognized by their names.
+Example: yellowgreen, or violet.
+
+Parameters can take values:
+
+- scr.w = width of the playing space, in pixels (number)
+- scr.h = height of the playing space, in pixels (number)
+- scr.col.bg = background color
+- scr.gfx.scalable = [0/1/2] (0 - don't scale topic 1 -
+  scalable 2 scalable without smoothing), since
+  version 2.2.0 available optional [4/5/6]: 4 - fully scalable (non-scalable 
+  fonts), 5 - scalable, with non-scalable fonts, 6 - scaled without smoothing, 
+  with not a scalable font
+- scr.gfx.bg = path to the background image (string)
+- scr.gfx.cursor.x = the x coordinate of the cursor center (number)
+- scr.gfx.cursor.y = the y coordinate of the cursor center (number)
+- scr.gfx.cursor.normal = path to the cursor picture file (string)
+- scr.gfx.cursor.use = path to the cursor picture file usage (string)
+- scr.gfx.use = path to the image-indicator of use (string)
+- scr.gfx.pad = padding for scrollbars and menu edges (number)
+- scr.gfx.x, scr.gfx.y, scr.gfx.w, scr.gfx.h = coordinates, width and the 
+  height of the window images. Region in which is located the picture scene. 
+  Interpretation depends on the mode of visit (number)
+- win.gfx.h - synonymous with scr.gfx.h (for compatibility)
+- scr.gfx.icon = path to the file-the icon of the game (OS dependent option,
+  may to work correctly in some cases)
+- scr.gfx.mode = mode location (line fixed, embedded or float). Sets the mode 
+  of the image. embedded-the picture is part of the content of the main 
+  window, the parameters of the scr.gfx.x, scr.gfx.y, scr.gfx.w are ignored. 
+  float-the picture located at the specified coordinates (scr.gfx.x, 
+  scr.gfx.y) and scales to the size scr.gfx.w x scr.gfx.if h exceeds it. 
+  fixed-the picture is part of a scene in embedded mode, but does not scroll 
+  along with text and located directly above it. Available modifications mode 
+  modifiers float 'left/right/center/middle/bottom/top', specifies how to 
+  place an image in the field scr.gfx. For example: float-top-left;
+- win.scroll.mode = [0/1/2/3] mode scrolling region of the scene. 0 - no
+  auto-scroll 1 - scroll to change the text, 2 scroll to change only if the 
+  change is not visible, 3 - always in the end;
+- win.x, win.y, win.w, win.h = coordinates, width and height of the main 
+  window. Region which is a description of the scene (number)
+- win.fnt.name = path to the font file (string). Hereinafter, font may contain 
+  a description of all styles, for example: {sans,sans-b and 
+  sans-i,sans-bi}.ttf (the font style set to regular, bold, italic and 
+  bold-italic). You can omit some of the faces, and the engine itself will 
+  generate them based on the normal style, for example: {sans, sans-i}.ttf (
+  set only regular and italic);- win.align = center/left/right/justify (text 
+  alignment in the window scene);
+- win.fnt.size = the font size of the main window (size)
+- win.fnt.height = line spacing as the floating the decimal point (1.0 is 
+  default)
+- win.gfx.up, win.gfx.down = paths to the image files skallerup up/down for 
+  the main window (string)
+- win.up.x, win.up.y, win.down.x, win.down.y = coordinates. (coordinate or -1)
+- win.col.fg = text color of the main window (color)
+- win.col.link = link color for the main window (color)
+- win.col.alink = active link color for the main window (color)- win.ways.mode 
+  = top/bottom (to specify the location of the jump list, default top -- on 
+  top of the scene)
+- inv.x, inv.y, inv.w, inv.h = coordinates, width and height of region 
+  inventory. (number)
+- inv.mode = string mode inventory (horizontal or vertical). In horizontal 
+  inventory mode in one line can be several items. In vertical mode, each line 
+  of the inventory contains only one thing. There are modifications to (-left/
+  right/center). You can set the mode to disabled if your the game doesn't 
+  need an inventory;
+- inv.col.fg = text color tools (color)- inv.col.link = link color tools
+  (color)
+- inv.col.alink = active link color for the inventory (the color)
+- inv.fnt.name = path to font file the inventory (row)
+- inv.fnt.size = the font size of the inventory (size)
+- inv.fnt.height = line spacing as the floating the decimal point
+  (1.0 is default)
+- inv.gfx.up, inv.gfx.down = paths to the image files skallerup up/down of 
+  equipment (line)
+- inv.up.x, inv.up.y, inv.down.x, inv.down.y = coordinates.
+  (coordinate or -1)
+- menu.col.bg = background (color)
+- menu.col.fg = text color menu (color)- menu.col.link = menu link color
+  (color)
+- menu.col.alink = active link color menu (color)
+- menu.col.alpha = the transparency of the menu 0-255 (number)
+- menu.col.border = border color menu (color)
+- menu.bw = thickness of the menu border (number)
+- menu.fnt.name = path to the font file menu (string)
+- menu.fnt.size = the font size menu (size)
+- menu.fnt.height = line spacing as the floating the decimal point
+  (1.0 is default)
+- menu.gfx.button = the file path to the icon image menu (string)
+- menu.button.x, menu.button.y = coordinates of the menu buttons (number)
+- snd.click = the path to the click sound file (string)
+- include = theme name (the last component in the directory path) (string)
+
+In addition, the subject header may include comments with tags. At the moment
+there is only one tag: $Name:, containing UTF-8 string with the theme name.
+For example:
+
+```
+; $Name:New theme$
+; modification themes book
+include = the book-to use the theme of the Book
+scr.gfx.h = 500 -- replace it one parameter
+```
+
+> The interpreter searches for themes in the "themes" directory. Unix version
+> in addition to this directory, scan also the directory ~/.instead/themes/
+> Windows version -- Documents and Settings/USER/Local
 > Settings/Application Data/instead/themes
 
-Кроме этого, новые версии INSTEAD поддерживают механизм множественных
-тем в одной игре. Давая возможность игроку через стандартное меню
-INSTEAD выбрать подходящее оформление, из предусмотренных автором
-игры. Для этого, все темы должны располагаться в игре в подкаталоге
-themes. В свою очередь, каждая тема -- это подкаталог в каталоге
-themes. В каждом таком подкаталоге должен находится свой файл
-theme.ini  и ресурсы темы (картинки, шрифты, звуки). При этом
-обязательно наличие темы-каталога themes/default - эта тема будет
-загружена по умолчанию. Формат файлов theme.ini мы только что
-рассмотрели. Однако, пути к файлам с ресурсами в theme.ini пишутся не
-относительно корневого каталога игры, а относительно текущего каталога
-темы. Это означает, что обычно они содержат только имя самого файла,
-без пути к каталогу. Например:
+In addition, the new version INSTEAD support multiple those in one game.
+Allowing the player via the standard menu INSTEAD choose a suitable
+appearance, provided by the author game. For this, all threads should be in
+the game in a subdirectory themes. In turn, each theme -- is a subdirectory in
+the directory themes. In each such subdirectory should be a file theme.ini and
+theme resources (images, fonts, sounds). In this casea themes catalog
+themes/default - this theme will loaded by default. The format of the theme
+files.ini we just considered. However, the file paths to resources in
+theme.ini file are not written relative to the root directory of the game, and
+relative to the current directory theme. This means that they usually contain
+only the name of the file without the directory path. For example:
 
 ```
 mygame/
@@ -4606,429 +4340,407 @@ scr.gfx.bg = bg.png
 ; ...
 ```
 
-При этом, все игровые темы наследуются от темы
-themes/default. Поддерживается механизм include. При этом, INSTEAD
-сначала пытается найти одноименную тему игры, и если такой темы не
-находится, будет загружена тема из стандартных тем INSTEAD (если она
-существует). Далее, в theme.ini можно изменять только те параметры,
-которые требуют изменения.
+In this case, all themes in the game are inherited from the
+themethemes/default. Supported mechanism include. At the same time, INSTEAD
+first tries to find the theme of the game, and if such topics are not is will
+downloaded the theme from the standard themes INSTEAD (if it exist). Further,
+in theme.ini you can only change those settings changes were required.
 
-## Модули
+## Modules
 
-Дополнительная функциональность часто реализована в INSTEAD в виде
-модулей. Для использования модуля необходимо
-написать:
+Additional functionality is often implemented INSTEAD in the form modules. To
+use a module, you must write:
 
-```
-require "имя модуля"
-```
+	require "module name"
 
-Или:
+Or:
 
-```
-loadmod "имя модуля"
-```
+	loadmod "module name"
 
-Если модуль поставляется вместе с игрой.
+If the module shipped with the game.
 
-Часть модулей входит в поставку INSTEAD, но есть и такие, которые вы
-можете скачать отдельно и положить в каталог с игрой. Вы можете
-заменить любой стандартный модуль своим, если положите его в каталог с
-игрой под тем-же именем файла, что и стандартный.
+Modules included INSTEAD, but there are those that you can download separately
+and put in the directory with the game. You can replace any standard module as
+its if you put it in the directory game under the same file name as the
+standard.
 
-Модуль, это фактически 'lua' файл с именем: 'имя_модуля.lua'.
+The module is actually 'lua' file name: 'module_name.lua'.
 
-Ниже перечислены основные стандартные модули, с указанием
-функциональности, которые они предоставляют.
+Following are the basic standard modules, indicating the functionality that
+they provide.
 
-- 'dbg' — модуль отладки;
-- 'click' — модуль перехвата кликов мыши по картинке сцены;
-- 'prefs' — модуль настроек (хранилище данных настроек);
-- 'snapshots' — модуль поддержки снапшотов (для откатов игровых ситуаций);
-- 'fmt' — модуль оформления вывода;
-- 'theme' — управление темой на лету;
-- 'noinv' - модуль работы с инвентарем;
-- 'key'' - модуль обработки событий срабатывания клавиш;
-- 'timer' - таймер;
-- 'sprite' — модуль для работы со спрайтами;
-- 'snd' — модуль работы со звуком;
-- 'nolife' – модуль блокировки методов life;
+- 'dbg' module debugging.
+- 'click' — module intercept mouse clicks on the image of the scene;
+- 'prefs' module settings (data warehouse settings);
+- 'snapshots' — a plugin to support snapshots (for kickbacks of game 
+  situations);
+- 'fmt' module of withdrawal;
+- 'theme' — the office theme on the fly;
+- 'noinv' module to operate the equipment;
+- 'key" - module event processing of the operation keys;
+- 'timer' - timer;
+- 'sprite' — module for working with sprites;
+- 'snd' module audio;
+- 'nolife' module locking methods life;
 
-Пример загрузки модулей:
+Example load the modules:
 
 ```
---$Name: Моя игра!$
+--$Name: My game!$
 require "fmt"
 require "click"
 ```
 
-> Некоторые дополнительные модули, которые не входят в стандартную
-> поставку, вы можете скачать из [репозитория
-> модулей](https://github.com/instead-hub/stead3-modules). Просто
-> скачайте нужный вам модуль и положите его в каталог с
-> игрой. Включайте такой модуль с помощью loadmod().
+> Some additional modules which are not included in the standard
+> supply, you can download it from [repository
+> modules](https://github.com/instead-hub/stead3-modules). Just
+> download the desired module and put it in the directory
+> the game. Enable this module by using the loadmod().
 
-### Модуль keys
+### Module keys
 
-Вы можете перехватывать события клавиатуры с помощью модуля "keys".
+You can intercept keyboard events using the module keys.
 
-Обычно, перехват клавиш имеет смысл использовать для организации текстового ввода.
+Usually, the interception of keys makes sense for text input.
 
-Для задания того, какие именно клавиши необходимо отслеживать,
-определите функцию keys:filter(press, key). Эта функция должна
-возвращать true в том случае, если вы хотите отследить данное
-событие. Например:
+To specify what keys you want to monitor define the function
+keys:filter(press, key). This function must to return true if you want to
+track this event. For example:
 
 ```
 require "keys"
 
 function keys:filter(press, key)
-	return press -- ловим нажатия любых клавиш
+	press return -- catch pressing any keys
 end
 ```
 
-В примере мы просто возвращаем параметр press, который равен true для
-события нажатия клавиши и false -- отжатия. В key передается
-символическое название клавиши (в виде строки).
+In the example we simply return the parameter, press which is true for
+keypress events and false -- squeezing. Key is passed the symbolic name of a
+key (as a string).
 
-Обычно, нам нужно выбрать какие именно клавиши мы хотим перехватывать:
+Usually, we need to choose what keys we want to intercept:
 
 ```
 require "keys"
 
 function keys:filter(press, key)
 	if key == '0' or key == '1' or key == 'z' then
-		return press -- ловим нажатия клавиш z, 1 и 0
+		press return -- catch keystrokes z, 1, and 0
 	end
 end
 ```
 
-Итак, keys:filter позволяет выбрать нужные события клавиатуры. А сами
-события приходят в игру в виде вызова обработчика 'onkey' для текущей
-комнаты или (если он не задан в комнате) для объекта 'game'.
+So, keys:filter allows one to choose keyboard events. And doevents come into
+play in the form of call handler 'onkey' for the current room or (if not
+specified in the room) object 'game'.
 
-Обработчик onkey действует как обычный обработчик STEAD3. Он может
-вернуть false и тогда считается, что клавиша не была обработана
-игрой. Либо он может выполнить какое-нибудь действие.
+The onkey handler acts as a normal handler STEAD3. It can to return false and
+then it is considered that the key was not processed game. Or it can perform
+some action.
 
-_Внимание:_ Если игра будет обрабатывать _все_ события клавиш, то даже
-те комбинации, которые используются самим INSTEAD будут обрабатываться
-игрой, а не интерпретатором. Например, если игра будет перехватывать
-клавишу "escape" (и не возвращать false из обработчика), то клавиша
-"escape" перестанет обрабатываться интерпретатором INSTEAD (escape --
-вызов меню).
+_Внимание:_ If the game will handle all key events, even those combinations
+that are used by the INTERPRETER are processed the game, not the interpreter.
+For example, if the game will catch press escape (and return false from the
+handler), pressing"escape" will no longer be handled by the interpreter
+INSTEAD (escape -- the call menu).
 
-Ниже приводится простой пример вывода на экран символических имен клавиш:
+Below is a simple example to display the symbolic names of keys:
 
 ```
 require "keys"
 
 function keys:filter(press, key)
-	return press -- ловим все нажатия
+	press return -- catch all the clicking
 end
 
 game.onkey = function(s, press, key)
 	dprint("pressed: ", key)
-	p("Нажата: ", key)
-	return false -- давать обрабатывать клавиши интерпретатору INSTEAD
+	p("Pressed: ", key)
+	return false -- allow to handle the keys to the interpreter INSTEAD
 end
 ```
 
-Этот пример можно использовать для того, чтобы выяснить символическое
-имя конкретной клавиши.
+This example can be used to determine the symbolic the name of the specific
+keys.
 
-При написании аркадных игр бывает полезным не получать событие от
-клавиатуры, а опрашивать ее (как правило, в таймере). Для этого вы
-можете использовать функцию keys:state(имя клавиши).
+When writing arcade games can be useful not get event fromthe keyboard and
+scan it (usually the timer). To do this, you can use the function
+keys:state(name key).
 
-Эта функция возвращает true для нажатой клавиши и false -- для
-отжатой, например:
+This function returns true for pressed and false -- for pressed, for example:
 
 ```
 require "timer"
 require "keys"
 
-game.timer = function(s) -- показываем состояние клавиши курсор вправо
+-- display the state of the key the cursor to the right
+game.timer = function(s)
 	dprint("state of 'right' key: ", keys:state 'right')
-	p("Состояние клавиши 'вправо':", keys:state 'right')
+	p("As keys 'right':", keys:state 'right')
 end
 
 timer:set(30)
 ```
 
-### Модуль click
+### Module click
 
-Вы можете отслеживать в своей игре клики по картинке сцены, а также по
-фону. Для этого, воспользуйтесь модулем "click".  Также, вы можете
-отслеживать состояние мыши с помощью функции:
+You can track in your game clicks on the picture of the scene, and background.
+To do this, use the module "click". Also, you can keep track of the mouse state
+by the function:
 
-```
-instead.mouse_pos([x, y])
-```
+	instead.mouse_pos([x, y])
 
-Которая возвращает координаты курсора. Если задать параметры (x, y),
-то можно переместить курсор в указанную позицию (все координаты
-рассчитываются относительно левого верхнего угла окна INSTEAD).
+Which returns the coordinates of the cursor. If you set the parameters (x, y),
+you can move the cursor to the specified position (all coordinates are
+calculated relative to the upper left corner of the window INSTEAD).
 
 ```
 require "click"
 function click:filter(press, btn, x, y, px, py)
 	dprint(press, btn, x, y, px, py)
-	return press and px -- ловим только нажатия на картинку
+	return press and px -- only catch clicking on the picture
 end
 room {
 	nam = 'main';
 	pic = "box:320x200,red";
 	onclick = function(s, press, btn, x, y, px, py)
-		pn("Вы нажали на картинку: ", px, ", ", py)
-		pn("Абсолютные координаты: ", x, ", ", y)
-		p("Кнопка: ", btn)
+		pn("You pressed the image: ", px, ", ", py)
+		pn("Absolute coordinates: ", x, ", ", y)
+ 		p("Button: ", btn)
 	end;
 }
 ```
 
-_Внимание!_ В INSTEAD по умолчанию включен фильтр кликов мыши, который
-гасит быстрые клики. Это сделано для исключения эффекта дребезга
-клавиш мыши. В некоторых случаях фильтр может оказаться
-нежелательным. В таком случае, используйте функцию
-instead.mouse\_filter(), которая может быть использована для
-определения текущего значения фильтра мыши и установки нового (в том
-числе - выключения), например:
+_Внимание!_ You can INSTEAD use the default filter mouse clicks, which
+extinguishes quick clicks. This is done to eliminate the effects of bounce
+buttons on a mouse. In some cases, the filter may be undesirable. In this
+case, use the function instead.mouse\_filter(), which can be used for
+determine the current filter values of the mouse and install new ( the number
+- off), for example:
 
 ```
 function start()
 	dprint("Mouse filter delay: ", instead.mouse_filter())
-	instead.mouse_filter(0) -- выключили фильтр
+	instead.mouse_filter(0) -- turn off the filter
 end
 ```
 
-Или так:
+Or this:
 
 ```
-old_filter = instead.mouse_filter(0) -- выключили
+old_filter = instead.mouse_filter(0) -- turn off
 ...
-instead.mouse_filter(old_filter) -- восстановили
+instead.mouse_filter(old_filter) -- restored
 ```
 
-### Модуль theme
+### The module theme
 
-Модуль theme позволяет изменять параметры темы на лету.
+The theme module allows you to change the theme settings on the fly.
 
-> Имейте в виду, что изменение параметров темы на лету для игр,
-> которые не содержат собственную тему -- источник потенциальных
-> проблем! Дело в том, что ваша игра в таком случае должна быть готова
-> работать с любыми разрешениями и параметрами тем, что крайне сложно
-> добиться. Поэтому, если вы собираетесь менять параметры темы из кода
-> -- создайте свою тему и включите ее в игру!
+> Keep in mind that changing the theme settings on the fly for games which
+> does not contain its own subject-a source of potential problems! The fact
+> that your game needs to be ready to work with any permissions and settings
+> the fact that it is extremely difficult to achieve. So if you are going to
+> change the theme settings from code -- create your own theme and turn it
+> into a game!
 
-При этом, сохранение изменений темы в файле сохранения не
-поддерживается. Автор игры должен сам восстановить параметры темы в
-функции start(), как это делается при работе с модулем спрайтов.
+In this case, the saving changes topic to save file not supported. The author
+of the game should restore the theme settings in function start () as you do
+when working with the module sprites.
 
-Для изменения параметров действующей темы, используются следующие
-функции:
+To change the settings of the current theme, use the following functions:
 
 ```
--- настройка окна вывода
+-- configuration of the output window
 theme.win.geom(x, y, w, h)
 theme.win.color(fg, link, alink)
-theme.win.font(name, size, height)
+theme.win.font(name, size, and height)
 theme.win.gfx.up(pic, x, y)
 theme.win.gfx.down(pic, x, y)
 
--- настройка инвентаря
+-- configuration inventory
 theme.inv.geom(x, y, w, h)
 theme.inv.color(fg, link, alink)
-theme.inv.font(name, size, height)
+theme.inv.font(name, size, and height)
 theme.inv.gfx.up(pic, x, y)
 theme.inv.gfx.down(pic, x, y)
 theme.inv.mode(mode)
 
--- настройка меню
+-- configuration menu
 theme.menu.bw(w)
 theme.menu.color(fg, link, alink)
-theme.menu.font(name, size, height)
+theme.menu.font(name, size, and height)
 theme.menu.gfx.button(pic, x, y)
 
--- настройка графики
+-- configuration graphics
 theme.gfx.cursor(norm, use, x, y)
 theme.gfx.mode(mode)
 theme.gfx.pad(pad)
 theme.gfx.bg(bg)
 
--- настройка звука
+-- sound settings
 theme.snd.click(name);
 ```
 
-Существует возможность чтения текущих параметров тем:
+There is the ability to read the current settings:
 
-	theme.get 'имя переменной темы';
+	theme.the 'get' variable name themes';
 
-Возвращаемое значение всегда в текстовой форме.
+The return value is always in text form.
 
-	theme.set ('имя переменной темы', значение);
+	theme.set ('variable name theme', value);
 
-Вы можете сбросить значение параметра темы на то, которое было
-установлено во встроенной теме игры:
+You can reset the value of the parameter of the topic, which was installed in
+the built-in theme of the game:
 
+	theme.reset 'variable name';
+	theme.win.reset();
 
-```
-theme.reset 'имя переменной';
-theme.win.reset();
-```
+There is a function, in order to know the current selected theme.
 
-Существует функция, для того, чтобы узнать текущую выбранную тему.
+	theme.name()
 
-```
-theme.name()
-```
-
-Функция возвращает строку -- имя каталога темы. Если игра использует
-собственный файл 'theme.ini', функция вернет точку. Это удобно, для
-определения того, включен ли механизм собственных тем игр:
+The function returns a string -- the directory name of the theme. If the game
+uses own the file 'theme.ini', the function will return a point. This is
+useful for determine whether the mechanism of its own for those games:
 
 ```
 if theme.name() ~= '.' then
-	error "Please, enable own theme mode in menu!"
+	error "Please enable own theme mode in menu!"
 end
 ```
 
-Если в игре используется механизм множественных тем, то имя темы
-начинается с точки, например:
+If the game uses the mechanism of multiple themes, then the theme name starts
+with a dot, for example:
 
 ```
 if theme.name() == '.default' then
-    -- наша встроенная тема default
+	-- our built-in default theme
 elseif theme.name() == 'default' then
-    -- стандартная тема default в INSTEAD
+	-- standard default theme.
 end
 ```
-Пример использования:
+
+Example usage:
 
 ```
 theme.gfx.bg "dramatic_bg.png";
-theme.win.geom (0,0, theme.get 'scr.w', theme.get 'scr.h');
+theme.win.geom (0,0, theme.get 'scr.w' theme.get 'scr.h');
 theme.inv.mode 'disabled'
 ```
 
-Получить размеры текущей темы:
+Get the dimensions of the current theme:
 
 ```
-theme.scr.w() -- ширина
-theme.scr.w() -- высота
+theme.scr.(w) -- width
+theme.scr.w () - height
 ```
 
-### Модуль sprite
+### The module sprite
 
-Модуль sprite позволяет работать с графическими изображениями.
-Для включения модуля напишите:
+The sprite module allows to work with graphic images.To enable the email
+module:
 
 	require "sprite"
 
-Спрайты не могут попасть в файл сохранения, поэтому восстановление
-состояния спрайтов -- задача автора игры. Обычно, для этого
-используются функции init() и/или start(). start() вызывается после
-загрузки игры, поэтому в этой функции вы можете использовать
-переменные игры.
+Sprites can't get into the save file so that recovery status of sprites-the
+task of the author of the game. Generally, this use the functions init() or
+start(). start() is called after download the game, so in this function you
+can use the variables of the game.
 
-На самом деле в модуле спрайт реализованы два модуля: спрайты и
-пиксели. Но так как они используются совместно, они размещены в одном
-модуле. Начнем со спрайтов:
+In fact, in module sprite implements two modules: sprites and pixels. But
+since they are used together, they are placed in one module. Let's start with
+the sprites:
 
-#### Спрайты
+#### Sprites
 
-Для создания спрайта используйте метод sprite.new, например:
-
-```
-	declare 'my_spr' (sprite.new 'gfx/bird.png')
-	local heart = sprite.new 'heart.png'
-	local blank = sprite.new (320, 200) -- пустой спрайт 320x200
-```
-
-У созданного спрайтового объекта существуют следующие методы:
-
-- :alpha(alpha) - создает новый спрайт с заданной прозрачностью alpha
-  (255 - не прозрачно). Это очень медленная функция;
-- :dup() - создает копию спрайта;
-- :scale(xs, ys, [smooth]) -- масштабирует спрайт, для отражений
-  используйте масштаб -1.0 (медленно! не для реального времени). Создает
-  новый спрайт.
-- :rotate(angle, [smooth]) -- поворот спрайта на заданный угол в
-  градусах (медленно! не для реального времени). Создает новый спрайт.
-- :size() -- Возвращает ширину и высоту спрайта в пикселях.
-- :draw(fx, fy, fw, fh, dst\_spr, x, y, [alpha]) -- Рисование
-  области src спрайта в область dst спрайта (задание alpha сильно
-  замедляет выполнение функции).
-- :draw(dst_spr, x, y, [alpha]) -- Рисование спрайта, укороченный
-  вариант; (задание alpha замедляет выполнение функции).
-- :copy(fx, fy, fw, fh, dst\_spr, x, y) -- Копирование
-  прямоугольника fw-на-fh из спрайта в спрайт
-  dst\_spr по координатам [x,y] (рисование - замещение). Существует
-  укороченный вариант (как :copy).
-- :compose(fx, fy, fw, fh, dst\_spr, x, y) -- Рисование - с
-  учетом прозрачности обоих спрайтов). Существует укороченный вариант
-  (как :compose).
-- :fill(x, y, w, h, [col]) -- Заполнение спрайта цветом.
-- :fill([col]) -- Заполнение спрайта цветом.
-- :pixel(x, y, col, [alpha]) -- Заполнение пикселя спрайта.
-- :pixel(x, y) -- Взятие пикселя спрайта (возвращает четыре
-  компонента цвета).
-- :colorkey(color) -- Задает в спрайте цвет, который выступает в
-  роли прозрачного фона. При этом, при последующем выполнении операции
-  :copy, из рассматриваемого спрайта будут скопированы только те
-  пиксели, цвет которых не совпадает с цветом прозрачного фона.
-
-В качестве "цвета" методы получают строки вида: 'green', 'red',
-'yellow' или '#333333', '#2d80ff'...
-
-Пример:
+To create a sprite, use the sprite.new, for example:
 
 ```
-	local spr = sprite.new(320, 200)
-	spr:fill 'blue'
-	local spr2 = sprite.new 'fish.png'
-	spr2:draw(spr, 0, 0)
+declare 'my_spr' (sprite.new 'gfx/bird.png')
+local heart = sprite.new 'heart.png'
+local blank = sprite.new (320, 200) -- an empty sprite 320x200
 ```
 
-Кроме того, существует возможность работы с шрифтами. Шрифт создается
-с помощью sprite.fnt(), например:
+Have created a sprite object has the following methods:
+
+- :alpha(alpha) - creates a new sprite with specified opacity alpha
+  (255 means transparent). This is a very slow function;
+- :dup() - creates a copy of the sprite;
+- :scale(xs, ys, [smooth]) -- scales sprite for reflections using scale -1.0 (
+  slow! not for real time). Creates a new sprite.
+- :rotate(angle [, smooth]) -- rotates the sprite through a specified angle in 
+  the degrees (slowly! not for real time). Creates a new sprite.
+- :size() -- Returns the width and height of the sprite in pixels.
+- :draw(fx, fy, fw, fh, dst\_spr, x, y, [alpha]) -- Drawing the field src of 
+  the sprite in the sprite area dst (job alpha much slows down the execution 
+  of the function).
+- :draw(dst_spr, x, y, [alpha]) -- drawing the sprite, cropped option; (job 
+  alpha slows down the execution of the function).
+- :copy(fx, fy, fw, fh, dst\_spr, x, y) -- Copying rectangle fw-fh from the 
+  sprite in the sprite dst\_spr by coordinates [x,y] (drawing substitution). 
+  There a shortened version (as copy).
+- :compose(fx, fy, fw, fh, dst\_spr, x, y) -- Drawing with given the 
+  transparency of the two sprites). There is a shortened version
+  (as in compose).
+- :fill(x, y, w, h, [col]) -- Fill sprite with a color.
+- :fill([col]) -- Fill sprite with a color.
+- :pixel(x, y, col, [alpha]) - Filling the pixel of a sprite.
+- :pixel(x, y) -- the capture of the pixel of the sprite (returns four color 
+  component).
+- :colorkey(color) -- Sets the sprite color, which acts the role of a 
+  transparent background. Thus, during subsequent operation :copy from this 
+  sprite will be copied only those pixels whose color doesn't match the 
+  background transparent.
+
+As the "color" methods receive string: 'green', 'red', 'yellow' or '#333333',
+'#2d80ff'...
+
+Example:
+
+```
+ local spr = sprite.new(320, 200)
+ spr:fill 'blue'
+ local spr2 = sprite.new 'fish.png'
+ spr2:draw(spr, 0, 0)
+```
+
+In addition, there is the possibility of working with fonts. The font is
+created with the help of sprite.fnt(), for example:
 
 	local font = sprite.fnt('sans.ttf', 32)
 
-У созданного объекта определены следующие методы:
+Have created object defines the following methods:
 
-- :height() -- высота шрифта в пикселях;
-- :text(text, col, [style]) -- создание спрайта из текста, col - здесь
-  и далее - цвет в текстовом формате (в формате '#rrggbb' или
-  'текстовое название цвета').
-- :size(text) -- вычисляет размер, который будет занимать текстовый
-  спрайт, без создания спрайта.
+- :height() -- height of the font in pixels;
+- :text(text, col, [style]) -- create a sprite from text col - here the color 
+  in the text format (in the format '#rrggbb' or 'text color').
+- :size(text) -- computes the size the text will occupy sprite, without 
+  creating a sprite.
 
-Вам также может пригодиться функция:
+You may also find it useful to:
 
 	sprite.font_scaled_size(size)
 
-Она возвращает размер шрифта с учетом масштабирование, которое
-выставил игрок в настройках INSTEAD. Если вы в своей игре хотите
-учитывать такую настройку, используйте эту функцию для определения
-размера шрифта.
+It returns font size taking into account the scaling that put the player in
+the settings INSTEAD. If you are in the game you want note this setting use
+this function to determine the size of the font.
 
-Пример:
-```
+Example:
+
 	local f = sprite.fnt('sans.ttf', 32)
 	local spr = sprite.new('box:320x200,black')
 	f:text("HELLO!", 'white'):draw(spr, 0, 0)
-```
 
-Теперь, рассмотрим варианты применения модуля sprite.
+Now, consider the application of the module sprite.
 
-#### Функция pic
+#### Function pic
 
-Функция pic может вернуть спрайт. Вы можете формировать каждый раз
-новый спрайт (что будет не очень эффективно), или можете возвращать
-заранее выделенный спрайт. Если в такой спрайт вносятся изменения, то
-эти изменения будут отражены в следующем кадре игры. Так, меняя спрайт
-по таймеру, можно делать анимацию:
+A function can return a pic for a sprite. You can shape every time new sprite
+(which is not very efficient), or may return preallocated sprite. If the
+sprite changes,  these changes will be reflected in the next frame of the
+game. So, changing the sprite the timer to do the animation:
 
 ```
 require "sprite"
@@ -5039,11 +4751,11 @@ function game:timer()
 	local col = { 'red', 'green', 'blue'}
 	col = col[rnd(3)]
 	spr:fill(col)
-	return false -- Важно! Так, сцена не будет изменена
+	return false -- Important! So, the scene will not be changed
 end
 
-game.pic = function() return spr end -- функция: так как
--- спрайт это особый объект (не строка)
+game.pic = function() return spr end -- function: as
+-- sprite is a special object (not a string)
 
 function start()
 	timer:set(30)
@@ -5051,34 +4763,34 @@ end
 
 room {
 	nam = 'main';
-	decor = [[ГИПНОЗ!]];
+	decor = [[HYPNOSIS]];
 }
 ```
 
-#### Отрисовка в фон
+#### Rendering in the background
 
-Функция sprite.scr() возвращает спрайт - фон. Вы можете выполнять
-отрисовку в этот спрайт в любом обработчике, например, в таймере. Тем
-самым добиваясь изменения фона на лету, без применения модуля theme.
-Например:
+Function sprite.scr() returns the sprite - background. You can perform render
+this sprite in any handler, for example, in the timer. The most seeking to
+change background on the fly, without the use of the module theme. For
+example:
 
 ```
---$Author: Andrew Lobanov
+--$Author: Andrew Lobanov 
 
 require 'sprite'
 require 'theme'
 require 'timer'
 
 declare {
-   x = 0,
-   y = 0,
-   dx = 10,
-   dy = 10,
+	x = 0,
+	y = 0,
+	dx = 10,
+	dy = 10,
 }
 
 const {
-   w = theme.scr.w(),
-   h = theme.scr.h(),
+	w = theme.scr.w(),
+	h = theme.scr.h(),
 }
 
 instead.fading = false
@@ -5086,63 +4798,61 @@ instead.fading = false
 local bg, red, green
 
 function init()
-   theme.set('scr.col.bg', '#000000')
-   theme.set('win.col.fg', '#aaaaaa')
-   theme.set('win.col.link', '#ffaa00')
-   theme.set('win.col.alink', '#ffffff')
+	theme.set('scr.col.bg', '#000000')
+	theme.set('win.col.fg', '#aaaaaa')
+	theme.set('win.col.link', '#ffaa00')
+	theme.set('win.col.alink', '#ffffff')	
 
-   bg = sprite.new(w, h)
-   bg:fill('black')
-   red = sprite.new(w, h)
-   red:fill('#ff0000')
-   red = red:alpha(128)
-   green = sprite.new(w, h)
-   green:fill('#00ff00')
-   green = green:alpha(64)
-   bg:copy(sprite.scr())
-   timer:set(25)
+	bg = sprite.new(w, h)
+	bg:fill('black')
+	red = sprite.new(w, h)
+	red:fill('#ff0000')
+	red = red:alpha(128)
+	green = sprite.new(w, h)
+	green:fill('#00ff00')
+	green = green:alpha(64)
+	bg:copy(sprite.scr())
+	timer:set(25)
 end
 
 function game:timer()
-   bg:copy(sprite.scr())
-   red:draw(sprite.scr(), x, 0, 128)
-   green:draw(sprite.scr(), 0, y, 64)
-   x = x + dx
-   if x >= w or x == 0 then
-      dx = -dx
-   end
-   y = y + dy
-   if y >= h or y == 0 then
-      dy = -dy
-   end
-   return false -- Важно!
+	bg:copy(sprite.scr())
+	red:draw(sprite.scr(), x, 0, 128)
+	green:draw(sprite.scr(), 0, y, 64)
+	x = x + dx
+	if x >= w or x == 0 then
+		dx = -dx
+	end
+	y = y + dy
+	if y >= h or y == 0 then
+		dy = -dy
+	end
+	return false -- Important!
 end
 
 room {
-   nam = 'main',
-   disp = 'Test. Test? Test!',
-   decor = 'Lorem ipsum';
+	nam = 'main',
+	disp = 'Test. Test? Test!',
+	decor = 'Lorem ipsum';
 }
-
 ```
 
-_Внимание!_ Интерпретатор INSTEAD в режиме использования предмета на
-предмет переводит себя в режим "паузы". Это значит, что в тот момент
-когда выбран предмет из инвентаря (курсор изменил вид на шестеренки)
-события таймера перестают обрабатываться до тех пор, пока игрок не
-применит предмет. Это сделано для того, чтобы не разрывать такт
-игры. Если для вашего творческого замысла такое поведение является
-помехой (например, вам не нравится тот факт, что анимация фона
-замирает), вы можете изменить его с помощью вызова:
+_Caution!_ Interpreter INSTEAD to use item on the object transforms itself
+into the mode "pause". This means that at the moment when the selected item
+from inventory (the cursor change gear) timer events will not be processed
+until the until the player apply the subject. This is done in order to not
+break the beat game. If your creative idea this is an obstacle (for example,
+you don't like the fact that the animation background freezes), you can change
+it by calling:
 
-    instead.wait_use(false)
+	instead.wait_use(false)
 
-Как обычно, поместите вызов в init() или start() функцию.
+As usual, place the call in the init() or start() function.
 
-#### Подстановки
+#### Lookup
 
-Вы можете создать свой системный объект - подстановку, и формировать
-графику в выводе игры с помощью img, например:
+You can create your system object - substitution, and forming graphics output
+of the game, with img, for example:
 
 ```
 require "sprite"
@@ -5152,7 +4862,7 @@ require "fmt"
 obj {
 	nam = '$spr';
 	{
-		["квадрат"] = sprite.new 'box:32x32,red';
+		["square"] = sprite.new 'box:32x32,red';
 	};
 	act = function(s, w)
 		return fmt.img(s[w])
@@ -5161,34 +4871,33 @@ obj {
 
 room {
 	nam = 'main';
-	decor = [[Сейчас мы вставим спрайт: {$spr|квадрат}.]];
+	decor = [[Now we insert the sprite: {$spr|square}.]];
 }
-
 ```
 
-#### direct режим
+#### direct mode
 
-В INSTEAD существует режим прямого доступа к графике. В теме он
-задается с помощью параметра:
+In INSTEAD, there is direct access to the chart. In the subject he is
+specified using the parameter:
 
 	scr.gfx.mode = direct
 
-Этот параметр можно заранее выставить в theme.ini, или воспользоваться
-модулем theme. Или (что лучше), специальной функцией:
+This option can be pre-set theme.ini, or use module theme. Or (better) special
+function:
 
 	sprite.direct(true)
 
-Если режим удалось включить -- функция вернет true. sprite.direct()
-без параметра -- возвращает текущий режим (true -- если direct
-включен.)
+If the regime managed to include -- the function will return true.
+sprite.direct() without the parameter -- returns the current mode (true-if
+direct included.)
 
-В этом режиме игра имеет прямой доступ ко всему окну и может выполнять
-отрисовку в процедуре таймера. Экран представлен специальным спрайтом:
+In this mode, the game has direct access to the entire window and can perform
+the rendering in the procedure of the timer. The screen presents a special
+sprite:
 
 	sprite.scr()
 
-Например:
-
+For example:
 
 ```
 require "sprite"
@@ -5209,11 +4918,11 @@ local colors = {
 	"gray",
 	"#002233",
 }
+
 function game:timer()
 	local scr = sprite.scr()
 	scr:fill 'black'
-	for i = 1, #stars do
-		local s = stars[i]
+	for i = 1, #stars do local s = stars[i]
 		scr:pixel(s.x, s.y, colors[s.dy])
 		s.y = s.y + s.dy
 		if s.y >= h then
@@ -5226,18 +4935,18 @@ end
 
 function start()
 	w, h = theme.scr.w(), theme.scr.h()
-
+	
 	w = std.tonum(w)
 	h = std.tonum(h)
-
+	
 	for i = 1, 100 do
 		table.insert(stars, { x = rnd(w) - 1, y = rnd(h) - 1, dy = rnd(8) })
-	end
+		end
 	timer:set(30)
 end
 ```
 
-Еще один пример:
+Another example:
 
 ```
 require "timer"
@@ -5254,154 +4963,149 @@ declare {
 }
 
 function init()
-    fnt = spr.fnt(theme.get 'win.fnt.name', 32);
-    ball = fnt:text("INSTEAD 3.0", 'white', 1);
-    ballw, ballh = ball:size();
-    bg = spr.new 'box:640x480,black';
-    line = spr.new 'box:320x8,lightblue';
-    spr.direct(true)
+	fnt = spr.fnt(theme.get 'win.fnt.name', 32);
+	ball = fnt:text("INSTEAD of 3.0", 'white', 1);
+	ballw, ballh = ball:size();
+	bg = spr.new 'box:640x480,black';
+	line = spr.new 'box:320x8,lightblue';
+	spr.direct(true)
 end
 
 function start()
-    timer:set(20)
-    G = 9.81
-    by = -ballh
-    bv = 0
-    bx = 320
-    t1 = instead.ticks()
+	timer:set(20)
+	G = 9.81
+	by = -ballh
+	bv = 0
+	bx = 320
+	t1 = instead.ticks()
 end
 
 function phys()
-    local t = timer:get() / 1000;
-    bv = bv + G * t;
-    by = by + bv * t;
-    if by > 400 then
-        bv = - bv
-    end
+	local t = timer:get() / 1000;
+	bv = bv + G * t;
+	by = by + bv * t;
+	if by > 400 then
+		bv = - bv
+	end
 end
 
 function game:timer(s)
-    local i
-    for i = 1, 10 do
-        phys()
-    end
-    if instead.ticks() - t1 >= 20 then
-        bg:copy(spr.scr(), 0, 0);
-        ball:draw(spr.scr(), (640 - ballw) / 2, by - ballh/2);
-        line:draw(spr.scr(), 320/2, 400 + ballh / 2);
-        t1 = instead.ticks()
-    end
+	local i
+	for i = 1, 10 do
+		phys()
+	end
+	if instead.ticks() - t1 >= 20 then
+		bg:copy(spr.scr(), 0, 0);
+		ball:draw(spr.scr(), (640 - ballw) / 2, by - ballh/2);
+		line:draw(spr.scr(), 320/2, 400 + ballh / 2);
+		t1 = instead.ticks()
+	end
 end
-
 ```
 
-_Внимание!_ direct режим может быть использован для создания простых
-аркадных игр. В некоторых случаях, вы можете захотеть убрать указатель
-мыши. Например, когда игра управляется только с клавиатуры.
+_Caution!_ direct mode can be used to create a simple arcade games. In some
+cases, you may want to remove the pointer mouse. For example, when the game is
+controlled only with keyboard.
 
-Для этого воспользуйтесь функцией instead.mouse\_show()
+To do this, use function instead.mouse\_show()
 
-```
-instead.mouse_show(false)
-```
+	instead.mouse_show(false)
 
-При этом в меню интерпретатора INSTEAD указатель мыши все еще будет
-виден.
+On the menu of the interpreter INSTEAD of the mouse pointer will still
+visible.
 
-#### Использование sprite совместно с модулем theme
+#### Using the sprite together with the module theme
 
-В функции start и в обработчиках вы можете менять параметры темы, в
-том числе, используя в качестве графики спрайты, например:
+In start and in the handler you can change the theme settings in with as
+graphics the sprites, for example:
 
 ```
 require "sprite"
 require "theme"
 
-function start() -- заменим фон на спрайт
+function start() -- replace the background sprite
 	local spr = sprite.new(800, 600)
 	spr:fill 'blue'
 	spr:fill (100, 100, 32, 60, 'red')
 	theme.set('scr.gfx.bg', spr)
 end
-
-```
-Используя эту технику, вы можете наносить на фоновое изображение
-статусы, элементы управления или просто менять подложку.
-
-
-#### Пиксели
-
-Модуль спрайтов поддерживает также работу с пиксельной графикой. Вы
-можете создавать объекты -- наборы пикселей, модифицировать их и
-рисовать в спрайты.
-
-Создание пикселей осуществляется функцией pixels.new().
-
-Примеры:
-
-	local p1 = pixels.new(320, 200) -- создали пиксели 320x200
-	local p2 = pixels.new 'gfx/apple.png' -- создали пиксели из
-	-- изображения
-	local p3 = pixels.new(320, 200, 2) -- создали пиксели 320x200,
-	-- которые при отрисовке их в спрайт -- будут смасштабированы до
-	-- 640x400
-
-Объект пиксели имеет следующие методы:
-> при описании использованы обозначения: r, g, b, a --
-> компоненты пикселя: красный, зеленый, синий, и прозрачность. Все
-> значения от 0 до 255). x, y - координаты левого верхнего угла, w, h
-> -- ширина и высота области.
-
-- :size() -- вернуть размер и масштаб (как 3 значения);
-- :clear(r, g, b, [a]) -- быстрая очистка пикселей;
-- :fill(r, g, b, [a]) -- заливка (с учетом прозрачности);
-- :fill(x, y, w, h, r, g, b, [a]) -- заливка области (с учетом прозрачности);
-- :val(x, y, r, g, b, a) - задать значение пикселя
-- :val(x, y) -- получить компоненты r, g, b, a
-- :pixel(x, y, r, g, b, a) -- нарисовать пиксель (с учетом
-        прозрачности существующего пикселя);
-- :line(x1, y1, x2, y2, r, g, b, a) -- линия;
-- :lineAA(x1, y1, x2, y2, r, g, b, a) -- линия с AA;
-- :circle(x, y, radius, r, g, b, a) -- окружность;
-- :circleAA(x, y, radius, r, g, b, a) -- окружность с AA;
-- :poly({x1, y1, x2, y2, ...}, r, g, b, a) -- полигон;
-- :polyAA({x1, y1, x2, y2, ...}, r, g, b, a) -- полигон с AA;
-- :blend(x1, y1, w1, h1, pixels2, x, y) -- рисовать область пикселей в
-  другой объект пиксели, полная форма;
-- :blend(pixels2, x, y) -- короткая форма;
-- :fill\_circle(x, y, radius, r, g, b, a) -- залитый круг;
-- :fill\_triangle(x1, y1, x2, y2, x3, y3, r, g, b, a) -- залитый
-  треугольник;
-- :fill\_poly({x1, y1, x2, y2, ...}, r, g, b, a) -- залитый полигон;
-- :copy(...) -- как blend, но не рисовать, а копировать (быстро);
-- :scale(xscale, yscale, [smooth]) -- масштабирование в новый объект
-  pixels;
-- :rotate(angle, [smooth]) -- поворот в новый объект pixels;
-- :draw_spr(...) -- как draw, но в спрайт, а не пиксели;
-- :copy_spr(...) -- как copy, но в спрайт, а не пиксели;
-- :compose_spr(...) -- то же самое, но в режиме compose;
-- :dup() -- создать копию пикселей;
-- :sprite() -- создать спрайт из пикселей.
-
-Также, есть возможность работы со шрифтами:
-
-- pixels.fnt(fnt(шрифт.ttf, размер) -- создать шрифт;
-
-При этом, у созданного объекта "шрифт" существует метод text:
-
-- :text(текст, цвет(как в спрайтах), стиль) -- создать пиксели с текстом;
-
-Например:
-
-```
-	local fnt = pixels.fnt("sans.ttf", 64)
-	local t = fnt:text("HELLO, INSTEAD!", 'black')
-	pxl:copy_spr(sprite.scr())
-	pxl2:draw_spr(sprite.scr(), 100, 200);
-	t:draw_spr(sprite.scr(), 200, 400)
 ```
 
-Еще один пример (автор примера, Андрей Лобанов):
+Using this technique, you can apply to the background image statuses,
+controls, or just change the substrate.
+
+#### Pixels
+
+The sprite module also supports work with pixel graphics. You can create
+objects -- sets of pixels, modify them and to draw the sprites.
+
+Creating pixels is a function of pixels.new().
+
+Examples:
+
+```
+local p1 = pixels.new(320, 200) -- has created a 320x200 pixels
+local p2 = pixels.new 'gfx/apple.png' -- created pixels from image
+local p3 = pixels.new(320, 200, 2) -- created a 320x200 pixels,
+-- that when you render them to a sprite -- will be scaled to
+-- 640x400
+```
+
+The pixels object has the following methods:
+
+> in the description of used symbols: r, g, b, a --
+> components of a pixel: red, green, blue, and transparency. All
+> values from 0 to 255). x, y coordinates of the upper left corner, w, h
+> -- width and height of the area.
+
+- :size() -- return the size and scale (3 values);
+- :clear(r, g, b, [a]) -- quick cleanup of pixels;
+- :fill(r, g, b, [a]) -- fill (with transparency);
+- :fill(x, y, w, h, r, g, b, [a]) -- fill area (with transparency);
+- :val(x, y, r, g, b, a) - set pixel value
+- :val(x, y) -- to obtain the components r, g, b, a
+- :pixel(x, y, r, g, b, a) -- draw a pixel (taking into account transparency 
+  of the existing pixel);
+- :line(x1, y1, x2, y2, r, g, b, a)--;
+- :lineAA(x1, y1, x2, y2, r, g, b, a) -- line AA;
+- :circle(x, y, radius, r, g, b, a) -- circle;
+- :circleAA(x, y, radius, r, g, b, a) is the circle with AA;
+- :poly({x1, y1, x2, y2, ...}, r, g, b, a) - polygon;
+- :polyAA({x1, y1, x2, y2, ...}, r, g, b, a) - polygon with AA;
+- :blend(x1, y1, w1, h1, pixels2, x, y) -- draw a pixel area in another object 
+  pixels, full form;
+- :blend(pixels2, x, y) -- short form;
+- :fill\_circle(x, y, radius, r, g, b, a) -- filled circle;
+- :fill\_triangle(x1, y1, x2, y2, x3, y3, r, g, b, a) -- filled triangle;
+- :fill\_poly({x1, y1, x2, y2, ...}, r, g, b, a) -- filled polygon;
+- :copy (...) - as a blend, but not to draw, and to copy (quickly);
+- :scale(xscale, yscale, [smooth]) -- scale the new object pixels;
+- :rotate(angle [, smooth]) -- the turn of the new object pixels;
+- :draw_spr(...) -- like draw, but in the sprite, not the pixels;
+- :copy_spr(...) -- like copy, but in the sprite, not the pixels;
+- :compose_spr(...) -- same thing, but in compose mode;
+- :dup() -- duplicate pixels;
+- :sprite() -- create a sprite with pixels.
+
+Also, it is possible to work with fonts:
+
+- pixels.fnt(fnt(font.ttf, size) -- create a font;
+
+In this case, the created object is "font" there is the text method:
+
+- :text(text, color(as in sprites), style) -- create pixel text;
+
+For example:
+
+```
+local fnt = pixels.fnt("sans.ttf", 64)
+local t = fnt:text("HELLO, INSTEAD!", 'black')
+pxl:copy_spr(sprite.scr())
+pxl2:draw_spr(sprite.scr(), 100, 200);
+t:draw_spr(sprite.scr(), 200, 400)
+```
+
+Another example (by example, Andrei Lobanov):
 
 ```
 require "sprite"
@@ -5413,84 +5117,80 @@ declare 'pxl' (false)
 declare 't' (0)
 
 function game:timer()
-   local x, y, i
-   t = t + 1
-   for x = 0, 199 do
-       for y = 0, 149 do
-           i = (x * x + y * y + t)
-               pxl:val(x, y, 0, i, i / 2)
-       end
-   end
-   pxl:copy_spr(sprite.scr())
+	local x, y, i
+	t = t + 1
+	for x = 0, 199 do
+		for y = 0 to 149 do
+			i = (x * x + y * y + t)
+			pxl:val(x, y, 0, i, i / 2)
+		end
+	end
+	pxl:copy_spr(sprite.scr())
 end
 
 function start(load)
-   pxl = pixels.new(200, 150, 4)
-   timer:set(20)
+	pxl = pixels.new(200, 150, 4)
+	timer:set(20)
 end
-
 ```
 
-При процедурной генерации с помощью pixels удобно использовать шумы
-Перлина. В INSTEAD существуют функции:
+When the procedural generation using pixels it is conveniently to use Perlin noise. In
+INSTEAD there are functions:
 
-- instead.noise1(x) - 1D шум Перлина;
-- instead.noise2(x, y) - 2D шум Перлина;
-- instead.noise3(x, y, z) - 3D шум Перлина;
-- instead.noise4(x, y, z, w) - 4D шум Перлина;
+- instead.noise1(x) - 1D Perlin noise;
+- instead.noise2(x, y) - 2D Perlin noise;
+- instead.noise3(x, y, z) is a 3D Perlin noise;
+- instead.noise4(x, y, z, w) - 4D Perlin noise;
 
-Все эти функции возвращают значение в диапазоне [-1; 1] а на вход
-получают координаты с плавающей точкой.
+All these functions return a value in the range [-1; 1] and at the entrance
+get the coordinates of the floating point.
 
-### Модуль snd
+### Module snd
 
-Мы уже рассматривали базовые возможности по работе со звуком. Модуль
-snd имеет еще некоторые функции по работе со звуком.
+We have already discussed the basic features to work with sound. Module
+snd has some functions for working with sound.
 
-Вы можете подгрузить звук и держать его в памяти до тех пор, пока он
-вам нужен.
+You can load the sound and keep it in memory as long as he you need.
 
-```
-require 'snd'
-local wav = snd.new 'bark.ogg'
-```
-Кроме подгрузки файлов, вы можете загрузить звук из массива lua:
+	require 'snd'
+	local wav = snd.new 'bark.ogg'
+
+Besides uploading files, you can load the sound from an array of lua:
 
 ```
 local wav = {}
 for i = 1, 10000 do
-	table.insert(wav, rnd() * 2 - 1) -- случайные значения от -1 до 1
+	table.insert(wav, rnd() * 2 - 1) -- random values from -1 to 1
 end
 
 function start()
-	local p = snd.new(22050, 1, wave) -- частота, число каналов и звук
+	-- frequency, number of channels and sound
+	local p = snd.new(22050, 1, wave)
 	p:play()
 end
 ```
-Звук задается в нормированном формате: [-1 .. 1]
 
-Звук можно проиграть методом :play([chan], [loop]), где chan -- канал
-(0 - 7), loop - циклы (0 - бесконечность).
+The sound is specified in normalized format: [-1 .. 1]
 
-Остальные функции модуля:
+The sound you can play method :play([chan], [loop]), where chan-channel
+(0 - 7), loop - cycles (0 - infinity).
 
-- snd.stop([channel]) – остановить проигрывание выбранного канала или
-  всех каналов. Вторым параметром можно задавать время затухания звука
-  в мс. при его приглушении;
+Other functions of the module:
 
-- snd.playing([channel]) – узнать проигрывается ли звук на любом
-  канале или на выбранном канале; если выбран конкретный канал,
-  функция вернет хандл проигрываемого в данный момент звука или
-  nil. Внимание! Звук клика не учитывается и обычно занимает 0 канал;
+- snd.stop([channel]) – to stop playback of the selected channel or  all
+  channels. The second parameter you can set the decay time of the sound  in 
+  MS. when it is muted;
+- snd.playing([channel]) – to know whether the sound is playing on any channel 
+  or on the selected channel; if the selected specific channel the function 
+  will return handle the currently played sound or nil. Attention! The sound 
+  of a click is not taken into account and usually takes 0 channel;
+- snd.pan(chan, l, r) – set panning. Channel, volume left[0-255], the volume 
+  of the right[0-255] channels. You must call before playing the sound to have 
+  effect;
+- snd.vol(vol) – sets the volume of sound (music and effects) from 0 to 127.
 
-- snd.pan(chan, l, r) – задание паннинга. Канал, громкость
-  левого[0-255], громкость правого[0-255] каналов. Необходимо вызывать
-  перед проигрыванием звука, чтобы имело эффект;
-
-- snd.vol(vol) – задание громкости звука (и музыки и эффектов) от 0 до 127.
-
-Еще одна интересная возможность -- генерирование звука на лету (пока
-находится в экспериментальном статусе):
+Another interesting possibility -- sound generation on the fly (yet is in
+experimental status):
 
 ```
 require "snd"
@@ -5505,118 +5205,111 @@ function start()
 end
 ```
 
-### Модуль prefs
+### The module prefs
 
-Этот модуль позволяет сохранять настройки игры.  Другими словами,
-сохраненная информация не зависит от состояния игры. Такой механизм
-можно использовать, например, для реализации системы достижений или
-счетчика количества прохождений игры.
+This module allows you to save game settings. In other words, the saved
+information does not depend on the state of the game. Such a mechanism can be
+used, for example, to implement an achievements system or the count of the
+number of passages of play.
 
-По своей сути prefs это объект, все переменные которого будут
-сохранены.
+Essentially prefs is an object, all the variables which will be saved.
 
-Cохранить настройки:
+Save settings:
 
-```
-prefs:store()
-```
+	prefs:store()
 
-Настройки сохраняются автоматически при сохранении игры, но вы можете
-контролировать этот процесс, вызывая prefs:store().
+The settings are automatically saved when you save the game, but you can to
+control this process, causing the prefs:store().
 
-Уничтожить файл с настройками:
-```
-prefs:purge()
-```
-Загрузка настроек выполняется автоматически при запуске игры
-(перед вызовом функции start()), но вы можете инициировать загрузку и
-вручную:
+Destroy configuration file:
 
-```
-prefs:load()
-```
+	prefs:purge()
 
-Пример использования:
+To download settings automatically when you start the game (before you call
+the start () function), but you can initiate the download and manually:
+
+	prefs:load()
+
+Example usage:
 
 ```
--- $Name: Тест модуля prefs$
+-- $Name: Test module prefs$
 -- $Version: 0.1$
--- $Author: instead$
+-- $Author: instead of$
 
--- подключаем модуль click
+-- plug-in click
 require "click"
--- подключаем модуль prefs
+-- the plug-in prefs
 require "prefs"
 
--- устанавливаем начальное значение счетчика
+-- set starting value of the counter
 prefs.counter = 0;
 
--- определяем функцию отслеживания количества "кликов"
+-- define a function for tracking the number of "clicks"
 game.onclick = function(s)
-    -- увеличиваем счетчик
-    prefs.counter = prefs.counter + 1;
-    -- сохраняем счетчик
-    prefs:store();
-    -- выводим сообщение
-    p("На данный момент сделано ", prefs.counter ," кликов");
+ 	-- increment counter
+	prefs.counter = prefs.counter + 1;
+	-- persistent counter
+	prefs:store();
+	-- print message
+	p("currently done ", prefs.counter" clicks");
 end;
 
--- добавляем изображение, по которому можно производить клики
+-- added image by which to produce clicks
 game.pic = 'box:320x200,black';
 
 room {
-    nam = 'main',
-    title = "Комната кликов",
-    -- делаем фиксацию статичной части описания
-    -- добавляем описание для сцены
-    decor = [[ Этот тест был написан специально
-            для проверки работы модуля <<prefs>>.
-    ]];
+	nam = 'main',
+	title = "house of clicks",
+	-- make the static parts of the description
+	-- added description for the scene
+	decor = [[ This test was written specifically
+	        to check the operation of the module <<prefs>>.
+	]];
 };
-
 ```
-Обратите внимание, что после запуска игры заново, число
-выполненных кликов не обнулится!
 
-### Модуль snapshots
+Please note that after starting the game again, the number of made clicks
+don't reset!
 
-Модуль snapshots предоставляет возможность восстанавливать
-предварительно сохраненные состояния игры. В качестве примера, можно
-привести ситуацию, когда игрок выполняет в игре действие, ведущее к
-проигрышу. Модуль позволяет автору игры написать код так, что игрок
-вернется к предварительно сохраненному состоянию игры.
+### Module snapshots
 
-Для создания снапшота используйте функцию: snapshots:make(). В
-качестве параметра может быть задано имя слота.
+Module snapshots provides the ability to restore the previously saved game
+state. As an example, it is possible to bring the situation when the player
+performs in the game action, leading to loss. The module allows the author to
+write the game code so that the player will return to the previously saved
+state of the game.
 
-_Внимание!!!_ Снапшот будет создан после завершения текущего такта игры,
-так как только в этом случае гарантирована непротиворечивость
-сохраненного состояния игры.
+To create a snapshot use: snapshots:make(). In the parameter can be set to the
+name of the slot.
 
-Загрузка снапшота осуществляется snapshots:restore(). В качестве
-параметра может быть задано имя слота.
+_Caution!!!_ Snapshot will be generated after completing the current step of
+game, because only in this case, the guaranteed consistency the saved game
+state.
 
-Удаление снапшота делается с помощью snapshots:remove(). Следует
-удалять ненужные снапшоты, так как они занимают лишнее место в файлах
-сохранения.
+Is download snapshot snapshots:restore(). As parameter can be set to the name
+of the slot.
 
-Пример использования:
+Snapshot deletion is done using snapshots:remove(). Should to remove
+unnecessary snapshots, since they take up extra space in files save.
+
+Example usage:
 
 ```
 require "snapshots"
 
 room {
 	nam = 'main';
-	title = 'Игра';
-	onenter = function()
-		snapshots:make() -- создали точку восстановления
+	title = 'Game';
+	the onenter = function()
+	snapshots:make () - created a restore point
 	end;
-	decor = [[{#red|Красное} или {#black|черное}?]];
+	decor = [[{#, red|Red} or {#black|black}?]];
 }: with {
 	obj {
 		nam = '#red';
 		act = function()
-			p [[Вы выиграли!]]
+			p [[You won!]]
 		end;
 	};
 	obj {
@@ -5629,137 +5322,129 @@ room {
 
 room {
 	nam = 'end';
-	title = 'Конец';
+	title = 'End';
 }: with {
 	obj {
-		dsc = [[{Переиграть?}]];
+		dsc = [[{Replay?}]];
 		act = function()
-			snapshots:restore() -- восстановились
+			snapshots:restore() -- recovered
 		end;
 	}
 }
 ```
 
-## Методы объектов
+## Object methods
 
-У всех объектов STEAD3 существуют методы, которые используются при
-реализации стандартной библиотеке и, обычно, не используются автором
-игры напрямую. Однако, иногда полезно знать состав этих методов, хотя
-бы для того, чтобы не называть свои переменные и методы именами уже
-существующих методов. Ниже представлен список методов с кратким
-описанием.
+All objects STEAD3 there are methods that are used in the implementation of
+the standard library and usually are not used by the author games directly.
+However, it is sometimes useful to know the composition of these methods,
+though would be to not name your variables and methods names already of the
+existing methods. Below are a list of methods with a brief description.
 
-### Объект (obj)
+### Object (. obj)
 
-- :with({...}) - задание списка obj;
-- :new(...) - конструктор;
-- :actions(тип, [значение]) - задать/прочитать число событий объекта
-  заданного типа;
-- :inroom([{}]) - в какой комнате (комнатах) находится объект;
-- :where([{}]) - в каком объекте (объектах) находится объект;
-- :purge() - удалить объект из всех списков;
-- :remove() - удалить объект из всех объектов/комнат/инвентаря;
-- :close()/:open() - закрыть/открыть;
-- :disable()/:enable() - выключить/включить;
-- :closed() -- вернет true, если закрыт;
-- :disabled() -- вернет true, если выключен;
-- :empty() -- вернет true, если пуст;
-- :save(fp, n) -- функция сохранения;
-- :display() -- функция отображения в сцене;
-- :visible() -- вернет true если считается видимым;
-- :srch(w) -- поиск видимого объекта;
-- :lookup(w) -- поиск любого объекта;
-- :for_each(fn, ...) -- итератор по объектам;
-- :lifeon()/:lifeoff() -- добавить/удалить из списка живых;
-- :live() -- вернет true, если в списке живых.
+- :with({...}) - set list obj;
+- :new (...) constructor;
+- :actions(type, [value]) - set/read the number of event object the preset 
+  type;
+- :inroom([{}]) - in which room (room) the object is located;
+- :where([{}]) - what the object (objects) is a object;
+- :purge() - removes the object from all lists.
+- :remove() - remove object from all objects/rooms/equipment;
+- :close ()/open() - close/open;
+- :disable()/:enable() - disable/enable;
+- :closed() -- returns true if closed;
+- :disabled() -- returns true if disabled;
+- :empty() -- returns true if empty;- :save(fp, n) -- save function;
+- :display() -- display function in the scene;
+- :visible() -- returns true if it is visible;
+- :srch(w) - the search for the visible object;
+- :lookup(w) - search any object;
+- :for_each(fn, ...) -- iterator over the objects;
+- :lifeon()/:lifeoff() -- add/remove from the list of living;
+- :live() -- returns true if the list alive.
 
-### Комната (room)
+### Room (room)
 
-Кроме методов obj, добавлены следующие методы:
+In addition to the methods of obj, added the following methods:
 
-- :from() -- откуда пришли в комнату;
-- :visited() -- была ли комната посещена ранее?;
-- :visits() -- число визитов (0 -- если не было);
-- :scene() -- отображение сцены (не объектов);
-- :display() -- отображение объектов сцены;
+- :from() -- where I came into the room;
+- :visited() -- was there a room you visited earlier?;
+- :visits() -- number of visits (0-if not);
+- :scene() -- display scene (no objects);
+- :display() -- display of objects in the scene;
 
-### Диалоги (dlg)
+### Dialogs (dlg)
 
-Кроме методов room, добавлены следующие методы:
+In addition to the methods room, added the following methods:
 
-- :push(фраза) - перейти к фразе с запоминанием ее в стеке;
-- :reset(фраза) -- то же самое, но со сбросом стека;
-- :pop([фраза]) -- возврат по стеку;
-- :select([фраза]) -- выбор текущей фразы;
-- :ph\_display() -- отображение выбранной фразы;
+- :push(phrase) - go to phrase, remembering it in the stack;
+- :reset(phrase) - same, but reset the stack;
+- :pop([phrase]) -- return stack;
+- :select([phrase]) -- select current phrase;
+- :ph\_display() -- display the selected phrase;
 
-### Игровой мир (объект game)
+### The game world (game object)
 
-Кроме методов obj, добавлены следующие методы:
+In addition to the methods of obj, added the following methods:
 
-- :time([v]) -- установить/взять число игровых тактов;
-- :lifeon([v])/:lifeoff([v]) -- добавить/удалить объект из списка
-  живых, или включить/выключить живой список глобально (если не задан
-  аргумент);
-- :live([v]) -- проверить активность живого объекта;
-- :set\_pl(pl) -- переключить игрока;
-- :life() -- итерация живых объектов;
-- :step() -- такт игры;
-- :lastdisp([v]) -- установить/взять последний вывод;
-- :display(state) -- отобразить вывод;
-- :lastreact([v]) -- установить/взять последнюю реакцию;
-- :reaction([v]) -- установить/взять текущую реакцию;
-- :events(pre, bg) -- установить/взять события живых объектов;
-- :cmd(cmd) -- выполнение команды INSTEAD;
+- :time([v]) -- set/get the number of game cycles;
+- :lifeon([v])/:lifeoff([v]) -- add/remove an object from the list alive, or 
+  enable/disable live listings globally (if not specified argument);
+- :live([v]) -- check the activity of the life object;
+- :set\_pl(pl) -- switch player
+- :life () - the iteration of live objects;
+- :step() -- tact of the game;
+- :lastdisp([v]) - set/get the latest output;
+- :display(state) -- display output;
+- :lastreact([v]) - set/get the latest reaction;
+- :reaction([v]) -- set/get current response;
+- :events(pre, bg) -- set/get events of live objects;
+- :cmd(cmd) -- the command INSTEAD;
 
-### Игрок (player)
+### Player (player)
 
-Кроме методов obj, добавлены следующие методы:
+In addition to the methods of obj, added the following methods:
 
-- :moved() -- игрок сделал перемещение в текущем такте игры;
-- :need_scene([v]) -- нужна отрисовка сцены в данном такте;
-- :inspect(w) -- найти объект (видимый) в текущей сцене или себе
-  самом;
-- :have(w) -- поиск в инвентаре;
-- :useit(w) -- использовать предмет;
-- :useon(w, ww) -- использовать предмет на предмет;
-- :call(m, ...) -- вызов метода игрока;
-- :action(w) -- действие на предмет (act);
-- :inventory() -- вернуть инвентарь (список, по умолчанию это obj);
-- :take(w) -- взять объект;
-- :walk/walkin/walkout -- переходы;
-- :go(w) -- команда идти (проверяет доступность переходов);
+- :moved () - the player made a move in the current cycle of the game;
+- :need_scene([v]) - need to render the scene in this cycle;
+- :inspect(w) - find an object (visible) in the current scene or really;
+- :have(w) - search in the inventory;
+- :useit(w) - use item;
+- :useon(w, ww) -- use the item on the subject;
+- :call(m, ...) -- calling a method of the player;
+- :action(w) - action on the subject (act);
+- :inventory() -- return the inventory (list, default is obj);
+- :take(w) -- take the object;
+- :walk/walkin/walkout -- transitions;
+- :go(w) - team go (checking the availability of transitions);
 
-## Послесловие
+## Epilogue
 
-Вот и все, здесь документация заканчивается. Но, возможно, начинается
-самое интересное -- ваша история!
+So that's where the documentation ends. But maybe starts the most interesting
+-- your story!
 
-Я сделал первую версию INSTEAD в 2009 году. В тот момент я никогда бы
-не подумал, что моя игрушка (и движок) переживут столько
-изменений. Сейчас, когда я пишу это послесловие, на дворе 2017 год и
-текстовые приключения все еще существуют. Правда, их влияние на
-культуру по прежнему минимально. И хороших приключений -- по прежнему
-очень мало.
+I made the first version INSTEAD in 2009. At that moment, I never would do not
+think that my toy (and the engine) will survive so much changes. Now, as I
+write this epilogue, on the court in 2017 and text adventures still exist.
+However, their impact on the culture is still minimal. And good adventure --
+still very little.
 
-На мой взгляд, у текстографических игр огромный потенциал. Они не
-такие интерактивные, они не отбирают вашу жизнь взамен на вечно
-неудовлетворенное желание, не вынуждают вас сутками просиживать за
-монитором в раздражении или нездоровой нервозности... Они могут взять
-лучшее из мира литературы и компьютерных игр. И то, что жанр по
-большей части некоммерческий -- даже плюс.
+In my opinion, text and graphic games have huge potential. They are not such
+interactive, they do not take your life for forever unsatisfied desire, not
+force you to sit for days for the monitor in frustration or unhealthy
+nervousness... They can take the best from the world of literature and
+computer games. That genre the greater part of the non-profit -- even a plus.
 
-История INSTEAD, на мой взгляд, хорошее тому подтверждение. Было
-выпущено множество игр, которые можно с уверенностью назвать
-отличными! Их авторы могут отойти от дел, но созданные ими
-произведения уже живут своей жизнью, отражаясь в сознании людей,
-которые в них играют или помнят. Пусть "тираж" этих игр не так велик,
-но то что я увидел, полностью "оправдало" все потраченные усилия на
-движок. Я знаю, что это время потрачено не зря. Так что я нашел в себе
-силы, и сделал движок еще лучше, выпустив STEAD3. Я надеюсь, он
-понравится и вам.
+History INSTEAD, in my opinion, good proof of this. It released many games
+that can safely be called great! Their authors may retire, but they
+created works are already living their lives, reflected in the consciousness of
+people, who play them or remember. Let the "circulation" of these games is not
+so great but what I saw completely "justified" all efforts spent on engine. I
+know it's time well spent. So I found a power, and made the engine even
+better, releasing STEAD3. I hope he and like you.
 
-Так что если вы дочитали до этого места, я могу только пожелать вам
-дописать вашу первую историю. Творчество -- это и есть свобода. :)
+So if you've read this far, I can only wish you to add your first story.
+Creativity -- this is freedom. :)
 
-Спасибо и удачи. Петр Косых, март 2017.
+Thank you and good luck. Peter Skew, of March 2017.
