@@ -1066,8 +1066,8 @@ function std:done()
 		local k = std.deref(v)
 		if std.is_system(v) then
 			objects[k] = v
---		else
---			print("Deleting "..k)
+		else
+			print("Deleting "..k)
 		end
 	end)
 	std.objects = objects
