@@ -140,6 +140,10 @@ else
 	end
 end
 
+math.pow = function(num, n)
+	return num ^ n
+end
+
 math.round = function(num, n)
 	local m = 10 ^ (n or 0)
 	return std.math.floor(num * m + 0.5) / m

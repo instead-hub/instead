@@ -7,6 +7,7 @@
   * enh: autosave in emscripten build;
   * enh: load status in emscripten build;
   * new: machine-translated English manual;
+  * fix: Lua5.3 compatibility;
   * fix: ini method and load parameter;
   * fix: -appdata and system build;
   * fix: build with zlib;
