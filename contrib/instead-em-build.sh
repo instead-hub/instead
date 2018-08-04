@@ -260,7 +260,7 @@ Module['postRun'].push(function() {
 });
 EOF
 
-unzip instead-em/contrib/instead-em.zip -j -d instead-em-js/
+unzip -o -j instead-em/contrib/instead-em.zip -d instead-em-js/
 
 cd instead-em-js
 ln -f -s ../instead-em/src/sdl-instead sdl-instead.bc
