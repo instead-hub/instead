@@ -44,7 +44,7 @@ stead.restore_snapshot = function (nr)
 	i = stead.do_ini(game, true);
 
 	if stead.api_atleast(1, 7, 1) then
-		game:start()
+		i = game:start()
 		stead.rawset(_G, 'PLAYER_MOVED',  true) -- force fading
 	else -- legacy
 		if not game.showlast then
