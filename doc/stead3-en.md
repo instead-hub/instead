@@ -765,9 +765,10 @@ room {
 
 You can choose the way that's clearer for you.
 
-## The attributes and handlers as functions
+## Defining attributes and event handlers with functions
 
-Most attributes and handlers can be _functions_. So, for example:
+Up until now we've assigned strings to most of the attributes of our objects
+and rooms. You can also assign _functions_ to attributes. For example:
 
 ```
 disp = function()
@@ -775,62 +776,61 @@ disp = function()
 end
 ```
 
-Not a very good example, as it would be easier to write disp = 'Apple', but it
-shows the syntax of the entry function.
+That wasn't a very good example, but it does show what the syntax should look
+like. We may as well have written `disp = 'Apple'`. The main objective of such functions is to return a string or boolean value.
 
-The main objective of such a function -- it returns a string or boolean values.
-Now we see the return line. To return a string you can use an explicit entry
-in the form:
+Let's take a look how to return something. One way to return a string is by an
+explicit statement such as the following:
 
 	return "Apple";
 
-The flow of code execution function stops and it returns the engine line. In
-this case, "Apple".
+When a statement like this is encountered, the function will exit with the
+given return value. In this case, that would be the string, "Apple".
 
-The more usual method of output are functions:
+The most common way to output strings is by using the following three built-in
+functions:
 
-- p ("text") -- output text and white space;
+- p  ("text") -- output text and white space;
 - pn ("text") -- output text with line break;
 - pr ("text") -- output text as-is.
 
-> If "p"/"pn"/"pr" is invoked with a single text parameter, the parentheses
-> can be omitted.
+These functions do not output text directly. The engine maintains a clipboard
+where text is stored. The contents of this clipboard is sent to the engine all
+at once when your function returns. This allows you to build up a block of
+text to return by calling p/pn/pr multiple times. In most cases, you shouldn't
+concern yourself with where line breaks will go or any other formatting issue.
+This is especially true of descriptions. The engine will wrap text and add
+spacing intelligently based on what you present to the player.
+
+As with all functions, you can leave out the parentheses if there is only a
+single value to supply:
 
 	pn "No brackets!"
 
-All these functions append text to the clipboard and when you return from the
-function return it to the engine. Thus, you can gradually to form a conclusion
-due to the sequential execution of p/pn/pr. Keep in mind that the author very
-rarely need to explicitly format the text, especially if it is a description
-of the objects, the engine itself puts the necessary line breaks and spaces to
-separate the information by different kind and does it in a unified fashion.
-
-You can use '..' or ',' for string concatenation. Then '(' and ')' required.
-For example:
+It's likely that you will often times want to concatenate strings together.
+You can either use '..' or ',' for this purpose, and in that case parentheses
+will be required:
 
 	pn ("String 1".." Line 2");
 	pn ("String 1" "String 2");
 
-> The main difference of the attributes from the event handlers is that
-> what event handlers can change the state of the game world, and
-> no attributes. So, if you make your attribute (e.g. 'dsc')
-> in a function, remember that the goal attribute is the return value, and
-> do not change the state of the game! The fact that the engine turns to
-> attributes in those moments of time that are usually not clearly defined,
-> and are not associated clearly with some gameplay!
+> The main difference between attributes and event handlers is that only event
+> handlers are able to change the state of the game world. When writing an
+> attribute such as 'dsc', remember that your goal is to return a value and
+> not to affect what happens in the game! Forgetting this rule will lead to
+> unpredictable behavior.
 
 __Important!__
 
-> Another feature of handlers is the fact that you are not> have to wait for some event inside the handler. That is, should not
-> be any cycles waiting or delays (pauses). Case
-> that the processor task-to change the game state and give
-> controls INSTEAD, which visualizes these changes and again
-> go into a pending user action. If you need
-> to organize the output timing, you'll have to use the module
-> the "timer".
+> There is something to keep in mind when writing event handlers as well. They
+> should execute quickly. Event handlers are called in response to user
+> action, and the engine expects them to return immediately so that it can
+> refresh the user interface. If you want to insert delays to control the
+> output that users see, you will have to use the "timer" module.
 
-Functions almost always contain conditions and work with
-variables. For example:
+
+Functions almost always return dynamic results that are based on the contents
+of variables. For example:
 
 ```
 obj {
@@ -838,9 +838,9 @@ obj {
 	seen = false;
 	dsc = function(s)
 		if not s.seen then
-			p 'On the table {something} is.';
+			p '{Something} is on the table.';
 		else
-			p 'lies On the table {Apple}.';
+			p 'An {Apple} lies on the table.';
 		end
 	end;
 	act = function(s)
@@ -853,55 +853,51 @@ obj {
 	end;
 };
 ```
+When a function is assigned to an attribute, its first parameter always refers
+to the object itself. We typically name this variable 's' for "self". You
+could also write out the object by name (\_'Apple'), but when writing such
+functions, it's generally better to use the 's' parameter than to make an
+explicit call to the object name. This will save you from having to rewrite
+functions if you ever need to rename the object.
 
-If the attribute or handler is laid out as a function, it is always Pervy
-argument function (s) -- the object itself. That is, in this example, 's' is
-synonymous with _'Apple'. When you work with the object itself in a function
-it is more convenient to use the parameter rather than the explicit call to
-the object name because when you rename an object you don't have to rewrite
-your game. And entry will be shorter.
+In this example, we make text descriptions dynamic. The first time the player
+encounters this object, it will be referred to as "Something". Once they
+interract with it, the 'seen' variable becomes true. After that, they will see
+that the object is an "Apple".
 
-In this example, when showing scenes in the dynamic parts of the scene will be
-removed text: 'the table something is'. When interacting with 'something',
-variable 'seen' object 'Apple' will be set to true -- true and we see that it
-was an Apple.
-
-As you can see, the syntax of the 'if' operator is quite obvious. For clarity,
-a few examples.
+The syntax of 'if' statements is easy to read. Here are a few examples for
+clarity:
 
 	if <expression> then <actions> end
 
 	if have 'Apple' then
-		p 'I Have an Apple!'
+		p 'I have an apple!'
 	end
 
 	if <expression> then <actions> else <actions otherwise> end
 
 	if have 'Apple' then
-		p 'I Have an Apple!'
+		p 'I have an apple!'
 	else
-		p 'I Have no apples!'
+		p 'I don't have any apples!'
 	end
 
 	if <expression> then <action> elseif <expression 2> then <action 2>
 	else <otherwise> end -- etc.
 
 	if have 'Apple' then
-		p 'I Have an Apple!'
+		p 'I have an apple!'
 	elseif have 'fork' then
-		p 'I Have no Apple, but there is a fork!'
+		p 'I don't have any apples, but there is this fork in my inventory!'
 	else
-		p 'I Have neither Apple nor fork!'
+		p 'I don't have an apple or a fork.
 	end
 
-The expression in the if statement can contain a logical "and" (and), "or"
-(or), "negation" (not) and parentheses ( ) to define priorities. Entry of the
-form if <variable> then means that the variable is not equal to false.
-Equality is described as '==', inequality '~='.
+The _expression_ of an "if" statement is a boolean value made up of true/false terms separated by "and", "or", "not", and parenthesis to control evaluation priority. Expressions containing a single variable (ie: `if <variable>`) simply chekt that the veriable does not equal to `false`. The equality operator is '==', and the inequality operator is '~='.
 
 ```
 if not have 'Apple' and not have 'fork' then
-	p 'I Have neither Apple nor fork!'
+	p 'I don't have an apple or a fork!'
 end
 
 ...
@@ -911,15 +907,14 @@ end
 ...
 
 if time() == 10 then
-	p '10 th move has come!'
+	p 'It's your 10th turn!'
 end
 ```
 
 __Important!__
 
-In a situation when a variable was not defined but used in the condition,
-INSTEAD will give an error. You will have to determine in advance variables
-that you use.
+You need to define variables before using them. If you use a variable in a
+condition expression without first defining it, INSTEAD will raise an error.
 
 ### Object variables
 
