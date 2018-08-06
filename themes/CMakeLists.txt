@@ -1,4 +1,4 @@
-SET(THEMES arctic bluesteel book clearlooks default fantasy original wide)
+SET(THEMES arctic bluesteel book clearlooks default fantasy wide mobile)
 
 IF(SYSTEMWIDE)
 	FOREACH(THEME ${THEMES})
