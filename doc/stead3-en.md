@@ -123,80 +123,81 @@ _Actions_ of the player can be:
 
 ### How to create a game
 
-The game is the directory in which the script should be placed (text file)
-main3.lua. (Note, the presence of the file main3.lua means that you write the
-game on STEAD3!) Other game resources (lua scripts, images, and music) should
-be inside the game directory. All links to resources are given relative to this
-directory -- the directory of the game.
+INSTEAD will treat any directory on your computer as a game project if it
+contains a text file named "main3.lua". The presense of this file means that
+it is a STEAD3 project. Any other files you need for your game such as extra
+Lua scripts, images, and music should be stored within the game directory as
+well. Any time you reference an external resource in your code, it should be
+relative to the top-level game directory.
 
-At the beginning of the file main3.lua can be defined header consisting of
-tags (strings of a special form). Tags must start with the characters: two
-minuses.
+The "main3.lua" file should start with a comment block containing a list of tags. Tags are pairs of names and character strings that provide information about your game to INSTEAD.
 
-	--
+Any sequence of characters starting with a double-dash on the same line is a Lua comment. INSTEAD tags are comment lines of the following form:
 
-Two dashes is a comment from the point of view of Lua. At the moment there are
-the following tags.
+	-- $TagName: A string of UTF-8 characters$
 
-The $Name tag contains the name of the game in UTF-8. Example use the tag:
+The $Name tag contains the name of the game. Here is an example:
 
 	-- $Name: the Most interesting game!$
 
-Then you should (preferably) ask version of the game:
+It's good practice to follow the 'Name' tag with a few others. Here is how to specify the game's version number:
 
 	-- $Version: 0.5$
 
-And to indicate the authorship:
+People who play your game may be interested in who wrote it:
 
 	-- $Author: Anonymous fan of text adventures$
 
-For more information about the game, you can set the tag Info:
+It's oftentimes helpful to include a description about your game. Here we give
+an example of a multi-line tag. You specify line breaks using the "\n" escape
+sequence:
 
-	-- $Info: This remake of the old game\PS ZX specturm$
+	-- $Info: This is a remake of a classic\nZX Spectrum game.$
 
-Note the \n in the Info, it will be a line when you select "Info" INSTEAD.
+If you are a Windows user, make sure that your text editor can save files
+encoded as UTF-8 _without a BOM (byte order marker)_.
 
-If you are developing a game in Windows make sure your editor supports UTF-8
-encoding but _without BOM_. This encoding should to use when writing games!
+After the preamble containing your tags, you should list any external modules
+required by the game. Here is an example of what that might look like. We'll explain what these specific lines mean later:
 
-Next, you should typically specify modules that are required by the game. On
-modules will be discussed separately.
-
-	require "fmt" -- some formatting functions
+	require "fmt"   -- some formatting functions
 	fmt.para = true -- enable the paragraphs (indents)
 
-In addition, it is usually worthwhile to define handlers by default:
-game.act, game.use, game.inv, which are also discussed below.
+After this, it's usually worthwhile to define default handlers. We haven't
+covered what handlers are yet, so it's fine if you don't know exactly what
+these lines do. Here is how you would define the default "act", "use", and
+"inv" handlers:
 
 	game.act = 'Not running.';
 	game.use = 'It does not help.';
 	game.inv = 'Why?';
 
-_Initialization_ of the game should be defined in the init function, which called
-by the engine in the beginning. In this function conveniently to initialize
-the state of the player at the beginning of the game, or any other the steps
-needed for initial configuration of the game world. However,the function
-"init" may not be needed.
+When the game starts, it will set the initial game state by calling the "init"
+function. You can use this function to initialize the player or to perform any
+special starting tasks. The function may not be needed depending on your game.
 
-	function init() -- add to the inventory the knife and paper
+	function init() -- Put the knife and paper in the player's inventory
 		take 'the knife'
 		take 'paper'
 	end
 
-Once the game is initialized, run the game. You can define a function start ()
-that runs directly before starting the game. This means, for example, in the
-case of download saved games, start() will be called after the save read
+The game engine only calls init() when a new game is started. It will not be
+called when you load a game that was previously saved. To perform a few
+actions whenever the game is loaded, use the start() function.
 
-
-	function start(load) -- to restore the original state?
-		if load then
-			dprint "It's a load state."
-		else
-			dprint "This is the start of the game."
-		end
-		-- we don't need to do anything
+```
+function start(is_loaded) -- to restore the original state?
+	if is_loaded then
+		dprint "Game loaded."
+	else
+		dprint "New game started."
 	end
+	-- we don't need to do anything
+end
+```
 
+If you include both an init() function _and_ a start() function, then them
+game engine will call init() first, and then call start().
 
 The graphic interpreter looks for available games in the directory games. The
 Unix version of the interpreter in addition, the catalog scans also games in
