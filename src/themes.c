@@ -939,9 +939,6 @@ int game_theme_update(void)
 extern void rotate_landscape(void);
 extern void rotate_portrait(void);
 extern void unlock_rotation(void);
-#if defined(ANDROID)
-extern void get_screen_size(int *w, int *h);
-#endif
 #endif
 
 int game_theme_init(void)
@@ -966,7 +963,7 @@ int game_theme_init(void)
 		else
 			unlock_rotation();
 #if defined(ANDROID)
-		get_screen_size(&w, &h);
+		gfx_get_max_mode(&w, &h, MODE_ANY);
 #endif
 #endif
 	}
