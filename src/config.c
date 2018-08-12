@@ -139,9 +139,11 @@ int cfg_load(void)
 	return cfg_parse(p);
 }
 
+extern int noowntheme_sw;
+
 int cfg_save(void)
 {
-	int save_owntheme = (opt_owntheme == 2)?0:opt_owntheme;
+	int save_owntheme = (opt_owntheme == 2)?0:((noowntheme_sw)?1:opt_owntheme);
 	int save_autosave = (opt_autosave == 2)?1:opt_autosave;
 	FILE *fp;
 	char *p = game_cfg_path();

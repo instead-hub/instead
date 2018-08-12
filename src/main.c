@@ -52,6 +52,7 @@ int nostdgames_sw = 0;
 int nostdthemes_sw = 0;
 int version_sw = 0;
 int owntheme_sw = 0;
+int noowntheme_sw = 0;
 int nopause_sw = 0;
 int chunksize_sw = 0;
 int software_sw = 0;
@@ -389,6 +390,8 @@ int instead_main(int argc, char *argv[])
 			debug_sw = 1;
 		} else if (!strcmp(argv[i], "-owntheme"))
 			owntheme_sw = 1;
+		else if (!strcmp(argv[i], "-notheme"))
+			noowntheme_sw = 1;
 		else if (!strcmp(argv[i], "-noautosave"))
 			noauto_sw = 1;
 		else if (!strcmp(argv[i], "-game")) {
@@ -700,6 +703,11 @@ int instead_main(int argc, char *argv[])
 		opt_owntheme = 2;
 	}
 
+	if (noowntheme_sw && opt_owntheme) {
+		opt_owntheme = 0;
+	} else
+		noowntheme_sw = 0;
+
 	if (noauto_sw && opt_autosave)
 		opt_autosave = 2;
 	if (window_sw)
@@ -791,6 +799,7 @@ static struct parser profile_parser[] = {
 	{ "themespath", parse_string, &themes_sw, 0 },
 	{ "game", parse_string, &game_sw, 0 },
 	{ "owntheme", parse_int, &owntheme_sw, 0 },
+	{ "notheme", parse_int, &noowntheme_sw, 0 },
 	{ "lang", parse_string, &lang_sw, 0 },
 	{ "appdata", parse_string, &appdata_sw, 0 },
 	{ "fullscreen", parse_int, &fullscreen_sw, 0 },
