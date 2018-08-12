@@ -155,6 +155,8 @@ int HandleAppEvents(void *userdata, SDL_Event *event)
 		*/
 		/* snd_pause(0); */
 		m_minimized = 0;
+		game_flip();
+		game_gfx_commit(0);
 		return 0;
 	case SDL_APP_TERMINATING:
 		cfg_save();
@@ -344,7 +346,7 @@ int input(struct inp_event *inp, int wait)
 			/* Fall through */
 		case SDL_WINDOWEVENT_EXPOSED:
 			game_flip();
-			gfx_commit();
+			game_gfx_commit(0);
 			break;
 		case SDL_WINDOWEVENT_MINIMIZED:
 		case SDL_WINDOWEVENT_RESTORED:

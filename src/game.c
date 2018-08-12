@@ -1840,6 +1840,7 @@ static void after_cmd(void)
 	game_autosave();
 	game_instead_restart();
 	game_instead_menu();
+	game_gfx_commit(0);
 }
 
 static void after_fading(void *aux)
