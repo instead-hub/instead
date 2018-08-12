@@ -963,6 +963,7 @@ int game_theme_init(void)
 		else
 			unlock_rotation();
 #if defined(ANDROID)
+		usleep(100000);
 		gfx_get_max_mode(&w, &h, MODE_ANY);
 #endif
 #endif
