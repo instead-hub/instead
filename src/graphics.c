@@ -1786,6 +1786,11 @@ static int current_gfx_w = - 1;
 static int current_gfx_h = - 1;
 #endif
 #endif
+
+#if defined(ANDROID)
+extern void get_screen_size(int *w, int *h);
+#endif
+
 int gfx_get_max_mode(int *w, int *h, int o)
 {
 	int ww = 0, hh = 0;
@@ -1796,7 +1801,13 @@ int gfx_get_max_mode(int *w, int *h, int o)
 #else
  #if SDL_VERSION_ATLEAST(2,0,0)
 	SDL_DisplayMode desktop_mode;
-  #if defined(ANDROID) || defined(IOS)
+  #if defined(ANDROID)
+	if (o == MODE_ANY) {
+		get_screen_size(w, h);
+		return 0;
+	}
+  #endif
+  #if defined(IOS)
 	if (o == MODE_ANY && current_gfx_w != -1) {
 		*w = current_gfx_w;
 		*h = current_gfx_h;
