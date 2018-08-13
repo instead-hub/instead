@@ -2,6 +2,7 @@
 
   * new: mobile theme;
   * new: -lang parameter;
+  * new: instead.screen_size();
   * enh: themes cleanups;
   * new: cmake and LuaJIT build (-DWITH_LUAJIT=1);
   * enh: autosave in emscripten build;

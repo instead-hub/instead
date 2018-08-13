@@ -41,6 +41,7 @@ local instead = std.ref '@instead'
 -- theme
 instead.theme_var = instead_theme_var
 instead.theme_name = instead_theme_name
+instead.screen_size = instead_screen_size
 
 local theme = std.obj {
 	nam = '@theme';

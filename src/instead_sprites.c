@@ -2501,6 +2501,14 @@ static int luaB_after_callback(lua_State *L) {
 	return 1;
 }
 
+static int luaB_screen_size(lua_State *L) {
+	int w = 0; int h = 0;
+	gfx_get_max_mode(&w, &h, MODE_ANY);
+	lua_pushinteger(L, w);
+	lua_pushinteger(L, h);
+	return 2;
+}
+
 static const luaL_Reg sprites_funcs[] = {
 	{"instead_font_load", luaB_load_font},
 	{"instead_font_free", luaB_free_font},
@@ -2536,6 +2544,7 @@ static const luaL_Reg sprites_funcs[] = {
 	{"instead_noise2", luaB_noise2},
 	{"instead_noise3", luaB_noise3},
 	{"instead_noise4", luaB_noise4},
+	{"instead_screen_size", luaB_screen_size},
 	{"instead_render_callback", luaB_after_callback},
 	{NULL, NULL}
 };
