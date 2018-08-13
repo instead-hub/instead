@@ -2,6 +2,7 @@
 
   * new: mobile theme;
   * new: -lang parameter;
+  * new: -notheme patameter;
   * new: instead.screen_size();
   * enh: themes cleanups;
   * new: cmake and LuaJIT build (-DWITH_LUAJIT=1);
