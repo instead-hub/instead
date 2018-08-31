@@ -1266,7 +1266,7 @@ std.obj = std.class {
 		v.obj = std.list(v.obj)
 --		v.obj:attach(v)
 		for key, val in pairs(v) do
-			if type(self[key]) == 'function' and type(val) ~= 'function' then
+			if not std.nostrict_new and type(self[key]) == 'function' and type(val) ~= 'function' then
 				std.err("Overwrited object method: '"..std.tostr(key).. "' in: "..std.tostr(v.nam), 2)
 			end
 			if not raw[key] then
