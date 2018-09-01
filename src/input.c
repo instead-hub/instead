@@ -414,7 +414,7 @@ int input(struct inp_event *inp, int wait)
 	case SDL_USEREVENT: {
 		void (*p) (void*) = (void (*)(void*))event.user.data1;
 		if (!p) /* idle cycles */
-			return 0;
+			return 1;
 		p(event.user.data2);
 		return AGAIN;
 		}
