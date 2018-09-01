@@ -17,7 +17,7 @@
   * fix: segfault on restart;
   * fix: build with old gcc;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 14 Jul 2018 19:29:00 +0300
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 1 Sep 2018 09:00:00 +0300
 
 3.2.1
 
