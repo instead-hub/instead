@@ -937,7 +937,7 @@ int counter_fn(int interval, void *p)
 {
 	timer_counter ++;
 #ifdef SAILFISHOS /* idle response sometimes */
-	if ((timer_counter % 25) == 0) {
+	if ((timer_counter % 10) == 0) {
 		push_user_event(NULL, NULL);
 	}
 #endif
