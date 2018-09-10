@@ -51,10 +51,11 @@ end
 
 local function dispof(v)
 	local d = std.titleof(v) or std.dispof(v)
+	local tag = (type(v.tag) == 'string' and v.tag)
 	if not d then
-		d = v.tag or 'n/a'
+		d = tag or 'n/a'
 	else
-		d = d..((v.tag and '/'..v.tag) or '')
+		d = d..((tag and '/'..tag) or '')
 	end
 	return d
 end
