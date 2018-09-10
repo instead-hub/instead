@@ -52,7 +52,7 @@ end
 local function dispof(v)
 	local d = std.titleof(v) or std.dispof(v)
 	local tag = (type(v.tag) == 'string' and v.tag)
-	if not d then
+	if type(d) ~= 'string' then
 		d = tag or 'n/a'
 	else
 		d = d..((tag and '/'..tag) or '')
@@ -88,7 +88,7 @@ end
 
 local function show_room(s, o)
 	s:printf("nam: %s | title: %s | disp: %s\n",
-		std.tostr(std.nameof(o)), std.titleof(o) or 'n/a', dispof(o))
+		std.tostr(std.nameof(o)), std.tostr(std.titleof(o) or 'n/a'), dispof(o))
 	s:printf("    way: ")
 	for k, v in ipairs(o.way) do
 		if k ~= 1 then
