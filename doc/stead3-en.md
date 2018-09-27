@@ -4675,10 +4675,10 @@ Have created a sprite object has the following methods:
   alpha slows down the execution of the function).
 - :copy(fx, fy, fw, fh, dst\_spr, x, y) -- Copying rectangle fw-fh from the 
   sprite in the sprite dst\_spr by coordinates [x,y] (drawing substitution). 
-  There a shortened version (as copy).
+  There a shortened version (as :draw).
 - :compose(fx, fy, fw, fh, dst\_spr, x, y) -- Drawing with given the 
   transparency of the two sprites). There is a shortened version
-  (as in compose).
+  (as in :draw).
 - :fill(x, y, w, h, [col]) -- Fill sprite with a color.
 - :fill([col]) -- Fill sprite with a color.
 - :pixel(x, y, col, [alpha]) - Filling the pixel of a sprite.
