@@ -5,7 +5,7 @@ all:
 
 clean:
 	rm -f *.aux *.log *.out *.toc stead3-manual-ru.tex modules3-manual-ru.tex stead3-manual-en.tex
-	rm -f *.pdf instead.txt
+#	rm -f *.pdf instead.txt
 
 stead3-manual-ru.tex: stead3-ru.md
 	multimarkdown stead3-ru.md -t latex -o stead3-manual-ru.tex
