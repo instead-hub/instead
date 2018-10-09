@@ -589,7 +589,7 @@ You can insert line breaks for clarity, when objects many, for example:
 
 ```
 obj = {
-	'tabl',
+	'table',
 	'apple',
 	'knife',
 };
