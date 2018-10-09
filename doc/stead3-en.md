@@ -87,9 +87,9 @@ an article about how it all began:
 
 https://instead-hub.github.io/article/2010-05-09-history/
 
-### Looks like a classic INSTEAD game
+### Look and feel of a typical INSTEAD game
 
-So, it looks like a classic INSTEAD of a game?
+So, What does a typical INSTEAD game look like?
 
 _Main game window_ contain a narrative, information about the static and
 dynamic parts of the scene, active events and a picture the scene (in the
@@ -121,7 +121,7 @@ _Actions_ of the player can be:
 - the unfolding of the object scene;
 - switch to another scene.
 
-### How to create a game
+### How to start a new game project
 
 INSTEAD will treat any directory on your computer as a game project if it
 contains a text file named "main3.lua". The presense of this file means that
