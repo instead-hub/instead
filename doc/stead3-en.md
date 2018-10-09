@@ -257,17 +257,19 @@ In the code of your game.
 
 When you debug a game, you usually need to frequently save the game and load
 the state of the game. You can use the standard mechanism of saving via menu
-(or via keys f2/f3), or use the quick saving/loading (press f8/f9).
+(or via keys F2/F3), or use the quick saving/loading (press F8/F9).
 
-Mode '-debug' you can restart the game with 'alt-r'. In combination with f8/f9
+Mode '-debug' you can restart the game with [ALT]+R. In combination with F8/F9
 this enables you to quickly see changes to the game after it changes.
 
-> Attention! If you just restart INSTEAD, it is likely
-> you will see the old state of the game, as the default running mode
-> startup AutoSave! Either disable this setting in the menu
-> (AutoSave), or explicitly reset the game after the edits.
-> Restart is possible through the menu (to start over) or the 'alt-r' in mode
-> '-debug' as described above.
+> Attention! INSTEAD's autosave feature is helpful when playing games, but may
+> get in the way when you are in the middle of development. When restarting
+> INSTEAD, the default behavior is to pick up where you left off by reloading
+> the previous game state. You can disable this feature through the menu
+> settings under "autosave". You can also explicitly reset the game whenever
+> you edit its source code. While in debug mode (by starting with the -debug
+> flag as described above), you can press [ALT]+R or select "start over" from
+> the menu.
 
 Mode '-debug' Windows version INSTEAD creates a console window (in Unix
 version, if you start INSTEAD from the console, the output will bedirected to
@@ -472,7 +474,7 @@ obj {
 };
 ```
 
-Object name "nam" is used when it gets to your inventory. Thoughin our case,
+Object name "nam" is used when it gets to your inventory. Though in our case,
 the table hardly gets there. If the object is defined 'disp', when it enters
 the inventory to display it will make use of this attribute. For example:
 
@@ -503,15 +505,15 @@ and state change to playing world.
 
 ## Add objects to the scene
 
-In order to put in scene objects, there are several ways.
+There are several ways for you, the author, to populate a scene with objects.
 
-First, when a room is created, you can define a list of 'obj', consisting of
-names of objects:
+First, when a room is created, you can assign a list containing the names of
+objects to the room's 'obj' attribute:
 
 ```
 obj { -- an object with a name but without a variable
 	nam = 'box';
-	dsc = [[On the floor I see the {box}.]];
+	dsc = [[I see a {box} on the floor.]];
 	act = [[Hard!]];
 }
 
@@ -525,8 +527,9 @@ room {
 
 Now, when rendering the scene, we will see the object "box" in a dynamic part.
 
-Instead of the object name, you can use a variable-reference if she was the
-only one determined in advance:
+Rather than referring to the box by its name, we could have used a variable
+reference. This is possible as long as the object is declared earlier in your
+source code:
 
 ```
 apple = obj { -- object variable, but without a name
@@ -542,7 +545,9 @@ room {
 };
 ```
 
-An alternative form of record is design with:
+As a syntactic convenience, you can assign room objects at the end in a
+":with" block. This allows you to remove one level of indentation, and group
+objects at the end of a room definition:
 
 ```
 room {
@@ -554,11 +559,8 @@ room {
 }
 ```
 
-Design with allows you to get rid of extra nesting level in the code of the
-game.
-
-Second, you can declare objects directly within obj, or with describing their
-definition:
+You can even declare your objects directly within a room definition. Here is
+an example of how you might do that:
 
 ```
 room {
@@ -568,7 +570,7 @@ room {
 }:with {
 	obj {
 		nam = 'box';
-		dsc = [[On the floor I see the {box}.]];
+		dsc = [[I see a {box} on the floor.]];
 		act = [[Hard!]];
 	}
 };
