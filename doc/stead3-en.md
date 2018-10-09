@@ -235,7 +235,7 @@ game.use = 'does Not work.';
 game.inv = 'Why me?';
 
 function init()
--- initialization if it is needed
+	-- initialization if it is needed
 end
 ```
 
