@@ -1,4 +1,4 @@
-## General information
+## General Information
 
 The engine for INSTEAD is written in Lua language (5.1), therefore knowing
 this language is useful, though not necessary. The core engine also written in
@@ -13,16 +13,16 @@ adventure games. This documentation describes the this basic skills is
 necessary, even if you want to write something else... so let's Start learning
 INSTEAD by writing a simple game!
 
-In February of 2017, after 8 years of development, INSTEAD (version 3.0) came
-with support for new kernel STEAD3. The old kernel got the name STEAD2.
-INSTEAD supports games written as STEAD2,  and STEAD3.
+INSTEAD 3.0 was published in February of 2017 after 8 years of development.
+Version 3.0 supports a new runtime named STEAD3. The old runtime is now known
+as STEAD2. INSTEAD supports games written for either STEAD2 or STEAD3.
 
-This manual describes STEAD3. If you have any questions, you can visit the
-website INSTEAD:
+This manual will teach you everything you need to know about writing games for
+STEAD3. Other resources may be helpful to you such as the INSTEAD website:
 
 https://instead-hub.github.io
 
-Or connect to the chat room on gitter:
+We also have a chat room on gitter:
 
 https://gitter.im/instead-hub/instead
 
