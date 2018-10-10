@@ -907,6 +907,7 @@ terms separated by "and", "or", "not", and parenthesis to control evaluation
 priority. Expressions containing a single variable (ie: `if <variable>`)
 simply check that the variable does not equal to `false`. The equality
 operator is '==', and the inequality operator is '~='.
+
 ```
 if not have 'Apple' and not have 'fork' then
 	p 'I don't have an apple or a fork!'
@@ -1246,7 +1247,7 @@ This method works only if the called method designed as a feature. You can use
 ## Inventory
 
 The easiest way to create an object that can be picked up is to assign a
-handler to the 'tak' attribute, short for "take". For example:
+handler to the 'tak' attribute, which is short for "take". For example:
 
 ```
 obj {
@@ -3546,7 +3547,7 @@ see before this response.
 ### Feature class
 
 The constructors of objects are widely used in STEAD2. IN STEAD3 obj/dlg/room
-are implemented as object classes. Class of objects isto create for those
+are implemented as object classes. Class of objects is to create for those
 occasions when the behavior of the created object is not fits into standard
 objects obj/room/dlg and you want to change methods of the class. Changing a
 class method, for example, you can generally to change how the object looks in
@@ -5429,25 +5430,27 @@ In addition to the methods of obj, added the following methods:
 So that's where the documentation ends. But maybe starts the most interesting
 -- your story!
 
-I made the first version INSTEAD in 2009. At that moment, I never would do not
-think that my toy (and the engine) will survive so much changes. Now, as I
-write this epilogue, on the court in 2017 and text adventures still exist.
-However, their impact on the culture is still minimal. And good adventure --
-still very little.
+I made the first version of INSTEAD in 2009. At that time, I never thought
+that my toy (and the engine) would have survived so many changes. Text
+adventures still exist as I write this epilogue in 2017. Even so, their impact
+on our culture remains minimal, and well-written adventures are far and few
+between.
 
-In my opinion, text and graphic games have huge potential. They are not such
-interactive, they do not take your life for forever unsatisfied desire, not
-force you to sit for days for the monitor in frustration or unhealthy
-nervousness... They can take the best from the world of literature and
-computer games. That genre the greater part of the non-profit -- even a plus.
+Games featuring a mixture of text and graphics have huge potential in my
+opinion. Though they are less interractive, they are also less demanding of
+the player. Enjoying a text adventure will not consume days of your life spent
+in front of the monitor suffering frustration or unhealthy anxiety as your
+desires are left unsatisfied. Textual games borrow from the best that the two
+worlds of liturature and computer gaming have to offer. As a bonus, the
+greater part of games in this genre can be enjoyed without cost.
 
-History INSTEAD, in my opinion, good proof of this. It released many games
-that can safely be called great! Their authors may retire, but they
-created works are already living their lives, reflected in the consciousness of
-people, who play them or remember. Let the "circulation" of these games is not
-so great but what I saw completely "justified" all efforts spent on engine. I
-know it's time well spent. So I found a power, and made the engine even
-better, releasing STEAD3. I hope he and like you.
+The history of INSTEAD is, in my opinion, proof of this claim. Many games have
+been released for INSTEAD which can safely be called great! Their authors may
+retire, but they created works are already living their lives, reflected in
+the consciousness of people, who play them or remember. Let the "circulation"
+of these games is not so great but what I saw completely "justified" all
+efforts spent on engine. I know it's time well spent. So I found a power, and
+made the engine even better, releasing STEAD3. I hope he and like you.
 
 So if you've read this far, I can only wish you to add your first story.
 Creativity -- this is freedom. :)
