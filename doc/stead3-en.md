@@ -598,30 +598,33 @@ obj = {
 Another way of placing objects is to call functions which the objects are
 placed in the required room. This will be discussed in further.
 
-## Decorations
+## Objects used as decoration
 
-Objects that can be migrated from one scene to another (or get into the
-inventory), typically have a name and/or variable link. So as thus you can
-always find the object anywhere and work with him.
+Objects which end up being moved around within different scenes or into and
+out of the player's inventory during play are typically given a name or
+assigned to a variable. Naming an object allows us to refer to and work with
+objects in our code wherever the player (or our code editor) happens to be.
 
-But a large part of the game world consists of objects which occupy the
-specific location and serve as decorations.
+On the other hand, many or most of our game world may consist of objects that
+serve no other purpose than decoration. These objects exist solely to enrich
+our environments with descriptive content for the player to experience.
 
-Such objects can be very much, and moreover, it is usually the same type of
-objects like trees and such objects.
-
-To create decorations you can use different approaches.
+Such objects can be numerous, and moreover, it's common for them to be
+duplicates of each other. A forested area might be populated by many instances
+of the same tree, city streets may contain the same light pole on every block.
+We use a different approach for creating objects such as these than we would
+for unique objects that the player can manipulate.
 
 ### The same object in multiple rooms
 
-You can create a single object, e.g. 'tree' and place them in the different
-rooms.
+Using our example of a forrested area, you can create a single object and
+place it in multiple rooms as follows:
 
 ```
 obj {
 	nam = 'tree';
 	dsc = [[There is a {tree}.]];
-	act = [[All the trees look alike.]];
+	act = [[All of these trees look alike.]];
 }
 
 room {
@@ -638,9 +641,11 @@ room {
 
 ### Use tags instead of names
 
-If you don't like to come up with unique names for the same type decorative
-objects you can use for such objects tags. Tags are set by the tag attribute
-and always begin with a '#'symbol:
+A decorative object may only appear in a single room. For objects like these,
+you can assign them a local name using the 'tag' attribute. By assigning a
+tag, you don't have to come up with a globally unique name. Strings assigned
+to the 'tag' attribute look like a name, but are preceeded by a '#' symbol.
+Even so, you refer to the object by its tag without a #:
 
 ```
 obj {
@@ -649,18 +654,19 @@ obj {
 }
 ```
 
-In this example, the name object will be created automatically, but to access
-the object you will be able to tag. The object will be be searched for in the
-current room. For example:
+All objects have names whether you define one or not. In this example, the
+object tagged as "flowers" will be given an automatically generated name.
+Referring to an object by its tag is only possible within the current room.
+For example:
 
 ```
--- searching in the current room the first object with the tag '#flowers'
+-- search the current room for the first object tagged as '#flowers'
 dprint(_'#flowers')
 ```
 
-Tags that is, in a sense, synonymous with local names, so there is an
-alternative account of the creation of the object tag:
-
+One way of thinking about tags is that they are local names. For convenience,
+you can tag an object by assigning a tag to the 'nam' attribute. Remember that
+tags always start with a '#' character whereas names do not.
 
 ```
 obj {
@@ -669,8 +675,8 @@ obj {
 }
 ```
 
-If the name of the object begins with the character '#', then the object gets
-tag and automatically generated numeric name.
+By assigning a tag to the 'nam' attribute, the object's actual name will be
+automatically generated behind the scenes.
 
 ### Attribute usage scene decor
 
@@ -896,8 +902,11 @@ clarity:
 		p 'I don't have an apple or a fork.
 	end
 
-The _expression_ of an "if" statement is a boolean value made up of true/false terms separated by "and", "or", "not", and parenthesis to control evaluation priority. Expressions containing a single variable (ie: `if <variable>`) simply chekt that the veriable does not equal to `false`. The equality operator is '==', and the inequality operator is '~='.
-
+The _expression_ of an "if" statement is a boolean value made up of true/false
+terms separated by "and", "or", "not", and parenthesis to control evaluation
+priority. Expressions containing a single variable (ie: `if <variable>`)
+simply check that the variable does not equal to `false`. The equality
+operator is '==', and the inequality operator is '~='.
 ```
 if not have 'Apple' and not have 'fork' then
 	p 'I don't have an apple or a fork!'
@@ -1014,8 +1023,8 @@ act = function(s)
 end
 ```
 
-In this example, the variable w exists only in the body the handler function
-act. We created a temporary reference variable w, which refers to the object
+In this example, the variable 'w' exists only in the body the handler function
+act. We created a temporary reference variable 'w', which refers to the object
 'light' to change feature-variable light this object.
 
 Of course, we could write:
@@ -1172,7 +1181,7 @@ act = function(s)
 end
 ```
 
-This displays the default description is specified using ahandler 'game.act'.
+This displays the default description is specified using a handler 'game.act'.
 Usually the default description contains description of the undoable action.
 Something like:
 
@@ -1236,9 +1245,8 @@ This method works only if the called method designed as a feature. You can use
 
 ## Inventory
 
-The easiest way to create an object that can be taken-to define handler 'tak'.
-
-For example:
+The easiest way to create an object that can be picked up is to assign a
+handler to the 'tak' attribute, short for "take". For example:
 
 ```
 obj {
@@ -1276,7 +1284,6 @@ obj {
 	end
 };
 ```
-
 If the object in the inventory is not declared a handler for the 'inv', will be called 'game.inv'.
 
 If the handler is 'tak' will return false, the item will not be taken, for example:
@@ -1522,8 +1529,8 @@ room {
 ```
 
 What's the difference? Disabling an object means that the object ceases to be
-available to the player. If the object is nested other objects,  and these
-objects become inaccessible.The closure of the facility makes unavailable the
+available to the player. If the object is nested other objects, and these
+objects become inaccessible. The closure of the facility makes unavailable the
 contents of this object, but not the object itself.
 
 However, in the case of rooms and closing rooms, and disabled room lead to the
@@ -1649,7 +1656,7 @@ object, then the object 'player', and then my current room. Youcan block
 Use 'use' or 'used' (or both) is a matter of personal preference, however, the
 method used is called earlier and therefore has a higher priority.
 
-## The Object "Player"
+## The "Player" Object
 
 Player in the world INSTEAD represented by an object of type 'player'. You can
 to create multiple players, but one player is present by default.
@@ -1681,7 +1688,7 @@ player, andnecessary, will move into the room where the new player.
 The 'me()' always returns the current player. Therefore, in most games and
 me() == pl.
 
-## The Object "World"
+## The "World" Object
 
 The game world is represented by an object of type world. The name of this
 object  the 'game'. There is a reference variable, also called game.
@@ -1714,9 +1721,9 @@ Still, the game object you can set handlers: afteract, afterinv, afteruse,
 afterwalk -- that are invoked in case of successful to perform the appropriate
 action.
 
-## The attributes-lists
+## List Attributes
 
-Attributes-lists (such as 'way' or 'obj') allow you to work with its content
+List attributes (such as 'way' or 'obj') allow you to work with its content
 with a set of methods. Attributes-a list designed keep a list of objects. In
 fact, you can create lists for their own needs, and place them in objects, for
 example:
