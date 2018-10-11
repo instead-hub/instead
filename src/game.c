@@ -154,6 +154,7 @@ int game_reset(void)
 {
 	game_release(); /* commit all user events */
 	game_release_theme(1);
+	game_theme_free();
 	if (game_select(curgame_dir))
 		goto out;
 	if (game_apply_theme())
