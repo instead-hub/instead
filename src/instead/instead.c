@@ -62,8 +62,16 @@ char 		*instead_fromgame(const char *s);
 char 		*togame(const char *s);
 lua_State	*L = NULL;
 
+/*
+ * Further we will use instead_api_path[] with additional subpaths appended.
+ * E.g. we will add "/stead.lua" part to it when building stead_path[] string.
+ * So we want to keep instead_api_path[] length less than PATH_MAX.
+ */
+#define INSTEAD_API_SUBPATH_MAX		10
+#define INSTEAD_API_PATH_MAX		(PATH_MAX - INSTEAD_API_SUBPATH_MAX)
+
 static char *err_msg = NULL;
-static char instead_api_path[PATH_MAX];
+static char instead_api_path[INSTEAD_API_PATH_MAX];
 
 static char *API = NULL;
 static char *MAIN = NULL;
