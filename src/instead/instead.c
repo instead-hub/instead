@@ -1052,7 +1052,7 @@ int instead_init(const char *path)
 		goto err;
 
 	if (snprintf(stead_path, sizeof(stead_path), "%s/stead.lua", STEAD_API_PATH) >=
-		sizeof(stead_path))
+		(int)sizeof(stead_path))
 		fprintf(stderr, "Path is too long.\n");
 
 	if (dofile(L, dirpath(stead_path)))
