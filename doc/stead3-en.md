@@ -1,4 +1,4 @@
-## General information
+## General Information
 
 The engine for INSTEAD is written in Lua language (5.1), therefore knowing
 this language is useful, though not necessary. The core engine also written in
@@ -13,16 +13,16 @@ adventure games. This documentation describes the this basic skills is
 necessary, even if you want to write something else... so let's Start learning
 INSTEAD by writing a simple game!
 
-In February of 2017, after 8 years of development, INSTEAD (version 3.0) came
-with support for new kernel STEAD3. The old kernel got the name STEAD2.
-INSTEAD supports games written as STEAD2,  and STEAD3.
+INSTEAD 3.0 was published in February of 2017 after 8 years of development.
+Version 3.0 supports a new runtime named STEAD3. The old runtime is now known
+as STEAD2. INSTEAD supports games written for either STEAD2 or STEAD3.
 
-This manual describes STEAD3. If you have any questions, you can visit the
-website INSTEAD:
+This manual will teach you everything you need to know about writing games for
+STEAD3. Other resources may be helpful to you such as the INSTEAD website:
 
 https://instead-hub.github.io
 
-Or connect to the chat room on gitter:
+We also have a chat room on gitter:
 
 https://gitter.im/instead-hub/instead
 
@@ -87,9 +87,9 @@ an article about how it all began:
 
 https://instead-hub.github.io/article/2010-05-09-history/
 
-### Looks like a classic INSTEAD game
+### Look and feel of a typical INSTEAD game
 
-So, it looks like a classic INSTEAD of a game?
+So, What does a typical INSTEAD game look like?
 
 _Main game window_ contain a narrative, information about the static and
 dynamic parts of the scene, active events and a picture the scene (in the
@@ -121,82 +121,83 @@ _Actions_ of the player can be:
 - the unfolding of the object scene;
 - switch to another scene.
 
-### How to create a game
+### How to start a new game project
 
-The game is the directory in which the script should be placed (text file)
-main3.lua. (Note, the presence of the file main3.lua means that you write the
-game on STEAD3!) Other game resources (lua scripts, images, and music) should
-be inside the game directory. All links to resources are given relative to this
-directory -- the directory of the game.
+INSTEAD will treat any directory on your computer as a game project if it
+contains a text file named "main3.lua". The presense of this file means that
+it is a STEAD3 project. Any other files you need for your game such as extra
+Lua scripts, images, and music should be stored within the game directory as
+well. Any time you reference an external resource in your code, it should be
+relative to the top-level game directory.
 
-At the beginning of the file main3.lua can be defined header consisting of
-tags (strings of a special form). Tags must start with the characters: two
-minuses.
+The "main3.lua" file should start with a comment block containing a list of tags. Tags are pairs of names and character strings that provide information about your game to INSTEAD.
 
-	--
+Any sequence of characters starting with a double-dash on the same line is a Lua comment. INSTEAD tags are comment lines of the following form:
 
-Two dashes is a comment from the point of view of Lua. At the moment there are
-the following tags.
+	-- $TagName: A string of UTF-8 characters$
 
-The $Name tag contains the name of the game in UTF-8. Example use the tag:
+The $Name tag contains the name of the game. Here is an example:
 
 	-- $Name: the Most interesting game!$
 
-Then you should (preferably) ask version of the game:
+It's good practice to follow the 'Name' tag with a few others. Here is how to specify the game's version number:
 
 	-- $Version: 0.5$
 
-And to indicate the authorship:
+People who play your game may be interested in who wrote it:
 
 	-- $Author: Anonymous fan of text adventures$
 
-For more information about the game, you can set the tag Info:
+It's oftentimes helpful to include a description about your game. Here we give
+an example of a multi-line tag. You specify line breaks using the "\n" escape
+sequence:
 
-	-- $Info: This remake of the old game\PS ZX specturm$
+	-- $Info: This is a remake of a classic\nZX Spectrum game.$
 
-Note the \n in the Info, it will be a line when you select "Info" INSTEAD.
+If you are a Windows user, make sure that your text editor can save files
+encoded as UTF-8 _without a BOM (byte order marker)_.
 
-If you are developing a game in Windows make sure your editor supports UTF-8
-encoding but _without BOM_. This encoding should to use when writing games!
+After the preamble containing your tags, you should list any external modules
+required by the game. Here is an example of what that might look like. We'll explain what these specific lines mean later:
 
-Next, you should typically specify modules that are required by the game. On
-modules will be discussed separately.
-
-	require "fmt" -- some formatting functions
+	require "fmt"   -- some formatting functions
 	fmt.para = true -- enable the paragraphs (indents)
 
-In addition, it is usually worthwhile to define handlers by default:
-game.act, game.use, game.inv, which are also discussed below.
+After this, it's usually worthwhile to define default handlers. We haven't
+covered what handlers are yet, so it's fine if you don't know exactly what
+these lines do. Here is how you would define the default "act", "use", and
+"inv" handlers:
 
 	game.act = 'Not running.';
 	game.use = 'It does not help.';
 	game.inv = 'Why?';
 
-_Initialization_ of the game should be defined in the init function, which called
-by the engine in the beginning. In this function conveniently to initialize
-the state of the player at the beginning of the game, or any other the steps
-needed for initial configuration of the game world. However,the function
-"init" may not be needed.
+When the game starts, it will set the initial game state by calling the "init"
+function. You can use this function to initialize the player or to perform any
+special starting tasks. The function may not be needed depending on your game.
 
-	function init() -- add to the inventory the knife and paper
+	function init() -- Put the knife and paper in the player's inventory
 		take 'the knife'
 		take 'paper'
 	end
 
-Once the game is initialized, run the game. You can define a function start ()
-that runs directly before starting the game. This means, for example, in the
-case of download saved games, start() will be called after the save read
+The game engine only calls init() when a new game is started. It will not be
+called when you load a game that was previously saved. To perform a few
+actions whenever the game is loaded, use the start() function.
 
-
-	function start(load) -- to restore the original state?
-		if load then
-			dprint "It's a load state."
-		else
-			dprint "This is the start of the game."
-		end
-		-- we don't need to do anything
+```
+function start(is_loaded) -- to restore the original state?
+	if is_loaded then
+		dprint "Game loaded."
+	else
+		dprint "New game started."
 	end
+	-- we don't need to do anything
+end
+```
 
+If you include both an init() function _and_ a start() function, then them
+game engine will call init() first, and then call start().
 
 The graphic interpreter looks for available games in the directory games. The
 Unix version of the interpreter in addition, the catalog scans also games in
@@ -234,7 +235,7 @@ game.use = 'does Not work.';
 game.inv = 'Why me?';
 
 function init()
--- initialization if it is needed
+	-- initialization if it is needed
 end
 ```
 
@@ -256,17 +257,19 @@ In the code of your game.
 
 When you debug a game, you usually need to frequently save the game and load
 the state of the game. You can use the standard mechanism of saving via menu
-(or via keys f2/f3), or use the quick saving/loading (press f8/f9).
+(or via keys F2/F3), or use the quick saving/loading (press F8/F9).
 
-Mode '-debug' you can restart the game with 'alt-r'. In combination with f8/f9
+Mode '-debug' you can restart the game with [ALT]+R. In combination with F8/F9
 this enables you to quickly see changes to the game after it changes.
 
-> Attention! If you just restart INSTEAD, it is likely
-> you will see the old state of the game, as the default running mode
-> startup AutoSave! Either disable this setting in the menu
-> (AutoSave), or explicitly reset the game after the edits.
-> Restart is possible through the menu (to start over) or the 'alt-r' in mode
-> '-debug' as described above.
+> Attention! INSTEAD's autosave feature is helpful when playing games, but may
+> get in the way when you are in the middle of development. When restarting
+> INSTEAD, the default behavior is to pick up where you left off by reloading
+> the previous game state. You can disable this feature through the menu
+> settings under "autosave". You can also explicitly reset the game whenever
+> you edit its source code. While in debug mode (by starting with the -debug
+> flag as described above), you can press [ALT]+R or select "start over" from
+> the menu.
 
 Mode '-debug' Windows version INSTEAD creates a console window (in Unix
 version, if you start INSTEAD from the console, the output will bedirected to
@@ -471,7 +474,7 @@ obj {
 };
 ```
 
-Object name "nam" is used when it gets to your inventory. Thoughin our case,
+Object name "nam" is used when it gets to your inventory. Though in our case,
 the table hardly gets there. If the object is defined 'disp', when it enters
 the inventory to display it will make use of this attribute. For example:
 
@@ -502,15 +505,15 @@ and state change to playing world.
 
 ## Add objects to the scene
 
-In order to put in scene objects, there are several ways.
+There are several ways for you, the author, to populate a scene with objects.
 
-First, when a room is created, you can define a list of 'obj', consisting of
-names of objects:
+First, when a room is created, you can assign a list containing the names of
+objects to the room's 'obj' attribute:
 
 ```
 obj { -- an object with a name but without a variable
 	nam = 'box';
-	dsc = [[On the floor I see the {box}.]];
+	dsc = [[I see a {box} on the floor.]];
 	act = [[Hard!]];
 }
 
@@ -524,8 +527,9 @@ room {
 
 Now, when rendering the scene, we will see the object "box" in a dynamic part.
 
-Instead of the object name, you can use a variable-reference if she was the
-only one determined in advance:
+Rather than referring to the box by its name, we could have used a variable
+reference. This is possible as long as the object is declared earlier in your
+source code:
 
 ```
 apple = obj { -- object variable, but without a name
@@ -541,7 +545,9 @@ room {
 };
 ```
 
-An alternative form of record is design with:
+As a syntactic convenience, you can assign room objects at the end in a
+":with" block. This allows you to remove one level of indentation, and group
+objects at the end of a room definition:
 
 ```
 room {
@@ -553,11 +559,8 @@ room {
 }
 ```
 
-Design with allows you to get rid of extra nesting level in the code of the
-game.
-
-Second, you can declare objects directly within obj, or with describing their
-definition:
+You can even declare your objects directly within a room definition. Here is
+an example of how you might do that:
 
 ```
 room {
@@ -567,7 +570,7 @@ room {
 }:with {
 	obj {
 		nam = 'box';
-		dsc = [[On the floor I see the {box}.]];
+		dsc = [[I see a {box} on the floor.]];
 		act = [[Hard!]];
 	}
 };
@@ -586,7 +589,7 @@ You can insert line breaks for clarity, when objects many, for example:
 
 ```
 obj = {
-	'tabl',
+	'table',
 	'apple',
 	'knife',
 };
@@ -595,30 +598,33 @@ obj = {
 Another way of placing objects is to call functions which the objects are
 placed in the required room. This will be discussed in further.
 
-## Decorations
+## Objects used as decoration
 
-Objects that can be migrated from one scene to another (or get into the
-inventory), typically have a name and/or variable link. So as thus you can
-always find the object anywhere and work with him.
+Objects which end up being moved around within different scenes or into and
+out of the player's inventory during play are typically given a name or
+assigned to a variable. Naming an object allows us to refer to and work with
+objects in our code wherever the player (or our code editor) happens to be.
 
-But a large part of the game world consists of objects which occupy the
-specific location and serve as decorations.
+On the other hand, many or most of our game world may consist of objects that
+serve no other purpose than decoration. These objects exist solely to enrich
+our environments with descriptive content for the player to experience.
 
-Such objects can be very much, and moreover, it is usually the same type of
-objects like trees and such objects.
-
-To create decorations you can use different approaches.
+Such objects can be numerous, and moreover, it's common for them to be
+duplicates of each other. A forested area might be populated by many instances
+of the same tree, city streets may contain the same light pole on every block.
+We use a different approach for creating objects such as these than we would
+for unique objects that the player can manipulate.
 
 ### The same object in multiple rooms
 
-You can create a single object, e.g. 'tree' and place them in the different
-rooms.
+Using our example of a forrested area, you can create a single object and
+place it in multiple rooms as follows:
 
 ```
 obj {
 	nam = 'tree';
 	dsc = [[There is a {tree}.]];
-	act = [[All the trees look alike.]];
+	act = [[All of these trees look alike.]];
 }
 
 room {
@@ -635,9 +641,11 @@ room {
 
 ### Use tags instead of names
 
-If you don't like to come up with unique names for the same type decorative
-objects you can use for such objects tags. Tags are set by the tag attribute
-and always begin with a '#'symbol:
+A decorative object may only appear in a single room. For objects like these,
+you can assign them a local name using the 'tag' attribute. By assigning a
+tag, you don't have to come up with a globally unique name. Strings assigned
+to the 'tag' attribute look like a name, but are preceeded by a '#' symbol.
+Even so, you refer to the object by its tag without a #:
 
 ```
 obj {
@@ -646,18 +654,19 @@ obj {
 }
 ```
 
-In this example, the name object will be created automatically, but to access
-the object you will be able to tag. The object will be be searched for in the
-current room. For example:
+All objects have names whether you define one or not. In this example, the
+object tagged as "flowers" will be given an automatically generated name.
+Referring to an object by its tag is only possible within the current room.
+For example:
 
 ```
--- searching in the current room the first object with the tag '#flowers'
+-- search the current room for the first object tagged as '#flowers'
 dprint(_'#flowers')
 ```
 
-Tags that is, in a sense, synonymous with local names, so there is an
-alternative account of the creation of the object tag:
-
+One way of thinking about tags is that they are local names. For convenience,
+you can tag an object by assigning a tag to the 'nam' attribute. Remember that
+tags always start with a '#' character whereas names do not.
 
 ```
 obj {
@@ -666,8 +675,8 @@ obj {
 }
 ```
 
-If the name of the object begins with the character '#', then the object gets
-tag and automatically generated numeric name.
+By assigning a tag to the 'nam' attribute, the object's actual name will be
+automatically generated behind the scenes.
 
 ### Attribute usage scene decor
 
@@ -893,7 +902,11 @@ clarity:
 		p 'I don't have an apple or a fork.
 	end
 
-The _expression_ of an "if" statement is a boolean value made up of true/false terms separated by "and", "or", "not", and parenthesis to control evaluation priority. Expressions containing a single variable (ie: `if <variable>`) simply chekt that the veriable does not equal to `false`. The equality operator is '==', and the inequality operator is '~='.
+The _expression_ of an "if" statement is a boolean value made up of true/false
+terms separated by "and", "or", "not", and parenthesis to control evaluation
+priority. Expressions containing a single variable (ie: `if <variable>`)
+simply check that the variable does not equal to `false`. The equality
+operator is '==', and the inequality operator is '~='.
 
 ```
 if not have 'Apple' and not have 'fork' then
@@ -1011,8 +1024,8 @@ act = function(s)
 end
 ```
 
-In this example, the variable w exists only in the body the handler function
-act. We created a temporary reference variable w, which refers to the object
+In this example, the variable 'w' exists only in the body the handler function
+act. We created a temporary reference variable 'w', which refers to the object
 'light' to change feature-variable light this object.
 
 Of course, we could write:
@@ -1169,7 +1182,7 @@ act = function(s)
 end
 ```
 
-This displays the default description is specified using ahandler 'game.act'.
+This displays the default description is specified using a handler 'game.act'.
 Usually the default description contains description of the undoable action.
 Something like:
 
@@ -1233,9 +1246,8 @@ This method works only if the called method designed as a feature. You can use
 
 ## Inventory
 
-The easiest way to create an object that can be taken-to define handler 'tak'.
-
-For example:
+The easiest way to create an object that can be picked up is to assign a
+handler to the 'tak' attribute, which is short for "take". For example:
 
 ```
 obj {
@@ -1273,7 +1285,6 @@ obj {
 	end
 };
 ```
-
 If the object in the inventory is not declared a handler for the 'inv', will be called 'game.inv'.
 
 If the handler is 'tak' will return false, the item will not be taken, for example:
@@ -1519,8 +1530,8 @@ room {
 ```
 
 What's the difference? Disabling an object means that the object ceases to be
-available to the player. If the object is nested other objects,  and these
-objects become inaccessible.The closure of the facility makes unavailable the
+available to the player. If the object is nested other objects, and these
+objects become inaccessible. The closure of the facility makes unavailable the
 contents of this object, but not the object itself.
 
 However, in the case of rooms and closing rooms, and disabled room lead to the
@@ -1646,7 +1657,7 @@ object, then the object 'player', and then my current room. Youcan block
 Use 'use' or 'used' (or both) is a matter of personal preference, however, the
 method used is called earlier and therefore has a higher priority.
 
-## The Object "Player"
+## The "Player" Object
 
 Player in the world INSTEAD represented by an object of type 'player'. You can
 to create multiple players, but one player is present by default.
@@ -1678,7 +1689,7 @@ player, andnecessary, will move into the room where the new player.
 The 'me()' always returns the current player. Therefore, in most games and
 me() == pl.
 
-## The Object "World"
+## The "World" Object
 
 The game world is represented by an object of type world. The name of this
 object  the 'game'. There is a reference variable, also called game.
@@ -1711,9 +1722,9 @@ Still, the game object you can set handlers: afteract, afterinv, afteruse,
 afterwalk -- that are invoked in case of successful to perform the appropriate
 action.
 
-## The attributes-lists
+## List Attributes
 
-Attributes-lists (such as 'way' or 'obj') allow you to work with its content
+List attributes (such as 'way' or 'obj') allow you to work with its content
 with a set of methods. Attributes-a list designed keep a list of objects. In
 fact, you can create lists for their own needs, and place them in objects, for
 example:
@@ -3536,7 +3547,7 @@ see before this response.
 ### Feature class
 
 The constructors of objects are widely used in STEAD2. IN STEAD3 obj/dlg/room
-are implemented as object classes. Class of objects isto create for those
+are implemented as object classes. Class of objects is to create for those
 occasions when the behavior of the created object is not fits into standard
 objects obj/room/dlg and you want to change methods of the class. Changing a
 class method, for example, you can generally to change how the object looks in
@@ -5419,25 +5430,27 @@ In addition to the methods of obj, added the following methods:
 So that's where the documentation ends. But maybe starts the most interesting
 -- your story!
 
-I made the first version INSTEAD in 2009. At that moment, I never would do not
-think that my toy (and the engine) will survive so much changes. Now, as I
-write this epilogue, on the court in 2017 and text adventures still exist.
-However, their impact on the culture is still minimal. And good adventure --
-still very little.
+I made the first version of INSTEAD in 2009. At that time, I never thought
+that my toy (and the engine) would have survived so many changes. Text
+adventures still exist as I write this epilogue in 2017. Even so, their impact
+on our culture remains minimal, and well-written adventures are far and few
+between.
 
-In my opinion, text and graphic games have huge potential. They are not such
-interactive, they do not take your life for forever unsatisfied desire, not
-force you to sit for days for the monitor in frustration or unhealthy
-nervousness... They can take the best from the world of literature and
-computer games. That genre the greater part of the non-profit -- even a plus.
+Games featuring a mixture of text and graphics have huge potential in my
+opinion. Though they are less interractive, they are also less demanding of
+the player. Enjoying a text adventure will not consume days of your life spent
+in front of the monitor suffering frustration or unhealthy anxiety as your
+desires are left unsatisfied. Textual games borrow from the best that the two
+worlds of liturature and computer gaming have to offer. As a bonus, the
+greater part of games in this genre can be enjoyed without cost.
 
-History INSTEAD, in my opinion, good proof of this. It released many games
-that can safely be called great! Their authors may retire, but they
-created works are already living their lives, reflected in the consciousness of
-people, who play them or remember. Let the "circulation" of these games is not
-so great but what I saw completely "justified" all efforts spent on engine. I
-know it's time well spent. So I found a power, and made the engine even
-better, releasing STEAD3. I hope he and like you.
+The history of INSTEAD is, in my opinion, proof of this claim. Many games have
+been released for INSTEAD which can safely be called great! Their authors may
+retire, but they created works are already living their lives, reflected in
+the consciousness of people, who play them or remember. Let the "circulation"
+of these games is not so great but what I saw completely "justified" all
+efforts spent on engine. I know it's time well spent. So I found a power, and
+made the engine even better, releasing STEAD3. I hope he and like you.
 
 So if you've read this far, I can only wish you to add your first story.
 Creativity -- this is freedom. :)
