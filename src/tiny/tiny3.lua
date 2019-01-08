@@ -324,3 +324,7 @@ std.mod_step(function(state)
 end)
 
 require "ext/paths"
+
+if std.ref '@metaparser' then
+	std.ref '@metaparser'.winsize = 0
+end
