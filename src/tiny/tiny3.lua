@@ -5,6 +5,10 @@ local instead = std.obj { nam = '@instead' }
 instead.nosave = false
 instead.noautosave = false
 
+function instead.mouse_filter()
+	return 0
+end
+
 function instead.render_callback()
 	return false
 end
@@ -318,3 +322,5 @@ std.mod_step(function(state)
 		dict = {}
 	end
 end)
+
+require "ext/paths"
