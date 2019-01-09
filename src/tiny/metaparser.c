@@ -53,7 +53,6 @@ int main(int argc, const char **argv)
 		p = fgets(input, sizeof(input), stdin);
 		if (!p)
 			break;
-		printf("    * * *\n");
 		p[strcspn(p, "\n\r")] = 0;
 		if (!strcmp(p, "quit"))
 			break;
@@ -62,14 +61,11 @@ int main(int argc, const char **argv)
 			continue;
 		}
 		snprintf(cmd, sizeof(cmd), "@metaparser \"%s\"", p);
-		str = instead_cmd(cmd, &rc);
+		str = instead_cmd(cmd, NULL);
 		if (str)
 			printf("%s", str);
 		free(str);
-		if (rc)
-			printf("error!\n");
-		else
-			if (log_opt) fprintf(stderr, "%s\n", p);
+		if (log_opt) fprintf(stderr, "%s\n", p);
 	}
 	instead_cmd("save autosave", NULL);
 	instead_done();
