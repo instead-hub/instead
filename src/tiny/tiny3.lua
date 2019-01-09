@@ -316,6 +316,11 @@ std.mod_init(function()
 end)
 std.mod_start(function()
 	dict = {}
+	local mp = std.ref '@metaparser'
+	if mp then
+		mp.winsize = 0
+		mp.prompt = false
+	end
 end)
 std.mod_step(function(state)
 	if state then
@@ -324,7 +329,3 @@ std.mod_step(function(state)
 end)
 
 require "ext/paths"
-
-if std.ref '@metaparser' then
-	std.ref '@metaparser'.winsize = 0
-end
