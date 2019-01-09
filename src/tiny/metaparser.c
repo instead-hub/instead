@@ -44,7 +44,7 @@ int main(int argc, const char **argv)
 	str = instead_cmd("look", &rc);
 #endif
 	if (!rc)
-		printf("%s", str);
+		printf("%s\n", str);
 	free(str);
 
 	while (1) {
@@ -63,7 +63,7 @@ int main(int argc, const char **argv)
 		snprintf(cmd, sizeof(cmd), "@metaparser \"%s\"", p);
 		str = instead_cmd(cmd, NULL);
 		if (str)
-			printf("%s", str);
+			printf("%s\n", str);
 		free(str);
 		if (log_opt) fprintf(stderr, "%s\n", p);
 	}
