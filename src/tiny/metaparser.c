@@ -37,19 +37,20 @@ int main(int argc, const char **argv)
 		fprintf(stderr, "Can not load game: %s\n", instead_err());
 		exit(1);
 	}
-	printf("%s\n", str);
+	printf("%s\n", str); fflush(stdout);
 #if 0 /* no autoload */
 	str = instead_cmd("load autosave", &rc);
 #else
 	str = instead_cmd("look", &rc);
 #endif
-	if (!rc)
-		printf("%s\n", str);
+	if (!rc) {
+		printf("%s\n", str); fflush(stdout);
+	}
 	free(str);
 
 	while (1) {
 		char input[128], *p, cmd[192];
-		printf("> ");
+		printf(">\n"); fflush(stdout);
 		p = fgets(input, sizeof(input), stdin);
 		if (!p)
 			break;
@@ -60,10 +61,14 @@ int main(int argc, const char **argv)
 			log_opt = 1;
 			continue;
 		}
-		snprintf(cmd, sizeof(cmd), "@metaparser \"%s\"", p);
+		if (!strncmp(p, "load ", 5) || !strncmp(p, "save ", 5))
+			snprintf(cmd, sizeof(cmd), "%s", p);
+		else
+			snprintf(cmd, sizeof(cmd), "@metaparser \"%s\"", p);
 		str = instead_cmd(cmd, NULL);
-		if (str)
-			printf("%s\n", str);
+		if (str) {
+			printf("%s\n", str); fflush(stdout);
+		}
 		free(str);
 		if (log_opt) fprintf(stderr, "%s\n", p);
 	}
