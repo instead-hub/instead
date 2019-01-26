@@ -64,7 +64,7 @@ func Input(id int64, str string) string {
 			return string(b) + "\n"
 		}
 	}
-	log.Printf("input: %s\n", str)
+//	log.Printf("input: %s\n", str)
 	ctx.input <- str
 
 	ctx.last_time = time.Now().Unix()
