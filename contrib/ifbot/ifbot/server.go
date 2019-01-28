@@ -1,28 +1,26 @@
-/* golang metaparser3 telegram bot */
-package main
+/* golang metaparser3 bot package */
+package ifbot
 
 import (
 	"bufio"
-//	"fmt"
-	"github.com/Syfaro/telegram-bot-api"
 	"io/ioutil"
 	"log"
-	"os/exec"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 	"time"
 )
 
 type Instance struct {
-	id int64
-	name string
-	input chan string
-	output chan string
+	id        int64
+	name      string
+	input     chan string
+	output    chan string
 	last_time int64
 }
 
-var Servers []*Instance
+var servers []*Instance
 
 func Input(id int64, str string) string {
 	var msg string
@@ -46,8 +44,8 @@ func Input(id int64, str string) string {
 	if strings.HasPrefix(cmd, "load") || strings.HasPrefix(cmd, "save") {
 		return ""
 	} else if strings.HasPrefix(cmd, "/restart") ||
-			strings.HasPrefix(cmd, "/stop") ||
-			strings.HasPrefix(cmd, "/start") {
+		strings.HasPrefix(cmd, "/stop") ||
+		strings.HasPrefix(cmd, "/start") {
 		if !new || strings.HasPrefix(cmd, "/restart") { // restart
 			Stop(ctx)
 			if strings.HasPrefix(cmd, "/restart") {
@@ -64,7 +62,7 @@ func Input(id int64, str string) string {
 			return string(b) + "\n"
 		}
 	}
-//	log.Printf("input: %s\n", str)
+	//	log.Printf("input: %s\n", str)
 	ctx.input <- str
 
 	ctx.last_time = time.Now().Unix()
@@ -79,24 +77,24 @@ func Input(id int64, str string) string {
 }
 
 func Cleanup() {
-	var stop_Servers []*Instance
+	var stop_servers []*Instance
 	t := time.Now().Unix()
-	for _, v := range Servers {
-		if t - v.last_time >= 60 * 15 {
-			stop_Servers = append(stop_Servers, v)
+	for _, v := range servers {
+		if t-v.last_time >= 60*15 {
+			stop_servers = append(stop_servers, v)
 		}
 	}
-	for _, v := range stop_Servers {
-		log.Printf("Stopped %d after %d\n",  v.id, t - v.last_time);
+	for _, v := range stop_servers {
+		log.Printf("Stopped %d after %d\n", v.id, t-v.last_time)
 		Stop(v)
 	}
 }
 
 func Purge(ctx *Instance) {
-	for n, v := range Servers {
+	for n, v := range servers {
 		if v.id == ctx.id {
-			Servers[len(Servers) - 1], Servers[n] = Servers[n], Servers[len(Servers) - 1]
-			Servers = Servers[:len(Servers) - 1]
+			servers[len(servers)-1], servers[n] = servers[n], servers[len(servers)-1]
+			servers = servers[:len(servers)-1]
 			return
 		}
 	}
@@ -106,30 +104,30 @@ func Kill() {
 	t := time.Now().Unix()
 	var oldest int64 = 0
 	var ctx *Instance
-	for _, v := range Servers {
-		if t - v.last_time > oldest {
+	for _, v := range servers {
+		if t-v.last_time > oldest {
 			oldest = t - v.last_time
 			ctx = v
 		}
 	}
 	if ctx != nil {
-		log.Printf("Killing %d\n",  ctx.id);
+		log.Printf("Killing %d\n", ctx.id)
 		Stop(ctx)
 	}
 }
 
 func Stop(ctx *Instance) {
 	ctx.input <- ("save " + autosave(ctx))
-	log.Printf("%s\n", <- ctx.output)
+	log.Printf("%s\n", <-ctx.output)
 	ctx.input <- "quit"
-	log.Printf("%s\n", <- ctx.output)
+	log.Printf("%s\n", <-ctx.output)
 	Purge(ctx)
 }
 
 func Lookup(id int64) *Instance {
-	for k, v := range Servers {
+	for k, v := range servers {
 		if v.id == id {
-			return Servers[k]
+			return servers[k]
 		}
 	}
 	return nil
@@ -142,9 +140,9 @@ func Spawn(id int64) (*Instance, string) {
 		return ctx, msg
 	}
 
-	if len(Servers) > 16 {
+	if len(servers) > 16 {
 		Cleanup()
-		if len(Servers) > 16 {
+		if len(servers) > 16 {
 			Kill()
 		}
 	}
@@ -153,10 +151,10 @@ func Spawn(id int64) (*Instance, string) {
 	ctx.input = make(chan string)
 	ctx.output = make(chan string)
 	ctx.id = id
-	Servers = append(Servers, ctx)
+	servers = append(servers, ctx)
 	go server(ctx)
 	msg = <-ctx.output
-//	fmt.Print(<-ctx.output)
+	//	fmt.Print(<-ctx.output)
 	return ctx, msg
 }
 
@@ -165,7 +163,7 @@ func savedir(ctx *Instance) string {
 }
 
 func autosave(ctx *Instance) string {
-	return "./saves/" + strconv.FormatInt(ctx.id, 10)  + "/autosave"
+	return "./saves/" + strconv.FormatInt(ctx.id, 10) + "/autosave"
 }
 
 func grab(b *bufio.Reader) (string, bool) {
@@ -202,16 +200,16 @@ func server(ctx *Instance) {
 
 	for {
 		output <- res
-		num, err := strconv.Atoi(<- input)
+		num, err := strconv.Atoi(<-input)
 
 		if err != nil {
 			res = ""
 			for k, f := range files {
-				res = res + strconv.Itoa(k + 1) + ") " + f.Name() + "\n"
+				res = res + strconv.Itoa(k+1) + ") " + f.Name() + "\n"
 			}
 			continue
 		}
-		num --
+		num--
 		if num < 0 || num >= len(files) {
 			continue
 		}
@@ -223,7 +221,7 @@ func server(ctx *Instance) {
 		break
 	}
 
-	cmd := exec.Command("./tiny-mp", "./games/" + ctx.name)
+	cmd := exec.Command("./tiny-mp", "./games/"+ctx.name)
 	in, err := cmd.StdinPipe()
 	if err != nil {
 		output <- "%ERROR 1"
@@ -255,9 +253,9 @@ func server(ctx *Instance) {
 	}
 
 	if _, err := os.Stat(savedir(ctx) + "/autosave"); err == nil {
-		in.Write([]byte("load "+autosave(ctx) + "\n"))
+		in.Write([]byte("load " + autosave(ctx) + "\n"))
 		res, ok = grab(bufOut)
-		if ! ok {
+		if !ok {
 			output <- "%ERROR 3"
 			return
 		}
@@ -265,7 +263,7 @@ func server(ctx *Instance) {
 	output <- string(res)
 
 	for {
-		str := <- input
+		str := <-input
 		i := strings.Index(str, "\n")
 		if i > -1 {
 			str = str[:i]
@@ -284,39 +282,4 @@ func server(ctx *Instance) {
 		output <- string(res)
 	}
 	output <- "%ERROR 0"
-}
-
-func main() {
-/*
-	scanner := bufio.NewScanner(os.Stdin)
-
-	for scanner.Scan() {
-		str := Input(1, scanner.Text())
-		fmt.Printf(str)
-		Cleanup()
-	}
-*/
-	bot, err := tgbotapi.NewBotAPI("TOKEN")
-	if err != nil {
-		log.Panic(err)
-	}
-
-	// bot.Debug = true
-	log.Printf("Authorized on account %s", bot.Self.UserName)
-
-	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 60
-
-	updates, err := bot.GetUpdatesChan(u)
-	for update := range updates {
-		if update.Message == nil {
-			continue
-		}
-		ChatID := update.Message.Chat.ID
-		Text := update.Message.Text
-		reply := Input(ChatID, Text)
-		msg := tgbotapi.NewMessage(ChatID, reply)
-		bot.Send(msg)
-		Cleanup()
-	}
 }
