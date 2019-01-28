@@ -266,6 +266,10 @@ func server(ctx *Instance) {
 
 	for {
 		str := <- input
+		i := strings.Index(str, "\n")
+		if i > -1 {
+			str = str[:i]
+		}
 		_, err = in.Write([]byte(str + "\n"))
 		if err != nil {
 			output <- "%ERROR 4"
