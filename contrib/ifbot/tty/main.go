@@ -1,9 +1,9 @@
 package main
 
 import (
+	"../ifbot"
 	"bufio"
 	"fmt"
-	"../ifbot"
 	"os"
 )
 

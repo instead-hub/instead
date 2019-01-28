@@ -2,15 +2,21 @@
 package main
 
 import (
-	"github.com/Dimonchik0036/vk-api"
 	"../ifbot"
+	"fmt"
+	"github.com/Dimonchik0036/vk-api"
 	"log"
+	"os"
 	"strings"
 	"time"
 )
 
 func main() {
-	client, err := vkapi.NewClientFromToken("TOKEN")
+	if len(os.Args) != 2 {
+		fmt.Println("BOT Token missing")
+		os.Exit(1)
+	}
+	client, err := vkapi.NewClientFromToken(os.Args[1])
 	if err != nil {
 		log.Panic(err)
 	}
@@ -29,9 +35,9 @@ func main() {
 		}
 		ID := update.Message.FromID
 		Text := update.Message.Text
-//		log.Printf("Input: %s", Text)
+		//		log.Printf("Input: %s", Text)
 		reply := ifbot.Input(ID, Text)
-//		log.Printf("Output: %s", reply)
+		//		log.Printf("Output: %s", reply)
 		lines := strings.Split(reply, "\n")
 		chunk := ""
 		for _, l := range lines {

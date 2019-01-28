@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -110,7 +111,7 @@ func Kill() {
 			ctx = v
 		}
 	}
-	if ctx != nil {
+	if ctx != nil && oldest > 60*5 {
 		log.Printf("Killing %d\n", ctx.id)
 		Stop(ctx)
 	}
@@ -140,10 +141,13 @@ func Spawn(id int64) (*Instance, string) {
 		return ctx, msg
 	}
 
-	if len(servers) > 16 {
+	if len(servers) >= 16 {
 		Cleanup()
-		if len(servers) > 16 {
+		if len(servers) >= 16 {
 			Kill()
+		}
+		if len(servers) >= 16 {
+			return nil, "Server full"
 		}
 	}
 
@@ -181,6 +185,31 @@ func grab(b *bufio.Reader) (string, bool) {
 	return res, true
 }
 
+func gamename(dir string) string {
+	file, err := os.Open("./games/" + dir + "/main3.lua")
+	if err != nil {
+		return dir
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+
+	var commentID = regexp.MustCompile(`^[ \t]*--`)
+	var nameID = regexp.MustCompile(`^[ \t]*--[ \t]*\$Name:[ \t]*(.+)`)
+	for scanner.Scan() {
+		if !commentID.MatchString(scanner.Text()) {
+			break
+		}
+		if !nameID.MatchString(scanner.Text()) {
+			continue
+		}
+		name := nameID.ReplaceAllString(scanner.Text(), "${1}")
+		name = strings.TrimRight(name, "$")
+		return name
+	}
+	return dir
+}
+
 func server(ctx *Instance) {
 	input := ctx.input
 	output := ctx.output
@@ -205,7 +234,7 @@ func server(ctx *Instance) {
 		if err != nil {
 			res = ""
 			for k, f := range files {
-				res = res + strconv.Itoa(k+1) + ") " + f.Name() + "\n"
+				res = res + strconv.Itoa(k+1) + ") " + gamename(f.Name()) + "\n"
 			}
 			continue
 		}
