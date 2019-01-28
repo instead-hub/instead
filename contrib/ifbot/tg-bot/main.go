@@ -2,13 +2,19 @@
 package main
 
 import (
-	"github.com/Syfaro/telegram-bot-api"
 	"../ifbot"
+	"fmt"
+	"github.com/Syfaro/telegram-bot-api"
 	"log"
+	"os"
 )
 
 func main() {
-	bot, err := tgbotapi.NewBotAPI("TOKEN")
+	if len(os.Args) != 2 {
+		fmt.Println("BOT Token missing")
+		os.Exit(1)
+	}
+	bot, err := tgbotapi.NewBotAPI(os.Args[1])
 	if err != nil {
 		log.Panic(err)
 	}
