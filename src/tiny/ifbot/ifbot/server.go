@@ -57,8 +57,8 @@ func Input(id int64, str string) string {
 			if ctx, msg = Spawn(id); ctx == nil {
 				return msg
 			}
+			new = true
 		}
-		str = ""
 	} else if strings.HasPrefix(cmd, "/help") {
 		b, err := ioutil.ReadFile("./HELP")
 		if err == nil {
@@ -219,8 +219,7 @@ func gamename(dir string) string {
 func server(ctx *Instance) {
 	input := ctx.input
 	output := ctx.output
-	var res string
-	res = ""
+	res := ""
 
 	b, err := ioutil.ReadFile("./MOTD")
 	if err == nil {
