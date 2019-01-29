@@ -29,6 +29,9 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
+
+	ifbot.SaveDir = "vk-saves"
+
 	for update := range updates {
 		if update.Message == nil || !update.IsNewMessage() || update.Message.Outbox() {
 			continue

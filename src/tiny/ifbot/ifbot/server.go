@@ -170,12 +170,14 @@ func Spawn(id int64) (*Instance, string) {
 	return ctx, msg
 }
 
+var SaveDir string = "saves"
+
 func savedir(ctx *Instance) string {
-	return "./games/" + ctx.name + "/saves/" + strconv.FormatInt(ctx.id, 10)
+	return "./games/" + ctx.name + "/" + SaveDir + "/" + strconv.FormatInt(ctx.id, 10)
 }
 
 func autosave(ctx *Instance) string {
-	return "./saves/" + strconv.FormatInt(ctx.id, 10) + "/autosave"
+	return "./" + SaveDir + "/" + strconv.FormatInt(ctx.id, 10) + "/autosave"
 }
 
 func grab(b *bufio.Reader) (string, bool) {
