@@ -44,7 +44,9 @@ func Input(id int64, str string) string {
 
 	cmd := strings.TrimSpace(strings.ToLower(str))
 
-	if strings.HasPrefix(cmd, "load") || strings.HasPrefix(cmd, "save") {
+	if strings.HasPrefix(cmd, "load") ||
+		strings.HasPrefix(cmd, "save") ||
+		strings.HasPrefix(cmd, "quit") {
 		return ""
 	} else if strings.HasPrefix(cmd, "/restart") ||
 		strings.HasPrefix(cmd, "/stop") ||
@@ -244,7 +246,12 @@ func server(ctx *Instance) {
 		}
 		for {
 			output <- res
-			num, err = strconv.Atoi(<-input)
+			inp := <-input
+			if inp == "quit" {
+				output <- "%ERROR quit"
+				return
+			}
+			num, err = strconv.Atoi(inp)
 			if err != nil {
 				continue
 			}
