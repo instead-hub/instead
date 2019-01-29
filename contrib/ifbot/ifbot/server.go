@@ -36,8 +36,10 @@ func Input(id int64, str string) string {
 		return msg
 	}
 
+	ctx.last_time = time.Now().Unix()
+
 	if msg != "" {
-		msg = msg + "\n"
+		msg += "\n"
 	}
 
 	cmd := strings.TrimSpace(strings.ToLower(str))
@@ -64,9 +66,12 @@ func Input(id int64, str string) string {
 		}
 	}
 	//	log.Printf("input: %s\n", str)
+	if new {
+		return msg
+	}
+
 	ctx.input <- str
 
-	ctx.last_time = time.Now().Unix()
 	o := <-ctx.output
 
 	if strings.HasPrefix(o, "%ERROR") {
@@ -155,6 +160,7 @@ func Spawn(id int64) (*Instance, string) {
 	ctx.input = make(chan string)
 	ctx.output = make(chan string)
 	ctx.id = id
+	ctx.last_time = time.Now().Unix()
 	servers = append(servers, ctx)
 	go server(ctx)
 	msg = <-ctx.output
@@ -227,27 +233,34 @@ func server(ctx *Instance) {
 		return
 	}
 
-	for {
-		output <- res
-		num, err := strconv.Atoi(<-input)
-
-		if err != nil {
-			res = ""
-			for k, f := range files {
-				res = res + strconv.Itoa(k+1) + ") " + gamename(f.Name()) + "\n"
+	var num int
+	if len(files) == 1 {
+		num = 0
+	} else if len(files) == 0 {
+		output <- "%ERROR 0"
+		return
+	} else {
+		for k, f := range files {
+			res = res + strconv.Itoa(k+1) + ") " + gamename(f.Name()) + "\n"
+		}
+		for {
+			output <- res
+			num, err = strconv.Atoi(<-input)
+			if err != nil {
+				continue
 			}
-			continue
+			num--
+			if num < 0 || num >= len(files) {
+				continue
+			}
+			break
 		}
-		num--
-		if num < 0 || num >= len(files) {
-			continue
-		}
-		ctx.name = files[num].Name()
-		err = os.MkdirAll(savedir(ctx), os.ModePerm)
-		if err != nil {
-			continue
-		}
-		break
+	}
+	ctx.name = files[num].Name()
+	err = os.MkdirAll(savedir(ctx), os.ModePerm)
+	if err != nil {
+		output <- "%ERROR 0"
+		return
 	}
 
 	cmd := exec.Command("./tiny-mp", "./games/"+ctx.name)
@@ -290,7 +303,6 @@ func server(ctx *Instance) {
 		}
 	}
 	output <- string(res)
-
 	for {
 		str := <-input
 		i := strings.Index(str, "\n")
