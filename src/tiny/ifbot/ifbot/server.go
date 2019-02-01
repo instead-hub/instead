@@ -45,6 +45,10 @@ func Input(id int64, str string) string {
 	str = strings.TrimSpace(str)
 	cmd := strings.ToLower(str)
 
+	if strings.HasPrefix(cmd, "*") { // comment
+		return ""
+	}
+
 	if strings.HasPrefix(cmd, "load") ||
 		strings.HasPrefix(cmd, "save") ||
 		strings.HasPrefix(cmd, "quit") {
