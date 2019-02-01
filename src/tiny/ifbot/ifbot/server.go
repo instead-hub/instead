@@ -42,7 +42,8 @@ func Input(id int64, str string) string {
 		msg += "\n"
 	}
 
-	cmd := strings.TrimSpace(strings.ToLower(str))
+	str = strings.TrimSpace(str)
+	cmd := strings.ToLower(str)
 
 	if strings.HasPrefix(cmd, "load") ||
 		strings.HasPrefix(cmd, "save") ||
