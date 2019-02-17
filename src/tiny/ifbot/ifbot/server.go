@@ -43,6 +43,9 @@ func Input(id int64, str string) string {
 	}
 
 	str = strings.TrimSpace(str)
+	if len(str) > 128 {
+		str = str[0:128]
+	}
 	cmd := strings.ToLower(str)
 
 	if strings.HasPrefix(cmd, "*") { // comment
