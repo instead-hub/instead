@@ -42,7 +42,15 @@ func Input(id int64, str string) string {
 		msg += "\n"
 	}
 
-	cmd := strings.TrimSpace(strings.ToLower(str))
+	str = strings.TrimSpace(str)
+	if len(str) > 128 {
+		str = str[0:128]
+	}
+	cmd := strings.ToLower(str)
+
+	if strings.HasPrefix(cmd, "*") { // comment
+		return ""
+	}
 
 	if strings.HasPrefix(cmd, "load") ||
 		strings.HasPrefix(cmd, "save") ||
