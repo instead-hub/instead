@@ -1,3 +1,13 @@
+3.2.3
+
+  * enh: english documentation;
+  * fix: some compilation warnings;
+  * fix: makefile and source code cleanups;
+  * new: tiny instead for metaparser;
+  * new: telegram and vk bots.
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 15 Feb 2019 16:25:00 +0300
+
 3.2.2
 
   * new: mobile theme;

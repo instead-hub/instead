@@ -49,7 +49,7 @@ int main(int argc, const char **argv)
 	free(str);
 
 	while (1) {
-		char input[128], *p, cmd[192];
+		char input[256], *p, cmd[256 + 64];
 		printf(">\n"); fflush(stdout);
 		p = fgets(input, sizeof(input), stdin);
 		if (!p)
