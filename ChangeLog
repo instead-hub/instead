@@ -3,6 +3,7 @@
   * enh: english documentation;
   * fix: some compilation warnings;
   * fix: makefile and source code cleanups;
+  * fix: possible segfault;
   * new: tiny instead for metaparser;
   * new: telegram and vk bots.
 
