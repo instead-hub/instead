@@ -1095,6 +1095,9 @@ void game_release_theme(int force)
 	if (el_img(el_spic)) {
 		gfx_free_image(el_img(el_spic));
 		el_zero(el_spic);
+		if (GFX_MODE(game_theme.gfx_mode) == GFX_MODE_EMBEDDED)
+			txt_layout_add_img(txt_box_layout(el_box(el_scene)),
+				"scene", NULL);
 	}
 
 	for (i = 0; i < el_max; i++) {
@@ -2039,9 +2042,8 @@ int game_cmd(char *cmd, int flags)
 			if (new_pict) {
 				gfx_free_image(el_img(el_spic));
 				el(el_spic)->p.p = NULL;
-				if (GFX_MODE(game_theme.gfx_mode) == GFX_MODE_EMBEDDED &&
-					!el(el_spic)->p.p) /* clear embedded gfx */
-				txt_layout_add_img(txt_box_layout(el_box(el_scene)),
+				if (GFX_MODE(game_theme.gfx_mode) == GFX_MODE_EMBEDDED) /* clear embedded gfx */
+					txt_layout_add_img(txt_box_layout(el_box(el_scene)),
 					"scene", NULL);
 			}
 		}
