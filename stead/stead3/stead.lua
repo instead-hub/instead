@@ -1071,7 +1071,7 @@ function std:done()
 		if std.is_system(v) then
 			objects[k] = v
 		else
-			dprint("Deleting "..k)
+			std.dprint("Deleting "..k)
 		end
 	end)
 	std.objects = objects
