@@ -449,7 +449,7 @@ int input(struct inp_event *inp, int wait)
 		key_compat(inp);
 #endif
 #if SDL_VERSION_ATLEAST(1,3,0) /* strange bug in some SDL2 env, with up/down events storm */
-		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_KEYDOWN, SDL_KEYUP) > 0) {
+		if (DIRECT_MODE && SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_KEYDOWN, SDL_KEYUP) > 0) {
 			if (peek.key.keysym.scancode == event.key.keysym.scancode &&
 				peek.key.repeat == 0)
 				return AGAIN;
@@ -470,7 +470,7 @@ int input(struct inp_event *inp, int wait)
 		key_compat(inp);
 #endif
 #if SDL_VERSION_ATLEAST(1,3,0) /* strange bug in some SDL2 env, with up/down events storm */
-		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_KEYDOWN, SDL_KEYUP) > 0) {
+		if (DIRECT_MODE && SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_KEYDOWN, SDL_KEYUP) > 0) {
 			if (event.key.keysym.scancode == peek.key.keysym.scancode &&
 				peek.key.repeat == 0)
 				return AGAIN;
