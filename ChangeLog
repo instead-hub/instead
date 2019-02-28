@@ -4,6 +4,7 @@
   * fix: some compilation warnings;
   * fix: makefile and source code cleanups;
   * fix: possible segfault;
+  * fix: do not eat keyboard input;
   * new: tiny instead for metaparser;
   * new: telegram and vk bots.
 
