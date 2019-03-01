@@ -306,10 +306,13 @@ static const luaL_Reg sdl_funcs[] = {
 	{NULL, NULL}
 };
 
+static int input_text_state = 0;
+
 static int sdl_ext_init(void)
 {
 	char path[PATH_MAX];
 	instead_api_register(sdl_funcs);
+	input_text_state = input_text(-1);
 	game_wait_use = 1;
 	game_grab_events = 0;
 	snprintf(path, sizeof(path), "%s/%s", instead_stead_path(), "/ext/gui.lua");
@@ -318,7 +321,7 @@ static int sdl_ext_init(void)
 
 static int sdl_ext_done(void)
 {
-	input_text(0);
+	input_text(input_text_state);
 	return 0;
 }
 
