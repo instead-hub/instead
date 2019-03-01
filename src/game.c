@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2018 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2019 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -3158,9 +3158,15 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 		const char *k;
 		args[0].val = "kbd"; args[0].type = INSTEAD_STR;
 		args[1].val = (down)?"true":"false"; args[1].type = INSTEAD_BOOL;
-		k = (key)?key:"unknown";
+		k = (key) ? key:"unknown";
 		args[2].val = (char*)k; args[2].type = INSTEAD_STR;
 		args[3].val = NULL;
+	} else if (mb == EV_CODE_TEXT) {
+		const char *k;
+		args[0].val = "text"; args[0].type = INSTEAD_STR;
+		k = (key) ? key:"";
+		args[1].val = (char*)k; args[2].type = INSTEAD_STR;
+		args[2].val = NULL;
 	} else {
 		const char *k;
 		int px = -1;
@@ -3307,13 +3313,14 @@ static int game_input_events(struct inp_event *ev)
 	if (ev->type == KEY_DOWN || ev->type == KEY_UP) {
 		if (!game_input((ev->type == KEY_DOWN), ev->sym, -1, -1, EV_CODE_KBD))
 			return 1;
-	}
-	if (ev->type == FINGER_DOWN || ev->type == FINGER_UP) {
+	} else if (ev->type == FINGER_DOWN || ev->type == FINGER_UP) {
 		if (!game_input((ev->type == FINGER_DOWN), ev->sym, ev->x, ev->y, EV_CODE_FINGER))
 			return 1;
-	}
-	if (ev->type == MOUSE_DOWN || ev->type == MOUSE_UP) {
+	} else if (ev->type == MOUSE_DOWN || ev->type == MOUSE_UP) {
 		if (!game_input((ev->type == MOUSE_DOWN), "mouse", ev->x, ev->y, ev->code))
+			return 1;
+	} else if (ev->type == KEY_TEXT) {
+		if (!game_input(1, ev->sym, -1, -1, EV_CODE_TEXT))
 			return 1;
 	}
 	return 0;

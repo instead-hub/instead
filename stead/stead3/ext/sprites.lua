@@ -37,6 +37,7 @@ local instead = std.ref '@instead'
 -- luacheck: read globals instead_direct
 -- luacheck: read globals instead_busy
 -- luacheck: read globals instead_sprite_pixels
+-- luacheck: read globals instead_screen_size
 
 -- theme
 instead.theme_var = instead_theme_var

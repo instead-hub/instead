@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2018 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2019 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -284,10 +284,25 @@ static int luaB_grab_events(lua_State *L) {
 	return 1;
 }
 
+static int luaB_text_input(lua_State *L) {
+	int rc;
+	int inp = lua_toboolean(L, 1);
+
+	if (!lua_isboolean(L, 1)) {
+		rc = input_text(-1);
+		lua_pushboolean(L, rc > 0);
+		return 1;
+	}
+	rc = input_text(inp);
+	lua_pushboolean(L, rc >= 0);
+	return 1;
+}
+
 static const luaL_Reg sdl_funcs[] = {
 	{ "instead_clipboard", luaB_clipboard },
 	{ "instead_wait_use", luaB_wait_use },
-	{"instead_grab_events", luaB_grab_events},
+	{ "instead_grab_events", luaB_grab_events},
+	{ "instead_text_input", luaB_text_input},
 	{NULL, NULL}
 };
 
@@ -301,8 +316,15 @@ static int sdl_ext_init(void)
 	return instead_loadfile(dirpath(path));
 }
 
+static int sdl_ext_done(void)
+{
+	input_text(0);
+	return 0;
+}
+
 static struct instead_ext sdl_ext = {
 	.init = sdl_ext_init,
+	.done = sdl_ext_done,
 };
 
 static int sdl_extensions(void)
