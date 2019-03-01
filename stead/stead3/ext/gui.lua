@@ -15,11 +15,13 @@ local instead = std.obj {
 -- luacheck: read globals instead_clipboard
 -- luacheck: read globals instead_wait_use
 -- luacheck: read globals instead_grab_events
+-- luacheck: read globals instead_text_input
 -- luacheck: no self
 
 instead.clipboard = instead_clipboard
 instead.wait_use = instead_wait_use
 instead.grab_events = instead_grab_events
+instead.text_input = instead_text_input
 
 function instead.atleast(...)
 	for k, v in std.ipairs {...} do
@@ -441,6 +443,10 @@ function iface:input(event, ...)
 	elseif event == 'event' then
 		if type(input.event) == 'function' then
 			return input:event(...);
+		end
+	elseif event == 'text' then
+		if type(input.text) == 'function' then
+			return input:text(...);
 		end
 	end
 	return

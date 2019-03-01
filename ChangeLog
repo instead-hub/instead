@@ -1,5 +1,6 @@
 3.2.3
 
+  * new: input:text event;
   * enh: english documentation;
   * fix: some compilation warnings;
   * fix: makefile and source code cleanups;

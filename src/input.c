@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2018 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2019 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -289,6 +289,11 @@ int input(struct inp_event *inp, int wait)
 	inp->count = 1;
 	switch(event.type){
 #if SDL_VERSION_ATLEAST(2,0,0)
+	case SDL_TEXTINPUT:
+		inp->type = KEY_TEXT;
+		strncpy(inp->sym, event.text.text, sizeof(inp->sym));
+		inp->sym[sizeof(inp->sym) - 1] = 0;
+		break;
 	case SDL_MULTIGESTURE:
 	case SDL_FINGERMOTION:
 		if (DIRECT_MODE && !game_paused())
@@ -547,4 +552,19 @@ int input(struct inp_event *inp, int wait)
 		break;
 	}
 	return 1;
+}
+
+int input_text(int start)
+{
+	#if SDL_VERSION_ATLEAST(2,0,0)
+		if (start == -1)
+			return SDL_IsTextInputActive();
+		if (start)
+			SDL_StartTextInput();
+		else
+			SDL_StopTextInput();
+		return 0;
+	#else
+		return -1;
+	#endif
 }
