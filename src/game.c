@@ -3165,7 +3165,7 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 		const char *k;
 		args[0].val = "text"; args[0].type = INSTEAD_STR;
 		k = (key) ? key:"";
-		args[1].val = (char*)k; args[2].type = INSTEAD_STR;
+		args[1].val = (char*)k; args[1].type = INSTEAD_STR;
 		args[2].val = NULL;
 	} else {
 		const char *k;
