@@ -554,14 +554,19 @@ int input(struct inp_event *inp, int wait)
 	return 1;
 }
 
+#if SDL_VERSION_ATLEAST(2,0,0)
+extern void gfx_real_size(int *ww, int *hh);
+#endif
 int input_text(int start)
 {
 	#if SDL_VERSION_ATLEAST(2,0,0)
 		SDL_Rect rect;
+		int w, h;
 		if (start == -1)
 			return SDL_IsTextInputActive();
 		if (start) {
-			rect.x = gfx_width / 2; rect.y = gfx_height - 1;
+			gfx_real_size(&w, &h);
+			rect.x = w / 2; rect.y = h - 1;
 			rect.w = 1; rect.h = 1;
 			SDL_SetTextInputRect(&rect);
 			SDL_StartTextInput();

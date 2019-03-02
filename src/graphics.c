@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2018 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2019 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -1987,6 +1987,17 @@ static int mouse_watcher(void *userdata, SDL_Event *event)
 	}
 	return 0;
 }
+
+void gfx_real_size(int *ww, int *hh)
+{
+	int w, h;
+	SDL_GetWindowSize(SDL_VideoWindow, &w, &h);
+	if (ww)
+		*ww = w;
+	if (hh)
+		*hh = h;
+}
+
 void gfx_finger_pos_scale(float x, float y, int *ox, int *oy, int norm)
 {
 	int xx = 0, yy = 0;
