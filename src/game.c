@@ -3396,8 +3396,10 @@ static int kbd_instead(struct inp_event *ev, int *x, int *y)
 					game_load(9);
 			}
 		}
+#if defined(ANDROID) || defined(IOS)
 	} else if (!is_key(ev, "f12") && curgame_dir && !menu_shown) {
 		input_text(!(input_text(-1) > 0));
+#endif
 	} else if (!is_key(ev, "f5") && curgame_dir && !menu_shown) {
 		mouse_reset(1);
 		game_cmd("look", 0);
