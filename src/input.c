@@ -561,8 +561,8 @@ int input_text(int start)
 		if (start == -1)
 			return SDL_IsTextInputActive();
 		if (start) {
-			rect.x = 0; rect.y = 0;
-			rect.w = game_theme.w; rect.h = game_theme.h;
+			rect.x = gfx_width / 2; rect.y = gfx_height - 1;
+			rect.w = 1; rect.h = 1;
 			SDL_SetTextInputRect(&rect);
 			SDL_StartTextInput();
 		} else
