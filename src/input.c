@@ -557,11 +557,15 @@ int input(struct inp_event *inp, int wait)
 int input_text(int start)
 {
 	#if SDL_VERSION_ATLEAST(2,0,0)
+		SDL_Rect rect;
 		if (start == -1)
 			return SDL_IsTextInputActive();
-		if (start)
+		if (start) {
+			rect.x = 0; rect.y = 0;
+			rect.w = game_theme.w; rect.h = game_theme.h;
+			SDL_SetTextInputRect(&rect);
 			SDL_StartTextInput();
-		else
+		} else
 			SDL_StopTextInput();
 		return 0;
 	#else
