@@ -1,13 +1,13 @@
-3.2.3
+3.3.0
 
   * new: input:text() event;
+  * new: tiny instead for metaparser;
+  * new: telegram, vk and discord bots;
   * enh: english documentation;
   * fix: some compilation warnings;
   * fix: makefile and source code cleanups;
   * fix: possible segfault;
   * fix: do not eat keyboard input;
-  * new: tiny instead for metaparser;
-  * new: telegram, vk and discord bots.
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 15 Feb 2019 16:25:00 +0300
 
