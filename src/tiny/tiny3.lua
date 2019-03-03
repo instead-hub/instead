@@ -58,6 +58,10 @@ end
 function instead.restart(v)
 end
 
+function instead.text_input()
+	return false
+end
+
 function instead.atleast(...)
 	return true
 end

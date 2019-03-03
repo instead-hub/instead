@@ -33,11 +33,10 @@ int main(int argc, const char **argv)
 		fprintf(stderr, "Can not init game: %s\n", game);
 		exit(1);
 	}
-	if (instead_load(&str)) {
+	if (instead_load(NULL)) {
 		fprintf(stderr, "Can not load game: %s\n", instead_err());
 		exit(1);
 	}
-	printf("%s\n", str); fflush(stdout);
 #if 0 /* no autoload */
 	str = instead_cmd("load autosave", &rc);
 #else
