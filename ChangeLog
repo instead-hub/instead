@@ -4,6 +4,7 @@
   * new: tiny instead for metaparser;
   * new: telegram, vk and discord bots;
   * enh: english documentation;
+  * fix: list:add() and order;
   * fix: some compilation warnings;
   * fix: makefile and source code cleanups;
   * fix: possible segfault;
