@@ -701,29 +701,23 @@ std.list = std.class {
 		if o then
 			return o -- already here
 		end
-		if not pos then
-			o = std.ref(n)
-			if not o then
-				std.err("Wrong argument to list:add(): "..std.tostr(n), 2)
+		if pos then
+			if type(pos) ~= 'number' then
+				std.err("Wrong parameter to list.add:"..std.tostr(pos), 2)
 			end
-			s:__dirty(true)
-			s:__attach(o)
-			table.insert(s, o)
-			s:sort()
-			return o
-		end
-		if type(pos) ~= 'number' then
-			std.err("Wrong parameter to list.add:"..std.tostr(pos), 2)
-		end
-		if pos > #s then
-			pos = #s
-		elseif pos < 0 then
-			pos = #s + pos + 1
-		end
-		if pos <= 0 then
-			pos = 1
+			if pos > #s then
+				pos = nil -- add to last position
+			elseif pos < 0 then
+				pos = #s + pos + 1
+			end
+			if pos and pos <= 0 then
+				pos = 1
+			end
 		end
 		o = std.ref(n)
+		if not o then
+			std.err("Wrong argument to list:add(): "..std.tostr(n), 2)
+		end
 		s:__dirty(true)
 		s:__attach(o)
 		if pos then
