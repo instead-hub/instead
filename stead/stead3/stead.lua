@@ -2836,7 +2836,7 @@ iface.imgr = fmt_stub
 iface.under = fmt_stub
 iface.st = fmt_stub
 iface.tab = fmt_stub
-iface.y = fmt_stub
+iface.y = function() return '' end
 
 function std.loadmod(f)
 	if std.game and not std.__in_gamefile then
