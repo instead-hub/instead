@@ -71,6 +71,7 @@ extern int	game_theme_select(const char *name);
 extern int	game_init(const char *game);
 extern void	game_flip(void);
 extern int	game_loop(void);
+extern void	game_quit(void);
 extern void	game_done(int err);
 extern char	*game_reset_name(void);
 
