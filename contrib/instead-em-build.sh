@@ -81,7 +81,7 @@ cd $WORKSPACE
 rm -rf SDL2
 git clone https://github.com/emscripten-ports/SDL2.git
 cd SDL2
-git checkout merge-2.0.7
+# git checkout merge-2.0.7
 git pull
 
 ./autogen.sh
@@ -272,6 +272,8 @@ emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_ttf.
 -s 'SDL2_IMAGE_FORMATS=["png","jpeg","gif"]' \
 -s 'EXTRA_EXPORTED_RUNTIME_METHODS=["ccall", "Pointer_stringify"]' \
 -s QUANTUM_SIZE=4 \
+-s BINARYEN_TRAP_MODE=clamp \
+-s WASM=1 \
 -s USE_OGG=1 -s USE_VORBIS=1 -s USE_LIBPNG=1 \
 -o instead-em.html -s SAFE_HEAP=0  -s TOTAL_MEMORY=167772160 -s ALLOW_MEMORY_GROWTH=1 \
 --post-js post.js  \
