@@ -1137,14 +1137,20 @@ void game_release_theme(int force)
 
 static int game_event(const char *ev);
 
+void game_quit()
+{
+	if (!curgame_dir)
+		return;
+	game_event("quit");
+	if (opt_autosave)
+		game_save(0);
+	game_cfg_save();
+}
+
 void game_done(int err)
 {
-	if (curgame_dir && !err) {
-		game_event("quit");
-		if (opt_autosave)
-			game_save(0);
-		game_cfg_save();
-	}
+	if (!err)
+		game_quit();
 	gfx_del_timer(timer_han);
 	timer_han = NULL_TIMER;
 	if (menu_shown)

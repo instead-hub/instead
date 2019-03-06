@@ -785,8 +785,11 @@ int instead_main(int argc, char *argv[])
 	return 0;
 #endif
 	cfg_save();
+#ifdef ANDROID
+	game_done(1); /* do not save game, it happaned in APP_TERMINATING */
+#else
 	game_done(0);
-
+#endif
 	snd_done();
 	gfx_video_done();
 	gfx_done();
