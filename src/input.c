@@ -159,10 +159,8 @@ int HandleAppEvents(void *userdata, SDL_Event *event)
 		game_gfx_commit(0);
 		return 0;
 	case SDL_APP_TERMINATING:
+#if !defined(ANDROID)
 		cfg_save();
-#if defined(ANDROID)
-		game_quit(); /* save only */
-#else
 		game_done(0);
 		snd_done();
 		gfx_video_done();
