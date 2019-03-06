@@ -2134,7 +2134,7 @@ stead.game_save = function(self, name, file)
 	if name == nil then
 		return nil, false
 	end
-	h = stead.io.open(name,"wb");
+	h = stead.io.open(name .. '.tmp', "wb");
 	if not h then
 		return nil, false
 	end
@@ -2148,6 +2148,8 @@ stead.game_save = function(self, name, file)
 	stead.do_savegame(self, h);
 	h:flush();
 	h:close();
+	stead.os.remove(name);
+	stead.os.rename(name .. '.tmp', name);
 	game.autosave = false; -- we have only one try for autosave
 	stead.restart_game = false
 	return nil;

@@ -993,8 +993,10 @@ end
 
 function std:save(fp)
 	local close
+	local name, name_tmp
 	if type(fp) == 'string' then
-		fp = io.open(fp, "wb");
+		name, name_tmp = fp, fp .. '.tmp'
+		fp = io.open(name_tmp, "wb");
 		if not fp then
 			return nil, false -- can create file
 		end
@@ -1037,6 +1039,8 @@ function std:save(fp)
 	if close then
 		fp:flush();
 		fp:close();
+		std.os.remove(name);
+		std.os.rename(name_tmp, name);
 	end
 	std.busy(false)
 	return std.game:lastdisp() -- same scene
