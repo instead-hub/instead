@@ -161,9 +161,11 @@ int HandleAppEvents(void *userdata, SDL_Event *event)
 	case SDL_APP_TERMINATING:
 		cfg_save();
 		game_done(0);
+#if !defined(ANDROID)
 		snd_done();
 		gfx_video_done();
 		gfx_done();
+#endif
 		return 0;
 	default:
 		/* No special processing, add it to the event queue */

@@ -1158,12 +1158,8 @@ void game_done(int err)
 	instead_done();
 	curgame_dir = NULL;
 
-/* #ifndef ANDROID
-	gfx_video_done();
-#endif */
 	game_own_theme = 0;
 	need_restart = 0;
-/*	SDL_Quit(); */
 }
 
 static void el_size(int i, int *w, int *h)
