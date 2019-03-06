@@ -789,9 +789,7 @@ int instead_main(int argc, char *argv[])
 
 	snd_done();
 	gfx_video_done();
-#ifndef ANDROID
 	gfx_done();
-#endif
 out:
 	if (debug_sw)
 		debug_done();
