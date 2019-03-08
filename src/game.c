@@ -944,12 +944,6 @@ int counter_fn(int interval, void *p)
 #endif
 	if (gfx_is_drawn_gifs() && !DIRECT_MODE)
 		push_user_event(anigif_do, NULL);
-#ifdef __EMSCRIPTEN__
-	if (timer_han) { /* emscripten SDL bug? */
-		gfx_del_timer(timer_han);
-		timer_han = gfx_add_timer(HZ, counter_fn, NULL);
-	}
-#endif
 	return interval;
 }
 

@@ -5624,10 +5624,6 @@ static Uint32 update(Uint32 interval, void *aux)
 {
 	if (!gfx_fading())
 		return 0;
-#ifdef __EMSCRIPTEN__
-	SDL_RemoveTimer(fade_timer);
-	fade_timer = SDL_AddTimer(60, update, NULL);
-#endif
 	if (gfx_change_nr > 0)
 		return interval;
 	gfx_change_nr ++;
