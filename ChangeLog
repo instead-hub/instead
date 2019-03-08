@@ -11,7 +11,7 @@
   * fix: possible segfault;
   * fix: do not eat keyboard input;
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 8 Mar 2018 09:28:00 +0300
+ -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 8 Mar 2019 09:28:00 +0300
 
 3.2.2
 
