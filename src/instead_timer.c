@@ -55,12 +55,6 @@ static void instead_timer_do(void *data)
 
 static int instead_fn(int interval, void *p)
 {
-#ifdef __EMSCRIPTEN__ /* bug in emscripten SDL timer? */
-	if (instead_timer) {
-		gfx_del_timer(instead_timer);
-		instead_timer = gfx_add_timer(interval, instead_fn, NULL);
-	}
-#endif
 	if (instead_timer_nr > 0) {
 		return interval; /* framedrop */
 	}
