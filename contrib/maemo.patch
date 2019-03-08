@@ -1,12 +1,12 @@
-diff -Nur instead-3.2.0/debian/compat instead-3.2.0-maemo/debian/compat
---- instead-3.2.0/debian/compat	2018-01-22 09:40:55.000000000 +0300
-+++ instead-3.2.0-maemo/debian/compat	2018-01-22 09:51:26.888674608 +0300
+diff -Nur instead-3.3.0/debian/compat instead-3.3.0.maemo/debian/compat
+--- instead-3.3.0/debian/compat	2019-03-08 12:05:53.000000000 +0300
++++ instead-3.3.0.maemo/debian/compat	2019-03-08 12:13:34.438490056 +0300
 @@ -1 +1 @@
 -7
 +4
-diff -Nur instead-3.2.0/debian/control instead-3.2.0-maemo/debian/control
---- instead-3.2.0/debian/control	2018-01-22 09:40:55.000000000 +0300
-+++ instead-3.2.0-maemo/debian/control	2018-01-22 09:51:37.144725842 +0300
+diff -Nur instead-3.3.0/debian/control instead-3.3.0.maemo/debian/control
+--- instead-3.3.0/debian/control	2019-03-08 12:05:53.000000000 +0300
++++ instead-3.3.0.maemo/debian/control	2019-03-08 12:13:34.438490056 +0300
 @@ -2,7 +2,7 @@
  Section: games
  Priority: optional
@@ -21,9 +21,9 @@ diff -Nur instead-3.2.0/debian/control instead-3.2.0-maemo/debian/control
  Description: simple text adventures/visual novels engine
   Visual novell/text quest-like engine.
 -
-diff -Nur instead-3.2.0/debian/rules instead-3.2.0-maemo/debian/rules
---- instead-3.2.0/debian/rules	2018-01-22 09:40:55.000000000 +0300
-+++ instead-3.2.0-maemo/debian/rules	2018-01-22 09:51:26.888674608 +0300
+diff -Nur instead-3.3.0/debian/rules instead-3.3.0.maemo/debian/rules
+--- instead-3.3.0/debian/rules	2019-03-08 12:05:53.000000000 +0300
++++ instead-3.3.0.maemo/debian/rules	2019-03-08 12:13:34.438490056 +0300
 @@ -61,7 +61,7 @@
  install: build
  	dh_testdir
@@ -33,9 +33,9 @@ diff -Nur instead-3.2.0/debian/rules instead-3.2.0-maemo/debian/rules
  	dh_installdirs
  
  	# Add here commands to install the package into debian/instead.
-diff -Nur instead-3.2.0/desktop/instead.desktop.in instead-3.2.0-maemo/desktop/instead.desktop.in
---- instead-3.2.0/desktop/instead.desktop.in	2018-01-22 09:40:55.000000000 +0300
-+++ instead-3.2.0-maemo/desktop/instead.desktop.in	2018-01-22 09:51:26.888674608 +0300
+diff -Nur instead-3.3.0/desktop/instead.desktop.in instead-3.3.0.maemo/desktop/instead.desktop.in
+--- instead-3.3.0/desktop/instead.desktop.in	2019-03-08 12:05:53.000000000 +0300
++++ instead-3.3.0.maemo/desktop/instead.desktop.in	2019-03-08 12:13:34.438490056 +0300
 @@ -13,4 +13,8 @@
  Exec=@BIN@/sdl-instead
  Icon=sdl_instead
@@ -45,9 +45,9 @@ diff -Nur instead-3.2.0/desktop/instead.desktop.in instead-3.2.0-maemo/desktop/i
 +X-HildonDesk-ShowInToolbar=true
 +StartupWMClass=instead
  Categories=Game;LogicGame;
-diff -Nur instead-3.2.0/desktop/Makefile instead-3.2.0-maemo/desktop/Makefile
---- instead-3.2.0/desktop/Makefile	2018-01-22 09:40:55.000000000 +0300
-+++ instead-3.2.0-maemo/desktop/Makefile	2018-01-22 09:51:26.888674608 +0300
+diff -Nur instead-3.3.0/desktop/Makefile instead-3.3.0.maemo/desktop/Makefile
+--- instead-3.3.0/desktop/Makefile	2019-03-08 12:05:53.000000000 +0300
++++ instead-3.3.0.maemo/desktop/Makefile	2019-03-08 12:13:34.438490056 +0300
 @@ -10,9 +10,9 @@
  	cat instead.desktop.in | sed -e "s|@BIN@|$(BIN)|g" > instead.desktop
  
@@ -61,9 +61,9 @@ diff -Nur instead-3.2.0/desktop/Makefile instead-3.2.0-maemo/desktop/Makefile
 -	$(RM) $(DESTDIR)$(PREFIX)/share/applications/instead.desktop
 +	$(RM) $(DESTDIR)$(PREFIX)/share/applications/hildon/instead.desktop
  
-diff -Nur instead-3.2.0/Rules.make.system instead-3.2.0-maemo/Rules.make.system
---- instead-3.2.0/Rules.make.system	2018-01-22 09:40:55.000000000 +0300
-+++ instead-3.2.0-maemo/Rules.make.system	2018-01-22 09:51:26.888674608 +0300
+diff -Nur instead-3.3.0/Rules.make.system instead-3.3.0.maemo/Rules.make.system
+--- instead-3.3.0/Rules.make.system	2019-03-08 12:05:53.000000000 +0300
++++ instead-3.3.0.maemo/Rules.make.system	2019-03-08 12:13:34.438490056 +0300
 @@ -28,7 +28,7 @@
  SDL_CFLAGS=$(shell sdl-config --cflags)
  SDL_LFLAGS=$(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer -lSDL_image -lm
@@ -73,9 +73,9 @@ diff -Nur instead-3.2.0/Rules.make.system instead-3.2.0-maemo/Rules.make.system
  
  INSTALLD=install -d -m 0755
  INSTALLB=install -m 0755
-diff -Nur instead-3.2.0/src/instead/util.h instead-3.2.0-maemo/src/instead/util.h
---- instead-3.2.0/src/instead/util.h	2018-01-22 09:40:55.000000000 +0300
-+++ instead-3.2.0-maemo/src/instead/util.h	2018-01-22 09:51:26.888674608 +0300
+diff -Nur instead-3.3.0/src/instead/util.h instead-3.3.0.maemo/src/instead/util.h
+--- instead-3.3.0/src/instead/util.h	2019-03-08 12:05:55.000000000 +0300
++++ instead-3.3.0.maemo/src/instead/util.h	2019-03-08 12:13:34.438490056 +0300
 @@ -52,7 +52,7 @@
  #define FREE(v) do { if ((v)) free((v)); v = NULL; } while(0)
  
@@ -85,9 +85,9 @@ diff -Nur instead-3.2.0/src/instead/util.h instead-3.2.0-maemo/src/instead/util.
   #include <SDL_mutex.h>
   #ifdef _USE_SDL_ICONV
    #include <SDL_stdinc.h>
-diff -Nur instead-3.2.0/src/sound.c instead-3.2.0-maemo/src/sound.c
---- instead-3.2.0/src/sound.c	2018-01-22 09:40:55.000000000 +0300
-+++ instead-3.2.0-maemo/src/sound.c	2018-01-22 09:51:26.888674608 +0300
+diff -Nur instead-3.3.0/src/sound.c instead-3.3.0.maemo/src/sound.c
+--- instead-3.3.0/src/sound.c	2019-03-08 12:05:55.000000000 +0300
++++ instead-3.3.0.maemo/src/sound.c	2019-03-08 12:13:34.442490085 +0300
 @@ -32,7 +32,9 @@
  
  #include <SDL.h>
@@ -99,9 +99,9 @@ diff -Nur instead-3.2.0/src/sound.c instead-3.2.0-maemo/src/sound.c
  #ifdef S60
  int audio_rate = 11025;
  #else
-diff -Nur instead-3.2.0/themes/default/theme.ini instead-3.2.0-maemo/themes/default/theme.ini
---- instead-3.2.0/themes/default/theme.ini	2018-01-22 09:40:56.000000000 +0300
-+++ instead-3.2.0-maemo/themes/default/theme.ini	2018-01-22 09:51:26.888674608 +0300
+diff -Nur instead-3.3.0/themes/default/theme.ini instead-3.3.0.maemo/themes/default/theme.ini
+--- instead-3.3.0/themes/default/theme.ini	2019-03-08 12:05:58.000000000 +0300
++++ instead-3.3.0.maemo/themes/default/theme.ini	2019-03-08 12:13:34.442490085 +0300
 @@ -5,7 +5,7 @@
  ; $Name(it): Predefinito$
  
@@ -140,17 +140,41 @@ diff -Nur instead-3.2.0/themes/default/theme.ini instead-3.2.0-maemo/themes/defa
  
  snd.click = click.wav ; click.ogg
  
-diff -Nur instead-3.2.0/themes/wide/theme.ini instead-3.2.0-maemo/themes/wide/theme.ini
---- instead-3.2.0/themes/wide/theme.ini	2018-01-22 09:40:57.000000000 +0300
-+++ instead-3.2.0-maemo/themes/wide/theme.ini	2018-01-22 09:51:26.888674608 +0300
-@@ -3,10 +3,3 @@
- ; $Name(uk):Широка$
- ; $Name(es):Amplio$
- ; $Name(it):Ampio$
+diff -Nur instead-3.3.0/themes/wide/theme.ini instead-3.3.0.maemo/themes/wide/theme.ini
+--- instead-3.3.0/themes/wide/theme.ini	2019-03-08 12:05:59.000000000 +0300
++++ instead-3.3.0.maemo/themes/wide/theme.ini	1970-01-01 03:00:00.000000000 +0300
+@@ -1,34 +0,0 @@
+-; $Name:Wide$
+-; $Name(ru):Широкая$
+-; $Name(uk):Широка$
+-; $Name(es):Amplio$
+-; $Name(it):Ampio$
 -
--scr.w = 800
--scr.h = 480
--win.h = 448
--inv.h = 448
+-scr.w = 960
+-scr.h = 540
 -
--menu.button.y = 456
+-scr.gfx.bg = bg.png
+-scr.col.bg = white
+-
+-win.align = justify
+-win.x = 48
+-win.y = 8
+-win.w = 664
+-win.h = 524
+-
+-inv.x = 780
+-inv.y = 8
+-inv.w = 144
+-inv.h = 504
+-
+-win.fnt.size = 16
+-win.fnt.height = 1.2
+-
+-inv.fnt.size = 16
+-inv.fnt.height = 1.2
+-
+-menu.fnt.size = 16
+-menu.fnt.height = 1.0
+-
+-menu.button.x = 936
+-menu.button.y = 516
