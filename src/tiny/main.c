@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "string.h"
+#include <string.h>
 #include "instead/instead.h"
 static int log_opt = 0;
 static int tiny_init(void)
