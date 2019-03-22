@@ -121,6 +121,11 @@ static int extensions_hook(enum instead_hook nr)
 
 int instead_extension(struct instead_ext *ext)
 {
+	struct instead_ext *e = NULL;
+	for_each_extension(e) {
+		if (e == ext)
+			return 0;
+	}
 	list_add(&extensions, &ext->list);
 	return 0;
 }
