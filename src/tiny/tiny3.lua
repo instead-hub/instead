@@ -73,6 +73,12 @@ function iface:title(str) -- hide title
 	return str
 end
 
+function iface:img() return end
+
+function iface:imgl() return end
+
+function iface:imgr() return end
+
 std.stat = std.class({
 	__stat_type = true;
 }, std.obj);
