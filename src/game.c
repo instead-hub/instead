@@ -3301,6 +3301,10 @@ static int game_input_events(struct inp_event *ev)
 	if (!curgame_dir)
 		return 0;
 	if (ev->type == KEY_DOWN || ev->type == KEY_UP) {
+#if defined(ANDROID) || defined(IOS)
+		if (!is_key(ev, "f12") && !menu_shown) /* f12 is keyboard toggle */
+			return 0;
+#endif
 		if (!game_input((ev->type == KEY_DOWN), ev->sym, -1, -1, EV_CODE_KBD))
 			return 1;
 	} else if (ev->type == FINGER_DOWN || ev->type == FINGER_UP) {
