@@ -5310,7 +5310,7 @@ room {
 	the onenter = function()
 	snapshots:make () - created a restore point
 	end;
-	decor = [[{#, red|Red} or {#black|black}?]];
+	decor = [[{#red|Red} or {#black|black}?]];
 }: with {
 	obj {
 		nam = '#red';
