@@ -2880,7 +2880,7 @@ is taken 'game.pic'. If the picture is not displayed.
 Supports all common image formats, but I I recommend you to use 'png' and
 where () 'jpg'.
 
-You can use as images animated gif files.
+You can use as images animated GIF files. Be sure that they are GIF files, and not WEBP format or PNG format, which are unsupported.
 
 You can embed the graphic images right in the text in the inventory,
 transitions, titles rooms and 'dsc' using the function 'fmt.img' (this will
