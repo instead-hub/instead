@@ -2146,8 +2146,8 @@ Steam can be as simple as:
 And can contain an array of pairs:
 
 	{'Question', 'Answer',
-		{'Sub-question1', 'Under-question1' },
-		{'Under-question2', 'Under-question2' },
+		{'Sub-question1', 'Under-answer1' },
+		{'Under-question2', 'Under-answer2' },
 	}
 
 In fact, if you look carefully at the attribute phr, you notice that the array
