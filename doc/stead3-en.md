@@ -2107,7 +2107,7 @@ dlg {
 
 ### Phrase
 
-The Central concept in dialogue is fraza. The phrase is not just the question-
+The Central concept in dialogue is the phrase. The phrase is not just the question-
 answer as you might think. The phrase is a tree, and in this the sense of the
 whole dialogue can be implemented only phrase. For example:
 
@@ -2146,8 +2146,8 @@ Steam can be as simple as:
 And can contain an array of pairs:
 
 	{'Question', 'Answer',
-		{'Sub-question1', 'Under-ответ1' },
-		{'Under-вопрос2', 'Under-ответ2' },
+		{'Sub-question1', 'Under-question1' },
+		{'Under-question2', 'Under-question2' },
 	}
 
 In fact, if you look carefully at the attribute phr, you notice that the array
