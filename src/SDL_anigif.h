@@ -56,6 +56,5 @@ extern DECLSPEC int		AG_LoadGIF_RW( SDL_RWops* src, AG_Frame* frames, int size, 
 #ifdef __cplusplus
 	}
 #endif
-#include "close_code.h"
 
 #endif /* _SDL_ANIGIF_H */
