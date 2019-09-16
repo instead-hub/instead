@@ -8,21 +8,27 @@ import (
 	"hash/fnv"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 )
 
 // Variables used for command line parameters
 var (
-	Token string
+	Token        string
+	Channels     string
+	ChannelsList []string
 )
 
 func init() {
 
 	flag.StringVar(&Token, "t", "", "Bot Token")
+	flag.StringVar(&Channels, "c", "", "Channels")
 	flag.Parse()
 }
 
 func main() {
+	ChannelsList = strings.Split(Channels, ",")
+
 	ifbot.SaveDir = "discord-saves/"
 	// Create a new Discord session using the provided bot token.
 	dg, err := discordgo.New("Bot " + Token)
@@ -57,17 +63,27 @@ func hash(s string) int64 {
 	return int64(h.Sum32())
 }
 
-/*
-func isPrivate(s *discordgo.Session, m *discordgo.MessageCreate) (bool, error) {
+func isPrivate(s *discordgo.Session, m *discordgo.MessageCreate) bool {
 	channel, err := s.State.Channel(m.ChannelID)
 	if err != nil {
 		if channel, err = s.Channel(m.ChannelID); err != nil {
-			return false, err
+			return false
 		}
 	}
-	return channel.Type == discordgo.ChannelTypeDM, nil
+	return channel.Type == discordgo.ChannelTypeDM
 }
-*/
+
+func isChannel(s *discordgo.Session, m *discordgo.MessageCreate) bool {
+	if len(ChannelsList) == 0 {
+		return true
+	}
+	for _, id := range ChannelsList {
+		if m.ChannelID == id {
+			return true
+		}
+	}
+	return false
+}
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
@@ -77,9 +93,10 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 	text := m.Content
-	//	if priv, _:= isPrivate(s, m); !priv {
-	//		return
-	//	}
+
+	if !(isChannel(s, m) || isPrivate(s, m)) {
+		return
+	}
 	reply := ifbot.Input(hash(m.ChannelID), text)
 	s.ChannelMessageSend(m.ChannelID, reply)
 	ifbot.Cleanup()
