@@ -1,3 +1,11 @@
+3.3.1
+
+ * fix: build with SDL 2.0.10;
+ * enh: discord bot can be sticked to channel(s);
+ * enh: english doc fixes;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Fri, 4 Oct 2019 18:21:00 +0300
+
 3.3.0
 
   * new: input:text() event;
