@@ -347,7 +347,7 @@ int input(struct inp_event *inp, int wait)
 	case SDL_WINDOWEVENT:
 		switch (event.window.event) {
 /*		case SDL_WINDOWEVENT_SHOWN: */
-/*		case SDL_WINDOWEVENT_RESIZED: */
+		case SDL_WINDOWEVENT_RESIZED: /* Android send this on screen rotate */
 		case SDL_WINDOWEVENT_SIZE_CHANGED:
 			gfx_resize(event.window.data1, event.window.data2);
 			/* Fall through */

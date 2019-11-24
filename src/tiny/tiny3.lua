@@ -79,6 +79,10 @@ function iface:imgl() return end
 
 function iface:imgr() return end
 
+function iface:nb(t)
+	return t == '' and ' ' or t
+end
+
 std.stat = std.class({
 	__stat_type = true;
 }, std.obj);
