@@ -352,6 +352,10 @@ int input(struct inp_event *inp, int wait)
 			gfx_resize(event.window.data1, event.window.data2);
 			/* Fall through */
 		case SDL_WINDOWEVENT_EXPOSED:
+			if (m_minimized) { /* broken WM? no RESTORE msg? */
+				m_minimized = 0;
+				snd_pause(0);
+			}
 			game_flip();
 			game_gfx_commit(0);
 			break;
