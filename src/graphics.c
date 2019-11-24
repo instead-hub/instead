@@ -2165,7 +2165,11 @@ int gfx_set_mode(int w, int h, int fs)
 
 #if defined(IOS) || defined(ANDROID) || defined(WINRT) || defined(SAILFISHOS)
 	SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h,
-			SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE);
+			SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE
+#if defined(ANDROID)
+			| SDL_WINDOW_FULLSCREEN_DESKTOP
+#endif
+			);
 	if (!SDL_VideoWindow) {
 		fprintf(stderr, "Fallback to software window.\n");
 		SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h,
