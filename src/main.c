@@ -46,10 +46,6 @@ extern void debug_done(void);
 extern luaL_Reg paths_funcs[];
 extern luaL_Reg bits_funcs[];
 
-#if SDL_VERSION_ATLEAST(2,0,0)
-extern void gamepad_done(void);
-#endif
-
 int debug_sw = 0;
 int noauto_sw = 0;
 int nostdgames_sw = 0;
@@ -790,10 +786,8 @@ int instead_main(int argc, char *argv[])
 #endif
 	cfg_save();
 	game_done(0);
-#if SDL_VERSION_ATLEAST(2,0,0)
-	gamepad_done();
-#endif
 	snd_done();
+	input_done();
 	gfx_video_done();
 	gfx_done();
 out:
