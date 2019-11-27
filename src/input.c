@@ -174,9 +174,68 @@ int HandleAppEvents(void *userdata, SDL_Event *event)
 }
 #endif
 
+#if SDL_VERSION_ATLEAST(2,0,0)
+static SDL_GameController *gamepad = NULL;
+
+static void gamepad_init(void)
+{
+	if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) < 0) {
+		fprintf(stderr, "Couldn't initialize GameController subsystem: %s\n", SDL_GetError());
+		return;
+	}
+	for (int i = 0; i < SDL_NumJoysticks(); ++i) {
+		if (SDL_IsGameController(i)) {
+			gamepad = SDL_GameControllerOpen(i);
+			if (gamepad) {
+			        fprintf(stderr, "Found gamepad: %s\n", SDL_GameControllerName(gamepad));
+				break;
+			} else {
+				fprintf(stderr, "Could not open gamepad %i: %s\n", i, SDL_GetError());
+			}
+		}
+	}
+}
+
+void gamepad_done(void)
+{
+	if(gamepad)
+		SDL_GameControllerClose(gamepad);
+	if(SDL_WasInit(SDL_INIT_GAMECONTROLLER))
+		SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
+}
+
+static const char *gamepad_map(int button)
+{
+	switch(button) {
+	case SDL_CONTROLLER_BUTTON_DPAD_UP:
+		return "up";
+	case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
+		return "down";
+	case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
+		return "left";
+	case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
+		return "right";
+	case SDL_CONTROLLER_BUTTON_A:
+		return "return";
+	case SDL_CONTROLLER_BUTTON_B:
+		return "space";
+	case SDL_CONTROLLER_BUTTON_X:
+		return "tab";
+	case SDL_CONTROLLER_BUTTON_START:
+		return "escape";
+	case SDL_CONTROLLER_BUTTON_LEFTSHOULDER:
+		return "page up";
+	case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER:
+		return "page down";
+	}
+	return "";
+}
+#endif
+
 int input_init(void)
 {
 #if SDL_VERSION_ATLEAST(2,0,0)
+	gamepad_init();
 	/* SDL_EnableKeyRepeat(500, 30); */ /* TODO ? */
 	last_press_ms = 0;
 	last_repeat_ms = 0;
@@ -343,6 +402,18 @@ int input(struct inp_event *inp, int wait)
 			sizeof(event.tfinger.touchId),
 			inp->sym + sizeof(event.tfinger.fingerId) * 2 + 1);
 		inp->sym[sizeof(event.tfinger.fingerId) * 2 + 1 + sizeof(event.tfinger.touchId) * 2] = 0;
+		break;
+	case SDL_CONTROLLERBUTTONDOWN:
+		inp->type = KEY_DOWN;
+		inp->code = event.cbutton.button;
+		strncpy(inp->sym, gamepad_map(event.cbutton.button), sizeof(inp->sym));
+		inp->sym[sizeof(inp->sym) - 1] = 0;
+		break;
+	case SDL_CONTROLLERBUTTONUP:
+		inp->type = KEY_UP;
+		inp->code = event.cbutton.button;
+		strncpy(inp->sym, gamepad_map(event.cbutton.button), sizeof(inp->sym));
+		inp->sym[sizeof(inp->sym) - 1] = 0;
 		break;
 	case SDL_WINDOWEVENT:
 		switch (event.window.event) {
