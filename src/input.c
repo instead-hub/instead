@@ -248,6 +248,13 @@ int input_init(void)
 	return 0;
 }
 
+void input_done(void)
+{
+#if SDL_VERSION_ATLEAST(2,0,0)
+	gamepad_done();
+#endif
+}
+
 void input_clear(void)
 {
 	SDL_Event event;
