@@ -179,6 +179,7 @@ static SDL_GameController *gamepad = NULL;
 
 static void gamepad_init(void)
 {
+	static char gamepad_cfg[PATH_MAX] = "";
 	if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) < 0) {
 		fprintf(stderr, "Couldn't initialize GameController subsystem: %s\n", SDL_GetError());
 		return;
@@ -194,9 +195,11 @@ static void gamepad_init(void)
 			}
 		}
 	}
+	snprintf(gamepad_cfg, sizeof(gamepad_cfg) - 1, "%s/gamecontrollerdb.txt", appdir());
+	SDL_GameControllerAddMappingsFromFile(gamepad_cfg);
 }
 
-void gamepad_done(void)
+static void gamepad_done(void)
 {
 	if(gamepad)
 		SDL_GameControllerClose(gamepad);
