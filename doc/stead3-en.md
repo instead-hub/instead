@@ -1748,7 +1748,7 @@ way and obj, for example:
 - open() - open the list objects;
 - add(object|name [position]) - add an object;
 - for_each(function, args) - to call for each object feature arguments;
-- lookup(name/tag or object) is object search in the list. Returns the object 
+- lookup(name/tag or object) is object search in the list. Returns the object
   and the index;
 - srch(name/tag or the object) - the search for a visible object in the list;
 - empty() - returns true if the list is empty;
@@ -1800,7 +1800,7 @@ Thus, the main function:
 - 'where ()' returns a room or an object which is the specified object if the
   object is in multiple places, you can  pass in a second parameter -- a Lua
   table that will be added  these objects;
-- 'inroom ()' similar to where(), but returns the room in which the facility 
+- 'inroom ()' similar to where(), but returns the room in which the facility
   is located (this is important for objects in the objects);
 - 'from([where])' returns the last room the player goes into given room.
   Optional parameter -- to the last room not for the current room, and for a
@@ -1808,7 +1808,7 @@ Thus, the main function:
 - 'seen(what [, where])' returns an object or transition, if itis present and
   can see, there is a second optional parameter -- select the scene or
   object/list in which to search;
-- 'lookup(what, [where])' returns an object or transition, if it there is in 
+- 'lookup(what, [where])' returns an object or transition, if it there is in
   the scene or object/list;
 - 'inspect ()' returns the object if it is visible/available on stage. The
   search is performed for transitions and objects, including, in the object of
@@ -1823,7 +1823,7 @@ further modification. For example, you can use 'seen' for writing terms:
 ```
 onexit = function(s)
 	if seen 'monster' then -- if a function has 1 parameter
-		--- I'm not hungry ... 
+		--- I'm not hungry ...
 		p 'the Monster's in the way!'
 		return false
 	end
@@ -1893,14 +1893,14 @@ In the description of the functions most of the functions under the parameter
 - rnd\_seed () - set seed of random number generator;
 - p (...) output a string to the buffer handler/attribute (with a space at the
   end);
-- pr (...) output a string to the buffer handler/attribute "as is";- pn (...) 
+- pr (...) output a string to the buffer handler/attribute "as is";- pn (...)
   output a string to the buffer handler/attribute (with a newline at the end);
 - pf(fmt, ...) - output formatted string to the buffer handler/attribute;
 
 		local text = 'hello';
 		pf("String: %q: %d\n", text, 10);
 
-- pfn(...)(...)... "line" - creating a simple handler; This feature simplifies 
+- pfn(...)(...)... "line" - creating a simple handler; This feature simplifies
   the creation of simple handlers:
 
 		act = pfn(walk, 'bathroom') "I decided to go to the bathroom.";
@@ -1913,7 +1913,7 @@ In the description of the functions most of the functions under the parameter
 - me() - returns the current player;
 - here() - returns the current scene.
 - from([w]) - returns the room from which the transition to your current scene.
-- new(constructor, arguments) - creates a new dinamicheskogo object (to be 
+- new(constructor, arguments) - creates a new dinamicheskogo object (to be
   described later);
 - delete(w) - deletes the dynamic object;
 - gamefile(file, [reset?]) - load dynamically the file with the game;
@@ -1929,7 +1929,7 @@ In the description of the functions most of the functions under the parameter
 			p [[it's my first time.]]
 		end
 
-- walk(w, [Boolean exit], [enter Boolean], [Boolean to change from]) - 
+- walk(w, [Boolean exit], [enter Boolean], [Boolean to change from]) -
   transition in the scene;
 
 		-- unconditional jump (to ignore onexit/the onenter/exit/enter);
@@ -1955,7 +1955,7 @@ In the description of the functions most of the functions under the parameter
 
 		local list = {}
 		local w = where('Apple', list)
-		-- if the Apple is in more than one place, then list will contain an 
+		-- if the Apple is in more than one place, then list will contain an
 		-- array of these places. If you only need one location, then:
 		where 'Apple' -- will be enough
 
@@ -1966,7 +1966,7 @@ In the description of the functions most of the functions under the parameter
 - open(w) - open;
 - close(w) - close the object;
 - actions(w, string, [value]) - returns (or sets)
-  the number of actions of type t to an object w. 
+  the number of actions of type t to an object w.
 
 		if actions(w, 'tak') > 0 then -- object w was taken at least 1 time;
 		if actions(w) == 1 then -- act it w was called 1 times;
@@ -2672,7 +2672,7 @@ You can define handlers that run every time when the game time increments by
 one. Usually, it makes sense for the living characters, or any background
 processes of the game. The algorithm of step games looks like this:
   - The player clicks on the link;
-  - Reaction, 'act', 'use", 'inv', 'tak', the inspection of the scene (click 
+  - Reaction, 'act', 'use", 'inv', 'tak', the inspection of the scene (click
     on the name scene) or transition into another scene;
   - Dynamic events;
   - Output a new state of the scene.
@@ -3326,7 +3326,7 @@ room {
 ```
 
 > Using the function 'fmt.u' and 'fmt.st' on strings containing spaces
-> you will get broken lines in these places. What to avoid it, 
+> you will get broken lines in these places. What to avoid it,
 > to turn the text into _non-breaking string_:
 
 	fmt.u(fmt.nb "now the unabridged" )
@@ -3336,7 +3336,7 @@ fonts in the window scene (except for the different font styles), so if you
 require a more flexible output control, you can do the following:
 
 - Use the graphic insert 'fmt.img()';
-- Use the module 'fonts', which implements the rendering different fonts at 
+- Use the module 'fonts', which implements the rendering different fonts at
   the expense module 'sprite';
 - Use another engine, because most likely you use INSTEAD for other purposes.
 
@@ -3653,7 +3653,7 @@ act = function() gamefile ("episode2") end -- .lua can be omitted
 ...
 ```
 
-> Attention! If your game defines a function init(), 
+> Attention! If your game defines a function init(),
 > loadable parts of it must be present! Otherwise
 > case, after uploading the file, will be called the current function init ()
 > that is not usually desirable.
@@ -4218,8 +4218,8 @@ Parameters can take values:
 - scr.col.bg = background color
 - scr.gfx.scalable = [0/1/2] (0 - don't scale topic 1 -
   scalable 2 scalable without smoothing), since
-  version 2.2.0 available optional [4/5/6]: 4 - fully scalable (non-scalable 
-  fonts), 5 - scalable, with non-scalable fonts, 6 - scaled without smoothing, 
+  version 2.2.0 available optional [4/5/6]: 4 - fully scalable (non-scalable
+  fonts), 5 - scalable, with non-scalable fonts, 6 - scaled without smoothing,
   with not a scalable font
 - scr.gfx.bg = path to the background image (string)
 - scr.gfx.cursor.x = the x coordinate of the cursor center (number)
@@ -4228,50 +4228,50 @@ Parameters can take values:
 - scr.gfx.cursor.use = path to the cursor picture file usage (string)
 - scr.gfx.use = path to the image-indicator of use (string)
 - scr.gfx.pad = padding for scrollbars and menu edges (number)
-- scr.gfx.x, scr.gfx.y, scr.gfx.w, scr.gfx.h = coordinates, width and the 
-  height of the window images. Region in which is located the picture scene. 
+- scr.gfx.x, scr.gfx.y, scr.gfx.w, scr.gfx.h = coordinates, width and the
+  height of the window images. Region in which is located the picture scene.
   Interpretation depends on the mode of visit (number)
 - win.gfx.h - synonymous with scr.gfx.h (for compatibility)
 - scr.gfx.icon = path to the file-the icon of the game (OS dependent option,
   may to work correctly in some cases)
-- scr.gfx.mode = mode location (line fixed, embedded or float). Sets the mode 
-  of the image. embedded-the picture is part of the content of the main 
-  window, the parameters of the scr.gfx.x, scr.gfx.y, scr.gfx.w are ignored. 
-  float-the picture located at the specified coordinates (scr.gfx.x, 
-  scr.gfx.y) and scales to the size scr.gfx.w x scr.gfx.if h exceeds it. 
-  fixed-the picture is part of a scene in embedded mode, but does not scroll 
-  along with text and located directly above it. Available modifications mode 
-  modifiers float 'left/right/center/middle/bottom/top', specifies how to 
+- scr.gfx.mode = mode location (line fixed, embedded or float). Sets the mode
+  of the image. embedded-the picture is part of the content of the main
+  window, the parameters of the scr.gfx.x, scr.gfx.y, scr.gfx.w are ignored.
+  float-the picture located at the specified coordinates (scr.gfx.x,
+  scr.gfx.y) and scales to the size scr.gfx.w x scr.gfx.if h exceeds it.
+  fixed-the picture is part of a scene in embedded mode, but does not scroll
+  along with text and located directly above it. Available modifications mode
+  modifiers float 'left/right/center/middle/bottom/top', specifies how to
   place an image in the field scr.gfx. For example: float-top-left;
 - win.scroll.mode = [0/1/2/3] mode scrolling region of the scene. 0 - no
-  auto-scroll 1 - scroll to change the text, 2 scroll to change only if the 
+  auto-scroll 1 - scroll to change the text, 2 scroll to change only if the
   change is not visible, 3 - always in the end;
-- win.x, win.y, win.w, win.h = coordinates, width and height of the main 
+- win.x, win.y, win.w, win.h = coordinates, width and height of the main
   window. Region which is a description of the scene (number)
-- win.fnt.name = path to the font file (string). Hereinafter, font may contain 
-  a description of all styles, for example: {sans,sans-b and 
-  sans-i,sans-bi}.ttf (the font style set to regular, bold, italic and 
-  bold-italic). You can omit some of the faces, and the engine itself will 
+- win.fnt.name = path to the font file (string). Hereinafter, font may contain
+  a description of all styles, for example: {sans,sans-b and
+  sans-i,sans-bi}.ttf (the font style set to regular, bold, italic and
+  bold-italic). You can omit some of the faces, and the engine itself will
   generate them based on the normal style, for example: {sans, sans-i}.ttf (
-  set only regular and italic);- win.align = center/left/right/justify (text 
+  set only regular and italic);- win.align = center/left/right/justify (text
   alignment in the window scene);
 - win.fnt.size = the font size of the main window (size)
-- win.fnt.height = line spacing as the floating the decimal point (1.0 is 
+- win.fnt.height = line spacing as the floating the decimal point (1.0 is
   default)
-- win.gfx.up, win.gfx.down = paths to the image files skallerup up/down for 
+- win.gfx.up, win.gfx.down = paths to the image files skallerup up/down for
   the main window (string)
 - win.up.x, win.up.y, win.down.x, win.down.y = coordinates. (coordinate or -1)
 - win.col.fg = text color of the main window (color)
 - win.col.link = link color for the main window (color)
-- win.col.alink = active link color for the main window (color)- win.ways.mode 
-  = top/bottom (to specify the location of the jump list, default top -- on 
+- win.col.alink = active link color for the main window (color)- win.ways.mode
+  = top/bottom (to specify the location of the jump list, default top -- on
   top of the scene)
-- inv.x, inv.y, inv.w, inv.h = coordinates, width and height of region 
+- inv.x, inv.y, inv.w, inv.h = coordinates, width and height of region
   inventory. (number)
-- inv.mode = string mode inventory (horizontal or vertical). In horizontal 
-  inventory mode in one line can be several items. In vertical mode, each line 
+- inv.mode = string mode inventory (horizontal or vertical). In horizontal
+  inventory mode in one line can be several items. In vertical mode, each line
   of the inventory contains only one thing. There are modifications to (-left/
-  right/center). You can set the mode to disabled if your the game doesn't 
+  right/center). You can set the mode to disabled if your the game doesn't
   need an inventory;
 - inv.col.fg = text color tools (color)- inv.col.link = link color tools
   (color)
@@ -4280,7 +4280,7 @@ Parameters can take values:
 - inv.fnt.size = the font size of the inventory (size)
 - inv.fnt.height = line spacing as the floating the decimal point
   (1.0 is default)
-- inv.gfx.up, inv.gfx.down = paths to the image files skallerup up/down of 
+- inv.gfx.up, inv.gfx.down = paths to the image files skallerup up/down of
   equipment (line)
 - inv.up.x, inv.up.y, inv.down.x, inv.down.y = coordinates.
   (coordinate or -1)
@@ -4378,7 +4378,7 @@ they provide.
 - 'dbg' module debugging.
 - 'click' — module intercept mouse clicks on the image of the scene;
 - 'prefs' module settings (data warehouse settings);
-- 'snapshots' — a plugin to support snapshots (for kickbacks of game 
+- 'snapshots' — a plugin to support snapshots (for kickbacks of game
   situations);
 - 'fmt' module of withdrawal;
 - 'theme' — the office theme on the fly;
@@ -4676,28 +4676,28 @@ Have created a sprite object has the following methods:
 - :dup() - creates a copy of the sprite;
 - :scale(xs, ys, [smooth]) -- scales sprite for reflections using scale -1.0 (
   slow! not for real time). Creates a new sprite.
-- :rotate(angle [, smooth]) -- rotates the sprite through a specified angle in 
+- :rotate(angle [, smooth]) -- rotates the sprite through a specified angle in
   the degrees (slowly! not for real time). Creates a new sprite.
 - :size() -- Returns the width and height of the sprite in pixels.
-- :draw(fx, fy, fw, fh, dst\_spr, x, y, [alpha]) -- Drawing the field src of 
-  the sprite in the sprite area dst (job alpha much slows down the execution 
+- :draw(fx, fy, fw, fh, dst\_spr, x, y, [alpha]) -- Drawing the field src of
+  the sprite in the sprite area dst (job alpha much slows down the execution
   of the function).
-- :draw(dst_spr, x, y, [alpha]) -- drawing the sprite, cropped option; (job 
+- :draw(dst_spr, x, y, [alpha]) -- drawing the sprite, cropped option; (job
   alpha slows down the execution of the function).
-- :copy(fx, fy, fw, fh, dst\_spr, x, y) -- Copying rectangle fw-fh from the 
-  sprite in the sprite dst\_spr by coordinates [x,y] (drawing substitution). 
+- :copy(fx, fy, fw, fh, dst\_spr, x, y) -- Copying rectangle fw-fh from the
+  sprite in the sprite dst\_spr by coordinates [x,y] (drawing substitution).
   There a shortened version (as :draw).
-- :compose(fx, fy, fw, fh, dst\_spr, x, y) -- Drawing with given the 
+- :compose(fx, fy, fw, fh, dst\_spr, x, y) -- Drawing with given the
   transparency of the two sprites). There is a shortened version
   (as in :draw).
 - :fill(x, y, w, h, [col]) -- Fill sprite with a color.
 - :fill([col]) -- Fill sprite with a color.
 - :pixel(x, y, col, [alpha]) - Filling the pixel of a sprite.
-- :pixel(x, y) -- the capture of the pixel of the sprite (returns four color 
+- :pixel(x, y) -- the capture of the pixel of the sprite (returns four color
   component).
-- :colorkey(color) -- Sets the sprite color, which acts the role of a 
-  transparent background. Thus, during subsequent operation :copy from this 
-  sprite will be copied only those pixels whose color doesn't match the 
+- :colorkey(color) -- Sets the sprite color, which acts the role of a
+  transparent background. Thus, during subsequent operation :copy from this
+  sprite will be copied only those pixels whose color doesn't match the
   background transparent.
 
 As the "color" methods receive string: 'green', 'red', 'yellow' or '#333333',
@@ -4720,9 +4720,9 @@ created with the help of sprite.fnt(), for example:
 Have created object defines the following methods:
 
 - :height() -- height of the font in pixels;
-- :text(text, col, [style]) -- create a sprite from text col - here the color 
+- :text(text, col, [style]) -- create a sprite from text col - here the color
   in the text format (in the format '#rrggbb' or 'text color').
-- :size(text) -- computes the size the text will occupy sprite, without 
+- :size(text) -- computes the size the text will occupy sprite, without
   creating a sprite.
 
 You may also find it useful to:
@@ -4781,7 +4781,7 @@ change background on the fly, without the use of the module theme. For
 example:
 
 ```
---$Author: Andrew Lobanov 
+--$Author: Andrew Lobanov
 
 require 'sprite'
 require 'theme'
@@ -4807,7 +4807,7 @@ function init()
 	theme.set('scr.col.bg', '#000000')
 	theme.set('win.col.fg', '#aaaaaa')
 	theme.set('win.col.link', '#ffaa00')
-	theme.set('win.col.alink', '#ffffff')	
+	theme.set('win.col.alink', '#ffffff')
 
 	bg = sprite.new(w, h)
 	bg:fill('black')
@@ -4941,10 +4941,10 @@ end
 
 function start()
 	w, h = theme.scr.w(), theme.scr.h()
-	
+
 	w = std.tonum(w)
 	h = std.tonum(h)
-	
+
 	for i = 1, 100 do
 		table.insert(stars, { x = rnd(w) - 1, y = rnd(h) - 1, dy = rnd(8) })
 		end
@@ -5070,7 +5070,7 @@ The pixels object has the following methods:
 - :fill(x, y, w, h, r, g, b, [a]) -- fill area (with transparency);
 - :val(x, y, r, g, b, a) - set pixel value
 - :val(x, y) -- to obtain the components r, g, b, a
-- :pixel(x, y, r, g, b, a) -- draw a pixel (taking into account transparency 
+- :pixel(x, y, r, g, b, a) -- draw a pixel (taking into account transparency
   of the existing pixel);
 - :line(x1, y1, x2, y2, r, g, b, a)--;
 - :lineAA(x1, y1, x2, y2, r, g, b, a) -- line AA;
@@ -5078,7 +5078,7 @@ The pixels object has the following methods:
 - :circleAA(x, y, radius, r, g, b, a) is the circle with AA;
 - :poly({x1, y1, x2, y2, ...}, r, g, b, a) - polygon;
 - :polyAA({x1, y1, x2, y2, ...}, r, g, b, a) - polygon with AA;
-- :blend(x1, y1, w1, h1, pixels2, x, y) -- draw a pixel area in another object 
+- :blend(x1, y1, w1, h1, pixels2, x, y) -- draw a pixel area in another object
   pixels, full form;
 - :blend(pixels2, x, y) -- short form;
 - :fill\_circle(x, y, radius, r, g, b, a) -- filled circle;
@@ -5184,14 +5184,14 @@ The sound you can play method :play([chan], [loop]), where chan-channel
 Other functions of the module:
 
 - snd.stop([channel]) – to stop playback of the selected channel or  all
-  channels. The second parameter you can set the decay time of the sound  in 
+  channels. The second parameter you can set the decay time of the sound  in
   MS. when it is muted;
-- snd.playing([channel]) – to know whether the sound is playing on any channel 
-  or on the selected channel; if the selected specific channel the function 
-  will return handle the currently played sound or nil. Attention! The sound 
+- snd.playing([channel]) – to know whether the sound is playing on any channel
+  or on the selected channel; if the selected specific channel the function
+  will return handle the currently played sound or nil. Attention! The sound
   of a click is not taken into account and usually takes 0 channel;
-- snd.pan(chan, l, r) – set panning. Channel, volume left[0-255], the volume 
-  of the right[0-255] channels. You must call before playing the sound to have 
+- snd.pan(chan, l, r) – set panning. Channel, volume left[0-255], the volume
+  of the right[0-255] channels. You must call before playing the sound to have
   effect;
 - snd.vol(vol) – sets the volume of sound (music and effects) from 0 to 127.
 
@@ -5351,7 +5351,7 @@ existing methods. Below are a list of methods with a brief description.
 
 - :with({...}) - set list obj;
 - :new (...) constructor;
-- :actions(type, [value]) - set/read the number of event object the preset 
+- :actions(type, [value]) - set/read the number of event object the preset
   type;
 - :inroom([{}]) - in which room (room) the object is located;
 - :where([{}]) - what the object (objects) is a object;
@@ -5395,7 +5395,7 @@ In addition to the methods room, added the following methods:
 In addition to the methods of obj, added the following methods:
 
 - :time([v]) -- set/get the number of game cycles;
-- :lifeon([v])/:lifeoff([v]) -- add/remove an object from the list alive, or 
+- :lifeon([v])/:lifeoff([v]) -- add/remove an object from the list alive, or
   enable/disable live listings globally (if not specified argument);
 - :live([v]) -- check the activity of the life object;
 - :set\_pl(pl) -- switch player
@@ -5424,6 +5424,66 @@ In addition to the methods of obj, added the following methods:
 - :take(w) -- take the object;
 - :walk/walkin/walkout -- transitions;
 - :go(w) - team go (checking the availability of transitions);
+
+## List of attributes and handlers
+
+Each object has a set of attributes and handlers associated with it.
+Most often attributes and handlers can be specified as text strings or
+functions. But some attributes are set in a special way. For example,
+the list of embedded objects is set as a 'obj' list {}, and 'noinv' is
+a boolean value.
+
+The main difference between an attribute and a handler is that the
+handler is a reaction on a game event. But attributes are used by the
+engine while generating a description of the scene and inventory.
+
+If the handler or attribute is set as a function, the first parameter
+(s) is always the object itself. Function-attributes MUST NOT
+change state of the game world. This can be done in handlers only.
+
+A list of attributes and handlers is provided below for reference
+purposes.
+
+### Objects and rooms (obj, room)
+
+- ini - handler, called for an object / room during construction
+  game world, can only be a function;
+- dsc - attribute, called to output the description;
+- disp - attribute, information about an item in the inventory or a room in
+  way list;
+- title - attribute of the room, the name of the room displayed when found
+  inside this room;
+- decor - attribute of the room, called to display a description of the static decorations in scene;
+- nolife - room attribute, do not call live object handlers;
+- noinv - room attribute, do not show inventory;
+- obj - attribute, list of nested objects;
+- way - attribute of room, list of rooms to walk;
+- life - handler, called for "live" (background) objects;
+- act - object handler, called when acting on a scene object;
+- tak - handler for taking an object from the scene (if act is not specified);
+- inv - object handler, called when acting on an inventory object;
+- use(s, on what) - object handler, called when using
+  inventory item on another item;
+- used (s, that) - object handler, called before use when
+  using this item (passive form);
+- onenter(s, from where) - room handler, called when entering the
+  the room, can cancel when returning false;
+- enter(s, where) - room handler, is called after a successful
+  entering the room;
+- onexit(s, where) - room handler, called when leaving
+  room, can cancel when returning false;
+- exit(s, where) - room handler, is called after a successful exit
+  from the room.
+
+### Game world (game)
+
+- use (s, what, on what) - handler, default action for
+  the use of the object;
+- act(s, that) - handler, default action while object click;
+- inv(s, that) - handler, default action on inventory click;
+- on{use, act, tak, inv, walk} - handler, response before call
+appropriate handlers, can cancel the chain;
+- after{use, act, tak, inv, walk} - handler, reaction after plaayer action.
 
 ## Epilogue
 
