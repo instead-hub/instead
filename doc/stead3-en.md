@@ -5446,6 +5446,8 @@ purposes.
 
 ### Objects and rooms (obj, room)
 
+- nam - attribute;
+- tag - attribute;
 - ini - handler, called for an object / room during construction
   game world, can only be a function;
 - dsc - attribute, called to output the description;
