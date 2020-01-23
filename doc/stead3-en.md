@@ -1794,7 +1794,7 @@ description of the function uses the following parameters agreement.
 
 Thus, the main function:
 
-- '_() ' - get the object;
+- '_(what) ' - get the object;
 - 'me()' returns the current object to the player;
 - 'here()' returns the current scene.
 - 'where ()' returns a room or an object which is the specified object if the
