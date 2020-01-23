@@ -1983,7 +1983,7 @@ In the description of the functions most of the functions under the parameter
 - remove(w, [wh]) - delete the object from object or room; Removes
   object obj from list and way (leaving all the rest, for example, game.lifes);
 - purge(w) - destroy the object (from all lists); Removes the object from
-  Vseh lists in which it is present;
+  all lists in which it is present;
 - replace(w, ww, [wh]) is to replace one object to another;
 - place(w, [wh]) is to put the object in the object/room (removing it from
   the old object/rooms);
