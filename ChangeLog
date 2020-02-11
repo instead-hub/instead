@@ -5,6 +5,7 @@
  * fix: loadstring sandboxed;
  * new: initial gamepad support;
  * new: utf8 tiny library;
+ * enh: stead3 debugger uses native text input;
  * enh: doc fixes;
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 11 Feb 2020 08:10:00 +0300
