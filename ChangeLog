@@ -1,3 +1,13 @@
+3.3.2
+
+ * fix: -lua parameter;
+ * fix: WM minimized state fix;
+ * fix: loadstring sandboxed;
+ * new: initial gamepad support;
+ * enh: doc fixes;
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 11 Feb 2020 08:10:00 +0300
+
 3.3.1
 
  * fix: build with SDL 2.0.10;
