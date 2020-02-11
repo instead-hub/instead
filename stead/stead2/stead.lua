@@ -2188,7 +2188,7 @@ end
 
 game = game {
 	codepage = "UTF-8";
-	nam = [[INSTEAD -- Simple Text Adventure interpreter v]]..stead.version..[[ '2009-2016 by Peter Kosyh]];
+	nam = [[INSTEAD -- Simple Text Adventure interpreter v]]..stead.version..[[ '2009-2020 by Peter Kosyh]];
 	dsc = [[
 Commands:^
     look(or just enter), act <on what> (or just what), use <what> [on what], go <where>,^
@@ -3269,6 +3269,16 @@ local build_sandbox_output = function(realpath, error, type, find, gsub, savepat
 	end)
 end
 
+local build_sandbox_load = function(eval, error, type, find)
+	return stead.hook(eval, function(f, str, ...)
+		if type(str) == 'string' and find(str, "\x1b", 1, true) == 1 then
+			error ("Loading bytecode is forbidden!", 3)
+			return false
+		end
+		return f(str, ...)
+	end)
+end
+
 io.open = build_sandbox_open(instead_realpath, error, type, string.find, string.gsub,
 		instead_savepath(), instead_gamepath());
 
@@ -3295,6 +3305,13 @@ end
 
 if not DEBUG then
 	debug = nil
+end
+if _VERSION == "Lua 5.1" then
+	loadstring = build_sandbox_load(loadstring, error, type, string.find)
+	stead.eval = loadstring
+else
+	load = build_sandbox_load(load, error, type, string.find)
+	stead.eval = load
 end
 package.cpath = ""
 package.preload = {}

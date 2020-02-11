@@ -1,6 +1,6 @@
 -- luacheck: globals STANDALONE
 -- luacheck: read globals instead
--- luacheck: globals io os debug
+-- luacheck: globals io os debug load loadstring
 -- luacheck: read globals instead_realpath
 
 local function sandbox()
@@ -83,6 +83,16 @@ local function sandbox()
 		end)
 	end
 
+	local build_sandbox_load = function(eval, error, type, find)
+		return stead.hook(eval, function(f, str, ...)
+			if type(str) == 'string' and find(str, "\x1b", 1, true) == 1 then
+				error ("Loading bytecode is forbidden!", 3)
+				return false
+			end
+			return f(str, ...)
+		end)
+	end
+
 	io.open = build_sandbox_open(instead_realpath, error, type, string.find, string.gsub,
 				     instead.savepath(), instead.gamepath());
 
@@ -109,6 +119,13 @@ local function sandbox()
 
 	if not stead.rawget(_G, 'DEBUG') then
 		debug = nil
+	end
+	if _VERSION == "Lua 5.1" then
+		loadstring = build_sandbox_load(loadstring, error, type, string.find)
+		stead.eval = loadstring
+	else
+		load = build_sandbox_load(load, error, type, string.find)
+		stead.eval = load
 	end
 	package.cpath = ""
 	package.preload = {}
