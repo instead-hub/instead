@@ -659,6 +659,9 @@ local dbg = std.obj {
 		std.pr (txt:anchor())
 	end;
 	text = function(s, text)
+		if not use_text_event() or not s.on then
+			return
+		end
 		if text == " " then -- key will handle this
 			return
 		end
@@ -698,6 +701,7 @@ local dbg = std.obj {
 			end
 		end
 		if (key == 'f7'and not s.key_ctrl and not s.key_alt) or (s.key_ctrl and key == 'd') then
+			s.key_ctrl = false -- sticky bug
 			return '@dbg toggle'
 		end
 		if s.on then
