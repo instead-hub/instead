@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2020 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -621,9 +621,11 @@ int instead_main(int argc, char *argv[])
 	}
 
 	if (lua_sw) {
+		char *script_dir = strdup(lua_sw);
 		instead_set_standalone(1);
 		instead_set_debug(debug_sw);
-		err = instead_init_lua(dirname(lua_sw), 0);
+		err = instead_init_lua(dirname(script_dir), 0);
+		free(script_dir);
 		if (err)
 			goto out;
 		instead_api_register(paths_funcs);
