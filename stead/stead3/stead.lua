@@ -1049,7 +1049,7 @@ end
 local rnd_seed = 1980 + 1978
 function std:init()
 	std.rawset(_G, 'iface', std.ref '@iface') -- force iface override
-	std.world { nam = 'game', player = 'player', codepage = 'UTF-8', dsc = [[STEAD3, 2019 by Peter Kosyh^https://instead-hub.github.io^^]] };
+	std.world { nam = 'game', player = 'player', codepage = 'UTF-8', dsc = [[STEAD3, 2020 by Peter Kosyh^https://instead-hub.github.io^^]] };
 	std.room { nam = 'main' }
 	std.player { nam = 'player', room = 'main' }
 
