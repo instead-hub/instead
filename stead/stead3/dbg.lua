@@ -8,10 +8,16 @@ local input = std.ref '@input'
 local string = std.string
 local pairs = std.pairs
 local ipairs = std.ipairs
-local okey
 local txt = std.ref '@iface'
 local instead = std.ref '@instead'
 local iface = txt
+
+local function use_text_event(key)
+	if key == "return" or key == "space" then
+		return false
+	end
+	return instead.text_input and instead.text_input()
+end
 
 local kbden = {
 	shifted = {
@@ -652,6 +658,12 @@ local dbg = std.obj {
 		std.pr (s.hint ..'\n')
 		std.pr (txt:anchor())
 	end;
+	text = function(s, text)
+		if text == " " then -- key will handle this
+			return
+		end
+		return '@dbg text '..string.format("%q", text)
+	end;
 	key = function(s, press, key)
 		if key:find 'shift' then
 			s.key_shift = press
@@ -688,7 +700,6 @@ local dbg = std.obj {
 		if (key == 'f7'and not s.key_ctrl and not s.key_alt) or (s.key_ctrl and key == 'd') then
 			return '@dbg toggle'
 		end
-
 		if s.on then
 			return '@dbg key '..string.format("%q", key)
 		end
@@ -696,44 +707,11 @@ local dbg = std.obj {
 }
 
 local function utf_bb(b, pos)
-	if type(b) ~= 'string' or b:len() == 0 then
-		return 0
-	end
-	local utf8 = (std.game.codepage == 'UTF-8' or std.game.codepage == 'utf-8')
-	if not utf8 then return 1 end
-	local i = pos or b:len()
-	local l = 0
-	while b:byte(i) >= 0x80 and b:byte(i) <= 0xbf do
-		i = i - 1
-		l = l + 1
-		if i <= 1 then
-			break
-		end
-	end
-	return l + 1
+	return utf8_prev(b, pos)
 end
 
 local function utf_ff(b, pos)
-	if type(b) ~= 'string' or b:len() == 0 then
-		return 0
-	end
-	local utf8 = (std.game.codepage == 'UTF-8' or std.game.codepage == 'utf-8')
-	if not utf8 then return 1 end
-	local i = pos or 1
-	local l = 0
-	if b:byte(i) < 0x80 then
-		return 1
-	end
-	i = i + 1
-	l = l + 1
-	while b:byte(i) >= 0x80 and b:byte(i) <= 0xbf do
-		i = i + 1
-		l = l + 1
-		if i > b:len() then
-			break
-		end
-	end
-	return l
+	return utf8_next(b, pos)
 end
 
 local function key_xlat(s)
@@ -853,7 +831,7 @@ std.mod_cmd(function(cmd)
 			end
 			s.input = s.history[s.history_pos]
 			s.cursor = #s.input + 1
-		elseif key_xlat(key) then
+		elseif not use_text_event(key) and key_xlat(key) then
 			local k = key_xlat(key)
 			local pre, post = dbg:inp_split()
 			dbg.cursor = dbg.cursor + k:len()
@@ -861,6 +839,14 @@ std.mod_cmd(function(cmd)
 		else
 			return nil, false
 		end
+		dbg:completion(false)
+		std.abort()
+		return std.call(dbg, 'dsc'), true
+	elseif cmd[2] == 'text' then
+		local text = cmd[3]
+		local pre, post = dbg:inp_split()
+		dbg.cursor = dbg.cursor + text:len()
+		dbg.input = pre .. text .. post
 		dbg:completion(false)
 		std.abort()
 		return std.call(dbg, 'dsc'), true
@@ -885,10 +871,12 @@ end
 
 dprint = std.dprint
 local oldlang
+local okey, otext
+
 local hooked = false
 std.mod_start(function(_)
 	local st, r
-	if oldlang ~= LANG then
+	if not use_text_event() and oldlang ~= LANG then
 		st, r = std.pcall(function() return require ('dbg-'..LANG) end)
 		if st and r then
 			std.dprint("dbg: Using '"..LANG.."' keyboard layout.")
@@ -899,15 +887,18 @@ std.mod_start(function(_)
 	iface:raw_mode(false)
 	if not hooked then
 		okey = input.key;
+		otext = input.text;
 		hooked = true
 	end
 	std.rawset(input, 'key', function(_, ...) return dbg:key(...) or (okey and okey(input, ...)) end)
+	std.rawset(input, 'text', function(_, ...) return dbg:text(...) or (otext and otext(input, ...)) end)
 end, -100)
 
 std.mod_done(function()
 	hooked = false
 	iface:raw_mode(false)
 	std.rawset(input, 'key', okey)
+	std.rawset(input, 'text', otext)
 end, -100)
 
 -- std.rawset(_G, 'dbg',  std.ref '@dbg')
