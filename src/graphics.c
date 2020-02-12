@@ -423,7 +423,8 @@ static void anigif_frame(anigif_t g)
 		SDL_SetClipRect(Surf(screen), &g->spawn[i].clip);
 		SDL_BlitSurface(frame->surface, NULL, Surf(screen), &dest);
 	}
-	g->delay = timer_counter;
+	if (!g->active) /* initial draw */
+		g->delay = timer_counter;
 	SDL_SetClipRect(Surf(screen), &clip);
 }
 
@@ -1413,9 +1414,9 @@ void gfx_draw(img_t p, int x, int y)
 		anigif_spawn(ag, x, y, dest.w, dest.h);
 		if (!ag->drawn)
 			anigif_drawn_nr ++;
+		anigif_frame(ag);
 		ag->drawn = 1;
 		ag->active = 1;
-		anigif_frame(ag);
 		return;
 	}
 	SDL_BlitSurface(pixbuf, NULL, Surf(screen), &dest);
