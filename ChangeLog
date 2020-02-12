@@ -2,10 +2,10 @@
 
  * fix: -lua parameter;
  * fix: WM minimized state fix;
- * fix: loadstring sandboxed;
  * fix: anigif and decorators fix;
  * new: initial gamepad support;
  * new: utf8 tiny library;
+ * enh: loadstring sandboxed;
  * enh: stead3 debugger uses native text input;
  * enh: doc fixes;
 
