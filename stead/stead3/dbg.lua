@@ -894,8 +894,14 @@ std.mod_start(function(_)
 		otext = input.text;
 		hooked = true
 	end
-	std.rawset(input, 'key', function(_, ...) return dbg:key(...) or (okey and okey(input, ...)) end)
-	std.rawset(input, 'text', function(_, ...) return dbg:text(...) or (otext and otext(input, ...)) end)
+	std.rawset(input, 'key', function(_, ...)
+		return dbg:key(...) or
+			(not dbg.on and okey and okey(input, ...))
+	end)
+	std.rawset(input, 'text', function(_, ...)
+		return dbg:text(...) or
+			(not dbg.on and otext and otext(input, ...))
+	end)
 end, -100)
 
 std.mod_done(function()
