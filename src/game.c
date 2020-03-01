@@ -3204,7 +3204,8 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 		return -1;
 	}
 
-	rc = game_cmd(p, (mb != -1)?GAME_CMD_CLICK:0); free(p);
+	rc = game_cmd(p, (mb >= 0 || mb == EV_CODE_FINGER)?GAME_CMD_CLICK:0);
+	free(p);
 
 	return (rc)?-1:0;
 }
