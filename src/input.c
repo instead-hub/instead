@@ -179,12 +179,13 @@ static SDL_GameController *gamepad = NULL;
 
 static void gamepad_init(void)
 {
+	int i;
 	static char gamepad_cfg[PATH_MAX] = "";
 	if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) < 0) {
 		fprintf(stderr, "Couldn't initialize GameController subsystem: %s\n", SDL_GetError());
 		return;
 	}
-	for (int i = 0; i < SDL_NumJoysticks(); ++i) {
+	for (i = 0; i < SDL_NumJoysticks(); ++i) {
 		if (SDL_IsGameController(i)) {
 			gamepad = SDL_GameControllerOpen(i);
 			if (gamepad) {
