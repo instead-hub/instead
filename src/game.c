@@ -392,6 +392,8 @@ static int cmp_game(const void *p1, const void *p2)
 
 static void games_sort()
 {
+	if (!games)
+		return;
 	qsort(games, games_nr, sizeof(struct game), cmp_game);
 }
 
