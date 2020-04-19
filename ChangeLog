@@ -3,6 +3,7 @@
  * fix: -lua parameter;
  * fix: WM minimized state fix;
  * fix: anigif and decorators fix;
+ * fix: gtk3 build warning;
  * new: initial gamepad support;
  * new: utf8 tiny library;
  * enh: loadstring sandboxed;
