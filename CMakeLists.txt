@@ -12,8 +12,8 @@ SET(INSTEAD_VERSION "3.3.2")
 
 # options
 OPTION(WITH_SDL2 "Use SDL2 instead of SDL 1" ON)
-OPTION(WITH_GTK2 "Use GTK2 file open dialog" ON)
-OPTION(WITH_GTK3 "Use GTK3 file open dialog" OFF)
+OPTION(WITH_GTK2 "Use GTK2 file open dialog" OFF)
+OPTION(WITH_GTK3 "Use GTK3 file open dialog" ON)
 OPTION(WITH_ICONV "Build with iconv support" ON)
 OPTION(WITH_LUAJIT "Use LuaJIT instead of Lua (recommended)" OFF)
 
