@@ -25,6 +25,6 @@ To run games you may:
 
 ## Contacts
 
-- Join the chat at [gitter](https://gitter.im/instead-hub/instead).
-- Unofficial [XMPP conference](instead@conference.jabber.ru).
+- Join the chat at [gitter](https://gitter.im/instead-hub/instead);
+- Unofficial XMPP conference: instead@conference.jabber.ru;
 - Check the [AUTHORS](AUTHORS) file.
