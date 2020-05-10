@@ -4,6 +4,7 @@ local instead = std.obj { nam = '@instead' }
 
 instead.nosave = false
 instead.noautosave = false
+instead.tiny = true
 
 function instead.mouse_filter()
 	return 0
