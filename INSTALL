@@ -43,8 +43,8 @@ Or use ppa with latest version:
 3) On arch linux
 ================
 
-Install stable version from community:
-	$ pacman -S instead
+Install stable version from AUR:
+	$ yay -S instead
 
 Or build from svn:
 	$ make PKGBUILD
