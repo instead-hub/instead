@@ -689,6 +689,8 @@ static int luaB_dofile (lua_State *L) {
 	return lua_gettop(L) - n;
 }
 
+#if LUA_VERSION_NUM <= 503
+/* is this hack still needed? */
 static int luaB_print (lua_State *L) {
 	int n = lua_gettop(L);  /* number of arguments */
 	int i;
@@ -708,6 +710,22 @@ static int luaB_print (lua_State *L) {
 	fputs("\n", stdout);
 	return 0;
 }
+#else
+static int luaB_print (lua_State *L) {
+  int n = lua_gettop(L);  /* number of arguments */
+  int i;
+  for (i = 1; i <= n; i++) {  /* for each argument */
+    size_t l;
+    const char *s = luaL_tolstring(L, i, &l);  /* convert it to string */
+    if (i > 1)  /* not the first element? */
+      lua_writestring("\t", 1);  /* add a tab before it */
+    lua_writestring(s, l);  /* print it */
+    lua_pop(L, 1);  /* pop result */
+  }
+  lua_writeline();
+  return 0;
+}
+#endif
 
 static int luaB_maxn (lua_State *L) {
 	lua_Integer max = 0;
