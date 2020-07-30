@@ -36,7 +36,7 @@ static void instead_timer_do(void *data)
 	char *p;
 	instead_timer_nr = 0;
 	instead_lock();
-	if (game_paused() || !curgame_dir) {
+	if (game_paused() || !curgame_dir || instead_timer == NULL_TIMER) {
 		instead_unlock();
 		return;
 	}
