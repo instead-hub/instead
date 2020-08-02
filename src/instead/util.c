@@ -688,8 +688,11 @@ char *getrealpath(const char *path, char *resolved)
 		}
 		unix_path(resolved);
 		len = strlen(resolved);
-		if (len > 1)
+		if (len > 1) {
 			p += len;
+			while (p != resolved && *(p-1) == '/')
+				*(--p) = 0;
+		}
 	}
 
 loop:
