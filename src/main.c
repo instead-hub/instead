@@ -171,43 +171,28 @@ void wince_init(char *path)
 #endif
 static int run_game(const char *path)
 {
-	char *p, *ep, *d;
-	static char gp[PATH_MAX + 1];
-	static char *cd = "./";
+	char *b, *d;
+	static char dir[PATH_MAX + 1];
+	static char base[PATH_MAX + 1];
 	if (!path)
 		return -1;
 	if (!path[0])
 		return -1;
 	if (strlen(path) >= PATH_MAX)
 		return -1;
-	strcpy(gp, path);
-	p = gp;
-	unix_path(p);
-	ep = p + strlen(p) - 1;
-	while (*ep == '/' && ep != p)
-		*ep-- = 0;
-	if (!p[0])
-		return -1;
-	ep = p + strlen(p) - 1;
-	while (ep != p) {
-		if (*ep == '/') {
-			*ep ++ = 0;
-			break;
-		}
-		ep --;
-	}
-	if (ep == p)
-		d = cd;
-	else
-		d = p;
-
-	if (!is_game(d, ep)) {
-		fprintf(stderr, "%s/%s is not a game path.\n", d, ep);
+	strcpy(dir, path);
+	unix_path(dir);
+	strcpy(base, path);
+	unix_path(base);
+	d = dirname(dir);
+	b = basename(base);
+	if (!is_game(d, b)) {
+		fprintf(stderr, "%s/%s is not a game path.\n", d, b);
 		return -1;
 	}
 	FREE(game_sw);
 	FREE(games_sw);
-	game_sw = strdup(ep);
+	game_sw = strdup(b);
 	games_sw = strdup(d);
 	return 0;
 }
