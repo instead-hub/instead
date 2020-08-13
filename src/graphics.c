@@ -2723,6 +2723,10 @@ static int parse_fn(const char *f, char *files[])
 	const char *ep = f;
 	const char *s = f;
 
+	/* language specific font path*/
+	char *fontpath;
+	FILE *fp;
+
 	int pref = strcspn(f, "{");
 	if (!f[pref])
 		goto no;
@@ -2740,7 +2744,8 @@ static int parse_fn(const char *f, char *files[])
 			files[nr] = NULL;
 			goto skip;
 		}
-		files[nr] = malloc(e + pref + elen + 1);
+		/* Enough space for filepath, including the optional language code. */
+		files[nr] = malloc(e + pref + elen + 4);
 		if (!files[nr])
 			break;
 		if (pref)
@@ -2750,6 +2755,31 @@ static int parse_fn(const char *f, char *files[])
 		if (elen)
 			memcpy(files[nr] + pref + e, ep, elen);
 		*(files[nr] + pref + e + elen) = 0;
+
+		/*
+		Add language specific fonts.
+
+		If there is a file prefixed with the language code, such as fa-sans.ttf,
+		we load that font instead of theme's font. This is a simple way to load
+		language-specific fonts without touching anything else. Another reason
+		for this change is the fact that the current default font does not have
+		any glyphs to render Arabic script (it is LiberationSans).
+		*/
+		/* First construct language-specific font path */
+		fontpath = malloc(strlen(files[nr])+4); // eg fa-sans.ttf
+		*(fontpath+pref) = '\0';
+		strncpy(fontpath, files[nr], pref);
+		strcat(fontpath, opt_lang);
+		strcat(fontpath, "-");
+		strcat(fontpath, files[nr]+pref);
+		/* Then, if there is such a font, use it instead of the default font. */
+		fp=fopen(fontpath, "r");
+		if (fp != NULL) {
+			memcpy(files[nr], fontpath, strlen(fontpath));
+			*(files[nr]+strlen(fontpath)) = 0;
+			fclose(fp);
+		}
+		free(fontpath);
 skip:
 		nr ++;
 		if (!f[e] || f[e] == '}')
