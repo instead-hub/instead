@@ -166,6 +166,7 @@ struct game {
 	char *author;
 	char *version;
 	char *info;
+	char *lang; /* ISO 639-1 two letter language code */
 	char *dir;
 /*	char *api; */
 	int idf;

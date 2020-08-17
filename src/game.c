@@ -322,6 +322,16 @@ static char *game_version(const char *path, const char *d_name)
 	trunc_lines(p, 0);
 	return p;
 }
+
+static char *game_lang(const char *path, const char *d_name)
+{
+	char *p = game_tag(path, d_name, "Language");
+	if (!p)
+		return strdup(d_name);
+	trunc_lines(p, 0);
+	return p;
+}
+
 #if 0
 static char *game_api(const char *path, const char *d_name)
 {
@@ -338,6 +348,7 @@ static void game_info_free(struct game *g)
 	FREE(g->info);
 	FREE(g->author);
 	FREE(g->version);
+	FREE(g->lang);
 /*	FREE(g->api); */
 }
 
@@ -354,6 +365,7 @@ static void game_info_fill(struct game *g)
 	g->info = game_info(dirpath(g->path), g->dir);
 	g->author = game_author(dirpath(g->path), g->dir);
 	g->version = game_version(dirpath(g->path), g->dir);
+	g->lang = game_lang(dirpath(g->path), g->dir);
 /*	g->api = game_api(dirpath(g->path), g->dir); */
 }
 
