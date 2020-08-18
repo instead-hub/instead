@@ -327,7 +327,7 @@ static char *game_lang(const char *path, const char *d_name)
 {
 	char *p = game_tag(path, d_name, "Language");
 	if (!p)
-		return strdup(d_name);
+		return NULL;
 	trunc_lines(p, 0);
 	return p;
 }
