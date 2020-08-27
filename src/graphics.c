@@ -2989,10 +2989,17 @@ struct xref;
 struct word {
 	int style;
 	int x;
+	int x_rtl;
 	int w;
 	int unbrake;
 	int valign;
 	int img_align;
+
+	/* Direction and Script (Language) of the word */
+	int direction;	/* See HarfBuzz hb_direction_t */
+	int script;		/* See HarfBuzz hb_script_t */
+	int isalpha;	/* Whether this word contains alphabets */
+
 	char *word;
 	img_t	img;
 	struct word *next; /* in line */
@@ -3010,6 +3017,16 @@ img_t	word_image(word_t v)
 	if (!w)
 		return NULL;
 	return w->img;
+}
+
+/* Check wether the given direction is right-to-left.
+Always return 0 if not compiled with HarfBuzz */
+static int is_rtl(int direction) {
+	#ifdef _USE_HARFBUZZ
+	return direction == HB_DIRECTION_RTL;
+	#else
+	return 0;
+	#endif
 }
 
 struct word *word_new(const char *str)
@@ -3046,6 +3063,10 @@ struct line {
 	int	al_tabx;
 	int	taby;
 	int	al_taby;
+
+	/* Each line could be RTL or LTR regardless of its script */
+	int direction;	/* See HarfBuzz hb_direction_t */
+
 	struct word *words;
 	struct line *next;
 	struct line *prev;
@@ -3098,6 +3119,12 @@ struct line *line_new(void)
 	l->layout = NULL;
 	l->align = 0;
 	l->pos = 0;
+
+	#ifdef _USE_HARFBUZZ
+	/* Use the game language direction as inital value. */
+	l->direction = game_lookup(curgame_dir)->rtl? HB_DIRECTION_RTL: HB_DIRECTION_LTR;
+	#endif
+
 	return l;
 }
 
@@ -3253,6 +3280,12 @@ void line_add_word(struct line *l, struct word *word)
 	if (!l->words) {
 		l->words = word;
 		word->prev = word;
+
+		/*	This is the first word in this line. Let's use its direction
+			for the line too. Ideally, something like fribidi should be
+			used for mixing directions however. */
+		l->direction = word->direction;
+
 		return;
 	}
 	w = w->prev;
@@ -4324,6 +4357,7 @@ static void word_image_render(struct word *word, int x, int y, clear_fn clear, u
 			clear(x + line->x + word->x, y + line->y/* + yy*/, word->w, line->h);
 	}
 	if (word->img) {
+		// We have an image to draw
 		if (word->img_align)
 			gfx_draw(word->img, x + word->x, y + line->y + yy);
 		else
@@ -4360,6 +4394,7 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 	gfx_noclip();
 }
 
+/* Draws everything */
 void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, int height, clear_fn clear)
 {
 	void *v;
@@ -4381,6 +4416,7 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 			continue;
 		word_image_render(margin->word, x, y, clear, NULL);
 	}
+
 	if (!line)
 		line = layout->lines;
 	for (; line; line= line->next) {
@@ -4393,6 +4429,7 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 				word_image_render(word, x, y, clear, NULL);
 		}
 	}
+
 	cache_shrink(layout->prerend_cache);
 	cache_shrink(layout->hlprerend_cache);
 	cache_shrink(layout->img_cache);
@@ -4710,6 +4747,7 @@ xref_t txt_box_xref(textbox_t tbox, int x, int y)
 		}
 	}
 	if (word && xref) {
+		// We found a highlighted word.
 		return xref;
 	}
 	return NULL;
@@ -4743,6 +4781,7 @@ img_t txt_box_render(textbox_t tbox)
 	return dst;
 }
 
+/* Draws game content */
 void txt_box_draw(textbox_t tbox, int x, int y)
 {
 	struct textbox *box = (struct textbox *)tbox;
