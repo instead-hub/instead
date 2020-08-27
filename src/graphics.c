@@ -4264,6 +4264,12 @@ static void word_render(struct layout *layout, struct word *word, int x, int y)
 	if (!wc)
 		return;
 
+	#ifdef _USE_HARFBUZZ
+	/* Set the language and script for SDL_ttf */
+	TTF_SetDirection(word->direction);
+	TTF_SetScript(word->script);
+	#endif
+
 	if (!word->xref) {
 		if (!word->prerend) {
 			prerend = cache_get(layout->prerend_cache, wc);
@@ -4386,10 +4392,22 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 		y -= (layout->box)->off;
 	}
 
+	#ifdef _USE_HARFBUZZ
+	/* layout_right_x is the logical opposite of x */
+	int layout_right_x = layout->w + x;
+	#endif
+
 	for (i = 0; i < xref->num; i ++) {
 		word = xref->words[i];
 		if (!word->img_align)
-			word_image_render(word, x, y, clear, update);
+		{
+			#ifdef _USE_HARFBUZZ
+			if (is_rtl(word->line->direction))
+				word_image_render(word, layout_right_x - (2*word->x + word->w), y, clear, update);
+			else
+			#endif
+				word_image_render(word, x, y, clear, update);
+		}
 	}
 	gfx_noclip();
 }
@@ -4404,6 +4422,7 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 	struct word *word;
 /*	line = layout->lines;
 	gfx_clip(x, y, layout->w, layout->h); */
+
 	if (!lay)
 		return;
 	for (v = NULL; (img = txt_layout_images(lay, &v)); )
@@ -4419,14 +4438,29 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 
 	if (!line)
 		line = layout->lines;
+
+	#ifdef _USE_HARFBUZZ
+	/* layout_right_x is the logical opposite of x */
+	int layout_right_x = layout->w + x;
+	#endif
+
 	for (; line; line= line->next) {
 		if ((line->y + line->h) < off)
 			continue;
 		if (line->y - off > height)
 			break;
 		for (word = line->words; word; word = word->next ) {
-			if (!word->img_align)
-				word_image_render(word, x, y, clear, NULL);
+			if (!word->img_align) {
+				#ifdef _USE_HARFBUZZ
+				if (is_rtl(line->direction))
+					{
+						word_image_render(word, layout_right_x - (2*word->x + word->w), y, clear, NULL);
+						word->x_rtl = layout->w - (word->x + word->w);
+					}
+				else
+				#endif
+					word_image_render(word, x, y, clear, NULL);
+			}
 		}
 	}
 
@@ -4721,24 +4755,48 @@ xref_t txt_box_xref(textbox_t tbox, int x, int y)
 		return NULL;
 	if (x >= box->w)
 		return NULL;
+
+	// Process each word in each line
 	for (line = box->line; line; line = line->next) {
 		int hh, yy;
 		if (y < line->y)
 			break;
 		if (y > line->y + line->h)
 			continue;
+
 		for (word = line->words; word; word = word->next) {
 			yy = vertical_align(word, &hh);
 			if (y < line->y + yy || y > line->y + yy + hh)
 				continue;
-			if (x < line->x + word->x)
+
+			if (is_rtl(word->direction)) {
+				// Continue until we reach the beginning of a word
+				if (x < (word->x_rtl))
+					continue;
+			} else if (x < line->x + word->x)
 				continue;
+
 			xref = word->xref;
+
+			// Go back. Found nothing.
 			if (!xref)
 				continue;
-			if (x < line->x + word->x + word->w)
+
+			// Break out if we are still on the word that we've found
+			if (is_rtl(word->direction)) {
+				if (x < (word->x_rtl + word->w))
+					break;
+			} else if (x < line->x + word->x + word->w)
 				break;
-			if (word->next && word->next->xref == xref && x < line->x + word->next->x + word->next->w) {
+
+			if (is_rtl(word->direction)) {
+				if (word->next && word->next->xref == xref && x < word->next->x_rtl) {
+					yy = vertical_align(word->next, &hh);
+					if (y < line->y + yy || y > line->y + yy + hh)
+						continue;
+					break;
+				}
+			} else if (word->next && word->next->xref == xref && x < line->x + word->next->x + word->next->w) {
 				yy = vertical_align(word->next, &hh);
 				if (y < line->y + yy || y > line->y + yy + hh)
 					continue;
@@ -5219,6 +5277,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 
 		wtok = 0;
 		if (img) {
+			/* Rendered width differs between RTL and LTR renders. */
 			w = gfx_img_w(img);
 			h = gfx_img_h(img);
 			if (img_align) {
