@@ -366,6 +366,7 @@ static void game_info_fill(struct game *g)
 	g->author = game_author(dirpath(g->path), g->dir);
 	g->version = game_version(dirpath(g->path), g->dir);
 	g->lang = game_lang(dirpath(g->path), g->dir);
+	g->rtl = is_rtl_lang(g->lang);
 /*	g->api = game_api(dirpath(g->path), g->dir); */
 }
 
@@ -1349,6 +1350,7 @@ void box_update_scrollbar(int n)
 	el_update(eldown->id);
 }
 
+/* Decides what to draw */
 void el_draw(int n)
 {
 	int x, y;
@@ -3693,4 +3695,15 @@ int game_instead_extensions(void)
 	instead_sound_init();
 	instead_paths_init();
 	return 0;
+}
+
+
+/*
+	Returns nonzero if the language is written right-to-left, otherwise 0.
+
+	@lang: ISO 639-1 two letter language code.
+*/
+int is_rtl_lang(const char *lang)
+{
+	return lang && (!strcmp(lang, "fa") || !strcmp(lang, "ar") || !strcmp(lang, "he"));
 }
