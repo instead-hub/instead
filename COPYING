@@ -47,3 +47,7 @@ INSTEAD links with the following libraries/sources:
     list routines (MIT) (http://ccodearchive.net/info/list.html)
     LuaFileSystem (http://keplerproject.github.io/luafilesystem/license.html)
     tinymt32 (The 3-clause BSD License)
+
+    HarfBuzz (old MIT)
+    GLib - partial (LGPL)
+    Basic UTF-8 manipulation routines (Public Domain)
