@@ -366,6 +366,7 @@ static void game_info_fill(struct game *g)
 	g->author = game_author(dirpath(g->path), g->dir);
 	g->version = game_version(dirpath(g->path), g->dir);
 	g->lang = game_lang(dirpath(g->path), g->dir);
+	g->rtl = is_rtl_lang(g->lang);
 /*	g->api = game_api(dirpath(g->path), g->dir); */
 }
 
@@ -760,6 +761,8 @@ int game_apply_theme(void)
 	layout_t lay = NULL;
 	textbox_t box = NULL;
 
+	struct game *g = game_lookup(curgame_dir);
+
 	gfx_bg(game_theme.bgcol);
 	if (!DIRECT_MODE)
 		game_clear_all();
@@ -773,9 +776,13 @@ int game_apply_theme(void)
 		lay = txt_layout(game_theme.font, align, game_theme.win_w, game_theme.win_h);
 		if (!lay)
 			return -1;
+
 		box = txt_box(game_theme.win_w, game_theme.win_h);
 		if (!box)
 			return -1;
+
+		/* Set game language direction as inital value. */
+		txt_layout_direction(lay, g? g->rtl: 0);
 		txt_layout_color(lay, game_theme.fgcol);
 		txt_layout_link_color(lay, game_theme.lcol);
 		/* txt_layout_link_style(lay, 4); */
@@ -791,6 +798,8 @@ int game_apply_theme(void)
 				game_theme.inv_w, game_theme.inv_h);
 			if (!lay)
 				return -1;
+
+			txt_layout_direction(lay, g? g->rtl: 0);
 			txt_layout_color(lay, game_theme.icol);
 			txt_layout_link_color(lay, game_theme.ilcol);
 			txt_layout_active_color(lay, game_theme.iacol);
@@ -810,6 +819,7 @@ int game_apply_theme(void)
 		if (!lay)
 			return -1;
 
+		txt_layout_direction(lay, g? g->rtl: 0);
 		txt_layout_color(lay, game_theme.fgcol);
 		txt_layout_link_color(lay, game_theme.lcol);
 		txt_layout_active_color(lay, game_theme.acol);
@@ -823,6 +833,7 @@ int game_apply_theme(void)
 		if (!lay)
 			return -1;
 
+		txt_layout_direction(lay, g? g->rtl: 0);
 		txt_layout_color(lay, game_theme.fgcol);
 		txt_layout_link_color(lay, game_theme.lcol);
 		txt_layout_active_color(lay, game_theme.acol);
@@ -1349,6 +1360,7 @@ void box_update_scrollbar(int n)
 	el_update(eldown->id);
 }
 
+/* Decides what to draw */
 void el_draw(int n)
 {
 	int x, y;
@@ -3693,4 +3705,15 @@ int game_instead_extensions(void)
 	instead_sound_init();
 	instead_paths_init();
 	return 0;
+}
+
+
+/*
+	Returns nonzero if the language is written right-to-left, otherwise 0.
+
+	@lang: ISO 639-1 two letter language code.
+*/
+int is_rtl_lang(const char *lang)
+{
+	return lang && (!strcmp(lang, "fa") || !strcmp(lang, "ar") || !strcmp(lang, "he"));
 }

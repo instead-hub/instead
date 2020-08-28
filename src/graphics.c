@@ -2989,10 +2989,17 @@ struct xref;
 struct word {
 	int style;
 	int x;
+	int x_rtl;
 	int w;
 	int unbrake;
 	int valign;
 	int img_align;
+
+	/* Direction and Script (Language) of the word */
+	int direction;	/* See HarfBuzz hb_direction_t */
+	int script;		/* See HarfBuzz hb_script_t */
+	int isalpha;	/* Whether this word contains alphabets */
+
 	char *word;
 	img_t	img;
 	struct word *next; /* in line */
@@ -3010,6 +3017,16 @@ img_t	word_image(word_t v)
 	if (!w)
 		return NULL;
 	return w->img;
+}
+
+/* Check wether the given direction is right-to-left.
+Always return 0 if not compiled with HarfBuzz */
+static int is_rtl(int direction) {
+	#ifdef _USE_HARFBUZZ
+	return direction == HB_DIRECTION_RTL;
+	#else
+	return 0;
+	#endif
 }
 
 struct word *word_new(const char *str)
@@ -3046,6 +3063,10 @@ struct line {
 	int	al_tabx;
 	int	taby;
 	int	al_taby;
+
+	/* Each line could be RTL or LTR regardless of its script */
+	int direction;	/* See HarfBuzz hb_direction_t */
+
 	struct word *words;
 	struct line *next;
 	struct line *prev;
@@ -3098,6 +3119,12 @@ struct line *line_new(void)
 	l->layout = NULL;
 	l->align = 0;
 	l->pos = 0;
+
+	/*	Default direction of the line. Only matters in non-LTR and multilingual text. 
+		4 is the value of HB_DIRECTION_LTR from HarfBuzz. Just in case.
+	*/
+	l->direction = 4;
+
 	return l;
 }
 
@@ -3253,6 +3280,12 @@ void line_add_word(struct line *l, struct word *word)
 	if (!l->words) {
 		l->words = word;
 		word->prev = word;
+
+		/*	This is the first word in this line. Let's use its direction
+			for the line too. Ideally, something like fribidi should be
+			used for mixing directions however. */
+		l->direction = word->direction;
+
 		return;
 	}
 	w = w->prev;
@@ -3349,6 +3382,9 @@ struct layout {
 	cache_t img_cache;
 	cache_t prerend_cache;
 	cache_t hlprerend_cache;
+
+	/* Default direction of the text. Only matters in non-LTR and multilingual text. */
+	int txt_layout_direction;
 };
 
 struct xref {
@@ -3622,6 +3658,8 @@ struct layout *layout_new(fnt_t fn, int w, int h)
 	memset(l->saved_valign, 0, sizeof(l->saved_valign));
 	l->acnt = 0;
 	l->vcnt = 0;
+	/* 4 is the enum value for HB_DIRECTION_LTR. Just in case. */
+	l->txt_layout_direction = 4;
 	return l;
 }
 void txt_layout_size(layout_t lay, int *w, int *h)
@@ -4151,6 +4189,20 @@ void	layout_debug(struct layout *layout)
 	}
 }
 
+/* Currently direction is only a boolean RTL flag */
+void txt_layout_direction(layout_t lay, int direction)
+{
+	struct layout *layout = (struct layout*)lay;
+	if (!lay)
+		return;
+	#ifdef _USE_HARFBUZZ
+	layout->txt_layout_direction = direction? HB_DIRECTION_RTL: HB_DIRECTION_LTR;
+	#else
+	/* This has no effect if INSTEAD and SDL_ttf are not compiled with HarfBuzz. */
+	layout->txt_layout_direction = 4;
+	#endif
+}
+
 void txt_layout_color(layout_t lay, color_t fg)
 {
 	struct layout *layout = (struct layout*)lay;
@@ -4230,6 +4282,12 @@ static void word_render(struct layout *layout, struct word *word, int x, int y)
 	}
 	if (!wc)
 		return;
+
+	#ifdef _USE_HARFBUZZ
+	/* Set the language and script for SDL_ttf */
+	TTF_SetDirection(word->direction);
+	TTF_SetScript(word->script);
+	#endif
 
 	if (!word->xref) {
 		if (!word->prerend) {
@@ -4324,6 +4382,7 @@ static void word_image_render(struct word *word, int x, int y, clear_fn clear, u
 			clear(x + line->x + word->x, y + line->y/* + yy*/, word->w, line->h);
 	}
 	if (word->img) {
+		// We have an image to draw
 		if (word->img_align)
 			gfx_draw(word->img, x + word->x, y + line->y + yy);
 		else
@@ -4352,14 +4411,27 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 		y -= (layout->box)->off;
 	}
 
+	#ifdef _USE_HARFBUZZ
+	/* layout_right_x is the logical opposite of x */
+	int layout_right_x = layout->w + x;
+	#endif
+
 	for (i = 0; i < xref->num; i ++) {
 		word = xref->words[i];
 		if (!word->img_align)
-			word_image_render(word, x, y, clear, update);
+		{
+			#ifdef _USE_HARFBUZZ
+			if (is_rtl(word->line->direction))
+				word_image_render(word, layout_right_x - (2*word->x + word->w), y, clear, update);
+			else
+			#endif
+				word_image_render(word, x, y, clear, update);
+		}
 	}
 	gfx_noclip();
 }
 
+/* Draws everything */
 void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, int height, clear_fn clear)
 {
 	void *v;
@@ -4369,6 +4441,7 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 	struct word *word;
 /*	line = layout->lines;
 	gfx_clip(x, y, layout->w, layout->h); */
+
 	if (!lay)
 		return;
 	for (v = NULL; (img = txt_layout_images(lay, &v)); )
@@ -4381,18 +4454,35 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 			continue;
 		word_image_render(margin->word, x, y, clear, NULL);
 	}
+
 	if (!line)
 		line = layout->lines;
+
+	#ifdef _USE_HARFBUZZ
+	/* layout_right_x is the logical opposite of x */
+	int layout_right_x = layout->w + x;
+	#endif
+
 	for (; line; line= line->next) {
 		if ((line->y + line->h) < off)
 			continue;
 		if (line->y - off > height)
 			break;
 		for (word = line->words; word; word = word->next ) {
-			if (!word->img_align)
-				word_image_render(word, x, y, clear, NULL);
+			if (!word->img_align) {
+				#ifdef _USE_HARFBUZZ
+				if (is_rtl(line->direction))
+					{
+						word_image_render(word, layout_right_x - (2*word->x + word->w), y, clear, NULL);
+						word->x_rtl = layout->w - (word->x + word->w);
+					}
+				else
+				#endif
+					word_image_render(word, x, y, clear, NULL);
+			}
 		}
 	}
+
 	cache_shrink(layout->prerend_cache);
 	cache_shrink(layout->hlprerend_cache);
 	cache_shrink(layout->img_cache);
@@ -4684,24 +4774,48 @@ xref_t txt_box_xref(textbox_t tbox, int x, int y)
 		return NULL;
 	if (x >= box->w)
 		return NULL;
+
+	// Process each word in each line
 	for (line = box->line; line; line = line->next) {
 		int hh, yy;
 		if (y < line->y)
 			break;
 		if (y > line->y + line->h)
 			continue;
+
 		for (word = line->words; word; word = word->next) {
 			yy = vertical_align(word, &hh);
 			if (y < line->y + yy || y > line->y + yy + hh)
 				continue;
-			if (x < line->x + word->x)
+
+			if (is_rtl(word->direction)) {
+				// Continue until we reach the beginning of a word
+				if (x < (word->x_rtl))
+					continue;
+			} else if (x < line->x + word->x)
 				continue;
+
 			xref = word->xref;
+
+			// Go back. Found nothing.
 			if (!xref)
 				continue;
-			if (x < line->x + word->x + word->w)
+
+			// Break out if we are still on the word that we've found
+			if (is_rtl(word->direction)) {
+				if (x < (word->x_rtl + word->w))
+					break;
+			} else if (x < line->x + word->x + word->w)
 				break;
-			if (word->next && word->next->xref == xref && x < line->x + word->next->x + word->next->w) {
+
+			if (is_rtl(word->direction)) {
+				if (word->next && word->next->xref == xref && x < word->next->x_rtl) {
+					yy = vertical_align(word->next, &hh);
+					if (y < line->y + yy || y > line->y + yy + hh)
+						continue;
+					break;
+				}
+			} else if (word->next && word->next->xref == xref && x < line->x + word->next->x + word->next->w) {
 				yy = vertical_align(word->next, &hh);
 				if (y < line->y + yy || y > line->y + yy + hh)
 					continue;
@@ -4710,6 +4824,7 @@ xref_t txt_box_xref(textbox_t tbox, int x, int y)
 		}
 	}
 	if (word && xref) {
+		// We found a highlighted word.
 		return xref;
 	}
 	return NULL;
@@ -4743,6 +4858,7 @@ img_t txt_box_render(textbox_t tbox)
 	return dst;
 }
 
+/* Draws game content */
 void txt_box_draw(textbox_t tbox, int x, int y)
 {
 	struct textbox *box = (struct textbox *)tbox;
@@ -5142,6 +5258,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 			goto err;
 		line->h = h;
 		line->align = layout->align;
+		line->direction = layout->txt_layout_direction;
 	} else {
 		line = lastline;
 	}
@@ -5180,6 +5297,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 
 		wtok = 0;
 		if (img) {
+			/* Rendered width differs between RTL and LTR renders. */
 			w = gfx_img_w(img);
 			h = gfx_img_h(img);
 			if (img_align) {
@@ -5230,7 +5348,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 			line->align = layout->align;
 			line->h = 0;/* h; */
 			line->y = ol->y + ol->h;
-
+			line->direction = layout->txt_layout_direction;
 
 /*			line->x = 0; */
 			line->x = layout_find_margin(layout, line->y, &width);
