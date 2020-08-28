@@ -761,6 +761,10 @@ int game_apply_theme(void)
 	layout_t lay = NULL;
 	textbox_t box = NULL;
 
+	#ifdef _USE_HARFBUZZ
+	struct game *g = game_lookup(curgame_dir);
+	#endif
+
 	gfx_bg(game_theme.bgcol);
 	if (!DIRECT_MODE)
 		game_clear_all();
@@ -774,9 +778,17 @@ int game_apply_theme(void)
 		lay = txt_layout(game_theme.font, align, game_theme.win_w, game_theme.win_h);
 		if (!lay)
 			return -1;
+
 		box = txt_box(game_theme.win_w, game_theme.win_h);
 		if (!box)
 			return -1;
+
+		#ifdef _USE_HARFBUZZ
+		/* Use the game language direction as inital value. */
+		if (g)
+			txt_layout_direction(lay, g->rtl? HB_DIRECTION_RTL: HB_DIRECTION_LTR);
+		#endif
+
 		txt_layout_color(lay, game_theme.fgcol);
 		txt_layout_link_color(lay, game_theme.lcol);
 		/* txt_layout_link_style(lay, 4); */
@@ -792,6 +804,13 @@ int game_apply_theme(void)
 				game_theme.inv_w, game_theme.inv_h);
 			if (!lay)
 				return -1;
+	
+			#ifdef _USE_HARFBUZZ
+			/* Use the game language direction as inital value. */
+			if (g)
+				txt_layout_direction(lay, g->rtl? HB_DIRECTION_RTL: HB_DIRECTION_LTR);
+			#endif
+
 			txt_layout_color(lay, game_theme.icol);
 			txt_layout_link_color(lay, game_theme.ilcol);
 			txt_layout_active_color(lay, game_theme.iacol);
@@ -811,6 +830,12 @@ int game_apply_theme(void)
 		if (!lay)
 			return -1;
 
+		#ifdef _USE_HARFBUZZ
+			/* Use the game language direction as inital value. */
+			if (g)
+				txt_layout_direction(lay, g->rtl? HB_DIRECTION_RTL: HB_DIRECTION_LTR);
+		#endif
+
 		txt_layout_color(lay, game_theme.fgcol);
 		txt_layout_link_color(lay, game_theme.lcol);
 		txt_layout_active_color(lay, game_theme.acol);
@@ -823,6 +848,12 @@ int game_apply_theme(void)
 		lay = txt_layout(game_theme.font, ALIGN_CENTER, game_theme.win_w, 0);
 		if (!lay)
 			return -1;
+
+		#ifdef _USE_HARFBUZZ
+			/* Use the game language direction as inital value. */
+			if (g)
+				txt_layout_direction(lay, g->rtl? HB_DIRECTION_RTL: HB_DIRECTION_LTR);
+		#endif
 
 		txt_layout_color(lay, game_theme.fgcol);
 		txt_layout_link_color(lay, game_theme.lcol);
