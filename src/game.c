@@ -761,9 +761,7 @@ int game_apply_theme(void)
 	layout_t lay = NULL;
 	textbox_t box = NULL;
 
-	#ifdef _USE_HARFBUZZ
 	struct game *g = game_lookup(curgame_dir);
-	#endif
 
 	gfx_bg(game_theme.bgcol);
 	if (!DIRECT_MODE)
