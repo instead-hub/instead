@@ -4189,12 +4189,18 @@ void	layout_debug(struct layout *layout)
 	}
 }
 
+/* Currently direction is only a boolean RTL flag */
 void txt_layout_direction(layout_t lay, int direction)
 {
 	struct layout *layout = (struct layout*)lay;
 	if (!lay)
 		return;
-	layout->txt_layout_direction = direction;
+	#ifdef _USE_HARFBUZZ
+	layout->txt_layout_direction = direction? HB_DIRECTION_RTL: HB_DIRECTION_LTR;
+	#else
+	/* This has no effect if INSTEAD and SDL_ttf are not compiled with HarfBuzz. */
+	layout->txt_layout_direction = 4;
+	#endif
 }
 
 void txt_layout_color(layout_t lay, color_t fg)
