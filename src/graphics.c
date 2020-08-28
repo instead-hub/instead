@@ -3120,10 +3120,10 @@ struct line *line_new(void)
 	l->align = 0;
 	l->pos = 0;
 
-	#ifdef _USE_HARFBUZZ
-	/* Use the game language direction as inital value. */
-	l->direction = game_lookup(curgame_dir)->rtl? HB_DIRECTION_RTL: HB_DIRECTION_LTR;
-	#endif
+	/*	Default direction of the line. Only matters in non-LTR and multilingual text. 
+		4 is the value of HB_DIRECTION_LTR from HarfBuzz. Just in case.
+	*/
+	l->direction = 4;
 
 	return l;
 }
@@ -3382,6 +3382,9 @@ struct layout {
 	cache_t img_cache;
 	cache_t prerend_cache;
 	cache_t hlprerend_cache;
+
+	/* Default direction of the text. Only matters in non-LTR and multilingual text. */
+	int txt_layout_direction;
 };
 
 struct xref {
@@ -3655,6 +3658,8 @@ struct layout *layout_new(fnt_t fn, int w, int h)
 	memset(l->saved_valign, 0, sizeof(l->saved_valign));
 	l->acnt = 0;
 	l->vcnt = 0;
+	/* 4 is the enum value for HB_DIRECTION_LTR. Just in case. */
+	l->txt_layout_direction = 4;
 	return l;
 }
 void txt_layout_size(layout_t lay, int *w, int *h)
@@ -4182,6 +4187,14 @@ void	layout_debug(struct layout *layout)
 		printf("\n");
 		line = line->next;
 	}
+}
+
+void txt_layout_direction(layout_t lay, int direction)
+{
+	struct layout *layout = (struct layout*)lay;
+	if (!lay)
+		return;
+	layout->txt_layout_direction = direction;
 }
 
 void txt_layout_color(layout_t lay, color_t fg)
@@ -5239,6 +5252,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 			goto err;
 		line->h = h;
 		line->align = layout->align;
+		line->direction = layout->txt_layout_direction;
 	} else {
 		line = lastline;
 	}
@@ -5328,7 +5342,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 			line->align = layout->align;
 			line->h = 0;/* h; */
 			line->y = ol->y + ol->h;
-
+			line->direction = layout->txt_layout_direction;
 
 /*			line->x = 0; */
 			line->x = layout_find_margin(layout, line->y, &width);
