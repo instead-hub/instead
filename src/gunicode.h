@@ -17,7 +17,23 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Basic typedefs for glib code to work */
+/** This file does not contain the full original work. It contains only the following
+    defitions:
+    - gunichar
+    - GUnicodeType
+    - GUnicodeScript
+    - g_unichar_isalnum
+    - g_unichar_isalpha
+    - g_unichar_isdigit
+    - g_unichar_get_script
+
+    Following eight typedefs are added to make the rest of code to be functional
+    without brining in the rest of GLib.
+
+    This modification is not part of the original source file from the original
+    Copyright holders.
+
+*/
 typedef char   gchar;
 typedef int    gint;
 typedef gint   gboolean;
@@ -499,6 +515,20 @@ typedef enum
   G_UNICODE_SCRIPT_KHITAN_SMALL_SCRIPT,    /* Kits */
   G_UNICODE_SCRIPT_YEZIDI                  /* Yezi */
 } GUnicodeScript;
+
+
+/** Following four function declarions are slightly modified to make the rest of
+    the code to be functional without brining in the rest of GLib. The original
+    definition is like this:
+
+    GLIB_AVAILABLE_IN_ALL
+    gboolean g_unichar_isalnum   (gunichar c) G_GNUC_CONST;
+
+    GLIB_AVAILABLE_IN_ALL and G_GNUC_CONST are removed and commented out.
+
+    This modification is not part of the original source file from the original
+    Copyright holders.
+*/
 
 /* These are all analogs of the <ctype.h> functions.*/
 gboolean g_unichar_isalnum   (gunichar c) /*G_GNUC_CONST*/;
