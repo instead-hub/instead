@@ -3055,6 +3055,7 @@ struct word *word_new(const char *str)
 	w->hlprerend = NULL;
 
 	#ifdef _USE_HARFBUZZ
+	int i = 0;
 	int u8len = u8_strlen(str);
 	uint32_t dest = 0;
 	uint32_t first[2];
@@ -3063,7 +3064,7 @@ struct word *word_new(const char *str)
 	/*	Find the first alphanumeric utf8 character for a meaningful direction
 		or use direction of the first character.
 	*/
-	for (int i=0; i < u8len; i++) {
+	for (i=0; i<u8len; i++) {
 		dest = u8_nextchar(str, &index);
 		if (!g_unichar_isalnum(dest)) {
 				dest = 0;
