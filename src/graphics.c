@@ -3065,8 +3065,7 @@ struct word *word_new(const char *str)
 	*/
 	for (int i=0; i < u8len; i++) {
 		dest = u8_nextchar(str, &index);
-		if (!g_unichar_isalnum(dest))
-			{
+		if (!g_unichar_isalnum(dest)) {
 				dest = 0;
 				continue;
 			}
@@ -5480,7 +5479,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 			if (!word->isalpha)
 				continue;
 
-			if(!word->img) {
+			if (!word->img) {
 				ln->direction = word->direction;
 				break;
 			}
