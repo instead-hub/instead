@@ -39,6 +39,11 @@
 #include "SDL_gfxBlitFunc.h"
 #include "SDL_anigif.h"
 
+#ifdef _USE_HARFBUZZ
+#include "utf8.h"
+#include "gunicode.h"
+#endif
+
 #define IMG_ANIGIF 1
 struct _img_t {
 	SDL_Surface *s;
@@ -3029,6 +3034,37 @@ static int is_rtl(int direction) {
 	#endif
 }
 
+/* This function detects and configures direction, script and type of a word. */
+static void detect_direction(struct word *w, const char *str) {
+	#ifdef _USE_HARFBUZZ
+	uint32_t dest = 0;
+	uint32_t first[2];
+	u8_toucs(first, 2, str, u8_seqlen(str));
+	/*	Find the first alphanumeric utf8 character for a meaningful direction
+		or use direction of the first character.
+	*/
+	int index = 0;
+	int i = 0;
+	for (i=0; i<u8_strlen(str); i++) {
+		dest = u8_nextchar(str, &index);
+		if (g_unichar_isalnum(dest))
+			break;
+	}
+	dest = dest?dest:first[0];
+	/* Is this made of alphabets? */
+	w->isalpha = g_unichar_isalpha(dest);
+	switch(g_unichar_get_script(dest)) {
+		case G_UNICODE_SCRIPT_ARABIC:
+			w->direction = g_unichar_isdigit(dest)? HB_DIRECTION_LTR: HB_DIRECTION_RTL;
+			w->script = HB_SCRIPT_ARABIC;
+			break;
+		default:
+			w->direction = HB_DIRECTION_LTR;
+			w->script = HB_SCRIPT_COMMON;
+	}
+	#endif
+}
+
 struct word *word_new(const char *str)
 {
 	struct word *w;
@@ -3048,6 +3084,10 @@ struct word *word_new(const char *str)
 	w->unbrake = 0;
 	w->prerend = NULL;
 	w->hlprerend = NULL;
+
+	/* Set direction, script and isalpha. */
+	detect_direction(w, str);
+
 	return w;
 }
 
@@ -5431,6 +5471,25 @@ void _txt_layout_add(layout_t lay, char *txt)
 		ptr = eptr;
 		free(p);
 	}
+
+	#ifdef _USE_HARFBUZZ
+	/* Set direction of each line based on the first non-image, non-number word in that line. */
+	struct word *word = NULL;
+	struct line *ln = NULL;
+	for (ln = layout->lines; ln; ln = ln->next) {
+		for (word = ln->words; word; word = word->next ) {
+			/* Continue until we get a word with some text (not letters or symbols) */
+			if (!word->isalpha)
+				continue;
+
+			if (!word->img) {
+				ln->direction = word->direction;
+				break;
+			}
+		}
+	}
+	#endif
+
 	if (layout->h == 0)
 		layout->h = line->y + line->h;
 
