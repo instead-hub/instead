@@ -3034,6 +3034,37 @@ static int is_rtl(int direction) {
 	#endif
 }
 
+/* This function detects and configures direction, script and type of a word. */
+static void detect_direction(struct word *w, const char *str) {
+	#ifdef _USE_HARFBUZZ
+	uint32_t dest = 0;
+	uint32_t first[2];
+	u8_toucs(first, 2, str, u8_seqlen(str));
+	/*	Find the first alphanumeric utf8 character for a meaningful direction
+		or use direction of the first character.
+	*/
+	int index = 0;
+	int i = 0;
+	for (i=0; i<u8_strlen(str); i++) {
+		dest = u8_nextchar(str, &index);
+		if (g_unichar_isalnum(dest))
+			break;
+	}
+	dest = dest?dest:first[0];
+	/* Is this made of alphabets? */
+	w->isalpha = g_unichar_isalpha(dest);
+	switch(g_unichar_get_script(dest)) {
+		case G_UNICODE_SCRIPT_ARABIC:
+			w->direction = g_unichar_isdigit(dest)? HB_DIRECTION_LTR: HB_DIRECTION_RTL;
+			w->script = HB_SCRIPT_ARABIC;
+			break;
+		default:
+			w->direction = HB_DIRECTION_LTR;
+			w->script = HB_SCRIPT_COMMON;
+	}
+	#endif
+}
+
 struct word *word_new(const char *str)
 {
 	struct word *w;
@@ -3054,37 +3085,8 @@ struct word *word_new(const char *str)
 	w->prerend = NULL;
 	w->hlprerend = NULL;
 
-	#ifdef _USE_HARFBUZZ
-	int i = 0;
-	int u8len = u8_strlen(str);
-	uint32_t dest = 0;
-	uint32_t first[2];
-	u8_toucs(first, 2, str, u8_seqlen(str));
-	int index = 0;
-	/*	Find the first alphanumeric utf8 character for a meaningful direction
-		or use direction of the first character.
-	*/
-	for (i=0; i<u8len; i++) {
-		dest = u8_nextchar(str, &index);
-		if (!g_unichar_isalnum(dest)) {
-				dest = 0;
-				continue;
-			}
-	}
-
-	dest = dest?dest:first[0];
-	/* Is this made of alphabets? */
-	w->isalpha = g_unichar_isalpha(dest);
-	switch(g_unichar_get_script(dest)) {
-		case G_UNICODE_SCRIPT_ARABIC:
-			w->direction = g_unichar_isdigit(dest)? HB_DIRECTION_LTR: HB_DIRECTION_RTL;
-			w->script = HB_SCRIPT_ARABIC;
-			break;
-		default:
-			w->direction = HB_DIRECTION_LTR;
-			w->script = HB_SCRIPT_COMMON;
-	}
-	#endif
+	/* Set direction, script and isalpha. */
+	detect_direction(w, str);
 
 	return w;
 }
