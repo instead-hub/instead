@@ -4834,7 +4834,7 @@ xref_t txt_box_xref(textbox_t tbox, int x, int y)
 			if (y < line->y + yy || y > line->y + yy + hh)
 				continue;
 
-			if (is_rtl(word->direction)) {
+			if (is_rtl(line->direction)) {
 				// Continue until we reach the beginning of a word
 				if (x < (word->x_rtl))
 					continue;
@@ -4848,13 +4848,13 @@ xref_t txt_box_xref(textbox_t tbox, int x, int y)
 				continue;
 
 			// Break out if we are still on the word that we've found
-			if (is_rtl(word->direction)) {
+			if (is_rtl(line->direction)) {
 				if (x < (word->x_rtl + word->w))
 					break;
 			} else if (x < line->x + word->x + word->w)
 				break;
 
-			if (is_rtl(word->direction)) {
+			if (is_rtl(line->direction)) {
 				if (word->next && word->next->xref == xref && x < word->next->x_rtl) {
 					yy = vertical_align(word->next, &hh);
 					if (y < line->y + yy || y > line->y + yy + hh)
@@ -5359,6 +5359,15 @@ void _txt_layout_add(layout_t lay, char *txt)
 			p = get_word_token(p, &wtok);
 			if (wtok && *p == 0)
 				sp = 1;
+
+			#ifdef _USE_HARFBUZZ
+			/* Correct size depends on the script and direction.
+			   Set them correctly before calling txt_size */
+			word = word_new(p);
+			TTF_SetDirection(word->direction);
+			TTF_SetScript(word->script);
+			#endif
+
 			txt_size(layout->fn, p, &w, &h);
 			h *= layout->fn_height;
 		}
@@ -5479,7 +5488,8 @@ void _txt_layout_add(layout_t lay, char *txt)
 	}
 
 	#ifdef _USE_HARFBUZZ
-	/* Set direction of each line based on the first non-image, non-number word in that line. */
+	/*	Set direction of each line based on the first non-image,
+		alphabet word in that line. */
 	struct word *word = NULL;
 	struct line *ln = NULL;
 	for (ln = layout->lines; ln; ln = ln->next) {
