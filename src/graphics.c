@@ -3034,23 +3034,29 @@ static int is_rtl(int direction) {
 	#endif
 }
 
+/* https://stackoverflow.com/a/32936928 */
+static size_t count_utf8_code_points(const char *s) {
+    size_t count = 0;
+    while (*s) {
+        count += (*s++ & 0xC0) != 0x80;
+    }
+    return count;
+}
+
 /* This function detects and configures direction, script and type of a word. */
 static void detect_direction(struct word *w, const char *str) {
 	#ifdef _USE_HARFBUZZ
 	uint32_t dest = 0;
-	uint32_t first[2];
-	u8_toucs(first, 2, str, u8_seqlen(str));
 	/*	Find the first alphanumeric utf8 character for a meaningful direction
 		or use direction of the first character.
 	*/
 	int index = 0;
-	int i = 0;
-	for (i=0; i<u8_strlen(str); i++) {
+	size_t i;
+	for (i=0; i<count_utf8_code_points(str); i++) {
 		dest = u8_nextchar(str, &index);
-		if (g_unichar_isalnum(dest))
+		if (g_unichar_isalpha(dest))
 			break;
 	}
-	dest = dest?dest:first[0];
 	/* Is this made of alphabets? */
 	w->isalpha = g_unichar_isalpha(dest);
 	switch(g_unichar_get_script(dest)) {
