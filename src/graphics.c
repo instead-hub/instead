@@ -5623,6 +5623,7 @@ xref_t txt_layout_xref(layout_t lay, int x, int y)
 			int hh,yy;
 			word = xref->words[i];
 			line = word->line;
+			int rtl = is_rtl(line->direction);
 			if (word->img_align)
 				continue;
 			if (y < line->y || y > line->y + line->h)
@@ -5630,11 +5631,17 @@ xref_t txt_layout_xref(layout_t lay, int x, int y)
 			yy = vertical_align(word, &hh);
 			if (y < line->y + yy || y > line->y + yy + hh)
 				continue;
-			if (x < line->x + word->x)
+
+			int x_begin = rtl? word->x_rtl: line->x+word->x;
+			int x_end = rtl? word->x_rtl+word->w: line->x + word->x + word->w;
+			if (x < x_begin)
 				continue;
-			if (x <= line->x + word->x + word->w)
+			if (x <= x_end)
 				return xref;
-			if (word->next && word->next->xref == xref && x < line->x + word->next->x + word->next->w) {
+			int next_x_end = 0;
+			if (word->next)
+				next_x_end = rtl? word->next->x_rtl: line->x + word->next->x + word->next->w;
+			if (word->next && word->next->xref == xref && x < next_x_end) {
 				yy = vertical_align(word->next, &hh);
 				if (y < line->y + yy || y > line->y + yy + hh)
 					continue;
