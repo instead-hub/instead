@@ -10,7 +10,7 @@ int u8_toucs(uint32_t *dest, int sz, const char *src, int srcsz);
 int u8_seqlen(const char *s);
 
 /* return next character, updating an index variable */
-u_int32_t u8_nextchar(const char *s, int *i);
+uint32_t u8_nextchar(const char *s, int *i);
 
 /* count the number of characters in a UTF-8 string */
 int u8_strlen(const char *s);
