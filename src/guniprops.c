@@ -17,13 +17,16 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+/** This file contains only parts of the original souce file from the original
+    Copyright holders in order to make the rest of this code to be functional
+    without brining in the rest of GLib.
+*/
+
 #include "gunicode.h"
 #include "gunichartables.h"
 #include "gscripttable.h"
 
-/* This file must not include any other glib header file and must thus
- * not refer to variables from glibconfig.h
- */
+/* These two defintions do not belong to the original source file. */
 #ifndef FALSE
 #define FALSE (0)
 #endif

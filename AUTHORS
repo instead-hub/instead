@@ -20,6 +20,9 @@ Debian package:
 FreeBSD port, cmake support and fixes:
 	Dmitry Marakasov <amdmi3@amdmi3.ru>
 
+Right-to-Left and multilingual mixed text support:
+	Mehdi Sadeghi
+
 Ideas, games, advices, testing, bug reports, fixes ...
 	Vadim Balashoff
 	Evgeniy Efremov (jhekasoft)
