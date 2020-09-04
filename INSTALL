@@ -10,6 +10,7 @@ WARNING! For successfull building you must install these development packages
 Optionally you may use:
 	sdl1
 	lua5.2/lua5.3
+	HarfBuzz and SDL2_ttf compiled with HarfBuzz support
 
 0) Prepare for building
 =======================
@@ -101,6 +102,7 @@ WITH_SDL2 Use SDL2 instead of SDL 1 (default on)
 WITH_GTK2 Use GTK2 file open dialog (default on)
 WITH_GTK3 Use GTK3 file open dialog
 WITH_LUAJIT Use LuaJIT instead of Lua (recommended, but off by default)
+WITH_HARFBUZZ RTL support. SDL2_ttf should be compiled with HarfBuzz too (default off)
 
 For example, to build with SDL2, use:
 
@@ -136,5 +138,11 @@ If build process has failed check Rules.make.system and make changes if needed.
 	$ sudo make install
 
 	$ sdl-instead
+
+8) Right-to-left support
+========================
+In order to build INSTEAD with right-to-left support, the SDL2_ttf underlying library and
+INSTEAD should be compiled with HarfBuzz support (see section 7 for cmake). SDL2_ttf has
+a flag for it (TTF_USE_HARFBUZZ) which should be set in SDL_ttf.c at the time of writing.
 
 Enjoy.
