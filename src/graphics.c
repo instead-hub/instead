@@ -2770,7 +2770,7 @@ static int parse_fn(const char *f, char *files[])
 		any glyphs to render Arabic script (it is LiberationSans).
 		*/
 		/* First construct language-specific font path */
-		fontpath = malloc(strlen(files[nr])+4); // eg fa-sans.ttf
+		fontpath = malloc(strlen(files[nr])+4); /* eg fa-sans.ttf */
 		*(fontpath+pref) = '\0';
 		strncpy(fontpath, files[nr], pref);
 		strcat(fontpath, opt_lang);
@@ -4406,7 +4406,7 @@ static void word_image_render(struct word *word, int x, int y, clear_fn clear, u
 			clear(x + line->x + word->x, y + line->y/* + yy*/, word->w, line->h);
 	}
 	if (word->img) {
-		// We have an image to draw
+		/* We have an image to draw */
 		if (word->img_align)
 			gfx_draw(word->img, x + word->x, y + line->y + yy);
 		else
@@ -4423,6 +4423,7 @@ static void word_image_render(struct word *word, int x, int y, clear_fn clear, u
 void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 {
 	int i;
+	int layout_right_x;
 	struct xref *xref = (struct xref*)pxref;
 	struct layout *layout;
 	struct word *word;
@@ -4435,15 +4436,12 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 		y -= (layout->box)->off;
 	}
 
-#ifdef _USE_HARFBUZZ
 	/* layout_right_x is the logical opposite of x */
-	int layout_right_x = layout->w + x;
-#endif
+	layout_right_x = layout->w + x;
 
 	for (i = 0; i < xref->num; i ++) {
 		word = xref->words[i];
-		if (!word->img_align)
-		{
+		if (!word->img_align) {
 			if (word->line->rtl)
 				word_image_render(word, layout_right_x - (2*word->x + word->w), y, clear, update);
 			else
@@ -4461,9 +4459,9 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 	struct layout *layout = (struct layout*)lay;
 	struct margin *margin;
 	struct word *word;
+	int layout_right_x;
 /*	line = layout->lines;
 	gfx_clip(x, y, layout->w, layout->h); */
-
 	if (!lay)
 		return;
 	for (v = NULL; (img = txt_layout_images(lay, &v)); )
@@ -4476,14 +4474,11 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 			continue;
 		word_image_render(margin->word, x, y, clear, NULL);
 	}
-
 	if (!line)
 		line = layout->lines;
 
-#ifdef _USE_HARFBUZZ
 	/* layout_right_x is the logical opposite of x */
-	int layout_right_x = layout->w + x;
-#endif
+	layout_right_x = layout->w + x;
 
 	for (; line; line= line->next) {
 		if ((line->y + line->h) < off)
@@ -4793,7 +4788,7 @@ xref_t txt_box_xref(textbox_t tbox, int x, int y)
 	if (x >= box->w)
 		return NULL;
 
-	// Process each word in each line
+	/* Process each word in each line */
 	for (line = box->line; line; line = line->next) {
 		int hh, yy;
 		if (y < line->y)
@@ -4807,7 +4802,7 @@ xref_t txt_box_xref(textbox_t tbox, int x, int y)
 				continue;
 
 			if (line->rtl) {
-				// Continue until we reach the beginning of a word
+				/* Continue until we reach the beginning of a word */
 				if (x < (word->x_rtl))
 					continue;
 			} else if (x < line->x + word->x)
@@ -4815,11 +4810,11 @@ xref_t txt_box_xref(textbox_t tbox, int x, int y)
 
 			xref = word->xref;
 
-			// Go back. Found nothing.
+			/* Go back. Found nothing. */
 			if (!xref)
 				continue;
 
-			// Break out if we are still on the word that we've found
+			/* Break out if we are still on the word that we've found */
 			if (line->rtl) {
 				if (x < (word->x_rtl + word->w))
 					break;
@@ -4842,7 +4837,7 @@ xref_t txt_box_xref(textbox_t tbox, int x, int y)
 		}
 	}
 	if (word && xref) {
-		// We found a highlighted word.
+		/* We found a highlighted word. */
 		return xref;
 	}
 	return NULL;
@@ -5243,6 +5238,26 @@ static void word_x(struct line *line, struct word *word, int width)
 	line->align = ALIGN_LEFT;
 }
 
+static void lines_dir(struct layout *layout)
+{
+	/*	Set direction of each line based on the first non-image,
+		alphabet word in that line. */
+	struct word *word = NULL;
+	struct line *ln = NULL;
+	for (ln = layout->lines; ln; ln = ln->next) {
+		for (word = ln->words; word; word = word->next ) {
+			/* Continue until we get a word with some text (not letters or symbols) */
+			if (!word->isalpha)
+				continue;
+
+			if (!word->img) {
+				ln->rtl = word->rtl;
+				break;
+			}
+		}
+	}
+}
+
 void _txt_layout_add(layout_t lay, char *txt)
 {
 	int sp = 0;
@@ -5460,22 +5475,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 	}
 
 #ifdef _USE_HARFBUZZ
-	/*	Set direction of each line based on the first non-image,
-		alphabet word in that line. */
-	struct word *word = NULL;
-	struct line *ln = NULL;
-	for (ln = layout->lines; ln; ln = ln->next) {
-		for (word = ln->words; word; word = word->next ) {
-			/* Continue until we get a word with some text (not letters or symbols) */
-			if (!word->isalpha)
-				continue;
-
-			if (!word->img) {
-				ln->rtl = word->rtl;
-				break;
-			}
-		}
-	}
+	lines_dir(layout);
 #endif
 
 	if (layout->h == 0)
@@ -5592,7 +5592,7 @@ xref_t txt_layout_xref(layout_t lay, int x, int y)
 		return NULL;
 	for (xref = layout->xrefs; xref; xref = xref->next) {
 		for (i = 0; i < xref->num; i ++) {
-			int hh, yy;
+			int hh, yy, x_begin, x_end, next_x_end;
 			word = xref->words[i];
 			line = word->line;
 			if (word->img_align)
@@ -5603,13 +5603,13 @@ xref_t txt_layout_xref(layout_t lay, int x, int y)
 			if (y < line->y + yy || y > line->y + yy + hh)
 				continue;
 
-			int x_begin = line->rtl? word->x_rtl: line->x+word->x;
-			int x_end = line->rtl? word->x_rtl+word->w: line->x + word->x + word->w;
+			x_begin = line->rtl? word->x_rtl: line->x+word->x;
+			x_end = line->rtl? word->x_rtl+word->w: line->x + word->x + word->w;
 			if (x < x_begin)
 				continue;
 			if (x <= x_end)
 				return xref;
-			int next_x_end = 0;
+			next_x_end = 0;
 			if (word->next)
 				next_x_end = line->rtl? word->next->x_rtl: line->x + word->next->x + word->next->w;
 			if (word->next && word->next->xref == xref && x < next_x_end) {

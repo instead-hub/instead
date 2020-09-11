@@ -168,7 +168,7 @@ extern layout_t txt_layout(fnt_t fn, char *txt, int width, int height); */
 extern layout_t txt_layout(fnt_t fn, int align, int width, int height);
 extern void	txt_layout_add(layout_t lay, char *txt);
 extern void	txt_layout_set(layout_t lay, char *txt);
-extern void txt_layout_direction(layout_t lay, int layout);
+extern void	txt_layout_direction(layout_t lay, int layout);
 extern void 	txt_layout_draw(layout_t lay, int x, int y);
 extern void	txt_layout_free(layout_t lay);
 extern void	_txt_layout_free(layout_t lay); /* do not free lay obj */
