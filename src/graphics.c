@@ -3000,7 +3000,7 @@ struct word {
 	int img_align;
 
 	/* Direction and Script (Language) of the word */
-	int direction;	/* See HarfBuzz hb_direction_t */
+	int rtl;
 	int script;		/* See HarfBuzz hb_script_t */
 	int isalpha;	/* Whether this word contains alphabets */
 
@@ -3023,19 +3023,18 @@ img_t	word_image(word_t v)
 	return w->img;
 }
 
-/* Check wether the given direction is right-to-left.
-Always return 0 if not compiled with HarfBuzz */
-static int is_rtl(int direction) {
-	#ifdef _USE_HARFBUZZ
-	return direction == HB_DIRECTION_RTL;
-	#else
+static int hb_dir(int rtl)
+{
+#ifdef _USE_HARFBUZZ
+	return rtl ? HB_DIRECTION_RTL:HB_DIRECTION_LTR;
+#else
 	return 0;
-	#endif
+#endif
 }
 
 /* This function detects and configures direction, script and type of a word. */
 static void detect_direction(struct word *w, const char *str) {
-	#ifdef _USE_HARFBUZZ
+#ifdef _USE_HARFBUZZ
 	int rc;
 	unsigned long sym = 0;
 	/*	Find the first alphanumeric utf8 character for a meaningful direction
@@ -3050,14 +3049,14 @@ static void detect_direction(struct word *w, const char *str) {
 	w->isalpha = g_unichar_isalpha(sym);
 	switch(g_unichar_get_script(sym)) {
 		case G_UNICODE_SCRIPT_ARABIC:
-			w->direction = g_unichar_isdigit(sym)? HB_DIRECTION_LTR: HB_DIRECTION_RTL;
+			w->rtl = !g_unichar_isdigit(sym);
 			w->script = HB_SCRIPT_ARABIC;
 			break;
 		default:
-			w->direction = HB_DIRECTION_LTR;
+			w->rtl = 0;
 			w->script = HB_SCRIPT_COMMON;
 	}
-	#endif
+#endif
 }
 
 struct word *word_new(const char *str)
@@ -3100,7 +3099,7 @@ struct line {
 	int	al_taby;
 
 	/* Each line could be RTL or LTR regardless of its script */
-	int direction;	/* See HarfBuzz hb_direction_t */
+	int rtl;
 
 	struct word *words;
 	struct line *next;
@@ -3154,11 +3153,7 @@ struct line *line_new(void)
 	l->layout = NULL;
 	l->align = 0;
 	l->pos = 0;
-
-	/*	Default direction of the line. Only matters in non-LTR and multilingual text. 
-		4 is the value of HB_DIRECTION_LTR from HarfBuzz. Just in case.
-	*/
-	l->direction = 4;
+	l->rtl = 0;
 
 	return l;
 }
@@ -3319,7 +3314,7 @@ void line_add_word(struct line *l, struct word *word)
 		/*	This is the first word in this line. Let's use its direction
 			for the line too. Ideally, something like fribidi should be
 			used for mixing directions however. */
-		l->direction = word->direction;
+		l->rtl = word->rtl;
 
 		return;
 	}
@@ -3693,8 +3688,7 @@ struct layout *layout_new(fnt_t fn, int w, int h)
 	memset(l->saved_valign, 0, sizeof(l->saved_valign));
 	l->acnt = 0;
 	l->vcnt = 0;
-	/* 4 is the enum value for HB_DIRECTION_LTR. Just in case. */
-	l->txt_layout_direction = 4;
+	l->txt_layout_direction = 0;
 	return l;
 }
 void txt_layout_size(layout_t lay, int *w, int *h)
@@ -4230,12 +4224,7 @@ void txt_layout_direction(layout_t lay, int direction)
 	struct layout *layout = (struct layout*)lay;
 	if (!lay)
 		return;
-	#ifdef _USE_HARFBUZZ
-	layout->txt_layout_direction = direction? HB_DIRECTION_RTL: HB_DIRECTION_LTR;
-	#else
-	/* This has no effect if INSTEAD and SDL_ttf are not compiled with HarfBuzz. */
-	layout->txt_layout_direction = 4;
-	#endif
+	layout->txt_layout_direction = direction;
 }
 
 void txt_layout_color(layout_t lay, color_t fg)
@@ -4318,11 +4307,11 @@ static void word_render(struct layout *layout, struct word *word, int x, int y)
 	if (!wc)
 		return;
 
-	#ifdef _USE_HARFBUZZ
+#ifdef _USE_HARFBUZZ
 	/* Set the language and script for SDL_ttf */
-	TTF_SetDirection(word->direction);
+	TTF_SetDirection(hb_dir(word->rtl));
 	TTF_SetScript(word->script);
-	#endif
+#endif
 
 	if (!word->xref) {
 		if (!word->prerend) {
@@ -4446,20 +4435,18 @@ void xref_update(xref_t pxref, int x, int y, clear_fn clear, update_fn update)
 		y -= (layout->box)->off;
 	}
 
-	#ifdef _USE_HARFBUZZ
+#ifdef _USE_HARFBUZZ
 	/* layout_right_x is the logical opposite of x */
 	int layout_right_x = layout->w + x;
-	#endif
+#endif
 
 	for (i = 0; i < xref->num; i ++) {
 		word = xref->words[i];
 		if (!word->img_align)
 		{
-			#ifdef _USE_HARFBUZZ
-			if (is_rtl(word->line->direction))
+			if (word->line->rtl)
 				word_image_render(word, layout_right_x - (2*word->x + word->w), y, clear, update);
 			else
-			#endif
 				word_image_render(word, x, y, clear, update);
 		}
 	}
@@ -4493,10 +4480,10 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 	if (!line)
 		line = layout->lines;
 
-	#ifdef _USE_HARFBUZZ
+#ifdef _USE_HARFBUZZ
 	/* layout_right_x is the logical opposite of x */
 	int layout_right_x = layout->w + x;
-	#endif
+#endif
 
 	for (; line; line= line->next) {
 		if ((line->y + line->h) < off)
@@ -4505,14 +4492,10 @@ void txt_layout_draw_ex(layout_t lay, struct line *line, int x, int y, int off, 
 			break;
 		for (word = line->words; word; word = word->next ) {
 			if (!word->img_align) {
-				#ifdef _USE_HARFBUZZ
-				if (is_rtl(line->direction))
-					{
-						word_image_render(word, layout_right_x - (2*word->x + word->w), y, clear, NULL);
-						word->x_rtl = layout->w - (word->x + word->w);
-					}
-				else
-				#endif
+				if (line->rtl) {
+					word_image_render(word, layout_right_x - (2*word->x + word->w), y, clear, NULL);
+					word->x_rtl = layout->w - (word->x + word->w);
+				} else
 					word_image_render(word, x, y, clear, NULL);
 			}
 		}
@@ -4823,7 +4806,7 @@ xref_t txt_box_xref(textbox_t tbox, int x, int y)
 			if (y < line->y + yy || y > line->y + yy + hh)
 				continue;
 
-			if (is_rtl(line->direction)) {
+			if (line->rtl) {
 				// Continue until we reach the beginning of a word
 				if (x < (word->x_rtl))
 					continue;
@@ -4837,13 +4820,13 @@ xref_t txt_box_xref(textbox_t tbox, int x, int y)
 				continue;
 
 			// Break out if we are still on the word that we've found
-			if (is_rtl(line->direction)) {
+			if (line->rtl) {
 				if (x < (word->x_rtl + word->w))
 					break;
 			} else if (x < line->x + word->x + word->w)
 				break;
 
-			if (is_rtl(line->direction)) {
+			if (line->rtl) {
 				if (word->next && word->next->xref == xref && x < word->next->x_rtl) {
 					yy = vertical_align(word->next, &hh);
 					if (y < line->y + yy || y > line->y + yy + hh)
@@ -5293,7 +5276,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 			goto err;
 		line->h = h;
 		line->align = layout->align;
-		line->direction = layout->txt_layout_direction;
+		line->rtl = layout->txt_layout_direction;
 	} else {
 		line = lastline;
 	}
@@ -5349,13 +5332,13 @@ void _txt_layout_add(layout_t lay, char *txt)
 			if (wtok && *p == 0)
 				sp = 1;
 
-			#ifdef _USE_HARFBUZZ
+#ifdef _USE_HARFBUZZ
 			/* Correct size depends on the script and direction.
 			   Set them correctly before calling txt_size */
 			word = word_new(p);
-			TTF_SetDirection(word->direction);
+			TTF_SetDirection(hb_dir(word->rtl));
 			TTF_SetScript(word->script);
-			#endif
+#endif
 
 			txt_size(layout->fn, p, &w, &h);
 			h *= layout->fn_height;
@@ -5392,7 +5375,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 			line->align = layout->align;
 			line->h = 0;/* h; */
 			line->y = ol->y + ol->h;
-			line->direction = layout->txt_layout_direction;
+			line->rtl = layout->txt_layout_direction;
 
 /*			line->x = 0; */
 			line->x = layout_find_margin(layout, line->y, &width);
@@ -5476,7 +5459,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 		free(p);
 	}
 
-	#ifdef _USE_HARFBUZZ
+#ifdef _USE_HARFBUZZ
 	/*	Set direction of each line based on the first non-image,
 		alphabet word in that line. */
 	struct word *word = NULL;
@@ -5488,12 +5471,12 @@ void _txt_layout_add(layout_t lay, char *txt)
 				continue;
 
 			if (!word->img) {
-				ln->direction = word->direction;
+				ln->rtl = word->rtl;
 				break;
 			}
 		}
 	}
-	#endif
+#endif
 
 	if (layout->h == 0)
 		layout->h = line->y + line->h;
@@ -5609,10 +5592,9 @@ xref_t txt_layout_xref(layout_t lay, int x, int y)
 		return NULL;
 	for (xref = layout->xrefs; xref; xref = xref->next) {
 		for (i = 0; i < xref->num; i ++) {
-			int hh,yy;
+			int hh, yy;
 			word = xref->words[i];
 			line = word->line;
-			int rtl = is_rtl(line->direction);
 			if (word->img_align)
 				continue;
 			if (y < line->y || y > line->y + line->h)
@@ -5621,15 +5603,15 @@ xref_t txt_layout_xref(layout_t lay, int x, int y)
 			if (y < line->y + yy || y > line->y + yy + hh)
 				continue;
 
-			int x_begin = rtl? word->x_rtl: line->x+word->x;
-			int x_end = rtl? word->x_rtl+word->w: line->x + word->x + word->w;
+			int x_begin = line->rtl? word->x_rtl: line->x+word->x;
+			int x_end = line->rtl? word->x_rtl+word->w: line->x + word->x + word->w;
 			if (x < x_begin)
 				continue;
 			if (x <= x_end)
 				return xref;
 			int next_x_end = 0;
 			if (word->next)
-				next_x_end = rtl? word->next->x_rtl: line->x + word->next->x + word->next->w;
+				next_x_end = line->rtl? word->next->x_rtl: line->x + word->next->x + word->next->w;
 			if (word->next && word->next->xref == xref && x < next_x_end) {
 				yy = vertical_align(word->next, &hh);
 				if (y < line->y + yy || y > line->y + yy + hh)
