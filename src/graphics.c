@@ -39,10 +39,6 @@
 #include "SDL_gfxBlitFunc.h"
 #include "SDL_anigif.h"
 
-#ifdef _USE_HARFBUZZ
-#include "gunicode.h"
-#endif
-
 #define IMG_ANIGIF 1
 struct _img_t {
 	SDL_Surface *s;

@@ -50,4 +50,3 @@ INSTEAD links with the following libraries/sources:
 
     HarfBuzz (old MIT)
     GLib - partial (LGPL)
-    Basic UTF-8 manipulation routines (Public Domain)

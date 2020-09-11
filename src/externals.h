@@ -6,4 +6,5 @@
 
 #ifdef _USE_HARFBUZZ
 #include <hb.h>
+#include <glib.h>
 #endif
