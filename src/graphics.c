@@ -40,7 +40,6 @@
 #include "SDL_anigif.h"
 
 #ifdef _USE_HARFBUZZ
-#include "utf8.h"
 #include "gunicode.h"
 #endif
 
@@ -3034,34 +3033,24 @@ static int is_rtl(int direction) {
 	#endif
 }
 
-/* https://stackoverflow.com/a/32936928 */
-static size_t count_utf8_code_points(const char *s) {
-	size_t count = 0;
-	while (*s) {
-		count += (*s++ & 0xC0) != 0x80;
-	}
-	return count;
-}
-
 /* This function detects and configures direction, script and type of a word. */
 static void detect_direction(struct word *w, const char *str) {
 	#ifdef _USE_HARFBUZZ
-	uint32_t dest = 0;
+	int rc;
+	unsigned long sym = 0;
 	/*	Find the first alphanumeric utf8 character for a meaningful direction
 		or use direction of the first character.
 	*/
-	int index = 0;
-	size_t i;
-	for (i=0; i<count_utf8_code_points(str); i++) {
-		dest = u8_nextchar(str, &index);
-		if (g_unichar_isalpha(dest))
+	while ((rc = get_utf8(str, &sym))) {
+		if (g_unichar_isalpha(sym))
 			break;
+		str += rc;
 	}
 	/* Is this made of alphabets? */
-	w->isalpha = g_unichar_isalpha(dest);
-	switch(g_unichar_get_script(dest)) {
+	w->isalpha = g_unichar_isalpha(sym);
+	switch(g_unichar_get_script(sym)) {
 		case G_UNICODE_SCRIPT_ARABIC:
-			w->direction = g_unichar_isdigit(dest)? HB_DIRECTION_LTR: HB_DIRECTION_RTL;
+			w->direction = g_unichar_isdigit(sym)? HB_DIRECTION_LTR: HB_DIRECTION_RTL;
 			w->script = HB_SCRIPT_ARABIC;
 			break;
 		default:
