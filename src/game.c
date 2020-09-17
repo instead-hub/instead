@@ -776,7 +776,6 @@ int game_apply_theme(void)
 		lay = txt_layout(game_theme.font, align, game_theme.win_w, game_theme.win_h);
 		if (!lay)
 			return -1;
-
 		box = txt_box(game_theme.win_w, game_theme.win_h);
 		if (!box)
 			return -1;
