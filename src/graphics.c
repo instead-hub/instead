@@ -3020,6 +3020,9 @@ static void word_detect_rtl(struct word *w)
 	/* Is this made of alphabets? */
 	w->isalpha = g_unichar_isalpha(sym);
 	switch(g_unichar_get_script(sym)) {
+		case G_UNICODE_SCRIPT_HEBREW:
+			w->rtl = !g_unichar_isdigit(sym);
+			w->script = HB_SCRIPT_HEBREW;
 		case G_UNICODE_SCRIPT_ARABIC:
 			w->rtl = !g_unichar_isdigit(sym);
 			w->script = HB_SCRIPT_ARABIC;
