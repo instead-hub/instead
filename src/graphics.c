@@ -4791,7 +4791,6 @@ xref_t txt_box_xref(textbox_t tbox, int x, int y)
 			break;
 		if (y > line->y + line->h)
 			continue;
-
 		for (word = line->words; word; word = word->next) {
 			yy = vertical_align(word, &hh);
 			if (y < line->y + yy || y > line->y + yy + hh)
