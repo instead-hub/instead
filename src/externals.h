@@ -3,8 +3,3 @@
 #include "emscripten.h"
 #include "emscripten/html5.h"
 #endif
-
-#ifdef _USE_HARFBUZZ
-#include <hb.h>
-#include <glib.h>
-#endif
