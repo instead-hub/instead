@@ -322,16 +322,6 @@ static char *game_version(const char *path, const char *d_name)
 	trunc_lines(p, 0);
 	return p;
 }
-
-static char *game_lang(const char *path, const char *d_name)
-{
-	char *p = game_tag(path, d_name, "Language");
-	if (!p)
-		return NULL;
-	trunc_lines(p, 0);
-	return p;
-}
-
 #if 0
 static char *game_api(const char *path, const char *d_name)
 {
@@ -348,7 +338,6 @@ static void game_info_free(struct game *g)
 	FREE(g->info);
 	FREE(g->author);
 	FREE(g->version);
-	FREE(g->lang);
 /*	FREE(g->api); */
 }
 
@@ -365,8 +354,6 @@ static void game_info_fill(struct game *g)
 	g->info = game_info(dirpath(g->path), g->dir);
 	g->author = game_author(dirpath(g->path), g->dir);
 	g->version = game_version(dirpath(g->path), g->dir);
-	g->lang = game_lang(dirpath(g->path), g->dir);
-	g->rtl = is_rtl_lang(g->lang);
 /*	g->api = game_api(dirpath(g->path), g->dir); */
 }
 
@@ -761,8 +748,6 @@ int game_apply_theme(void)
 	layout_t lay = NULL;
 	textbox_t box = NULL;
 
-	struct game *g = game_lookup(curgame_dir);
-
 	gfx_bg(game_theme.bgcol);
 	if (!DIRECT_MODE)
 		game_clear_all();
@@ -779,9 +764,6 @@ int game_apply_theme(void)
 		box = txt_box(game_theme.win_w, game_theme.win_h);
 		if (!box)
 			return -1;
-
-		/* Set game language direction as inital value. */
-		txt_layout_direction(lay, g? g->rtl: 0);
 		txt_layout_color(lay, game_theme.fgcol);
 		txt_layout_link_color(lay, game_theme.lcol);
 		/* txt_layout_link_style(lay, 4); */
@@ -797,8 +779,6 @@ int game_apply_theme(void)
 				game_theme.inv_w, game_theme.inv_h);
 			if (!lay)
 				return -1;
-
-			txt_layout_direction(lay, g? g->rtl: 0);
 			txt_layout_color(lay, game_theme.icol);
 			txt_layout_link_color(lay, game_theme.ilcol);
 			txt_layout_active_color(lay, game_theme.iacol);
@@ -818,7 +798,6 @@ int game_apply_theme(void)
 		if (!lay)
 			return -1;
 
-		txt_layout_direction(lay, g? g->rtl: 0);
 		txt_layout_color(lay, game_theme.fgcol);
 		txt_layout_link_color(lay, game_theme.lcol);
 		txt_layout_active_color(lay, game_theme.acol);
@@ -832,7 +811,6 @@ int game_apply_theme(void)
 		if (!lay)
 			return -1;
 
-		txt_layout_direction(lay, g? g->rtl: 0);
 		txt_layout_color(lay, game_theme.fgcol);
 		txt_layout_link_color(lay, game_theme.lcol);
 		txt_layout_active_color(lay, game_theme.acol);
@@ -3704,15 +3682,4 @@ int game_instead_extensions(void)
 	instead_sound_init();
 	instead_paths_init();
 	return 0;
-}
-
-
-/*
-	Returns nonzero if the language is written right-to-left, otherwise 0.
-
-	@lang: ISO 639-1 two letter language code.
-*/
-int is_rtl_lang(const char *lang)
-{
-	return lang && (!strcmp(lang, "fa") || !strcmp(lang, "ar") || !strcmp(lang, "he"));
 }

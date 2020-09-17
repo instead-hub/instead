@@ -149,7 +149,6 @@ extern void *sound_get(const char *fname);
 extern void sound_put(void *sn);
 
 extern int game_tag_valid(const char *p);
-extern int is_rtl_lang(const char *lang);
 
 void game_gfx_commit(int sync);
 
@@ -167,8 +166,6 @@ struct game {
 	char *author;
 	char *version;
 	char *info;
-	char *lang; /* ISO 639-1 two letter language code */
-	int rtl; /* nonzero if base direction is right-to-left */
 	char *dir;
 /*	char *api; */
 	int idf;
