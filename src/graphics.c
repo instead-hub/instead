@@ -2993,14 +2993,12 @@ img_t	word_image(word_t v)
 	return w->img;
 }
 
+#ifdef _USE_HARFBUZZ
 static int hb_dir(int rtl)
 {
-#ifdef _USE_HARFBUZZ
 	return rtl ? HB_DIRECTION_RTL:HB_DIRECTION_LTR;
-#else
-	return 0;
-#endif
 }
+#endif
 
 /* This function detects and configures direction, script and type of a word. */
 static void word_detect_rtl(struct word *w)
@@ -5186,6 +5184,7 @@ static void word_x(struct line *line, struct word *word, int width)
 	line->align = ALIGN_LEFT;
 }
 
+#ifdef _USE_HARFBUZZ
 static void layout_lines_dir(struct layout *layout)
 {
 	/*	Set direction of each line based on the first non-image,
@@ -5205,6 +5204,7 @@ static void layout_lines_dir(struct layout *layout)
 		}
 	}
 }
+#endif
 
 void _txt_layout_add(layout_t lay, char *txt)
 {
@@ -5421,11 +5421,9 @@ void _txt_layout_add(layout_t lay, char *txt)
 		ptr = eptr;
 		free(p);
 	}
-
 #ifdef _USE_HARFBUZZ
 	layout_lines_dir(layout);
 #endif
-
 	if (layout->h == 0)
 		layout->h = line->y + line->h;
 
