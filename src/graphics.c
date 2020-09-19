@@ -4314,8 +4314,8 @@ static void word_render(struct layout *layout, struct word *word, int x, int y)
 	free(wc);
 #ifdef _USE_HARFBUZZ
 	/* Drop to defaults */
-	TTF_SetDirection(0);
-	TTF_SetScript(0);
+	TTF_SetDirection(HB_DIRECTION_LTR);
+	TTF_SetScript(HB_SCRIPT_COMMON);
 #endif
 	if (!s)
 		return;
@@ -5299,8 +5299,8 @@ void _txt_layout_add(layout_t lay, char *txt)
 			TTF_SetDirection(hb_dir(word->rtl));
 			TTF_SetScript(word->script);
 			txt_size(layout->fn, p, &w, &h);
-			TTF_SetDirection(0);
-			TTF_SetScript(0);
+			TTF_SetDirection(HB_DIRECTION_LTR);
+			TTF_SetScript(HB_SCRIPT_COMMON);
 			free(word);
 #else
 			txt_size(layout->fn, p, &w, &h);
