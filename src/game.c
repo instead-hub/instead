@@ -322,6 +322,16 @@ static char *game_version(const char *path, const char *d_name)
 	trunc_lines(p, 0);
 	return p;
 }
+
+static char *game_direction(const char *path, const char *d_name)
+{
+	char *p = game_tag(path, d_name, "Direction");
+	if (!p)
+		return strdup(d_name);
+	trunc_lines(p, 0);
+	return p;
+}
+
 #if 0
 static char *game_api(const char *path, const char *d_name)
 {
@@ -338,6 +348,7 @@ static void game_info_free(struct game *g)
 	FREE(g->info);
 	FREE(g->author);
 	FREE(g->version);
+	FREE(g->direction);
 /*	FREE(g->api); */
 }
 
@@ -354,6 +365,7 @@ static void game_info_fill(struct game *g)
 	g->info = game_info(dirpath(g->path), g->dir);
 	g->author = game_author(dirpath(g->path), g->dir);
 	g->version = game_version(dirpath(g->path), g->dir);
+	g->direction = game_direction(dirpath(g->path), g->dir);
 /*	g->api = game_api(dirpath(g->path), g->dir); */
 }
 
@@ -747,7 +759,14 @@ int game_apply_theme(void)
 	int align = game_theme.win_align;
 	layout_t lay = NULL;
 	textbox_t box = NULL;
-
+	struct game *g = game_lookup(curgame_dir);
+	int rtl = 0;
+	if (g && g->direction) {
+		if (!strcmp(g->direction, "rtl"))
+			rtl = 1;
+		else if (!strcmp(g->direction, "auto"))
+			rtl = -1;
+	}
 	gfx_bg(game_theme.bgcol);
 	if (!DIRECT_MODE)
 		game_clear_all();
@@ -769,6 +788,8 @@ int game_apply_theme(void)
 		/* txt_layout_link_style(lay, 4); */
 		txt_layout_active_color(lay, game_theme.acol);
 		txt_layout_font_height(lay, game_theme.font_height);
+		txt_layout_rtl(lay, rtl);
+
 		txt_box_set(box, lay);
 		el_set(el_scene, elt_box, game_theme.win_x, 0, box);
 	}
@@ -783,6 +804,7 @@ int game_apply_theme(void)
 			txt_layout_link_color(lay, game_theme.ilcol);
 			txt_layout_active_color(lay, game_theme.iacol);
 			txt_layout_font_height(lay, game_theme.inv_font_height);
+			txt_layout_rtl(lay, rtl);
 
 			box = txt_box(game_theme.inv_w, game_theme.inv_h);
 			if (!box)
@@ -802,6 +824,7 @@ int game_apply_theme(void)
 		txt_layout_link_color(lay, game_theme.lcol);
 		txt_layout_active_color(lay, game_theme.acol);
 		txt_layout_font_height(lay, game_theme.font_height);
+		txt_layout_rtl(lay, rtl);
 
 		el_set(el_title, elt_layout, game_theme.win_x, game_theme.win_y, lay);
 	}
@@ -815,6 +838,7 @@ int game_apply_theme(void)
 		txt_layout_link_color(lay, game_theme.lcol);
 		txt_layout_active_color(lay, game_theme.acol);
 		txt_layout_font_height(lay, game_theme.font_height);
+		txt_layout_rtl(lay, rtl);
 
 		el_set(el_ways, elt_layout, game_theme.win_x, 0, lay);
 	}

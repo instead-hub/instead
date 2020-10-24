@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2020 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -85,12 +85,12 @@ extern void	gfx_getclip(int *x, int *y, int *w, int *h);
 extern void	gfx_img_clip(img_t img, int x, int y, int w, int h);
 extern void	gfx_img_noclip(img_t img);
 
-extern int 	gfx_width;
-extern int 	gfx_height;
-extern int 	gfx_fs;
+extern int	gfx_width;
+extern int	gfx_height;
+extern int	gfx_fs;
 extern int	gfx_video_init(void);
-extern int 	gfx_set_mode(int w, int h, int fs);
-extern int 	gfx_get_mode(int n, int *w, int *h);
+extern int	gfx_set_mode(int w, int h, int fs);
+extern int	gfx_get_mode(int n, int *w, int *h);
 extern int	gfx_get_token(const char *ptr, char **eptr, char **val, int *sp);
 
 #define MODE_ANY 0
@@ -171,68 +171,69 @@ extern void	txt_layout_set(layout_t lay, char *txt);
 extern void 	txt_layout_draw(layout_t lay, int x, int y);
 extern void	txt_layout_free(layout_t lay);
 extern void	_txt_layout_free(layout_t lay); /* do not free lay obj */
-extern xref_t 	txt_layout_xref(layout_t lay, int x, int y);
-extern void 	txt_layout_color(layout_t lay, color_t fg);
-extern fnt_t 	txt_layout_font(layout_t lay);
-extern void 	txt_layout_font_height(layout_t lay, float height);
+extern xref_t	txt_layout_xref(layout_t lay, int x, int y);
+extern void	txt_layout_color(layout_t lay, color_t fg);
+extern void	txt_layout_rtl(layout_t lay, int rtl);
+extern fnt_t	txt_layout_font(layout_t lay);
+extern void	txt_layout_font_height(layout_t lay, float height);
 extern textbox_t	txt_layout_box(layout_t lay);
-extern void 	txt_layout_link_color(layout_t lay, color_t link);
-extern void 	txt_layout_active_color(layout_t lay, color_t link);
+extern void	txt_layout_link_color(layout_t lay, color_t link);
+extern void	txt_layout_active_color(layout_t lay, color_t link);
 extern void	txt_layout_link_style(layout_t lay, int style);
-extern int 	txt_layout_add_img(layout_t lay, const char *name, img_t img);
-extern img_t 	txt_layout_images(layout_t lay, void **v); /* enumerator */
-extern word_t 	txt_layout_words(layout_t lay, word_t w); /* enumerator */
+extern int	txt_layout_add_img(layout_t lay, const char *name, img_t img);
+extern img_t	txt_layout_images(layout_t lay, void **v); /* enumerator */
+extern word_t	txt_layout_words(layout_t lay, word_t w); /* enumerator */
 extern int	word_geom(word_t v, int *x, int *y, int *w, int *h);
 extern img_t	word_image(word_t v);
 extern void	txt_layout_size(layout_t lay, int *w, int *h);
 extern textbox_t txt_box(int w, int h);
 extern layout_t txt_box_layout(textbox_t tbox);
-extern void 	txt_box_set(textbox_t tbox, layout_t lay);
-extern void 	txt_box_free(textbox_t tbox);
-extern void 	txt_box_draw(textbox_t tbox, int x, int y);
-extern void 	txt_box_next(textbox_t tbox);
-extern void 	txt_box_prev(textbox_t tbox);
-extern void 	txt_box_next_line(textbox_t tbox);
-extern void 	txt_box_prev_line(textbox_t tbox);
+extern void	txt_box_set(textbox_t tbox, layout_t lay);
+extern void	txt_box_free(textbox_t tbox);
+extern void	txt_box_draw(textbox_t tbox, int x, int y);
+extern void	txt_box_next(textbox_t tbox);
+extern void	txt_box_prev(textbox_t tbox);
+extern void	txt_box_next_line(textbox_t tbox);
+extern void	txt_box_prev_line(textbox_t tbox);
 extern void	txt_box_scroll(textbox_t tbox, int disp);
 extern xref_t	txt_box_xref(textbox_t tbox, int x, int y);
-extern xref_t 	txt_box_xrefs(textbox_t tbox);
+extern xref_t	txt_box_xrefs(textbox_t tbox);
 extern void	txt_box_real_size(textbox_t box, int *pw, int *ph);
 
 extern int	txt_box_off(textbox_t tbox);
 extern void	txt_box_size(textbox_t tbox, int *w, int *h);
-extern void 	txt_box_resize(textbox_t tbox, int w, int h);
+extern void	txt_box_resize(textbox_t tbox, int w, int h);
 
 typedef void 	(*clear_fn)(int x, int y, int w, int h);
 
-extern void 	txt_box_update_links(textbox_t tbox, int x, int y, clear_fn);
-extern void 	txt_layout_update_links(layout_t layout, int x, int y, clear_fn clear);
-extern void 	txt_layout_real_size(layout_t lay, int *w, int *h);
+extern void	txt_box_update_links(textbox_t tbox, int x, int y, clear_fn);
+extern void	txt_layout_update_links(layout_t layout, int x, int y, clear_fn clear);
+extern void	txt_layout_real_size(layout_t lay, int *w, int *h);
 extern void	txt_layout_set_size(layout_t lay, int w, int h); /* without text only */
 
-extern int 	txt_layout_pos2off(layout_t lay, int pos, int *hh);
-extern int 	txt_layout_anchor(layout_t lay, int *hh);
+extern int	txt_layout_pos2off(layout_t lay, int pos, int *hh);
+extern int	txt_layout_anchor(layout_t lay, int *hh);
 
-extern img_t 	txt_box_render(textbox_t tbox);
+extern img_t	txt_box_render(textbox_t tbox);
 
 extern char	*xref_get_text(xref_t x);
-extern void 	xref_set_active(xref_t x, int val);
+extern void	xref_set_active(xref_t x, int val);
 extern int	xref_get_active(xref_t x);
 
 extern xref_t	xref_next(xref_t x);
 extern xref_t	xref_prev(xref_t x);
 
-extern int 	xref_position(xref_t x, int *xc, int *yc);
-extern int 	xref_valid(xref_t x);
+extern int	xref_position(xref_t x, int *xc, int *yc);
+extern int	xref_valid(xref_t x);
 
 extern xref_t	txt_layout_xrefs(layout_t lay);
 
 extern layout_t	xref_layout(xref_t x);
 
-typedef void 	(*update_fn)(int x, int y, int w, int h);
+typedef void	(*update_fn)(int x, int y, int w, int h);
 extern void	xref_update(xref_t xref, int x, int y, clear_fn clear, update_fn update);
-extern void 	gfx_start_gif(img_t img);
-extern int 	gfx_is_drawn_gifs(void);
+extern void	gfx_start_gif(img_t img);
+extern int	gfx_is_drawn_gifs(void);
 extern void	gfx_stop_gif(img_t img);
 extern int	gfx_frame_gif(img_t img);
 extern void	gfx_del_timer(gtimer_t han);

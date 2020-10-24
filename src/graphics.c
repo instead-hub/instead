@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2020 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -3001,12 +3001,14 @@ static int hb_dir(int rtl)
 #endif
 
 /* This function detects and configures direction, script and type of a word. */
-static void word_detect_rtl(struct word *w)
+static void word_detect_rtl(struct word *w, int mode)
 {
 #ifdef _USE_HARFBUZZ
 	const char *str = w->word;
 	int rc;
 	unsigned long sym = 0;
+	if (mode == 0) /* force ltr mode */
+		return;
 	/*	Find the first alphanumeric utf8 character for a meaningful direction
 		or use direction of the first character.
 	*/
@@ -3017,6 +3019,11 @@ static void word_detect_rtl(struct word *w)
 	}
 	/* Is this made of alphabets? */
 	w->isalpha = g_unichar_isalpha(sym);
+	if (mode == 1) { /* force rtl */
+		w->rtl = 1;
+		w->script = HB_SCRIPT_COMMON;
+		return;
+	}
 	switch(g_unichar_get_script(sym)) {
 		case G_UNICODE_SCRIPT_HEBREW:
 			w->rtl = !g_unichar_isdigit(sym);
@@ -3029,9 +3036,6 @@ static void word_detect_rtl(struct word *w)
 			w->rtl = 0;
 			w->script = HB_SCRIPT_COMMON;
 	}
-#else
-	w->rtl = 0;
-	w->script = 0;
 #endif
 }
 
@@ -3055,8 +3059,9 @@ struct word *word_new(const char *str)
 	w->prerend = NULL;
 	w->hlprerend = NULL;
 
-	/* Set direction, script and isalpha. */
-	word_detect_rtl(w);
+	w->rtl = 0;
+	w->script = 0;
+	w->isalpha = 0;
 
 	return w;
 }
@@ -3383,6 +3388,7 @@ struct layout {
 	int acnt;
 	int vcnt;
 	int style;
+	int rtl;
 	int scnt[4];
 	int lstyle;
 	cache_t img_cache;
@@ -3647,6 +3653,7 @@ struct layout *layout_new(fnt_t fn, int w, int h)
 	l->valign = 0;
 	l->style = 0;
 	l->lstyle = 0;
+	l->rtl = 0;
 	l->xrefs = NULL;
 	l->margin = NULL;
 	l->col = gfx_col(0, 0, 0);
@@ -4196,6 +4203,14 @@ void txt_layout_color(layout_t lay, color_t fg)
 	if (!lay)
 		return;
 	layout->col = fg;
+}
+
+void txt_layout_rtl(layout_t lay, int rtl)
+{
+	struct layout *layout = (struct layout*)lay;
+	if (!lay)
+		return;
+	layout->rtl = rtl;
 }
 
 void	txt_layout_font_height(layout_t lay, float height)
@@ -5219,7 +5234,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 	char *p, *eptr;
 	char *ptr = txt;
 	struct xref *xref = NULL;
-	int w, h = 0, nl = 0;
+	int w = 0, h = 0, nl = 0;
 	int spw;
 	img_t img = NULL;
 	if (!layout || !layout->fn)
@@ -5296,12 +5311,15 @@ void _txt_layout_add(layout_t lay, char *txt)
 			/* Correct size depends on the script and direction.
 			   Set them correctly before calling txt_size */
 			word = word_new(p);
-			TTF_SetDirection(hb_dir(word->rtl));
-			TTF_SetScript(word->script);
-			txt_size(layout->fn, p, &w, &h);
-			TTF_SetDirection(HB_DIRECTION_LTR);
-			TTF_SetScript(HB_SCRIPT_COMMON);
-			free(word);
+			if (word) {
+				word_detect_rtl(word, layout->rtl);
+				TTF_SetDirection(hb_dir(word->rtl));
+				TTF_SetScript(word->script);
+				txt_size(layout->fn, p, &w, &h);
+				TTF_SetDirection(HB_DIRECTION_LTR);
+				TTF_SetScript(HB_SCRIPT_COMMON);
+				free(word);
+			}
 #else
 			txt_size(layout->fn, p, &w, &h);
 #endif
@@ -5362,6 +5380,7 @@ void _txt_layout_add(layout_t lay, char *txt)
 			free(p);
 			goto err;
 		}
+		word_detect_rtl(word, layout->rtl);
 		word->valign = layout->valign;
 		if (!sp && !line_empty(line))
 			word->unbrake = 1;
