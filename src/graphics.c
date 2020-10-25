@@ -3028,6 +3028,7 @@ static void word_detect_rtl(struct word *w, int mode)
 		case G_UNICODE_SCRIPT_HEBREW:
 			w->rtl = !g_unichar_isdigit(sym);
 			w->script = HB_SCRIPT_HEBREW;
+			/* Fall through */
 		case G_UNICODE_SCRIPT_ARABIC:
 			w->rtl = !g_unichar_isdigit(sym);
 			w->script = HB_SCRIPT_ARABIC;
