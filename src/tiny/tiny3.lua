@@ -74,11 +74,11 @@ function iface:title(str) -- hide title
 	return str
 end
 
-function iface:img() return end
+function iface:img() return '' end
 
-function iface:imgl() return end
+function iface:imgl() return '' end
 
-function iface:imgr() return end
+function iface:imgr() return '' end
 
 function iface:nb(t)
 	return t == '' and ' ' or t
