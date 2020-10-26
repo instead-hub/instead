@@ -902,7 +902,7 @@ void game_gfx_commit(int sync)
 
 static int game_render_callback_redraw(void);
 
-static void anigif_do(void *data)
+static void anim_do(void *data)
 {
 	void *v;
 	img_t img;
@@ -912,27 +912,27 @@ static void anigif_do(void *data)
 
 	game_cursor(CURSOR_CLEAR);
 
-	if (gfx_frame_gif(el_img(el_spic))) { /* scene */
+	if (gfx_frame_anim(el_img(el_spic))) { /* scene */
 		game_render_callback_redraw();
-		gfx_update_gif(el_img(el_spic), game_update);
+		gfx_update_anim(el_img(el_spic), game_update);
 	}
 
 	game_cursor(CURSOR_CLEAR);
 
 	for (v = NULL; (img = txt_layout_images(txt_box_layout(el_box(el_scene)), &v)); ) { /* scene */
 		game_cursor(CURSOR_CLEAR);
-		if ((img != el_img(el_spic)) && gfx_frame_gif(img)) {
+		if ((img != el_img(el_spic)) && gfx_frame_anim(img)) {
 			game_render_callback_redraw();
-			gfx_update_gif(img, game_update);
+			gfx_update_anim(img, game_update);
 		}
 	}
 	game_cursor(CURSOR_CLEAR);
 
 	for (v = NULL; (img = txt_layout_images(txt_box_layout(el_box(el_inv)), &v)); ) { /* inv */
 		game_cursor(CURSOR_CLEAR);
-		if (gfx_frame_gif(img)) {
+		if (gfx_frame_anim(img)) {
 			game_render_callback_redraw();
-			gfx_update_gif(img, game_update);
+			gfx_update_anim(img, game_update);
 		}
 	}
 
@@ -940,9 +940,9 @@ static void anigif_do(void *data)
 
 	for (v = NULL; (img = txt_layout_images(el_layout(el_title), &v)); ) { /* title */
 		game_cursor(CURSOR_CLEAR);
-		if (gfx_frame_gif(img)) {
+		if (gfx_frame_anim(img)) {
 			game_render_callback_redraw();
-			gfx_update_gif(img, game_update);
+			gfx_update_anim(img, game_update);
 		}
 	}
 
@@ -950,9 +950,9 @@ static void anigif_do(void *data)
 
 	for (v = NULL; (img = txt_layout_images(el_layout(el_ways), &v)); ) { /* ways */
 		game_cursor(CURSOR_CLEAR);
-		if (gfx_frame_gif(img)) {
+		if (gfx_frame_anim(img)) {
 			game_render_callback_redraw();
-			gfx_update_gif(img, game_update);
+			gfx_update_anim(img, game_update);
 		}
 	}
 	game_cursor(CURSOR_ON);
@@ -968,8 +968,8 @@ int counter_fn(int interval, void *p)
 		push_user_event(NULL, NULL);
 	}
 #endif
-	if (gfx_is_drawn_gifs() && !DIRECT_MODE)
-		push_user_event(anigif_do, NULL);
+	if (gfx_is_drawn_anims() && !DIRECT_MODE)
+		push_user_event(anim_do, NULL);
 	return interval;
 }
 
@@ -1224,12 +1224,12 @@ static int _el_clear(int n, clear_fn clear)
 		clear(x, y, w, h);
 	if (o->type == elt_box) {
 		for (v = NULL; (img = txt_layout_images(txt_box_layout(el_box(n)), &v)); )
-			gfx_dispose_gif(img);
+			gfx_dispose_anim(img);
 	} else if (o->type == elt_layout) {
 		for (v = NULL; (img = txt_layout_images(el_layout(n), &v)); )
-			gfx_dispose_gif(img);
+			gfx_dispose_anim(img);
 	} else if (o->type == elt_image)
-		gfx_dispose_gif(el_img(n));
+		gfx_dispose_anim(el_img(n));
 
 	return 1;
 }
@@ -1866,7 +1866,7 @@ static void after_cmd(void)
 
 static void after_fading(void *aux)
 {
-	gfx_start_gif(el_img(el_spic));
+	gfx_start_anim(el_img(el_spic));
 	gfx_free_image(fade_ctx.offscreen);
 	game_render_callback_redraw();
 	after_click(fade_ctx.flags, fade_ctx.m_restore);
@@ -2238,7 +2238,7 @@ inv:
 	if (fading) {
 		img_t offscreen;
 		game_cursor(CURSOR_OFF);
-		gfx_stop_gif(el_img(el_spic));
+		gfx_stop_anim(el_img(el_spic));
 		instead_render_callback();
 		offscreen = gfx_screen(oldscreen);
 		fade_ctx.offscreen = offscreen;
