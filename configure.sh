@@ -23,23 +23,23 @@ else
 	zlib_libs="pkg-config --libs zlib"
 fi
 
-echo -n "Checking pkg-config --cflags gtk+-2.0..."
-if ! pkg-config --cflags gtk+-2.0 >/dev/null 2>&1; then
+echo -n "Checking pkg-config --cflags gtk+-3.0..."
+if ! pkg-config --cflags gtk+-3.0 >/dev/null 2>&1; then
 	echo "no"
-	echo -n "Checking pkg-config --cflags gtk+-3.0..."
-	if ! pkg-config --cflags gtk+-3.0 >/dev/null 2>&1; then
+	echo -n "Checking pkg-config --cflags gtk+-2.0..."
+	if ! pkg-config --cflags gtk+-2.0 >/dev/null 2>&1; then
 		echo "no open file dialog"
 		gtk_cflags=
 		gtk_libs=
 	else
 		echo "yes"
-		gtk_cflags="pkg-config --cflags gtk+-3.0"
-		gtk_libs="pkg-config --libs gtk+-3.0"
+		gtk_cflags="pkg-config --cflags gtk+-2.0"
+		gtk_libs="pkg-config --libs gtk+-2.0"
 	fi
 else
 	echo "yes"
-	gtk_cflags="pkg-config --cflags gtk+-2.0"
-	gtk_libs="pkg-config --libs gtk+-2.0"
+	gtk_cflags="pkg-config --cflags gtk+-3.0"
+	gtk_libs="pkg-config --libs gtk+-3.0"
 fi
 
 
