@@ -173,7 +173,7 @@ static SDL_bool NormalizeFrames(GIF_Frame_t *frames, int count)
     SDL_Rect rect;
 
 #if SDL_VERSION_ATLEAST(2,0,0)
-    if (SDL_HasColorKey(frames[0].image)) {
+    if (SDL_GetColorKey(frames[0].image, NULL) == 0) {
         image = SDL_ConvertSurfaceFormat(frames[0].image, SDL_PIXELFORMAT_ARGB8888, 0);
     } else {
         image = SDL_ConvertSurfaceFormat(frames[0].image, SDL_PIXELFORMAT_RGB888, 0);
@@ -216,11 +216,7 @@ static SDL_bool NormalizeFrames(GIF_Frame_t *frames, int count)
         SDL_BlitSurface(frames[i].image, NULL, image, &rect);
 
         SDL_FreeSurface(frames[i].image);
-#if SDL_VERSION_ATLEAST(2,0,0)
-        frames[i].image = SDL_DuplicateSurface(image);
-#else        
 	frames[i].image = SDL_ConvertSurface(image, image->format, image->flags);
-#endif
         if (!frames[i].image) {
             return SDL_FALSE;
         }
