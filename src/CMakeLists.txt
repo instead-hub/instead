@@ -1,6 +1,6 @@
 # sources
 SET(INSTEAD_SRCS
-	SDL_anigif.c
+	SDL_gif.c
 	SDL_gfxBlitFunc.c
 	SDL_rotozoom.c
 	config.c

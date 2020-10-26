@@ -232,14 +232,14 @@ extern layout_t	xref_layout(xref_t x);
 
 typedef void	(*update_fn)(int x, int y, int w, int h);
 extern void	xref_update(xref_t xref, int x, int y, clear_fn clear, update_fn update);
-extern void	gfx_start_gif(img_t img);
-extern int	gfx_is_drawn_gifs(void);
-extern void	gfx_stop_gif(img_t img);
-extern int	gfx_frame_gif(img_t img);
+extern void	gfx_start_anim(img_t img);
+extern int	gfx_is_drawn_anims(void);
+extern void	gfx_stop_anim(img_t img);
+extern int	gfx_frame_anim(img_t img);
 extern void	gfx_del_timer(gtimer_t han);
 extern gtimer_t gfx_add_timer(int delay, int (*fn)(int, void*), void *aux);
-extern void	gfx_update_gif(img_t img, update_fn update);
-extern void 	gfx_dispose_gif(img_t p);
+extern void	gfx_update_anim(img_t img, update_fn update);
+extern void 	gfx_dispose_anim(img_t p);
 extern unsigned long gfx_ticks(void);
 
 extern void gfx_set_cursor(img_t cur, int xc, int yc);

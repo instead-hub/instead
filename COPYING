@@ -29,7 +29,8 @@ INSTEAD links with the following libraries/sources:
     SDL_ttf (LGPL)
     SDL_mixer (LGPL)
     SDL_gfx (Zlib)
-    SDL_anigif.c (LGPL)
+
+    SDL_gif.c (Zlib)
 
     SDL2 (Zlib)
     SDL2_image (Zlib)
@@ -49,4 +50,4 @@ INSTEAD links with the following libraries/sources:
     tinymt32 (The 3-clause BSD License)
 
     HarfBuzz (old MIT)
-    GLib - partial (LGPL)
+    GLib (LGPL)
