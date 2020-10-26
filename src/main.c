@@ -339,6 +339,9 @@ int instead_main(int argc, char *argv[])
 #ifdef _WIN32_WCE
 	libwince_init(argv[0], 1);
 	wince_init(argv[0]);
+#elif defined(APPIMAGE)
+	unix_path(argv[0]);
+	strcpy(game_cwd, dirname(argv[0]));
 #elif defined(WINRT)
 	unix_path(argv[0]);
 	strcpy(game_cwd, argv[0]);
