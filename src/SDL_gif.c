@@ -24,6 +24,7 @@
 /* This is a GIF image file loading framework */
 
 #include <SDL_image.h>
+#include <string.h>
 
 /* Code from here to end of file has been adapted from XPaint:           */
 /* +-------------------------------------------------------------------+ */
