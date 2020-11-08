@@ -269,7 +269,7 @@ EOF
 unzip -o -j instead-em/contrib/instead-em.zip -d instead-em-js/
 
 cd instead-em-js
-ln -f -s ../instead-em/src/sdl-instead sdl-instead.bc
+ln -f -s ../instead-em/src/sdl-instead.bc sdl-instead.bc
 ln -f -s ../lib lib
 
 emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_ttf.a  lib/libfreetype.a lib/libSDL2_mixer.a lib/libSDL2.a lib/libmikmod.a  lib/libSDL2_image.a lib/libjpeg.a  \
