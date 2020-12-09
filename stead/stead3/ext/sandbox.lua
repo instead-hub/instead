@@ -1,6 +1,6 @@
 -- luacheck: globals STANDALONE
 -- luacheck: read globals instead
--- luacheck: globals io os debug load loadstring
+-- luacheck: globals io os debug load loadstring package
 -- luacheck: read globals instead_realpath
 
 local function sandbox()
