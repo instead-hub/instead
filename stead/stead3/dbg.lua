@@ -1,5 +1,5 @@
 -- luacheck: globals dprint
--- luacheck: read globals walk disable enable drop take remove
+-- luacheck: read globals walk disable enable drop take remove utf8_prev utf8_next
 
 local std = stead
 local type = std.type
