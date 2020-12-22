@@ -557,7 +557,11 @@ void game_clear(int x, int y, int w, int h)
 
 void game_clear_all(void)
 {
-	game_clear(0, 0, game_theme.w, game_theme.h);
+	if (DIRECT_MODE)
+		gfx_img_fill(gfx_screen(NULL), 0, 0, game_theme.w, game_theme.h,
+			gfx_col(game_theme.brdcol.r, game_theme.brdcol.g, game_theme.brdcol.b));
+	else
+		game_clear(0, 0, game_theme.w, game_theme.h);
 }
 
 void game_clear(int x, int y, int w, int h);
@@ -767,9 +771,10 @@ int game_apply_theme(void)
 		else if (!strcmp(g->direction, "auto"))
 			rtl = -1;
 	}
-	gfx_bg(game_theme.bgcol);
-	if (!DIRECT_MODE)
-		game_clear_all();
+	gfx_bg(game_theme.xoff, game_theme.yoff,
+		game_theme.w - 2*game_theme.xoff, game_theme.h - 2*game_theme.yoff,
+		game_theme.bgcol, game_theme.brdcol);
+	game_clear_all();
 	gfx_flip();
 	if (opt_justify == JUST_NO && align == ALIGN_JUSTIFY)
 		align = ALIGN_LEFT;
