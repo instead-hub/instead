@@ -1525,16 +1525,26 @@ void gfx_draw_wh(img_t p, int x, int y, int w, int h)
 	SDL_BlitSurface(pixbuf, &src, Surf(screen), &dest);
 }
 static SDL_Color bgcol = { .r = 0, .g = 0, .b = 0 };
+static SDL_Color brdcol = { .r = 0, .g = 0, .b = 0 };
+static SDL_Rect brd = { .x = 0, .y = 0, .w = -1, .h = -1 };
 
-void gfx_bg(color_t col)
+void gfx_bg(int x, int y, int w, int h, color_t col, color_t brdcol)
 {
+	brd.x = x;
+	brd.y = y;
+	brd.w = w;
+	brd.h = h;
 	bgcol.r = col.r;
 	bgcol.g = col.g;
 	bgcol.b = col.b;
+	brdcol.r = brdcol.r;
+	brdcol.g = brdcol.g;
+	brdcol.b = brdcol.b;
 }
 
 void gfx_clear(int x, int y, int w, int h)
 {
+	int dx, dy;
 	SDL_Rect dest;
 	SDL_Surface *s = Surf(screen);
 	if (!s)
@@ -1543,7 +1553,27 @@ void gfx_clear(int x, int y, int w, int h)
 	dest.y = y;
 	dest.w = w;
 	dest.h = h;
-	SDL_FillRect(s, &dest, SDL_MapRGB(s->format, bgcol.r, bgcol.g, bgcol.b));
+	if (x < brd.x || y < brd.y || x + w >= brd.x + brd.w || y + h >= brd.y + brd.h) {
+		SDL_FillRect(s, &dest, SDL_MapRGB(s->format, brdcol.r, brdcol.g, brdcol.b));
+		dx = brd.x - x;
+		dy = brd.y - y;
+		if (dx > 0) {
+			dest.x += dx;
+			dest.w -= dx;
+		}
+		if (dy > 0) {
+			dest.y += dy;
+			dest.h -= dy;
+		}
+		dx = (brd.x + brd.w) - (dest.x + dest.w);
+		dy = (brd.y + brd.h) - (dest.y + dest.h);
+		if (dx < 0)
+			dest.w += dx;
+		if (dy < 0)
+			dest.h += dy;
+		SDL_FillRect(s, &dest, SDL_MapRGB(s->format, bgcol.r, bgcol.g, bgcol.b));
+	} else
+		SDL_FillRect(s, &dest, SDL_MapRGB(s->format, bgcol.r, bgcol.g, bgcol.b));
 }
 
 int gfx_width = -1;

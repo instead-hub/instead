@@ -44,6 +44,7 @@ struct game_theme {
 	int 	h;
 	int	gfx_scalable;
 	color_t	bgcol;
+	color_t brdcol;
 	char	*bg_name;
 	img_t	bg;
 	char	*use_name;

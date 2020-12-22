@@ -78,7 +78,7 @@ extern void	gfx_commit(void);
 
 extern cache_t	gfx_image_cache(void);
 extern img_t	gfx_screen(img_t nscreen);
-extern void	gfx_bg(color_t col);
+extern void	gfx_bg(int x, int y, int w, int h, color_t col, color_t brdcol);
 extern void	gfx_noclip(void);
 extern void	gfx_clip(int x, int y, int w, int h);
 extern void	gfx_getclip(int *x, int *y, int *w, int *h);

@@ -275,6 +275,7 @@ struct parser cmd_parser[] = {
 	{ "scr.h", parse_int, &game_theme.h, 0 },
 	{ "scr.gfx.scalable", parse_int, &game_theme.gfx_scalable, CHANGED_WIN | CHANGED_INV | CHANGED_FONT | CHANGED_IFONT | CHANGED_MFONT },
 	{ "scr.col.bg", parse_color, &game_theme.bgcol, 0 },
+	{ "scr.col.brd", parse_color, &game_theme.brdcol, 0 },
 	{ "scr.gfx.icon", theme_parse_full_path, &game_theme.icon_name, CHANGED_ICON },
 	{ "scr.gfx.bg", theme_parse_full_path, &game_theme.bg_name, CHANGED_BG },
 	{ "scr.gfx.cursor.normal", theme_parse_full_path, &game_theme.cursor_name, CHANGED_CURSOR },
@@ -732,7 +733,8 @@ static int theme_bg_scale(void)
 			if (!pic)
 				return -1;
 			screen = gfx_screen(pic);
-			gfx_img_fill(pic, 0, 0, t->w, t->h, gfx_col(0,0,0));
+			gfx_img_fill(pic, 0, 0, t->w, t->h,
+				gfx_col(t->brdcol.r, t->brdcol.g, t->brdcol.b));
 			gfx_copy(t->bg, xoff, yoff);
 			gfx_screen(screen);
 			gfx_free_image(t->bg);
@@ -993,9 +995,10 @@ int game_theme_init(void)
 		game_theme_select(DEFAULT_THEME);
 		return -1;
 	}
-	gfx_bg(game_theme.bgcol);
-	if (!DIRECT_MODE)
-		game_clear_all();
+	gfx_bg(game_theme.xoff, game_theme.yoff,
+		game_theme.w - 2*game_theme.xoff, game_theme.h - 2*game_theme.yoff,
+		game_theme.bgcol, game_theme.brdcol);
+	game_clear_all();
 	gfx_flip();
 	gfx_commit();
 	return 0;
