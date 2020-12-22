@@ -1571,7 +1571,8 @@ void gfx_clear(int x, int y, int w, int h)
 			dest.w += dx;
 		if (dy < 0)
 			dest.h += dy;
-		SDL_FillRect(s, &dest, SDL_MapRGB(s->format, bgcol.r, bgcol.g, bgcol.b));
+		if (dest.w > 0 && dest.h > 0)
+			SDL_FillRect(s, &dest, SDL_MapRGB(s->format, bgcol.r, bgcol.g, bgcol.b));
 	} else
 		SDL_FillRect(s, &dest, SDL_MapRGB(s->format, bgcol.r, bgcol.g, bgcol.b));
 }
