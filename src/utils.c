@@ -87,11 +87,37 @@ char *find_in_esc(const char *l, const char *s)
 	return NULL;
 }
 
+static void unescape_sym(char *l, const char *s)
+{
+	int esc = 0;
+	char *r = l;
+	int d = 0;
+	for (; *l; ) {
+		if (esc) {
+			esc = 0;
+			if (strspn(l, s))
+				r --;
+			*r ++ = *l ++;
+			continue;
+		}
+		d = strcspn(l, s);
+		if (d)
+			memmove(r, l, d);
+		r += d; l += d;
+		if (*l == '\\')
+			esc = 1;
+		if (*l)
+			*r ++ = *l ++;
+	}
+	*r = 0;
+}
+
 static void comments_zap(char *p)
 {
 	char *l = find_in_esc(p, "\\;\n");
 	if (l)
 		*l = 0;
+	unescape_sym(p, "\\;\n");
 }
 
 int parse_all(void *fp, char *(*getl)(void *p, char *s, int size), const char *path, struct parser *cmd_parser)
