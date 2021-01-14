@@ -1528,7 +1528,7 @@ static SDL_Color bgcol = { .r = 0, .g = 0, .b = 0 };
 static SDL_Color brdcol = { .r = 0, .g = 0, .b = 0 };
 static SDL_Rect brd = { .x = 0, .y = 0, .w = -1, .h = -1 };
 
-void gfx_bg(int x, int y, int w, int h, color_t col, color_t brdcol)
+void gfx_bg(int x, int y, int w, int h, color_t col, color_t bcol)
 {
 	brd.x = x;
 	brd.y = y;
@@ -1537,9 +1537,9 @@ void gfx_bg(int x, int y, int w, int h, color_t col, color_t brdcol)
 	bgcol.r = col.r;
 	bgcol.g = col.g;
 	bgcol.b = col.b;
-	brdcol.r = brdcol.r;
-	brdcol.g = brdcol.g;
-	brdcol.b = brdcol.b;
+	brdcol.r = bcol.r;
+	brdcol.g = bcol.g;
+	brdcol.b = bcol.b;
 }
 
 void gfx_clear(int x, int y, int w, int h)
