@@ -104,7 +104,7 @@ emmake make install
 
 cd $WORKSPACE
 rm -rf freetype-2.8
-wget https://download.savannah.gnu.org/releases/freetype/freetype-2.8.tar.gz
+wget --no-check-certificate https://download.savannah.gnu.org/releases/freetype/freetype-2.8.tar.gz
 tar -xvf freetype-2.8.tar.gz
 cd freetype-2.8
 ./autogen.sh
