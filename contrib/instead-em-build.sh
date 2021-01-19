@@ -104,12 +104,12 @@ emmake make install
 
 cd $WORKSPACE
 rm -rf freetype-2.8
-wget https://download.savannah.gnu.org/releases/freetype/freetype-2.8.tar.gz
+wget --no-check-certificate https://download.savannah.gnu.org/releases/freetype/freetype-2.8.tar.gz
 tar -xvf freetype-2.8.tar.gz
 cd freetype-2.8
 ./autogen.sh
 
-emconfigure ./configure --build=amd64-unknown-linux --host=asmjs-unknown-linux --prefix=$WORKSPACE  CPPFLAGS="-I$WORKSPACE/include" LDFLAGS="-L$WORKSPACE/lib" --disable-shared
+emconfigure ./configure --build=amd64-unknown-linux --host=asmjs-linux --prefix=$WORKSPACE  CPPFLAGS="-I$WORKSPACE/include" LDFLAGS="-L$WORKSPACE/lib" --disable-shared
 emmake make install
 
 # SDL2_ttf
@@ -119,6 +119,7 @@ git clone https://github.com/emscripten-ports/SDL2_ttf.git
 cd SDL2_ttf
 git checkout master
 git pull
+sed -i -e 's/noinst_PROGRAMS = showfont glfont//' Makefile.am
 ./autogen.sh
 emconfigure ./configure --build=amd64-unknown-linux --host=asmjs-unknown-linux --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -I$WORKSPACE/include/SDL2 -I$WORKSPACE/include/freetype2" LDFLAGS="-L$WORKSPACE/lib" --disable-sdltest --disable-shared
 emmake make install
@@ -135,6 +136,9 @@ hg --config "extensions.purge=" purge --all
 cat configure.in | sed -e 's/AC_CHECK_LIB(\[modplug\], /AC_CHECK_LIB(\[modplug\], \[ModPlug_Load\], /' -e 's/have_libmikmod=no/have_libmikmod=yes/g' > configure.in.new
 mv -f configure.in.new configure.in
 ./autogen.sh
+
+export have_ogg_lib=yes
+export have_libmikmod=yes
 emconfigure ./configure --host=asmjs-unknown-emscripten --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -I$WORKSPACE/include/SDL2 -s USE_VORBIS=1 -s USE_OGG=1" LDFLAGS="-L$WORKSPACE/lib" --disable-sdltest --disable-shared \
    --disable-music-mp3-mad-gpl --enable-music-ogg --disable-music-ogg-shared --enable-music-mod-mikmod --disable-music-mod-mikmod-shared \
    --disable-music-midi-fluidsynth --disable-music-midi-fluidsynth-shared \
@@ -150,7 +154,7 @@ rm -rf jpeg-9b
 [ -f jpegsrc.v9b.tar.gz ] || wget -nv 'http://www.ijg.org/files/jpegsrc.v9b.tar.gz'
 tar xf jpegsrc.v9b.tar.gz
 cd jpeg-9b
-emconfigure ./configure --prefix=$WORKSPACE
+emconfigure ./configure --prefix=$WORKSPACE --disable-shared
 emmake make install
 
 # SDL_image
@@ -159,6 +163,8 @@ rm -rf SDL2_image
 [ -d SDL2_image/.git ] || git clone https://github.com/emscripten-ports/SDL2_image.git SDL2_image
 cd SDL2_image
 ./autogen.sh
+export ac_cv_lib_jpeg_jpeg_CreateDecompress=yes
+export ac_cv_lib_png_png_create_read_struct=yes
 emconfigure ./configure --host=asmjs-unknown-linux --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -I$WORKSPACE/include/SDL2 -s USE_LIBPNG=1" LDFLAGS="-L$WORKSPACE/lib -lpng -ljpeg" --disable-sdltest --disable-shared --enable-static --enable-png --disable-png-shared --enable-jpg --disable-jpg-shared
 emmake make install
 
@@ -178,7 +184,8 @@ LUA_LFLAGS=
 ZLIB_LFLAGS=
 EOF
 emmake make clean
-emmake make
+sed -i -e 's/^EXE=$/EXE=.bc/' Rules.make.standalone
+LDFLAGS=-r emmake make
 
 cd $WORKSPACE
 [ -d  instead-em-js ] ||  mkdir instead-em-js 
@@ -192,6 +199,7 @@ rm -rf instead-em-js/fs/games # without games
 find instead-em-js/fs/ \( -name '*.svg' -o -name Makefile -o -name CMakeLists.txt \) -exec rm {} \;
 
 cat <<EOF > post.js
+function autoResumeAudioContext() {}
 var Module;
 FS.mkdir('/appdata');
 FS.mount(IDBFS,{},'/appdata');
@@ -226,7 +234,6 @@ Module['postRun'].push(function() {
 		spinnerElement.style.display = 'inline-block';
 		Module['setStatus']('Downloading data file...');
 	}, 3);
-
 	req.onload = function() {
 		var basename = function(path) {
 			parts = path.split( '/' );
@@ -242,12 +249,11 @@ Module['postRun'].push(function() {
 			console.log("Writing: ", url);
 			FS.writeFile(url, new Int8Array(data), { encoding: 'binary' }, "w");
 			console.log("Running...");
-			var args = [];
-			[ "instead-em", url, "-standalone", "-window", "-resizable", "-mode" ].forEach(function(item) {
-				args.push(allocate(intArrayFromString(item), 'i8', ALLOC_NORMAL));
-				args.push(0); args.push(0); args.push(0);
+			var args = stackAlloc(7 * 4);
+			args[6] = 0;
+			[ "instead-em", url, "-standalone", "-window", "-resizable", "-mode" ].forEach(function(item, i) {
+				HEAP32[(args >> 2) + i] = allocateUTF8OnStack(item);
 			})
-			args = allocate(args, 'i32', ALLOC_NORMAL);
 			setTimeout(function() {
 				Module.setStatus('');
 				document.getElementById('status').style.display = 'none';
@@ -263,16 +269,16 @@ EOF
 unzip -o -j instead-em/contrib/instead-em.zip -d instead-em-js/
 
 cd instead-em-js
-ln -f -s ../instead-em/src/sdl-instead sdl-instead.bc
+ln -f -s ../instead-em/src/sdl-instead.bc sdl-instead.bc
 ln -f -s ../lib lib
 
-
 emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_ttf.a  lib/libfreetype.a lib/libSDL2_mixer.a lib/libSDL2.a lib/libmikmod.a  lib/libSDL2_image.a lib/libjpeg.a  \
+-lidbfs.js \
 -s EXPORTED_FUNCTIONS="['_instead_main']" \
 -s 'SDL2_IMAGE_FORMATS=["png","jpeg","gif"]' \
 -s 'EXTRA_EXPORTED_RUNTIME_METHODS=["ccall", "Pointer_stringify"]' \
+-s 'DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=["$autoResumeAudioContext", "$dynCall"]' \
 -s QUANTUM_SIZE=4 \
--s BINARYEN_TRAP_MODE=clamp \
 -s WASM=1 \
 -s PRECISE_F32=1 \
 -s USE_OGG=1 -s USE_VORBIS=1 -s USE_LIBPNG=1 \
