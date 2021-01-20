@@ -1,3 +1,17 @@
+3.3.3
+
+ * new: scr.col.brd in theme.ini;
+ * new: rtl support (_USE_HARFBUZZ and new SDL_ttf needed);
+ * new: instead.tiny flag in tiny;
+ * enh: emscripten 2.0.12 ready;
+ * enh: gtk3 build is enabled by default;
+ * enh: APPIMAGE define;
+ * enh: new anigif realization (LGPL code removed);
+ * enh: lua5.4 ready;
+ * enh: fixes and cleanups in code.
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 20 Jan 2021 16:00:00 +0300
+
 3.3.2
 
  * fix: -lua parameter;
