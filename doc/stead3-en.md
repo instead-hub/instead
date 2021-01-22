@@ -1605,16 +1605,16 @@ Another example, when it is convenient to return false:
 
 ```
 use = function(s, w)
-	if w^'Apple' then
+	if w^'Knife' then
 		p [[I cleaned up the Apple.]]
-		w.cut = true
+		s.cut = true
 		return
 	end
 		return false;
 end
 ```
 
-In this case, use Apple only handles one situation -- effect on Apple. In
+In this case, use Apple only handles one situation -- effect on Apple by Knife. In
 other cases, the handler returns false and the engine will call the default:
 game.use.
 
