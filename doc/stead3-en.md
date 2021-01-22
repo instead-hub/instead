@@ -1610,15 +1610,15 @@ use = function(s, w)
 		w.cut = true
 		return
 	end
-		return false;
+	return false;
 end
 ```
 
-In this case, use Apple only handles one situation -- effect on Apple. In
+In this case, use for knife only handles one situation -- effect on using knife on Apple. In
 other cases, the handler returns false and the engine will call the default:
 game.use.
 
-But it is better if you will register the action in default of a knife:
+But it is better if you will add default message in use handler:
 
 ```
 use = function(s, w)
