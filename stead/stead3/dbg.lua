@@ -537,6 +537,9 @@ local dbg = std.obj {
 	embed;
 	{ commands = commands },
 	enable = function(s)
+		s.key_ctrl = false -- sticky bug
+		s.key_alt = false
+
 		instead_func('get_picture')
 		instead_func('get_fading')
 		instead_func('get_title')
@@ -579,6 +582,11 @@ local dbg = std.obj {
 		iface:raw_mode(false)
 		local timer = stead.ref '@timer'
 		timer:set(s.last_timer)
+
+		s.key_ctrl = false -- sticky bug
+		s.key_alt = false
+		s:okey(false, 'left ctrl')
+		s:okey(false, 'right ctrl')
 		std.game:lastdisp(s.__last_disp)
 	end;
 	inp_split = function(s)
@@ -701,7 +709,6 @@ local dbg = std.obj {
 			end
 		end
 		if (key == 'f7'and not s.key_ctrl and not s.key_alt) or (s.key_ctrl and key == 'd') then
-			s.key_ctrl = false -- sticky bug
 			return '@dbg toggle'
 		end
 		if s.on then
@@ -878,6 +885,13 @@ local oldlang
 local okey, otext
 
 local hooked = false
+
+function dbg:okey(...)
+	if okey then
+		okey(input, ...)
+	end
+end
+
 std.mod_start(function(_)
 	local st, r
 	if not use_text_event() and oldlang ~= LANG then
