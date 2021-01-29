@@ -309,7 +309,7 @@ struct _anim_t {
 	int	loop;
 	int 	drawn;
 	int	active;
-	int	delay;
+	unsigned long	delay;
 	int	spawn_nr;
 	struct	anspawn *spawn;
 	Animation_t *anim;
@@ -1464,7 +1464,7 @@ int gfx_frame_anim(img_t img)
 	if (ag->loop == -1)
 		return 0;
 
-	if ((timer_counter - ag->delay) < (ag->anim->delays[ag->cur_frame] / HZ))
+	if ((int)(timer_counter - ag->delay) < (ag->anim->delays[ag->cur_frame] / HZ))
 		return 0;
 
 	if (ag->cur_frame != ag->nr_frames - 1 || ag->loop > 1 || !ag->loop)
