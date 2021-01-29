@@ -199,7 +199,6 @@ rm -rf instead-em-js/fs/games # without games
 find instead-em-js/fs/ \( -name '*.svg' -o -name Makefile -o -name CMakeLists.txt \) -exec rm {} \;
 
 cat <<EOF > post.js
-function autoResumeAudioContext() {}
 var Module;
 FS.mkdir('/appdata');
 FS.mount(IDBFS,{},'/appdata');
