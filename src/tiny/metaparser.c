@@ -64,7 +64,9 @@ int main(int argc, const char **argv)
 			snprintf(cmd, sizeof(cmd), "%s", p);
 		else
 			snprintf(cmd, sizeof(cmd), "@metaparser \"%s\"", p);
-		str = instead_cmd(cmd, NULL);
+		str = instead_cmd(cmd, &rc);
+		if (rc && !str) /* menu? */
+			str = instead_cmd(p, &rc);
 		if (str) {
 			printf("%s\n", str); fflush(stdout);
 		}
