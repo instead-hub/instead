@@ -774,7 +774,8 @@ int game_apply_theme(void)
 	gfx_bg(game_theme.xoff, game_theme.yoff,
 		game_theme.w - 2*game_theme.xoff, game_theme.h - 2*game_theme.yoff,
 		game_theme.bgcol, game_theme.brdcol);
-	game_clear_all();
+	if (!DIRECT_MODE)
+		game_clear_all();
 	gfx_flip();
 	if (opt_justify == JUST_NO && align == ALIGN_JUSTIFY)
 		align = ALIGN_LEFT;
