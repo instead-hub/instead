@@ -393,7 +393,7 @@ local	commands = {
 			s:printf([[Use <tab> key to complete words.
 Use <up>/<down> for history.
 Use ctrl-l to clear screen.
-Use ctrl-d or f6 to enter/exit debugger.
+Use ctrl-d or f7 to enter/exit debugger.
 Some useful commands:
     show obj * - show all objects
     show room * - show all rooms
