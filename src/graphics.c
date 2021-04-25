@@ -1915,6 +1915,7 @@ int gfx_check_mode(int w, int h)
 
 static SDL_Surface *icon = NULL;
 extern int software_sw;
+extern int glhack_sw;
 
 #if SDL_VERSION_ATLEAST(2,0,0)
 #ifdef _USE_SWROTATE
@@ -2189,13 +2190,13 @@ int gfx_set_mode(int w, int h, int fs)
 	t = game_reset_name();
 	if (!t)
 		t = title;
-#if defined(ANDROID)
-	/* fix for hackish samsung devices */
-	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
-	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 6);
-	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
-#endif
-
+	if (glhack_sw) {
+		fprintf(stderr, "glhack: %d\n", glhack_sw);
+		/* fix for hackish samsung devices */
+		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, (glhack_sw / 100) % 10);
+		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, (glhack_sw / 10) % 10);
+		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, glhack_sw % 10);
+	}
 #if defined(IOS) || defined(ANDROID) || defined(WINRT) || defined(SAILFISHOS)
 	SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h,
 			SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE
