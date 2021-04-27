@@ -18,11 +18,13 @@ static void footer(void)
 {
 	char *p;
 	p = instead_cmd("way", NULL);
-	if (p && *p)
-		printf(">> %s", instead_cmd("way", NULL));
+	if (p && *p) {
+		printf(">> %s", p); free(p);
+	}
 	p = instead_cmd("inv", NULL);
-	if (p && *p)
-		printf("** %s", instead_cmd("inv", NULL));
+	if (p && *p) {
+		printf("** %s", p); free(p);
+	}
 }
 int main(int argc, const char **argv)
 {
@@ -37,7 +39,6 @@ int main(int argc, const char **argv)
 		exit(1);
 	}
 	instead_set_debug(1);
-
 	if (instead_init(game)) {
 		fprintf(stderr, "Can not init game: %s\n", game);
 		exit(1);
@@ -57,7 +58,6 @@ int main(int argc, const char **argv)
 		footer();
 	}
 	free(str);
-
 	while (1) {
 		char input[128], *p, cmd[64];
 		p = fgets(input, sizeof(input), stdin);
