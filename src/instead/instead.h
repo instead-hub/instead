@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2021 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -74,6 +74,8 @@ extern int  instead_iretval(int n);
 extern char *instead_fromgame(const char *s);
 extern int  instead_encode(const char *s, const char *d);
 extern int  instead_busy(void);
+
+extern void instead_set_encoding(const char *cp); /* UTF-8 by default */
 
 /* internal use */
 extern int  instead_init_lua(const char *path, int detect);
