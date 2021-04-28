@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2020 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2021 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -442,11 +442,21 @@ int instead_function(char *s, struct instead_args *args)
 }
 
 #ifdef _HAVE_ICONV
-static char *curcp = "UTF-8";
+static char *curcp = NULL;
 static char *fromcp = NULL;
 #endif
 
 #ifdef _HAVE_ICONV
+void instead_set_encoding(const char *cp)
+{
+	if (curcp)
+		free(curcp);
+	if (cp)
+		curcp = strdup(cp);
+	else
+		curcp = NULL;
+	return;
+}
 char *instead_fromgame(const char *s)
 {
 	iconv_t han;
@@ -500,6 +510,9 @@ char *togame(const char *s)
 	if (!s)
 		return NULL;
 	return strdup(s);
+}
+void instead_set_encoding(const char *cp)
+{
 }
 #endif
 
@@ -1119,6 +1132,7 @@ int instead_init_lua(const char *path, int detect)
 	setlocale(LC_COLLATE, "C");
 #endif
 /*	strcpy(curcp, "UTF-8"); */
+	instead_set_encoding("UTF-8");
 	getdir(instead_cwd_path, sizeof(instead_cwd_path));
 	unix_path(instead_cwd_path);
 	instead_cwd_path[sizeof(instead_cwd_path) - 1] = 0;
