@@ -80,6 +80,8 @@ function iface:imgl() return '' end
 
 function iface:imgr() return '' end
 
+function iface:anchor() return '' end
+
 function iface:nb(t)
 	return t == '' and ' ' or t
 end
