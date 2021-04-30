@@ -1276,6 +1276,7 @@ void instead_done(void)
 #endif
 #ifdef _HAVE_ICONV
 	FREE(fromcp);
+	FREE(curcp);
 #endif
 	if (L)
 		lua_close(L);
