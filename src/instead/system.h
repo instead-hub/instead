@@ -35,7 +35,9 @@
  #include "snprintf.h"
  typedef long ssize_t;
 #endif
+#if !defined(PLAN9)
 #include <math.h>
+#endif
 
 #ifndef PATH_MAX
 #define PATH_MAX 	4096
