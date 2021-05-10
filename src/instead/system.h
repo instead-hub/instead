@@ -28,7 +28,7 @@
 #include <ctype.h>
 #include <dirent.h>
 #include <time.h>
-#ifndef S60
+#if !defined(S60) && !defined(PLAN9)
  #include <libgen.h>
 #endif
 #ifdef S60
