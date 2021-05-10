@@ -27,7 +27,11 @@ typedef uint32_t Uint32;
  * c) url to LICENSE
  */
 
-#ifdef S60
+#if defined(PLAN9)
+#define __inline
+#endif
+
+#if defined(S60) || defined(PLAN9)
 #define	UINT32_C(c)	(c ## U)
 #else
 #include <stdint.h>
