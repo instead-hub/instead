@@ -63,7 +63,8 @@ char 		*togame(const char *s);
 lua_State	*L = NULL;
 
 static char *err_msg = NULL;
-static char instead_api_path[PATH_MAX];
+static char instead_api_path[PATH_MAX + 1];
+static char instead_base_path[PATH_MAX] = STEAD_PATH;
 
 static char *API = NULL;
 static char *MAIN = NULL;
@@ -1047,6 +1048,18 @@ const char *instead_get_api(void)
 	return API;
 }
 
+const char *instead_lua_path(const char *path)
+{
+	if (!path)
+		return instead_base_path;
+	if (!*path) {
+		strncpy(instead_base_path, STEAD_PATH, sizeof(instead_base_path) - 1);
+		return instead_base_path;
+	}
+	strncpy(instead_base_path, path, sizeof(instead_base_path) - 1);
+	return instead_base_path;
+}
+
 static int instead_set_api(const char *api)
 {
 	int i, c = 0;
@@ -1054,7 +1067,7 @@ static int instead_set_api(const char *api)
 	char *oa;
 	if (!api || !*api) {
 		FREE(API);
-		snprintf(instead_api_path, sizeof(instead_api_path), "%s", STEAD_PATH);
+		snprintf(instead_api_path, sizeof(instead_api_path), "%s", instead_lua_path(NULL));
 	} else {
 		s = strlen(api);
 		for (i = 0; i < s; i ++) {
@@ -1071,7 +1084,7 @@ static int instead_set_api(const char *api)
 		oa = API;
 		API = strdup(api);
 		FREE(oa);
-		snprintf(instead_api_path, sizeof(instead_api_path), "%s/%s", STEAD_PATH, API);
+		snprintf(instead_api_path, sizeof(instead_api_path), "%s/%s", instead_lua_path(NULL), API);
 	}
 	return 0;
 }
