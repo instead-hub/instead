@@ -1821,21 +1821,9 @@ static int pixels_triangle(lua_State *L) {
 	x2 = luaL_optnumber(L, 6, 0);
 	y2 = luaL_optnumber(L, 7, 0);
 	#define XOR_SWAP(x,y) x=x^y; y=x^y; x=x^y;
-	if (x0 > x1) {
-		XOR_SWAP(x0, x1)
-		XOR_SWAP(y0, y1)
-	}
-	if (x0 > x2) {
-		XOR_SWAP(x0, x2)
-		XOR_SWAP(y0, y2)
-	}
-	if (x1 > x2) {
+	if (orient2d(x0, y0, x1, y1, x2, y2) < 0) {
 		XOR_SWAP(x1, x2)
 		XOR_SWAP(y1, y2)
-	}
-	if (y1 > y0) {
-		XOR_SWAP(y1, y2)
-		XOR_SWAP(x1, x2)
 	}
 	#undef XOR_SWAP
 	r = luaL_optnumber(L, 8, 0);
