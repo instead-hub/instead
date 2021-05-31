@@ -1560,7 +1560,7 @@ static void triangle(struct lua_pixels *src, int x0, int y0, int x1, int y1, int
 
 	for (y = miny; y <= maxy; y ++) {
 		int w0 = w0_row;
-	        int w1 = w1_row;
+		int w1 = w1_row;
 		int w2 = w2_row;
 		unsigned char *p = ptr;
 		for (x = minx; x <= maxx; x++) {
