@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2018 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2021 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -1820,6 +1820,24 @@ static int pixels_triangle(lua_State *L) {
 	y1 = luaL_optnumber(L, 5, 0);
 	x2 = luaL_optnumber(L, 6, 0);
 	y2 = luaL_optnumber(L, 7, 0);
+	#define XOR_SWAP(x,y) x=x^y; y=x^y; x=x^y;
+	if (x0 > x1) {
+		XOR_SWAP(x0, x1)
+		XOR_SWAP(y0, y1)
+	}
+	if (x0 > x2) {
+		XOR_SWAP(x0, x2)
+		XOR_SWAP(y0, y2)
+	}
+	if (x1 > x2) {
+		XOR_SWAP(x1, x2)
+		XOR_SWAP(y1, y2)
+	}
+	if (y1 > y0) {
+		XOR_SWAP(y1, y2)
+		XOR_SWAP(x1, x2)
+	}
+	#undef XOR_SWAP
 	r = luaL_optnumber(L, 8, 0);
 	g = luaL_optnumber(L, 9, 0);
 	b = luaL_optnumber(L, 10, 0);
