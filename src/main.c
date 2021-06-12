@@ -37,6 +37,10 @@
 #include "android.h"
 #endif
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 #ifdef _WIN32_WCE
 extern void	libwince_init(const char* prog, int debug);
 #endif
