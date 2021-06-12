@@ -330,6 +330,11 @@ int instead_main(int argc, char *argv[])
 #endif
 	int err = 0;
 	int i;
+#ifdef _WIN32
+	HINSTANCE lib = LoadLibrary("user32.dll");
+	int (*SetProcessDPIAware)() = (void*) GetProcAddress(lib, "SetProcessDPIAware");
+	SetProcessDPIAware();
+#endif
 #ifdef __APPLE__
 	macosx_init();
 #endif
