@@ -1407,19 +1407,21 @@ img_t	game_pict_scale(img_t img, int ww, int hh)
 		return img; /* do not scale sprites! */
 	}
 
-	if (game_theme.scale > 1.0f)
-		theme_img_scale(&img);
+	if (game_theme.img_scale > 1.0f)
+		scale = game_theme.img_scale;
 
-	w = gfx_img_w(img);
-	h = gfx_img_h(img);
+	w = gfx_img_w(img) * scale;
+	h = gfx_img_h(img) * scale;
 
 	if (ww == -1)
 		ww = w;
 	if (hh == -1)
 		hh = h;
 
-	if (w <= ww && h <= hh)
+	if (w <= ww && h <= hh) {
+		theme_img_scale(&img);
 		return img;
+	}
 
 	www = ww;
 	hhh = hh;
