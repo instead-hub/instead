@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2018 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2021 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -40,8 +40,10 @@
 
 struct game_theme {
 	float	scale;
-	int 	w;
-	int 	h;
+	float	img_scale;
+	int	scale_aware;
+	int	w;
+	int	h;
 	int	gfx_scalable;
 	color_t	bgcol;
 	color_t brdcol;
@@ -150,7 +152,11 @@ struct game_theme {
 #define CHANGED_IDOWN	0x1000
 #define CHANGED_BUTTON	0x2000
 #define CHANGED_ICON	0x4000
+#define CHANGED_IMG (CHANGED_BG | CHANGED_CLICK | CHANGED_CURSOR | CHANGED_USE | \
+	CHANGED_UP | CHANGED_DOWN | CHANGED_IUP |CHANGED_IDOWN | \
+	CHANGED_BUTTON)
 #define CHANGED_ALL 0xffff
+
 struct theme {
 	char *path;
 	char *name;
