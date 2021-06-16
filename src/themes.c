@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2018 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2021 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -273,7 +273,9 @@ static int theme_parse_full_path(const char *v, void *data)
 struct parser cmd_parser[] = {
 	{ "scr.w", parse_int, &game_theme.w, 0 },
 	{ "scr.h", parse_int, &game_theme.h, 0 },
-	{ "scr.gfx.scalable", parse_int, &game_theme.gfx_scalable, CHANGED_WIN | CHANGED_INV | CHANGED_FONT | CHANGED_IFONT | CHANGED_MFONT },
+	{ "scr.scale_aware", parse_int, &game_theme.scale_aware, 0 },
+	{ "scr.gfx.scalable", parse_int, &game_theme.gfx_scalable, CHANGED_ALL },
+	{ "scr.gfx.scale", parse_float, &game_theme.img_scale, CHANGED_IMG },
 	{ "scr.col.bg", parse_color, &game_theme.bgcol, 0 },
 	{ "scr.col.brd", parse_color, &game_theme.brdcol, 0 },
 	{ "scr.gfx.icon", theme_parse_full_path, &game_theme.icon_name, CHANGED_ICON },
@@ -403,6 +405,8 @@ static int theme_scalables_unscaled[sizeof(theme_scalables)/sizeof(theme_scalabl
 
 struct game_theme game_theme = {
 	.scale = 1.0f,
+	.scale_aware = 0,
+	.img_scale = 1.0f,
 	.w = 800,
 	.h = 480,
 	.gfx_scalable = 1,
@@ -530,7 +534,7 @@ int game_theme_free(void)
 int theme_img_scale(img_t *p)
 {
 	img_t pic;
-	float v = game_theme.scale;
+	float v = game_theme.img_scale;
 	if (!p || !*p || v == 1.0f)
 		return 0;
 
@@ -592,6 +596,7 @@ static  int game_theme_scale(int w, int h)
 		yoff = 0;
 
 	t->scale = v;
+	t->img_scale = v;
 	t->xoff = xoff;
 	t->yoff = yoff;
 out:
@@ -603,12 +608,16 @@ out:
 		val *= t->scale;
 		if (theme_scalables[i].flags & TF_POSX)
 			val += t->xoff;
-  		if (theme_scalables[i].flags & TF_POSY)
+		if (theme_scalables[i].flags & TF_POSY)
 			val += t->yoff;
 		*(theme_scalables[i].val) = val;
 	}
 	t->w = w;
 	t->h = h;
+	if (t->scale_aware) {
+		t->scale = 1.0f;
+		t->xoff = t->yoff = 0;
+	}
 	return 0;
 }
 extern int parse_relative_path;
@@ -616,6 +625,8 @@ extern int parse_relative_path;
 char *theme_getvar(char *name)
 {
 	int i;
+	if (game_theme.scale_aware)
+		goto skip;
 	for (i = 0; theme_scalables[i].name; i ++) {
 		int val;
 		char buf[64];
@@ -625,6 +636,7 @@ char *theme_getvar(char *name)
 		sprintf(buf, "%d", val);
 		return strdup(buf);
 	}
+skip:
 	/* so, it is a string or like this */
 	for (i = 0; cmd_parser[i].cmd; i++) {
 		int *num;
