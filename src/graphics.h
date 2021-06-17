@@ -239,11 +239,12 @@ extern int	gfx_frame_anim(img_t img);
 extern void	gfx_del_timer(gtimer_t han);
 extern gtimer_t gfx_add_timer(int delay, int (*fn)(int, void*), void *aux);
 extern void	gfx_update_anim(img_t img, update_fn update);
-extern void 	gfx_dispose_anim(img_t p);
+extern void	gfx_dispose_anim(img_t p);
 extern unsigned long gfx_ticks(void);
 
-extern void gfx_set_cursor(img_t cur, int xc, int yc);
-extern int gfx_pending(void);
+extern void	gfx_set_cursor(img_t cur, int xc, int yc);
+extern int	gfx_pending(void);
+extern float	gfx_get_dpi(void);
 
 #endif
 

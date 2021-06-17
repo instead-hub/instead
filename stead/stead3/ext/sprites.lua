@@ -38,11 +38,13 @@ local instead = std.ref '@instead'
 -- luacheck: read globals instead_busy
 -- luacheck: read globals instead_sprite_pixels
 -- luacheck: read globals instead_screen_size
+-- luacheck: read globals instead_screen_dpi
 
 -- theme
 instead.theme_var = instead_theme_var
 instead.theme_name = instead_theme_name
 instead.screen_size = instead_screen_size
+instead.screen_dpi = instead_screen_dpi
 
 local theme = std.obj {
 	nam = '@theme';
