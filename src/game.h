@@ -56,6 +56,7 @@ extern int	resizable_sw;
 extern int	scale_sw;
 extern int	standalone_sw;
 extern char	*render_sw;
+extern int	dpi_sw;
 
 extern char	*appdir(void);
 

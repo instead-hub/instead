@@ -5955,6 +5955,8 @@ int gfx_set_icon(img_t ic)
 float gfx_get_dpi(void)
 {
 	float hdpi = 96.0f;
+	if (dpi_sw > 0)
+		return (float)dpi_sw;
 #if SDL_VERSION_ATLEAST(2,0,4)
 	if (SDL_GetDisplayDPI(SDL_CurrentDisplay, NULL, &hdpi, NULL))
 		hdpi = 96.0f;

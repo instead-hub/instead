@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2021 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -1437,6 +1437,7 @@ img_t	game_pict_scale(img_t img, int ww, int hh)
 	}
 	if (scale < 0)
 		scale = 0;
+	scale *= (game_theme.img_scale * game_theme.scale);
 	img2 = gfx_scale(img, scale, scale, SCALABLE_THEME_SMOOTH);
 	gfx_free_image(img);
 	return img2;

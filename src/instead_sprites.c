@@ -865,7 +865,8 @@ static int luaB_theme_var(lua_State *L) {
 		return 0;
 	if (!strcmp(var, "scr.w") ||
 		!strcmp(var, "scr.h") ||
-		!strcmp(var, "scr.scale_aware")) /* filter resolution */
+		!strcmp(var, "scr.scale_aware") ||
+		!strcmp(var, "scr.dpi")) /* filter resolution */
 		return 0;
 	if (!theme_setvar((char*)var, (char*)val)) {
 		if (strcmp(var, "win.scroll.mode")) /* let change scroll mode w/o theme reload */

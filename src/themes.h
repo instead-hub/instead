@@ -42,6 +42,10 @@ struct game_theme {
 	float	scale;
 	float	img_scale;
 	int	scale_aware;
+	struct dpi {
+		int min;
+		int max;
+	} dpi;
 	int	w;
 	int	h;
 	int	gfx_scalable;
@@ -222,5 +226,8 @@ extern int theme_relative;
 #define SCALABLE_FONT (!(game_theme.gfx_scalable & 4))
 #define SCALABLE_THEME (game_theme.gfx_scalable & 3)
 #define SCALABLE_THEME_SMOOTH (game_theme.gfx_scalable & 1)
+
+#define DEFAULT_DPI_MIN 96
+#define DEFAULT_DPI_MAX 96
 
 #endif
