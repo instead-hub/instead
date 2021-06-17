@@ -201,7 +201,7 @@ static int luaB_load_sprite(lua_State *L) {
 			img = gfx_dup(img);
 	} else {
 		img = gfx_load_image((char*)fname);
-		if (img)
+		if (img && game_theme.scale_aware != 2)
 			theme_img_scale(&img);
 	}
 	if (img)
