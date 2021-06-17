@@ -629,8 +629,7 @@ int game_menu_act(const char *a)
 #endif
 	} else if (!strcmp(a, "/hires")) {
 		opt_hires ^= 1;
-		if (opt_fs)
-			restart_needed = 1;
+		restart_needed = 1;
 		game_menu_box(1, game_menu_gen());
 	} else if (!strncmp(a, "/games ", 7)) {
 		if (!strcmp(a + 7, "prev")) {

@@ -225,6 +225,35 @@ static int out_color(const void *v, char **out)
 	return 0;
 }
 
+int parse_dpi(const char *v, void *data)
+{
+	struct dpi *dpi = (struct dpi*)data;
+	if (sscanf(v, "%d-%d", &dpi->min, &dpi->max) != 2) {
+		if (sscanf(v, "%d", &dpi->min) != 1) {
+			dpi->min = DEFAULT_DPI_MIN;
+			dpi->max = DEFAULT_DPI_MAX;
+			return -1;
+		}
+		dpi->max = dpi->min;
+	}
+	return 0;
+}
+
+static int out_dpi(const void *v, char **out)
+{
+	char *o;
+	struct dpi *dpi = (struct dpi *)v;
+	o = malloc(64);
+	if (!o)
+		return -1;
+	if (dpi->min == dpi->max)
+		sprintf(o, "%d", dpi->min);
+	else
+		sprintf(o, "%d-%d", dpi->min, dpi->max);
+	*out = o;
+	return 0;
+}
+
 static int parse_include(const char *v, void *data)
 {
 	int rc;
@@ -274,6 +303,7 @@ struct parser cmd_parser[] = {
 	{ "scr.w", parse_int, &game_theme.w, 0 }, /* must be 0 */
 	{ "scr.h", parse_int, &game_theme.h, 0 }, /* must be 1, see scale_aware logic */
 	{ "scr.scale_aware", parse_int, &game_theme.scale_aware, 0 },
+	{ "scr.dpi", parse_dpi, &game_theme.dpi, 0 },
 	{ "scr.gfx.scalable", parse_int, &game_theme.gfx_scalable, CHANGED_ALL },
 	{ "scr.gfx.scale", parse_float, &game_theme.img_scale, CHANGED_IMG },
 	{ "scr.col.bg", parse_color, &game_theme.bgcol, 0 },
@@ -406,6 +436,10 @@ static int theme_scalables_unscaled[sizeof(theme_scalables)/sizeof(theme_scalabl
 struct game_theme game_theme = {
 	.scale = 1.0f,
 	.scale_aware = 0,
+	.dpi = {
+		.min = DEFAULT_DPI_MIN,
+		.max = DEFAULT_DPI_MAX,
+	},
 	.img_scale = 1.0f,
 	.w = 800,
 	.h = 480,
@@ -556,6 +590,26 @@ static  int game_theme_scale(int w, int h)
 	int xoff, yoff;
 	struct game_theme *t = &game_theme;
 
+	if ((w < 0 || h < 0) && opt_hires) {
+		int ww = 0, hh = 0;
+		float dpi = gfx_get_dpi();
+		if (dpi > game_theme.dpi.max && game_theme.dpi.max > 0)
+			dpi = dpi / (float)game_theme.dpi.max;
+		else if (dpi < game_theme.dpi.min && game_theme.dpi.min > 0)
+			dpi = dpi / (float)game_theme.dpi.min;
+		else
+			dpi = 1.0f;
+		if (dpi != 1.0f && !gfx_get_max_mode(&ww, &hh, MODE_ANY)) {
+			if (t->w * dpi <= ww && t->h * dpi <= hh) {
+				w = t->w * dpi;
+				h = t->h * dpi;
+				printf("DPI scale: %f\n", dpi);
+			} else {
+				w = ww;
+				h = hh;
+			}
+		}
+	}
 	if (w < 0 || h < 0 || (w == t->w && h == t->h)) {
 		t->scale = 1.0f;
 		t->xoff = 0;
@@ -675,6 +729,10 @@ char *theme_getvar(char *name)
 			return strdup(buf);
 		} else if (cmd_parser[i].fn == parse_color) {
 			if (out_color(cmd_parser[i].p, &s))
+				return NULL;
+			return s;
+		} else if (cmd_parser[i].fn == parse_dpi) {
+			if (out_dpi(cmd_parser[i].p, &s))
 				return NULL;
 			return s;
 		} else

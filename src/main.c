@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2020 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2021 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -67,6 +67,7 @@ int scale_sw = 1;
 int standalone_sw = 0;
 int nocursor_sw = 0;
 int glhack_sw = 0;
+int dpi_sw = 0;
 
 static int opt_index = 1;
 
@@ -384,6 +385,11 @@ int instead_main(int argc, char *argv[])
 			vsync_sw = 1;
 		else if (!strcmp(argv[i], "-nosound"))
 			nosound_sw = 1;
+		else if (!strcmp(argv[i], "-dpi"))
+			if ((i + 1) < argc)
+				dpi_sw = atoi(argv[++i]);
+			else
+				dpi_sw = 96;
 		else if (!strcmp(argv[i], "-fullscreen"))
 			fullscreen_sw = 1;
 		else if (!strcmp(argv[i], "-hires"))
@@ -840,6 +846,7 @@ static struct parser profile_parser[] = {
 	{ "fontscale", parse_string, &fsize_sw, 0 },
 	{ "renderer", parse_string, &render_sw, 0 },
 	{ "nocursor", parse_int, &nocursor_sw, 0 },
+	{ "dpi", parse_int, &dpi_sw, 0 },
 	{ NULL, NULL, NULL, 0 },
 };
 
