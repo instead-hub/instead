@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2020 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2021 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -5950,4 +5950,14 @@ int gfx_set_icon(img_t ic)
 /* not works for SDL < 2 */
 #endif
 	return 0;
+}
+
+float gfx_get_dpi(void)
+{
+	float hdpi = 96.0f;
+#if SDL_VERSION_ATLEAST(2,0,4)
+	if (SDL_GetDisplayDPI(SDL_CurrentDisplay, NULL, &hdpi, NULL))
+		hdpi = 96.0f;
+#endif
+	return hdpi;
 }

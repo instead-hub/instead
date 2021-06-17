@@ -2516,6 +2516,11 @@ static int luaB_screen_size(lua_State *L) {
 	return 2;
 }
 
+static int luaB_screen_dpi(lua_State *L) {
+	lua_pushnumber(L, gfx_get_dpi());
+	return 1;
+}
+
 static const luaL_Reg sprites_funcs[] = {
 	{"instead_font_load", luaB_load_font},
 	{"instead_font_free", luaB_free_font},
@@ -2552,6 +2557,7 @@ static const luaL_Reg sprites_funcs[] = {
 	{"instead_noise3", luaB_noise3},
 	{"instead_noise4", luaB_noise4},
 	{"instead_screen_size", luaB_screen_size},
+	{"instead_screen_dpi", luaB_screen_dpi},
 	{"instead_render_callback", luaB_after_callback},
 	{NULL, NULL}
 };
