@@ -1407,8 +1407,8 @@ img_t	game_pict_scale(img_t img, int ww, int hh)
 		return img; /* do not scale sprites! */
 	}
 
-	if (game_theme.img_scale > 1.0f)
-		scale = game_theme.img_scale;
+	if (game_theme.img_scale * game_theme.scale > 1.0f)
+		scale = game_theme.img_scale * game_theme.scale;
 
 	w = gfx_img_w(img) * scale;
 	h = gfx_img_h(img) * scale;

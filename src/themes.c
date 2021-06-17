@@ -271,8 +271,8 @@ static int theme_parse_full_path(const char *v, void *data)
 }
 
 struct parser cmd_parser[] = {
-	{ "scr.w", parse_int, &game_theme.w, 0 },
-	{ "scr.h", parse_int, &game_theme.h, 0 },
+	{ "scr.w", parse_int, &game_theme.w, 0 }, /* must be 0 */
+	{ "scr.h", parse_int, &game_theme.h, 0 }, /* must be 1, see scale_aware logic */
 	{ "scr.scale_aware", parse_int, &game_theme.scale_aware, 0 },
 	{ "scr.gfx.scalable", parse_int, &game_theme.gfx_scalable, CHANGED_ALL },
 	{ "scr.gfx.scale", parse_float, &game_theme.img_scale, CHANGED_IMG },
@@ -534,7 +534,7 @@ int game_theme_free(void)
 int theme_img_scale(img_t *p)
 {
 	img_t pic;
-	float v = game_theme.img_scale;
+	float v = game_theme.scale * game_theme.img_scale;
 	if (!p || !*p || v == 1.0f)
 		return 0;
 
@@ -596,7 +596,6 @@ static  int game_theme_scale(int w, int h)
 		yoff = 0;
 
 	t->scale = v;
-	t->img_scale = v;
 	t->xoff = xoff;
 	t->yoff = yoff;
 out:
@@ -615,8 +614,15 @@ out:
 	t->w = w;
 	t->h = h;
 	if (t->scale_aware) {
-		t->scale = 1.0f;
+		if (t->scale_aware == 2) {
+			t->img_scale *= t->scale;
+			t->scale = 1.0f;
+		}
 		t->xoff = t->yoff = 0;
+		theme_scalables_unscaled[0] = w / t->scale;
+		theme_scalables_unscaled[1] = h / t->scale;
+		for (i = 2; theme_scalables[i].name; i++)
+			theme_scalables_unscaled[i] = *(theme_scalables[i].val) / t->scale;
 	}
 	return 0;
 }
@@ -625,8 +631,6 @@ extern int parse_relative_path;
 char *theme_getvar(char *name)
 {
 	int i;
-	if (game_theme.scale_aware)
-		goto skip;
 	for (i = 0; theme_scalables[i].name; i ++) {
 		int val;
 		char buf[64];
@@ -636,7 +640,6 @@ char *theme_getvar(char *name)
 		sprintf(buf, "%d", val);
 		return strdup(buf);
 	}
-skip:
 	/* so, it is a string or like this */
 	for (i = 0; cmd_parser[i].cmd; i++) {
 		int *num;
