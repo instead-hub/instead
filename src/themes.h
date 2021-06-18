@@ -195,9 +195,10 @@ extern int 	game_theme_free(void);
 extern int	game_theme_optimize(void);
 extern int	game_theme_update(void);
 
-extern int 	theme_load(const char *name);
-extern int 	theme_load_idf(idf_t idf, const char *name);
-extern int 	theme_img_scale(img_t *p);
+extern int	theme_load(const char *name);
+extern int	theme_load_idf(idf_t idf, const char *name);
+extern int	theme_img_scale(img_t *p);
+extern int	theme_gfx_scale(img_t *p, float scale);
 extern int	theme_scalable_mode(int w, int h);
 
 extern int theme_relative;

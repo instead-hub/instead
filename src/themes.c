@@ -567,8 +567,13 @@ int game_theme_free(void)
 
 int theme_img_scale(img_t *p)
 {
+	return theme_gfx_scale(p, game_theme.img_scale);
+}
+
+int theme_gfx_scale(img_t *p, float scale)
+{
 	img_t pic;
-	float v = game_theme.scale * game_theme.img_scale;
+	float v = game_theme.scale * scale;
 	if (!p || !*p || v == 1.0f)
 		return 0;
 
