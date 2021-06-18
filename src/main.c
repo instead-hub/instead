@@ -344,6 +344,7 @@ int instead_main(int argc, char *argv[])
 	int err = 0;
 	int i;
 #ifdef _WIN32
+	char *exe_path;
 	HINSTANCE lib = LoadLibrary("user32.dll");
 	int (*SetProcessDPIAware)() = (void*) GetProcAddress(lib, "SetProcessDPIAware");
 	if (SetProcessDPIAware)
@@ -369,7 +370,14 @@ int instead_main(int argc, char *argv[])
 	extern char s60_data[];
 	strcpy(game_cwd, s60_data);
 #elif defined(_WIN32)
-	strcpy(game_cwd, dirname(argv[0]));
+	exe_path = malloc(PATH_MAX + 1);
+	if (exe_path) {
+		i = GetModuleFileName(NULL, exe_path, PATH_MAX);
+		exe_path[i] = 0;
+		strcpy(game_cwd, dirname(exe_path));
+		free(exe_path);
+	} else /* Sorry, kernel mode programming practice. Useless here. */
+		strcpy(game_cwd, dirname(argv[0]));
 #else
 	if (!getcwd(game_cwd, sizeof(game_cwd)))
 		fprintf(stderr,"Warning: can not get current dir\n.");
