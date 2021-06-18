@@ -178,6 +178,7 @@ void wince_init(char *path)
 static int run_game(const char *path)
 {
 	char *b, *d;
+	struct stat path_stat;
 	static char dir[PATH_MAX + 1];
 	static char base[PATH_MAX + 1];
 	if (!path)
@@ -186,11 +187,18 @@ static int run_game(const char *path)
 		return -1;
 	if (strlen(path) >= PATH_MAX)
 		return -1;
-	strcpy(dir, path);
+	strcpy(dir, getrealpath(path, base)); /* always get full path */
 	unix_path(dir);
-	strcpy(base, path);
-	unix_path(base);
-	d = dirname(dir);
+	stat(dir, &path_stat);
+	if (S_ISREG(path_stat.st_mode)) {
+		d = dirname(dir);
+		strcpy(base, d);
+		d = dirname(d);
+	} else {
+		d = dirname(dir);
+		strcpy(base, path);
+		unix_path(base);
+	}
 	b = basename(base);
 	if (!is_game(d, b)) {
 		fprintf(stderr, "%s/%s is not a game path.\n", d, b);
