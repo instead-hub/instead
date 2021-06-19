@@ -193,10 +193,11 @@ static int luaB_load_sprite(lua_State *L) {
 	const char *key;
 	char sname[sizeof(unsigned long) * 2 + 16];
 	struct lua_pixels *pixels = lua_touserdata(L, 1);
-	const char *desc = luaL_optstring(L, 2, NULL);
+	const char *desc = NULL;
 	const char *fname = NULL;
 	char pixels_name[32];
-
+	if (lua_isstring(L, 2))
+		desc = luaL_optstring(L, 2, NULL);
 	if (!pixels)
 		fname = luaL_optstring(L, 1, NULL);
 	else {
