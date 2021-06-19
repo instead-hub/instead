@@ -524,8 +524,12 @@ function pxl:dup()
 	return self:new(p)
 end
 
-function pxl:sprite()
-	return sprite.new(self)
+function pxl:sprite(...)
+	return sprite.new(self, false, ...)
+end
+
+function pxl:tosprite(...)
+	return sprite.new(self, true, ...)
 end
 
 function pxl:draw_spr(fx, fy, fw, fh, d, x, y, alpha)

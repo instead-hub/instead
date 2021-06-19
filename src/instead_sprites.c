@@ -174,7 +174,20 @@ static int luaB_free_sprites(lua_State *L) {
 	return 0;
 }
 
+#define PIXELS_MAGIC 0x1980
+struct lua_pixels {
+	int type;
+	int w;
+	int h;
+	float scale;
+	size_t size;
+	img_t img;
+	int dirty;
+	int direct;
+};
+
 static int luaB_load_sprite(lua_State *L) {
+	int convert = 0;
 	img_t img = NULL;
 	_spr_t *sp;
 	const char *key;
@@ -196,9 +209,19 @@ static int luaB_load_sprite(lua_State *L) {
 		return 0;
 
 	if (pixels) {
-		img = pixels_img(pixels);
-		if (img)
-			img = gfx_dup(img);
+		if (lua_isboolean(L, 2)) {
+			convert = lua_toboolean(L, 2);
+			desc = luaL_optstring(L, 3, NULL);
+		}
+		if (convert) { /* slow path */
+			img = gfx_new_from(pixels->w, pixels->h, (unsigned char*)(pixels + 1));
+			if (img)
+				theme_gfx_scale(&img, pixels->scale);
+		} else {
+			img = pixels_img(pixels);
+			if (img)
+				img = gfx_dup(img);
+		}
 	} else {
 		img = gfx_load_image((char*)fname);
 		if (img)
@@ -1039,18 +1062,6 @@ static int luaB_get_themespath(lua_State *L) {
 	lua_pushstring(L, themes_path);
 	return 1;
 }
-#define PIXELS_MAGIC 0x1980
-struct lua_pixels {
-	int type;
-	int w;
-	int h;
-	float scale;
-	size_t size;
-	img_t img;
-	int dirty;
-	int direct;
-};
-
 static int pixels_size(lua_State *L) {
 	struct lua_pixels *hdr = (struct lua_pixels*)lua_touserdata(L, 1);
 	if (!hdr || hdr->type != PIXELS_MAGIC)
