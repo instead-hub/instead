@@ -1791,7 +1791,7 @@ static int pixels_fill(lua_State *L) {
 		b = luaL_optnumber(L, 8, 0);
 		a = luaL_optnumber(L, 9, 255);
 	}
-	_fill(src, x, y, w, h, r, g, b, a, PXL_BLEND_BLEND);
+	_fill(src, x, y, w, h, r, g, b, a, (a == 255)?PXL_BLEND_COPY:PXL_BLEND_BLEND);
 	return 0;
 }
 
