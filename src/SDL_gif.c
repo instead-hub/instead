@@ -741,7 +741,7 @@ ReadImage(SDL_RWops * src, int len, int height, int cmapSize,
 }
 
 /* Load a GIF type animation from an SDL datasource */
-static Animation_t *IMG_LoadGIFAnimation_RW(SDL_RWops *src)
+static Animation_t *LoadGIFAnimation_RW(SDL_RWops *src)
 {
     GIF_Anim_t *internal = IMG_LoadGIF_RW_Internal(src, SDL_TRUE);
     if (internal) {
@@ -782,7 +782,7 @@ Animation_t *GIF_LoadAnim(const char* file)
 	SDL_RWops* src = RWFromIdf(instead_idf(), file);
 	if (!src)
 		return NULL;
-	anim = IMG_LoadGIFAnimation_RW(src);
+	anim = LoadGIFAnimation_RW(src);
 	SDL_RWclose(src);
 	if (!anim)
 		return NULL;
