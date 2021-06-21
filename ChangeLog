@@ -1,3 +1,9 @@
+3.3.5
+
+ * fix: build with latest SDL2_image.
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Mon, 21 Jun 2021 12:09:00 +0300
+
 3.3.4
 
  * fix: regression with direct mode and theme.
