@@ -8,7 +8,7 @@
 &EN
 
 ; standard SIS file header
-#{"INSTEAD"},(0xA0020500),3,3,4
+#{"INSTEAD"},(0xA0020500),3,3,5
 
 ;Localised Vendor name
 %{"Peter Kosyh"}
