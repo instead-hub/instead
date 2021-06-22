@@ -605,14 +605,15 @@ static  int game_theme_scale(int w, int h)
 		else
 			dpi = 1.0f;
 		if (dpi != 1.0f && !gfx_get_max_mode(&ww, &hh, MODE_ANY)) {
-			if (t->w * dpi <= ww && t->h * dpi <= hh) {
-				w = t->w * dpi;
-				h = t->h * dpi;
-				printf("DPI scale: %f\n", dpi);
-			} else {
-				w = ww;
-				h = hh;
-			}
+			w = t->w * dpi; h = t->h * dpi;
+			xs = ys = dpi;
+			if (w > ww)
+				xs = (float)ww / (float)t->w;
+			if (h > hh)
+				ys = (float)hh / (float)t->h;
+			v = (xs < ys)?xs:ys;
+			w = t->w * v; h = t->h * v;
+			printf("DPI scale: %f\n", v);
 		}
 	}
 	if (w < 0 || h < 0 || (w == t->w && h == t->h)) {
