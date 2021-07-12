@@ -1034,7 +1034,6 @@ int game_use_theme(void)
 	game_theme_changed = 0;
 	game_own_theme = 0;
 
-	game_theme.changed = CHANGED_ALL;
 	memset(objs, 0, sizeof(struct el) * el_max);
 
 	if (game_default_theme()) {
