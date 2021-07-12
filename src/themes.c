@@ -433,66 +433,7 @@ static theme_scalable_t theme_scalables[] = {
 };
 static int theme_scalables_unscaled[sizeof(theme_scalables)/sizeof(theme_scalable_t)];
 
-struct game_theme game_theme = {
-	.scale = 1.0f,
-	.scale_aware = 0,
-	.dpi = {
-		.min = DEFAULT_DPI_MIN,
-		.max = DEFAULT_DPI_MAX,
-	},
-	.img_scale = 1.0f,
-	.w = 800,
-	.h = 480,
-	.gfx_scalable = 1,
-	.bg_name = NULL,
-	.bg = NULL,
-	.use_name = NULL,
-	.cursor_name = NULL,
-	.icon = NULL,
-	.icon_name = NULL,
-	.use = NULL,
-	.cursor = NULL,
-	.cur_x = 0,
-	.cur_y = 0,
-	.font_name = NULL,
-	.font_height = 1.0f,
-	.font = NULL,
-	.a_up_name = NULL,
-	.a_down_name = NULL,
-	.a_up = NULL,
-	.a_down = NULL,
-	.a_up_x = -1,
-	.a_up_y = -1,
-	.a_down_x = -1,
-	.a_down_y = -1,
-	.inv_font_name = NULL,
-	.inv_font = NULL,
-	.inv_font_height = 1.0f,
-	.inv_a_up_name = NULL,
-	.inv_a_down_name = NULL,
-	.inv_a_up_x = -1,
-	.inv_a_up_y = -1,
-	.inv_a_down_x = -1,
-	.inv_a_down_y = -1,
-	.inv_a_up = NULL,
-	.inv_a_down = NULL,
-	.menu_font_name = NULL,
-	.menu_font_height = 1.0f,
-	.menu_font = NULL,
-	.menu_button_name = NULL,
-	.menu_button = NULL,
-	.win_align = ALIGN_JUSTIFY,
-	.win_scroll_mode = 2,
-	.gfx_mode = GFX_MODE_EMBEDDED,
-	.inv_mode = INV_MODE_VERT | INV_ALIGN_SET(ALIGN_LEFT),
-	.ways_mode = ALIGN_TOP,
-	.click_name = NULL,
-	.click = NULL,
-	.xoff = 0,
-	.yoff = 0,
-	.changed = 0,
-};
-struct	game_theme game_theme;
+struct game_theme game_theme;
 
 static void free_theme_strings(void)
 {
@@ -1472,6 +1413,8 @@ int game_theme_select(const char *name)
 int game_default_theme(void)
 {
 	int rc;
+	memset(&game_theme, 0, sizeof(game_theme));
+	game_theme.changed = CHANGED_ALL;
 	rc = game_theme_load(DEFAULT_THEME, THEME_GLOBAL);
 	if (rc)
 		return rc;
