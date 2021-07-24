@@ -4221,6 +4221,9 @@ Parameters can take values:
   version 2.2.0 available optional [4/5/6]: 4 - fully scalable (non-scalable
   fonts), 5 - scalable, with non-scalable fonts, 6 - scaled without smoothing,
   with not a scalable font
+- scr.scale_aware = [0|1|2] (adaptive themes support: 0 - virtual resolution, 1 - real proportions, 2 - real resolution)
+- scr.dpi = [dpi|dpi1-dpi2] (theme dpi, 96 by default)
+- scr.gfx.scale = scale (image scaling, 1.0 by default)
 - scr.gfx.bg = path to the background image (string)
 - scr.gfx.cursor.x = the x coordinate of the cursor center (number)
 - scr.gfx.cursor.y = the y coordinate of the cursor center (number)
