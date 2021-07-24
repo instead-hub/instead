@@ -1,3 +1,23 @@
+3.4.0
+
+ * fix: pxl:fill_triangle cw order normalization;
+ * fix: build with new SDL_image;
+ * new: dpi awarness for win;
+ * new: high dpi ready (scale by dpi/96 when HQ option is on);
+ * new: -dpi <dpi> parameter;
+ * new: instead.screen_dpi();
+ * new: theme scr.gfx.scale;
+ * new: theme scr.dpi;
+ * new: theme scr.scale_aware (1|2) - adaptive themes support;
+ * new: run game from command line via path to main?.lua file;
+ * enh: better scene pic scaling;
+ * enh: SDL 2.0.14 for win build;
+ * enh: use GetModuleName to detect exe path (win build);
+ * new: pxl:tosprite (convert pxl to sprite with scaling);
+ * enh: pxl:fill speedup when alpha is 255.
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 24 Jul 2021 11:30:00 +0300
+
 3.3.4
 
  * fix: regression with direct mode and theme.
