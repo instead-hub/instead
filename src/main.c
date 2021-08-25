@@ -355,6 +355,9 @@ int instead_main(int argc, char *argv[])
 #endif
 #ifndef S60
 	putenv("SDL_MOUSE_RELATIVE=0"); /* test this! */
+#if GTK_MAJOR_VERSION == 4 /* fix crash when SDL2 uses gl */
+	putenv("GDK_DEBUG=gl-disable");
+#endif
 #endif
 
 #ifdef _WIN32_WCE
@@ -799,7 +802,11 @@ int instead_main(int argc, char *argv[])
 	snd_init(opt_hz);
 	snd_volume_mus(opt_vol);
 #ifdef _USE_GTK
+#if GTK_MAJOR_VERSION == 4
+	gtk_init();
+#else
 	gtk_init(&argc, &argv); /* must be called AFTER SDL_Init when using SDL2 */
+#endif
 #endif
 	if (gfx_video_init() || input_init())
 		return -1;
