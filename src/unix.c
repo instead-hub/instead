@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2017 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2021 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -111,8 +111,6 @@ char *open_file_dialog(void)
 	return NULL;
 #else
 	gulong response_handler;
-	char *filename = NULL;
-
 	static int old_dir_set = 0;
 	static char file[PATH_MAX];
 	static char old_dir[PATH_MAX];
@@ -144,19 +142,30 @@ char *open_file_dialog(void)
 	file[0] = 0;
 	file_dialog = gtk_file_chooser_dialog_new (BROWSE_MENU, 
 			NULL, GTK_FILE_CHOOSER_ACTION_OPEN,
-#if GTK_MAJOR_VERSION == 3
+#if GTK_MAJOR_VERSION == 4
+			g_dgettext("gtk40", "_Cancel"), GTK_RESPONSE_CANCEL,
+			g_dgettext("gtk40", "_Open"),   GTK_RESPONSE_ACCEPT, NULL);
+#elif GTK_MAJOR_VERSION == 3
 			g_dgettext("gtk30", "_Cancel"), GTK_RESPONSE_CANCEL,
 			g_dgettext("gtk30", "_Open"),   GTK_RESPONSE_ACCEPT, NULL);
 #else
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			GTK_STOCK_OPEN,   GTK_RESPONSE_ACCEPT, NULL);
 #endif
-	if (old_dir_set)
+	if (old_dir_set) {
+#if GTK_MAJOR_VERSION == 4
+		GFile *f = g_file_new_for_path(old_dir);
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(file_dialog),
+			f, NULL);
+		g_object_unref(f);
+#else
 		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(file_dialog),
 			old_dir);
-
+#endif
+	}
+#if GTK_MAJOR_VERSION != 4
 	gtk_window_set_icon(GTK_WINDOW(file_dialog), create_pixbuf(ICON_PATH"/sdl_instead.png"));
-
+#endif
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_dialog),
 		file_filter_all);
 
@@ -179,15 +188,28 @@ char *open_file_dialog(void)
 	while (gtk_response == -1) {
 		struct inp_event ev;
 		memset(&ev, 0, sizeof(struct inp_event));
-		while (gtk_events_pending()) {
-			gtk_main_iteration();
+		while (g_main_context_pending(NULL)) {
+			g_main_context_iteration(NULL, FALSE);
 			while ((input(&ev, 0)) == AGAIN);
 		} 
 		while ((input(&ev, 0)) == AGAIN);
 		usleep(HZ*100);
 	}
 	if (gtk_response == GTK_RESPONSE_ACCEPT) {
-		filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (file_dialog));
+#if GTK_MAJOR_VERSION == 4
+		GFile *f = gtk_file_chooser_get_file(GTK_FILE_CHOOSER (file_dialog));
+		if (f) {
+			strcpy(file, g_file_get_path(f));
+			g_object_unref(f);
+		}
+		f = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(file_dialog));
+		if (f) {
+			strcpy(old_dir, g_file_get_path(f));
+			g_object_unref(f);
+			old_dir_set = 1;
+		}
+#else
+		char *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (file_dialog));
 		if (filename) {
 			strcpy(file, filename);
 			g_free (filename);
@@ -198,14 +220,19 @@ char *open_file_dialog(void)
 			g_free (filename);
 			old_dir_set = 1;
 		}
+#endif
 	}
 
 	if (gtk_response != GTK_RESPONSE_DELETE_EVENT) {
 		g_signal_handler_disconnect (GTK_WIDGET(file_dialog), response_handler);
+#if GTK_MAJOR_VERSION == 4
+		gtk_window_destroy(GTK_WINDOW(file_dialog));
+#else
 		gtk_widget_destroy(GTK_WIDGET(file_dialog));
+#endif
 	}
-	while(gtk_events_pending())
-		gtk_main_iteration();
+	while (g_main_context_pending(NULL))
+		g_main_context_iteration(NULL, FALSE);
 	return (file[0])?file:NULL;
 #endif
 }
