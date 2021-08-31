@@ -2,7 +2,7 @@
 # build INSTEAD with emscripten
 
 set -e
-export WORKSPACE="" #"/home/peter/Devel/emsdk-portable/env"
+# export WORKSPACE="/home/peter/Devel/emsdk/env"
 
 if [ ! -f ./emsdk_env.sh ]; then
 	echo "Run this script in emsdk directory"
@@ -36,6 +36,9 @@ export LDSHARED="$LD"
 export RANLIB="emranlib"
 export AR="emar"
 export CC_BUILD=cc
+
+deps()
+{
 
 # Lua
 cd $WORKSPACE
@@ -123,21 +126,18 @@ sed -i -e 's/noinst_PROGRAMS = showfont glfont//' Makefile.am
 ./autogen.sh
 emconfigure ./configure --build=amd64-unknown-linux --host=asmjs-unknown-linux --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -I$WORKSPACE/include/SDL2 -I$WORKSPACE/include/freetype2" LDFLAGS="-L$WORKSPACE/lib" --disable-sdltest --disable-shared
 emmake make install
-
 # SDL2_mixer
 cd $WORKSPACE
-rm -rf SDL_mixer
-[ -d SDL_mixer/.hg ] || hg clone https://hg.libsdl.org/SDL_mixer
-cd SDL_mixer
-hg pull -u
-hg up -C
-hg --config "extensions.purge=" purge --all
+rm -rf SDL_mixer-2.0.2
+[ -f SDL2_mixer-2.0.2.tar.gz ] || wget -nv https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-2.0.2.tar.gz
+tar xf SDL2_mixer-2.0.2.tar.gz && cd SDL2_mixer-2.0.2
 
 cat configure.in | sed -e 's/AC_CHECK_LIB(\[modplug\], /AC_CHECK_LIB(\[modplug\], \[ModPlug_Load\], /' -e 's/have_libmikmod=no/have_libmikmod=yes/g' > configure.in.new
 mv -f configure.in.new configure.in
 ./autogen.sh
 
 export have_ogg_lib=yes
+export have_ogg_h=yes
 export have_libmikmod=yes
 emconfigure ./configure --host=asmjs-unknown-emscripten --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -I$WORKSPACE/include/SDL2 -s USE_VORBIS=1 -s USE_OGG=1" LDFLAGS="-L$WORKSPACE/lib" --disable-sdltest --disable-shared \
    --disable-music-mp3-mad-gpl --enable-music-ogg --disable-music-ogg-shared --enable-music-mod-mikmod --disable-music-mod-mikmod-shared \
@@ -146,6 +146,7 @@ emconfigure ./configure --host=asmjs-unknown-emscripten --prefix=$WORKSPACE CPPF
 
 cat Makefile | sed -e 's| \$(objects)/playwave\$(EXE) \$(objects)/playmus\$(EXE)||g' > Makefile.new
 mv -f Makefile.new Makefile
+emmake make
 emmake make install
 
 # jpeg lib
@@ -167,6 +168,10 @@ export ac_cv_lib_jpeg_jpeg_CreateDecompress=yes
 export ac_cv_lib_png_png_create_read_struct=yes
 emconfigure ./configure --host=asmjs-unknown-linux --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -I$WORKSPACE/include/SDL2 -s USE_LIBPNG=1" LDFLAGS="-L$WORKSPACE/lib -lpng -ljpeg" --disable-sdltest --disable-shared --enable-static --enable-png --disable-png-shared --enable-jpg --disable-jpg-shared
 emmake make install
+
+}
+
+deps
 
 # INSTEAD
 echo "INSTEAD"
