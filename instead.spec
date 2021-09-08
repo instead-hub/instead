@@ -1,6 +1,6 @@
 Summary:	simple text adventures/visual novels engine and game
 Name:		instead
-Version:	3.4.0
+Version:	3.4.1
 Release:	1%{?dist}
 License:	MIT
 URL:		http://instead.sourceforge.net
