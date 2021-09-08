@@ -14,9 +14,10 @@
  * enh: SDL 2.0.14 for win build;
  * enh: use GetModuleName to detect exe path (win build);
  * new: pxl:tosprite (convert pxl to sprite with scaling);
- * enh: pxl:fill speedup when alpha is 255.
+ * enh: pxl:fill speedup when alpha is 255;
+ * new: experimental gtk4.0 support.
 
- -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 24 Jul 2021 11:30:00 +0300
+ -- Peter Kosyh <p.kosyh@gmail.com>  Tue, 31 Sep 2021 12:38:00 +0300
 
 3.3.4
 
