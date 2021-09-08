@@ -1,3 +1,9 @@
+3.4.1
+
+ * fix: game pic scaling on dpi < 96.
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Wed, 08 Sep 2021 21:33:00 +0300
+
 3.4.0
 
  * fix: pxl:fill_triangle cw order normalization;
