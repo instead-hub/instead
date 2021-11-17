@@ -5043,6 +5043,9 @@ end
 Using this technique, you can apply to the background image statuses,
 controls, or just change the substrate.
 
+Take note that in this case `theme.get('scr.gfx.bg')` call returns a string similar to `spr:xxxxxxxxxxx`, and not a sprite object.
+If you want to change background dinamically, use `sprite.scr()` or multiple calls to `theme.set('scr.gfx.bg', spr)` with new sprites.
+
 #### Pixels
 
 The sprite module also supports work with pixel graphics. You can create
