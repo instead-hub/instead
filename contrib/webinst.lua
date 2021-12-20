@@ -1,9 +1,9 @@
--- 
+--
 -- this is the network game installer
 -- Usage: instead -lua webinst.lua [<game>]
 -- You must have installed luasocket module.
 --
-local http = require("socket.http")
+local https = require("ssl.https")
 local ltn12 = require("ltn12")
 
 INSTEAD = instead_exepath()
@@ -276,7 +276,7 @@ local games = {}
 
 function games_feed(url)
 	local xml = ''
-	http.request { 
+	https.request {
 		url = url, 
 		sink = function(chunk, err)
 			if not chunk then
@@ -381,8 +381,8 @@ function games_list()
 	end
 end
 
-games_feed("http://instead-games.ru/xml.php")
--- games_feed("http://instead-games.ru/xml2.php")
+games_feed("https://instead-games.ru/xml.php")
+-- games_feed("https://instead-games.ru/xml2.php")
 
 local a = { ... }
 
