@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2021 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2022 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -814,7 +814,7 @@ static int game_theme_update_data(void)
 	}
 
 	if (t->menu_font_name && (t->changed & CHANGED_MFONT)) {
-		int m = FONT_SZ(t->inv_font_size);
+		int m = FONT_SZ(t->menu_font_size);
 		if (MAX_MENU_LINES * m * game_theme.menu_font_height > game_theme.h)
 			m = game_theme.h / MAX_MENU_LINES / game_theme.menu_font_height;
 		else if (m < t->menu_font_size)
