@@ -545,7 +545,7 @@ static  int game_theme_scale(int w, int h)
 			dpi = dpi / (float)game_theme.dpi.min;
 		else
 			dpi = 1.0f;
-		if (dpi != 1.0f && !gfx_get_max_mode(&ww, &hh, MODE_ANY)) {
+		if ((SCALABLE_THEME || dpi > 1.0f) && !gfx_get_max_mode(&ww, &hh, MODE_ANY)) {
 			w = t->w * dpi; h = t->h * dpi;
 			xs = ys = dpi;
 			if (w > ww)
