@@ -77,7 +77,7 @@ local function get_bool(o, nam)
 		return o[nam]
 	end
 	if type(o[nam]) == 'function' then
-		return o:nam()
+		return o[nam](o)
 	end
 	return nil
 end
