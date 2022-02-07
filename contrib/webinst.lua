@@ -348,7 +348,7 @@ function game_download(name)
 	end
 	io.stderr:write("Download: "..tostring(basename(url)).." [     ]")
 	local sz = 0
-	http.request { 
+	https.request {
 		url = url, 
 		sink = function(chunk, err)
 			if not chunk then
