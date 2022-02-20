@@ -1,4 +1,4 @@
-SET(GAMES tutorial3)
+SET(GAMES tutorial)
 
 IF(SYSTEMWIDE)
 	FOREACH(GAME ${GAMES})
