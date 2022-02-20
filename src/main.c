@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2021 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2022 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -190,7 +190,9 @@ static int run_game(const char *path)
 	strcpy(dir, getrealpath(path, base)); /* always get full path */
 	unix_path(dir);
 	stat(dir, &path_stat);
-	if (S_ISREG(path_stat.st_mode)) {
+	if (S_ISREG(path_stat.st_mode) &&
+		(!strlowcmp(basename(dir), INSTEAD_MAIN) ||
+		!strlowcmp(basename(dir), INSTEAD_MAIN3))) {
 		d = dirname(dir);
 		strcpy(base, d);
 		d = dirname(d);
