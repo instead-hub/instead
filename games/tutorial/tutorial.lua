@@ -261,7 +261,9 @@ obj {
 				pt = 'Você escreve o seu nome no papel.',
 				uk = 'Ви пишите на аркуші своє ім`я.',
 			})
+			return
 		end
+		return false
 	end
 }
 
@@ -728,7 +730,9 @@ obj {
 				pt = 'Você escreve várias letras na escrivaninha.',
 				uk = 'Ви пишете на столешні декілька літер.',
 			})
+			return
 		end
+		return false
 	end;
 }:with { 'apple' }
 
