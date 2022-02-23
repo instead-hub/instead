@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2021 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2022 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -3193,6 +3193,16 @@ static int game_input(int down, const char *key, int x, int y, int mb)
 		k = (key) ? key:"";
 		args[1].val = (char*)k; args[1].type = INSTEAD_STR;
 		args[2].val = NULL;
+	} else if (mb == EV_CODE_WHEEL) {
+		if (!game_grab_events)
+			return -1;
+
+		args[0].val = "wheel"; args[0].type = INSTEAD_STR;
+		snprintf(tx, sizeof(tx), "%d", x);
+		snprintf(ty, sizeof(ty), "%d", y);
+		args[1].val = tx; args[1].type = INSTEAD_NUM;
+		args[2].val = ty; args[2].type = INSTEAD_NUM;
+		args[3].val = NULL;
 	} else {
 		const char *k;
 		int px = -1;
@@ -3349,6 +3359,12 @@ static int game_input_events(struct inp_event *ev)
 			return 1;
 	} else if (ev->type == MOUSE_DOWN || ev->type == MOUSE_UP) {
 		if (!game_input((ev->type == MOUSE_DOWN), "mouse", ev->x, ev->y, ev->code))
+			return 1;
+	} else if (ev->type == MOUSE_WHEEL_DOWN) {
+		if (!game_input(1, "wheel", 0, ev->count, EV_CODE_WHEEL))
+			return 1;
+	} else if (ev->type == MOUSE_WHEEL_UP) {
+		if (!game_input(1, "wheel", 0, -ev->count, EV_CODE_WHEEL))
 			return 1;
 	} else if (ev->type == KEY_TEXT) {
 		if (!game_input(1, ev->sym, -1, -1, EV_CODE_TEXT))

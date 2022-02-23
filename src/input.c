@@ -598,7 +598,7 @@ int input(struct inp_event *inp, int wait)
 		break;
 #if SDL_VERSION_ATLEAST(2,0,0)
 	case SDL_MOUSEWHEEL:
-		if (DIRECT_MODE && !game_paused())
+		if (!game_grab_events && DIRECT_MODE && !game_paused())
 			return AGAIN;
 
 		inp->type = (event.wheel.y > 0) ? MOUSE_WHEEL_UP : MOUSE_WHEEL_DOWN;
@@ -606,8 +606,8 @@ int input(struct inp_event *inp, int wait)
 		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_MOUSEWHEEL, SDL_MOUSEWHEEL) > 0) {
 			if (!((event.wheel.y > 0 &&
 				inp->type == MOUSE_WHEEL_UP) ||
-			    (event.wheel.y < 0 &&
-			    	inp->type == MOUSE_WHEEL_DOWN)))
+				(event.wheel.y < 0 &&
+				inp->type == MOUSE_WHEEL_DOWN)))
 				break;
 			inp->count ++;
 		}
