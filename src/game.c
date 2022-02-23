@@ -2548,7 +2548,7 @@ int game_click(int x, int y, int action, int filter)
 	new_xref = look_xref(x, y, &new_elem);
 	link = (new_xref)?xref_get_text(new_xref):"";
 
-	if ((!game_theme.drag_mode || strncmp("use ", link, 4)) &&
+	if ((!game_theme.drag_mode || !use_xref) &&
 		(new_elem != click_el || strcmp(link, click_xref))) {
 		click_el = NULL;
 		new_xref = NULL;
