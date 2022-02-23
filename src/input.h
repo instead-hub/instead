@@ -40,6 +40,7 @@
 #define EV_CODE_KBD -1
 #define EV_CODE_FINGER -2
 #define EV_CODE_TEXT -3
+#define EV_CODE_WHEEL -4
 
 #define AGAIN 2
 struct inp_event {
