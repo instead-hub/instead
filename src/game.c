@@ -2505,6 +2505,7 @@ int game_click(int x, int y, int action, int filter)
 	char		*xref_txt = NULL;
 	xref_t		new_xref = NULL;
 	struct el 	*new_elem = NULL;
+	char *link;
 
 	int was_motion = (motion_mode == 2);
 
@@ -2521,29 +2522,7 @@ int game_click(int x, int y, int action, int filter)
 	if (action)
 		motion_mode = 0;
 
-	if (action == 1) {
-		char *link;
-
-		new_xref = look_xref(x, y, &new_elem);
-		link = (new_xref)?xref_get_text(new_xref):"";
-
-		if (new_elem != click_el || strcmp(link, click_xref)) {
-			click_el = NULL;
-			new_xref = NULL;
-			new_elem = NULL;
-			if (click_xref[0]) {
-				click_xref[0] = 0;
-				return 0; /* just filtered */
-			}
-		}
-	}
-
-	if (action == 1) {
-		xref = new_xref;
-		elem = new_elem;
-		click_xref[0] = 0;
-		click_el = NULL;
-	} else  { /* just press */
+	if (action == 0) { /* just press */
 		xref = look_xref(x, y, &elem);
 		click_xref[0] = 0;
 		if (xref) {
@@ -2560,10 +2539,31 @@ int game_click(int x, int y, int action, int filter)
 			click_xref[sizeof(click_xref) - 1] = 0;
 		}
 		click_el = elem;
-		return 0;
+		if (!game_theme.drag_mode || !xref || strncmp("use ", xref_get_text(xref), 4)) {
+			return 0;
+		}
+		action = 1;
 	}
-	/* now look only second press */
 
+	new_xref = look_xref(x, y, &new_elem);
+	link = (new_xref)?xref_get_text(new_xref):"";
+
+	if ((!game_theme.drag_mode || strncmp("use ", link, 4)) &&
+		(new_elem != click_el || strcmp(link, click_xref))) {
+		click_el = NULL;
+		new_xref = NULL;
+		new_elem = NULL;
+		if (click_xref[0]) {
+			click_xref[0] = 0;
+			return 0; /* just filtered */
+		}
+	}
+
+	/* now look only second press */
+	xref = new_xref;
+	elem = new_elem;
+	click_xref[0] = 0;
+	click_el = NULL;
 
 	if (!xref) {
 		if (elem) {

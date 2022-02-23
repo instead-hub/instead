@@ -303,6 +303,7 @@ struct parser cmd_parser[] = {
 	{ "scr.w", parse_int, &game_theme.w, 0 }, /* must be 0 */
 	{ "scr.h", parse_int, &game_theme.h, 0 }, /* must be 1, see scale_aware logic */
 	{ "scr.scale_aware", parse_int, &game_theme.scale_aware, 0 },
+	{ "scr.drag_mode", parse_int, &game_theme.drag_mode, 0 },
 	{ "scr.dpi", parse_dpi, &game_theme.dpi, 0 },
 	{ "scr.gfx.scalable", parse_int, &game_theme.gfx_scalable, CHANGED_ALL },
 	{ "scr.gfx.scale", parse_float, &game_theme.img_scale, CHANGED_IMG },
