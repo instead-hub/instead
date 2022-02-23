@@ -2494,7 +2494,7 @@ int mouse_filter(int filter)
 	return 0;
 }
 /* action: 0 - first click,1 - second, -1 - restore */
-int game_click(int x, int y, int action, int filter)
+int game_click(int x, int y, int action, int mouse)
 {
 	int menu_mode	= 0;
 	int use_mode	= 0;
@@ -2505,7 +2505,6 @@ int game_click(int x, int y, int action, int filter)
 	char		*xref_txt = NULL;
 	xref_t		new_xref = NULL;
 	struct el 	*new_elem = NULL;
-	char *link;
 
 	int was_motion = (motion_mode == 2);
 
@@ -2539,31 +2538,33 @@ int game_click(int x, int y, int action, int filter)
 			click_xref[sizeof(click_xref) - 1] = 0;
 		}
 		click_el = elem;
-		if (!game_theme.drag_mode || !xref || strncmp("use ", xref_get_text(xref), 4)) {
+		if (!game_theme.drag_mode || !mouse || !xref || strncmp("use ", xref_get_text(xref), 4)) {
 			return 0;
 		}
 		action = 1;
 	}
 
-	new_xref = look_xref(x, y, &new_elem);
-	link = (new_xref)?xref_get_text(new_xref):"";
+	if (action == 1) {
+		char *link;
+		new_xref = look_xref(x, y, &new_elem);
+		link = (new_xref)?xref_get_text(new_xref):"";
 
-	if ((!game_theme.drag_mode || !use_xref) &&
-		(new_elem != click_el || strcmp(link, click_xref))) {
-		click_el = NULL;
-		new_xref = NULL;
-		new_elem = NULL;
-		if (click_xref[0]) {
-			click_xref[0] = 0;
-			return 0; /* just filtered */
+		if ((!game_theme.drag_mode || !use_xref) &&
+			(new_elem != click_el || strcmp(link, click_xref))) {
+			click_el = NULL;
+			new_xref = NULL;
+			new_elem = NULL;
+			if (click_xref[0]) {
+				click_xref[0] = 0;
+				return 0; /* just filtered */
+			}
 		}
+		/* now look only second press */
+		xref = new_xref;
+		elem = new_elem;
+		click_xref[0] = 0;
+		click_el = NULL;
 	}
-
-	/* now look only second press */
-	xref = new_xref;
-	elem = new_elem;
-	click_xref[0] = 0;
-	click_el = NULL;
 
 	if (!xref) {
 		if (elem) {
@@ -2633,7 +2634,7 @@ int game_click(int x, int y, int action, int filter)
 				snprintf(buf, sizeof(buf), "act %s", xref_txt);
 		} else
 			snprintf(buf, sizeof(buf), "%s", xref_txt);
-		if (mouse_filter(filter))
+		if (mouse_filter(mouse))
 			return 0;
 		buf[sizeof(buf) - 1] = 0;
 		game_cmd(buf, GAME_CMD_CLICK);
@@ -2651,7 +2652,7 @@ int game_click(int x, int y, int action, int filter)
 		else
 			snprintf(buf,sizeof(buf), "use %s,%s", xref_get_text(use_xref), xref_txt);
 	}
-	if (mouse_filter(filter))
+	if (mouse_filter(mouse))
 		return 0;
 
 	disable_use();
