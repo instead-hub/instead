@@ -436,6 +436,10 @@ function iface:input(event, ...)
 		if type(input.click) == 'function' then
 			return input:click(...); -- pressed, x, y, mb
 		end
+	elseif event == 'wheel' then
+		if type(input.wheel) == 'function' then
+			return input:wheel(...);
+		end
 	elseif event == 'finger' then
 		if type(input.finger) == 'function' then
 			return input:finger(...); -- pressed, x, y, finger
