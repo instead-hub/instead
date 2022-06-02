@@ -17,6 +17,45 @@ game.gui = {
 	hidetitle = false;
 }
 
+stead.list_search = function(self, n, dis)
+	local i
+	if stead.tonum(n) then
+		i = self:byid(stead.tonum(n), dis);
+	end
+	if not i then
+		i = self:look(n)
+		if not i then
+			i = self:name(n, dis);
+		end
+		if not i then
+			return nil
+		end
+	end
+	if not dis and isDisabled(stead.ref(self[i])) then
+		return nil
+	end
+	return self[i], i
+end
+
+iface.xref = function(self, str, obj, ...)
+	local o = stead.ref(stead.here():srch(obj));
+	if not o then
+		o = stead.ref(ways():srch(obj));
+	end
+	if not o then
+		o = stead.ref(stead.me():srch(obj));
+	end
+	if not o or not o.id then
+		return str;
+	end
+	local a = ''
+	local varg = {...}
+	for i = 1, stead.table.maxn(varg) do
+		a = a..','..varg[i]
+	end
+	local n = stead.nameof(o)
+	return stead.cat(str, "("..stead.tostr(o.id or n)..a..")");
+end
 -- menu and stat
 stat = function(v)
 	v.status_type = true
