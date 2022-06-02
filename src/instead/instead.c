@@ -575,12 +575,12 @@ err:
 	return -1;
 }
 
-int instead_loadfile(char *name)
+int instead_loadfile(const char *name)
 {
 	return instead_loadscript(name, -1, NULL, 1);
 }
 
-int instead_loadscript(char *name, int argc, char **argv, int exec)
+int instead_loadscript(const char *name, int argc, char **argv, int exec)
 {
 	int status;
 	if (exec && argc >= 0)
