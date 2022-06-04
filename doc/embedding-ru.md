@@ -219,9 +219,127 @@ static struct instead_ext ext = {
 
 Обработчик cmd полезен, когда вы хотите делать что-то после такта игры. Например, музыкальный плеер может вызываться каждый такт команды, чтобы определить: появилась ли новая задача для проигрывателя музыки.
 
+Для вызова Lua из C кода вы можете воспользоваться функцией:
+
+- int  instead_function(char *s, struct instead_args *args);
+
+Первый параметр: текстовое представление метода на Lua, который может содержать двоеточие или точку (вызов метода Lua).
+
+Например:
+
+```
+instead_function("instead.get_sound", NULL);
+
+```
+
+Второй параметр задаёт аргументы или NULL. Пример аргументов:
+
+```
+struct instead_args args[] = {
+	{ .val = "nil", .type = INSTEAD_NIL },
+	{ .val = "-1", .type = INSTEAD_NUM },
+	{ .val = NULL }
+};
+
+```
+
+Как видно из примера, аргументы это пары: значение - тип. Допустимые типы:
+
+- INSTEAD_NIL - nil;
+- INSTEAD_NUM - целое число;
+- INSTEAD_STR - строка;
+- INSTEAD_BOOL - булево ("true" или "false").
+
+В случае ошибки возвращается -1, в случае успеха -- 0.
+
+Lua метод может возвратить одно или несколько значений: строку, число, булево.
+Чтобы получит их используйте функции (все они получают в качестве параметра номер возвращаемого значения от 0):
+
+- extern char *instead_retval(int n); -- получить строку (освободить через free())
+- int instead_iretval(int n); -- получить целое
+- int instead_bretval(int n); -- получить булево
+
+После того, как вы проанализировали возвращаемые значения, нужно вызвать:
+
+- void instead_clear(void); -- сбросить стек Lua
+
+_Внимание!_: функцию instead_clear() после вызова instead_function() необходимо вызывать всегда!
+
+
+## Пример реализации расширения для проигрывания музыки
+
+Ниже, для наглядности, приводятся упрощённые фрагменты расширения для проигрывания музыки. Расширение регистрирует функции на Lua в (stead/stead3/ext/sound.lua).
+
+Полное расширение см. src/instead_sound.c. Кроме игры музыки оно поддерживает расширенную работу со звуком.
+
+```
+static void game_music_player(void)
+{
+	int	loop;
+	char		*mus;
+
+	int cf_out = 0;
+	int cf_in = 0;
+
+	instead_function("instead.get_music", NULL);
+	mus = instead_retval(0);
+	loop = instead_iretval(1);
+	instead_clear();
+
+	instead_function("instead.get_music_fading", NULL);
+	cf_out = instead_iretval(0);
+	cf_in = instead_iretval(1);
+	instead_clear();
+
+	// в mus - трек
+	// cf_out,cf_in -- параметры затухания
+	// mus -- путь к файлу
+	// loop -- число проигрываний
+	// TODO реализовать плеер
+
+	free(mus);
+}
+
+static int sound_init(void)
+{
+	int rc;
+	char path[PATH_MAX];
+
+	snprintf(path, sizeof(path), "%s/%s", instead_stead_path(), "/ext/sound.lua");
+
+	rc = instead_loadfile(dirpath(path));
+	if (rc)
+		return rc;
+	// TODO - инициализация звуковой подсистемы
+	return 0;
+}
+
+static int sound_cmd(void)
+{
+	game_music_player();
+	return 0;
+}
+
+static int sound_done(void)
+{
+	// TODO: деинициализация звуковой подсистемы
+	return 0;
+}
+
+static struct instead_ext ext = {
+	.init = sound_init,
+	.done = sound_done,
+	.cmd = sound_cmd,
+};
+
+int instead_sound_init(void)
+{
+	return instead_extension(&ext);
+}
+
 # Lua часть (stead/)
 
-Большая часть логики заключена в Lua файлах. Если вы хотите изучить как работает графический интерпретатор, смотрите ext/gui.lua. Функции instead.xxxxx - это те функции, которые вызывает графический интерпретатор.
+Большая часть логики заключена в Lua файлах. Если вы хотите изучить как работает графический интерпретатор, смотрите ext/gui.lua. Функции instead.xxxxx - это те функции, которые вызывает графический интерпретатор с помощью instead_function().
 
 - instead.get_title, instead.get_inv, instead.get_ways, instead.get_picture и др.
 
