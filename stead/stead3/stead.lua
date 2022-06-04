@@ -2784,12 +2784,21 @@ local iface = std.obj {
 		end
 		return r, v
 	end;
-	xref = function(_, str, obj)
+	xref = function(_, str, obj, ...)
 		obj = std.ref(obj)
 		if not obj then
-			return str;
+			return str
 		end
-		return std.cat(str, "("..std.deref(obj)..")");
+		local a = { ... }
+		local args = ''
+		for i = 1, #a do
+			if type(a[i]) ~= 'string' and type(a[i]) ~= 'number' and type(a[i]) ~= 'boolean' then
+				std.err ("Wrong argument to iface:xref: "..std.tostr(a[i]), 2)
+			end
+			args = args .. ' '..std.dump(a[i])
+		end
+		local xref = std.string.format("%s%s", std.deref_str(obj), args)
+		return std.cat(str, "("..xref..")");
 	end;
 	title = function(_, str)
 		return "[ "..std.tostr(str).." ]"
