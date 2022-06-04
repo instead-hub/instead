@@ -336,6 +336,7 @@ int instead_sound_init(void)
 {
 	return instead_extension(&ext);
 }
+```
 
 # Lua часть (stead/)
 
