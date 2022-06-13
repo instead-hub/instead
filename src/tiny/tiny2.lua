@@ -36,26 +36,86 @@ stead.list_search = function(self, n, dis)
 	end
 	return self[i], i
 end
+local dict = {}
 
 iface.xref = function(self, str, obj, ...)
-	local o = stead.ref(stead.here():srch(obj));
-	if not o then
-		o = stead.ref(ways():srch(obj));
+	local cmd = ''
+	local o = stead.ref(obj)
+
+	if not isObject(o) or isStatus(o) or (not o.id and not isXaction(o)) then
+		return str
 	end
-	if not o then
-		o = stead.ref(stead.me():srch(obj));
+
+	if stead.ref(ways():srch(obj)) then
+		cmd = 'go'
+	elseif isMenu(o) then
+		cmd = 'use'
+	elseif isSceneUse(o) then
+		cmd = 'use'
+	elseif isXaction(o) and not o.id then
+		cmd = 'act'
+	elseif stead.ref(stead.me():srch(obj)) then
+		cmd = 'use'
+	elseif stead.ref(stead.here():srch(obj)) then
+		cmd = 'act'
 	end
-	if not o or not o.id then
-		return str;
-	end
+
 	local a = ''
 	local varg = {...}
 	for i = 1, stead.table.maxn(varg) do
 		a = a..','..varg[i]
 	end
-	local n = stead.nameof(o)
-	return stead.cat(str, "("..stead.tostr(o.id or n)..a..")");
+
+	local n = stead.deref(obj)
+	local xref = string.format("%s%s", stead.tostr(o.id or n), a)
+	if not dict[xref] then
+		stead.table.insert(dict, { xref, cmd } )
+		dict[xref] = #dict
+	end
+	xref = stead.tostr(dict[xref])
+	return stead.cat(str, "("..xref..")");
 end
+
+local tag_all = stead.player_tagall -- save old
+
+stead.player_tagall = function(self)
+	dict = {}
+	return tag_all(self)
+end
+
+local iface_cmd = iface.cmd -- save old
+
+function iface:cmd(inp)
+	local cmd, a = stead.getcmd(inp)
+	if stead.tonum(cmd) then
+		stead.table.insert(a, 1, cmd)
+		cmd = 'act'
+	end
+	if cmd == 'act' or cmd == 'use' or cmd == 'go' then
+		if a[1] == '' then -- fix use vs look
+			return iface_cmd(self, "look")
+		end
+		if cmd == 'use' then
+			local use = { }
+			local c = false
+			for i = 1, #a do
+				local u = stead.tonum(a[i])
+				u = u and dict[u]
+				c = c or (u and u[2])
+				stead.table.insert(use, u and u[1] or a[i])
+			end
+			if #a == 1 and c == 'act' then -- fix use 1,2 where 1,2 is object and look
+				cmd = 'act'
+			end
+			inp = cmd .. ','..stead.table.concat(use, ',')
+		elseif stead.tonum(a[1]) then
+			a[1] = dict[stead.tonum(a[1])][1]
+			inp = cmd .. ','..stead.table.concat(a, ',')
+		end
+	end
+	return iface_cmd(self, inp)
+end
+
 -- menu and stat
 stat = function(v)
 	v.status_type = true
