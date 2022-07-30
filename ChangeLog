@@ -1,3 +1,16 @@
+3.5.0
+
+ * fix: menu font scaling;
+ * fix: get_bool;
+ * enh: do not scale-down non scalable themes via dpi scale < 1.0;
+ * enh: be strict while open game via file;
+ * new: tutorial in stead3 API;
+ * new: wheel input event (grab_events mode);
+ * doc: embedding manual;
+ * enh: tiny2 better games compatible.
+
+ -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 30 Jul 2022 10:00:00 +0300
+
 3.4.1
 
  * fix: game pic scaling on dpi < 96.

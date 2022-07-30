@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/instead-hub/instead.svg?branch=master)](https://travis-ci.org/instead-hub/instead)
-
 # INSTEAD
 
 This program is covered by the terms of the MIT license.
