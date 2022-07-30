@@ -24,7 +24,7 @@ export PATH="$WORKSPACE/bin:$PATH"
 export CFLAGS="-g0 -O2"
 export CXXFLAGS="$CFLAGS"
 export EM_CFLAGS="-Wno-warn-absolute-paths"
-export EMMAKEN_CFLAGS="$EM_CFLAGS"
+export EMCC_CFLAGS="$EM_CFLAGS"
 export PKG_CONFIG_PATH="$WORKSPACE/lib/pkgconfig"
 export MAKEFLAGS="-j2"
 
@@ -42,6 +42,7 @@ deps()
 
 # Lua
 cd $WORKSPACE
+if ! test -r .stamp_lua; then
 rm -rf lua-5.1.5
 [ -f lua-5.1.5.tar.gz ] || wget -nv 'https://www.lua.org/ftp/lua-5.1.5.tar.gz'
 tar xf lua-5.1.5.tar.gz
@@ -50,27 +51,36 @@ cat src/luaconf.h | sed -e 's/#define LUA_USE_POPEN//g' -e 's/#define LUA_USE_UL
 mv src/luaconf.h.new src/luaconf.h
 emmake make posix CC=emcc 
 emmake make install INSTALL_TOP=$WORKSPACE 
+touch ../.stamp_lua
+fi
 
 # libiconv
 cd $WORKSPACE
+if ! test -r .stamp_iconv; then
 rm -rf libiconv-1.15
 [ -f libiconv-1.15.tar.gz ] || wget -nv 'https://ftp.gnu.org/gnu/libiconv/libiconv-1.15.tar.gz'
 tar xf libiconv-1.15.tar.gz
 cd libiconv-1.15
 emconfigure ./configure --prefix=$WORKSPACE
 emmake make install
+touch ../.stamp_iconv
+fi
 
 # zlib
 cd $WORKSPACE
-rm -rf zlib-1.2.11/
-[ -f zlib-1.2.11.tar.gz ] || wget -nv 'http://zlib.net/zlib-1.2.11.tar.gz'
-tar xf zlib-1.2.11.tar.gz
-cd zlib-1.2.11
+if ! test -r .stamp_zlib; then
+rm -rf zlib-1.2.12/
+[ -f zlib-1.2.12.tar.gz ] || wget -nv 'http://zlib.net/zlib-1.2.12.tar.gz'
+tar xf zlib-1.2.12.tar.gz
+cd zlib-1.2.12
 emconfigure ./configure --prefix=$WORKSPACE
 emmake make install
+touch ../.stamp_zlib
+fi
 
 # libmikmod
 cd $WORKSPACE
+if ! test -r .stamp_libmikmod; then
 rm -rf libmikmod-3.1.12/
 [ -f SDL2_mixer-2.0.1.tar.gz ] || wget -nv https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-2.0.1.tar.gz
 tar xf SDL2_mixer-2.0.1.tar.gz
@@ -78,9 +88,12 @@ mv SDL2_mixer-2.0.1/external/libmikmod-3.1.12/ libmikmod-3.1.12/
 cd libmikmod-3.1.12/
 emconfigure ./configure --prefix=$WORKSPACE --disable-shared --enable-static 
 emmake make install SHELL="${SHELL}"
+touch ../.stamp_libmikmod
+fi
 
 # SDL2
 cd $WORKSPACE
+if ! test -r .stamp_sdl2; then
 rm -rf SDL2
 git clone https://github.com/emscripten-ports/SDL2.git
 cd SDL2
@@ -103,9 +116,47 @@ cat <<EOF >em.patch
      build_stream = SDL_FALSE;
 EOF
 patch -p1 src/audio/SDL_audio.c -i em.patch
+
+cat <<EOF >em.patch
+--- SDL_systimer.c	2022-07-30 11:09:08.647816300 +0300
++++ SDL_systimer.c.em	2022-07-30 11:09:31.587919493 +0300
+@@ -191,13 +191,6 @@
+ void
+ SDL_Delay(Uint32 ms)
+ {
+-#ifdef __EMSCRIPTEN__
+-    if (emscripten_has_asyncify() && SDL_GetHintBoolean(SDL_HINT_EMSCRIPTEN_ASYNCIFY, SDL_TRUE)) {
+-        /* pseudo-synchronous pause, used directly or through e.g. SDL_WaitEvent */
+-        emscripten_sleep(ms);
+-        return;
+-    }
+-#endif
+     int was_error;
+ 
+ #if HAVE_NANOSLEEP
+@@ -207,6 +200,13 @@
+     Uint32 then, now, elapsed;
+ #endif
+ 
++#ifdef __EMSCRIPTEN__
++    if (emscripten_has_asyncify() && SDL_GetHintBoolean(SDL_HINT_EMSCRIPTEN_ASYNCIFY, SDL_TRUE)) {
++        /* pseudo-synchronous pause, used directly or through e.g. SDL_WaitEvent */
++        emscripten_sleep(ms);
++        return;
++    }
++#endif
+     /* Set the timeout interval */
+ #if HAVE_NANOSLEEP
+     elapsed.tv_sec = ms / 1000;
+EOF
+patch -p1 src/timer/unix/SDL_systimer.c -i em.patch
+
 emmake make install
+touch ../.stamp_sdl2
+fi
 
 cd $WORKSPACE
+if ! test -r .stamp_ft2; then
 rm -rf freetype-2.8
 wget --no-check-certificate https://download.savannah.gnu.org/releases/freetype/freetype-2.8.tar.gz
 tar -xvf freetype-2.8.tar.gz
@@ -114,9 +165,12 @@ cd freetype-2.8
 
 emconfigure ./configure --build=amd64-unknown-linux --host=asmjs-linux --prefix=$WORKSPACE  CPPFLAGS="-I$WORKSPACE/include" LDFLAGS="-L$WORKSPACE/lib" --disable-shared
 emmake make install
+touch ../.stamp_ft2
+fi
 
 # SDL2_ttf
 cd $WORKSPACE
+if ! test -r .stamp_sdl2_ttf; then
 rm -rf SDL2_ttf
 git clone https://github.com/emscripten-ports/SDL2_ttf.git
 cd SDL2_ttf
@@ -126,8 +180,13 @@ sed -i -e 's/noinst_PROGRAMS = showfont glfont//' Makefile.am
 ./autogen.sh
 emconfigure ./configure --build=amd64-unknown-linux --host=asmjs-unknown-linux --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -I$WORKSPACE/include/SDL2 -I$WORKSPACE/include/freetype2" LDFLAGS="-L$WORKSPACE/lib" --disable-sdltest --disable-shared
 emmake make install
+touch ../.stamp_sdl2_ttf
+fi
+
+
 # SDL2_mixer
 cd $WORKSPACE
+if ! test -r .stamp_sdl2_mixer; then
 rm -rf SDL_mixer-2.0.2
 [ -f SDL2_mixer-2.0.2.tar.gz ] || wget -nv https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-2.0.2.tar.gz
 tar xf SDL2_mixer-2.0.2.tar.gz && cd SDL2_mixer-2.0.2
@@ -148,18 +207,24 @@ cat Makefile | sed -e 's| \$(objects)/playwave\$(EXE) \$(objects)/playmus\$(EXE)
 mv -f Makefile.new Makefile
 emmake make
 emmake make install
+touch ../.stamp_sdl2_mixer
+fi
 
 # jpeg lib
 cd $WORKSPACE
+if ! test -r .stamp_jpeg; then
 rm -rf jpeg-9b
 [ -f jpegsrc.v9b.tar.gz ] || wget -nv 'http://www.ijg.org/files/jpegsrc.v9b.tar.gz'
 tar xf jpegsrc.v9b.tar.gz
 cd jpeg-9b
 emconfigure ./configure --prefix=$WORKSPACE --disable-shared
 emmake make install
+touch ../.stamp_jpeg
+fi
 
 # SDL_image
 cd $WORKSPACE
+if ! test -r .stamp_sdl2_image; then
 rm -rf SDL2_image
 [ -d SDL2_image/.git ] || git clone https://github.com/emscripten-ports/SDL2_image.git SDL2_image
 cd SDL2_image
@@ -168,6 +233,8 @@ export ac_cv_lib_jpeg_jpeg_CreateDecompress=yes
 export ac_cv_lib_png_png_create_read_struct=yes
 emconfigure ./configure --host=asmjs-unknown-linux --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -I$WORKSPACE/include/SDL2 -s USE_LIBPNG=1" LDFLAGS="-L$WORKSPACE/lib -lpng -ljpeg" --disable-sdltest --disable-shared --enable-static --enable-png --disable-png-shared --enable-jpg --disable-jpg-shared
 emmake make install
+touch ../.stamp_sdl2_image
+fi
 
 }
 
@@ -280,7 +347,7 @@ emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_ttf.
 -lidbfs.js \
 -s EXPORTED_FUNCTIONS="['_instead_main']" \
 -s 'SDL2_IMAGE_FORMATS=["png","jpeg","gif"]' \
--s 'EXTRA_EXPORTED_RUNTIME_METHODS=["ccall", "Pointer_stringify"]' \
+-s 'EXPORTED_RUNTIME_METHODS=["ccall", "Pointer_stringify"]' \
 -s 'DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=["$autoResumeAudioContext", "$dynCall"]' \
 -s QUANTUM_SIZE=4 \
 -s WASM=1 \
