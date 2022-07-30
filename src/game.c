@@ -2348,7 +2348,7 @@ xref_t look_xref(int x, int y, struct el **elem)
 		xref = txt_layout_xref(o->p.lay, x - o->x, y - o->y);
 	else if (type == elt_box)
 		xref = txt_box_xref(o->p.box, x - o->x, y - o->y);
-#if defined(ANDROID) || defined(IOS) || defined(SAILFISHOS) || defined(WINRT)
+#if defined(ANDROID) || defined(IOS) || defined(SAILFISHOS)
 	if (!xref) {
 		int xc, yc, r;
 		xref = get_nearest_xref(o->id, x, y);
@@ -3265,8 +3265,6 @@ int game_from_disk(void)
 	char *g, *p, *b, *d;
 	char dir[PATH_MAX];
 	char base[PATH_MAX];
-#ifndef MAEMO
-#ifndef S60
 	if (opt_fs) {
 		int old_menu = (menu_shown) ? cur_menu: -1;
 		opt_fs ^= 1;
@@ -3274,8 +3272,6 @@ int game_from_disk(void)
 		if (old_menu != -1)
 			game_menu(old_menu);
 	}
-#endif
-#endif
 	mouse_cursor(1);
 	game_cursor(CURSOR_OFF);
 	browse_dialog = 1;
@@ -3397,17 +3393,6 @@ static int kbd_modifiers(struct inp_event *ev)
 static int is_key_back(struct inp_event *ev)
 {
 	if (!is_key(ev, "escape")
-#if defined(S60) || defined(_WIN32_WCE) || defined(WINRT)
-	    || !is_key(ev, "space")
-#endif
-#if defined(_WIN32_WCE) || defined(WINRT)
-	    || (ev->code >= 0xc0 && ev->code <= 0xcf) ||
-	    !is_key(ev, "f1") ||
-	    !is_key(ev, "f2") ||
-	    !is_key(ev, "f3") ||
-	    !is_key(ev, "f4") ||
-	    !is_key(ev, "f5")
-#endif
 #ifdef ANDROID
 	    || ev->code == 118
 #endif
@@ -3487,9 +3472,6 @@ static int kbd_instead(struct inp_event *ev, int *x, int *y)
 	} else if (DIRECT_MODE && !menu_shown) {
 		; /* nothing todo */
 	} else if (!alt_pressed && (!is_key(ev, "return") || !is_key(ev, "enter")
-#ifdef S60
-				    || !is_key(ev, ".")
-#endif
 				    )) {
 		gfx_cursor(x, y);
 		game_highlight(-1, -1, 0); /* reset */
@@ -3549,7 +3531,6 @@ static int kbd_instead(struct inp_event *ev, int *x, int *y)
 			else
 				game_scroll_pdown();
 		}
-#if !defined(S60) && !defined(_WIN32_WCE) && !defined(WINRT)
 	} else if (!is_key(ev, "left") || !is_key(ev, "[4]")) {
 		select_ref(1, 0);
 	} else if (!is_key(ev, "right") || !is_key(ev, "[6]")) {
@@ -3558,18 +3539,6 @@ static int kbd_instead(struct inp_event *ev, int *x, int *y)
 		scroll_pup(el_scene);
 	} else if (!is_key(ev, "space") && !menu_shown) {
 		scroll_pdown(el_scene);
-#else
-	} else if (!is_key(ev, "left") || !is_key(ev, "[4]")) {
-		if (menu_shown)
-			select_ref(1, 0);
-		else
-			select_frame(1);
-	} else if (!is_key(ev, "right") || !is_key(ev, "[6]")) {
-		if (menu_shown)
-			select_ref(0, 0);
-		else
-			select_frame(0);
-#endif
 	} else
 		return 0;
 	return 1;

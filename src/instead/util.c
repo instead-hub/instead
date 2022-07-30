@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2018 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2022 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -276,187 +276,7 @@ double mt_random_double(void)
 	return tinymt32_generate_32double(&trandom);
 }
 
-#if defined(S60)
-#include "system.h"
-#include <limits.h>
-#include <pwd.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <stdio.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <string.h>
-#include <stdlib.h>
-
-#include <sys/unistd.h>
-
-#include "snprintf.c"
-
-int setdir(const char *path)
-{
-	return chdir(path);
-}
-
-char *getdir(char *path, size_t size)
-{
-	return getcwd(path, size);
-}
-
-char *dirpath(const char *path)
-{
-	return (char*)path;
-}
-
-int is_absolute_path(const char *path)
-{
-	if (!path || !path[0])
-		return 0;
-	if (path[0] == '/' || path[0] == '\\')
-		return 1;
-	if (!path[1])
-		return 0;
-	return (path[1] == ':');
-}
-
-char *dirname(char *path)
-{
-	char *p;
-	if (path == NULL || *path == '\0')
-		return ".";
-	p = path + strlen(path) - 1;
-	while (*p == '/') {
-		if (p == path)
-			return path;
-		*p-- = '\0';
-	}
-	while (p >= path && *p != '/')
-		p--;
-	return p < path ? "." : p == path ? "/" : (*p = '\0', path);
-}
-
-char* basename (char* path)
-{
-	char *ptr = path;
-	int l = 0;
-	while (ptr[(l = strcspn (ptr, "\\//"))])
-		ptr += l + 1;
-	return ptr;
-}
-
-#elif defined(_WIN32_WCE)
-
-#include "system.h"
-#include <windows.h>
-#include <shlobj.h>
-#include <limits.h>
-#include <sys/types.h>
-#include <dir.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-
-static char curdir[PATH_MAX];
-
-int setdir(const char *path)
-{
-	strncpy(curdir, path, sizeof(curdir) - 1);
-	return 0;
-}
-
-char *getdir(char *path, size_t size)
-{
-	strncpy(path, curdir, size - 1);
-	return path;
-}
-
-char *dirpath(const char *path)
-{
-	static char fp[PATH_MAX * 4];
-	if (path[0] == '/')
-		return (char*)path;
-	snprintf(fp, sizeof(fp), "%s/%s", curdir, path);
-	fp[sizeof(fp) - 1] = 0;
-	unix_path(fp);
-	return fp;
-}
-
-int is_absolute_path(const char *path)
-{
-	if (!path || !*path)
-		return 0;
-	return (*path == '/' || *path == '\\');
-}
-
-#elif defined(WINRT)
-
-#include "system.h"
-#include <windows.h>
-#include <limits.h>
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-
-static char curdir[PATH_MAX];
-
-int setdir(const char *path)
-{
-	strncpy(curdir, path, sizeof(curdir) - 1);
-	return 0;
-}
-
-char *getdir(char *path, size_t size)
-{
-	strncpy(path, curdir, size - 1);
-	return path;
-}
-
-char *dirpath(const char *path)
-{
-	static char fp[PATH_MAX * 4];
-	if (path[0] == '/' || path[1] == ':')
-		return (char*)path;
-	snprintf(fp, sizeof(fp), "%s/%s", curdir, path);
-	fp[sizeof(fp) - 1] = 0;
-	unix_path(fp);
-	return fp;
-}
-
-int is_absolute_path(const char *path)
-{
-	if (!path || !*path)
-		return 0;
-	return (*path == '/' || *path == '\\' || path[1] == ':');
-}
-
-// dirname & basename functions were copied from S60 above
-char *dirname(char *path)
-{
-	char *p;
-	if (path == NULL || *path == '\0')
-		return ".";
-	p = path + strlen(path) - 1;
-	while (*p == '/') {
-		if (p == path)
-			return path;
-		*p-- = '\0';
-	}
-	while (p >= path && *p != '/')
-		p--;
-	return p < path ? "." : p == path ? "/" : (*p = '\0', path);
-}
-
-char* basename(char* path)
-{
-	char *ptr = path;
-	int l = 0;
-	while (ptr[(l = strcspn(ptr, "\\//"))])
-		ptr += l + 1;
-	return ptr;
-}
-
-#elif defined(_WIN32)
+#if defined(_WIN32)
 
 #include <windows.h>
 #include <shlobj.h>
@@ -497,7 +317,6 @@ int is_absolute_path(const char *path)
 }
 
 #ifdef _MSC_VER
-// dirname & basename functions were copied from S60 above
 char *dirname(char *path)
 {
 	char *p;
@@ -643,7 +462,7 @@ char *getrealpath(const char *path, char *resolved)
 	const char *q;
 	char *p, *fres;
 	size_t len;
-#if defined(unix) && !defined(S60)
+#if defined(unix)
 	struct stat sb;
 	ssize_t n;
 	int idx = 0, nlnk = 0;
@@ -752,7 +571,7 @@ loop:
 		    q - path);
 		p[1 + q - path] = '\0';
 	}
-#if defined(unix) && !defined(S60)
+#if defined(unix)
 	/*
 	 * If this component is a symlink, toss it and prepend link
 	 * target to unresolved path.
