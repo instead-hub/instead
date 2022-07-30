@@ -10,7 +10,7 @@ Check the [INSTALL](INSTALL) file for install instructions.
 
 - [Homepage](https://instead-hub.github.io)
 - [Code](https://github.com/instead-hub/instead)
-- [Games](http://instead-games.sf.net)
+- [Community](https://instead-games.ru)
 - [Documentation](https://instead-hub.github.io/#doc)
 
 ## Install games
@@ -23,6 +23,5 @@ To run games you may:
 
 ## Contacts
 
-- Join the chat at [gitter](https://gitter.im/instead-hub/instead);
-- Unofficial XMPP conference: instead@conference.jabber.ru;
+- Join the irc channel #instead on irc.oftc.net;
 - Check the [AUTHORS](AUTHORS) file.
