@@ -1,5 +1,5 @@
 INSTEAD was written by:
-	Peter Kosyh <p.kosyh at gmail.com>
+	Peter Kosyh <pkosyh at yandex.ru>
 
 Initial port to Windows:
 	Ilya Ryndin
@@ -9,7 +9,7 @@ Port to Android:
 	Anton Kolosov <antokolos@gmail.com>
 	Boris Timofeev <btimofeev@emunix.org>
 
-Port to Mac OS X:
+Port to macOS:
 	.dm
 
 Port to Windows CE:
@@ -36,14 +36,4 @@ Ideas, games, advices, testing, bug reports, fixes ...
 	Alexander Yakovlev <keloero at oreolek.ru>
 	Vladimir Zhirov
 	Andrew Lobanov
-	And many others...
-
-Web resources:
-	https://instead-hub.github.io
-	https://github.com/instead-hub/instead
-
-Join the chat at:
-	https://gitter.im/instead-hub/instead
-
-Unofficial XMPP conference:
-	instead@conference.jabber.ru
+	And many, many others...
