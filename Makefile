@@ -34,7 +34,8 @@ PKGBUILD: PKGBUILD.in tarball
 	cat PKGBUILD.in | sed -e s/MD5SUM/`md5sum $(ARCHIVE) | cut -f1 -d' '`/g > PKGBUILD
 
 windows-sdl2.tar.gz:
-	wget "http://sourceforge.net/projects/instead/files/instead/build-bin-data/windows-sdl2-2.0.14.tar.gz/download" -O $(@)
+	wget "http://sourceforge.net/projects/instead/files/instead/build-bin-data/windows-sdl2-2.0.22.tar.gz/download" -O $(@)
+	# wget "http://sourceforge.net/projects/instead/files/instead/build-bin-data/windows-sdl2-2.0.14.tar.gz/download" -O $(@)
 
 build-bin-data: windows-sdl2.tar.gz
 
