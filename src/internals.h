@@ -1,7 +1,3 @@
-#ifdef S60
-#include "s60.h"
-#endif
-
 #ifdef __IPHONEOS__
 #include "ios.h"
 #endif

@@ -1,15 +1,6 @@
 #ifndef __INSTEAD_EXTERNAL_H_
 #define __INSTEAD_EXTERNAL_H_
 
-#if defined (_WIN32_WCE) || defined(WINRT)
- #define errno 0
- #define putenv(a) ;
- #ifndef WINRT
- #define strerror(a) ""
- #define setlocale(a, b) ;
- #endif
-#endif
-
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
@@ -28,15 +19,9 @@
 #include <ctype.h>
 #include <dirent.h>
 #include <time.h>
-#if !defined(S60) && !defined(PLAN9)
- #include <libgen.h>
-#endif
-#ifdef S60
- #include "snprintf.h"
- typedef long ssize_t;
-#endif
 #if !defined(PLAN9)
-#include <math.h>
+ #include <libgen.h>
+ #include <math.h>
 #endif
 
 #ifndef PATH_MAX

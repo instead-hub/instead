@@ -22,7 +22,7 @@
  *
  */
 
-#if defined(__APPLE__) || defined(S60) || defined(ANDROID) || defined(WINRT)
+#if defined(__APPLE__) || defined(ANDROID)
 #include <SDL.h>
 #endif
 
@@ -39,10 +39,6 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#endif
-
-#ifdef _WIN32_WCE
-extern void	libwince_init(const char* prog, int debug);
 #endif
 
 extern int debug_init(void);
@@ -153,28 +149,6 @@ void macosx_init(void) {
 }
 #endif
 
-#ifdef _WIN32_WCE
-char *getcurdir(char *path)
-{
-	char *p;
-	if (path == NULL || *path == '\0')
-		return ".";
-	p = path + strlen(path) - 1;
-	while (*p == '/') {
-		if (p == path)
-			return path;
-		*p-- = '\0';
-	}
-	while (p >= path && *p != '/')
-		p--;
-	return p < path ? "." : p == path ? "/" : (*p = '\0', path);
-}
-void wince_init(char *path)
-{
-	unix_path(path);
-	strcpy(game_cwd, getcurdir(path));
-}
-#endif
 static int run_game(const char *path)
 {
 	char *b, *d;
@@ -355,25 +329,14 @@ int instead_main(int argc, char *argv[])
 #ifdef __APPLE__
 	macosx_init();
 #endif
-#ifndef S60
 	putenv("SDL_MOUSE_RELATIVE=0"); /* test this! */
 #if GTK_MAJOR_VERSION == 4 /* fix crash when SDL2 uses gl */
 	putenv("GDK_DEBUG=gl-disable");
 #endif
-#endif
 
-#ifdef _WIN32_WCE
-	libwince_init(argv[0], 1);
-	wince_init(argv[0]);
-#elif defined(APPIMAGE)
+#if defined(APPIMAGE)
 	unix_path(argv[0]);
 	strcpy(game_cwd, dirname(argv[0]));
-#elif defined(WINRT)
-	unix_path(argv[0]);
-	strcpy(game_cwd, argv[0]);
-#elif defined(S60)
-	extern char s60_data[];
-	strcpy(game_cwd, s60_data);
 #elif defined(_WIN32)
 	exe_path = malloc(PATH_MAX + 1);
 	if (exe_path) {

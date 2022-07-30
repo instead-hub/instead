@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2017 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2022 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -25,23 +25,13 @@
 #include "externals.h"
 #include "internals.h"
 
-#if defined(S60) || defined(_WIN32_WCE) || defined(MAEMO)
-int opt_fsize = 12;
-#elif defined(IOS) || defined(SAILFISHOS) || defined(ANDROID) || defined(WINRT)
+#if defined(IOS) || defined(SAILFISHOS) || defined(ANDROID)
 int opt_fsize = 5;
 #else
 int opt_fsize = 0;
 #endif
 
-#if defined(MAEMO)
-int opt_fs = 1;
-int opt_owntheme = 0;
-int opt_hl = 0;
-#elif defined(IOS) || defined(ANDROID) || defined(SAILFISHOS)
-int opt_fs = 1;
-int opt_owntheme = 1;
-int opt_hl = 0;
-#elif defined(_WIN32_WCE) || defined(WINRT)
+#if defined(IOS) || defined(ANDROID) || defined(SAILFISHOS)
 int opt_fs = 1;
 int opt_owntheme = 1;
 int opt_hl = 0;
@@ -51,11 +41,7 @@ int opt_owntheme = 1;
 int opt_hl = 1;
 #endif
 int opt_fading = 1;
-#if defined(S60) || defined(MAEMO) || defined(_WIN32_WCE)
-int opt_hz = 22050;
-#else
 int opt_hz = 44100;
-#endif
 int opt_vol = 127;
 int opt_motion = 1;
 int opt_click = 1;

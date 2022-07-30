@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2021 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2022 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -976,18 +976,10 @@ static int instead_platform(void)
 	snprintf(plat, sizeof(plat) - 1, "PLATFORM='IOS'");
 #elif defined(__APPLE__)
 	snprintf(plat, sizeof(plat) - 1, "PLATFORM='MACOSX'");
-#elif defined(_WIN32_WCE)
-	snprintf(plat, sizeof(plat) - 1, "PLATFORM='WINCE'");
-#elif defined(WINRT)
-	snprintf(plat, sizeof(plat) - 1, "PLATFORM='WINRT'");
-#elif defined(S60)
-	snprintf(plat, sizeof(plat) - 1, "PLATFORM='S60'");
 #elif defined(ANDROID)
 	snprintf(plat, sizeof(plat) - 1, "PLATFORM='ANDROID'");
 #elif defined(_WIN32)
 	snprintf(plat, sizeof(plat) - 1, "PLATFORM='WIN32'");
-#elif defined(MAEMO)
-	snprintf(plat, sizeof(plat) - 1, "PLATFORM='MAEMO'");
 #elif defined(SAILFISHOS)
 	snprintf(plat, sizeof(plat) - 1, "PLATFORM='SFOS'");
 #else
@@ -1006,15 +998,8 @@ static int instead_package(const char *path)
 	if (!stead_path)
 		return -1;
 	strcpy(stead_path, "package.path=\"");
-#if defined(_WIN32_WCE) || defined(WINRT)
-	if (path) {
-		strcat(stead_path, path); /* wince have not cwd :) */
-		strcat(stead_path, "/?.lua;");
-	}
-#else
 	if (path)
 		strcat(stead_path, "./?.lua;");
-#endif
 
 #ifdef INSTEAD_LEGACY
 	p = instead_local_stead_path(wd);

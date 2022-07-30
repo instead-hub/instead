@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2021 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2022 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -1828,26 +1828,21 @@ int gfx_get_max_mode(int *w, int *h, int o)
 {
 	int ww = 0, hh = 0;
 	int i = 0;
-#ifdef MAEMO
-	*w = 800;
-	*h = 480;
-#else
- #if SDL_VERSION_ATLEAST(2,0,0)
+#if SDL_VERSION_ATLEAST(2,0,0)
 	SDL_DisplayMode desktop_mode;
-  #if defined(ANDROID)
+	#if defined(ANDROID)
 	if (o == MODE_ANY) {
 		get_screen_size(w, h);
 		return 0;
 	}
-  #endif
-  #if defined(IOS)
+	#elif defined(IOS)
 	if (o == MODE_ANY && current_gfx_w != -1) {
 		*w = current_gfx_w;
 		*h = current_gfx_h;
 		return 0;
 	}
-  #endif
-#ifdef _USE_SWROTATE
+	#endif
+	#ifdef _USE_SWROTATE
 	if (!SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode)) {
 		if ((o == MODE_H && desktop_mode.w < desktop_mode.h) ||
 		    (o == MODE_V && desktop_mode.w > desktop_mode.h)) {
@@ -1859,13 +1854,13 @@ int gfx_get_max_mode(int *w, int *h, int o)
 		}
 		return 0;
 	}
-#endif
+	#endif
 	if (o == MODE_ANY && !SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode)) {
 		*w = desktop_mode.w;
 		*h = desktop_mode.h;
 		return 0;
 	}
- #endif
+#endif
 	*w = 0;
 	*h = 0;
 
@@ -1885,7 +1880,6 @@ int gfx_get_max_mode(int *w, int *h, int o)
 		}
 		i ++;
 	}
-#endif
 	if (*w == 0 || *h == 0) /* no suitable mode */
 		return -1;
 	return 0;
@@ -2132,7 +2126,7 @@ int gfx_set_mode(int w, int h, int fs)
 	strcat(title, VERSION );
 	win_w = w * scale_sw; win_h = h * scale_sw;
 	gfx_get_max_mode(&max_mode_w, &max_mode_h, MODE_ANY); /* get current window size */
-#if defined(IOS) || defined(ANDROID) || defined(MAEMO) || defined(_WIN32_WCE) || defined(S60) || defined(WINRT) || defined(SAILFISHOS)
+#if defined(IOS) || defined(ANDROID) || defined(SAILFISHOS)
 	fs = 1; /* always fs for mobiles */
 #endif
 	if (fs && !software_sw) {
@@ -2197,7 +2191,7 @@ int gfx_set_mode(int w, int h, int fs)
 		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, (glhack_sw / 10) % 10);
 		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, glhack_sw % 10);
 	}
-#if defined(IOS) || defined(ANDROID) || defined(WINRT) || defined(SAILFISHOS)
+#if defined(IOS) || defined(ANDROID) || defined(SAILFISHOS)
 	SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h,
 			SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE
 #if defined(ANDROID)
@@ -2322,32 +2316,22 @@ int gfx_set_mode(int w, int h, int fs)
 	gfx_height = h;
 	if (!nocursor_sw)
 		SDL_ShowCursor(SDL_DISABLE);
-#ifdef S60
-	scr = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | hw | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
-#else
- #ifdef ANDROID
+#ifdef ANDROID
 	scr = SDL_SetVideoMode(gfx_width, gfx_height, 0, hw | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
- #else
-  #ifdef MAEMO
-	scr = SDL_SetVideoMode(gfx_width, gfx_height, 16, SDL_DOUBLEBUF | hw | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
-  #else
-   #ifdef __APPLE__
+#else
+	#ifdef __APPLE__
 	scr = SDL_SetVideoMode(gfx_width, gfx_height, (fs)?32:0, SDL_SWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 	if (scr == NULL) /* ok, fallback to anyformat */
 		scr = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | SDL_SWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
-   #else
-    #if !defined(_WIN32_WCE) && !defined(WINRT)
-	#if SDL_VERSION_ATLEAST(1,3,0)
-	scr = SDL_SetVideoMode(gfx_width, gfx_height, 32, SDL_DOUBLEBUF | hw | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
 	#else
+		#if SDL_VERSION_ATLEAST(1,3,0)
+	scr = SDL_SetVideoMode(gfx_width, gfx_height, 32, SDL_DOUBLEBUF | hw | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
+		#else
 	scr = SDL_SetVideoMode(gfx_width, gfx_height, (fs)?32:0, SDL_DOUBLEBUF | hw | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
-	#endif
+		#endif
 	if (scr == NULL) /* ok, fallback to anyformat */
-    #endif
 		scr = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | hw | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
-   #endif
-  #endif
- #endif
+	#endif
 #endif
 	screen = GFX_IMG_REL(scr);
 	if (scr == NULL || screen == NULL) {
@@ -5918,15 +5902,11 @@ int gfx_pending(void)
 int gfx_set_title(const char *title)
 {
 	char stitle[4096];
-#if !defined(S60)
 	if (!title) {
-#endif
 		strcpy( stitle, "INSTEAD - " );
 		strcat( stitle, VERSION );
 		title = stitle;
-#if !defined(S60)
 	}
-#endif
 #if !SDL_VERSION_ATLEAST(2,0,0)
 	if (screen)
 		SDL_WM_SetCaption(title, title);

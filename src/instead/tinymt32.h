@@ -31,7 +31,7 @@ typedef uint32_t Uint32;
 #define __inline
 #endif
 
-#if defined(S60) || defined(PLAN9)
+#if defined(PLAN9)
 #define	UINT32_C(c)	(c ## U)
 #else
 #include <stdint.h>

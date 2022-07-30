@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2018 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2022 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -316,7 +316,7 @@ int parse_path(const char *v, void *data)
 	unix_path(*p);
 	return 0;
 }
-#if defined(_WIN32) && !defined(_WIN32_WCE)
+#if defined(_WIN32)
 #include <wchar.h>
 #include <windows.h>
 
@@ -359,7 +359,7 @@ int parse_full_path(const char *v, void *data)
 		*p = strdup("");
 		return (*p)?0:-1;
 	}
-#if defined(_WIN32) && !defined(_WIN32_WCE)
+#if defined(_WIN32)
 	w32_getdir(cwd, sizeof(cwd));
 #else
 	getdir(cwd, sizeof(cwd));
