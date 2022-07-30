@@ -33,21 +33,15 @@ docs: rules
 PKGBUILD: PKGBUILD.in tarball
 	cat PKGBUILD.in | sed -e s/MD5SUM/`md5sum $(ARCHIVE) | cut -f1 -d' '`/g > PKGBUILD
 
-caanoo.tar.gz:
-	wget "http://sourceforge.net/projects/instead/files/instead/build-bin-data/$(@)/download" -O $(@)
-
-mingw32ce.tar.gz:
-	wget "http://sourceforge.net/projects/instead/files/instead/build-bin-data/$(@)/download" -O $(@)
-
 windows-sdl2.tar.gz:
 	wget "http://sourceforge.net/projects/instead/files/instead/build-bin-data/windows-sdl2-2.0.14.tar.gz/download" -O $(@)
 
-build-bin-data: caanoo.tar.gz mingw32ce.tar.gz windows-sdl2.tar.gz
+build-bin-data: windows-sdl2.tar.gz
 
 tarball: clean svnclean gitclean docs rules
 	echo "# you can define own flags here" > config.make
 	ln -sf ./ $(VERTITLE)
-	tar -cz --exclude $(VERTITLE)/$(VERTITLE) --exclude CJK.zip --exclude .git --exclude .svn --exclude $(ARCHIVE) --exclude mingw32ce.tar.gz --exclude windows-sdl2.tar.gz --exclude caanoo.tar.gz -f $(ARCHIVE) $(VERTITLE)/*
+	tar -cz --exclude $(VERTITLE)/$(VERTITLE) --exclude CJK.zip --exclude .git --exclude .svn --exclude $(ARCHIVE) --exclude windows-sdl2.tar.gz -f $(ARCHIVE) $(VERTITLE)/*
 	$(RM) -f $(VERTITLE)
 
 clean:
