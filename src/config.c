@@ -25,13 +25,13 @@
 #include "externals.h"
 #include "internals.h"
 
-#if defined(IOS) || defined(SAILFISHOS) || defined(ANDROID)
+#if defined(IOS) || defined(SAILFISHOS) || defined(ANDROID) || defined(WINRT)
 int opt_fsize = 5;
 #else
 int opt_fsize = 0;
 #endif
 
-#if defined(IOS) || defined(ANDROID) || defined(SAILFISHOS)
+#if defined(IOS) || defined(ANDROID) || defined(SAILFISHOS) || defined(WINRT)
 int opt_fs = 1;
 int opt_owntheme = 1;
 int opt_hl = 0;

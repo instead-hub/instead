@@ -1,0 +1,356 @@
+diff --git a/src/iowin32.c b/src/iowin32.c
+index 13a7dd73..56afa364 100644
+--- a/src/iowin32.c
++++ b/src/iowin32.c
+@@ -94,8 +94,16 @@ voidpf ZCALLBACK win32_open64_file_func (voidpf opaque,const void* filename,int
+ 
+     win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
+ 
++    // CreateFile has to be replaced with CreateFile2 because CreateFile can actually do a number of potentially unsafe (read: malware) things
++    // see: https://social.msdn.microsoft.com/Forums/office/en-US/e44eaf00-5be2-4683-868f-aca54dd658e0/u81not-able-to-create-file-using-universal-app-?forum=wpdevelop
+     if ((filename!=NULL) && (dwDesiredAccess != 0))
++    {
++#ifndef _WIN_EXT
+         hFile = CreateFile((LPCTSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
++#else
++        hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
++#endif
++    }
+ 
+     return win32_build_iowin(hFile);
+ }
+@@ -110,7 +118,13 @@ voidpf ZCALLBACK win32_open64_file_funcA (voidpf opaque,const void* filename,int
+     win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
+ 
+     if ((filename!=NULL) && (dwDesiredAccess != 0))
++    {
++#ifndef _WIN_EXT
+         hFile = CreateFileA((LPCSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
++#else
++        hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
++#endif
++    }
+ 
+     return win32_build_iowin(hFile);
+ }
+@@ -125,7 +139,13 @@ voidpf ZCALLBACK win32_open64_file_funcW (voidpf opaque,const void* filename,int
+     win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
+ 
+     if ((filename!=NULL) && (dwDesiredAccess != 0))
++    {
++#ifndef _WIN_EXT
+         hFile = CreateFileW((LPCWSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
++#else
++        hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
++#endif
++    }
+ 
+     return win32_build_iowin(hFile);
+ }
+@@ -140,7 +160,13 @@ voidpf ZCALLBACK win32_open_file_func (voidpf opaque,const char* filename,int mo
+     win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
+ 
+     if ((filename!=NULL) && (dwDesiredAccess != 0))
++    {
++#ifndef _WIN_EXT
+         hFile = CreateFile((LPCTSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
++#else
++        hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
++#endif
++    }
+ 
+     return win32_build_iowin(hFile);
+ }
+@@ -197,7 +223,15 @@ long ZCALLBACK win32_tell_file_func (voidpf opaque,voidpf stream)
+         hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
+     if (hFile != NULL)
+     {
+-        DWORD dwSet = SetFilePointer(hFile, 0, NULL, FILE_CURRENT);
++        DWORD dwSet;
++#ifndef _WIN_EXT
++        dwSet = SetFilePointer(hFile, 0, NULL, FILE_CURRENT);
++#else
++        LARGE_INTEGER outPointer;
++        LARGE_INTEGER zero;
++        zero.QuadPart = 0;
++        dwSet = SetFilePointerEx(hFile, zero, &outPointer, FILE_CURRENT) ? outPointer.u.LowPart : INVALID_SET_FILE_POINTER;
++#endif
+         if (dwSet == INVALID_SET_FILE_POINTER)
+         {
+             DWORD dwErr = GetLastError();
+@@ -221,7 +255,14 @@ ZPOS64_T ZCALLBACK win32_tell64_file_func (voidpf opaque, voidpf stream)
+     {
+         LARGE_INTEGER li;
+         li.QuadPart = 0;
++#ifndef _WIN_EXT
+         li.u.LowPart = SetFilePointer(hFile, li.u.LowPart, &li.u.HighPart, FILE_CURRENT);
++#else
++        LARGE_INTEGER zero;
++        LARGE_INTEGER outPointer;
++        zero.QuadPart = 0;
++        li.u.LowPart = SetFilePointerEx(hFile, zero, &outPointer, FILE_CURRENT) ? outPointer.u.LowPart : INVALID_SET_FILE_POINTER;
++#endif
+         if ( (li.LowPart == 0xFFFFFFFF) && (GetLastError() != NO_ERROR))
+         {
+             DWORD dwErr = GetLastError();
+@@ -259,7 +300,15 @@ long ZCALLBACK win32_seek_file_func (voidpf opaque,voidpf stream,uLong offset,in
+ 
+     if (hFile != NULL)
+     {
++#ifndef _WIN_EXT
+         DWORD dwSet = SetFilePointer(hFile, offset, NULL, dwMoveMethod);
++#else
++        LARGE_INTEGER outPointer;
++        LARGE_INTEGER loffset;
++        loffset.QuadPart = 0;
++        loffset.u.LowPart = offset;
++        DWORD dwSet = SetFilePointerEx(hFile, loffset, &outPointer, dwMoveMethod) ? outPointer.u.LowPart : INVALID_SET_FILE_POINTER;
++#endif
+         if (dwSet == INVALID_SET_FILE_POINTER)
+         {
+             DWORD dwErr = GetLastError();
+@@ -297,8 +346,14 @@ long ZCALLBACK win32_seek64_file_func (voidpf opaque, voidpf stream,ZPOS64_T off
+ 
+     if (hFile)
+     {
++#ifndef _WIN_EXT
+         LARGE_INTEGER* li = (LARGE_INTEGER*)&offset;
+         DWORD dwSet = SetFilePointer(hFile, li->u.LowPart, &li->u.HighPart, dwMoveMethod);
++#else
++        LARGE_INTEGER outPointer;
++        LARGE_INTEGER* li = (LARGE_INTEGER*)&offset;
++        DWORD dwSet = SetFilePointerEx(hFile, *li, &outPointer, dwMoveMethod) ? outPointer.u.LowPart : INVALID_SET_FILE_POINTER;
++#endif
+         if (dwSet == INVALID_SET_FILE_POINTER)
+         {
+             DWORD dwErr = GetLastError();
+diff --git a/src/unpack.c b/src/unpack.c
+index 7340bcbb..cfe095fb 100644
+--- a/src/unpack.c
++++ b/src/unpack.c
+@@ -67,11 +67,46 @@ tm_unz tmu_date;
+ 	HANDLE hFile;
+ 	FILETIME ftm, ftLocal, ftCreate, ftLastAcc, ftLastWrite;
+ 
++#ifndef _WIN_EXT
+ 	hFile = CreateFileA(filename, GENERIC_READ | GENERIC_WRITE,
+ 			    0, NULL, OPEN_EXISTING, 0, NULL);
++#else
++	hFile = CreateFile2((LPCTSTR)filename, GENERIC_READ | GENERIC_WRITE, 0, OPEN_EXISTING, NULL);
++#endif
+ 	GetFileTime(hFile, &ftCreate, &ftLastAcc, &ftLastWrite);
++#ifndef _WIN_EXT
+ 	DosDateTimeToFileTime((WORD) (dosdate >> 16), (WORD) dosdate, &ftLocal);
+ 	LocalFileTimeToFileTime(&ftLocal, &ftm);
++#else
++	SYSTEMTIME systime;
++	/*
++	OMG, it's so lowlevel, but I'll try :)
++	wFatDate[in]
++	The MS - DOS date.The date is a packed value with the following format.
++	Bits	Description
++	0 - 4	Day of the month(1-31)
++	5 - 8	Month(1 = January, 2 = February, and so on)
++	9 - 15	Year offset from 1980 (add 1980 to get actual year)
++
++	wFatTime[in]
++	The MS - DOS time.The time is a packed value with the following format.
++	Bits	Description
++	0 - 4	Second divided by 2
++	5 - 10	Minute(0-59)
++	11 - 15	Hour(0-23 on a 24 - hour clock)
++	*/
++	WORD wFatDate = (WORD)(dosdate >> 16);
++	WORD wFatTime = (WORD)dosdate;
++	systime.wYear = (WORD)((wFatDate >> 8) + 1980);
++	systime.wMonth = (WORD)(((BYTE)wFatDate) >> 4);
++	systime.wDayOfWeek = 0;  // ignored
++	systime.wDay = (WORD)(0x000F & wFatDate);
++	systime.wHour = (WORD)(wFatTime >> 10);
++	systime.wMinute = (WORD)((wFatTime >> 4) & 0x003F);
++	systime.wSecond = (WORD)(wFatTime & 0x000F) * 2;
++	systime.wMilliseconds = 0;
++	SystemTimeToFileTime(&systime, &ftm);
++#endif
+ 	SetFileTime(hFile, &ftm, &ftLastAcc, &ftm);
+ 	CloseHandle(hFile);
+ #else
+@@ -160,10 +195,23 @@ const char *newdir;
+ 	return 1;
+ }
+ 
+-static int do_extract_currentfile(uf, password)
++static __inline char *get_full_path(full_path_buffer, dirname, filename)
++char *full_path_buffer;
++const char *dirname;
++const char *filename;
++{
++	strcpy(full_path_buffer, dirname);
++	strcat(full_path_buffer, "/");
++	strcat(full_path_buffer, filename);
++	return full_path_buffer;
++}
++
++static int do_extract_currentfile(uf, password, dirname)
+ unzFile uf;
+ const char *password;
++const char *dirname;
+ {
++	char full_path_buffer[PATH_MAX];
+ 	char filename_inzip[256];
+ 	char dir_inzip[256];
+ 	char *filename_withoutpath;
+@@ -209,7 +257,7 @@ const char *password;
+ 			goto out;
+ 		}
+ 		fprintf(stderr, "creating directory: %s\n", filename_inzip);
+-		mymkdir(filename_inzip);
++		mymkdir(get_full_path(full_path_buffer, dirname, filename_inzip));
+ 		if (!*zip_game_dirname)
+ 			strcpy(zip_game_dirname, dir_inzip);
+ 	} else {
+@@ -226,16 +274,16 @@ const char *password;
+ 		}
+ 
+ 		if (skip == 0) {
+-			fout = fopen64(write_filename, "wb");
++			fout = fopen64(get_full_path(full_path_buffer, dirname, write_filename), "wb");
+ 
+ 			/* some zipfile don't contain directory alone before file */
+ 			if ((fout == NULL)
+ 			    && (filename_withoutpath != (char *)filename_inzip)) {
+ 				char c = *(filename_withoutpath - 1);
+ 				*(filename_withoutpath - 1) = '\0';
+-				makedir(write_filename);
++				makedir(get_full_path(full_path_buffer, dirname, write_filename));
+ 				*(filename_withoutpath - 1) = c;
+-				fout = fopen64(write_filename, "wb");
++				fout = fopen64(get_full_path(full_path_buffer, dirname, write_filename), "wb");
+ 			}
+ 
+ 			if (fout == NULL) {
+@@ -273,7 +321,7 @@ const char *password;
+ 				fclose(fout);
+ 
+ 			if (err == 0)
+-				change_file_date(write_filename,
++				change_file_date(get_full_path(full_path_buffer, dirname, write_filename),
+ 						 file_info.dosDate,
+ 						 file_info.tmu_date);
+ 		}
+@@ -313,9 +361,10 @@ out:
+ 	return err;
+ }
+ 
+-static int do_extract(uf, password)
++static int do_extract(uf, password, dirname)
+ unzFile uf;
+ const char *password;
++const char *dirname;
+ {
+ 	uLong i;
+ 	unz_global_info64 gi;
+@@ -325,7 +374,7 @@ const char *password;
+ 		fprintf(stderr, "error %d with zipfile in unzGetGlobalInfo \n", err);
+ 
+ 	for (i = 0; i < gi.number_entry; i++) {
+-		if (do_extract_currentfile(uf, password) != UNZ_OK)
++		if (do_extract_currentfile(uf, password, dirname) != UNZ_OK)
+ 			return -1;
+ 
+ 		if ((i + 1) < gi.number_entry) {
+@@ -395,7 +444,7 @@ int unpack(const char *zipfilename, const char *dirname)
+ 		fprintf(stderr, "Error changing dir to %s, aborting\n", dirname);
+ 		goto out;
+ 	}
+-	ret_value = do_extract(uf, NULL);
++	ret_value = do_extract(uf, NULL, dirname);
+  out:
+ 	unzClose(uf);
+ #ifdef _WIN32
+diff --git a/src/unzip.c b/src/unzip.c
+index 6116f3b9..411c600c 100644
+--- a/src/unzip.c
++++ b/src/unzip.c
+@@ -612,12 +612,18 @@ local unzFile unzOpenInternal (const void *path,
+         us.z_filefunc = *pzlib_filefunc64_32_def;
+     us.is64bitOpenFunction = is64bitOpenFunction;
+ 
+-
++	void *_path = path;
++#ifdef _WIDE_CHARS
++	wchar_t wpath[_MAX_PATH];
++	mbstowcs(wpath, path, _MAX_PATH);
++	_path = (void*)wpath;
++#endif
+ 
+     us.filestream = ZOPEN64(us.z_filefunc,
+-                                                 path,
++                                                 _path,
+                                                  ZLIB_FILEFUNC_MODE_READ |
+                                                  ZLIB_FILEFUNC_MODE_EXISTING);
++
+     if (us.filestream==NULL)
+         return NULL;
+ 
+diff --git a/src/winrt.c b/src/winrt.c
+index 60d05173..003d13db 100644
+--- a/src/winrt.c
++++ b/src/winrt.c
+@@ -252,12 +252,56 @@ char *game_save_path( int cr, int nr )
+ 
+ int debug_init(void)
+ {
++	// stub
+ 	return 0;
+ }
+ 
+ void debug_done()
+ {
++	// stub
+ }
++
++BOOL GetFileTime(
++	HANDLE     hFile,
++	LPFILETIME lpCreationTime,
++	LPFILETIME lpLastAccessTime,
++	LPFILETIME lpLastWriteTime
++)
++{
++	// stub
++	return 1;
++}
++
++BOOL SetFileTime(
++	HANDLE   hFile,
++	const FILETIME *lpCreationTime,
++	const FILETIME *lpLastAccessTime,
++	const FILETIME *lpLastWriteTime
++)
++{
++	// stub
++	return 1;
++}
++
++// see https://docs.microsoft.com/en-us/cpp/cppcx/crt-functions-not-supported-in-universal-windows-platform-apps
++// The concept of a working directory doesn't apply to Windows 8.x Store apps. Use full paths instead.
++char *_getcwd(
++	char *buffer,
++	int maxlen
++)
++{
++	// stub
++	return buffer;
++}
++
++int _chdir(
++	const char *dirname
++)
++{
++	// stub
++	return 0;
++}
++
+ #ifdef _USE_BROWSE
+ char *open_file_dialog(void)
+ {

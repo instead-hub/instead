@@ -957,7 +957,7 @@ int game_theme_update(void)
 	return 0;
 }
 
-#if defined(ANDROID) || defined(IOS) || defined(_USE_SWROTATE)
+#if defined(ANDROID) || defined(IOS) || defined(WINRT) || defined(_USE_SWROTATE)
 extern void rotate_landscape(void);
 extern void rotate_portrait(void);
 extern void unlock_rotation(void);
@@ -971,7 +971,7 @@ int game_theme_init(void)
 	game_cursor_show = 1;
 
 	if (opt_fs && opt_hires && !gfx_get_max_mode(&w, &h, MODE_ANY)) {
-#if defined(IOS) || defined(ANDROID) || defined(_USE_SWROTATE)
+#if defined(IOS) || defined(ANDROID) || defined(WINRT) || defined(_USE_SWROTATE)
 		if ((game_theme.w > game_theme.h && w < h) ||
 		    (game_theme.w < game_theme.h && w > h)) { /* rotated */
 			if (gfx_get_max_mode(&w, &h, (game_theme.w > game_theme.h)?MODE_H:MODE_V)) {
@@ -990,7 +990,7 @@ int game_theme_init(void)
 #endif
 #endif
 	}
-#if defined(ANDROID) || defined(IOS) || defined(_USE_SWROTATE)
+#if defined(ANDROID) || defined(IOS) || defined(WINRT) || defined(_USE_SWROTATE)
 	else {
 		unlock_rotation();
 	}

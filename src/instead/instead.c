@@ -29,16 +29,16 @@
 
 #define DATA_IDF INSTEAD_IDF
 #ifdef _USE_SDL
-#ifndef __EMSCRIPTEN__
+#if !defined(__EMSCRIPTEN__) && !defined(WINRT)
 static SDL_mutex *sem;
 #endif
 void instead_lock(void) {
-#ifndef __EMSCRIPTEN__
+#if !defined(__EMSCRIPTEN__) && !defined(WINRT)
 	SDL_LockMutex(sem);
 #endif
 }
 void instead_unlock(void) {
-#ifndef __EMSCRIPTEN__
+#if !defined(__EMSCRIPTEN__) && !defined(WINRT)
 	SDL_UnlockMutex(sem);
 #endif
 }
@@ -976,6 +976,8 @@ static int instead_platform(void)
 	snprintf(plat, sizeof(plat) - 1, "PLATFORM='IOS'");
 #elif defined(__APPLE__)
 	snprintf(plat, sizeof(plat) - 1, "PLATFORM='MACOSX'");
+#elif defined(WINRT)
+	snprintf(plat, sizeof(plat) - 1, "PLATFORM='WINRT'");
 #elif defined(ANDROID)
 	snprintf(plat, sizeof(plat) - 1, "PLATFORM='ANDROID'");
 #elif defined(_WIN32)
@@ -998,8 +1000,14 @@ static int instead_package(const char *path)
 	if (!stead_path)
 		return -1;
 	strcpy(stead_path, "package.path=\"");
-	if (path)
+	if (path) {
+#if defined(WINRT)
+		strcat(stead_path, path); /* winrt have not cwd :) */
+		strcat(stead_path, "/?.lua;");
+#else
 		strcat(stead_path, "./?.lua;");
+#endif
+	}
 
 #ifdef INSTEAD_LEGACY
 	p = instead_local_stead_path(wd);
@@ -1215,7 +1223,7 @@ int instead_init(const char *path)
 		goto err;
 	}
 #ifdef _USE_SDL
-#ifndef __EMSCRIPTEN__
+#if !defined(__EMSCRIPTEN__) && !defined(WINRT)
 	sem = SDL_CreateMutex();
 	if (!sem)
 		goto err;
@@ -1266,7 +1274,7 @@ void instead_done(void)
 	if (wasL)
 		extensions_hook(done);
 #ifdef _USE_SDL
-#ifndef __EMSCRIPTEN__
+#if !defined(__EMSCRIPTEN__) && !defined(WINRT)
 	if (sem)
 		SDL_DestroyMutex(sem);
 	sem = NULL;
