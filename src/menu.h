@@ -1,7 +1,7 @@
 #ifndef __MENU_H_INCLUDED
 #define __MENU_H_INCLUDED
 
-#if defined(ANDROID)
+#if defined(IOS) || defined(SAILFISHOS) || defined(ANDROID) || defined(WINRT)
 #define MENU_GAMES_MAX 5
 #define MENU_THEMES_MAX 5
 #define MENU_PER_PAGER 5

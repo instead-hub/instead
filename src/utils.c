@@ -316,7 +316,7 @@ int parse_path(const char *v, void *data)
 	unix_path(*p);
 	return 0;
 }
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(WINRT)
 #include <wchar.h>
 #include <windows.h>
 
@@ -359,7 +359,7 @@ int parse_full_path(const char *v, void *data)
 		*p = strdup("");
 		return (*p)?0:-1;
 	}
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(WINRT)
 	w32_getdir(cwd, sizeof(cwd));
 #else
 	getdir(cwd, sizeof(cwd));

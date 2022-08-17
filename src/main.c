@@ -22,7 +22,7 @@
  *
  */
 
-#if defined(__APPLE__) || defined(ANDROID)
+#if defined(__APPLE__) || defined(ANDROID) || defined(WINRT)
 #include <SDL.h>
 #endif
 
@@ -319,7 +319,7 @@ int instead_main(int argc, char *argv[])
 #endif
 	int err = 0;
 	int i;
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(WINRT)
 	char *exe_path;
 	HINSTANCE lib = LoadLibrary("user32.dll");
 	int (*SetProcessDPIAware)() = (void*) GetProcAddress(lib, "SetProcessDPIAware");
@@ -334,7 +334,7 @@ int instead_main(int argc, char *argv[])
 	putenv("GDK_DEBUG=gl-disable");
 #endif
 
-#if defined(APPIMAGE)
+#if defined(APPIMAGE) || defined(WINRT)
 	unix_path(argv[0]);
 	strcpy(game_cwd, dirname(argv[0]));
 #elif defined(_WIN32)

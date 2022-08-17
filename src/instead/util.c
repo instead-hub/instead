@@ -276,7 +276,74 @@ double mt_random_double(void)
 	return tinymt32_generate_32double(&trandom);
 }
 
-#if defined(_WIN32)
+#if defined(WINRT)
+
+#include "system.h"
+#include <windows.h>
+#include <limits.h>
+#include <sys/types.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+
+static char curdir[PATH_MAX];
+
+int setdir(const char *path)
+{
+	strncpy(curdir, path, sizeof(curdir) - 1);
+	return 0;
+}
+
+char *getdir(char *path, size_t size)
+{
+	strncpy(path, curdir, size - 1);
+	return path;
+}
+
+char *dirpath(const char *path)
+{
+	static char fp[PATH_MAX * 4];
+	if (path[0] == '/' || path[1] == ':')
+		return (char*)path;
+	snprintf(fp, sizeof(fp), "%s/%s", curdir, path);
+	fp[sizeof(fp) - 1] = 0;
+	unix_path(fp);
+	return fp;
+}
+
+int is_absolute_path(const char *path)
+{
+	if (!path || !*path)
+		return 0;
+	return (*path == '/' || *path == '\\' || path[1] == ':');
+}
+
+char *dirname(char *path)
+{
+	char *p;
+	if (path == NULL || *path == '\0')
+		return ".";
+	p = path + strlen(path) - 1;
+	while (*p == '/') {
+		if (p == path)
+			return path;
+		*p-- = '\0';
+	}
+	while (p >= path && *p != '/')
+		p--;
+	return p < path ? "." : p == path ? "/" : (*p = '\0', path);
+}
+
+char* basename(char* path)
+{
+	char *ptr = path;
+	int l = 0;
+	while (ptr[(l = strcspn(ptr, "\\//"))])
+		ptr += l + 1;
+	return ptr;
+}
+
+#elif defined(_WIN32)
 
 #include <windows.h>
 #include <shlobj.h>

@@ -8,7 +8,7 @@
  * new: wheel input event (grab_events mode);
  * doc: embedding manual;
  * enh: tiny2 better games compatible;
- * rem: S60, MAEMO, WCE, WINRT ports.
+ * rem: S60, MAEMO, WCE ports.
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 30 Jul 2022 10:00:00 +0300
 
