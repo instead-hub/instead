@@ -334,9 +334,12 @@ int instead_main(int argc, char *argv[])
 	putenv("GDK_DEBUG=gl-disable");
 #endif
 
-#if defined(APPIMAGE) || defined(WINRT)
+#if defined(APPIMAGE)
 	unix_path(argv[0]);
 	strcpy(game_cwd, dirname(argv[0]));
+#elif defined(WINRT)
+	unix_path(argv[0]);
+	strcpy(game_cwd, argv[0]); /* argv[0] is directory */
 #elif defined(_WIN32)
 	exe_path = malloc(PATH_MAX + 1);
 	if (exe_path) {
