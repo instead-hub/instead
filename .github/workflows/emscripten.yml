@@ -40,6 +40,10 @@ jobs:
           cd emsdk
           export WORKSPACE="${{github.workspace}}/emsdk/env"
           ../contrib/instead-em-build.sh
+
+      - name: Create Artifact
+        run:
+          cd emsdk
           mkdir -p ../release/instead-em
           cp env/instead-em-js/instead-em.* ../release/instead-em
           cp -f env/instead-em-js/instead.html ../release/instead-em/instead-em.html
