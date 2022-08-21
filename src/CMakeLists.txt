@@ -2,7 +2,7 @@
 SET(INSTEAD_SRCS
 	SDL_gif.c
 	SDL_gfxBlitFunc.c
-	SDL2_rotozoom.c
+	SDL_rotozoom.c
 	config.c
 	game.c
 	graphics.c
