@@ -6,8 +6,24 @@ on:
 
 jobs:
   build:
-    name: Standalone
-    runs-on: ubuntu-latest
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        config:
+          - {
+              name: "with lua5.1"
+              os: ubuntu-latest
+              packages: "liblua5.1-dev libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev libsdl2-mixer-dev"
+              cmake_opts: "-DSTANDALONE=1 -DWITH_LUAJIT=0 -DWITH_GTK3=FALSE"
+            }
+          - {
+              name: "with luajit"
+              os: ubuntu-latest
+              packages: "libluajit5.1-dev libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev libsdl2-mixer-dev"
+              cmake_opts: "-DSTANDALONE=1 -DWITH_LUAJIT=1 -DWITH_GTK3=FALSE"
+            }
 
     steps:
       - uses: actions/checkout@v2
@@ -18,11 +34,11 @@ jobs:
       - name: Install Packages
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y liblua5.1-dev libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev libsdl2-mixer-dev
+          sudo apt-get install -y ${{ matrix.config.packages }}
           sudo apt-get install -y build-essential debhelper
 
       - name: Configure CMake
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DSTANDALONE=1 -DWITH_LUAJIT=0 -DWITH_GTK3=FALSE
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release ${{ matrix.config.cmake_opts }}
 
       - name: Build
         run: cmake --build ./build --config Release
