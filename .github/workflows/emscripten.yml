@@ -29,10 +29,14 @@ jobs:
           cd emsdk
           export WORKSPACE="${{github.workspace}}/emsdk/env"
           ../contrib/instead-em-build.sh
+          mkdir -p ../release/instead-em
+          cp env/instead-em-js/instead-em.* ../release/instead-em
+          cp env/instead-em-js/load* ../release/instead-em
+          cp env/instead-em-js/*.svg ../release/instead-em
 
       - name: Publish Artifact
         uses: actions/upload-artifact@v3
         with:
           name: instead-em
-          path: emsdk/env/instead-em-js
+          path: release
           retention-days: 1
