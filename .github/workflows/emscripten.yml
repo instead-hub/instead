@@ -1,0 +1,26 @@
+name: Emscripten version
+
+jobs:
+  build:
+    name: Emscripten version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Packages
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y build-essential git
+
+      - name: Prep
+        run: |
+          git clone https://github.com/emscripten-core/emsdk.git
+          cd emsdk
+          ./emsdk install latest
+          ./emsdk activate latest
+
+      - name: Build
+        run: |
+          cd emsdk
+          export WORKSPACE="${{github.workspace}}/emsdk/env"
+          ../contrib/instead-em-build.sh

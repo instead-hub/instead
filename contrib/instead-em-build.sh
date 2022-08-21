@@ -358,4 +358,4 @@ emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_ttf.
 --preload-file fs@/
 
 echo "Happy hacking"
-python2.7 -m SimpleHTTPServer 8000
+# python2.7 -m SimpleHTTPServer 8000
