@@ -91,69 +91,7 @@ emmake make install SHELL="${SHELL}"
 touch ../.stamp_libmikmod
 fi
 
-# SDL2
-cd $WORKSPACE
-if ! test -r .stamp_sdl2; then
-rm -rf SDL2
-git clone https://github.com/emscripten-ports/SDL2.git
-cd SDL2
-# git checkout merge-2.0.7
-git pull
-
-./autogen.sh
-emconfigure ./configure --host=asmjs-unknown-emscripten --disable-assembly --disable-threads --disable-mmx --disable-sdltest --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include" LDFLAGS="-L$WORKSPACE/lib" --disable-sdltest --disable-shared --disable-joystick --disable-pthreads CFLAGS='-sUSE_SDL=0'
-cat <<EOF >em.patch
---- SDL_audio.c	2017-12-23 14:03:32.965522053 +0300
-+++ SDL_audio.c.em	2017-12-23 14:18:03.274008570 +0300
-@@ -1280,7 +1280,7 @@
- 
-     /* if your target really doesn't need it, set it to 0x1 or something. */
-     /* otherwise, close_audio_device() won't call impl.CloseDevice(). */
--    SDL_assert(device->hidden != NULL);
-+//    SDL_assert(device->hidden != NULL);
- 
-     /* See if we need to do any conversion */
-     build_stream = SDL_FALSE;
-EOF
-patch -p1 src/audio/SDL_audio.c -i em.patch
-
-cat <<EOF >em.patch
---- SDL_systimer.c	2022-07-30 11:09:08.647816300 +0300
-+++ SDL_systimer.c.em	2022-07-30 11:09:31.587919493 +0300
-@@ -191,13 +191,6 @@
- void
- SDL_Delay(Uint32 ms)
- {
--#ifdef __EMSCRIPTEN__
--    if (emscripten_has_asyncify() && SDL_GetHintBoolean(SDL_HINT_EMSCRIPTEN_ASYNCIFY, SDL_TRUE)) {
--        /* pseudo-synchronous pause, used directly or through e.g. SDL_WaitEvent */
--        emscripten_sleep(ms);
--        return;
--    }
--#endif
-     int was_error;
- 
- #if HAVE_NANOSLEEP
-@@ -207,6 +200,13 @@
-     Uint32 then, now, elapsed;
- #endif
- 
-+#ifdef __EMSCRIPTEN__
-+    if (emscripten_has_asyncify() && SDL_GetHintBoolean(SDL_HINT_EMSCRIPTEN_ASYNCIFY, SDL_TRUE)) {
-+        /* pseudo-synchronous pause, used directly or through e.g. SDL_WaitEvent */
-+        emscripten_sleep(ms);
-+        return;
-+    }
-+#endif
-     /* Set the timeout interval */
- #if HAVE_NANOSLEEP
-     elapsed.tv_sec = ms / 1000;
-EOF
-patch -p1 src/timer/unix/SDL_systimer.c -i em.patch
-
-emmake make install
-touch ../.stamp_sdl2
-fi
+# freetype2
 
 cd $WORKSPACE
 if ! test -r .stamp_ft2; then
@@ -178,7 +116,7 @@ git checkout master
 git pull
 sed -i -e 's/noinst_PROGRAMS = showfont glfont//' Makefile.am
 ./autogen.sh
-emconfigure ./configure --build=amd64-unknown-linux --host=asmjs-unknown-linux --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -I$WORKSPACE/include/SDL2 -I$WORKSPACE/include/freetype2" LDFLAGS="-L$WORKSPACE/lib" --disable-sdltest --disable-shared
+emconfigure ./configure --build=amd64-unknown-linux --host=asmjs-unknown-linux --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -I$WORKSPACE/include/SDL2 -I$WORKSPACE/include/freetype2" LDFLAGS="-L$WORKSPACE/lib" --disable-sdltest --disable-shared CFLAGS="-sUSE_SDL=2"
 emmake make install
 touch ../.stamp_sdl2_ttf
 fi
@@ -201,7 +139,7 @@ export have_libmikmod=yes
 emconfigure ./configure --host=asmjs-unknown-emscripten --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -I$WORKSPACE/include/SDL2 -s USE_VORBIS=1 -s USE_OGG=1" LDFLAGS="-L$WORKSPACE/lib" --disable-sdltest --disable-shared \
    --disable-music-mp3-mad-gpl --enable-music-ogg --disable-music-ogg-shared --enable-music-mod-mikmod --disable-music-mod-mikmod-shared \
    --disable-music-midi-fluidsynth --disable-music-midi-fluidsynth-shared \
-   --disable-music-mp3-smpeg --disable-music-mp3-smpeg-shared
+   --disable-music-mp3-smpeg --disable-music-mp3-smpeg-shared CFLAGS="-sUSE_SDL=2"
 
 cat Makefile | sed -e 's| \$(objects)/playwave\$(EXE) \$(objects)/playmus\$(EXE)||g' > Makefile.new
 mv -f Makefile.new Makefile
@@ -231,7 +169,7 @@ cd SDL2_image
 ./autogen.sh
 export ac_cv_lib_jpeg_jpeg_CreateDecompress=yes
 export ac_cv_lib_png_png_create_read_struct=yes
-emconfigure ./configure --host=asmjs-unknown-linux --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -I$WORKSPACE/include/SDL2 -s USE_LIBPNG=1" LDFLAGS="-L$WORKSPACE/lib -lpng -ljpeg" --disable-sdltest --disable-shared --enable-static --enable-png --disable-png-shared --enable-jpg --disable-jpg-shared
+emconfigure ./configure --host=asmjs-unknown-linux --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -I$WORKSPACE/include/SDL2 -s USE_LIBPNG=1" LDFLAGS="-L$WORKSPACE/lib -lpng -ljpeg" --disable-sdltest --disable-shared --enable-static --enable-png --disable-png-shared --enable-jpg --disable-jpg-shared CFLAGS="-sUSE_SDL=2"
 emmake make install
 touch ../.stamp_sdl2_image
 fi
@@ -249,7 +187,7 @@ git pull
 [ -e Rules.make ] || ln -s Rules.standalone Rules.make
 cat <<EOF > config.make
 EXTRA_CFLAGS+= -DNOMAIN -D_HAVE_ICONV -I../../include
-SDL_CFLAGS=-I../../include/SDL2 -sUSE_SDL=0
+SDL_CFLAGS=-I../../include/SDL2 -sUSE_SDL=2
 SDL_LFLAGS=
 LUA_CFLAGS=
 LUA_LFLAGS=
