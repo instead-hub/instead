@@ -4,6 +4,9 @@ on:
     - cron: '30 21 * * *'
   workflow_dispatch:
 
+env:
+    emsdk_ver: 3.1.19
+
 jobs:
   build:
     name: Emscripten version
@@ -16,7 +19,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: emsdk
-          key: ${{ runner.os }}-3.1.19
+          key: ${{ runner.os }}-${{ env.emsdk_ver }}
 
       - name: Install Packages
         run: |
@@ -28,8 +31,8 @@ jobs:
         run: |
           git clone https://github.com/emscripten-core/emsdk.git
           cd emsdk
-          ./emsdk install 3.1.19
-          ./emsdk activate 3.1.19
+          ./emsdk install ${{ env.emsdk_ver }}
+          ./emsdk activate ${{ env.emsdk_ver }}
           mkdir env
 
       - name: Build
@@ -39,6 +42,7 @@ jobs:
           ../contrib/instead-em-build.sh
           mkdir -p ../release/instead-em
           cp env/instead-em-js/instead-em.* ../release/instead-em
+          cp -f env/instead-em-js/instead.html ../release/instead-em/instead-em.html
           cp env/instead-em-js/load* ../release/instead-em
           cp env/instead-em-js/*.svg ../release/instead-em
 
