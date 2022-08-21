@@ -22,7 +22,7 @@ jobs:
             name: "with lua5.3 and gtk3",
             os: "ubuntu-latest",
             packages: "liblua5.3-dev libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev libsdl2-mixer-dev libgtk-3-dev",
-            cmake_opts: "-DSTANDALONE=1 -DWITH_LUAJIT=1 -DWITH_GTK3=TRUE"
+            cmake_opts: "-DSTANDALONE=1 -DWITH_LUAJIT=0 -DWITH_GTK3=TRUE"
           }
 
     steps:
