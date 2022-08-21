@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
@@ -12,16 +12,16 @@ jobs:
       fail-fast: true
       matrix:
         config:
-        - {
-            name: "with lua5.1"
-            os: ubuntu-latest
-            packages: "liblua5.1-dev libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev libsdl2-mixer-dev"
+          - {
+            name: "with lua5.1",
+            os: "ubuntu-latest",
+            packages: "liblua5.1-dev libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev libsdl2-mixer-dev",
             cmake_opts: "-DSTANDALONE=1 -DWITH_LUAJIT=0 -DWITH_GTK3=FALSE"
           }
-        - {
-            name: "with luajit"
-            os: ubuntu-latest
-            packages: "libluajit5.1-dev libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev libsdl2-mixer-dev"
+          - {
+            name: "with luajit",
+            os: "ubuntu-latest",
+            packages: "libluajit5.1-dev libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev libsdl2-mixer-dev",
             cmake_opts: "-DSTANDALONE=1 -DWITH_LUAJIT=1 -DWITH_GTK3=FALSE"
           }
 
