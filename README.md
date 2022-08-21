@@ -1,3 +1,5 @@
+![Build status](https://github.com/instead-hub/instead/actions/workflows/CI.yml/badge.svg)
+
 # INSTEAD
 
 This program is covered by the terms of the MIT license.
