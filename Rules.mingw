@@ -22,12 +22,13 @@ LUA_LFLAGS=-llua5.1 -L./windows/
 SDL_CFLAGS=-I./windows/SDL
 SDL_LFLAGS=-lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image -L./windows/SDL
 
-CFLAGS	+= -Wall -mwindows -D_HAVE_ICONV -D_USE_UNPACK -D_USE_BROWSE -D_LOCAL_APPDATA # -D_SDL_MOD_BUG
+CFLAGS	+= -Wall -mwindows -D_HAVE_ICONV -D_USE_UNPACK -D_USE_BROWSE -D_LOCAL_APPDATA
 LDFLAGS += -liconv
 
-CC=i486-mingw32-gcc
-AR=i486-mingw32-ar rc
-RANLIB=i486-mingw32-ranlib
+MINGW=i686-w64-mingw32-
+CC=$(MINGW)gcc
+AR=$(MINGW)ar rc
+RANLIB=$(MINGW)ranlib
 
 RM=rm
 EXE=.exe
@@ -41,4 +42,4 @@ PLATFORM=windows.c iowin32.c
 RESOURCES=resources.o
 
 resources.o: resources.rc
-	i486-mingw32-windres -i resources.rc -o resources.o
+	$(MINGW)windres -i resources.rc -o resources.o

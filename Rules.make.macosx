@@ -24,10 +24,10 @@ LUA_LFLAGS=$(shell pkg-config --libs lua5.1)
 # LUA_LFLAGS=$(shell pkg-config --libs lua)
 #
 
-SDL_CFLAGS=$(shell sdl-config --cflags)
-SDL_LFLAGS=$(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer -lSDL_image
+SDL_CFLAGS=$(shell sdl2-config --cflags)
+SDL_LFLAGS=$(shell sdl2-config --libs) -lSDL2_ttf -lSDL2_mixer -lSDL2_image
 
-CFLAGS	+= -Wall -Dunix -D_USE_UNPACK -D_USE_BROWSE -D_SDL_MOD_BUG
+CFLAGS	+= -Wall -Dunix -D_USE_UNPACK -D_USE_BROWSE
 
 INSTALLD=echo "Do not install standalone version!"
 INSTALLB=echo "Do not install standalone version!"
