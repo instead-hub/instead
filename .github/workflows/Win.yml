@@ -1,0 +1,37 @@
+name: Win
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Windows version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Packages
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y mingw-w64 mingw-w64-i686-dev
+          sudo apt-get install -y build-essential
+
+      - name: Prep
+        run: make windows-sdl2.tar.gz
+
+      - name: Configure
+        run: ./configure-mingw32.sh
+
+      - name: Build
+        run: make -f Makefile.mingw
+
+      - name: Create Artifact
+        run: make install -f Makefile.mingw
+          cmake --install ./build
+
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: win
+          path: bin
