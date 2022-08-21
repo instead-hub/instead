@@ -1,12 +1,8 @@
-#include <SDL.h>
-#if SDL_VERSION_ATLEAST(2,0,0)
-#include "SDL2_rotozoom.c"
-#else
 /*  
 
-SDL_rotozoom.c: rotozoomer, zoomer and shrinker for 32bit or 8bit surfaces
+SDL2_rotozoom.c: rotozoomer, zoomer and shrinker for 32bit or 8bit surfaces
 
-Copyright (C) 2001-2012  Andreas Schiffler
+Copyright (C) 2012  Andreas Schiffler
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages
@@ -87,14 +83,7 @@ to a situation where the program can segfault.
 Uint32 _colorkey(SDL_Surface *src)
 {
 	Uint32 key = 0; 
-#if (SDL_MINOR_VERSION == 3)
 	SDL_GetColorKey(src, &key);
-#else
-	if (src) 
-	{
-		key = src->format->colorkey;
-	}
-#endif
 	return key;
 }
 
@@ -132,8 +121,7 @@ int _shrinkSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int factorx, int fa
 	* Scan destination
 	*/
 	sp = (tColorRGBA *) src->pixels;
-/*	sgap = src->pitch - src->w * 4; */
-
+	
 	dp = (tColorRGBA *) dst->pixels;
 	dgap = dst->pitch - dst->w * 4;
 
@@ -221,7 +209,6 @@ int _shrinkSurfaceY(SDL_Surface * src, SDL_Surface * dst, int factorx, int facto
 	* Scan destination
 	*/
 	sp = (Uint8 *) src->pixels;
-/*	sgap = src->pitch - src->w; */
 
 	dp = (Uint8 *) dst->pixels;
 	dgap = dst->pitch - dst->w;
@@ -297,10 +284,10 @@ int _zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy,
 	/*
 	* Allocate memory for row/column increments 
 	*/
-	if ((sax = (Sint32 *) malloc((dst->w + 1) * sizeof(Sint32))) == NULL) {
+	if ((sax = (int *) malloc((dst->w + 1) * sizeof(int))) == NULL) {
 		return (-1);
 	}
-	if ((say = (Sint32 *) malloc((dst->h + 1) * sizeof(Sint32))) == NULL) {
+	if ((say = (int *) malloc((dst->h + 1) * sizeof(int))) == NULL) {
 		free(sax);
 		return (-1);
 	}
@@ -542,7 +529,7 @@ int _zoomSurfaceY(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy)
 	/*
 	* Pointer setup 
 	*/
-	csp = (Uint8 *) src->pixels;
+	sp = csp = (Uint8 *) src->pixels;
 	dp = (Uint8 *) dst->pixels;
 	dgap = dst->pitch - dst->w;
 
@@ -769,8 +756,6 @@ void transformSurfaceY(SDL_Surface * src, SDL_Surface * dst, int cx, int cy, int
 	yd = ((src->h - dst->h) << 15);
 	ax = (cx << 16) - (icos * cx);
 	ay = (cy << 16) - (isin * cx);
-/*	sw = src->w - 1;
-	sh = src->h - 1; */
 	pc = (tColorY*) dst->pixels;
 	gap = dst->pitch - dst->w;
 	/*
@@ -803,11 +788,11 @@ void transformSurfaceY(SDL_Surface * src, SDL_Surface * dst, int cx, int cy, int
 }
 
 /*!
-\brief Rotates a 32 bit surface in increments of 90 degrees.
+\brief Rotates a 8/16/24/32 bit surface in increments of 90 degrees.
 
 Specialized 90 degree rotator which rotates a 'src' surface in 90 degree 
 increments clockwise returning a new surface. Faster than rotozoomer since
-not scanning or interpolation takes place. Input surface must be 32 bit.
+no scanning or interpolation takes place. Input surface must be 8/16/24/32 bit.
 (code contributed by J. Schiller, improved by C. Allport and A. Schiffler)
 
 \param src Source surface to rotate.
@@ -818,13 +803,17 @@ not scanning or interpolation takes place. Input surface must be 32 bit.
 SDL_Surface* rotateSurface90Degrees(SDL_Surface* src, int numClockwiseTurns) 
 {
 	int row, col, newWidth, newHeight;
-	int bpp, src_ipr, dst_ipr;
+	int bpp;
 	SDL_Surface* dst;
-	Uint32* srcBuf;
-	Uint32* dstBuf;
+	Uint8* srcBuf;
+	Uint8* dstBuf;
 
-	/* Has to be a valid surface pointer and only 32-bit surfaces (for now) */
-	if (!src || src->format->BitsPerPixel != 32) { return NULL; }
+	/* Has to be a valid surface pointer and be a 8/16/24/32-bit surface */
+	if (!src || !src->format ||
+		 !(src->format->BitsPerPixel == 8) || 
+		  (src->format->BitsPerPixel == 16) ||
+		  (src->format->BitsPerPixel == 24) ||
+		  (src->format->BitsPerPixel == 32)) { return NULL; }
 
 	/* normalize numClockwiseTurns */
 	while(numClockwiseTurns < 0) { numClockwiseTurns += 4; }
@@ -842,17 +831,15 @@ SDL_Surface* rotateSurface90Degrees(SDL_Surface* src, int numClockwiseTurns)
 		return NULL;
 	}
 
-	if (SDL_MUSTLOCK(dst)) {
-		SDL_LockSurface(dst);
+	if (SDL_MUSTLOCK(src)) {
+		SDL_LockSurface(src);
 	}
 	if (SDL_MUSTLOCK(dst)) {
 		SDL_LockSurface(dst);
 	}
 
-	/* Calculate int-per-row */
+	/* Calculate byte-per-pixel */
 	bpp = src->format->BitsPerPixel / 8;
-	src_ipr = src->pitch / bpp;
-	dst_ipr = dst->pitch / bpp;
 
 	switch(numClockwiseTurns) {
 	case 0: /* Make a copy of the surface */
@@ -867,12 +854,12 @@ SDL_Surface* rotateSurface90Degrees(SDL_Surface* src, int numClockwiseTurns)
 			else
 			{
 				/* If the pitch differs, copy each row separately */
-				srcBuf = (Uint32*)(src->pixels); 
-				dstBuf = (Uint32*)(dst->pixels);
+				srcBuf = (Uint8*)(src->pixels);
+				dstBuf = (Uint8*)(dst->pixels);
 				for (row = 0; row < src->h; row++) {
 					memcpy(dstBuf, srcBuf, dst->w * bpp);
-					srcBuf += src_ipr;
-					dstBuf += dst_ipr;
+					srcBuf += src->pitch;
+					dstBuf += dst->pitch;
 				} /* end for(col) */
 			} /* end for(row) */
 		}
@@ -882,42 +869,40 @@ SDL_Surface* rotateSurface90Degrees(SDL_Surface* src, int numClockwiseTurns)
 	case 1: /* rotated 90 degrees clockwise */
 		{
 			for (row = 0; row < src->h; ++row) {
-				srcBuf = (Uint32*)(src->pixels) + (row * src_ipr);
-				dstBuf = (Uint32*)(dst->pixels) + (dst->w - row - 1);
+				srcBuf = (Uint8*)(src->pixels) + (row * src->pitch);
+				dstBuf = (Uint8*)(dst->pixels) + (dst->w - row - 1) * bpp;
 				for (col = 0; col < src->w; ++col) {
-					*dstBuf = *srcBuf;
-					++srcBuf;
-					dstBuf += dst_ipr;
+					memcpy (dstBuf, srcBuf, bpp);
+					srcBuf += bpp;
+					dstBuf += dst->pitch;
 				} 
-				/* end for(col) */
 			} 
-			/* end for(row) */
 		}
 		break;
 
 	case 2: /* rotated 180 degrees clockwise */
 		{
 			for (row = 0; row < src->h; ++row) {
-				srcBuf = (Uint32*)(src->pixels) + (row * src_ipr);
-				dstBuf = (Uint32*)(dst->pixels) + ((dst->h - row - 1) * dst_ipr) + (dst->w - 1);
+				srcBuf = (Uint8*)(src->pixels) + (row * src->pitch);
+				dstBuf = (Uint8*)(dst->pixels) + ((dst->h - row - 1) * dst->pitch) + (dst->w - 1) * bpp;
 				for (col = 0; col < src->w; ++col) {
-					*dstBuf = *srcBuf;
-					++srcBuf;
-					--dstBuf;
+					memcpy (dstBuf, srcBuf, bpp);
+					srcBuf += bpp;
+					dstBuf -= bpp;
 				} 
 			} 
 		}
 		break;
 
-	case 3:
+	case 3: /* rotated 270 degrees clockwise */
 		{
 			for (row = 0; row < src->h; ++row) {
-				srcBuf = (Uint32*)(src->pixels) + (row * src_ipr);
-				dstBuf = (Uint32*)(dst->pixels) + row + ((dst->h - 1) * dst_ipr);
+				srcBuf = (Uint8*)(src->pixels) + (row * src->pitch);
+				dstBuf = (Uint8*)(dst->pixels) + row + ((dst->h - 1) * dst->pitch);
 				for (col = 0; col < src->w; ++col) {
 					*dstBuf = *srcBuf;
-					++srcBuf;
-					dstBuf -= dst_ipr;
+					srcBuf += bpp;
+					dstBuf -= dst->pitch;
 				} 
 			} 
 		}
@@ -1062,22 +1047,14 @@ SDL_Surface *rotozoomSurfaceXY(SDL_Surface * src, double angle, double zoomx, do
 	int is32bit;
 	int i, src_converted;
 	int flipx,flipy;
-	Uint8 r,g,b;
-	Uint32 colorkey = 0;
-	int colorKeyAvailable = 0;
 
 	/*
 	* Sanity check 
 	*/
-	if (src == NULL)
+	if (src == NULL) {
 		return (NULL);
-
-	if (src->flags & SDL_SRCCOLORKEY)
-	{
-		colorkey = _colorkey(src);
-		SDL_GetRGB(colorkey, src->format, &r, &g, &b);
-		colorKeyAvailable = 1;
 	}
+
 	/*
 	* Determine if source surface is 32bit or 8bit 
 	*/
@@ -1100,13 +1077,9 @@ SDL_Surface *rotozoomSurfaceXY(SDL_Surface * src, double angle, double zoomx, do
 			0xff000000,  0x00ff0000, 0x0000ff00, 0x000000ff
 #endif
 			);
-		if(colorKeyAvailable)
-			SDL_SetColorKey(src, 0, 0);
 
 		SDL_BlitSurface(src, NULL, rz_src, NULL);
 
-		if(colorKeyAvailable)
-			SDL_SetColorKey(src, SDL_SRCCOLORKEY, colorkey);
 		src_converted = 1;
 		is32bit = 1;
 	}
@@ -1175,12 +1148,6 @@ SDL_Surface *rotozoomSurfaceXY(SDL_Surface * src, double angle, double zoomx, do
 		/* Adjust for guard rows */
 		rz_dst->h = dstheight;
 
-		if (colorKeyAvailable == 1){
-			colorkey = SDL_MapRGB(rz_dst->format, r, g, b);
-
-			SDL_FillRect(rz_dst, NULL, colorkey );
-		}
-
 		/*
 		* Lock source surface 
 		*/
@@ -1199,11 +1166,6 @@ SDL_Surface *rotozoomSurfaceXY(SDL_Surface * src, double angle, double zoomx, do
 				(int) (sanglezoominv), (int) (canglezoominv), 
 				flipx, flipy,
 				smooth);
-			/*
-			* Turn on source-alpha support 
-			*/
-			SDL_SetAlpha(rz_dst, SDL_SRCALPHA, 255);
-			SDL_SetColorKey(rz_dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, _colorkey(rz_src));
 		} else {
 			/*
 			* Copy palette and colorkey info 
@@ -1218,7 +1180,6 @@ SDL_Surface *rotozoomSurfaceXY(SDL_Surface * src, double angle, double zoomx, do
 			transformSurfaceY(rz_src, rz_dst, dstwidthhalf, dstheighthalf,
 				(int) (sanglezoominv), (int) (canglezoominv),
 				flipx, flipy);
-			SDL_SetColorKey(rz_dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, _colorkey(rz_src));
 		}
 		/*
 		* Unlock source surface 
@@ -1267,12 +1228,6 @@ SDL_Surface *rotozoomSurfaceXY(SDL_Surface * src, double angle, double zoomx, do
 		/* Adjust for guard rows */
 		rz_dst->h = dstheight;
 
-		if (colorKeyAvailable == 1){
-			colorkey = SDL_MapRGB(rz_dst->format, r, g, b);
-
-			SDL_FillRect(rz_dst, NULL, colorkey );
-		}
-
 		/*
 		* Lock source surface 
 		*/
@@ -1289,11 +1244,6 @@ SDL_Surface *rotozoomSurfaceXY(SDL_Surface * src, double angle, double zoomx, do
 			*/
 			_zoomSurfaceRGBA(rz_src, rz_dst, flipx, flipy, smooth);
 
-			/*
-			* Turn on source-alpha support 
-			*/
-			SDL_SetAlpha(rz_dst, SDL_SRCALPHA, 255);
-			SDL_SetColorKey(rz_dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, _colorkey(rz_src));
 		} else {
 			/*
 			* Copy palette and colorkey info 
@@ -1307,7 +1257,6 @@ SDL_Surface *rotozoomSurfaceXY(SDL_Surface * src, double angle, double zoomx, do
 			* Call the 8bit transformation routine to do the zooming 
 			*/
 			_zoomSurfaceY(rz_src, rz_dst, flipx, flipy);
-			SDL_SetColorKey(rz_dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, _colorkey(rz_src));
 		}
 
 		/*
@@ -1494,10 +1443,6 @@ SDL_Surface *zoomSurface(SDL_Surface * src, double zoomx, double zoomy, int smoo
 		* Call the 32bit transformation routine to do the zooming (using alpha) 
 		*/
 		_zoomSurfaceRGBA(rz_src, rz_dst, flipx, flipy, smooth);
-		/*
-		* Turn on source-alpha support 
-		*/
-		SDL_SetAlpha(rz_dst, SDL_SRCALPHA, 255);
 	} else {
 		/*
 		* Copy palette and colorkey info 
@@ -1510,7 +1455,6 @@ SDL_Surface *zoomSurface(SDL_Surface * src, double zoomx, double zoomy, int smoo
 		* Call the 8bit transformation routine to do the zooming 
 		*/
 		_zoomSurfaceY(rz_src, rz_dst, flipx, flipy);
-		SDL_SetColorKey(rz_dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, _colorkey(rz_src));
 	}
 	/*
 	* Unlock source surface 
@@ -1556,7 +1500,7 @@ SDL_Surface *shrinkSurface(SDL_Surface *src, int factorx, int factory)
 	SDL_Surface *rz_dst = NULL;
 	int dstwidth, dstheight;
 	int is32bit;
-	int i, src_converted;
+	int i, src_converted = 0;
 	int haveError = 0;
 
 	/*
@@ -1653,15 +1597,6 @@ SDL_Surface *shrinkSurface(SDL_Surface *src, int factorx, int factory)
 			haveError = 1;
 			goto exitShrinkSurface;
 		}
-
-		/*
-		* Turn on source-alpha support 
-		*/
-		result = SDL_SetAlpha(rz_dst, SDL_SRCALPHA, 255);
-		if (result!=0) {
-			haveError = 1;
-			goto exitShrinkSurface;
-		}
 	} else {
 		/*
 		* Copy palette and colorkey info 
@@ -1678,15 +1613,6 @@ SDL_Surface *shrinkSurface(SDL_Surface *src, int factorx, int factory)
 			haveError = 1;
 			goto exitShrinkSurface;
 		}
-
-		/*
-		* Set colorkey on target
-		*/
-		result = SDL_SetColorKey(rz_dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, _colorkey(rz_src));
-		if (result!=0) {
-			haveError = 1;
-			goto exitShrinkSurface;
-		}		
 	}
 
 exitShrinkSurface:
@@ -1719,4 +1645,3 @@ exitShrinkSurface:
 	*/
 	return (rz_dst);
 }
-#endif

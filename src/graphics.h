@@ -32,13 +32,9 @@
 #define LINK_CACHE_SIZE		64
 */
 
-#if SDL_VERSION_ATLEAST(1,3,0)
 typedef int		gtimer_t;
 #define	NULL_TIMER	0
-#else
-typedef void*	gtimer_t;
-#define	NULL_TIMER	NULL
-#endif
+
 struct _img_t;
 typedef struct _img_t*	img_t;
 typedef void*	fnt_t;

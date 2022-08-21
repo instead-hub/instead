@@ -292,11 +292,7 @@ mus_t snd_load_mus(const char *fname)
 	mus->rw = RWFromIdf(instead_idf(), fname);
 	if (!mus->rw)
 		goto err;
-#if MIXER_VERSION_ATLEAST(2,0,0)
 	mus->mus = Mix_LoadMUS_RW(mus->rw, SDL_FALSE);
-#else
-	mus->mus = Mix_LoadMUS_RW(mus->rw);
-#endif
 	if (!mus->mus)
 		goto err1;
 	return mus;
@@ -387,23 +383,14 @@ int snd_panning(int channel, int left, int right)
 
 void snd_free_mus(mus_t mus)
 {
-	int to_close = 0;
 	if (!sound_on)
 		return;
 	if (!mus)
 		return;
 	Mix_HaltMusic();
 	if (mus->mus) {
-#ifdef _SDL_MOD_BUG
-		if ((Mix_GetMusicType(mus->mus) == MUS_MOD) && !MIXER_VERSION_ATLEAST(1, 2, 12))
-			SDL_RWclose(mus->rw);
-#endif
-		if (MIXER_VERSION_ATLEAST(1, 2, 12) && Mix_GetMusicType(mus->mus) != MUS_MP3) {
-			to_close = 1;
-		}
 		Mix_FreeMusic((Mix_Music*) mus->mus);
-		if (to_close)
-			SDL_RWclose(mus->rw);
+		SDL_RWclose(mus->rw);
 	}
 	free(mus);
 }

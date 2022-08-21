@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2022 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -70,7 +70,6 @@ void push_user_event(void (*p) (void*), void *data)
 
 int system_clipboard(const char *text, char **buf)
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
 	if (buf) {
 		if (!SDL_HasClipboardText())
 			return -1;
@@ -82,9 +81,6 @@ int system_clipboard(const char *text, char **buf)
 	if (!text)
 		return -1;
 	return SDL_SetClipboardText(text);
-#else
-	return -1;
-#endif
 }
 
 #ifdef SAILFISHOS
@@ -113,11 +109,10 @@ static void push_mouse_event(SDL_Event *sevent)
 }
 #endif
 
-#if SDL_VERSION_ATLEAST(2,0,0)
 static unsigned long last_press_ms = 0;
 static unsigned long last_repeat_ms = 0;
 extern void gfx_finger_pos_scale(float x, float y, int *ox, int *oy, int norm);
-#endif
+
 #define INPUT_REP_DELAY_MS 500
 #define INPUT_REP_INTERVAL_MS 30
 
@@ -174,7 +169,6 @@ int HandleAppEvents(void *userdata, SDL_Event *event)
 }
 #endif
 
-#if SDL_VERSION_ATLEAST(2,0,0)
 static SDL_GameController *gamepad = NULL;
 
 static void gamepad_init(void)
@@ -234,18 +228,14 @@ static const char *gamepad_map(int button)
 	}
 	return "";
 }
-#endif
 
 int input_init(void)
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
 	gamepad_init();
 	/* SDL_EnableKeyRepeat(500, 30); */ /* TODO ? */
 	last_press_ms = 0;
 	last_repeat_ms = 0;
-#else
-	SDL_EnableKeyRepeat(INPUT_REP_DELAY_MS, INPUT_REP_INTERVAL_MS);
-#endif
+
 #if defined(IOS) || defined(ANDROID)
 	SDL_SetEventFilter(HandleAppEvents, NULL);
 #endif
@@ -254,9 +244,7 @@ int input_init(void)
 
 void input_done(void)
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
 	gamepad_done();
-#endif
 }
 
 void input_clear(void)
@@ -271,11 +259,7 @@ void input_uevents(void)
 	char *g = curgame_dir;
 	SDL_Event peek;
 	curgame_dir = NULL;
-#if SDL_VERSION_ATLEAST(1,3,0)
 	while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_USEREVENT, SDL_USEREVENT) > 0) {
-#else
-	while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_EVENTMASK (SDL_USEREVENT)) > 0) {
-#endif
 		void (*p) (void*) = (void (*)(void*)) peek.user.data1;
 		if (p)
 			p(peek.user.data2);
@@ -283,7 +267,6 @@ void input_uevents(void)
 	curgame_dir = g;
 }
 
-#if SDL_VERSION_ATLEAST(1,3,0)
 static void key_compat(struct inp_event *inp)
 {
 	int len = strlen(inp->sym);
@@ -303,14 +286,13 @@ static void key_compat(struct inp_event *inp)
 		strcpy(inp->sym + 1 + len - 7, "]");
 	}
 }
-#endif
+
 #if defined(IOS) || defined(SAILFISHOS)
 static unsigned long touch_stamp = 0;
 static int touch_num = 0;
 #endif
 int finger_pos(const char *finger, int *x, int *y, float *pressure)
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
 	SDL_TouchID tid;
 	SDL_FingerID fid;
 	SDL_Finger *f;
@@ -335,9 +317,6 @@ int finger_pos(const char *finger, int *x, int *y, float *pressure)
 		}
 	}
 	return -1;
-#else
-	return -1;
-#endif
 }
 int input(struct inp_event *inp, int wait)
 {
@@ -360,7 +339,6 @@ int input(struct inp_event *inp, int wait)
 	inp->type = 0;
 	inp->count = 1;
 	switch(event.type){
-#if SDL_VERSION_ATLEAST(2,0,0)
 	case SDL_TEXTINPUT:
 		inp->type = KEY_TEXT;
 		strncpy(inp->sym, event.text.text, sizeof(inp->sym));
@@ -479,31 +457,6 @@ int input(struct inp_event *inp, int wait)
 		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_WINDOWEVENT, SDL_WINDOWEVENT) > 0)
 			return AGAIN; /* to avoid flickering */
 		return 0;
-#else
-	case SDL_ACTIVEEVENT:
-		if (event.active.state & SDL_APPACTIVE) {
-			m_minimized = !event.active.gain;
-			snd_pause(!nopause_sw && m_minimized);
-		}
-		if (event.active.state & (SDL_APPMOUSEFOCUS | SDL_APPINPUTFOCUS)) {
-			if (event.active.gain) {
-				m_focus = 1;
-				if (opt_fs)
-					mouse_cursor(0);
-			} else if (event.active.state & SDL_APPMOUSEFOCUS) {
-				m_focus = 0;
-				if (opt_fs)
-					mouse_cursor(1); /* is it hack?*/
-			}
-		}
-#if SDL_VERSION_ATLEAST(1,3,0)
-		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_ACTIVEEVENT, SDL_ACTIVEEVENT) > 0)
-#else
-		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_EVENTMASK(SDL_ACTIVEEVENT)) > 0)
-#endif
-			return AGAIN; /* to avoid flickering */
-		return 0;
-#endif
 	case SDL_USEREVENT: {
 		void (*p) (void*) = (void (*)(void*))event.user.data1;
 		if (!p) /* idle cycles */
@@ -515,7 +468,6 @@ int input(struct inp_event *inp, int wait)
 		game_running = 0;
 		return -1;
 	case SDL_KEYDOWN:	/* A key has been pressed */
-#if SDL_VERSION_ATLEAST(2,0,0)
 		if (event.key.repeat) {
 			if (DIRECT_MODE && !game_paused()) /* do not send key repeats */
 				return AGAIN;
@@ -528,47 +480,30 @@ int input(struct inp_event *inp, int wait)
 			last_press_ms = gfx_ticks();
 			last_repeat_ms = gfx_ticks();
 		}
-#endif
 		inp->type = KEY_DOWN;
 		inp->code = event.key.keysym.scancode;
-#if SDL_VERSION_ATLEAST(1,3,0)
 		strncpy(inp->sym, SDL_GetScancodeName(inp->code), sizeof(inp->sym));
-#else
-		strncpy(inp->sym, SDL_GetKeyName(event.key.keysym.sym), sizeof(inp->sym));
-#endif
 		inp->sym[sizeof(inp->sym) - 1] = 0;
 		tolow(inp->sym);
-#if SDL_VERSION_ATLEAST(1,3,0)
 		key_compat(inp);
-#endif
-#if SDL_VERSION_ATLEAST(1,3,0) /* strange bug in some SDL2 env, with up/down events storm */
 		if (DIRECT_MODE && SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_KEYDOWN, SDL_KEYUP) > 0) {
 			if (peek.key.keysym.scancode == event.key.keysym.scancode &&
 				peek.key.repeat == 0)
 				return AGAIN;
 		}
-#endif
 		break;
 	case SDL_KEYUP:
 		inp->type = KEY_UP;
 		inp->code = event.key.keysym.scancode;
-#if SDL_VERSION_ATLEAST(1,3,0)
 		strncpy(inp->sym, SDL_GetScancodeName(inp->code), sizeof(inp->sym));
-#else
-		strncpy(inp->sym, SDL_GetKeyName(event.key.keysym.sym), sizeof(inp->sym));
-#endif
 		inp->sym[sizeof(inp->sym) - 1] = 0;
 		tolow(inp->sym);
-#if SDL_VERSION_ATLEAST(1,3,0)
 		key_compat(inp);
-#endif
-#if SDL_VERSION_ATLEAST(1,3,0) /* strange bug in some SDL2 env, with up/down events storm */
 		if (DIRECT_MODE && SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_KEYDOWN, SDL_KEYUP) > 0) {
 			if (event.key.keysym.scancode == peek.key.keysym.scancode &&
 				peek.key.repeat == 0)
 				return AGAIN;
 		}
-#endif
 		break;
 	case SDL_MOUSEMOTION:
 		m_focus = 1; /* ahhh */
@@ -577,11 +512,7 @@ int input(struct inp_event *inp, int wait)
 		inp->type = MOUSE_MOTION;
 		inp->x = event.button.x;
 		inp->y = event.button.y;
-#if SDL_VERSION_ATLEAST(1,3,0)
 		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEMOTION) > 0) {
-#else
-		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_EVENTMASK (SDL_MOUSEMOTION)) > 0) {
-#endif
 			inp->x = peek.button.x;
 			inp->y = peek.button.y;
 		}
@@ -596,7 +527,6 @@ int input(struct inp_event *inp, int wait)
 		else if (event.button.button == 5)
 			inp->type = 0;
 		break;
-#if SDL_VERSION_ATLEAST(2,0,0)
 	case SDL_MOUSEWHEEL:
 		if (!game_grab_events && DIRECT_MODE && !game_paused())
 			return AGAIN;
@@ -612,7 +542,6 @@ int input(struct inp_event *inp, int wait)
 			inp->count ++;
 		}
 		break;
-#endif
 	case SDL_MOUSEBUTTONDOWN:
 		m_focus = 1; /* ahhh */
 		inp->type = MOUSE_DOWN;
@@ -623,11 +552,7 @@ int input(struct inp_event *inp, int wait)
 			inp->type = MOUSE_WHEEL_UP;
 		else if (event.button.button == 5)
 			inp->type = MOUSE_WHEEL_DOWN;
-#if SDL_VERSION_ATLEAST(1,3,0)
 		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONDOWN) > 0) {
-#else
-		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_EVENTMASK (SDL_MOUSEBUTTONDOWN)) > 0) {
-#endif
 			if (!((event.button.button == 4 &&
 				inp->type == MOUSE_WHEEL_UP) ||
 				(event.button.button == 5 &&
@@ -642,26 +567,21 @@ int input(struct inp_event *inp, int wait)
 	return 1;
 }
 
-#if SDL_VERSION_ATLEAST(2,0,0)
 extern void gfx_real_size(int *ww, int *hh);
-#endif
+
 int input_text(int start)
 {
-	#if SDL_VERSION_ATLEAST(2,0,0)
-		SDL_Rect rect;
-		int w, h;
-		if (start == -1)
-			return SDL_IsTextInputActive();
-		if (start) {
-			gfx_real_size(&w, &h);
-			rect.x = w / 2; rect.y = h - 1;
-			rect.w = 1; rect.h = 1;
-			SDL_SetTextInputRect(&rect);
-			SDL_StartTextInput();
-		} else
-			SDL_StopTextInput();
-		return 0;
-	#else
-		return -1;
-	#endif
+	SDL_Rect rect;
+	int w, h;
+	if (start == -1)
+		return SDL_IsTextInputActive();
+	if (start) {
+		gfx_real_size(&w, &h);
+		rect.x = w / 2; rect.y = h - 1;
+		rect.w = 1; rect.h = 1;
+		SDL_SetTextInputRect(&rect);
+		SDL_StartTextInput();
+	} else
+		SDL_StopTextInput();
+	return 0;
 }

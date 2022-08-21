@@ -173,15 +173,11 @@ static SDL_bool NormalizeFrames(GIF_Frame_t *frames, int count)
     Uint32 fill;
     SDL_Rect rect;
 
-#if SDL_VERSION_ATLEAST(2,0,0)
     if (SDL_GetColorKey(frames[0].image, NULL) == 0) {
         image = SDL_ConvertSurfaceFormat(frames[0].image, SDL_PIXELFORMAT_ARGB8888, 0);
     } else {
         image = SDL_ConvertSurfaceFormat(frames[0].image, SDL_PIXELFORMAT_RGB888, 0);
     }
-#else
-    image = (frames[0].image->flags & SDL_SRCCOLORKEY) ? SDL_DisplayFormatAlpha(frames[0].image) : SDL_DisplayFormat(frames[0].image);
-#endif
 
     if (!image) {
         return SDL_FALSE;
@@ -346,11 +342,7 @@ IMG_LoadGIF_RW_Internal(SDL_RWops *src, SDL_bool load_anim)
 
         if (image) {
             if (state.Gif89.transparent >= 0) {
-#if SDL_VERSION_ATLEAST(2,0,0)
                 SDL_SetColorKey(image, SDL_TRUE, state.Gif89.transparent);
-#else
-                SDL_SetColorKey(image, SDL_SRCCOLORKEY, state.Gif89.transparent );
-#endif
             }
 
             frames = (GIF_Frame_t *)SDL_realloc(anim->frames, (anim->count + 1) * sizeof(*anim->frames));

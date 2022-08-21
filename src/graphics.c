@@ -35,12 +35,7 @@
 #endif
 
 #include <SDL_mutex.h>
-#if SDL_VERSION_ATLEAST(2,0,0)
-#include "SDL2_rotozoom.h"
-#define SDL_SRCALPHA	0
-#else
 #include "SDL_rotozoom.h"
-#endif
 #include "SDL_gfxBlitFunc.h"
 #include "SDL_gif.h"
 
@@ -588,16 +583,14 @@ img_t   gfx_new_rgba(int w, int h)
 	bmask = 0x00ff0000;
 	amask = 0xff000000;
 #endif
-	dst = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, w, h,
+	dst = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h,
 				   32,
 				   rmask,
 				   gmask,
 				   bmask,
 				   amask);
-#if SDL_VERSION_ATLEAST(2,0,0)
 	if (dst)
 		SDL_SetSurfaceBlendMode(dst, SDL_BLENDMODE_BLEND);
-#endif
 	if (dst)
 		return GFX_IMG_REL(dst);
 	return NULL;
@@ -630,10 +623,8 @@ img_t   gfx_new_from(int w, int h, unsigned char *pixels)
 	amask = 0xff000000;
 #endif
 	dst = SDL_CreateRGBSurfaceFrom(pixels, w, h, 32, w * 4, rmask, gmask, bmask, amask);
-#if SDL_VERSION_ATLEAST(2,0,0)
 	if (dst)
 		SDL_SetSurfaceBlendMode(dst, SDL_BLENDMODE_BLEND);
-#endif
 	if (dst)
 		return GFX_IMG_REL(dst);
 	return NULL;
@@ -645,17 +636,15 @@ img_t 	gfx_new(int w, int h)
 	if (!screen) {
 		return gfx_new_rgba(w, h);
 	} else {
-		dst = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, w, h,
+		dst = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h,
 			Surf(screen)->format->BitsPerPixel,
 			Surf(screen)->format->Rmask,
 			Surf(screen)->format->Gmask,
 			Surf(screen)->format->Bmask,
 			Surf(screen)->format->Amask);
 	}
-#if SDL_VERSION_ATLEAST(2,0,0)
 	if (dst)
 		SDL_SetSurfaceBlendMode(dst, SDL_BLENDMODE_NONE);
-#endif
 	if (dst)
 		return GFX_IMG_REL(dst);
 	return NULL;
@@ -721,7 +710,6 @@ img_t	gfx_grab_screen(int x, int y, int w, int h)
 	return img;
 }
 
-#if SDL_VERSION_ATLEAST(2,0,0)
 static SDL_RendererInfo SDL_VideoRendererInfo;
 
 SDL_Surface *SDL_DisplayFormat(SDL_Surface * surface)
@@ -747,7 +735,6 @@ SDL_Surface *SDL_DisplayFormatAlpha(SDL_Surface * surface)
 	return converted;
 }
 
-#endif
 img_t gfx_display_alpha(img_t src)
 {
 	SDL_Surface* res;
@@ -757,12 +744,10 @@ img_t gfx_display_alpha(img_t src)
 		return src;
 	if (is_anim(src)) /* already optimized */
 		return src;
-#if SDL_VERSION_ATLEAST(2,0,0)
 	if (Surf(screen)->format == Surf(src)->format) { /* fast path! */
 		SDL_SetSurfaceBlendMode(Surf(src), SDL_BLENDMODE_BLEND);
 		return src;
 	}
-#endif
 	res = SDL_DisplayFormatAlpha(Surf(src));
 	if (!res)
 		return src;
@@ -917,21 +902,13 @@ void gfx_set_colorkey(img_t src, color_t col)
 	if (!s)
 		return;
 	c = SDL_MapRGB(s->format, col.r, col.g, col.b);
-#if SDL_VERSION_ATLEAST(2,0,0)
 	SDL_SetColorKey(s, SDL_TRUE, c);
-#else
-	SDL_SetColorKey(s, SDL_SRCCOLORKEY, c);
-#endif
 /*	gfx_unset_alpha(src); */
 }
 
 void gfx_unset_colorkey(img_t src)
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
 	SDL_SetColorKey(Surf(src), SDL_FALSE, 0);
-#else
-	SDL_SetColorKey(Surf(src), 0, 0);
-#endif
 /*	gfx_set_alpha(src, SDL_ALPHA_OPAQUE); */
 }
 
@@ -939,22 +916,17 @@ void	gfx_set_alpha(img_t src, int alpha)
 {
 	if (alpha < 0)
 		return;
-#if SDL_VERSION_ATLEAST(1,3,0)
 /*	if (Surf(src)->format->Amask)
 		alpha = SDL_ALPHA_OPAQUE; */
 	SDL_SetSurfaceAlphaMod(Surf(src), alpha);
 /*		SDL_SetSurfaceBlendMode((SDL_Surface *)src, SDL_BLENDMODE_NONE);
 	else */
 	SDL_SetSurfaceBlendMode(Surf(src), SDL_BLENDMODE_BLEND);
-#else
-	SDL_SetAlpha(Surf(src), SDL_SRCALPHA, alpha);
-#endif
 }
 
 int	gfx_unset_alpha(img_t src)
 {
 	int alpha = -1;
-#if SDL_VERSION_ATLEAST(1,3,0)
 	SDL_BlendMode  blendMode;
 	Uint8	sdl_alpha = SDL_ALPHA_OPAQUE;
 	alpha = SDL_GetSurfaceBlendMode(Surf(src), &blendMode);
@@ -964,11 +936,6 @@ int	gfx_unset_alpha(img_t src)
 	}
 	SDL_SetSurfaceAlphaMod(Surf(src), SDL_ALPHA_OPAQUE);
 	SDL_SetSurfaceBlendMode(Surf(src), SDL_BLENDMODE_NONE);
-#else
-	if ((Surf(src)->flags) & SDL_SRCALPHA)
-		alpha = Surf(src)->format->alpha;
-	SDL_SetAlpha(Surf(src), 0, SDL_ALPHA_OPAQUE);
-#endif
 	return alpha;
 }
 
@@ -1299,7 +1266,6 @@ void gfx_draw_bg(img_t p, int x, int y, int width, int height)
 
 void gfx_draw_from_alpha(img_t s, int x, int y, int w, int h, img_t d, int xx, int yy, int alpha)
 {
-#if SDL_VERSION_ATLEAST(1,3,0)
 	SDL_BlendMode  blendMode;
 	Uint8	sdl_alpha = SDL_ALPHA_OPAQUE;
 	SDL_GetSurfaceBlendMode(Surf(s), &blendMode);
@@ -1311,12 +1277,6 @@ void gfx_draw_from_alpha(img_t s, int x, int y, int w, int h, img_t d, int xx, i
 	gfx_draw_from(s, x, y, w, h, d, xx, yy);
 	SDL_SetSurfaceBlendMode(Surf(s), blendMode);
 	SDL_SetSurfaceAlphaMod(Surf(s), sdl_alpha);
-#else
-	img_t img;
-	img = gfx_alpha_img(s, alpha);
-	gfx_draw_from((img)?img:s, x, y, w, h, d, xx, yy);
-	gfx_free_image(img);
-#endif
 }
 
 void gfx_draw_from(img_t p, int x, int y, int width, int height, img_t to, int xx, int yy)
@@ -1589,7 +1549,7 @@ static SDL_Rect m1024x768 = { .w = 1024, .h = 768 };
 static SDL_Rect m1280x800 = { .w = 1280, .h = 800 };
 
 static SDL_Rect* std_modes[] = { &m640x480, &m800x480, &m800x600, &m1024x768, &m1280x800, NULL };
-#if SDL_VERSION_ATLEAST(2,0,0)
+
 static int SDL_CurrentDisplay = 0;
 
 static void SelectVideoDisplay()
@@ -1668,7 +1628,6 @@ out:
 	SDL_free(modes);
 	return NULL;
 }
-#endif
 
 extern char *modes_sw;
 
@@ -1733,15 +1692,7 @@ int gfx_modes(void)
 	SDL_Rect** modes;
 	if ((i = gfx_parse_modes()))
 		return i;
-#if SDL_VERSION_ATLEAST(2,0,0)
 	modes = SDL_ListModes(NULL, 0);
-#else
-#ifdef __APPLE__
-	modes = SDL_ListModes(NULL, SDL_FULLSCREEN | SDL_SWSURFACE | SDL_ANYFORMAT);
-#else
-	modes = SDL_ListModes(NULL, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_ANYFORMAT);
-#endif
-#endif
 	if (modes == (SDL_Rect**)0)/* no modes */
 		return 0;
 	if (modes == (SDL_Rect**)-1) {
@@ -1813,11 +1764,9 @@ int gfx_next_mode(int *w, int *h)
 	*w = ww; *h = hh;
 	return 0;
 }
-#if SDL_VERSION_ATLEAST(2,0,0)
 #if defined(ANDROID) || defined(IOS)
 static int current_gfx_w = - 1;
 static int current_gfx_h = - 1;
-#endif
 #endif
 
 #if defined(ANDROID)
@@ -1828,7 +1777,7 @@ int gfx_get_max_mode(int *w, int *h, int o)
 {
 	int ww = 0, hh = 0;
 	int i = 0;
-#if SDL_VERSION_ATLEAST(2,0,0)
+
 	SDL_DisplayMode desktop_mode;
 	#if defined(ANDROID)
 	if (o == MODE_ANY) {
@@ -1860,7 +1809,7 @@ int gfx_get_max_mode(int *w, int *h, int o)
 		*h = desktop_mode.h;
 		return 0;
 	}
-#endif
+
 	*w = 0;
 	*h = 0;
 
@@ -1911,7 +1860,6 @@ static SDL_Surface *icon = NULL;
 extern int software_sw;
 extern int glhack_sw;
 
-#if SDL_VERSION_ATLEAST(2,0,0)
 #ifdef _USE_SWROTATE
 static int gfx_flip_rotate = 0;
 #endif
@@ -2288,10 +2236,8 @@ retry:
 	else
 #endif
 		SDL_RenderSetLogicalSize(Renderer, w, h);
-#if SDL_VERSION_ATLEAST(2,0,0)
 	SDL_DelEventWatch(mouse_watcher, NULL);
 	SDL_AddEventWatch(mouse_watcher, NULL);
-#endif
 	fprintf(stderr, "Video mode: %dx%d@%dbpp (%s)\n", Surf(screen)->w, Surf(screen)->h, Surf(screen)->format->BitsPerPixel, SDL_VideoRendererInfo.name);
 done:
 	SDL_SetRenderDrawBlendMode(Renderer, SDL_BLENDMODE_NONE);
@@ -2301,77 +2247,19 @@ done:
 	SDL_FillRect(SDL_VideoSurface, NULL, SDL_MapRGB(SDL_VideoSurface->format, 0, 0, 0));
 	return 0;
 }
-#else
-int gfx_set_mode(int w, int h, int fs)
-{
-	int hw = (software_sw)?0:SDL_HWSURFACE;
-	SDL_Surface *scr;
-	game_reset_name();
-	if (gfx_width == w && gfx_height == h && gfx_fs == fs) {
-		return 0; /* already done */
-	}
-	vid_modes = NULL;
-	gfx_fs = fs;
-	gfx_width = w;
-	gfx_height = h;
-	if (!nocursor_sw)
-		SDL_ShowCursor(SDL_DISABLE);
-#ifdef ANDROID
-	scr = SDL_SetVideoMode(gfx_width, gfx_height, 0, hw | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
-#else
-	#ifdef __APPLE__
-	scr = SDL_SetVideoMode(gfx_width, gfx_height, (fs)?32:0, SDL_SWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
-	if (scr == NULL) /* ok, fallback to anyformat */
-		scr = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | SDL_SWSURFACE | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
-	#else
-		#if SDL_VERSION_ATLEAST(1,3,0)
-	scr = SDL_SetVideoMode(gfx_width, gfx_height, 32, SDL_DOUBLEBUF | hw | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
-		#else
-	scr = SDL_SetVideoMode(gfx_width, gfx_height, (fs)?32:0, SDL_DOUBLEBUF | hw | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
-		#endif
-	if (scr == NULL) /* ok, fallback to anyformat */
-		scr = SDL_SetVideoMode(gfx_width, gfx_height, 0, SDL_ANYFORMAT | hw | ( ( fs ) ? SDL_FULLSCREEN : 0 ) );
-	#endif
-#endif
-	screen = GFX_IMG_REL(scr);
-	if (scr == NULL || screen == NULL) {
-		fprintf(stderr, "Unable to set %dx%d video: %s\n", w, h, SDL_GetError());
-		return -1;
-	}
-	fprintf(stderr,"Video mode: %dx%d@%dbpp\n", scr->w, scr->h, scr->format->BitsPerPixel);
-	gfx_clear(0, 0, gfx_width, gfx_height);
-	return 0;
-}
-#endif
+
 int gfx_video_init(void)
 {
-#if !SDL_VERSION_ATLEAST(2,0,0)
-	char title[4096];
-
-	strcpy( title, "INSTEAD - " );
-	strcat( title, VERSION );
-#endif
 	if (TTF_Init()) {
 		fprintf(stderr, "Can't init TTF subsystem.\n");
 		return -1;
 	}
-#if !SDL_VERSION_ATLEAST(2,0,0)
-	SDL_WM_SetCaption( title, title );
-#endif
 #ifndef ICON_PATH
 #define ICON_PATH "./icon"
 #endif
-
 	icon = IMG_Load( ICON_PATH"/sdl_instead_1.png" );
-#if !SDL_VERSION_ATLEAST(2,0,0)
-	if ( icon ) {
-		SDL_WM_SetIcon( icon, NULL );
-	}
-#endif
 	return 0;
 }
-
-#if SDL_VERSION_ATLEAST(2,0,0)
 
 static int queue_x1 = -1;
 static int queue_y1 = -1;
@@ -2521,40 +2409,26 @@ static void SDL_UpdateRect(SDL_Surface * screen, Sint32 x, Sint32 y, Uint32 w, U
 		queue_y2 = (Sint32)(y + h);
 	queue_dirty = 1;
 }
-#else
-void gfx_set_cursor(img_t cur, int xc, int yc)
-{
-	return;
-}
-#endif
 
 void gfx_flip(void)
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
 	queue_x1 = queue_y1 = 0;
 	queue_x2 = gfx_width;
 	queue_y2 = gfx_height;
 	queue_dirty = 1;
-#else
-	SDL_Flip(Surf(screen));
-#endif
 }
 
 void gfx_resize(int w, int h)
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
 #if defined(ANDROID) || defined(IOS)
 	current_gfx_w = w;
 	current_gfx_h = h;
-#endif
 #endif
 }
 
 void gfx_commit(void)
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
 	SDL_Flip(Surf(screen));
-#endif
 }
 
 void gfx_update(int x, int y, int w, int h) {
@@ -5652,12 +5526,8 @@ void txt_box_real_size(textbox_t box, int *pw, int *ph)
 int gfx_cursor(int *xp, int *yp)
 {
 	int x, y;
-#if SDL_VERSION_ATLEAST(2,0,0)
 	x = mouse_x;
 	y = mouse_y;
-#else
-	SDL_GetMouseState(&x, &y);
-#endif
 	if (xp)
 		*xp = x;
 	if (yp)
@@ -5667,7 +5537,6 @@ int gfx_cursor(int *xp, int *yp)
 
 void gfx_warp_cursor(int x, int y)
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
 	float sx, sy;
 	SDL_Rect rect;
 #ifdef _USE_SWROTATE
@@ -5683,9 +5552,6 @@ void gfx_warp_cursor(int x, int y)
 	x = (x + rect.x) * sx;
 	y = (y + rect.y) * sy;
 	SDL_WarpMouseInWindow(SDL_VideoWindow, x, y);
-#else
-	SDL_WarpMouse(x, y);
-#endif
 }
 
 static int ALPHA_STEPS = 4;
@@ -5702,30 +5568,22 @@ static void *fade_aux = NULL;
 static void (*fade_cb)(void *) = NULL;
 static SDL_TimerID	fade_timer;
 static long gfx_change_nr = 0;
-#if SDL_VERSION_ATLEAST(2,0,0)
+
 static SDL_Texture *fade_bg_texture = NULL;
 static SDL_Texture *fade_fg_texture = NULL;
-#endif
+
 static void update_gfx(void)
 {
 	img_t img = fade_fg;
 	if (fade_step_nr == -1 || !img || !fade_bg || !fade_fg)
 		return;
-#if !SDL_VERSION_ATLEAST(2,0,0)
-	game_cursor(CURSOR_CLEAR);
-	gfx_set_alpha(img, (SDL_ALPHA_OPAQUE * (fade_step_nr + 1)) / ALPHA_STEPS);
-	gfx_draw(fade_bg, 0, 0);
-	gfx_draw(img, 0, 0);
-	game_cursor(CURSOR_DRAW);
-	gfx_flip();
-#else
 	gfx_render_copy(fade_bg_texture, NULL, 1);
 	SDL_SetTextureAlphaMod(fade_fg_texture, (SDL_ALPHA_OPAQUE * (fade_step_nr + 1)) / ALPHA_STEPS);
 	gfx_render_copy(fade_fg_texture, NULL, 0);
 	if (game_cursor_show)
 		gfx_render_cursor();
 	SDL_RenderPresent(Renderer);
-#endif
+
 	fade_step_nr ++;
 	if (fade_step_nr == ALPHA_STEPS)
 		fade_step_nr = -1;
@@ -5736,10 +5594,6 @@ static void gfx_change_screen_step(void *aux)
 	gfx_change_nr --;
 	if (gfx_fading()) {
 		update_gfx();
-#if !SDL_VERSION_ATLEAST(2,0,0)
-		game_cursor(CURSOR_ON);
-		gfx_commit();
-#endif
 	}
 	if (gfx_fading())
 		return;
@@ -5766,10 +5620,8 @@ void gfx_cancel_change_screen(void)
 	fade_step_nr = -1;
 
 	SDL_RemoveTimer(fade_timer);
-#if SDL_VERSION_ATLEAST(2,0,0)
 	SDL_DestroyTexture(fade_fg_texture);
 	SDL_DestroyTexture(fade_bg_texture);
-#endif
 	game_cursor(CURSOR_CLEAR);
 	gfx_copy(fade_fg, 0, 0);
 	game_cursor(CURSOR_ON);
@@ -5803,7 +5655,6 @@ void gfx_change_screen(img_t src, int steps, void (*callback)(void *), void *aux
 
 	fade_fg = src;
 
-#if SDL_VERSION_ATLEAST(2,0,0)
 	fade_bg_texture = SDL_CreateTextureFromSurface(Renderer, Surf(fade_bg));
 	if (!fade_bg_texture)
 		goto err;
@@ -5813,32 +5664,28 @@ void gfx_change_screen(img_t src, int steps, void (*callback)(void *), void *aux
 	if (!fade_fg_texture)
 		goto err2;
 	SDL_SetTextureBlendMode(fade_fg_texture, SDL_BLENDMODE_BLEND);
-#endif
+
 	memset(&ev, 0, sizeof(ev));
 	ALPHA_STEPS = steps;
 	fade_step_nr = 0;
 	fade_timer = SDL_AddTimer(60, update, NULL);
 	return;
-#if SDL_VERSION_ATLEAST(2,0,0)
 err2:
 	SDL_DestroyTexture(fade_bg_texture);
 err:
 	gfx_free_image(fade_bg);
 	fade_bg = NULL;
 	return;
-#endif
 }
 
 int gfx_init(void)
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 	if (render_sw)
 		SDL_SetHint(SDL_HINT_RENDER_DRIVER, render_sw);
 #if defined(_WIN32) /* do not use buggy D3D by default: fullscreen problem with NVidia */
 	else
 		SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
-#endif
 #endif
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
 		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
@@ -5855,7 +5702,6 @@ int gfx_init(void)
 
 void gfx_done(void)
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
 	if (screen)
 		gfx_free_image(screen);
 /*	if (SDL_VideoTexture)
@@ -5864,7 +5710,7 @@ void gfx_done(void)
 		SDL_DestroyRenderer(Renderer);
 	if (SDL_VideoWindow)
 		SDL_DestroyWindow(SDL_VideoWindow);
-#endif
+
 	cache_free(images);
 	images = NULL;
 	SDL_Quit();
@@ -5872,11 +5718,7 @@ void gfx_done(void)
 
 gtimer_t gfx_add_timer(int delay, int (*fn)(int, void*), void *aux)
 {
-#if SDL_VERSION_ATLEAST(1,3,0)
 	return (gtimer_t)SDL_AddTimer(delay, (SDL_TimerCallback)fn, aux);
-#else
-	return (gtimer_t)SDL_AddTimer(delay, (SDL_NewTimerCallback)fn, aux);
-#endif
 }
 
 void gfx_del_timer(gtimer_t han)
@@ -5892,11 +5734,7 @@ unsigned long gfx_ticks(void)
 
 int gfx_pending(void)
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
 	return queue_dirty;
-#else
-	return 0;
-#endif
 }
 
 int gfx_set_title(const char *title)
@@ -5907,28 +5745,19 @@ int gfx_set_title(const char *title)
 		strcat( stitle, VERSION );
 		title = stitle;
 	}
-#if !SDL_VERSION_ATLEAST(2,0,0)
-	if (screen)
-		SDL_WM_SetCaption(title, title);
-#else
 	if (SDL_VideoWindow)
 		SDL_SetWindowTitle(SDL_VideoWindow, title);
-#endif
 	return 0;
 }
 
 int gfx_set_icon(img_t ic)
 {
-#if SDL_VERSION_ATLEAST(2,0,0)
 	if (SDL_VideoWindow) {
 		if (ic)
 			SDL_SetWindowIcon(SDL_VideoWindow, Surf(ic));
 		else if (icon)
 			SDL_SetWindowIcon(SDL_VideoWindow, icon);
 	}
-#else
-/* not works for SDL < 2 */
-#endif
 	return 0;
 }
 

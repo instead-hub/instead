@@ -24,21 +24,12 @@ Please see each individual source file for a list of they copyright holders.
 INSTEAD links with the following libraries/sources:
 
     Lua (MIT)
-    SDL (LGPL)
-    SDL_image (LGPL)
-    SDL_ttf (LGPL)
-    SDL_mixer (LGPL)
-    SDL_gfx (Zlib)
-
     SDL_gif.c (Zlib)
-
     SDL2 (Zlib)
     SDL2_image (Zlib)
     SDL2_ttf (Zlib)
     SDL2_mixer (Zlib)
     SDL2_gfx (Zlib)
-
-    zlib (Zlib)
 
     Freetype (LGPL)
     FFmpeg (LGPL)
