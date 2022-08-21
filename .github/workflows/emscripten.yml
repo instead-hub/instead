@@ -1,27 +1,36 @@
 name: Emscripten version
 on:
   schedule:
-    - cron:  '30 21 * * *'
+    - cron: '30 21 * * *'
   workflow_dispatch:
 
 jobs:
   build:
+    emsdk-ver: 3.1.19
     name: Emscripten version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
+      - name: Cache emsdk
+        id: cache-emsdk
+        uses: actions/cache@v3
+        with:
+          path: emsdk
+          key: ${{ runner.os }}-${{ emsdk-ver }}
 
       - name: Install Packages
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y build-essential git
 
-      - name: Prep
+      - if: ${{ steps.cache-emsdk.outputs.cache-hit != 'true' }}
+        name: Prep
         run: |
           git clone https://github.com/emscripten-core/emsdk.git
           cd emsdk
-          ./emsdk install 3.1.19
-          ./emsdk activate 3.1.19
+          ./emsdk install ${{ emsdk-ver }}
+          ./emsdk activate ${{ emsdk-ver }}
           mkdir env
 
       - name: Build
