@@ -673,20 +673,13 @@ int idf_read(idff_t fil, void *ptr, int size, int maxnum)
 #ifdef _USE_SDL
 #include <SDL.h>
 
-#if SDL_VERSION_ATLEAST(2,0,0)
 static Sint64 idfrw_seek(struct SDL_RWops *context, Sint64 offset, int whence)
-#else
-static int idfrw_seek(struct SDL_RWops *context, int offset, int whence)
-#endif
 {
 	idff_t fil = (idff_t)context->hidden.unknown.data1;
 	return idf_seek(fil, offset, whence);
 }
-#if SDL_VERSION_ATLEAST(2,0,0)
+
 static size_t idfrw_read(struct SDL_RWops *context, void *ptr, size_t size, size_t maxnum)
-#else
-static int idfrw_read(struct SDL_RWops *context, void *ptr, int size, int maxnum)
-#endif
 {
 	idff_t fil = (idff_t)context->hidden.unknown.data1;
 	return idf_read(fil, ptr, size, maxnum);
@@ -701,7 +694,7 @@ static 	int idfrw_close(struct SDL_RWops *context)
 	}
 	return 0;
 }
-#if SDL_VERSION_ATLEAST(2,0,0)
+
 static Sint64 idfrw_size(struct SDL_RWops *context)
 {
 	idff_t fil = (idff_t)context->hidden.unknown.data1;
@@ -709,7 +702,6 @@ static Sint64 idfrw_size(struct SDL_RWops *context)
 		return -1;
 	return fil->dir->size;
 }
-#endif
 
 SDL_RWops *RWFromIdf(idf_t idf, const char *fname)
 {
@@ -724,9 +716,7 @@ SDL_RWops *RWFromIdf(idf_t idf, const char *fname)
 	n = SDL_AllocRW();
 	if (!n)
 		goto err;
-#if SDL_VERSION_ATLEAST(2,0,0)
 	n->size = idfrw_size;
-#endif
 	n->seek = idfrw_seek;
 	n->read = idfrw_read;
 	n->close = idfrw_close;

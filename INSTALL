@@ -8,8 +8,7 @@ WARNING! For successfull building you must install these development packages
 	and gtk+2(3) (to build with open file dialog)
 
 Optionally you may use:
-	sdl1
-	lua5.2/lua5.3
+	lua5.2/lua5.3/lua5.4
 	HarfBuzz and SDL2_ttf compiled with HarfBuzz support
 
 0) Prepare for building
@@ -98,20 +97,14 @@ $ cd standalone
 $ ./sdl-instead
 
 Some options:
-WITH_SDL2 Use SDL2 instead of SDL 1 (default on)
-WITH_GTK2 Use GTK2 file open dialog (default on)
-WITH_GTK3 Use GTK3 file open dialog
-WITH_LUAJIT Use LuaJIT instead of Lua (recommended, but off by default)
+WITH_GTK2 Use GTK2 file open dialog
+WITH_GTK3 Use GTK3 file open dialog (default on)
+WITH_LUAJIT Use LuaJIT instead of Lua (default on))
 WITH_HARFBUZZ RTL support. SDL2_ttf should be compiled with HarfBuzz too (default off)
 
-For example, to build with SDL2, use:
+For example, to build standalone version without LuaJIT, use:
 
-$ cmake .. -DWITH_SDL2=1 -DWITH_LUAJIT=1 -DSTANDALONE=1
-$ cmake .. -DWITH_SDL2=0 -DSTANDALONE=1 # build with SDL1
-
-To build with GTK3:
-
-$ cmake .. -DWITH_GTK3=1
+$ cmake .. -DWITH_LUAJIT=0 -DSTANDALONE=1
 
 8) Manual build
 ===============
