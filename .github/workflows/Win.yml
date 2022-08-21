@@ -28,7 +28,6 @@ jobs:
 
       - name: Create Artifact
         run: make install -f Makefile.mingw
-          cmake --install ./build
 
       - name: Publish Artifact
         uses: actions/upload-artifact@v2
