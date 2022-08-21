@@ -6,7 +6,6 @@ on:
 
 jobs:
   build:
-    emsdk-ver: 3.1.19
     name: Emscripten version
     runs-on: ubuntu-latest
     steps:
@@ -17,7 +16,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: emsdk
-          key: ${{ runner.os }}-${{ emsdk-ver }}
+          key: ${{ runner.os }}-3.1.19
 
       - name: Install Packages
         run: |
@@ -29,8 +28,8 @@ jobs:
         run: |
           git clone https://github.com/emscripten-core/emsdk.git
           cd emsdk
-          ./emsdk install ${{ emsdk-ver }}
-          ./emsdk activate ${{ emsdk-ver }}
+          ./emsdk install 3.1.19
+          ./emsdk activate 3.1.19
           mkdir env
 
       - name: Build
