@@ -18,6 +18,7 @@ jobs:
           cd emsdk
           ./emsdk install latest
           ./emsdk activate latest
+          mkdir env
 
       - name: Build
         run: |
