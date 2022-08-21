@@ -1,5 +1,5 @@
 name: Emscripten version
-
+on: [workflow_dispatch]
 jobs:
   build:
     name: Emscripten version
