@@ -115,7 +115,7 @@
   * fix: build with zlib;
   * fix: std.fmt and substitutions ($);
   * fix: segfault on restart;
-  * fix: build with old gcc;
+  * fix: build with old gcc.
 
  -- Peter Kosyh <p.kosyh@gmail.com>  Sat, 1 Sep 2018 09:21:00 +0300
 
