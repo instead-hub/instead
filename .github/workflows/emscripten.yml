@@ -1,7 +1,7 @@
 name: Emscripten version
 on:
-  schedule:
-    - cron: '30 21 * * *'
+  push:
+    branches: [ master ]
   workflow_dispatch:
 
 env:
