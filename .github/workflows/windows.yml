@@ -34,4 +34,4 @@ jobs:
         with:
           name: instead-win
           path: bin
-          retention-days: 3
+          retention-days: 1
