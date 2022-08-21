@@ -42,7 +42,7 @@ jobs:
           ../contrib/instead-em-build.sh
 
       - name: Create Artifact
-        run:
+        run: |
           cd emsdk
           mkdir -p ../release/instead-em
           cp env/instead-em-js/instead-em.* ../release/instead-em
