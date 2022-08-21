@@ -30,7 +30,8 @@ jobs:
         run: make install -f Makefile.mingw
 
       - name: Publish Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: instead-win
           path: bin
+          retention-days: 3
