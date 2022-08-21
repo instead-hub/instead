@@ -22,7 +22,7 @@ jobs:
           sudo apt-get install -y build-essential debhelper
 
       - name: Configure CMake
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DSTANDALONE=1 -DWITH_LUAJIT=0
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DSTANDALONE=1 -DWITH_LUAJIT=0 -DWITH_GTK3=FALSE
 
       - name: Build
         run: cmake --build ./build --config Release
