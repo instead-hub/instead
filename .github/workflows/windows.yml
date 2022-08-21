@@ -1,4 +1,4 @@
-name: Win
+name: Windows version
 
 on:
   push:
