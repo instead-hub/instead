@@ -101,7 +101,7 @@ cd SDL2
 git pull
 
 ./autogen.sh
-emconfigure ./configure --host=asmjs-unknown-emscripten --disable-assembly --disable-threads --disable-mmx --disable-sdltest --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include" LDFLAGS="-L$WORKSPACE/lib" --disable-sdltest --disable-shared --disable-joystick --disable-pthreads
+emconfigure ./configure --host=asmjs-unknown-emscripten --disable-assembly --disable-threads --disable-mmx --disable-sdltest --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include" LDFLAGS="-L$WORKSPACE/lib" --disable-sdltest --disable-shared --disable-joystick --disable-pthreads CFLAGS='-sUSE_SDL=0'
 cat <<EOF >em.patch
 --- SDL_audio.c	2017-12-23 14:03:32.965522053 +0300
 +++ SDL_audio.c.em	2017-12-23 14:18:03.274008570 +0300
@@ -249,7 +249,7 @@ git pull
 [ -e Rules.make ] || ln -s Rules.standalone Rules.make
 cat <<EOF > config.make
 EXTRA_CFLAGS+= -DNOMAIN -D_HAVE_ICONV -I../../include
-SDL_CFLAGS=-I../../include/SDL2
+SDL_CFLAGS=-I../../include/SDL2 -sUSE_SDL=0
 SDL_LFLAGS=
 LUA_CFLAGS=
 LUA_LFLAGS=
