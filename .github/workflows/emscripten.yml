@@ -1,5 +1,8 @@
 name: Emscripten version
-on: [workflow_dispatch]
+on:
+  schedule:
+    - cron:  '30 21 * * *'
+
 jobs:
   build:
     name: Emscripten version
@@ -16,8 +19,8 @@ jobs:
         run: |
           git clone https://github.com/emscripten-core/emsdk.git
           cd emsdk
-          ./emsdk install latest
-          ./emsdk activate latest
+          ./emsdk install 3.1.19
+          ./emsdk activate 3.1.19
           mkdir env
 
       - name: Build
@@ -25,3 +28,10 @@ jobs:
           cd emsdk
           export WORKSPACE="${{github.workspace}}/emsdk/env"
           ../contrib/instead-em-build.sh
+
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: instead-em
+          path: emsdk/env/instead-em-js
+          retention-days: 1
