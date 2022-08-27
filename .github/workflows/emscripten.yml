@@ -1,7 +1,7 @@
 name: Emscripten version
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   workflow_dispatch:
 
 env:

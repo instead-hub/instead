@@ -1,0 +1,50 @@
+name: AppImage
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: build AppImage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Create Build Directory
+        run: cmake -E make_directory ${{github.workspace}}/build
+
+      - name: Install Packages
+
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y wget libluajit-5.1-dev libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev libsdl2-mixer-dev libgtk-3-dev
+
+      - name: Configure CMake
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DWITH_LUAJIT=1 -DAPPIMAGE=1 -DWITH_GTK3=1
+
+      - name: Build
+        run: cmake --build ./build --config Release
+
+      - name: Build
+        run: |
+          cd emsdk
+          export WORKSPACE="${{github.workspace}}/emsdk/env"
+          ../contrib/instead-em-build.sh
+
+      - name: Create Artifact
+        run: |
+          cmake --install ./build DESTDIR=appimage
+          tar -xvf ../contrib/appimage.tar.gz --strip-components=1 -C appimage
+          wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          chmod +x linuxdeploy-x86_64.AppImage
+          ./linuxdeploy-x86_64.AppImage --appdir appimage
+          wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x ./appimagetool-x86_64.AppImage
+          ./appimagetool-x86_64.AppImage appimage/
+
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: AppImage
+          path: INSTEAD-x86_64.AppImage
