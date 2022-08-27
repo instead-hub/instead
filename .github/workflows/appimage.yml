@@ -28,7 +28,7 @@ jobs:
 
       - name: Create Artifact
         run: |
-          cmake --install ./build --prefix appimage
+          DESTDIR=appimage cmake --install ./build
           tar -xvf contrib/appimage.tar.gz --strip-components=1 -C appimage
           wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
           chmod +x linuxdeploy-x86_64.AppImage
