@@ -32,5 +32,5 @@ install: all
 	$(MAKE) DESTDIR=../bin/ -C doc install
 
 setup:  install docs
-	cp setup.iss bin
+	cp contrib/setup.iss bin
 	cd bin; $(ISCC) setup.iss
