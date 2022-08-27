@@ -26,12 +26,6 @@ jobs:
       - name: Build
         run: cmake --build ./build --config Release
 
-      - name: Build
-        run: |
-          cd emsdk
-          export WORKSPACE="${{github.workspace}}/emsdk/env"
-          ../contrib/instead-em-build.sh
-
       - name: Create Artifact
         run: |
           cmake --install ./build DESTDIR=appimage
