@@ -2,17 +2,19 @@
 
  * fix: menu font scaling;
  * fix: get_bool;
- * enh: do not scale-down non scalable themes via dpi scale < 1.0;
- * enh: be strict while open game via file;
  * new: tutorial in stead3 API;
  * new: wheel input event (grab_events mode);
- * doc: embedding manual;
+ * enh: do not scale-down non scalable themes via dpi scale < 1.0;
+ * enh: be strict while open game via file;
  * enh: tiny2 better games compatible;
- * new: WITH_LUAJIT is now on by default (cmake);
- * rem: S60, MAEMO, WCE ports;
+ * enh: WITH_LUAJIT is now on by default (cmake);
+ * enh: Windows build updated SDL2 libs;
+ * enh: github workflow for CI/emscripten/windows/appimage builds;
+ * doc: embedding manual;
+ * rem: S60, MAEMO, WinCE ports removed;
  * rem: SDL1 code removed.
 
- -- Peter Kosyh <pkosyh@yandex.ru>  Sat, 21 Aug 2022 13:53:00 +0300
+ -- Peter Kosyh <pkosyh@yandex.ru>  Sat, 27 Aug 2022 11:07:00 +0300
 
 3.4.1
 
