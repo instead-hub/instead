@@ -109,7 +109,8 @@ function iface:cmd(inp)
 			end
 			inp = cmd .. ','..stead.table.concat(use, ',')
 		elseif stead.tonum(a[1]) then
-			a[1] = dict[stead.tonum(a[1])][1]
+			local d = dict[stead.tonum(a[1])]
+			a[1] = d and d[1] or a[1]
 			inp = cmd .. ','..stead.table.concat(a, ',')
 		end
 	end
