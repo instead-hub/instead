@@ -90,14 +90,15 @@ std.stat = std.class({
 	__stat_type = true;
 }, std.obj);
 
+-- luacheck: globals menu
 std.menu = std.class({
 	__menu_type = true;
-	new = function(self, v)
+	new = function(_, v)
 		if type(v) ~= 'table' then
 			std.err ("Wrong argument to std.menu:"..std.tostr(v), 2)
 		end
 		v = std.obj(v)
-		std.setmt(v, self)
+--		std.setmt(v, self)
 		return v
 	end;
 	inv = function(s, ...)
@@ -107,9 +108,13 @@ std.menu = std.class({
 		else
 			r, v = std.call(s, 'act', ...) -- fallback to act
 		end
-		return true, false -- menu mode
+		if not r and not v then
+			return true, false -- menu mode
+		end
+		return r, v
 	end;
 }, std.obj);
+
 std.setmt(std.phr, std.menu) -- make phrases menus
 std.setmt(std.ref '@', std.menu) -- make xact menu
 
