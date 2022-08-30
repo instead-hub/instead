@@ -86,7 +86,7 @@ int system_clipboard(const char *text, char **buf)
 #ifdef SAILFISHOS
 static SDL_FingerID finger_mouse = 0;
 
-static void push_mouse_event(SDL_Event *sevent)
+static void touch_mouse_event(SDL_Event *sevent)
 {
 	SDL_Event event;
 	memset(&event, 0, sizeof(event));
@@ -244,6 +244,44 @@ static void gamepad_done(void)
 		SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
 }
 
+static int gamepad_mouse_event(SDL_Event *ev)
+{
+	int axis_x = 0, axis_y = 0;
+	SDL_Event event;
+
+	memset(&event, 0, sizeof(event));
+	if (ev->type == SDL_CONTROLLERBUTTONDOWN) {
+		if (ev->cbutton.button != SDL_CONTROLLER_BUTTON_LEFTSTICK &&
+			ev->cbutton.button != SDL_CONTROLLER_BUTTON_RIGHTSTICK)
+			return 0;
+		event.type = SDL_MOUSEBUTTONDOWN;
+	} else if (ev->type == SDL_CONTROLLERBUTTONUP) {
+		if (ev->cbutton.button != SDL_CONTROLLER_BUTTON_LEFTSTICK &&
+			ev->cbutton.button != SDL_CONTROLLER_BUTTON_RIGHTSTICK)
+			return 0;
+		event.type = SDL_MOUSEBUTTONUP;
+	} else if (ev->type == SDL_CONTROLLERAXISMOTION)
+		event.type = SDL_MOUSEMOTION;
+
+	gfx_cursor(&event.button.x, &event.button.y);
+
+	if (ev->caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX ||
+		ev->caxis.axis == SDL_CONTROLLER_AXIS_LEFTX)
+		axis_x = ev->caxis.axis;
+	else if (ev->caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY ||
+		ev->caxis.axis == SDL_CONTROLLER_AXIS_LEFTY)
+		axis_y = ev->caxis.axis;
+	if (abs(axis_x) > deadzone || abs(axis_y) > deadzone) {
+		event.button.x += gamepad_mouse_shift(axis_x);
+		event.button.y += gamepad_mouse_shift(axis_y);
+		gfx_warp_cursor(event.button.x, event.button.y);
+	}
+	event.button.clicks = 1;
+	event.button.button = 1;
+	SDL_PushEvent(&event);
+	return 1;
+}
+
 static const char *gamepad_map(int button)
 {
 	switch(button) {
@@ -366,7 +404,6 @@ int input(struct inp_event *inp, int wait)
 	int rc;
 	SDL_Event event;
 	SDL_Event peek;
-	int cursor_x, cursor_y, axis_x, axis_y;
 	memset(&event, 0, sizeof(event));
 	memset(&peek, 0, sizeof(peek));
 
@@ -378,17 +415,6 @@ int input(struct inp_event *inp, int wait)
 		rc = SDL_PollEvent(&event);
 	if (!rc)
 		return 0;
-
-	if (gamepad) {
-		axis_x = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_RIGHTX);
-		axis_y = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_RIGHTY);
-		if (abs(axis_x) > deadzone || abs(axis_y) > deadzone) {
-			gfx_cursor(&cursor_x, &cursor_y);
-			cursor_x += gamepad_mouse_shift(axis_x);
-			cursor_y += gamepad_mouse_shift(axis_y);
-			gfx_warp_cursor(cursor_x, cursor_y);
-		}
-	}
 
 	inp->sym[0] = 0;
 	inp->type = 0;
@@ -406,7 +432,7 @@ int input(struct inp_event *inp, int wait)
 		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, event.type, event.type) > 0)
 			return AGAIN; /* to avoid flickering */
 #if defined(SAILFISHOS)
-		push_mouse_event(&event);
+		touch_mouse_event(&event);
 #endif
 		break;
 	case SDL_FINGERUP:
@@ -415,7 +441,7 @@ int input(struct inp_event *inp, int wait)
 #endif
 	case SDL_FINGERDOWN:
 #if defined(SAILFISHOS)
-		push_mouse_event(&event);
+		touch_mouse_event(&event);
 #endif
 #if defined(IOS) || defined(SAILFISHOS)
 		if (event.type == SDL_FINGERDOWN) {
@@ -447,17 +473,24 @@ int input(struct inp_event *inp, int wait)
 			inp->sym + sizeof(event.tfinger.fingerId) * 2 + 1);
 		inp->sym[sizeof(event.tfinger.fingerId) * 2 + 1 + sizeof(event.tfinger.touchId) * 2] = 0;
 		break;
+	case SDL_CONTROLLERAXISMOTION:
+		gamepad_mouse_event(&event);
+		return AGAIN;
 	case SDL_CONTROLLERBUTTONDOWN:
 		inp->type = KEY_DOWN;
 		inp->code = event.cbutton.button;
 		strncpy(inp->sym, gamepad_map(event.cbutton.button), sizeof(inp->sym));
 		inp->sym[sizeof(inp->sym) - 1] = 0;
+		if (gamepad_mouse_event(&event) || !inp->sym[0])
+			return AGAIN;
 		break;
 	case SDL_CONTROLLERBUTTONUP:
 		inp->type = KEY_UP;
 		inp->code = event.cbutton.button;
 		strncpy(inp->sym, gamepad_map(event.cbutton.button), sizeof(inp->sym));
 		inp->sym[sizeof(inp->sym) - 1] = 0;
+		if (gamepad_mouse_event(&event) || !inp->sym[0])
+			return AGAIN;
 		break;
 	case SDL_WINDOWEVENT:
 		switch (event.window.event) {
@@ -583,6 +616,7 @@ int input(struct inp_event *inp, int wait)
 			inp->type = 0;
 		break;
 	case SDL_MOUSEWHEEL:
+		gamepad_mouse_event(&event);
 		if (!game_grab_events && DIRECT_MODE && !game_paused())
 			return AGAIN;
 
