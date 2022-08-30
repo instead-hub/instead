@@ -616,7 +616,6 @@ int input(struct inp_event *inp, int wait)
 			inp->type = 0;
 		break;
 	case SDL_MOUSEWHEEL:
-		gamepad_mouse_event(&event);
 		if (!game_grab_events && DIRECT_MODE && !game_paused())
 			return AGAIN;
 
