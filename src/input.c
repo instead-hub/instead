@@ -269,8 +269,8 @@ static int gamepad_timer_fn(int interval, void *p)
 		memset(&event, 0, sizeof(event));
 		event.type = SDL_MOUSEMOTION;
 		gfx_cursor(&event.button.x, &event.button.y);
-		event.button.x += game_theme.scale * gamepad_mouse_shift(axis_x);
-		event.button.y += game_theme.scale * gamepad_mouse_shift(axis_y);
+		event.button.x += ceil(game_theme.scale * gamepad_mouse_shift(axis_x));
+		event.button.y += ceil(game_theme.scale * gamepad_mouse_shift(axis_y));
 		gfx_warp_cursor(event.button.x, event.button.y);
 		SDL_PushEvent(&event);
 	}
