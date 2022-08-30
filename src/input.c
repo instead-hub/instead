@@ -170,6 +170,42 @@ int HandleAppEvents(void *userdata, SDL_Event *event)
 #endif
 
 static SDL_GameController *gamepad = NULL;
+static int deadzone = 8192;
+
+const float MOUSE_SHIFT_MIN = 1.0;
+const float MOUSE_SHIFT_MAX = 8.0;
+
+static int gamepad_deadzone(SDL_GameController *g)
+{
+	switch (SDL_GameControllerGetType(g))
+	{
+	case SDL_CONTROLLER_TYPE_UNKNOWN:
+	case SDL_CONTROLLER_TYPE_XBOXONE:
+	case SDL_CONTROLLER_TYPE_XBOX360:
+	case SDL_CONTROLLER_TYPE_PS3:
+		return 10000;
+	case SDL_CONTROLLER_TYPE_PS4:
+	case SDL_CONTROLLER_TYPE_PS5:
+		return 4096;
+	case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO:
+		return 8192; // Actual dead-zone should be closer to 10% of full-scale, but we use this to account for variances in 3rd-party controllers
+	case SDL_CONTROLLER_TYPE_VIRTUAL:
+		return 8192;
+	default:
+		return 8192;
+	}
+}
+
+static int gamepad_mouse_shift(int axis_value) {
+	float range;
+	if (abs(axis_value) < deadzone)
+		return 0;
+	range = 32768.0 - deadzone;
+	if (axis_value > deadzone)
+		return MOUSE_SHIFT_MIN + (MOUSE_SHIFT_MAX - MOUSE_SHIFT_MIN) * (axis_value - deadzone) / range;
+	else
+		return -MOUSE_SHIFT_MIN + (MOUSE_SHIFT_MAX - MOUSE_SHIFT_MIN) * (axis_value + deadzone) / range;
+}
 
 static void gamepad_init(void)
 {
@@ -183,7 +219,9 @@ static void gamepad_init(void)
 		if (SDL_IsGameController(i)) {
 			gamepad = SDL_GameControllerOpen(i);
 			if (gamepad) {
-			        fprintf(stderr, "Found gamepad: %s\n", SDL_GameControllerName(gamepad));
+				fprintf(stderr, "Found gamepad: %s\n",
+					SDL_GameControllerName(gamepad));
+				deadzone = gamepad_deadzone(gamepad);
 				break;
 			} else {
 				fprintf(stderr, "Could not open gamepad %i: %s\n", i, SDL_GetError());
@@ -318,11 +356,13 @@ int finger_pos(const char *finger, int *x, int *y, float *pressure)
 	}
 	return -1;
 }
+
 int input(struct inp_event *inp, int wait)
 {
 	int rc;
 	SDL_Event event;
 	SDL_Event peek;
+	int cursor_x, cursor_y, axis_x, axis_y;
 	memset(&event, 0, sizeof(event));
 	memset(&peek, 0, sizeof(peek));
 
@@ -334,6 +374,17 @@ int input(struct inp_event *inp, int wait)
 		rc = SDL_PollEvent(&event);
 	if (!rc)
 		return 0;
+
+	if (gamepad) {
+		axis_x = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_RIGHTX);
+		axis_y = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_RIGHTY);
+		if (abs(axis_x) > deadzone || abs(axis_y) > deadzone) {
+			gfx_cursor(&cursor_x, &cursor_y);
+			cursor_x += gamepad_mouse_shift(axis_x);
+			cursor_y += gamepad_mouse_shift(axis_y);
+			gfx_warp_cursor(cursor_x, cursor_y);
+		}
+	}
 
 	inp->sym[0] = 0;
 	inp->type = 0;
