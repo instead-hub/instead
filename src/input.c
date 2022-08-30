@@ -177,6 +177,7 @@ const float MOUSE_SHIFT_MAX = 8.0;
 
 static int gamepad_deadzone(SDL_GameController *g)
 {
+#if SDL_VERSION_ATLEAST(2,0,12)
 	switch (SDL_GameControllerGetType(g))
 	{
 	case SDL_CONTROLLER_TYPE_UNKNOWN:
@@ -194,6 +195,9 @@ static int gamepad_deadzone(SDL_GameController *g)
 	default:
 		return 8192;
 	}
+#else
+	return 8192;
+#endif
 }
 
 static int gamepad_mouse_shift(int axis_value) {
