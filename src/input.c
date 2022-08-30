@@ -116,6 +116,8 @@ extern void gfx_finger_pos_scale(float x, float y, int *ox, int *oy, int norm);
 #define INPUT_REP_DELAY_MS 500
 #define INPUT_REP_INTERVAL_MS 30
 
+#define GAMEPAD_TICKS 100
+
 #if defined(IOS) || defined(ANDROID)
 int HandleAppEvents(void *userdata, SDL_Event *event)
 {
@@ -243,7 +245,7 @@ static void gamepad_done(void)
 	if(SDL_WasInit(SDL_INIT_GAMECONTROLLER))
 		SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
 }
-
+static int gamepad_stamp = 0;
 static int gamepad_mouse_event(SDL_Event *ev)
 {
 	int rc = 1;
@@ -253,6 +255,8 @@ static int gamepad_mouse_event(SDL_Event *ev)
 	memset(&event, 0, sizeof(event));
 	gfx_cursor(&event.button.x, &event.button.y);
 	event.type = SDL_MOUSEMOTION;
+	event.button.clicks = 1;
+	event.button.button = 1;
 
 	if (ev->type == SDL_CONTROLLERBUTTONDOWN) {
 		if (ev->cbutton.button != SDL_CONTROLLER_BUTTON_LEFTSTICK &&
@@ -275,7 +279,8 @@ static int gamepad_mouse_event(SDL_Event *ev)
 			event.button.x += gamepad_mouse_shift(axis_x);
 			event.button.y += gamepad_mouse_shift(axis_y);
 			gfx_warp_cursor(event.button.x, event.button.y);
-		}
+		} else
+			return 1; /* no motion */
 	} else if (gamepad) { /* poll mode, no gamepad event */
 		axis_x = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_RIGHTX);
 		axis_y = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_RIGHTY);
@@ -284,16 +289,19 @@ static int gamepad_mouse_event(SDL_Event *ev)
 			axis_y = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_LEFTY);
 		}
 		if (abs(axis_x) > deadzone || abs(axis_y) > deadzone) {
+			if (gfx_ticks() - gamepad_stamp <= GAMEPAD_TICKS) {
+				axis_x = 0; axis_y = 0;
+			} else
+				gamepad_stamp = gfx_ticks();
 			gfx_cursor(&event.button.x, &event.button.y);
 			event.button.x += gamepad_mouse_shift(axis_x);
 			event.button.y += gamepad_mouse_shift(axis_y);
 			gfx_warp_cursor(event.button.x, event.button.y);
-		}
+		} else
+			return 0; /* no motion */
 		rc = 0;
 	}
 
-	event.button.clicks = 1;
-	event.button.button = 1;
 	SDL_PushEvent(&event);
 	return rc;
 }
