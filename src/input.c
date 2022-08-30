@@ -116,7 +116,7 @@ extern void gfx_finger_pos_scale(float x, float y, int *ox, int *oy, int norm);
 #define INPUT_REP_DELAY_MS 500
 #define INPUT_REP_INTERVAL_MS 30
 
-#define GAMEPAD_TICKS 100
+#define GAMEPAD_TICKS 10
 
 #if defined(IOS) || defined(ANDROID)
 int HandleAppEvents(void *userdata, SDL_Event *event)
@@ -283,10 +283,10 @@ static int gamepad_mouse_event(SDL_Event *ev)
 		}
 		if (abs(axis_x) > deadzone || abs(axis_y) > deadzone) {
 			rc = 1;
-//			if (gfx_ticks() - gamepad_stamp <= GAMEPAD_TICKS) {
-//				axis_x = 0; axis_y = 0;
-//			} else
-//				gamepad_stamp = gfx_ticks();
+			if (gfx_ticks() - gamepad_stamp <= GAMEPAD_TICKS) {
+				axis_x = 0; axis_y = 0;
+			} else
+				gamepad_stamp = gfx_ticks();
 			gfx_cursor(&event.button.x, &event.button.y);
 			event.button.x += gamepad_mouse_shift(axis_x);
 			event.button.y += gamepad_mouse_shift(axis_y);
