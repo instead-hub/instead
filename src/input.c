@@ -267,10 +267,10 @@ static int gamepad_mouse_event(SDL_Event *ev)
 
 	if (ev->caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX ||
 		ev->caxis.axis == SDL_CONTROLLER_AXIS_LEFTX)
-		axis_x = ev->caxis.axis;
+		axis_x = ev->caxis.value;
 	else if (ev->caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY ||
 		ev->caxis.axis == SDL_CONTROLLER_AXIS_LEFTY)
-		axis_y = ev->caxis.axis;
+		axis_y = ev->caxis.value;
 	if (abs(axis_x) > deadzone || abs(axis_y) > deadzone) {
 		event.button.x += gamepad_mouse_shift(axis_x);
 		event.button.y += gamepad_mouse_shift(axis_y);
