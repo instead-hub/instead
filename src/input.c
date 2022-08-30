@@ -282,7 +282,6 @@ static int gamepad_mouse_event(SDL_Event *ev)
 			axis_y = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_LEFTY);
 		}
 		if (abs(axis_x) > deadzone || abs(axis_y) > deadzone) {
-			rc = 1;
 			if (gfx_ticks() - gamepad_stamp <= GAMEPAD_TICKS) {
 				axis_x = 0; axis_y = 0;
 			} else
@@ -291,6 +290,8 @@ static int gamepad_mouse_event(SDL_Event *ev)
 			event.button.x += gamepad_mouse_shift(axis_x);
 			event.button.y += gamepad_mouse_shift(axis_y);
 			gfx_warp_cursor(event.button.x, event.button.y);
+			SDL_PushEvent(&event);
+			return rc;
 		}
 	}
 
