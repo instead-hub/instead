@@ -246,10 +246,14 @@ static void gamepad_done(void)
 
 static int gamepad_mouse_event(SDL_Event *ev)
 {
+	int rc = 1;
 	int axis_x = 0, axis_y = 0;
 	SDL_Event event;
 
 	memset(&event, 0, sizeof(event));
+	gfx_cursor(&event.button.x, &event.button.y);
+	event.type = SDL_MOUSEMOTION;
+
 	if (ev->type == SDL_CONTROLLERBUTTONDOWN) {
 		if (ev->cbutton.button != SDL_CONTROLLER_BUTTON_LEFTSTICK &&
 			ev->cbutton.button != SDL_CONTROLLER_BUTTON_RIGHTSTICK)
@@ -260,26 +264,38 @@ static int gamepad_mouse_event(SDL_Event *ev)
 			ev->cbutton.button != SDL_CONTROLLER_BUTTON_RIGHTSTICK)
 			return 0;
 		event.type = SDL_MOUSEBUTTONUP;
-	} else if (ev->type == SDL_CONTROLLERAXISMOTION)
-		event.type = SDL_MOUSEMOTION;
-
-	gfx_cursor(&event.button.x, &event.button.y);
-
-	if (ev->caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX ||
-		ev->caxis.axis == SDL_CONTROLLER_AXIS_LEFTX)
-		axis_x = ev->caxis.value;
-	else if (ev->caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY ||
-		ev->caxis.axis == SDL_CONTROLLER_AXIS_LEFTY)
-		axis_y = ev->caxis.value;
-	if (abs(axis_x) > deadzone || abs(axis_y) > deadzone) {
-		event.button.x += gamepad_mouse_shift(axis_x);
-		event.button.y += gamepad_mouse_shift(axis_y);
-		gfx_warp_cursor(event.button.x, event.button.y);
+	} else if (ev->type == SDL_CONTROLLERAXISMOTION) {
+		if (ev->caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX ||
+			ev->caxis.axis == SDL_CONTROLLER_AXIS_LEFTX)
+			axis_x = ev->caxis.value;
+		else if (ev->caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY ||
+			ev->caxis.axis == SDL_CONTROLLER_AXIS_LEFTY)
+			axis_y = ev->caxis.value;
+		if (abs(axis_x) > deadzone || abs(axis_y) > deadzone) {
+			event.button.x += gamepad_mouse_shift(axis_x);
+			event.button.y += gamepad_mouse_shift(axis_y);
+			gfx_warp_cursor(event.button.x, event.button.y);
+		}
+	} else if (gamepad) { /* poll mode, no gamepad event */
+		axis_x = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_RIGHTX);
+		axis_y = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_RIGHTY);
+		if (abs(axis_x) <= deadzone && abs(axis_y) <= deadzone) {
+			axis_x = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_LEFTX);
+			axis_y = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_LEFTY);
+		}
+		if (abs(axis_x) > deadzone || abs(axis_y) > deadzone) {
+			gfx_cursor(&event.button.x, &event.button.y);
+			event.button.x += gamepad_mouse_shift(axis_x);
+			event.button.y += gamepad_mouse_shift(axis_y);
+			gfx_warp_cursor(event.button.x, event.button.y);
+		}
+		rc = 0;
 	}
+
 	event.button.clicks = 1;
 	event.button.button = 1;
 	SDL_PushEvent(&event);
-	return 1;
+	return rc;
 }
 
 static const char *gamepad_map(int button)
@@ -416,6 +432,9 @@ int input(struct inp_event *inp, int wait)
 	if (!rc)
 		return 0;
 
+	if (gamepad_mouse_event(&event))
+		return AGAIN;
+
 	inp->sym[0] = 0;
 	inp->type = 0;
 	inp->count = 1;
@@ -473,15 +492,12 @@ int input(struct inp_event *inp, int wait)
 			inp->sym + sizeof(event.tfinger.fingerId) * 2 + 1);
 		inp->sym[sizeof(event.tfinger.fingerId) * 2 + 1 + sizeof(event.tfinger.touchId) * 2] = 0;
 		break;
-	case SDL_CONTROLLERAXISMOTION:
-		gamepad_mouse_event(&event);
-		return AGAIN;
 	case SDL_CONTROLLERBUTTONDOWN:
 		inp->type = KEY_DOWN;
 		inp->code = event.cbutton.button;
 		strncpy(inp->sym, gamepad_map(event.cbutton.button), sizeof(inp->sym));
 		inp->sym[sizeof(inp->sym) - 1] = 0;
-		if (gamepad_mouse_event(&event) || !inp->sym[0])
+		if (!inp->sym[0])
 			return AGAIN;
 		break;
 	case SDL_CONTROLLERBUTTONUP:
@@ -489,7 +505,7 @@ int input(struct inp_event *inp, int wait)
 		inp->code = event.cbutton.button;
 		strncpy(inp->sym, gamepad_map(event.cbutton.button), sizeof(inp->sym));
 		inp->sym[sizeof(inp->sym) - 1] = 0;
-		if (gamepad_mouse_event(&event) || !inp->sym[0])
+		if (!inp->sym[0])
 			return AGAIN;
 		break;
 	case SDL_WINDOWEVENT:
