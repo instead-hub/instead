@@ -279,8 +279,7 @@ static int gamepad_mouse_event(SDL_Event *ev)
 			event.button.x += gamepad_mouse_shift(axis_x);
 			event.button.y += gamepad_mouse_shift(axis_y);
 			gfx_warp_cursor(event.button.x, event.button.y);
-		} else
-			return 1; /* no motion */
+		}
 	} else if (gamepad) { /* poll mode, no gamepad event */
 		axis_x = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_RIGHTX);
 		axis_y = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_RIGHTY);
