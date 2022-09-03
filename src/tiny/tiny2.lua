@@ -46,16 +46,14 @@ iface.xref = function(self, str, obj, ...)
 		return str
 	end
 
-	if stead.ref(ways():srch(obj)) then
+	if stead.cmd == 'way' then
 		cmd = 'go'
-	elseif isMenu(o) then
+	elseif stead.cmd == 'inv' then
 		cmd = 'use'
 	elseif isSceneUse(o) then
 		cmd = 'use'
 	elseif isXaction(o) and not o.id then
 		cmd = 'act'
-	elseif stead.ref(stead.me():srch(obj)) then
-		cmd = 'use'
 	elseif stead.ref(stead.here():srch(obj)) then
 		cmd = 'act'
 	end
@@ -68,11 +66,11 @@ iface.xref = function(self, str, obj, ...)
 
 	local n = stead.deref(obj)
 	local xref = string.format("%s%s", stead.tostr(o.id or n), a)
-	if not dict[xref] then
+	if not dict[cmd..xref] then
 		stead.table.insert(dict, { xref, cmd } )
-		dict[xref] = #dict
+		dict[cmd..xref] = #dict
 	end
-	xref = stead.tostr(dict[xref])
+	xref = stead.tostr(dict[cmd..xref])
 	return stead.cat(str, "("..xref..")");
 end
 
