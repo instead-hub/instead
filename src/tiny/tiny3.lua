@@ -23,16 +23,6 @@ local type = std.type
 
 local dict = {}
 
-local function get_bool(o, nam)
-	if type(o[nam]) == 'boolean' then
-		return o[nam]
-	end
-	if type(o[nam]) == 'function' then
-		return o:nam()
-	end
-	return nil
-end
-
 instead.inv_delim = '\n'
 instead.hinv_delim = ' | '
 instead.ways_delim = ' | '
