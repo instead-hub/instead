@@ -38,6 +38,11 @@ stead.list_search = function(self, n, dis)
 end
 local dict = {}
 
+function iface.title(t)
+	if type(t) ~= 'string' then return end
+	return '['..t..']'
+end
+
 iface.xref = function(self, str, obj, ...)
 	local cmd = ''
 	local o = stead.ref(obj)
