@@ -38,11 +38,6 @@ stead.list_search = function(self, n, dis)
 end
 local dict = {}
 
-function iface.title(t)
-	if type(t) ~= 'string' then return end
-	return '['..t..']'
-end
-
 iface.xref = function(self, str, obj, ...)
 	local cmd = ''
 	local o = stead.ref(obj)
@@ -184,6 +179,11 @@ function menu(v)
 		v.save = stead.menu_save;
 	end
 	return obj(v);
+end
+
+function iface.title(t)
+	if type(t) ~= 'string' then return end
+	return '['..t..']'
 end
 
 -- fake audio and timer
