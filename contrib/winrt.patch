@@ -125,10 +125,10 @@ index 13a7dd73..56afa364 100644
          {
              DWORD dwErr = GetLastError();
 diff --git a/src/unpack.c b/src/unpack.c
-index 7340bcbb..cfe095fb 100644
+index df4600ac..39589b21 100644
 --- a/src/unpack.c
 +++ b/src/unpack.c
-@@ -67,11 +67,46 @@ tm_unz tmu_date;
+@@ -65,11 +65,46 @@ tm_unz tmu_date;
  	HANDLE hFile;
  	FILETIME ftm, ftLocal, ftCreate, ftLastAcc, ftLastWrite;
  
@@ -175,7 +175,7 @@ index 7340bcbb..cfe095fb 100644
  	SetFileTime(hFile, &ftm, &ftLastAcc, &ftm);
  	CloseHandle(hFile);
  #else
-@@ -160,10 +195,23 @@ const char *newdir;
+@@ -156,10 +191,23 @@ const char *newdir;
  	return 1;
  }
  
@@ -200,7 +200,7 @@ index 7340bcbb..cfe095fb 100644
  	char filename_inzip[256];
  	char dir_inzip[256];
  	char *filename_withoutpath;
-@@ -209,7 +257,7 @@ const char *password;
+@@ -205,7 +253,7 @@ const char *password;
  			goto out;
  		}
  		fprintf(stderr, "creating directory: %s\n", filename_inzip);
@@ -209,7 +209,7 @@ index 7340bcbb..cfe095fb 100644
  		if (!*zip_game_dirname)
  			strcpy(zip_game_dirname, dir_inzip);
  	} else {
-@@ -226,16 +274,16 @@ const char *password;
+@@ -222,16 +270,16 @@ const char *password;
  		}
  
  		if (skip == 0) {
@@ -229,7 +229,7 @@ index 7340bcbb..cfe095fb 100644
  			}
  
  			if (fout == NULL) {
-@@ -273,7 +321,7 @@ const char *password;
+@@ -269,7 +317,7 @@ const char *password;
  				fclose(fout);
  
  			if (err == 0)
@@ -238,7 +238,7 @@ index 7340bcbb..cfe095fb 100644
  						 file_info.dosDate,
  						 file_info.tmu_date);
  		}
-@@ -313,9 +361,10 @@ out:
+@@ -309,9 +357,10 @@ out:
  	return err;
  }
  
@@ -250,7 +250,7 @@ index 7340bcbb..cfe095fb 100644
  {
  	uLong i;
  	unz_global_info64 gi;
-@@ -325,7 +374,7 @@ const char *password;
+@@ -321,7 +370,7 @@ const char *password;
  		fprintf(stderr, "error %d with zipfile in unzGetGlobalInfo \n", err);
  
  	for (i = 0; i < gi.number_entry; i++) {
@@ -259,7 +259,7 @@ index 7340bcbb..cfe095fb 100644
  			return -1;
  
  		if ((i + 1) < gi.number_entry) {
-@@ -395,7 +444,7 @@ int unpack(const char *zipfilename, const char *dirname)
+@@ -391,7 +440,7 @@ int unpack(const char *zipfilename, const char *dirname)
  		fprintf(stderr, "Error changing dir to %s, aborting\n", dirname);
  		goto out;
  	}
@@ -294,21 +294,14 @@ index 6116f3b9..411c600c 100644
          return NULL;
  
 diff --git a/src/winrt.c b/src/winrt.c
-index 60d05173..003d13db 100644
+index d3764322..f3bf9ec8 100644
 --- a/src/winrt.c
 +++ b/src/winrt.c
-@@ -252,12 +252,56 @@ char *game_save_path( int cr, int nr )
- 
- int debug_init(void)
- {
-+	// stub
- 	return 0;
- }
- 
+@@ -258,3 +258,45 @@ int debug_init(void)
  void debug_done()
  {
-+	// stub
  }
++
 +
 +BOOL GetFileTime(
 +	HANDLE     hFile,
@@ -350,7 +343,3 @@ index 60d05173..003d13db 100644
 +	// stub
 +	return 0;
 +}
-+
- #ifdef _USE_BROWSE
- char *open_file_dialog(void)
- {
