@@ -258,34 +258,3 @@ int debug_init(void)
 void debug_done()
 {
 }
-#ifdef _USE_BROWSE
-char *open_file_dialog(void)
-{
-	OPENFILENAME ofn;
-	static char szFile[MAX_PATH];
-	static char szOldDir[MAX_PATH];
-	static int old_dir_set = 0;
-	ZeroMemory( &ofn , sizeof( ofn));
-	ofn.lStructSize = sizeof ( ofn );
-	ofn.hwndOwner = NULL ;
-	ofn.lpstrFile = szFile ;
-	ofn.lpstrFile[0] = '\0';
-	ofn.nMaxFile = sizeof( szFile );
-	ofn.lpstrFilter = "*.*\0*.*\0main?.lua;*.zip;*.idf\0main.lua;main3.lua;*.zip;*.idf\0\0";
-	ofn.nFilterIndex = 2;
-	ofn.lpstrFileTitle = NULL;
-	ofn.nMaxFileTitle = 0;
-	if (!old_dir_set)
-		ofn.lpstrInitialDir = NULL;
-	else
-		ofn.lpstrInitialDir = szOldDir;
-	ofn.Flags = OFN_PATHMUSTEXIST|OFN_FILEMUSTEXIST|OFN_HIDEREADONLY|OFN_READONLY;
-	if (!GetOpenFileName(&ofn))
-		return NULL;
-	old_dir_set = 1;
-	strcpy(szOldDir, ofn.lpstrFile);
-	dirname(szOldDir);
-	unix_path(ofn.lpstrFile);
-	return ofn.lpstrFile;
-}
-#endif

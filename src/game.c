@@ -3344,7 +3344,7 @@ static int game_input_events(struct inp_event *ev)
 	if (!curgame_dir)
 		return 0;
 	if (ev->type == KEY_DOWN || ev->type == KEY_UP) {
-#if defined(ANDROID) || defined(IOS)
+#if defined(ANDROID) || defined(IOS) || defined(WINRT)
 		if (!is_key(ev, "f12") && !menu_shown) /* f12 is keyboard toggle */
 			return 0;
 #endif
@@ -3428,7 +3428,7 @@ static int kbd_instead(struct inp_event *ev, int *x, int *y)
 					game_load(9);
 			}
 		}
-#if defined(ANDROID) || defined(IOS)
+#if defined(ANDROID) || defined(IOS) || defined(WINRT)
 	} else if (!is_key(ev, "f12") && curgame_dir && !menu_shown) {
 		input_text(!(input_text(-1) > 0));
 #endif
