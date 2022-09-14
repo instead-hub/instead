@@ -309,31 +309,41 @@ static int gamepad_mouse_event(SDL_Event *ev)
 	return rc;
 }
 
-static const char *gamepad_map(int button)
+static int gamepad_map(struct inp_event *inp)
 {
-	switch(button) {
+	const char *key;
+	switch(inp->code) {
 	case SDL_CONTROLLER_BUTTON_DPAD_UP:
-		return "up";
+		key = "up"; break;
 	case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
-		return "down";
+		key = "down"; break;
 	case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
-		return "left";
+		key = "left"; break;
 	case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
-		return "right";
-	case SDL_CONTROLLER_BUTTON_A:
-		return "return";
+		key = "right"; break;
+	case SDL_CONTROLLER_BUTTON_A: /* emulate click */
+		inp->type = (inp->type == KEY_DOWN)?MOUSE_DOWN:MOUSE_UP;
+		gfx_cursor(&inp->x, &inp->y);
+		inp->code = 1;
+		return 1;
 	case SDL_CONTROLLER_BUTTON_B:
-		return "space";
+		key = "space"; break;
 	case SDL_CONTROLLER_BUTTON_X:
-		return "tab";
+		key = "tab"; break;
+	case SDL_CONTROLLER_BUTTON_Y:
+		key = "return"; break;
 	case SDL_CONTROLLER_BUTTON_START:
-		return "escape";
+		key = "escape"; break;
 	case SDL_CONTROLLER_BUTTON_LEFTSHOULDER:
-		return "page up";
+		key = "page up"; break;
 	case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER:
-		return "page down";
+		key = "page down"; break;
+	default:
+		return 0;
 	}
-	return "";
+	strncpy(inp->sym, key, sizeof(inp->sym));
+	inp->sym[sizeof(inp->sym) - 1] = 0;
+	return 1;
 }
 
 int input_init(void)
@@ -506,17 +516,13 @@ int input(struct inp_event *inp, int wait)
 	case SDL_CONTROLLERBUTTONDOWN:
 		inp->type = KEY_DOWN;
 		inp->code = event.cbutton.button;
-		strncpy(inp->sym, gamepad_map(event.cbutton.button), sizeof(inp->sym));
-		inp->sym[sizeof(inp->sym) - 1] = 0;
-		if (!inp->sym[0])
+		if (!gamepad_map(inp))
 			return AGAIN;
 		break;
 	case SDL_CONTROLLERBUTTONUP:
 		inp->type = KEY_UP;
 		inp->code = event.cbutton.button;
-		strncpy(inp->sym, gamepad_map(event.cbutton.button), sizeof(inp->sym));
-		inp->sym[sizeof(inp->sym) - 1] = 0;
-		if (!inp->sym[0])
+		if (!gamepad_map(inp))
 			return AGAIN;
 		break;
 	case SDL_WINDOWEVENT:
