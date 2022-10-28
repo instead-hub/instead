@@ -4310,8 +4310,8 @@ For example:
 ```
 ; $Name:New theme$
 ; modification themes book
-include = the book-to use the theme of the Book
-scr.gfx.h = 500 -- replace it one parameter
+include = book ; -- to use the theme of the Book
+scr.gfx.h = 500 ; -- replace it one parameter
 ```
 
 > The interpreter searches for themes in the "themes" directory. Unix version
