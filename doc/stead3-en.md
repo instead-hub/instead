@@ -4310,7 +4310,7 @@ For example:
 ```
 ; $Name:New theme$
 ; modification themes book
-include = Book ; -- to use the theme of the Book
+include = book ; -- to use the theme of the Book
 scr.gfx.h = 500 ; -- replace it one parameter
 ```
 
