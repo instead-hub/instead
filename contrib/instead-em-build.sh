@@ -69,10 +69,10 @@ fi
 # zlib
 cd $WORKSPACE
 if ! test -r .stamp_zlib; then
-rm -rf zlib-1.2.12/
-[ -f zlib-1.2.12.tar.gz ] || wget -nv 'http://zlib.net/zlib-1.2.12.tar.gz'
-tar xf zlib-1.2.12.tar.gz
-cd zlib-1.2.12
+rm -rf zlib-1.2.13/
+[ -f zlib-1.2.13.tar.gz ] || wget -nv 'http://zlib.net/zlib-1.2.13.tar.gz'
+tar xf zlib-1.2.13.tar.gz
+cd zlib-1.2.13
 emconfigure ./configure --prefix=$WORKSPACE
 emmake make install
 touch ../.stamp_zlib
