@@ -1971,7 +1971,7 @@ std.world = std.class({
 			s:lastreact(s:reaction() or false)
 			s:lastdisp(r)
 		end
-		return r, v ~= false
+		return r, v
 	end;
 	aftertak = function(s, w) -- standard take action
 		w = std.ref(w)
