@@ -325,6 +325,17 @@ int instead_bretval(int n)
 	return lua_toboolean(L, n - N);
 }
 
+static int instead_bstatus(int n)
+{
+	int N;
+	if (!L)
+		return 0;
+	N = lua_gettop(L);  /* number of arguments */
+	if (n - N >= 0 || lua_isnil(L, n - N))
+		return 1;
+	return lua_toboolean(L, n - N);
+}
+
 int instead_iretval(int n)
 {
 	int N;
@@ -348,7 +359,7 @@ char *instead_file_cmd(char *s, int *rc)
 	instead_function("iface:cmd", args);
 	s = instead_retval(0);
 	if (rc)
-		*rc = !instead_bretval(1);
+		*rc = !instead_bstatus(1);
 	instead_clear();
 	extensions_hook(cmd);
 	return s;
@@ -370,7 +381,7 @@ char *instead_cmd(char *s, int *rc)
 	free(s);
 	s = instead_retval(0);
 	if (rc)
-		*rc = !instead_bretval(1);
+		*rc = !instead_bstatus(1);
 	instead_clear();
 	extensions_hook(cmd);
 	return s;
