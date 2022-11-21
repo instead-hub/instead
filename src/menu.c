@@ -432,6 +432,8 @@ static void menu_remove_tag(const char *a, const char *b)
 	p[len] = 0;
 }
 
+static char err_msg[512];
+
 char *game_menu_gen(void)
 {
 	if (cur_menu == menu_main) {
@@ -536,12 +538,18 @@ char *game_menu_gen(void)
 	} else if (cur_menu == menu_save) {
 		save_menu();
 	} else if (cur_menu == menu_error) {
+		strncpy(err_msg, instead_err()?instead_err():UNKNOWN_ERROR,
+			sizeof(err_msg) - 1);
+		strcpy(err_msg + sizeof(err_msg) - 4, "...");
 		snprintf(menu_buff, sizeof(menu_buff),
-		ERROR_MENU, instead_err()?instead_err():UNKNOWN_ERROR);
+		ERROR_MENU, err_msg);
 		instead_err_msg(NULL);
 	} else if (cur_menu == menu_warning) {
+		strncpy(err_msg, instead_err()?instead_err():UNKNOWN_ERROR,
+			sizeof(err_msg) - 1);
+		strcpy(err_msg + sizeof(err_msg) - 4, "...");
 		snprintf(menu_buff, sizeof(menu_buff),
-		WARNING_MENU, instead_err()?instead_err():UNKNOWN_ERROR);
+		WARNING_MENU, err_msg);
 		instead_err_msg(NULL);
 	} else if (cur_menu == menu_remove) {
 		const char *sname = games[gtr].path;

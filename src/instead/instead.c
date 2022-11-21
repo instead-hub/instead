@@ -71,8 +71,6 @@ static char *MAIN = NULL;
 
 #define STEAD_API_PATH instead_api_path
 
-#define ERR_MSG_MAX 512
-
 static struct list_head extensions = LIST_HEAD_INIT(extensions);
 
 #define for_each_extension(ext) list_for_each(&extensions, ext, list)
@@ -140,13 +138,9 @@ void instead_err_msg(const char *s)
 {
 	if (err_msg)
 		free(err_msg);
-	if (s) {
+	if (s)
 		err_msg = strdup(s);
-		if (err_msg && strlen(err_msg) > ERR_MSG_MAX) {
-			err_msg[ERR_MSG_MAX - 4] = 0;
-			strcat(err_msg, "...");
-		}
-	} else
+	else
 		err_msg = NULL;
 }
 
