@@ -326,14 +326,22 @@ end
 std.mod_init(function()
 	std.rawset(_G, 'instead', instead)
 end)
+
+local mp_hooked = false
+
 std.mod_start(function()
 	dict = {}
 	local mp = std.ref '@metaparser'
 	if mp then
 		mp.winsize = 0
 		mp.prompt = false
+		if not mp_hooked then -- force truncate text for all commands
+			std.mod_cmd(function(cmd) mp:trim() end)
+			mp_hooked = true
+		end
 	end
 end)
+
 std.mod_step(function(state)
 	if state then
 		dict = {}
