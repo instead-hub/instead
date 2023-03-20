@@ -1109,10 +1109,10 @@ static __inline void pixel(unsigned char *s, unsigned char *d)
 	unsigned char a_dst = d[3];
 	if (a_src == 255 || a_dst == 0) {
 		memcpy(d, s, 4);
-	} else if (a_dst == 255) {
-		draw(s, d);
 	} else if (a_src == 0) {
 		/* nothing to do */
+	} else if (a_dst == 255) {
+		draw(s, d);
 	} else {
 		blend(s, d);
 	}
