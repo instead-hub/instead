@@ -183,6 +183,7 @@ echo "INSTEAD"
 cd $WORKSPACE
 [ -d instead-em ] || git clone https://github.com/instead-hub/instead.git instead-em
 cd instead-em
+git checkout .
 git pull
 [ -e Rules.make ] || ln -s Rules.standalone Rules.make
 cat <<EOF > config.make
