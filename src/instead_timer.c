@@ -69,10 +69,10 @@ static int luaB_set_timer(lua_State *L) {
 	gfx_del_timer(instead_timer);
 	instead_timer = NULL_TIMER;
 	if (!delay)
-		d = 0;
+		d = -1;
 	else	
 		d = atoi(delay);
-	if (!d)
+	if (d==-1)
 		return 0;
 	instead_timer_nr = 0;
 	instead_timer = gfx_add_timer(d, instead_fn, NULL);

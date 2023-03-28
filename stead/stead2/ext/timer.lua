@@ -39,10 +39,10 @@ stead.module_init(function(s)
 			return stead.tonum(s._timer);
 		end,
 		stop = function(s)
-			return s:set(0);
+			return s:set(-1);
 		end,
 		del = function(s)
-			return s:set(0);
+			return s:set(-1);
 		end,
 		set = function(s, v)
 			s._timer = stead.tonum(v);

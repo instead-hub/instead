@@ -18,7 +18,7 @@ local timer = std.obj {
 		return s.__timer or 0;
 	end;
 	stop = function(s)
-		return s:set(0)
+		return s:set(-1)
 	end;
 	set = function(s, v)
 		if type(v) ~= 'number' then
