@@ -77,15 +77,16 @@ typedef struct {
 typedef struct {
 	_snd_t *snd;
 	int	loop;
+	int fading;
 	int	channel;
 } _snd_req_t;
 static _snd_t *channels[SND_CHANNELS];
 static _snd_req_t sound_reqs[SND_CHANNELS];
-static void sound_play(_snd_t *sn, int chan, int loop);
+static void sound_play(_snd_t *sn, int chan, int loop,int fading);
 
 void sound_play_click(void)
 {
-	sound_play(game_theme.click, -1, 1);
+	sound_play(game_theme.click, -1, 1,0);
 }
 
 static void sound_callback(void *aux)
@@ -100,7 +101,7 @@ static void sound_callback(void *aux)
 	if (r->snd) {
 		_snd_t *s = r->snd;
 		r->snd = NULL;
-		sound_play(s, channel, r->loop);
+		sound_play(s, channel, r->loop,r->fading);
 	} else {
 		snd_halt_chan(channel, 0); /* to avoid races */
 	}
@@ -235,7 +236,7 @@ static int sound_find_channel(void)
 	return -1;
 }
 
-static void sound_play(_snd_t *sn, int chan, int loop)
+static void sound_play(_snd_t *sn, int chan, int loop,int fading)
 {
 	int c;
 	if (!sn)
@@ -249,12 +250,13 @@ static void sound_play(_snd_t *sn, int chan, int loop)
 	if (channels[c]) {
 		sound_reqs[c].snd = sn;
 		sound_reqs[c].loop = loop;
+		sound_reqs[c].fading = fading;
 		sound_reqs[c].channel = chan;
 		snd_halt_chan(chan, 0); /* work in callback */
-		input_uevents(); /* all callbacks */
+		//input_uevents(); /* all callbacks */
 		return;
 	}
-	c = snd_play(sn->wav, c, loop - 1);
+	c = snd_play(sn->wav, c, loop - 1,fading);
 /*	fprintf(stderr, "added: %d\n", c); */
 	if (c == -1)
 		return;
@@ -409,7 +411,7 @@ static void sound_unload(const char *fname)
 	return;
 }
 
-static int _play_combined_snd(char *filename, int chan, int loop)
+static int _play_combined_snd(char *filename, int chan, int loop, int fading)
 {
 	char *str;
 	char *p, *ep;
@@ -420,14 +422,14 @@ static int _play_combined_snd(char *filename, int chan, int loop)
 
 	p = strip(p);
 	while (*p) {
-		int c = chan, l = loop;
+		int c = chan, l = loop,f =fading;
 		int at = 0;
 		ep = p + strcspn(p, ";@");
 
 		if (*ep == '@') {
 			at = 1;
 			*ep = 0; ep ++;
-			if (sscanf(ep, "%d,%d", &c, &l) > 1)
+			if (sscanf(ep, "%d,%d,%d", &c, &l, &f) > 1)
 				at ++;
 			ep += strcspn(ep, ";");
 			if (*ep)
@@ -442,7 +444,7 @@ static int _play_combined_snd(char *filename, int chan, int loop)
 		if (!sn)
 			sn = sound_add(p, 0, NULL, 0);
 		if (sn)
-			sound_play(sn, c, l);
+			sound_play(sn, c, l,f);
 		else if (at || c != -1) { /* if @ or specific channel */
 			snd_halt_chan(c, (at == 2)?l:500);
 		}
@@ -460,7 +462,7 @@ static void game_sound_player(void)
 	char		*snd;
 	int		chan = -1;
 	int		loop = 1;
-
+int		fading =0;
 	struct instead_args args[] = {
 			{ .val = "nil", .type = INSTEAD_NIL },
 			{ .val = "-1", .type = INSTEAD_NUM },
@@ -472,7 +474,7 @@ static void game_sound_player(void)
 
 	instead_lock();
 	instead_function("instead.get_sound", NULL);
-
+fading = instead_iretval(3);
 	loop = instead_iretval(2);
 	chan = instead_iretval(1);
 	snd = instead_retval(0);
@@ -489,7 +491,7 @@ static void game_sound_player(void)
 	instead_function("instead.set_sound", args); instead_clear();
 	instead_unlock();
 	unix_path(snd);
-	_play_combined_snd(snd, chan, loop);
+	_play_combined_snd(snd, chan, loop,fading);
 	free(snd);
 }
 
@@ -562,7 +564,6 @@ void game_music_player(void)
 	loop = instead_iretval(1);
 	unix_path(mus);
 	instead_clear();
-
 	instead_function("instead.get_music_fading", NULL);
 	cf_out = instead_iretval(0);
 	cf_in = instead_iretval(1);
@@ -675,7 +676,7 @@ static int luaB_load_sound_mem(lua_State *L) {
 	if (!name)
 		return 0;
 	lua_pushstring(L, name);
-	return 1;
+return 1;
 }
 
 static int luaB_free_sound(lua_State *L) {

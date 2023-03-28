@@ -55,15 +55,15 @@ function instead.finish_music()
 end
 
 function instead.get_sound()
-	return instead.__sound, instead.__sound_channel, instead.__sound_loop
+	return instead.__sound, instead.__sound_channel, instead.__sound_loop, instead.__sound_fading
 end
 
-function instead.add_sound(s, chan, loop)
+function instead.add_sound(s, chan, loop,fading)
 	if type(s) ~= 'string' then
 		std.err("Wrong parameter to instead.add_sound()", 2)
 	end
 	if type(instead.__sound) ~= 'string' then
-		return instead.set_sound(s, chan, loop)
+		return instead.set_sound(s, chan, loop,fading)
 	end
 	if std.tonum(chan) then
 		s = s..'@'..std.tostr(chan);
@@ -71,12 +71,16 @@ function instead.add_sound(s, chan, loop)
 	if std.tonum(loop) then
 		s = s..','..std.tostr(loop)
 	end
-	instead.set_sound(instead.__sound..';'..s, instead.__sound_channel, instead.__sound_loop);
+	if std.tonum(fading) then
+		s = s..','..std.tostr(fading)
+	end
+	instead.set_sound(instead.__sound..';'..s, instead.__sound_channel, instead.__sound_loop, instead.__sound_fading);
 end
 
-function instead.set_sound(sound, chan, loop)
+function instead.set_sound(sound, chan, loop,fading)
 	instead.__sound = sound
 	instead.__sound_loop = loop or 1
+instead.__sound_fading =fading or 0
 	instead.__sound_channel = chan or -1
 end
 

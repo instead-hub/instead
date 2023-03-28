@@ -62,7 +62,7 @@ end
 stead.is_sound = instead_sound
 
 stead.get_sound = function()
-	return game._sound, game._sound_channel, game._sound_loop;
+	return game._sound, game._sound_channel, game._sound_loop, game._sound_fading;
 end
 
 stead.get_sound_chan = function()
@@ -71,6 +71,10 @@ end
 
 stead.get_sound_loop = function()
 	return game._sound_loop
+end
+
+stead.get_sound_fading = function()
+	return game._sound_fading
 end
 
 stead.stop_sound = function(chan, fo)
@@ -89,7 +93,7 @@ stead.stop_sound = function(chan, fo)
 	end
 end
 
-stead.add_sound = function(s, chan, loop)
+stead.add_sound = function(s, chan, loop,fading)
 	if stead.type(s) ~= 'string' then
 		return
 	end
@@ -100,20 +104,27 @@ stead.add_sound = function(s, chan, loop)
 		if stead.tonum(loop) then
 			s = s..','..stead.tostr(loop)
 		end
-		stead.set_sound(game._sound..';'..s, stead.get_sound_chan(), stead.get_sound_loop());
+		if stead.tonum(fading) then
+			s = s..','..stead.tostr(fading)
+		end
+		stead.set_sound(game._sound..';'..s, stead.get_sound_chan(), stead.get_sound_loop(),stead.get_sound_fading);
 	else
-		stead.set_sound(s, chan, loop);
+		stead.set_sound(s, chan, loop,fading);
 	end
 end
 
-stead.set_sound = function(s, chan, loop)
+stead.set_sound = function(s, chan, loop,fading)
 	game._sound = s;
 	if not stead.tonum(loop) then
 		game._sound_loop = 1;
 	else
 		game._sound_loop = stead.tonum(loop);
 	end
-
+if not stead.tonum(fading) then
+		game._sound_fading = 0;
+	else
+		game._sound_fading = stead.tonum(fading);
+	end
 	if not stead.tonum(chan) then
 		game._sound_channel = -1;
 	else
@@ -137,6 +148,7 @@ stop_sound = stead.stop_sound
 
 get_sound = stead.get_sound
 get_sound_loop = stead.get_sound_loop
+get_sound_fadding =stead.get_sound_fading
 get_sound_chan = stead.get_sound_chan
 
 get_music = stead.get_music

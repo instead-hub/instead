@@ -255,13 +255,17 @@ stead.get_sound_loop = function()
 	return 0
 end
 
+stead.get_sound_fading = function()
+	return 0
+end
+
 stead.stop_sound = function(chan, fo)
 end
 
-stead.add_sound = function(s, chan, loop)
+stead.add_sound = function(s, chan, loop,fading)
 end
 
-stead.set_sound = function(s, chan, loop)
+stead.set_sound = function(s, chan, loop,fading)
 end
 
 -- those are sill in global space
@@ -271,6 +275,7 @@ stop_sound = stead.stop_sound
 
 get_sound = stead.get_sound
 get_sound_loop = stead.get_sound_loop
+get_sound_fading = stead.get_sound_fading
 get_sound_chan = stead.get_sound_chan
 
 get_music = stead.get_music

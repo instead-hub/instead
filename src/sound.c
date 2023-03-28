@@ -395,7 +395,7 @@ void snd_free_mus(mus_t mus)
 	free(mus);
 }
 
-int snd_play(void *chunk, int channel, int loop)
+int snd_play(void *chunk, int channel, int loop,int fading)
 {
 	if (!sound_on)
 		return -1;
@@ -408,7 +408,7 @@ int snd_play(void *chunk, int channel, int loop)
 	if (channel != -1)
 		snd_halt_chan(channel, 0);
 	snd_volume_mus(snd_volume_mus(-1)); /* SDL hack? */
-	return Mix_PlayChannel(channel, (Mix_Chunk*)chunk, loop);
+	return fading?Mix_FadeInChannel(channel, (Mix_Chunk*)chunk, loop,fading):Mix_PlayChannel(channel, (Mix_Chunk*)chunk, loop);;
 }
 
 void snd_mus_callback(void (*fn)(void *udata, unsigned char *stream, int len), void *arg)
