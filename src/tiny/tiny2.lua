@@ -221,6 +221,13 @@ end
 stead.restore_music = function(s)
 end
 
+stead.finish_music =function()
+	if (game._music_loop or 0) == 0 then
+		return false
+	end
+	game._music_loop = -1
+	return true
+end
 stead.set_music = function(s, count)
 end
 
