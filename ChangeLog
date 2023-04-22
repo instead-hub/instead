@@ -3,7 +3,8 @@
  * enh: gamepads support;
  * fix: anigif logic;
  * fix: sprite alpha artefacts;
- * fix: cleanups in instead library and docs.
+ * fix: cleanups in instead library and docs;
+ * fix: Windows XP build.
 
  -- Peter Kosyh <pkosyh@yandex.ru>  Mon, 27 Mar 2023 21:48:00 +0300
 
