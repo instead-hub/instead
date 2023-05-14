@@ -4,7 +4,8 @@
  * fix: anigif logic;
  * fix: sprite alpha artefacts;
  * fix: cleanups in instead library and docs;
- * fix: Windows XP build.
+ * fix: Windows XP build;
+ * fix: -software parameter in Windows.
 
  -- Peter Kosyh <pkosyh@yandex.ru>  Mon, 27 Mar 2023 21:48:00 +0300
 
