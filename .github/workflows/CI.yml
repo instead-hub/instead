@@ -28,7 +28,7 @@ jobs:
           }
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@main
 
       - name: Create Build Directory
         run: cmake -E make_directory ${{github.workspace}}/build

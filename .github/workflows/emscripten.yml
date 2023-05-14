@@ -12,7 +12,7 @@ jobs:
     name: Emscripten version
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@main
 
       - name: Cache emsdk
         id: cache-emsdk
