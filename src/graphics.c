@@ -5685,7 +5685,7 @@ int gfx_init(void)
 	if (render_sw)
 		SDL_SetHint(SDL_HINT_RENDER_DRIVER, render_sw);
 #if defined(_WIN32) /* do not use buggy D3D by default: fullscreen problem with NVidia */
-	else
+	else if (!software_sw)
 		SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 #endif
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
