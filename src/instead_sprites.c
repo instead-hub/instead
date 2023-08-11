@@ -1128,7 +1128,7 @@ static __inline void line0(struct lua_pixels *hdr, int x1, int y1, int dx, int d
 	int ly = w * 4;
 	int lx = xd * 4;
 
-	while ((x1 < 0 || y1 < 0 || x1 >= w) && dx --) {
+	while ((x1 < 0 || y1 < 0 || x1 >= w || y1 >= h) && dx --) {
 		if (err >= 0) {
 			y1 ++;
 			err += dyx2;
@@ -1172,9 +1172,9 @@ static __inline void line1(struct lua_pixels *hdr, int x1, int y1, int dx, int d
 	int ly = w * 4;
 	int lx = xd * 4;
 
-	while ((x1 < 0 || y1 < 0 || x1 >= w) && dy --) {
+	while ((x1 < 0 || y1 < 0 || x1 >= w || y1 >= h) && dy --) {
 		if (err >= 0) {
-		        x1 += xd;
+			x1 += xd;
 			err += dxy2;
 		} else {
 			err += dx2;
