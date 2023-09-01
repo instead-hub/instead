@@ -37,7 +37,7 @@
 #include "externals.h"
 #include "internals.h"
 
-#if !defined(_UWP) && defined(_WIN32_WINNT) && _WIN32_WINNT >= 0x0A00
+#if !defined(_UWP) && defined(_WIN32_WINNT) && _WIN32_WINNT >= 0x0A00 && !defined(__MINGW32__)
 #define _UWP
 #endif
 
