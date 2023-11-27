@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 env:
-    emsdk_ver: 3.1.47
+    emsdk_ver: 3.1.49
 
 jobs:
   build:

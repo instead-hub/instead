@@ -148,32 +148,6 @@ emmake make install
 touch ../.stamp_sdl2_mixer
 fi
 
-# jpeg lib
-cd $WORKSPACE
-if ! test -r .stamp_jpeg; then
-rm -rf jpeg-9b
-[ -f jpegsrc.v9b.tar.gz ] || wget -nv 'http://www.ijg.org/files/jpegsrc.v9b.tar.gz'
-tar xf jpegsrc.v9b.tar.gz
-cd jpeg-9b
-emconfigure ./configure --prefix=$WORKSPACE --disable-shared
-emmake make install
-touch ../.stamp_jpeg
-fi
-
-# SDL_image
-cd $WORKSPACE
-if ! test -r .stamp_sdl2_image; then
-rm -rf SDL2_image
-[ -d SDL2_image/.git ] || git clone https://github.com/emscripten-ports/SDL2_image.git SDL2_image
-cd SDL2_image
-./autogen.sh
-export ac_cv_lib_jpeg_jpeg_CreateDecompress=yes
-export ac_cv_lib_png_png_create_read_struct=yes
-emconfigure ./configure --host=asmjs-unknown-linux --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -I$WORKSPACE/include/SDL2 -s USE_LIBPNG=1" LDFLAGS="-L$WORKSPACE/lib -lpng -ljpeg" --disable-sdltest --disable-shared --enable-static --enable-png --disable-png-shared --enable-jpg --disable-jpg-shared CFLAGS="-sUSE_SDL=2"
-emmake make install
-touch ../.stamp_sdl2_image
-fi
-
 }
 
 deps
@@ -282,7 +256,7 @@ cd instead-em-js
 ln -f -s ../instead-em/src/sdl-instead.bc sdl-instead.bc
 ln -f -s ../lib lib
 
-emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_ttf.a  lib/libfreetype.a lib/libSDL2_mixer.a lib/libmikmod.a  lib/libSDL2_image.a lib/libjpeg.a  \
+emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_ttf.a  lib/libfreetype.a lib/libSDL2_mixer.a lib/libmikmod.a \
 -lidbfs.js \
 -s EXPORTED_FUNCTIONS="['_instead_main']" \
 -s 'SDL2_IMAGE_FORMATS=["png","jpeg","gif"]' \
@@ -291,7 +265,8 @@ emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_ttf.
 -s QUANTUM_SIZE=4 \
 -s WASM=1 \
 -s PRECISE_F32=1 \
--s USE_OGG=1 -s USE_VORBIS=1 -s USE_LIBPNG=1 -s USE_SDL=2 \
+-s STACK_SIZE=131072 \
+-s USE_OGG=1 -s USE_VORBIS=1 -s USE_SDL=2 -s USE_SDL_IMAGE=2 \
 -o instead-em.html -s SAFE_HEAP=0  -s TOTAL_MEMORY=167772160 -s ALLOW_MEMORY_GROWTH=1 \
 --post-js post.js  \
 --preload-file fs@/
