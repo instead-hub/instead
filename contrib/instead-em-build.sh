@@ -162,7 +162,7 @@ git pull
 [ -e Rules.make ] || ln -s Rules.standalone Rules.make
 cat <<EOF > config.make
 EXTRA_CFLAGS+= -DNOMAIN -D_HAVE_ICONV -I../../include
-SDL_CFLAGS=-I../../include/SDL2 -sUSE_SDL=2
+SDL_CFLAGS=-I../../include/SDL2 -sUSE_SDL=2 -sUSE_SDL_IMAGE=2
 SDL_LFLAGS=
 LUA_CFLAGS=
 LUA_LFLAGS=
