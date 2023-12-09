@@ -44,7 +44,7 @@ deps()
 cd $WORKSPACE
 if ! test -r .stamp_lua; then
 rm -rf lua-5.1.5
-[ -f lua-5.1.5.tar.gz ] || wget -nv 'https://www.lua.org/ftp/lua-5.1.5.tar.gz'
+[ -f lua-5.1.5.tar.gz ] || wget -nv 'https://www.lua.org/ftp/lua-5.1.5.tar.gz' || wget -nv 'https://www.tecgraf.puc-rio.br/lua/mirror/ftp/lua-5.1.5.tar.gz'
 tar xf lua-5.1.5.tar.gz
 cd lua-5.1.5
 cat src/luaconf.h | sed -e 's/#define LUA_USE_POPEN//g' -e 's/#define LUA_USE_ULONGJMP//g'>src/luaconf.h.new
