@@ -259,7 +259,7 @@ ln -f -s ../lib lib
 emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_ttf.a  lib/libfreetype.a lib/libSDL2_mixer.a lib/libmikmod.a \
 -lidbfs.js \
 -s EXPORTED_FUNCTIONS="['_instead_main']" \
--s 'SDL2_IMAGE_FORMATS=["png","jpeg","gif"]' \
+-s 'SDL2_IMAGE_FORMATS=["png","jpg","gif"]' \
 -s 'EXPORTED_RUNTIME_METHODS=["ccall", "Pointer_stringify"]' \
 -s 'DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=["$autoResumeAudioContext", "$dynCall"]' \
 -s QUANTUM_SIZE=4 \
