@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2022 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2024 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -249,7 +249,7 @@ static void gamepad_done(void)
 		SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
 }
 
-void gamepad_check_triggers(void)
+static void gamepad_check_triggers(void)
 {
 	SDL_Event event;
 	memset(&event, 0, sizeof(event));
