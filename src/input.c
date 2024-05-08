@@ -249,6 +249,25 @@ static void gamepad_done(void)
 		SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
 }
 
+void gamepad_check_triggers(void)
+{
+	SDL_Event event;
+	memset(&event, 0, sizeof(event));
+	event.type = SDL_MOUSEWHEEL;
+
+	int trigger_left = 0, trigger_right = 0;
+	trigger_left = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_TRIGGERLEFT);
+	trigger_right = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_TRIGGERRIGHT);
+
+	if (abs(trigger_left) > deadzone) {
+		event.wheel.y = 1;
+		SDL_PushEvent(&event);
+	} else if (abs(trigger_right) > deadzone) {
+		event.wheel.y = -1;
+		SDL_PushEvent(&event);
+	}
+}
+
 static int gamepad_timer_fn(int interval, void *p)
 {
 	SDL_Event event;
@@ -256,6 +275,8 @@ static int gamepad_timer_fn(int interval, void *p)
 
 	if (!gamepad)
 		return interval;
+
+	gamepad_check_triggers();
 
 	axis_x = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_RIGHTX);
 	axis_y = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_RIGHTY);
