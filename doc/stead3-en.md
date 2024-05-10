@@ -5523,4 +5523,4 @@ made the engine even better, releasing STEAD3. I hope he and like you.
 So if you've read this far, I can only wish you to add your first story.
 Creativity -- this is freedom. :)
 
-Thank you and good luck. Peter Skew, of March 2017.
+Thank you and good luck. Peter Kosyh, of March 2017.
