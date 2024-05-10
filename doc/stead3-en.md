@@ -1940,7 +1940,7 @@ In the description of the functions most of the functions under the parameter
   enter/the onenter);
 - walkback([w]) - a synonym walkout([w], false);
 - \_(w) - receiving object;
-- for_all(fn, ....) - to perform the function for all arguments;
+- for_all(fn, ...) - to perform the function for all arguments;
 
 		for_all(enable, 'window', 'door');
 
@@ -2700,7 +2700,7 @@ obj {
 		r = rnd(#s.lf); -- the # symbol is the number of elements in the array
 		p(s.lf[	r]); -- derive one of the 6 States of the snow leopard
 	end;
-....
+...
 ```
 
 And here is the point in the game, when snow leopard gets to us in thy bosom.
@@ -3636,7 +3636,7 @@ include "start"
 
 room {
 	nam = 'main';
-....
+...
 ```
 
 How to split a source text file depends on you. I use the files in accordance
