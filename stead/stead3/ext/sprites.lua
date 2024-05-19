@@ -49,7 +49,7 @@ instead.screen_dpi = instead_screen_dpi
 local theme = std.obj {
 	nam = '@theme';
 	vars = {};
-	reset_vars = {};
+	{ reset_vars = {}; };
 	{
 		win = { gfx = {}};
 		inv = { gfx = {}};
@@ -68,6 +68,9 @@ function theme.restore(name)
 	if not v then
 		return
 	end
+	if not theme.reset_vars[name] then
+		theme.reset_vars[name] = instead.theme_var(name)
+	end
 	instead.theme_var(name, v);
 end
 
@@ -75,22 +78,21 @@ function theme.set(name, val)
 	if type(name) ~= 'string' or val == nil then
 		std.err("Wrong parameter to theme.set", 2)
 	end
-	if not theme.reset_vars[name] then
-		theme.reset_vars[name] = instead.theme_var(name)
-	end
-	instead.theme_var(name, std.tostr(val));
 	theme.vars[name] = std.tostr(val);
+	theme.restore(name)
 end
 
 function theme.reset(name)
 	if type(name) ~= 'string' then
 		std.err("Wrong parameter to theme.reset", 2)
 	end
-	local v = theme.reset_vars[name]
-	if not v then
+	if not theme.vars[name] then
 		return
 	end
-	instead.theme_var(name, v);
+	local v = theme.reset_vars[name]
+	if v then
+		instead.theme_var(name, v);
+	end
 	theme.vars[name] = nil
 	theme.reset_vars[name] = nil
 end
