@@ -201,10 +201,11 @@ game engine will call init() first, and then call start().
 
 The graphic interpreter looks for available games in the directory games. The
 Unix version of the interpreter in addition, the catalog scans also games in
-the directory ~/.instead/games. Windows version: Documents and
-Settings/USER/Local Settings/Application Data/instead/games. In Windows -
-standalone-Unix-version of the game are searched in the directory
-./appdata/games, if it exists.
+the directory ~/.instead/games. Windows version: %LOCALAPPDATA%\instead\games
+(below Vista:
+Documents and Settings\USER\Local Settings\Application Data\instead\games).
+In Windows and standalone-Unix version of the game are searched in the
+directory ./appdata/games, if it exists.
 
 In some assemblies, INSTEAD (in Windows, in Linux if the project is built with
 gtk etc.), you can open the game in any way from the menu "Choice of
@@ -4315,9 +4316,9 @@ scr.gfx.h = 500 ; -- replace it one parameter
 ```
 
 > The interpreter searches for themes in the "themes" directory. Unix version
-> in addition to this directory, scan also the directory ~/.instead/themes/
-> Windows version -- Documents and Settings/USER/Local
-> Settings/Application Data/instead/themes
+> in addition to this directory, scan also the directory ~/.instead/themes/.
+> Windows version: %LOCALAPPDATA%\instead\themes (below Vista:
+> Documents and Settings\USER\Local Settings\Application Data\instead\themes).
 
 In addition, the new version INSTEAD support multiple those in one game.
 Allowing the player via the standard menu INSTEAD choose a suitable
