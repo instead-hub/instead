@@ -24,6 +24,7 @@ docs:
 
 install: all
 	cp src/sdl-instead.exe bin
+	cp COPYING bin
 	$(MAKE) DESTDIR=../bin/ -C themes install
 	$(MAKE) DESTDIR=../bin/ -C games install
 	$(MAKE) DESTDIR=../bin/ -C stead install
