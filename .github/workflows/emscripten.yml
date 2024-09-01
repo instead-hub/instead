@@ -16,7 +16,7 @@ jobs:
 
       - name: Cache emsdk
         id: cache-emsdk
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: emsdk
           key: ${{ runner.os }}-${{ env.emsdk_ver }}
