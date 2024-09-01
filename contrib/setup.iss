@@ -6,7 +6,7 @@
 
 ; Constants to define key parameters of installer:
 #define AppName "INSTEAD"
-#define AppVersion "3.5.1"
+#define AppVersion "3.5.2"
 #define AppDescription "Simple Text Adventure Interpreter."
 #define AppPublisher "Peter Kosyh"
 #define AppURL "https://instead-hub.github.io"
