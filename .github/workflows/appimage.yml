@@ -39,7 +39,7 @@ jobs:
           ./appimagetool-x86_64.AppImage appimage/
 
       - name: Publish Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact
         with:
           name: AppImage
           path: INSTEAD-x86_64.AppImage
