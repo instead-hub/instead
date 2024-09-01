@@ -51,7 +51,7 @@ jobs:
           cp env/instead-em-js/*.svg ../release/instead-em
 
       - name: Publish Artifact
-        uses: actions/upload-artifact
+        uses: actions/upload-artifact@v4
         with:
           name: instead-em
           path: release
