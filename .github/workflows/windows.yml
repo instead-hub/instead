@@ -31,7 +31,7 @@ jobs:
         run: make install -f Makefile.mingw
 
       - name: Publish Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact
         with:
           name: instead-win
           path: bin
