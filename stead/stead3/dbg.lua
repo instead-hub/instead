@@ -13,7 +13,7 @@ local instead = std.ref '@instead'
 local iface = txt
 
 local function use_text_event(key)
-	if key == "return" or key == "space" then
+	if key == "return" then
 		return false
 	end
 	return instead.text_input and instead.text_input()
@@ -622,6 +622,7 @@ local dbg = std.obj {
 		if #hint == 1 and edit ~= false then
 			local _, par = s.commands:lookup(s.input)
 			if par then
+				s.input = std.strip(s.input)
 				local len = par:len()
 				s.input = s.input:sub(1, s.input:len() - len)
 			end
@@ -670,9 +671,9 @@ local dbg = std.obj {
 		if not use_text_event() or not s.on then
 			return
 		end
-		if text == " " then -- key will handle this
-			return
-		end
+--		if text == " " then -- key will handle this
+--			return
+--		end
 		return '@dbg text '..string.format("%q", text)
 	end;
 	key = function(s, press, key)
@@ -805,19 +806,19 @@ std.mod_cmd(function(cmd)
 			dbg.input = ''
 		elseif (key == 'l' and dbg.key_ctrl) then
 			dbg:cls()
-		elseif key:find '^right' then
+		elseif key == 'right' then
 			if dbg.cursor <= dbg.input:len() then
 				local i = utf_ff(dbg.input, dbg.cursor)
 				dbg.cursor = dbg.cursor + i
 			end
 			if dbg.cursor > dbg.input:len() then dbg.cursor = dbg.input:len() + 1 end
-		elseif key:find '^left' then
+		elseif key == 'left' then
 			if dbg.cursor > 1 then
 				local i = utf_bb(dbg.input, dbg.cursor - 1)
 				dbg.cursor = dbg.cursor - i
 			end
 			if dbg.cursor < 1 then dbg.cursor = 1 end
-		elseif key:find '^up' then
+		elseif key == 'up' then
 			local s = dbg
 			if #s.history == 0 then
 				return
@@ -831,7 +832,7 @@ std.mod_cmd(function(cmd)
 			end
 			s.input = s.history[s.history_pos]
 			s.cursor = #s.input + 1
-		elseif key:find '^down' then
+		elseif key == 'down' then
 			local s = dbg
 			if #s.history == 0 or s.history_pos == #s.history then
 				return

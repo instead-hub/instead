@@ -28,7 +28,7 @@ jobs:
           }
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@main
 
       - name: Create Build Directory
         run: cmake -E make_directory ${{github.workspace}}/build
@@ -50,7 +50,7 @@ jobs:
 #          cmake --install ./build
 
 #      - name: Publish Artifact
-#        uses: actions/upload-artifact@v2
+#        uses: actions/upload-artifact@v4
 #        with:
 #          name: standalone
 #          path: build/standalone

@@ -5,18 +5,18 @@ on:
   workflow_dispatch:
 
 env:
-    emsdk_ver: 3.1.19
+    emsdk_ver: 3.1.49
 
 jobs:
   build:
     name: Emscripten version
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@main
 
       - name: Cache emsdk
         id: cache-emsdk
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: emsdk
           key: ${{ runner.os }}-${{ env.emsdk_ver }}
@@ -51,7 +51,7 @@ jobs:
           cp env/instead-em-js/*.svg ../release/instead-em
 
       - name: Publish Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: instead-em
           path: release

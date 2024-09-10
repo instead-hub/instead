@@ -9,7 +9,7 @@ jobs:
     name: build AppImage
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@main
 
       - name: Create Build Directory
         run: cmake -E make_directory ${{github.workspace}}/build
@@ -39,7 +39,7 @@ jobs:
           ./appimagetool-x86_64.AppImage appimage/
 
       - name: Publish Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: AppImage
           path: INSTEAD-x86_64.AppImage
