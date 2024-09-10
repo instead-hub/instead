@@ -22,10 +22,6 @@ STEAD3. Other resources may be helpful to you such as the INSTEAD website:
 
 https://instead-hub.github.io
 
-We also have a chat room on gitter:
-
-https://gitter.im/instead-hub/instead
-
 ### The story of creation
 
 When we say "text adventure" most of the people there one of the two familiar
