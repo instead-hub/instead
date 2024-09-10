@@ -1,11 +1,24 @@
+3.5.2
+
+ * enh: redesigned installer for Windows;
+ * enh: gamepad triggers simulate mouse wheel up/down;
+ * fix: theme.reset();
+ * fix: documentation.
+
+ -- Peter Kosyh <pkosyh@yandex.ru>  Sun, 1 Sep 2024 12:00:00 +0300
+
 3.5.1
 
  * enh: gamepads support;
  * fix: anigif logic;
  * fix: sprite alpha artefacts;
- * fix: cleanups in instead library and docs.
+ * fix: cleanups in instead library and docs;
+ * fix: Windows XP build;
+ * fix: -software parameter in Windows;
+ * fix: dbg keyboard input fix;
+ * fix: segfault in pixels (line).
 
- -- Peter Kosyh <pkosyh@yandex.ru>  Mon, 27 Mar 2023 21:48:00 +0300
+ -- Peter Kosyh <pkosyh@yandex.ru>  Fri, 1 Sep 2023 12:00:00 +0300
 
 3.5.0
 

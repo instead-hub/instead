@@ -44,7 +44,7 @@ deps()
 cd $WORKSPACE
 if ! test -r .stamp_lua; then
 rm -rf lua-5.1.5
-[ -f lua-5.1.5.tar.gz ] || wget -nv 'https://www.lua.org/ftp/lua-5.1.5.tar.gz'
+[ -f lua-5.1.5.tar.gz ] || wget -nv 'https://www.lua.org/ftp/lua-5.1.5.tar.gz' || wget -nv 'https://www.tecgraf.puc-rio.br/lua/mirror/ftp/lua-5.1.5.tar.gz'
 tar xf lua-5.1.5.tar.gz
 cd lua-5.1.5
 cat src/luaconf.h | sed -e 's/#define LUA_USE_POPEN//g' -e 's/#define LUA_USE_ULONGJMP//g'>src/luaconf.h.new
@@ -69,10 +69,10 @@ fi
 # zlib
 cd $WORKSPACE
 if ! test -r .stamp_zlib; then
-rm -rf zlib-1.2.13/
-[ -f zlib-1.2.13.tar.gz ] || wget -nv 'http://zlib.net/zlib-1.2.13.tar.gz'
-tar xf zlib-1.2.13.tar.gz
-cd zlib-1.2.13
+rm -rf zlib-1.3.1/
+[ -f zlib-1.3.1.tar.gz ] || wget -nv 'http://zlib.net/zlib-1.3.1.tar.gz'
+tar xf zlib-1.3.1.tar.gz
+cd zlib-1.3.1
 emconfigure ./configure --prefix=$WORKSPACE
 emmake make install
 touch ../.stamp_zlib
@@ -148,32 +148,6 @@ emmake make install
 touch ../.stamp_sdl2_mixer
 fi
 
-# jpeg lib
-cd $WORKSPACE
-if ! test -r .stamp_jpeg; then
-rm -rf jpeg-9b
-[ -f jpegsrc.v9b.tar.gz ] || wget -nv 'http://www.ijg.org/files/jpegsrc.v9b.tar.gz'
-tar xf jpegsrc.v9b.tar.gz
-cd jpeg-9b
-emconfigure ./configure --prefix=$WORKSPACE --disable-shared
-emmake make install
-touch ../.stamp_jpeg
-fi
-
-# SDL_image
-cd $WORKSPACE
-if ! test -r .stamp_sdl2_image; then
-rm -rf SDL2_image
-[ -d SDL2_image/.git ] || git clone https://github.com/emscripten-ports/SDL2_image.git SDL2_image
-cd SDL2_image
-./autogen.sh
-export ac_cv_lib_jpeg_jpeg_CreateDecompress=yes
-export ac_cv_lib_png_png_create_read_struct=yes
-emconfigure ./configure --host=asmjs-unknown-linux --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -I$WORKSPACE/include/SDL2 -s USE_LIBPNG=1" LDFLAGS="-L$WORKSPACE/lib -lpng -ljpeg" --disable-sdltest --disable-shared --enable-static --enable-png --disable-png-shared --enable-jpg --disable-jpg-shared CFLAGS="-sUSE_SDL=2"
-emmake make install
-touch ../.stamp_sdl2_image
-fi
-
 }
 
 deps
@@ -188,7 +162,7 @@ git pull
 [ -e Rules.make ] || ln -s Rules.standalone Rules.make
 cat <<EOF > config.make
 EXTRA_CFLAGS+= -DNOMAIN -D_HAVE_ICONV -I../../include
-SDL_CFLAGS=-I../../include/SDL2 -sUSE_SDL=2
+SDL_CFLAGS=-I../../include/SDL2 -sUSE_SDL=2 -sUSE_SDL_IMAGE=2
 SDL_LFLAGS=
 LUA_CFLAGS=
 LUA_LFLAGS=
@@ -282,16 +256,17 @@ cd instead-em-js
 ln -f -s ../instead-em/src/sdl-instead.bc sdl-instead.bc
 ln -f -s ../lib lib
 
-emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_ttf.a  lib/libfreetype.a lib/libSDL2_mixer.a lib/libmikmod.a  lib/libSDL2_image.a lib/libjpeg.a  \
+emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_ttf.a  lib/libfreetype.a lib/libSDL2_mixer.a lib/libmikmod.a \
 -lidbfs.js \
 -s EXPORTED_FUNCTIONS="['_instead_main']" \
--s 'SDL2_IMAGE_FORMATS=["png","jpeg","gif"]' \
+-s 'SDL2_IMAGE_FORMATS=["png","jpg","gif"]' \
 -s 'EXPORTED_RUNTIME_METHODS=["ccall", "Pointer_stringify"]' \
 -s 'DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=["$autoResumeAudioContext", "$dynCall"]' \
 -s QUANTUM_SIZE=4 \
 -s WASM=1 \
 -s PRECISE_F32=1 \
--s USE_OGG=1 -s USE_VORBIS=1 -s USE_LIBPNG=1 -s USE_SDL=2 \
+-s STACK_SIZE=131072 \
+-s USE_OGG=1 -s USE_VORBIS=1 -s USE_SDL=2 -s USE_SDL_IMAGE=2 \
 -o instead-em.html -s SAFE_HEAP=0  -s TOTAL_MEMORY=167772160 -s ALLOW_MEMORY_GROWTH=1 \
 --post-js post.js  \
 --preload-file fs@/

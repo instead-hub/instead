@@ -197,10 +197,11 @@ game engine will call init() first, and then call start().
 
 The graphic interpreter looks for available games in the directory games. The
 Unix version of the interpreter in addition, the catalog scans also games in
-the directory ~/.instead/games. Windows version: Documents and
-Settings/USER/Local Settings/Application Data/instead/games. In Windows -
-standalone-Unix-version of the game are searched in the directory
-./appdata/games, if it exists.
+the directory ~/.instead/games. Windows version: %LOCALAPPDATA%\instead\games
+(below Vista:
+Documents and Settings\USER\Local Settings\Application Data\instead\games).
+In Windows and standalone-Unix version of the game are searched in the
+directory ./appdata/games, if it exists.
 
 In some assemblies, INSTEAD (in Windows, in Linux if the project is built with
 gtk etc.), you can open the game in any way from the menu "Choice of
@@ -1936,7 +1937,7 @@ In the description of the functions most of the functions under the parameter
   enter/the onenter);
 - walkback([w]) - a synonym walkout([w], false);
 - \_(w) - receiving object;
-- for_all(fn, ....) - to perform the function for all arguments;
+- for_all(fn, ...) - to perform the function for all arguments;
 
 		for_all(enable, 'window', 'door');
 
@@ -2696,7 +2697,7 @@ obj {
 		r = rnd(#s.lf); -- the # symbol is the number of elements in the array
 		p(s.lf[	r]); -- derive one of the 6 States of the snow leopard
 	end;
-....
+...
 ```
 
 And here is the point in the game, when snow leopard gets to us in thy bosom.
@@ -3632,7 +3633,7 @@ include "start"
 
 room {
 	nam = 'main';
-....
+...
 ```
 
 How to split a source text file depends on you. I use the files in accordance
@@ -4311,9 +4312,9 @@ scr.gfx.h = 500 ; -- replace it one parameter
 ```
 
 > The interpreter searches for themes in the "themes" directory. Unix version
-> in addition to this directory, scan also the directory ~/.instead/themes/
-> Windows version -- Documents and Settings/USER/Local
-> Settings/Application Data/instead/themes
+> in addition to this directory, scan also the directory ~/.instead/themes/.
+> Windows version: %LOCALAPPDATA%\instead\themes (below Vista:
+> Documents and Settings\USER\Local Settings\Application Data\instead\themes).
 
 In addition, the new version INSTEAD support multiple those in one game.
 Allowing the player via the standard menu INSTEAD choose a suitable
@@ -5519,4 +5520,4 @@ made the engine even better, releasing STEAD3. I hope he and like you.
 So if you've read this far, I can only wish you to add your first story.
 Creativity -- this is freedom. :)
 
-Thank you and good luck. Peter Skew, of March 2017.
+Thank you and good luck. Peter Kosyh, of March 2017.
