@@ -24,7 +24,7 @@
 
 #ifndef __GRAPHICS_H__
 #define __GRAPHICS_H__
-#include <SDL_version.h>
+#include <SDL3/SDL_version.h>
 /* #define GFX_CACHE_SIZE 64
 #define GFX_MAX_CACHED_W 256
 #define GFX_MAX_CACHED_H 256
@@ -119,7 +119,6 @@ extern img_t	gfx_load_image(char *filename);
 extern void	gfx_free_image(img_t pixmap);
 extern int	gfx_img_w(img_t pixmap);
 extern int	gfx_img_h(img_t pixmap);
-extern img_t	gfx_combine(img_t src, img_t dst);
 extern void	gfx_set_alpha(img_t src, int alpha);
 extern int	gfx_unset_alpha(img_t src);
 extern void	gfx_set_colorkey(img_t src, color_t col);

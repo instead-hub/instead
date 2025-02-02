@@ -52,10 +52,9 @@ extern double mt_random_double(void);
 #define FREE(v) do { if ((v)) free((v)); v = NULL; } while(0)
 
 #ifdef _USE_SDL
- #include <SDL_config.h>
- #include <SDL_mutex.h>
+ #include <SDL3/SDL_mutex.h>
  #ifdef _USE_SDL_ICONV
-  #include <SDL_stdinc.h>
+  #include <SDL3/SDL_stdinc.h>
   #define iconv SDL_iconv
   #define iconv_t SDL_iconv_t
   #define iconv_open SDL_iconv_open

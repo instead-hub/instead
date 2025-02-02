@@ -24,7 +24,7 @@
 
 #ifndef __GAME_H__
 #define __GAME_H__
-#include <SDL_mixer.h>
+//#include <SDL3/SDL_mixer.h>
 #include "utils.h"
 
 #define SND_CHANNELS MIX_CHANNELS
