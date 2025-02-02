@@ -45,7 +45,7 @@
    Use SDL_Surface rather than xpaint Image structure
    Define SDL versions of RWSetMsg(), ImageNewCmap() and ImageSetCmap()
 */
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include "SDL_gif.h"
 #include "instead/instead.h"
 
@@ -213,7 +213,7 @@ static SDL_bool NormalizeFrames(GIF_Frame_t *frames, int count)
         SDL_BlitSurface(frames[i].image, NULL, image, &rect);
 
         SDL_FreeSurface(frames[i].image);
-	frames[i].image = SDL_ConvertSurface(image, image->format, image->flags);
+        frames[i].image = SDL_ConvertSurface(image, image->format, image->flags);
         if (!frames[i].image) {
             return SDL_FALSE;
         }

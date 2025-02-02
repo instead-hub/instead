@@ -23,7 +23,7 @@
  */
 
 #if defined(__APPLE__) || defined(ANDROID) || defined(WINRT)
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #endif
 
 #include "externals.h"

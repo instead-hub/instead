@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2017 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2025 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -671,21 +671,21 @@ int idf_read(idff_t fil, void *ptr, int size, int maxnum)
 }
 
 #ifdef _USE_SDL
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
-static Sint64 idfrw_seek(struct SDL_RWops *context, Sint64 offset, int whence)
+static Sint64 idfrw_seek(struct SDL_IOStream *context, Sint64 offset, int whence)
 {
 	idff_t fil = (idff_t)context->hidden.unknown.data1;
 	return idf_seek(fil, offset, whence);
 }
 
-static size_t idfrw_read(struct SDL_RWops *context, void *ptr, size_t size, size_t maxnum)
+static size_t idfrw_read(struct SDL_IOStream *context, void *ptr, size_t size, size_t maxnum)
 {
 	idff_t fil = (idff_t)context->hidden.unknown.data1;
 	return idf_read(fil, ptr, size, maxnum);
 }
 
-static 	int idfrw_close(struct SDL_RWops *context)
+static 	int idfrw_close(struct SDL_IOStream *context)
 {
 	if (context) {
 		idff_t fil = (idff_t)context->hidden.unknown.data1;
@@ -695,7 +695,7 @@ static 	int idfrw_close(struct SDL_RWops *context)
 	return 0;
 }
 
-static Sint64 idfrw_size(struct SDL_RWops *context)
+static Sint64 idfrw_size(struct SDL_IOStream *context)
 {
 	idff_t fil = (idff_t)context->hidden.unknown.data1;
 	if (!fil || !fil->dir)
@@ -703,14 +703,14 @@ static Sint64 idfrw_size(struct SDL_RWops *context)
 	return fil->dir->size;
 }
 
-SDL_RWops *RWFromIdf(idf_t idf, const char *fname)
+SDL_IOStream *RWFromIdf(idf_t idf, const char *fname)
 {
 	idff_t fil = NULL;
-	SDL_RWops *n;
+	SDL_IOStream *n;
 	fil = idf_open(idf, fname);
 	if (!fil) {
 		if (!idf || !idf->idfonly)
-			return SDL_RWFromFile(dirpath(fname), "rb");
+			return SDL_IOFromFile(dirpath(fname), "rb");
 		return NULL;
 	}
 	n = SDL_AllocRW();

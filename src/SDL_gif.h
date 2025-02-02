@@ -26,7 +26,7 @@
 
 /* This is a GIF image file loading framework */
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 typedef struct
 {
@@ -37,7 +37,7 @@ typedef struct
 	int *delays;
 } Animation_t;
 
-extern DECLSPEC Animation_t *GIF_LoadAnim(const char* file);
-extern DECLSPEC void FreeAnimation(Animation_t *anim);
+extern SDL_DECLSPEC Animation_t *GIF_LoadAnim(const char* file);
+extern SDL_DECLSPEC void FreeAnimation(Animation_t *anim);
 
 #endif /* _SDL_AGIF_H */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2023 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2025 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -25,17 +25,20 @@
 #include "externals.h"
 #include "internals.h"
 
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
+#include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
+#include <SDL3_ttf/SDL_ttf.h>
+
+#define PIXEL_FORMAT (SDL_PIXELFORMAT_RGBA32)
+#define PIXEL_FORMAT_DETAILS SDL_GetPixelFormatDetails(SDL_PIXELFORMAT_RGBA32)
 
 #ifdef _USE_HARFBUZZ
 #include <hb.h>
 #include <glib.h>
 #endif
 
-#include <SDL_mutex.h>
-#include "SDL_rotozoom.h"
+#include <SDL3/SDL_mutex.h>
+#include "SDL3_rotozoom.h"
 #include "SDL_gfxBlitFunc.h"
 #include "SDL_gif.h"
 
@@ -571,24 +574,7 @@ static img_t	gfx_new_img(SDL_Surface *s, int fl, void *data, int release)
 img_t   gfx_new_rgba(int w, int h)
 {
 	SDL_Surface *dst;
-	Uint32 rmask, gmask, bmask, amask;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	rmask = 0xff000000;
-	gmask = 0x00ff0000;
-	bmask = 0x0000ff00;
-	amask = 0x000000ff;
-#else
-	rmask = 0x000000ff;
-	gmask = 0x0000ff00;
-	bmask = 0x00ff0000;
-	amask = 0xff000000;
-#endif
-	dst = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h,
-				   32,
-				   rmask,
-				   gmask,
-				   bmask,
-				   amask);
+	dst = SDL_CreateSurface(w, h, PIXEL_FORMAT);
 	if (dst)
 		SDL_SetSurfaceBlendMode(dst, SDL_BLENDMODE_BLEND);
 	if (dst)
@@ -601,7 +587,7 @@ img_t gfx_dup(img_t src)
 	SDL_Surface *dst;
 	if (!src)
 		return NULL;
-	dst = SDL_ConvertSurface(Surf(src), Surf(src)->format, Surf(src)->flags);
+	dst = SDL_ConvertSurface(Surf(src), PIXEL_FORMAT);
 	if (!dst)
 		return NULL;
 	return GFX_IMG_REL(dst);
@@ -609,20 +595,7 @@ img_t gfx_dup(img_t src)
 
 img_t   gfx_new_from(int w, int h, unsigned char *pixels)
 {
-	SDL_Surface *dst;
-	Uint32 rmask, gmask, bmask, amask;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	rmask = 0xff000000;
-	gmask = 0x00ff0000;
-	bmask = 0x0000ff00;
-	amask = 0x000000ff;
-#else
-	rmask = 0x000000ff;
-	gmask = 0x0000ff00;
-	bmask = 0x00ff0000;
-	amask = 0xff000000;
-#endif
-	dst = SDL_CreateRGBSurfaceFrom(pixels, w, h, 32, w * 4, rmask, gmask, bmask, amask);
+	SDL_Surface *dst = SDL_CreateSurfaceFrom(w, h, PIXEL_FORMAT, pixels, w*4);
 	if (dst)
 		SDL_SetSurfaceBlendMode(dst, SDL_BLENDMODE_BLEND);
 	if (dst)
@@ -632,17 +605,7 @@ img_t   gfx_new_from(int w, int h, unsigned char *pixels)
 
 img_t 	gfx_new(int w, int h)
 {
-	SDL_Surface *dst;
-	if (!screen) {
-		return gfx_new_rgba(w, h);
-	} else {
-		dst = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h,
-			Surf(screen)->format->BitsPerPixel,
-			Surf(screen)->format->Rmask,
-			Surf(screen)->format->Gmask,
-			Surf(screen)->format->Bmask,
-			Surf(screen)->format->Amask);
-	}
+	SDL_Surface *dst= SDL_CreateSurface(w, h, PIXEL_FORMAT);
 	if (dst)
 		SDL_SetSurfaceBlendMode(dst, SDL_BLENDMODE_NONE);
 	if (dst)
@@ -659,7 +622,7 @@ void	gfx_img_fill(img_t img, int x, int y, int w, int h, color_t col)
 	dest.y = y;
 	dest.w = w;
 	dest.h = h;
-	SDL_FillRect(Surf(img), &dest, SDL_MapRGB((Surf(img))->format, col.r, col.g, col.b));
+	SDL_FillSurfaceRect(Surf(img), &dest, SDL_MapRGB(PIXEL_FORMAT_DETAILS, NULL, col.r, col.g, col.b));
 }
 
 void	gfx_fill(int x, int y, int w, int h, color_t col)
@@ -686,18 +649,13 @@ img_t	gfx_grab_screen(int x, int y, int w, int h)
 	img_t img;
 	if (!screen)
 		return NULL;
-	s = SDL_CreateRGBSurface(Surf(screen)->flags, w, h, Surf(screen)->format->BitsPerPixel,
-			Surf(screen)->format->Rmask, Surf(screen)->format->Gmask, Surf(screen)->format->Bmask, Surf(screen)->format->Amask);
+	s = SDL_CreateSurface(w, h, PIXEL_FORMAT);
 	if (!s)
 		return NULL;
-	src.x = x;
-	src.y = y;
-	src.w = w;
-	src.h = h;
-	dst.x = 0;
-	dst.y = 0;
-	dst.w = w;
-	dst.h = h;
+	src.x = x; src.y = y;
+	src.w = w; src.h = h;
+	dst.x = 0; dst.y = 0;
+	dst.w = w; dst.h = h;
 /*	SDL_SetSurfaceBlendMode(screen, SDL_BLENDMODE_NONE);
 	SDL_SetSurfaceBlendMode(img, SDL_BLENDMODE_NONE); */
 	a = gfx_unset_alpha(screen);
@@ -710,49 +668,15 @@ img_t	gfx_grab_screen(int x, int y, int w, int h)
 	return img;
 }
 
-static SDL_RendererInfo SDL_VideoRendererInfo;
-
-SDL_Surface *SDL_DisplayFormat(SDL_Surface * surface)
-{
-	SDL_PixelFormat *format;
-	SDL_Surface *converted;
-
-	if (!screen) {
-		fprintf(stderr, "No video mode has been set.\n");
-		return NULL;
-	}
-	format = Surf(screen)->format;
-	converted = SDL_ConvertSurface(surface, format, 0);
-	return converted;
-}
-
-SDL_Surface *SDL_DisplayFormatAlpha(SDL_Surface * surface)
-{
-	SDL_Surface *converted;
-	converted = SDL_DisplayFormat(surface);
-	if (converted)
-		SDL_SetSurfaceBlendMode(converted, SDL_BLENDMODE_BLEND);
-	return converted;
-}
-
 img_t gfx_display_alpha(img_t src)
 {
-	SDL_Surface* res;
-	if (!src)
-		return NULL;
-	if (!screen)
-		return src;
+	img_t dst;
 	if (is_anim(src)) /* already optimized */
 		return src;
-	if (Surf(screen)->format == Surf(src)->format) { /* fast path! */
-		SDL_SetSurfaceBlendMode(Surf(src), SDL_BLENDMODE_BLEND);
-		return src;
-	}
-	res = SDL_DisplayFormatAlpha(Surf(src));
-	if (!res)
-		return src;
+	dst = gfx_dup(src); /* always to rgba */
+	SDL_SetSurfaceBlendMode(Surf(dst), SDL_BLENDMODE_BLEND);
 	gfx_free_image(src);
-	return GFX_IMG_REL(res);
+	return dst;
 }
 
 int gfx_get_pixel(img_t src, int x, int y,  color_t *color)
@@ -760,7 +684,7 @@ int gfx_get_pixel(img_t src, int x, int y,  color_t *color)
 	Uint8 r, g, b, a;
 	Uint32 col = 0;
 	Uint8 *ptr;
-	int	bpp;
+	int	bpp = 4;
 	SDL_Surface *img = Surf(src);
 	if (!img)
 		return -1;
@@ -768,23 +692,18 @@ int gfx_get_pixel(img_t src, int x, int y,  color_t *color)
 	if (x >= img->w || y >= img->h || x < 0 || y < 0)
 		return -1;
 
-	if (SDL_LockSurface(img))
+	if (!SDL_LockSurface(img))
 		return -1;
 
-	if (img->format)
-		bpp = img->format->BytesPerPixel;
-	else
-		bpp = 1; /* hack? */
-
 	ptr = (Uint8*)img->pixels;
-	ptr += img->pitch * y;
+	ptr += img->w * y * bpp;
 	ptr += x * bpp;
 
 	memcpy(&col, ptr, bpp);
 
 	SDL_UnlockSurface(img);
 	if (color)
-		SDL_GetRGBA(col, img->format, &r, &g, &b, &a);
+		SDL_GetRGBA(col, PIXEL_FORMAT_DETAILS, NULL, &r, &g, &b, &a);
 
 	if (color) {
 		color->r = r;
@@ -797,7 +716,7 @@ int gfx_get_pixel(img_t src, int x, int y,  color_t *color)
 
 int gfx_set_pixel(img_t src, int x, int y,  color_t color)
 {
-	int bpp;
+	int bpp = 4;
 	Uint32 col;
 	Uint8 *ptr;
 	SDL_Surface *img = Surf(src);
@@ -807,18 +726,13 @@ int gfx_set_pixel(img_t src, int x, int y,  color_t color)
 	if (x >= img->w || y >= img->h || x < 0 || y < 0)
 		return -1;
 
-	if (SDL_LockSurface(img))
+	if (!SDL_LockSurface(img))
 		return -1;
 
-	if (img->format)
-		bpp = img->format->BytesPerPixel;
-	else
-		bpp = 1; /* hack? */
-
 	ptr = (Uint8*)img->pixels;
-	ptr += img->pitch * y;
+	ptr += img->w * y * bpp;
 	ptr += x * bpp;
-	col = SDL_MapRGBA(img->format, color.r, color.g, color.b, color.a);
+	col = SDL_MapRGBA(PIXEL_FORMAT_DETAILS, NULL, color.r, color.g, color.b, color.a);
 	memcpy(ptr, &col, bpp);
 
 	SDL_UnlockSurface(img);
@@ -840,47 +754,39 @@ unsigned char *gfx_get_pixels(img_t src)
 	if (!img)
 		return NULL;
 
-	if (SDL_LockSurface(img))
+	if (!SDL_LockSurface(img))
 		return NULL;
 
 	ptr = (unsigned char*)img->pixels;
 	return ptr;
 }
+
 img_t gfx_alpha_img(img_t src, int alpha)
 {
 	Uint8 *ptr;
 	Uint32 col;
 	int size;
-	int bpp;
+	int bpp = 4;
 
 	img_t img = NULL;
 	if (!src)
 		return NULL;
-	if (screen) {
-		SDL_Surface *s = SDL_DisplayFormatAlpha(Surf(src));
-		if (s)
-			img = GFX_IMG_REL(s);
-	} else
-		img = gfx_new(Surf(src)->w, Surf(src)->h);
+	img = gfx_new(Surf(src)->w, Surf(src)->h);
+
 	if (!img)
 		return NULL;
 
-	if (Surf(img)->format)
-		bpp = Surf(img)->format->BytesPerPixel;
-	else
-		bpp = 1;
-
 	gfx_set_alpha(img, SDL_ALPHA_OPAQUE);
 
-	if (SDL_LockSurface(Surf(img)) == 0) {
+	if (SDL_LockSurface(Surf(img))) {
 		int w = Surf(img)->w;
 		ptr = (Uint8*)(Surf(img)->pixels);
 		size = Surf(img)->w * Surf(img)->h;
 		while (size --) {
 			Uint8 r, g, b, a;
 			memcpy(&col, ptr, bpp);
-			SDL_GetRGBA(col, Surf(img)->format, &r, &g, &b, &a);
-			col = SDL_MapRGBA(Surf(img)->format, r, g, b, a * alpha /  SDL_ALPHA_OPAQUE);
+			SDL_GetRGBA(col, PIXEL_FORMAT_DETAILS, NULL, &r, &g, &b, &a);
+			col = SDL_MapRGBA(PIXEL_FORMAT_DETAILS, NULL, r, g, b, a * alpha /  SDL_ALPHA_OPAQUE);
 			memcpy(ptr, &col, bpp);
 			ptr += bpp;
 			w --;
@@ -901,15 +807,13 @@ void gfx_set_colorkey(img_t src, color_t col)
 	SDL_Surface *s = Surf(src);
 	if (!s)
 		return;
-	c = SDL_MapRGB(s->format, col.r, col.g, col.b);
-	SDL_SetColorKey(s, SDL_TRUE, c);
-/*	gfx_unset_alpha(src); */
+	c = SDL_MapRGB(PIXEL_FORMAT_DETAILS, NULL, col.r, col.g, col.b);
+	SDL_SetSurfaceColorKey(s, true, c);
 }
 
 void gfx_unset_colorkey(img_t src)
 {
-	SDL_SetColorKey(Surf(src), SDL_FALSE, 0);
-/*	gfx_set_alpha(src, SDL_ALPHA_OPAQUE); */
+	SDL_SetSurfaceColorKey(Surf(src), false, 0);
 }
 
 void	gfx_set_alpha(img_t src, int alpha)
@@ -937,19 +841,6 @@ int	gfx_unset_alpha(img_t src)
 	SDL_SetSurfaceAlphaMod(Surf(src), SDL_ALPHA_OPAQUE);
 	SDL_SetSurfaceBlendMode(Surf(src), SDL_BLENDMODE_NONE);
 	return alpha;
-}
-
-img_t gfx_combine(img_t src, img_t dst)
-{
-	img_t new;
-	SDL_Surface *s;
-	s = SDL_DisplayFormatAlpha(Surf(dst));
-	if (!s)
-		return NULL;
-	new = GFX_IMG_REL(s);
-	if (new)
-		SDL_BlitSurface(Surf(src), NULL, Surf(new), NULL);
-	return new;
 }
 
 static img_t img_pad(char *fname)
@@ -1134,7 +1025,7 @@ err:
 
 static img_t _gfx_load_image(char *filename, int combined)
 {
-	SDL_RWops *rw;
+	SDL_IOStream *rw;
 	img_t img;
 	Animation_t *anim = NULL;
 	filename = strip(filename);
@@ -1157,21 +1048,10 @@ static img_t _gfx_load_image(char *filename, int combined)
 	}
 	rw = RWFromIdf(instead_idf(), filename);
 
-	if (!rw || !(img = GFX_IMG_REL(IMG_Load_RW(rw, 1))))
+	if (!rw || !(img = GFX_IMG_REL(IMG_Load_IO(rw, 1))))
 		return NULL;
 
-	if (Surf(img)->format->BitsPerPixel == 32) { /* hack for 32 bit BMP :( */
-		SDL_RWops *rwop;
-		rwop = RWFromIdf(instead_idf(), filename);
-		if (rwop) {
-			if (IMG_isBMP(rwop))
-/*				SDL_SetAlpha(img, 0, SDL_ALPHA_OPAQUE); */
-				gfx_unset_alpha(img);
-			SDL_RWclose(rwop);
-		}
-	}
-	img = gfx_display_alpha(img);
-	return img;
+	return gfx_display_alpha(img);
 }
 
 /* x.png;a.png@1,2;b.png@3,4 */
@@ -1515,7 +1395,7 @@ void gfx_clear(int x, int y, int w, int h)
 	dest.w = w;
 	dest.h = h;
 	if (x < brd.x || y < brd.y || x + w >= brd.x + brd.w || y + h >= brd.y + brd.h) {
-		SDL_FillRect(s, &dest, SDL_MapRGB(s->format, brdcol.r, brdcol.g, brdcol.b));
+		SDL_FillRect(s, &dest, SDL_MapRGB(PIXEL_FORMAT_DETAILS, NULL, brdcol.r, brdcol.g, brdcol.b));
 		dx = brd.x - x;
 		dy = brd.y - y;
 		if (dx > 0) {
@@ -1533,9 +1413,9 @@ void gfx_clear(int x, int y, int w, int h)
 		if (dy < 0)
 			dest.h += dy;
 		if (dest.w > 0 && dest.h > 0)
-			SDL_FillRect(s, &dest, SDL_MapRGB(s->format, bgcol.r, bgcol.g, bgcol.b));
+			SDL_FillRect(s, &dest, SDL_MapRGB(PIXEL_FORMAT_DETAILS, NULL, bgcol.r, bgcol.g, bgcol.b));
 	} else
-		SDL_FillRect(s, &dest, SDL_MapRGB(s->format, bgcol.r, bgcol.g, bgcol.b));
+		SDL_FillRect(s, &dest, SDL_MapRGB(PIXEL_FORMAT_DETAILS, NULL, bgcol.r, bgcol.g, bgcol.b));
 }
 
 int gfx_width = -1;
@@ -1551,59 +1431,63 @@ static SDL_Rect m1280x800 = { .w = 1280, .h = 800 };
 
 static SDL_Rect* std_modes[] = { &m640x480, &m800x480, &m800x600, &m1024x768, &m1280x800, NULL };
 
-static int SDL_CurrentDisplay = 0;
+static SDL_DisplayID SDL_CurrentDisplay = 0;
 
-static void SelectVideoDisplay()
+static int SelectVideoDisplay()
 {
+	int i = 0, disp_nr;
 	const char *variable = SDL_getenv("SDL_VIDEO_FULLSCREEN_DISPLAY");
-	if ( !variable ) {
+	if (!variable)
 		variable = SDL_getenv("SDL_VIDEO_FULLSCREEN_HEAD");
-	}
-	if ( variable ) {
-		SDL_CurrentDisplay = SDL_atoi(variable);
-	}
+	if (variable)
+		i = SDL_atoi(variable);
+
+	SDL_DisplayID *disp_list = SDL_GetDisplays(&disp_nr);
+	if (!disp_list)
+		return -1;
+	if (i >= disp_nr)
+		i = 0;
+	SDL_CurrentDisplay = disp_list[i];
+	SDL_free(disp_list);
 }
 
 static SDL_Rect **SDL_ListModes(const SDL_PixelFormat * format, Uint32 flags)
 {
-	SDL_DisplayMode disp_mode;
+	const SDL_DisplayMode *disp_mode;
 	int i, nmodes;
+	int disp_modes_nr = 0;
+	SDL_DisplayMode **disp_modes;
 	SDL_Rect **modes;
 	SDL_Rect **new_modes;
-	Uint32 Rmask, Gmask, Bmask, Amask;
 	int bpp;
 
 	SelectVideoDisplay();
 
-	SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &disp_mode);
-	SDL_PixelFormatEnumToMasks(disp_mode.format, &bpp, &Rmask, &Gmask, &Bmask,
-				   &Amask);
-	if (format)
-		bpp = format->BitsPerPixel;
+	disp_mode = SDL_GetDesktopDisplayMode(SDL_CurrentDisplay);
+	bpp = SDL_BITSPERPIXEL(disp_mode->format);
+
 	nmodes = 0;
 	modes = NULL;
-	for (i = 0; i < SDL_GetNumDisplayModes(SDL_CurrentDisplay); ++i) {
-		SDL_DisplayMode mode;
-		if (SDL_GetDisplayMode(SDL_CurrentDisplay, i, &mode) < 0)
+
+	disp_modes = SDL_GetFullscreenDisplayModes(SDL_CurrentDisplay, &disp_modes_nr);
+	for (i = 0; i < disp_modes_nr; ++i) {
+		SDL_DisplayMode *mode = disp_modes[i];
+
+		if (!mode->w || !mode->h)
 			continue;
 
-		if (!mode.w || !mode.h) {
+		if ((unsigned int)bpp < SDL_BITSPERPIXEL(mode->format))
 			continue;
-		}
-/*		fprintf(stderr, "Mode: %d %d %d %d\n", bpp, SDL_BITSPERPIXEL(mode.format), mode.w, mode.h); */
-		if ((unsigned int)bpp < SDL_BITSPERPIXEL(mode.format)) {
-			continue;
-		}
 
-		if (mode.w > disp_mode.w || mode.h > disp_mode.h) {  /* skip large modes */
-			if (mode.w > disp_mode.h || mode.h > disp_mode.w) /* landscape ? */
+		if (mode->w > disp_mode->w || mode->h > disp_mode->h) {  /* skip large modes */
+			if (mode->w > disp_mode->h || mode->h > disp_mode->w) /* landscape ? */
 				continue;
 		}
 
-		if (nmodes > 0 && modes[nmodes - 1]->w == mode.w
-			&& modes[nmodes - 1]->h == mode.h) {
+		if (nmodes > 0 && modes[nmodes - 1]->w == mode->w
+			&& modes[nmodes - 1]->h == mode->h)
 			continue;
-		}
+
 		new_modes = SDL_realloc(modes, (nmodes + 2) * sizeof(*modes));
 		if (!new_modes)
 			goto out;
@@ -1613,10 +1497,11 @@ static SDL_Rect **SDL_ListModes(const SDL_PixelFormat * format, Uint32 flags)
 			goto out;
 		modes[nmodes]->x = 0;
 		modes[nmodes]->y = 0;
-		modes[nmodes]->w = mode.w;
-		modes[nmodes]->h = mode.h;
+		modes[nmodes]->w = mode->w;
+		modes[nmodes]->h = mode->h;
 		++nmodes;
 	}
+	SDL_free(disp_modes);
 	if (!modes) /* no modes found */
 		return (SDL_Rect **) (-1);
 	if (modes) {
@@ -1778,8 +1663,7 @@ int gfx_get_max_mode(int *w, int *h, int o)
 {
 	int ww = 0, hh = 0;
 	int i = 0;
-
-	SDL_DisplayMode desktop_mode;
+	const SDL_DisplayMode *desktop_mode;
 	#if defined(ANDROID)
 	if (o == MODE_ANY) {
 		get_screen_size(w, h);
@@ -1793,21 +1677,21 @@ int gfx_get_max_mode(int *w, int *h, int o)
 	}
 	#endif
 	#ifdef _USE_SWROTATE
-	if (!SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode)) {
-		if ((o == MODE_H && desktop_mode.w < desktop_mode.h) ||
-		    (o == MODE_V && desktop_mode.w > desktop_mode.h)) {
-			*w = desktop_mode.h;
-			*h = desktop_mode.w;
+	if ((desktop_mode = SDL_GetDesktopDisplayMode(SDL_CurrentDisplay))) {
+		if ((o == MODE_H && desktop_mode->w < desktop_mode->h) ||
+		    (o == MODE_V && desktop_mode->w > desktop_mode->h)) {
+			*w = desktop_mode->h;
+			*h = desktop_mode->w;
 		} else {
-			*w = desktop_mode.w;
-			*h = desktop_mode.h;
+			*w = desktop_mode->w;
+			*h = desktop_mode->h;
 		}
 		return 0;
 	}
 	#endif
-	if (o == MODE_ANY && !SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode)) {
-		*w = desktop_mode.w;
-		*h = desktop_mode.h;
+	if (o == MODE_ANY && (desktop_mode = SDL_GetDesktopDisplayMode(SDL_CurrentDisplay))) {
+		*w = desktop_mode->w;
+		*h = desktop_mode->h;
 		return 0;
 	}
 
@@ -1868,49 +1752,25 @@ SDL_Window *SDL_VideoWindow = NULL;
 static SDL_Texture *SDL_VideoTexture = NULL;
 static SDL_Surface *SDL_VideoSurface = NULL;
 static SDL_Renderer *Renderer = NULL;
+
 static void GetEnvironmentWindowPosition(int w, int h, int *x, int *y)
 {
 	const char *window = SDL_getenv("SDL_VIDEO_WINDOW_POS");
 	const char *center = SDL_getenv("SDL_VIDEO_CENTERED");
 	if (window) {
-		if (SDL_sscanf(window, "%d,%d", x, y) == 2) {
+		if (SDL_sscanf(window, "%d,%d", x, y) == 2)
 			return;
-		}
-		if (SDL_strcmp(window, "center") == 0) {
+
+		if (SDL_strcmp(window, "center") == 0)
 			center = window;
-		}
 	}
 	if (center) {
-		SDL_DisplayMode mode;
-		SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &mode);
-		*x = (mode.w - w) / 2;
-		*y = (mode.h - h) / 2;
+		const SDL_DisplayMode *mode;
+		if ((mode = SDL_GetDesktopDisplayMode(SDL_CurrentDisplay))) {
+			*x = (mode->w - w) / 2;
+			*y = (mode->h - h) / 2;
+		}
 	}
-}
-
-static SDL_Surface *CreateVideoSurface(SDL_Texture * texture)
-{
-	SDL_Surface *surface;
-	Uint32 format;
-	int w, h;
-	int bpp;
-	Uint32 Rmask, Gmask, Bmask, Amask;
-/*	void *pixels;
-	int pitch; */
-
-	if (SDL_QueryTexture(texture, &format, NULL, &w, &h) < 0) {
-		return NULL;
-	}
-
-	if (!SDL_PixelFormatEnumToMasks(format, &bpp, &Rmask, &Gmask, &Bmask, &Amask)) {
-		fprintf(stderr, "Unknown texture format.\n");
-		return NULL;
-	}
-
-	surface =
-		SDL_CreateRGBSurface(0, w, h, bpp, Rmask, Gmask, Bmask, Amask);
-	SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE);
-	return surface;
 }
 
 static int mouse_x = -1;
@@ -1950,12 +1810,12 @@ static int mouse_watcher(void *userdata, SDL_Event *event)
 	}
 #endif
 	switch (event->type) {
-	case SDL_MOUSEBUTTONUP:
-	case SDL_MOUSEBUTTONDOWN:
+	case SDL_EVENT_MOUSE_BUTTON_UP:
+	case SDL_EVENT_MOUSE_BUTTON_DOWN:
 		mouse_x = event->button.x;
 		mouse_y = event->button.y;
 		break;
-	case SDL_MOUSEMOTION:
+	case SDL_EVENT_MOUSE_MOTION:
 		mouse_x = event->motion.x;
 		mouse_y = event->motion.y;
 		break;
@@ -2058,7 +1918,7 @@ void unlock_rotation(void)
 int gfx_set_mode(int w, int h, int fs)
 {
 	int i;
-	int vsync = SDL_RENDERER_PRESENTVSYNC;
+	int vsync = 1;
 	int window_x = SDL_WINDOWPOS_UNDEFINED;
 	int window_y = SDL_WINDOWPOS_UNDEFINED;
 	int win_w;
@@ -2066,7 +1926,7 @@ int gfx_set_mode(int w, int h, int fs)
 	int max_mode_w = 0;
 	int max_mode_h = 0;
 
-	SDL_DisplayMode desktop_mode;
+	const SDL_DisplayMode *desktop_mode;
 
 	char title[4096];
 	char *t;
@@ -2093,7 +1953,7 @@ int gfx_set_mode(int w, int h, int fs)
 		goto done; /* already done */
 	}
 	SelectVideoDisplay();
-	SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode);
+	desktop_mode = SDL_GetDesktopDisplayMode(SDL_CurrentDisplay);
 
 	if (vid_modes && vid_modes != std_modes) {
 		for (i = 0; vid_modes[i]; i++)
@@ -2126,9 +1986,9 @@ int gfx_set_mode(int w, int h, int fs)
 	} else
 		GetEnvironmentWindowPosition(win_w, win_h, &window_x, &window_y);
 
-	if (desktop_mode.w <= win_w || fs)
+	if (desktop_mode->w <= win_w || fs)
 		window_x = 0;
-	if (desktop_mode.h <= win_h || fs)
+	if (desktop_mode->h <= win_h || fs)
 		window_y = 0;
 	t = game_reset_name();
 	if (!t)
@@ -2141,7 +2001,7 @@ int gfx_set_mode(int w, int h, int fs)
 		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, glhack_sw % 10);
 	}
 #if defined(IOS) || defined(ANDROID) || defined(SAILFISHOS) || defined(WINRT)
-	SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h,
+	SDL_VideoWindow = SDL_CreateWindow(t, win_w, win_h,
 			SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE
 #if defined(ANDROID)
 			| SDL_WINDOW_FULLSCREEN_DESKTOP
@@ -2149,18 +2009,17 @@ int gfx_set_mode(int w, int h, int fs)
 			);
 	if (!SDL_VideoWindow) {
 		fprintf(stderr, "Fallback to software window.\n");
-		SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h,
+		SDL_VideoWindow = SDL_CreateWindow(t, win_w, win_h,
 			SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE);
 	}
 #else
 	if (!software_sw) /* try to using scale */
-		SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h,
-			SDL_WINDOW_SHOWN | ((fs)?SDL_WINDOW_FULLSCREEN:(resizable_sw?SDL_WINDOW_RESIZABLE:0)) | SDL_WINDOW_OPENGL);
+		SDL_VideoWindow = SDL_CreateWindow(t, win_w, win_h,
+			((fs)?SDL_WINDOW_FULLSCREEN:(resizable_sw?SDL_WINDOW_RESIZABLE:0)) | SDL_WINDOW_OPENGL);
 	if (!SDL_VideoWindow) { /* try simple window */
 		fprintf(stderr, "Fallback to software window.\n");
 		win_w = w; win_h = h;
-		SDL_VideoWindow = SDL_CreateWindow(t, window_x, window_y, win_w, win_h,
-			SDL_WINDOW_SHOWN | ((fs)?SDL_WINDOW_FULLSCREEN:0));
+		SDL_VideoWindow = SDL_CreateWindow(t, win_w, win_h, ((fs)?SDL_WINDOW_FULLSCREEN:0));
 	}
 #endif
 	if (SDL_VideoWindow == NULL) {
@@ -2189,8 +2048,9 @@ retry:
 			return -1;
 		}
 	}
-	SDL_GetRendererInfo(Renderer, &SDL_VideoRendererInfo);
-	SDL_VideoTexture = SDL_CreateTexture(Renderer, SDL_PIXELFORMAT_ARGB8888,
+	if (vsync)
+		SDL_RendererFlags(Renderer, 1);
+	SDL_VideoTexture = SDL_CreateTexture(Renderer, SDL_PIXELFORMAT_RGBA32,
 		SDL_TEXTUREACCESS_STREAMING, w, h);
 	if (!SDL_VideoTexture) {
 		fprintf(stderr, "Unable to create texture: %s\n", SDL_GetError());
@@ -2201,7 +2061,8 @@ retry:
 		}
 		return -1;
 	}
-	SDL_VideoSurface = CreateVideoSurface(SDL_VideoTexture);
+	SDL_VideoSurface = SDL_CreateSurface(w, h, PIXEL_FORMAT);
+
 	if (!SDL_VideoSurface) {
 		fprintf(stderr, "Unable to create screen surface: %s\n", SDL_GetError());
 		return -1;
