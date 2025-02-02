@@ -56,8 +56,8 @@ extern int idf_magic(const char *fname);
 extern int idf_only(idf_t idf, int fl);
 
 #ifdef _USE_SDL
-#include <SDL_rwops.h>
-extern SDL_RWops *RWFromIdf(idf_t idf, const char *fname);
+#include <SDL3/SDL_iostream.h>
+extern SDL_IOStream *RWFromIdf(idf_t idf, const char *fname);
 #endif
 
 #endif

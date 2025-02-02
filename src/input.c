@@ -25,7 +25,7 @@
 #include "externals.h"
 #include "internals.h"
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 static int m_focus = 1;
 static int m_minimized = 0;
