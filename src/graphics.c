@@ -1449,6 +1449,7 @@ static int SelectVideoDisplay()
 		i = 0;
 	SDL_CurrentDisplay = disp_list[i];
 	SDL_free(disp_list);
+	return 0;
 }
 
 static SDL_Rect **SDL_ListModes(const SDL_PixelFormat * format, Uint32 flags)
@@ -1776,7 +1777,7 @@ static void GetEnvironmentWindowPosition(int w, int h, int *x, int *y)
 static int mouse_x = -1;
 static int mouse_y = -1;
 
-static int mouse_watcher(void *userdata, SDL_Event *event)
+static bool mouse_watcher(void *userdata, SDL_Event *event)
 {
 #ifdef _USE_SWROTATE
 	if (gfx_flip_rotate) {
@@ -2036,20 +2037,16 @@ int gfx_set_mode(int w, int h, int fs)
 	if (!vsync_sw)
 		vsync = 0;
 retry:
-	if (software_sw ||
-		(!(Renderer = SDL_CreateRenderer(SDL_VideoWindow, -1,
-		SDL_RENDERER_ACCELERATED | vsync | SDL_RENDERER_TARGETTEXTURE)) &&
-		!(Renderer = SDL_CreateRenderer(SDL_VideoWindow, -1,
-		SDL_RENDERER_ACCELERATED)))) {
+	if (software_sw || !(Renderer = SDL_CreateRenderer(SDL_VideoWindow, NULL))) {
 		fprintf(stderr, "Fallback to software renderer.\n");
 		sw_fallback = 1;
-		if (!(Renderer = SDL_CreateRenderer(SDL_VideoWindow, -1, SDL_RENDERER_SOFTWARE))) {
+		if (!(Renderer = SDL_CreateRenderer(SDL_VideoWindow, SDL_SOFTWARE_RENDERER))) {
 			fprintf(stderr, "Unable to create renderer: %s\n", SDL_GetError());
 			return -1;
 		}
 	}
 	if (vsync)
-		SDL_RendererFlags(Renderer, 1);
+		SDL_SetRenderVSync(Renderer, 1);
 	SDL_VideoTexture = SDL_CreateTexture(Renderer, SDL_PIXELFORMAT_RGBA32,
 		SDL_TEXTUREACCESS_STREAMING, w, h);
 	if (!SDL_VideoTexture) {
@@ -2081,7 +2078,7 @@ retry:
 	}
 #endif
 	if (!nocursor_sw)
-		SDL_ShowCursor(SDL_DISABLE);
+		SDL_HideCursor();
 
 	gfx_fs = fs;
 	gfx_width = w;
@@ -2100,13 +2097,13 @@ retry:
 		SDL_RenderSetLogicalSize(Renderer, w, h);
 	SDL_DelEventWatch(mouse_watcher, NULL);
 	SDL_AddEventWatch(mouse_watcher, NULL);
-	fprintf(stderr, "Video mode: %dx%d@%dbpp (%s)\n", Surf(screen)->w, Surf(screen)->h, Surf(screen)->format->BitsPerPixel, SDL_VideoRendererInfo.name);
+	fprintf(stderr, "Video mode: %dx%d (%s)\n", Surf(screen)->w, Surf(screen)->h, SDL_GetRendererName(Renderer));
 done:
 	SDL_SetRenderDrawBlendMode(Renderer, SDL_BLENDMODE_NONE);
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
 	SDL_RenderClear(Renderer);
 	SDL_RenderPresent(Renderer);
-	SDL_FillRect(SDL_VideoSurface, NULL, SDL_MapRGB(SDL_VideoSurface->format, 0, 0, 0));
+	SDL_FillRect(SDL_VideoSurface, NULL, SDL_MapRGB(PIXEL_FORMAT_DETAILS, NULL, 0, 0, 0));
 	return 0;
 }
 
@@ -2184,12 +2181,9 @@ static void gfx_render_copy(SDL_Texture *texture, SDL_Rect *dst, int clear)
 		return;
 	}
 #endif
-	if (SDL_VideoRendererInfo.flags & SDL_RENDERER_ACCELERATED) {
-		if (clear)
-			SDL_RenderClear(Renderer);
-		SDL_RenderCopy(Renderer, texture, NULL, NULL);
-	} else
-		SDL_RenderCopy(Renderer, texture, dst, dst);
+	SDL_RenderCopy(Renderer, texture, NULL, NULL);
+// TODO
+//	SDL_RenderCopy(Renderer, texture, dst, dst);
 }
 
 static void gfx_render_cursor(void)
@@ -2241,7 +2235,7 @@ int SDL_Flip(SDL_Surface * screen)
 	if (!screen)
 		return 0;
 	pitch = screen->pitch;
-	psize = screen->format->BytesPerPixel;
+	psize = 4; //screen->format->BytesPerPixel;
 	pixels = screen->pixels;
 	if (queue_dirty) {
 		rect.x = queue_x1;
@@ -2483,8 +2477,8 @@ fnt_t fnt_load(const char *fname, int size)
 	for (i = 0; i < n; i++) {
 		fn = NULL;
 		if (!is_empty(files[i])) {
-			SDL_RWops *rw = RWFromIdf(instead_idf(), files[i]);
-			if (!rw || !(fn = TTF_OpenFontRW(rw, 1, size))) {
+			SDL_IOStream *rw = RWFromIdf(instead_idf(), files[i]);
+			if (!rw || !(fn = TTF_OpenFontIO(rw, 1, size))) {
 				fprintf(stderr, "Can not load font: '%s'\n", files[i]);
 			}
 		}
@@ -2560,7 +2554,7 @@ img_t fnt_render(fnt_t fn, const char *p, color_t col)
 	struct fnt *h = (struct fnt*)fn;
 	if (!h)
 		return NULL;
-	return GFX_IMG_REL(TTF_RenderUTF8_Blended((TTF_Font *)h->fn, p, scol));
+	return GFX_IMG_REL(TTF_RenderText_Blended((TTF_Font *)h->fn, p, 0, scol));
 }
 
 int fnt_height(fnt_t fn)
@@ -2568,7 +2562,7 @@ int fnt_height(fnt_t fn)
 	struct fnt *h = (struct fnt*)fn;
 	if (!fn)
 		return 0;
-	return TTF_FontHeight((TTF_Font *)(h->fonts[FN_REG]));
+	return TTF_GetFontHeight((TTF_Font *)(h->fonts[FN_REG]));
 }
 
 void fnt_free(fnt_t fnt)
@@ -2646,7 +2640,7 @@ void txt_size(fnt_t fnt, const char *txt, int *w, int *h)
 {
 	int ww, hh;
 	struct fnt *f = (struct fnt*)fnt;
-	TTF_SizeUTF8((TTF_Font *)f->fn, txt, &ww, &hh);
+	TTF_GetStringSize((TTF_Font *)f->fn, txt, 0, &ww, &hh);
 	if (w)
 		*w = ww;
 	if (h)
@@ -5463,7 +5457,7 @@ static void gfx_change_screen_step(void *aux)
 	return;
 }
 
-static Uint32 update(Uint32 interval, void *aux)
+static Uint32 update(void *aux, SDL_TimerID timerID, Uint32 interval)
 {
 	if (!gfx_fading())
 		return 0;
@@ -5542,14 +5536,13 @@ err:
 
 int gfx_init(void)
 {
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 	if (render_sw)
 		SDL_SetHint(SDL_HINT_RENDER_DRIVER, render_sw);
 #if defined(_WIN32) /* do not use buggy D3D by default: fullscreen problem with NVidia */
 	else if (!software_sw)
 		SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 #endif
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
+	if (!SDL_Init(SDL_INIT_VIDEO)) {
 		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
 		return -1;
 	}
@@ -5625,12 +5618,7 @@ int gfx_set_icon(img_t ic)
 
 float gfx_get_dpi(void)
 {
-	float hdpi = 96.0f;
 	if (dpi_sw > 0)
 		return (float)dpi_sw;
-#if SDL_VERSION_ATLEAST(2,0,4)
-	if (SDL_GetDisplayDPI(SDL_CurrentDisplay, NULL, &hdpi, NULL))
-		hdpi = 96.0f;
-#endif
-	return hdpi;
+	return (float)(SDL_GetWindowDisplayScale(SDL_VideoWindow) * 96.0f);
 }
