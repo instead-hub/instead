@@ -47,9 +47,9 @@ int mouse_cursor(int on)
 	if (nocursor_sw)
 		return 0;
 	if (on)
-		SDL_ShowCursor(SDL_ENABLE);
+		SDL_ShowCursor();
 	else
-		SDL_ShowCursor(SDL_DISABLE);
+		SDL_HideCursor();
 	return 0;
 }
 
@@ -59,9 +59,9 @@ void push_user_event(void (*p) (void*), void *data)
 	SDL_UserEvent uevent;
 	memset(&event, 0, sizeof(event));
 	memset(&uevent, 0, sizeof(uevent));
-	uevent.type = SDL_USEREVENT;
+	uevent.type = SDL_EVENT_USER;
 	uevent.code = 0;
-	event.type = SDL_USEREVENT;
+	event.type = SDL_EVENT_USER;
 	uevent.data1 = (void*) p;
 	uevent.data2 = data;
 	event.user = uevent;
@@ -172,35 +172,30 @@ int HandleAppEvents(void *userdata, SDL_Event *event)
 #endif
 
 static gtimer_t gamepad_timer = NULL_TIMER;
-static SDL_GameController *gamepad = NULL;
+static SDL_Gamepad *gamepad = NULL;
 static int deadzone = 8192;
 
 const float MOUSE_SHIFT_MIN = 1.0;
 const float MOUSE_SHIFT_MAX = 10.0;
 
-static int gamepad_deadzone(SDL_GameController *g)
+static int gamepad_deadzone(SDL_Gamepad *g)
 {
-#if SDL_VERSION_ATLEAST(2,0,12)
-	switch (SDL_GameControllerGetType(g))
+	switch (SDL_GetGamepadType(g))
 	{
-	case SDL_CONTROLLER_TYPE_UNKNOWN:
-	case SDL_CONTROLLER_TYPE_XBOXONE:
-	case SDL_CONTROLLER_TYPE_XBOX360:
-	case SDL_CONTROLLER_TYPE_PS3:
+	case SDL_GAMEPAD_TYPE_STANDARD:
+	case SDL_GAMEPAD_TYPE_XBOXONE:
+	case SDL_GAMEPAD_TYPE_XBOX360:
+	case SDL_GAMEPAD_TYPE_PS3:
 		return 10000;
-	case SDL_CONTROLLER_TYPE_PS4:
-	case SDL_CONTROLLER_TYPE_PS5:
+	case SDL_GAMEPAD_TYPE_PS4:
+	case SDL_GAMEPAD_TYPE_PS5:
 		return 4096;
-	case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO:
+	case SDL_GAMEPAD_TYPE_NINTENDO_SWITCH_PRO:
 		return 8192; // Actual dead-zone should be closer to 10% of full-scale, but we use this to account for variances in 3rd-party controllers
-	case SDL_CONTROLLER_TYPE_VIRTUAL:
-		return 8192;
 	default:
 		return 8192;
 	}
-#else
 	return 8192;
-#endif
 }
 
 static int gamepad_mouse_shift(int axis_value) {
@@ -217,47 +212,53 @@ static int gamepad_mouse_shift(int axis_value) {
 static void gamepad_init(void)
 {
 	int i;
+	int num_joysticks = 0;
+	SDL_JoystickID *joysticks_list = NULL;
+
 	static char gamepad_cfg[PATH_MAX] = "";
-	if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) < 0) {
-		fprintf(stderr, "Couldn't initialize GameController subsystem: %s\n", SDL_GetError());
+	if (!SDL_InitSubSystem(SDL_INIT_GAMEPAD)) {
+		fprintf(stderr, "Couldn't initialize Gamepad subsystem: %s\n", SDL_GetError());
 		return;
 	}
-	for (i = 0; i < SDL_NumJoysticks(); ++i) {
-		if (SDL_IsGameController(i)) {
-			gamepad = SDL_GameControllerOpen(i);
-			if (gamepad) {
-				fprintf(stderr, "Found gamepad: %s\n",
-					SDL_GameControllerName(gamepad));
-				deadzone = gamepad_deadzone(gamepad);
-				break;
-			} else {
-				fprintf(stderr, "Could not open gamepad %i: %s\n", i, SDL_GetError());
-			}
+
+	joysticks_list = SDL_GetGamepads(&num_joysticks);
+
+	for (i = 0; i < num_joysticks; ++i) {
+		gamepad = SDL_OpenGamepad(joysticks_list[i]);
+		if (gamepad) {
+			fprintf(stdout, "Found gamepad: %s\n",
+				SDL_GetGamepadName(gamepad));
+			deadzone = gamepad_deadzone(gamepad);
+			break;
+		} else {
+			fprintf(stderr, "Could not open gamepad %i: %s\n",
+				i, SDL_GetError());
 		}
 	}
-	snprintf(gamepad_cfg, sizeof(gamepad_cfg) - 1, "%s/gamecontrollerdb.txt", appdir());
-	SDL_GameControllerAddMappingsFromFile(gamepad_cfg);
+	SDL_free(joysticks_list);
+	snprintf(gamepad_cfg, sizeof(gamepad_cfg) - 1, "%s/Gamepaddb.txt", appdir());
+	SDL_AddGamepadMappingsFromFile(gamepad_cfg);
 }
 
 static void gamepad_done(void)
 {
 	if(gamepad) {
 		gfx_del_timer(gamepad_timer);
-		SDL_GameControllerClose(gamepad);
+		SDL_CloseGamepad(gamepad);
 	}
-	if(SDL_WasInit(SDL_INIT_GAMECONTROLLER))
-		SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
+	if(SDL_WasInit(SDL_INIT_GAMEPAD))
+		SDL_QuitSubSystem(SDL_INIT_GAMEPAD);
 }
 
 static void gamepad_check_triggers(void)
 {
 	SDL_Event event;
 	memset(&event, 0, sizeof(event));
-	event.type = SDL_MOUSEWHEEL;
+	event.type = SDL_EVENT_MOUSE_WHEEL;
 
 	int trigger_left = 0, trigger_right = 0;
-	trigger_left = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_TRIGGERLEFT);
-	trigger_right = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_TRIGGERRIGHT);
+	trigger_left = SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_LEFT_TRIGGER);
+	trigger_right = SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_RIGHT_TRIGGER);
 
 	if (abs(trigger_left) > deadzone) {
 		event.wheel.y = 1;
@@ -278,26 +279,30 @@ static int gamepad_timer_fn(int interval, void *p)
 
 	gamepad_check_triggers();
 
-	axis_x = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_RIGHTX);
-	axis_y = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_RIGHTY);
+	axis_x = SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_RIGHTX);
+	axis_y = SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_RIGHTY);
 
 	if (abs(axis_x) <= deadzone && abs(axis_y) <= deadzone) {
-		axis_x = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_LEFTX);
-		axis_y = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_LEFTY);
+		axis_x = SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_LEFTX);
+		axis_y = SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_LEFTY);
 	}
 
 	if (abs(axis_x) > deadzone || abs(axis_y) > deadzone) {
+		int mx, my;
 		memset(&event, 0, sizeof(event));
-		event.type = SDL_MOUSEMOTION;
-		gfx_cursor(&event.button.x, &event.button.y);
-		event.button.x += ceil(game_theme.scale * gamepad_mouse_shift(axis_x));
-		event.button.y += ceil(game_theme.scale * gamepad_mouse_shift(axis_y));
-		gfx_warp_cursor(event.button.x, event.button.y);
+		event.type = SDL_EVENT_MOUSE_MOTION;
+		gfx_cursor(&mx, &my);
+		event.motion.x = mx;
+		event.motion.y = my;
+		event.motion.x += ceil(game_theme.scale * gamepad_mouse_shift(axis_x));
+		event.motion.y += ceil(game_theme.scale * gamepad_mouse_shift(axis_y));
+		gfx_warp_cursor(event.motion.x, event.motion.y);
 		SDL_PushEvent(&event);
 	}
 	return interval;
 }
 
+#if 0
 static int gamepad_mouse_event(SDL_Event *ev)
 {
 	int rc = 0;
@@ -329,35 +334,35 @@ static int gamepad_mouse_event(SDL_Event *ev)
 		SDL_PushEvent(&event);
 	return rc;
 }
-
+#endif
 static int gamepad_map(struct inp_event *inp)
 {
 	const char *key;
 	switch(inp->code) {
-	case SDL_CONTROLLER_BUTTON_DPAD_UP:
+	case SDL_GAMEPAD_BUTTON_DPAD_UP:
 		key = "up"; break;
-	case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
+	case SDL_GAMEPAD_BUTTON_DPAD_DOWN:
 		key = "down"; break;
-	case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
+	case SDL_GAMEPAD_BUTTON_DPAD_LEFT:
 		key = "left"; break;
-	case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
+	case SDL_GAMEPAD_BUTTON_DPAD_RIGHT:
 		key = "right"; break;
-	case SDL_CONTROLLER_BUTTON_A: /* emulate click */
+	case SDL_GAMEPAD_BUTTON_SOUTH: /* emulate click */
 		inp->type = (inp->type == KEY_DOWN)?MOUSE_DOWN:MOUSE_UP;
 		gfx_cursor(&inp->x, &inp->y);
 		inp->code = 1;
 		return 1;
-	case SDL_CONTROLLER_BUTTON_B:
+	case SDL_GAMEPAD_BUTTON_EAST:
 		key = "space"; break;
-	case SDL_CONTROLLER_BUTTON_X:
+	case SDL_GAMEPAD_BUTTON_WEST:
 		key = "tab"; break;
-	case SDL_CONTROLLER_BUTTON_Y:
+	case SDL_GAMEPAD_BUTTON_NORTH:
 		key = "return"; break;
-	case SDL_CONTROLLER_BUTTON_START:
+	case SDL_GAMEPAD_BUTTON_START:
 		key = "escape"; break;
-	case SDL_CONTROLLER_BUTTON_LEFTSHOULDER:
+	case SDL_GAMEPAD_BUTTON_LEFT_SHOULDER:
 		key = "page up"; break;
-	case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER:
+	case SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER:
 		key = "page down"; break;
 	default:
 		return 0;
@@ -397,7 +402,7 @@ void input_uevents(void)
 	char *g = curgame_dir;
 	SDL_Event peek;
 	curgame_dir = NULL;
-	while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_USEREVENT, SDL_USEREVENT) > 0) {
+	while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_EVENT_USER, SDL_EVENT_USER) > 0) {
 		void (*p) (void*) = (void (*)(void*)) peek.user.data1;
 		if (p)
 			p(peek.user.data2);
@@ -433,7 +438,7 @@ int finger_pos(const char *finger, int *x, int *y, float *pressure)
 {
 	SDL_TouchID tid;
 	SDL_FingerID fid;
-	SDL_Finger *f;
+	SDL_Finger **f;
 	int i, n;
 	i = hex2data(finger, &fid, sizeof(fid));
 
@@ -441,16 +446,16 @@ int finger_pos(const char *finger, int *x, int *y, float *pressure)
 		return -1;
 	if (hex2data(finger + i + 1, &tid, sizeof(tid)) != sizeof(tid) * 2)
 		return -1;
-
-	n = SDL_GetNumTouchFingers(tid);
-	if (n <= 0)
+	f = SDL_GetTouchFingers(tid, &n);
+	if (!f || !n) {
+		SDL_free(f);
 		return -1;
+	}
 	for (i = 0; i < n; i++) {
-		f = SDL_GetTouchFinger(tid, i);
-		if (f->id == fid) {
+		if (f[i]->id == fid) {
 			if (pressure)
-				*pressure = f->pressure;
-			gfx_finger_pos_scale(f->x, f->y, x, y, 1);
+				*pressure = f[i]->pressure;
+			gfx_finger_pos_scale(f[i]->x, f[i]->y, x, y, 1);
 			return 0;
 		}
 	}
@@ -474,20 +479,20 @@ int input(struct inp_event *inp, int wait)
 	if (!rc)
 		return 0;
 
-	if (gamepad_mouse_event(&event))
-		return AGAIN;
+//	if (gamepad_mouse_event(&event))
+//		return AGAIN;
 
 	inp->sym[0] = 0;
 	inp->type = 0;
 	inp->count = 1;
 	switch(event.type){
-	case SDL_TEXTINPUT:
+	case SDL_EVENT_TEXT_INPUT:
 		inp->type = KEY_TEXT;
 		strncpy(inp->sym, event.text.text, sizeof(inp->sym));
 		inp->sym[sizeof(inp->sym) - 1] = 0;
 		break;
-	case SDL_MULTIGESTURE:
-	case SDL_FINGERMOTION:
+	case SDL_EVENT_FINGER_CANCELED:
+	case SDL_EVENT_FINGER_MOTION:
 		if (DIRECT_MODE && !game_paused())
 			return AGAIN;
 		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, event.type, event.type) > 0)
@@ -496,16 +501,16 @@ int input(struct inp_event *inp, int wait)
 		touch_mouse_event(&event);
 #endif
 		break;
-	case SDL_FINGERUP:
+	case SDL_EVENT_FINGER_UP:
 #ifdef IOS
 		touch_num = 0;
 #endif
-	case SDL_FINGERDOWN:
+	case SDL_EVENT_FINGER_DOWN:
 #if defined(SAILFISHOS)
 		touch_mouse_event(&event);
 #endif
 #if defined(IOS) || defined(SAILFISHOS)
-		if (event.type == SDL_FINGERDOWN) {
+		if (event.type == SDL_EVENT_FINGER_DOWN) {
 			if (gfx_ticks() - touch_stamp > 100) {
 				touch_num = 0;
 				touch_stamp = gfx_ticks();
@@ -524,92 +529,84 @@ int input(struct inp_event *inp, int wait)
 #else
 		gfx_finger_pos_scale(event.tfinger.x, event.tfinger.y, &inp->x, &inp->y, 1);
 #endif
-		inp->type = (event.type == SDL_FINGERDOWN) ? FINGER_DOWN : FINGER_UP;
-		data2hex(&event.tfinger.fingerId,
-			sizeof(event.tfinger.fingerId),
+		inp->type = (event.type == SDL_EVENT_FINGER_DOWN) ? FINGER_DOWN : FINGER_UP;
+		data2hex(&event.tfinger.fingerID,
+			sizeof(event.tfinger.fingerID),
 			inp->sym);
-		inp->sym[sizeof(event.tfinger.fingerId) * 2] = ':';
-		data2hex(&event.tfinger.touchId,
-			sizeof(event.tfinger.touchId),
-			inp->sym + sizeof(event.tfinger.fingerId) * 2 + 1);
-		inp->sym[sizeof(event.tfinger.fingerId) * 2 + 1 + sizeof(event.tfinger.touchId) * 2] = 0;
+		inp->sym[sizeof(event.tfinger.fingerID) * 2] = ':';
+		data2hex(&event.tfinger.touchID,
+			sizeof(event.tfinger.touchID),
+			inp->sym + sizeof(event.tfinger.fingerID) * 2 + 1);
+		inp->sym[sizeof(event.tfinger.fingerID) * 2 + 1 + sizeof(event.tfinger.touchID) * 2] = 0;
 		break;
-	case SDL_CONTROLLERBUTTONDOWN:
+	case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
 		inp->type = KEY_DOWN;
-		inp->code = event.cbutton.button;
+		inp->code = event.gbutton.button;
 		if (!gamepad_map(inp))
 			return AGAIN;
 		break;
-	case SDL_CONTROLLERBUTTONUP:
+	case SDL_EVENT_GAMEPAD_BUTTON_UP:
 		inp->type = KEY_UP;
-		inp->code = event.cbutton.button;
+		inp->code = event.gbutton.button;
 		if (!gamepad_map(inp))
 			return AGAIN;
 		break;
-	case SDL_WINDOWEVENT:
-		switch (event.window.event) {
-/*		case SDL_WINDOWEVENT_SHOWN: */
-		case SDL_WINDOWEVENT_RESIZED: /* Android send this on screen rotate */
-		case SDL_WINDOWEVENT_SIZE_CHANGED:
-			gfx_resize(event.window.data1, event.window.data2);
-			/* Fall through */
-		case SDL_WINDOWEVENT_EXPOSED:
-			if (m_minimized) { /* broken WM? no RESTORE msg? */
-				m_minimized = 0;
-				snd_pause(0);
-			}
-			game_flip();
-			game_gfx_commit(0);
-			break;
-		case SDL_WINDOWEVENT_MINIMIZED:
-		case SDL_WINDOWEVENT_RESTORED:
-			m_minimized = (event.window.event == SDL_WINDOWEVENT_MINIMIZED && !opt_fs);
-			snd_pause(!nopause_sw && m_minimized);
-			break;
-#if defined(SAILFISHOS)
-		case SDL_WINDOWEVENT_FOCUS_LOST:
-			snd_pause(!nopause_sw);
-			while (1) { /* pause */
-				SDL_WaitEvent(&event);
-				if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_FOCUS_GAINED) {
-					snd_pause(0);
-					break;
-				}
-				if (event.type == SDL_QUIT) {
-					game_running = 0;
-					return -1;
-				}
-			}
-			break;
-#endif
-		case SDL_WINDOWEVENT_ENTER:
-		case SDL_WINDOWEVENT_FOCUS_GAINED:
-			m_focus = 1;
-			if (opt_fs)
-				mouse_cursor(0);
-			break;
-		case SDL_WINDOWEVENT_LEAVE:
-			m_focus = 0;
-			if (opt_fs)
-				mouse_cursor(1); /* is it hack?*/
-			break;
-		default:
-			break;
+	case SDL_EVENT_WINDOW_RESIZED: /* Android send this on screen rotate */
+		gfx_resize(event.window.data1, event.window.data2);
+		/* Fall through */
+	case SDL_EVENT_WINDOW_EXPOSED:
+		if (m_minimized) { /* broken WM? no RESTORE msg? */
+			m_minimized = 0;
+			snd_pause(0);
 		}
-		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_WINDOWEVENT, SDL_WINDOWEVENT) > 0)
-			return AGAIN; /* to avoid flickering */
-		return 0;
-	case SDL_USEREVENT: {
+		game_flip();
+		game_gfx_commit(0);
+		break;
+	case SDL_EVENT_WINDOW_MINIMIZED:
+	case SDL_EVENT_WINDOW_RESTORED:
+		m_minimized = (event.type == SDL_EVENT_WINDOW_MINIMIZED && !opt_fs);
+		snd_pause(!nopause_sw && m_minimized);
+		break;
+#if defined(SAILFISHOS)
+	case SDL_EVENT_WINDOW_FOCUS_LOST:
+		snd_pause(!nopause_sw);
+		while (1) { /* pause */
+			SDL_WaitEvent(&event);
+			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_FOCUS_GAINED) {
+				snd_pause(0);
+				break;
+			}
+			if (event.type == SDL_QUIT) {
+				game_running = 0;
+				return -1;
+			}
+		}
+		break;
+#endif
+	case SDL_EVENT_WINDOW_MOUSE_ENTER:
+	case SDL_EVENT_WINDOW_FOCUS_GAINED:
+		m_focus = 1;
+		if (opt_fs)
+			mouse_cursor(0);
+		break;
+	case SDL_EVENT_WINDOW_MOUSE_LEAVE:
+		m_focus = 0;
+		if (opt_fs)
+			mouse_cursor(1); /* is it hack?*/
+		break;
+//	if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_WINDOWEVENT, SDL_WINDOWEVENT) > 0)
+//		return AGAIN; /* to avoid flickering */
+	case SDL_EVENT_USER: {
 		void (*p) (void*) = (void (*)(void*))event.user.data1;
 		if (!p) /* idle cycles */
 			return 1;
 		p(event.user.data2);
 		return AGAIN;
 		}
-	case SDL_QUIT:
+	case SDL_EVENT_QUIT:
 		game_running = 0;
 		return -1;
-	case SDL_KEYDOWN:	/* A key has been pressed */
+	case SDL_EVENT_KEY_DOWN:	/* A key has been pressed */
 		if (event.key.repeat) {
 			if (DIRECT_MODE && !game_paused()) /* do not send key repeats */
 				return AGAIN;
@@ -623,43 +620,43 @@ int input(struct inp_event *inp, int wait)
 			last_repeat_ms = gfx_ticks();
 		}
 		inp->type = KEY_DOWN;
-		inp->code = event.key.keysym.scancode;
+		inp->code = event.key.scancode;
 		strncpy(inp->sym, SDL_GetScancodeName(inp->code), sizeof(inp->sym));
 		inp->sym[sizeof(inp->sym) - 1] = 0;
 		tolow(inp->sym);
 		key_compat(inp);
-		if (DIRECT_MODE && SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_KEYDOWN, SDL_KEYUP) > 0) {
-			if (peek.key.keysym.scancode == event.key.keysym.scancode &&
+		if (DIRECT_MODE && SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_EVENT_KEY_DOWN, SDL_EVENT_KEY_UP) > 0) {
+			if (peek.key.scancode == event.key.scancode &&
 				peek.key.repeat == 0)
 				return AGAIN;
 		}
 		break;
-	case SDL_KEYUP:
+	case SDL_EVENT_KEY_UP:
 		inp->type = KEY_UP;
-		inp->code = event.key.keysym.scancode;
+		inp->code = event.key.scancode;
 		strncpy(inp->sym, SDL_GetScancodeName(inp->code), sizeof(inp->sym));
 		inp->sym[sizeof(inp->sym) - 1] = 0;
 		tolow(inp->sym);
 		key_compat(inp);
-		if (DIRECT_MODE && SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_KEYDOWN, SDL_KEYUP) > 0) {
-			if (event.key.keysym.scancode == peek.key.keysym.scancode &&
+		if (DIRECT_MODE && SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, SDL_EVENT_KEY_DOWN, SDL_EVENT_KEY_UP) > 0) {
+			if (event.key.scancode == peek.key.scancode &&
 				peek.key.repeat == 0)
 				return AGAIN;
 		}
 		break;
-	case SDL_MOUSEMOTION:
+	case SDL_EVENT_MOUSE_MOTION:
 		m_focus = 1; /* ahhh */
 		if (DIRECT_MODE && !game_paused())
 			return AGAIN;
 		inp->type = MOUSE_MOTION;
 		inp->x = event.button.x;
 		inp->y = event.button.y;
-		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEMOTION) > 0) {
+		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_EVENT_MOUSE_MOTION, SDL_EVENT_MOUSE_MOTION) > 0) {
 			inp->x = peek.button.x;
 			inp->y = peek.button.y;
 		}
 		break;
-	case SDL_MOUSEBUTTONUP:
+	case SDL_EVENT_MOUSE_BUTTON_UP:
 		inp->type = MOUSE_UP;
 		inp->x = event.button.x;
 		inp->y = event.button.y;
@@ -669,13 +666,13 @@ int input(struct inp_event *inp, int wait)
 		else if (event.button.button == 5)
 			inp->type = 0;
 		break;
-	case SDL_MOUSEWHEEL:
+	case SDL_EVENT_MOUSE_WHEEL:
 		if (!game_grab_events && DIRECT_MODE && !game_paused())
 			return AGAIN;
 
 		inp->type = (event.wheel.y > 0) ? MOUSE_WHEEL_UP : MOUSE_WHEEL_DOWN;
 
-		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_MOUSEWHEEL, SDL_MOUSEWHEEL) > 0) {
+		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_EVENT_MOUSE_WHEEL, SDL_EVENT_MOUSE_WHEEL) > 0) {
 			if (!((event.wheel.y > 0 &&
 				inp->type == MOUSE_WHEEL_UP) ||
 				(event.wheel.y < 0 &&
@@ -684,7 +681,7 @@ int input(struct inp_event *inp, int wait)
 			inp->count ++;
 		}
 		break;
-	case SDL_MOUSEBUTTONDOWN:
+	case SDL_EVENT_MOUSE_BUTTON_DOWN:
 		m_focus = 1; /* ahhh */
 		inp->type = MOUSE_DOWN;
 		inp->x = event.button.x;
@@ -694,7 +691,7 @@ int input(struct inp_event *inp, int wait)
 			inp->type = MOUSE_WHEEL_UP;
 		else if (event.button.button == 5)
 			inp->type = MOUSE_WHEEL_DOWN;
-		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONDOWN) > 0) {
+		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_EVENT_MOUSE_BUTTON_DOWN, SDL_EVENT_MOUSE_BUTTON_DOWN) > 0) {
 			if (!((event.button.button == 4 &&
 				inp->type == MOUSE_WHEEL_UP) ||
 				(event.button.button == 5 &&
@@ -711,6 +708,8 @@ int input(struct inp_event *inp, int wait)
 
 extern void gfx_real_size(int *ww, int *hh);
 
+extern SDL_Window *SDL_VideoWindow;
+
 int input_text(int start)
 {
 	SDL_Rect rect;
@@ -721,9 +720,9 @@ int input_text(int start)
 		gfx_real_size(&w, &h);
 		rect.x = w / 2; rect.y = h - 1;
 		rect.w = 1; rect.h = 1;
-		SDL_SetTextInputRect(&rect);
-		SDL_StartTextInput();
+		SDL_SetTextInputArea(SDL_VideoWindow, &rect, 0);
+		SDL_StartTextInput(SDL_VideoWindow);
 	} else
-		SDL_StopTextInput();
+		SDL_StopTextInput(SDL_VideoWindow);
 	return 0;
 }
