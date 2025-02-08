@@ -673,31 +673,28 @@ int idf_read(idff_t fil, void *ptr, int size, int maxnum)
 #ifdef _USE_SDL
 #include <SDL3/SDL.h>
 
-static Sint64 idfrw_seek(struct SDL_IOStream *context, Sint64 offset, int whence)
+static Sint64 idfrw_seek(void *context, Sint64 offset, SDL_IOWhence whence)
 {
-	idff_t fil = (idff_t)context->hidden.unknown.data1;
+	idff_t fil = (idff_t)context;
 	return idf_seek(fil, offset, whence);
 }
 
-static size_t idfrw_read(struct SDL_IOStream *context, void *ptr, size_t size, size_t maxnum)
+static size_t idfrw_read(void *context, void *ptr, size_t size, SDL_IOStatus *status)
 {
-	idff_t fil = (idff_t)context->hidden.unknown.data1;
-	return idf_read(fil, ptr, size, maxnum);
+	idff_t fil = (idff_t)context;
+	return idf_read(fil, ptr, 1, size);
 }
 
-static 	int idfrw_close(struct SDL_IOStream *context)
+static 	bool idfrw_close(void *context)
 {
-	if (context) {
-		idff_t fil = (idff_t)context->hidden.unknown.data1;
-		idf_close(fil);
-		SDL_FreeRW(context);
-	}
-	return 0;
+	idff_t fil = (idff_t)context;
+	idf_close(fil);
+	return true;
 }
 
-static Sint64 idfrw_size(struct SDL_IOStream *context)
+static Sint64 idfrw_size(void *context)
 {
-	idff_t fil = (idff_t)context->hidden.unknown.data1;
+	idff_t fil = (idff_t)context;
 	if (!fil || !fil->dir)
 		return -1;
 	return fil->dir->size;
@@ -713,18 +710,21 @@ SDL_IOStream *RWFromIdf(idf_t idf, const char *fname)
 			return SDL_IOFromFile(dirpath(fname), "rb");
 		return NULL;
 	}
-	n = SDL_AllocRW();
+	SDL_IOStreamInterface iface;
+	SDL_INIT_INTERFACE(&iface);
+
+	iface.size = idfrw_size;
+	iface.seek = idfrw_seek;
+	iface.read = idfrw_read;
+	iface.close = idfrw_close;
+
+	n = SDL_OpenIO(&iface, fil);
 	if (!n)
 		goto err;
-	n->size = idfrw_size;
-	n->seek = idfrw_seek;
-	n->read = idfrw_read;
-	n->close = idfrw_close;
-	n->hidden.unknown.data1 = fil;
 	return n;
 err:
 	if (n)
-		SDL_FreeRW(n);
+		SDL_CloseIO(n);
 	free(fil);
 	return NULL;
 }

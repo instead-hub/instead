@@ -319,7 +319,7 @@ static int anim_spawn(anim_t ag, int x, int y, int w, int h)
 {
 	int nr;
 	SDL_Rect clip;
-	SDL_GetClipRect(Surf(screen), &clip);
+	SDL_GetSurfaceClipRect(Surf(screen), &clip);
 	/* gfx_free_image(ag->bg); */
 	if (!ag->spawn && !(ag->spawn = malloc(ANSPAWN_BLOCK * sizeof(struct anspawn))))
 		return -1;
@@ -365,11 +365,11 @@ static void anim_disposal(anim_t g)
 	dest.w = g->anim->w;
 	dest.h = g->anim->h;
 
-	SDL_GetClipRect(Surf(screen), &clip);
+	SDL_GetSurfaceClipRect(Surf(screen), &clip);
 
 	for (i = 0; i < g->spawn_nr; i++) {
 		SDL_Rect dst;
-		SDL_SetClipRect(Surf(screen), &g->spawn[i].clip);
+		SDL_SetSurfaceClipRect(Surf(screen), &g->spawn[i].clip);
 		dst = dest;
 		dst.x += g->spawn[i].x;
 		dst.y += g->spawn[i].y;
@@ -381,7 +381,7 @@ static void anim_disposal(anim_t g)
 			SDL_BlitSurface(img, NULL, Surf(screen), &dst);
 		}
 	}
-	SDL_SetClipRect(Surf(screen), &clip);
+	SDL_SetSurfaceClipRect(Surf(screen), &clip);
 }
 
 static void anim_frame(anim_t g)
@@ -392,7 +392,7 @@ static void anim_frame(anim_t g)
 	SDL_Surface *frame;
 	frame = g->anim->frames[g->cur_frame];
 
-	SDL_GetClipRect(Surf(screen), &clip);
+	SDL_GetSurfaceClipRect(Surf(screen), &clip);
 
 	dest.w = g->anim->w;
 	dest.h = g->anim->h;
@@ -400,12 +400,12 @@ static void anim_frame(anim_t g)
 	for (i = 0; i < g->spawn_nr; i++) {
 		dest.x = g->spawn[i].x;
 		dest.y = g->spawn[i].y;
-		SDL_SetClipRect(Surf(screen), &g->spawn[i].clip);
+		SDL_SetSurfaceClipRect(Surf(screen), &g->spawn[i].clip);
 		SDL_BlitSurface(frame, NULL, Surf(screen), &dest);
 	}
 	if (!g->active) /* initial draw */
 		g->delay = timer_counter;
-	SDL_SetClipRect(Surf(screen), &clip);
+	SDL_SetSurfaceClipRect(Surf(screen), &clip);
 }
 
 static anim_t is_anim(img_t img)
@@ -468,7 +468,7 @@ static void gfx_free_img(img_t p)
 {
 	if (!p)
 		return;
-	SDL_FreeSurface(Surf(p));
+	SDL_DestroySurface(Surf(p));
 	/* todo texture */
 	SDL_free(p);
 }
@@ -515,7 +515,7 @@ void gfx_getclip(int *x, int *y, int *w, int *h)
 	SDL_Rect clip;
 	if (!screen)
 		return;
-	SDL_GetClipRect(Surf(screen), &clip);
+	SDL_GetSurfaceClipRect(Surf(screen), &clip);
 	if (x)
 		*x = clip.x;
 	if (y)
@@ -528,7 +528,7 @@ void gfx_getclip(int *x, int *y, int *w, int *h)
 
 void gfx_img_noclip(img_t img)
 {
-	SDL_SetClipRect(Surf(img), NULL);
+	SDL_SetSurfaceClipRect(Surf(img), NULL);
 }
 
 void gfx_noclip(void)
@@ -543,7 +543,7 @@ void gfx_img_clip(img_t img, int x, int y, int w, int h)
 	src.y = y;
 	src.w = w;
 	src.h = h;
-	SDL_SetClipRect(Surf(img), &src);
+	SDL_SetSurfaceClipRect(Surf(img), &src);
 }
 
 void gfx_clip(int x, int y, int w, int h)
@@ -566,7 +566,7 @@ static img_t	gfx_new_img(SDL_Surface *s, int fl, void *data, int release)
 		i->flags = fl;
 		i->aux = data;
 	} else if (release && s) {
-		SDL_FreeSurface(s);
+		SDL_DestroySurface(s);
 	}
 	return i;
 }
@@ -1395,7 +1395,7 @@ void gfx_clear(int x, int y, int w, int h)
 	dest.w = w;
 	dest.h = h;
 	if (x < brd.x || y < brd.y || x + w >= brd.x + brd.w || y + h >= brd.y + brd.h) {
-		SDL_FillRect(s, &dest, SDL_MapRGB(PIXEL_FORMAT_DETAILS, NULL, brdcol.r, brdcol.g, brdcol.b));
+		SDL_FillSurfaceRect(s, &dest, SDL_MapRGB(PIXEL_FORMAT_DETAILS, NULL, brdcol.r, brdcol.g, brdcol.b));
 		dx = brd.x - x;
 		dy = brd.y - y;
 		if (dx > 0) {
@@ -1413,9 +1413,9 @@ void gfx_clear(int x, int y, int w, int h)
 		if (dy < 0)
 			dest.h += dy;
 		if (dest.w > 0 && dest.h > 0)
-			SDL_FillRect(s, &dest, SDL_MapRGB(PIXEL_FORMAT_DETAILS, NULL, bgcol.r, bgcol.g, bgcol.b));
+			SDL_FillSurfaceRect(s, &dest, SDL_MapRGB(PIXEL_FORMAT_DETAILS, NULL, bgcol.r, bgcol.g, bgcol.b));
 	} else
-		SDL_FillRect(s, &dest, SDL_MapRGB(PIXEL_FORMAT_DETAILS, NULL, bgcol.r, bgcol.g, bgcol.b));
+		SDL_FillSurfaceRect(s, &dest, SDL_MapRGB(PIXEL_FORMAT_DETAILS, NULL, bgcol.r, bgcol.g, bgcol.b));
 }
 
 int gfx_width = -1;
@@ -1853,8 +1853,8 @@ void gfx_finger_pos_scale(float x, float y, int *ox, int *oy, int norm)
 		rect.y = 0;
 	} else {
 		SDL_GetWindowSize(SDL_VideoWindow, &w, &h);
-		SDL_RenderGetViewport(Renderer, &rect);
-		SDL_RenderGetScale(Renderer, &sx, &sy);
+		SDL_GetRenderViewport(Renderer, &rect);
+		SDL_GetRenderScale(Renderer, &sx, &sy);
 	}
 
 	if (sx != 0) {
@@ -2029,11 +2029,11 @@ int gfx_set_mode(int w, int h, int fs)
 	}
 	if (icon)
 		SDL_SetWindowIcon(SDL_VideoWindow, icon);
-
-	if (SDL_SetWindowDisplayMode(SDL_VideoWindow, (fs)?NULL:&desktop_mode) < 0) {
-		fprintf(stderr, "Unable to set display mode: %s\n", SDL_GetError());
-		/* return -1; */
-	}
+// TODO
+//	if (SDL_SetWindowDisplayMode(SDL_VideoWindow, (fs)?NULL:&desktop_mode) < 0) {
+//		fprintf(stderr, "Unable to set display mode: %s\n", SDL_GetError());
+//		/* return -1; */
+//	}
 	if (!vsync_sw)
 		vsync = 0;
 retry:
@@ -2091,11 +2091,11 @@ retry:
 
 #ifdef _USE_SWROTATE
 	if (gfx_flip_rotate)
-		SDL_RenderSetLogicalSize(Renderer, h, w);
+		SDL_SetRenderLogicalSize(Renderer, h, w);
 	else
 #endif
-		SDL_RenderSetLogicalSize(Renderer, w, h);
-	SDL_DelEventWatch(mouse_watcher, NULL);
+		SDL_SetRenderLogicalPresentation(Renderer, w, h, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+	SDL_RemoveEventWatch(mouse_watcher, NULL);
 	SDL_AddEventWatch(mouse_watcher, NULL);
 	fprintf(stderr, "Video mode: %dx%d (%s)\n", Surf(screen)->w, Surf(screen)->h, SDL_GetRendererName(Renderer));
 done:
@@ -2103,7 +2103,7 @@ done:
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
 	SDL_RenderClear(Renderer);
 	SDL_RenderPresent(Renderer);
-	SDL_FillRect(SDL_VideoSurface, NULL, SDL_MapRGB(PIXEL_FORMAT_DETAILS, NULL, 0, 0, 0));
+	SDL_FillSurfaceRect(SDL_VideoSurface, NULL, SDL_MapRGB(PIXEL_FORMAT_DETAILS, NULL, 0, 0, 0));
 	return 0;
 }
 
@@ -2177,13 +2177,13 @@ static void gfx_render_copy(SDL_Texture *texture, SDL_Rect *dst, int clear)
 		r2.x = 0; r2.y = -h;
 		r2.w = w; r2.h = h;
 		r.x = 0; r.y = h;
-		SDL_RenderCopyEx(Renderer, texture, NULL, &r2, 90, &r, 0);
+		SDL_RenderTextureEx(Renderer, texture, NULL, &r2, 90, &r, 0);
 		return;
 	}
 #endif
-	SDL_RenderCopy(Renderer, texture, NULL, NULL);
+	SDL_RenderTexture(Renderer, texture, NULL, NULL);
 // TODO
-//	SDL_RenderCopy(Renderer, texture, dst, dst);
+//	SDL_RenderTexture(Renderer, texture, dst, dst);
 }
 
 static void gfx_render_cursor(void)
@@ -2191,7 +2191,7 @@ static void gfx_render_cursor(void)
 	int cursor_x = 0;
 	int cursor_y = 0;
 
-	SDL_Rect rect;
+	SDL_FRect rect;
 #ifdef _USE_SWROTATE
 	SDL_Point r;
 #endif
@@ -2219,10 +2219,10 @@ static void gfx_render_cursor(void)
 	rect.h = cursor_h; /* - 1; */
 #ifdef _USE_SWROTATE
 	if (gfx_flip_rotate)
-		SDL_RenderCopyEx(Renderer, cursor, NULL, &rect, 90, &r, 0);
+		SDL_RenderTextureEx(Renderer, cursor, NULL, &rect, 90, &r, 0);
 	else
 #endif
-		SDL_RenderCopy(Renderer, cursor, NULL, &rect);
+		SDL_RenderTexture(Renderer, cursor, NULL, &rect);
 }
 
 static void SDL_UpdateRect(SDL_Surface * screen, Sint32 x, Sint32 y, Uint32 w, Uint32 h);
@@ -2312,7 +2312,7 @@ void gfx_update(int x, int y, int w, int h) {
 void gfx_video_done(void)
 {
 	if (icon)
-		SDL_FreeSurface(icon);
+		SDL_DestroySurface(icon);
 	screen = NULL;
 	TTF_Quit();
 }
@@ -3115,12 +3115,12 @@ void word_free(struct word *word)
 
 	if (word->prerend) {
 		cache_forget(word->line->layout->prerend_cache, word->prerend);
-/*		SDL_FreeSurface(word->prerend); */
+/*		SDL_DestroySurface(word->prerend); */
 	}
 
 	if (word->hlprerend) {
 		cache_forget(word->line->layout->hlprerend_cache, word->hlprerend);
-/*		SDL_FreeSurface(word->hlprerend); */
+/*		SDL_DestroySurface(word->hlprerend); */
 	}
 	word->hlprerend = word->prerend = NULL;
 	free(word);
@@ -5403,8 +5403,8 @@ void gfx_warp_cursor(int x, int y)
 		x = gfx_height - tmp;
 	}
 #endif
-	SDL_RenderGetViewport(Renderer, &rect);
-	SDL_RenderGetScale(Renderer, &sx, &sy);
+	SDL_GetRenderViewport(Renderer, &rect);
+	SDL_GetRenderScale(Renderer, &sx, &sy);
 	x = (x + rect.x) * sx;
 	y = (y + rect.y) * sy;
 	SDL_WarpMouseInWindow(SDL_VideoWindow, x, y);

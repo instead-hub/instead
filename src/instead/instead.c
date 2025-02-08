@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2022 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2025 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -30,7 +30,7 @@
 #define DATA_IDF INSTEAD_IDF
 #ifdef _USE_SDL
 #if !defined(__EMSCRIPTEN__) && !defined(WINRT)
-static SDL_mutex *sem;
+static SDL_Mutex *sem;
 #endif
 void instead_lock(void) {
 #if !defined(__EMSCRIPTEN__) && !defined(WINRT)

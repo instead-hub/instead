@@ -290,7 +290,7 @@ mus_t snd_load_mus(const char *fname)
 		goto err1;
 	return mus;
 err1:
-	SDL_RWclose(mus->rw);
+	SDL_CloseIO(mus->rw);
 err:
 	free(mus);
 	return NULL;
@@ -383,7 +383,7 @@ void snd_free_mus(mus_t mus)
 	Mix_HaltMusic();
 	if (mus->mus) {
 		Mix_FreeMusic((Mix_Music*) mus->mus);
-		SDL_RWclose(mus->rw);
+		SDL_CloseIO(mus->rw);
 	}
 	free(mus);
 }
