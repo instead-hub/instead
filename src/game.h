@@ -27,7 +27,7 @@
 //#include <SDL3/SDL_mixer.h>
 #include "utils.h"
 
-#define SND_CHANNELS MIX_CHANNELS
+#define SND_CHANNELS 8
 
 #ifndef GAMES_PATH
 #define GAMES_PATH "./games"
