@@ -124,7 +124,7 @@ static int _snd_open(int hz)
 	aspec.channels = audio_channels;
 	aspec.freq = hz;
 	aspec.format = SND_DEFAULT_FORMAT;
-	if (Mix_OpenAudio(0, &aspec)) {
+	if (!Mix_OpenAudio(0, &aspec)) {
 		fprintf(stderr, "Unable to open audio!\n");
 		return -1;
 	}
