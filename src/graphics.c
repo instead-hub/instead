@@ -39,8 +39,8 @@
 
 #include <SDL3/SDL_mutex.h>
 #include "SDL3_rotozoom.h"
-#include "SDL_gfxBlitFunc.h"
-#include "SDL_gif.h"
+#include "SDL3_gfxBlitFunc.h"
+#include "SDL3_gif.h"
 
 #define IMG_ANIM 1
 struct _img_t {
@@ -771,7 +771,7 @@ img_t gfx_alpha_img(img_t src, int alpha)
 	img_t img = NULL;
 	if (!src)
 		return NULL;
-	img = gfx_new(Surf(src)->w, Surf(src)->h);
+	img = gfx_dup(src); //Surf(src)->w, Surf(src)->h);
 
 	if (!img)
 		return NULL;
@@ -798,6 +798,7 @@ img_t gfx_alpha_img(img_t src, int alpha)
 		}
 		SDL_UnlockSurface(Surf(img));
 	}
+
 	return img;
 }
 
@@ -1462,7 +1463,7 @@ static SDL_Rect **SDL_ListModes(const SDL_PixelFormat * format, Uint32 flags)
 	SDL_Rect **new_modes;
 	int bpp;
 
-	SelectVideoDisplay();
+//	SelectVideoDisplay();
 
 	disp_mode = SDL_GetDesktopDisplayMode(SDL_CurrentDisplay);
 	bpp = SDL_BITSPERPIXEL(disp_mode->format);
@@ -1953,7 +1954,7 @@ int gfx_set_mode(int w, int h, int fs)
 			SDL_SetWindowSize(SDL_VideoWindow, win_w, win_h);
 		goto done; /* already done */
 	}
-	SelectVideoDisplay();
+//	SelectVideoDisplay();
 	desktop_mode = SDL_GetDesktopDisplayMode(SDL_CurrentDisplay);
 
 	if (vid_modes && vid_modes != std_modes) {
@@ -5546,11 +5547,13 @@ int gfx_init(void)
 		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
 		return -1;
 	}
+	SelectVideoDisplay();
 	if (!(images = cache_init(-1, gfx_cache_free_image))) {
 		fprintf(stderr, "Can't init cache subsystem.\n");
 		gfx_done();
 		return -1;
 	}
+
 /*	SDL_DisableScreenSaver(); */
 	return 0;
 }
@@ -5571,15 +5574,41 @@ void gfx_done(void)
 	SDL_Quit();
 }
 
-gtimer_t gfx_add_timer(int delay, int (*fn)(int, void*), void *aux)
+struct gfx_timer {
+	void *aux;
+	int delay;
+	int (*cb)(int, void*);
+	SDL_TimerID timer;
+};
+
+static Uint32 gfx_timer_cb(void *ctx, SDL_TimerID id, Uint32 interval)
 {
-	return (gtimer_t)SDL_AddTimer(delay, (SDL_TimerCallback)fn, aux);
+	gtimer_t t = (gtimer_t)ctx;
+	return t->cb(t->delay, t->aux);
 }
 
-void gfx_del_timer(gtimer_t han)
+gtimer_t gfx_add_timer(int delay, int (*fn)(int, void*), void *aux)
 {
-	if (han)
-		SDL_RemoveTimer((SDL_TimerID)han);
+	gtimer_t t = malloc(sizeof(struct gfx_timer));
+	if (!t)
+		return NULL;
+	t->aux = aux;
+	t->cb = fn;
+	t->delay = delay;
+	t->timer = SDL_AddTimer(delay, gfx_timer_cb, t);
+	if (!t->timer) {
+		free(t);
+		return NULL;
+	}
+	return t;
+}
+
+void gfx_del_timer(gtimer_t t)
+{
+	if (t) {
+		SDL_RemoveTimer(t->timer);
+		free(t);
+	}
 }
 
 unsigned long gfx_ticks(void)
@@ -5620,5 +5649,12 @@ float gfx_get_dpi(void)
 {
 	if (dpi_sw > 0)
 		return (float)dpi_sw;
-	return (float)(SDL_GetWindowDisplayScale(SDL_VideoWindow) * 96.0f);
+	float dpi = SDL_GetDisplayContentScale(SDL_CurrentDisplay);
+	if (dpi == 0.0f)
+		dpi = 1.0f;
+	#if defined(ANDROID) || defined(IOS)
+		return dpi * 160.0f;
+	#else
+		return dpi * 96.0f;
+	#endif
 }

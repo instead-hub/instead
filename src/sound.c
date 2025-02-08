@@ -47,7 +47,7 @@ static mus_t mus;
 static char *next_mus = NULL;
 static int   next_fadein = 0;
 static int   next_loop = -1;
-static SDL_TimerID timer_id = NULL_TIMER;
+static SDL_TimerID timer_id = 0;
 
 static int sound_on = 0;
 
@@ -77,7 +77,7 @@ static void mus_callback(void *aux)
 		next_mus = NULL;
 	}
 	SDL_RemoveTimer(timer_id);
-	timer_id = NULL_TIMER;
+	timer_id = 0;
 }
 
 static Uint32 callback(void *aux, SDL_TimerID timerID, Uint32 interval)
@@ -418,7 +418,7 @@ void snd_close(void)
 	Mix_ChannelFinished(NULL);
 	if (timer_id) {
 		SDL_RemoveTimer(timer_id);
-		timer_id = NULL_TIMER;
+		timer_id = 0;
 	}
 	Mix_HaltChannel(-1);
 	Mix_HookMusicFinished(NULL);
