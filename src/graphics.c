@@ -2109,7 +2109,7 @@ done:
 
 int gfx_video_init(void)
 {
-	if (TTF_Init()) {
+	if (!TTF_Init()) {
 		fprintf(stderr, "Can't init TTF subsystem.\n");
 		return -1;
 	}
