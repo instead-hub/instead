@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2024 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2025 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
