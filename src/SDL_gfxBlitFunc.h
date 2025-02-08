@@ -93,10 +93,10 @@ extern    "C" {
 	*/
 #define GFX_RGBA_FROM_PIXEL(pixel, fmt, r, g, b, a)				\
 	{									\
-	r = ((pixel&fmt->Rmask)>>fmt->Rshift)<<fmt->Rloss; 		\
-	g = ((pixel&fmt->Gmask)>>fmt->Gshift)<<fmt->Gloss; 		\
-	b = ((pixel&fmt->Bmask)>>fmt->Bshift)<<fmt->Bloss; 		\
-	a = ((pixel&fmt->Amask)>>fmt->Ashift)<<fmt->Aloss;	 	\
+	r = ((pixel&fmt->Rmask)>>fmt->Rshift)<<(8 - fmt->Rbits); 		\
+	g = ((pixel&fmt->Gmask)>>fmt->Gshift)<<(8 - fmt->Gbits); 		\
+	b = ((pixel&fmt->Bmask)>>fmt->Bshift)<<(8 - fmt->Bbits); 		\
+	a = ((pixel&fmt->Amask)>>fmt->Ashift)<<(8 - fmt->Abits);	 	\
 	}
 
 	/*!
@@ -114,10 +114,10 @@ extern    "C" {
 	*/
 #define GFX_PIXEL_FROM_RGBA(pixel, fmt, r, g, b, a)				\
 	{									\
-	pixel = ((r>>fmt->Rloss)<<fmt->Rshift)|				\
-	((g>>fmt->Gloss)<<fmt->Gshift)|				\
-	((b>>fmt->Bloss)<<fmt->Bshift)|				\
-	((a<<fmt->Aloss)<<fmt->Ashift);				\
+	pixel = ((r>>(8 - fmt->Rbits))<<fmt->Rshift)|				\
+	((g>>(8 - fmt->Gbits))<<fmt->Gshift)|				\
+	((b>>(8 - fmt->Bbits))<<fmt->Bshift)|				\
+	((a<<(8 - fmt->Abits))<<fmt->Ashift);				\
 	}
 
 	/*!

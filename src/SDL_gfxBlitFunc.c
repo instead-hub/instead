@@ -313,9 +313,10 @@ void _SDL_gfxBlitBlitterRGBA(SDL_gfxBlitInfo * info)
 	int       dstskip = info->d_skip;
 	SDL_PixelFormat *srcfmt = info->src;
 	SDL_PixelFormat *dstfmt = info->dst;
-	Uint8       srcbpp = srcfmt->BytesPerPixel;
-	Uint8       dstbpp = dstfmt->BytesPerPixel;
-
+	Uint8       srcbpp = SDL_BYTESPERPIXEL(*srcfmt);
+	Uint8       dstbpp = SDL_BYTESPERPIXEL(*dstfmt);
+	const SDL_PixelFormatDetails *srcf = SDL_GetPixelFormatDetails(*srcfmt);
+	const SDL_PixelFormatDetails *dstf = SDL_GetPixelFormatDetails(*dstfmt);
 	while (height--) {
 		GFX_DUFFS_LOOP4( {
 			Uint32 pixel;
@@ -328,12 +329,12 @@ void _SDL_gfxBlitBlitterRGBA(SDL_gfxBlitInfo * info)
 			unsigned dB;
 			unsigned dA;
 			unsigned sAA;
-			GFX_DISASSEMBLE_RGBA(src, srcbpp, srcfmt, pixel, sR, sG, sB, sA);
-			GFX_DISASSEMBLE_RGBA(dst, dstbpp, dstfmt, pixel, dR, dG, dB, dA);
+			GFX_DISASSEMBLE_RGBA(src, srcbpp, srcf, pixel, sR, sG, sB, sA);
+			GFX_DISASSEMBLE_RGBA(dst, dstbpp, dstf, pixel, dR, dG, dB, dA);
 			sAA=GFX_ALPHA_ADJUST_ARRAY[sA & 255];
 			GFX_ALPHA_BLEND(sR, sG, sB, sAA, dR, dG, dB);
 			dA |= sAA;
-			GFX_ASSEMBLE_RGBA(dst, dstbpp, dstfmt, dR, dG, dB, dA);
+			GFX_ASSEMBLE_RGBA(dst, dstbpp, dstf, dR, dG, dB, dA);
 			src += srcbpp; dst += dstbpp;
 		}, width);
 		src += srcskip;
@@ -364,18 +365,18 @@ int _SDL_gfxBlitRGBACall(SDL_Surface * src, SDL_Rect * srcrect, SDL_Surface * ds
 		/*
 		* Set up the blit information 
 		*/
-		info.s_pixels = (Uint8 *) src->pixels               + (Uint16) srcrect->y * src->pitch + (Uint16) srcrect->x * src->format->BytesPerPixel;
+		info.s_pixels = (Uint8 *) src->pixels               + (Uint16) srcrect->y * src->pitch + (Uint16) srcrect->x * SDL_BYTESPERPIXEL(src->format);
 		info.s_width = srcrect->w;
 		info.s_height = srcrect->h;
-		info.s_skip = (int)(src->pitch - info.s_width * src->format->BytesPerPixel);
-		info.d_pixels = (Uint8 *) dst->pixels               + (Uint16) dstrect->y * dst->pitch + (Uint16) dstrect->x * dst->format->BytesPerPixel;
+		info.s_skip = (int)(src->pitch - info.s_width * SDL_BYTESPERPIXEL(src->format));
+		info.d_pixels = (Uint8 *) dst->pixels               + (Uint16) dstrect->y * dst->pitch + (Uint16) dstrect->x * SDL_BYTESPERPIXEL(dst->format);
 		info.d_width = dstrect->w;
 		info.d_height = dstrect->h;
-		info.d_skip = (int)(dst->pitch - info.d_width * dst->format->BytesPerPixel);
+		info.d_skip = (int)(dst->pitch - info.d_width * SDL_BYTESPERPIXEL(dst->format));
 		info.aux_data = NULL;
-		info.src = src->format;
+		info.src = &src->format;
 		info.table = NULL;
-		info.dst = dst->format;
+		info.dst = &dst->format;
 
 		/*
 		* Run the actual software blitter 
@@ -412,11 +413,12 @@ int SDL_gfxBlitRGBA(SDL_Surface * src, SDL_Rect * srcrect, SDL_Surface * dst, SD
 		SDL_SetError("SDL_UpperBlit: passed a NULL surface");
 		return (-1);
 	}
+/*
 	if ((src->locked) || (dst->locked)) {
 		SDL_SetError("Surfaces must not be locked during blit");
 		return (-1);
 	}
-
+*/
 	/*
 	* If the destination rectangle is NULL, use the entire dest surface 
 	*/
@@ -466,26 +468,27 @@ int SDL_gfxBlitRGBA(SDL_Surface * src, SDL_Rect * srcrect, SDL_Surface * dst, SD
 	* Clip the destination rectangle against the clip rectangle 
 	*/
 	{
-		SDL_Rect *clip = &dst->clip_rect;
+		SDL_Rect clip;
+		SDL_GetSurfaceClipRect(dst, &clip);
 		int       dx, dy;
 
-		dx = clip->x - dr.x;
+		dx = clip.x - dr.x;
 		if (dx > 0) {
 			w -= dx;
 			dr.x += dx;
 			srcx += dx;
 		}
-		dx = dr.x + w - clip->x - clip->w;
+		dx = dr.x + w - clip.x - clip.w;
 		if (dx > 0)
 			w -= dx;
 
-		dy = clip->y - dr.y;
+		dy = clip.y - dr.y;
 		if (dy > 0) {
 			h -= dy;
 			dr.y += dy;
 			srcy += dy;
 		}
-		dy = dr.y + h - clip->y - clip->h;
+		dy = dr.y + h - clip.y - clip.h;
 		if (dy > 0)
 			h -= dy;
 	}
@@ -525,8 +528,8 @@ int SDL_gfxSetAlpha(SDL_Surface *src, Uint8 a)
 
 	/* Check if we have a 32bit surface */
 	if ( (src==NULL) || 
-		(src->format==NULL) || 
-		(src->format->BytesPerPixel!=4) ) {
+		(!src->format) || 
+		(SDL_BYTESPERPIXEL(src->format)!=4) ) {
 			SDL_SetError("SDL_gfxSetAlpha: Invalid input surface.");
 			return -1;
 	}
@@ -535,7 +538,7 @@ int SDL_gfxSetAlpha(SDL_Surface *src, Uint8 a)
 	* Lock the surface 
 	*/
 	if (SDL_MUSTLOCK(src)) {
-		if (SDL_LockSurface(src) < 0) {
+		if (!SDL_LockSurface(src)) {
 			return (-1);
 		}
 	}
@@ -588,8 +591,8 @@ int SDL_gfxMultiplyAlpha(SDL_Surface *src, Uint8 a)
 
 	/* Check if we have a 32bit surface */
 	if ( (src==NULL) || 
-		(src->format==NULL) || 
-		(src->format->BytesPerPixel!=4) ) {
+		(!src->format) || 
+		(SDL_BYTESPERPIXEL(src->format)!=4) ) {
 			SDL_SetError("SDL_gfxMultiplyAlpha: Invalid input surface.");
 			return -1;
 	}
@@ -603,7 +606,7 @@ int SDL_gfxMultiplyAlpha(SDL_Surface *src, Uint8 a)
 	* Lock the surface 
 	*/
 	if (SDL_MUSTLOCK(src)) {
-		if (SDL_LockSurface(src) < 0) {
+		if (!SDL_LockSurface(src)) {
 			return (-1);
 		}
 	}
