@@ -27,7 +27,7 @@ Andreas Schiffler -- aschiffler at ferzkopp dot net
 
 */
 
-#include "SDL_gfxBlitFunc.h"
+#include "SDL3_gfxBlitFunc.h"
 
 /*!  
 \brief Alpha adjustment table for custom blitter.
