@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2022 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2025 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -30,12 +30,16 @@
 #include <glib.h>
 #endif
 
-#include <SDL.h>
-#include <SDL_mixer.h>
+#include <SDL3/SDL.h>
+#include <SDL3_mixer/SDL_mixer.h>
+
 
 int audio_rate = 22050;
 
-Uint16 audio_format = MIX_DEFAULT_FORMAT;
+#define SND_DEFAULT_FORMAT MIX_DEFAULT_FORMAT
+
+Uint16 audio_format = SND_DEFAULT_FORMAT;
+
 int audio_channels = 2;
 int audio_buffers = 8192;
 
@@ -49,7 +53,7 @@ static int sound_on = 0;
 
 struct _mus_t {
 	Mix_Music *mus;
-	SDL_RWops *rw;
+	SDL_IOStream *rw;
 };
 
 int snd_enabled(void)
@@ -76,7 +80,7 @@ static void mus_callback(void *aux)
 	timer_id = NULL_TIMER;
 }
 
-static Uint32 callback(Uint32 interval, void *aux)
+static Uint32 callback(void *aux, SDL_TimerID timerID, Uint32 interval)
 {
 	push_user_event(mus_callback,  aux);
 	return interval;
@@ -107,6 +111,7 @@ void snd_pause(int on)
 
 static int _snd_open(int hz)
 {
+	struct SDL_AudioSpec aspec;
 	int chunk;
 	if (!hz)
 		hz = audio_rate;
@@ -116,11 +121,10 @@ static int _snd_open(int hz)
 	audio_buffers = (audio_rate / 11025) * chunk;
 	if (audio_buffers <= 0) /* wrong parameter? */
 		audio_buffers = DEFAULT_CHUNKSIZE;
-#ifdef __EMSCRIPTEN__
-	if (Mix_OpenAudioDevice(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4096, NULL, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE)) {
-#else
-	if (Mix_OpenAudio(hz, audio_format, audio_channels, audio_buffers)) {
-#endif
+	aspec.channels = audio_channels;
+	aspec.freq = hz;
+	aspec.format = SND_DEFAULT_FORMAT;
+	if (Mix_OpenAudio(0, &aspec)) {
 		fprintf(stderr, "Unable to open audio!\n");
 		return -1;
 	}
@@ -170,7 +174,7 @@ int snd_open(int hz)
 
 int snd_init(int hz)
 {
-	if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0) {
+	if (!SDL_InitSubSystem(SDL_INIT_AUDIO)) {
 		fprintf(stderr, "Unable to init audio!\n");
 		return -1;
 	}
@@ -185,18 +189,12 @@ int snd_volume_mus(int vol)
 	return Mix_VolumeMusic(vol);
 }
 
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-#define SND_DEFAULT_FORMAT  AUDIO_S16LSB
-#else
-#define SND_DEFAULT_FORMAT  AUDIO_S16MSB
-#endif
 
 #define MIXER_VERSION_ATLEAST(a,b,c)  (SDL_VERSIONNUM(SDL_MIXER_MAJOR_VERSION, SDL_MIXER_MINOR_VERSION,SDL_MIXER_PATCHLEVEL) >= SDL_VERSIONNUM(a, b, c))
 
 wav_t	snd_load_mem(int fmt, const short *data, size_t len)
 {
 	int freq = 22050, ffreq;
-	SDL_AudioCVT wavecvt;
 	Mix_Chunk *chunk;
 	size_t size = len * sizeof(short);
 
@@ -209,27 +207,22 @@ wav_t	snd_load_mem(int fmt, const short *data, size_t len)
 	else
 		ffreq = 44100;
 
-	if (audio_format != SND_DEFAULT_FORMAT ||
+	if (audio_format != SDL_AUDIO_S16 ||
 	    audio_channels != ((fmt & SND_FMT_STEREO) ? 2:1) ||
 	    ffreq != freq) {
-		if (SDL_BuildAudioCVT(&wavecvt,
-			      SND_DEFAULT_FORMAT, (fmt & SND_FMT_STEREO) ? 2:1, ffreq,
-			      audio_format, audio_channels, freq) < 0)
+		Uint8 *dst;
+		int dst_len;
+		SDL_AudioSpec sspec, dspec;
+		sspec.freq = ffreq;
+		sspec.channels = (fmt & SND_FMT_STEREO) ? 2:1;
+		sspec.format = SDL_AUDIO_S16;
+		dspec.freq = freq;
+		dspec.channels = audio_channels;
+		dspec.format = audio_format;
+		if (!SDL_ConvertAudioSamples(&sspec, (Uint8 *)data, size, &dspec, &dst, &dst_len))
 			return NULL;
-
-		wavecvt.len = size;
-		wavecvt.buf = (Uint8 *)SDL_calloc(1, wavecvt.len * wavecvt.len_mult);
-
-		if (!wavecvt.buf)
-			return NULL;
-
-		SDL_memcpy(wavecvt.buf, data, size);
-
-		if (SDL_ConvertAudio(&wavecvt) < 0) {
-			SDL_free(wavecvt.buf);
-			return NULL;
-		}
-		chunk = Mix_QuickLoad_RAW(wavecvt.buf, wavecvt.len_cvt);
+		chunk = Mix_QuickLoad_RAW(dst, dst_len);
+		SDL_free(dst);
 	} else {
 		Uint8 *b = (Uint8 *)SDL_calloc(1, size);
 		if (!b)
@@ -245,14 +238,14 @@ wav_t	snd_load_mem(int fmt, const short *data, size_t len)
 
 wav_t	snd_load_wav(const char *fname)
 {
-	SDL_RWops *rw;
+	SDL_IOStream *rw;
 	wav_t r;
 	if (!sound_on)
 		return NULL;
 	if (!fname || !*fname)
 		return NULL;
 	rw = RWFromIdf(instead_idf(), fname);
-	if (!rw || !(r = (wav_t)Mix_LoadWAV_RW(rw, 1))) {
+	if (!rw || !(r = (wav_t)Mix_LoadWAV_IO(rw, 1))) {
 		return NULL;
 	}
 	return r;
@@ -292,7 +285,7 @@ mus_t snd_load_mus(const char *fname)
 	mus->rw = RWFromIdf(instead_idf(), fname);
 	if (!mus->rw)
 		goto err;
-	mus->mus = Mix_LoadMUS_RW(mus->rw, SDL_FALSE);
+	mus->mus = Mix_LoadMUS_IO(mus->rw, 0);
 	if (!mus->mus)
 		goto err1;
 	return mus;
