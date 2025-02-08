@@ -43,7 +43,7 @@
    Define SDL versions of RWSetMsg(), ImageNewCmap() and ImageSetCmap()
 */
 #include <SDL3/SDL.h>
-#include "SDL_gif.h"
+#include "SDL3_gif.h"
 #include "instead/instead.h"
 
 #define Image           SDL_Surface

@@ -32,8 +32,10 @@
 #define LINK_CACHE_SIZE		64
 */
 
-typedef int		gtimer_t;
-#define	NULL_TIMER	0
+struct gfx_timer;
+typedef struct gfx_timer *gtimer_t;
+
+#define	NULL_TIMER	NULL
 
 struct _img_t;
 typedef struct _img_t*	img_t;

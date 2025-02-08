@@ -2507,7 +2507,6 @@ int game_click(int x, int y, int action, int filter)
 	struct el 	*new_elem = NULL;
 
 	int was_motion = (motion_mode == 2);
-
 	if (!action) {
 		click_x = x;
 		click_y = y;
@@ -3547,9 +3546,9 @@ static int kbd_instead(struct inp_event *ev, int *x, int *y)
 static int mouse_instead(struct inp_event *ev, int *x, int *y)
 {
 	if (ev->type == MOUSE_DOWN) {
-		if (ev->code != 1)
+		if (ev->code != 1) {
 			disable_use();
-		else {
+		} else {
 			game_highlight(-1, -1, 0);
 			game_click(ev->x, ev->y, 0, 1);
 			*x = ev->x;
