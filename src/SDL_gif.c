@@ -744,7 +744,7 @@ void FreeAnimation(Animation_t *anim)
             int i;
             for (i = 0; i < anim->count; ++i) {
                 if (anim->frames[i]) {
-                    SDL_FreeSurface(anim->frames[i]);
+                    SDL_DestroySurface(anim->frames[i]);
                 }
             }
             SDL_free(anim->frames);
@@ -763,7 +763,7 @@ Animation_t *GIF_LoadAnim(const char* file)
 	if (!src)
 		return NULL;
 	anim = LoadGIFAnimation_IO(src);
-	SDL_RWclose(src);
+	SDL_CloseIO(src);
 	if (!anim)
 		return NULL;
 	if (anim->count <=1) {

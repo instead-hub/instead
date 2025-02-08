@@ -1,7 +1,7 @@
 #ifndef TINYMT32_H
 #define TINYMT32_H
 #ifdef _USE_SDL
-#include <SDL_types.h>
+#include <SDL3/SDL_stdinc.h>
 #else
 #include <stdint.h>
 typedef uint32_t Uint32;

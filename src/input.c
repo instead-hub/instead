@@ -715,7 +715,7 @@ int input_text(int start)
 	SDL_Rect rect;
 	int w, h;
 	if (start == -1)
-		return SDL_IsTextInputActive();
+		return SDL_TextInputActive(SDL_VideoWindow);
 	if (start) {
 		gfx_real_size(&w, &h);
 		rect.x = w / 2; rect.y = h - 1;
