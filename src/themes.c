@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2022 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2025 Peter Kosyh <p.kosyh at gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -251,6 +251,28 @@ static int out_dpi(const void *v, char **out)
 	else
 		sprintf(o, "%d-%d", dpi->min, dpi->max);
 	*out = o;
+	return 0;
+}
+
+static int out_win_align(const void *v, char **out)
+{
+	int mode = *(int*)v;
+	switch (mode) {
+	case ALIGN_LEFT:
+		*out = strdup("left");
+		break;
+	case ALIGN_RIGHT:
+		*out = strdup("right");
+		break;
+	case ALIGN_CENTER:
+		*out = strdup("center");
+		break;
+	case ALIGN_JUSTIFY:
+		*out = strdup("justify");
+		break;
+	default:
+		return -1;
+	}
 	return 0;
 }
 
@@ -680,6 +702,10 @@ char *theme_getvar(char *name)
 			return s;
 		} else if (cmd_parser[i].fn == parse_dpi) {
 			if (out_dpi(cmd_parser[i].p, &s))
+				return NULL;
+			return s;
+		} else if (cmd_parser[i].fn == parse_win_align) {
+			if (out_win_align(cmd_parser[i].p, &s))
 				return NULL;
 			return s;
 		} else
