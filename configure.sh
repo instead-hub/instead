@@ -26,16 +26,8 @@ fi
 echo -n "Checking pkg-config --cflags gtk+-3.0..."
 if ! pkg-config --cflags gtk+-3.0 >/dev/null 2>&1; then
 	echo "no"
-	echo -n "Checking pkg-config --cflags gtk+-2.0..."
-	if ! pkg-config --cflags gtk+-2.0 >/dev/null 2>&1; then
-		echo "no open file dialog"
-		gtk_cflags=
-		gtk_libs=
-	else
-		echo "yes"
-		gtk_cflags="pkg-config --cflags gtk+-2.0"
-		gtk_libs="pkg-config --libs gtk+-2.0"
-	fi
+	gtk_cflags=
+	gtk_libs=
 else
 	echo "yes"
 	gtk_cflags="pkg-config --cflags gtk+-3.0"
@@ -67,18 +59,18 @@ if test "x$lua_libs" = "x"; then
 fi
 
 
-echo -n "Checking sdl2-config..."
-if ! sdl2-config --version >/dev/null 2>&1; then
-	echo "error: no sdl2-config in \$PATH."
-	echo "Please install sdl2, sdl2_ttf, sdl2_mixer and sdl2_image development packages."
+echo -n "Checking pkg-config sdl3..."
+if ! pkg-config sdl3 >/dev/null 2>&1; then
+	echo "error: no sdl3-config in \$PATH."
+	echo "Please install sdl3, sdl3_ttf, sdl3_mixer and sdl3_image development packages."
 	exit 1
 else
 	echo "ok"
-	sdl_config="sdl2-config"
-	sdl_libs="-lSDL2_ttf -lSDL2_mixer -lSDL2_image -lm"
+	sdl_config="pkg-config sdl3"
+	sdl_libs="-lSDL3_ttf -lSDL3_mixer -lSDL3_image -lm"
 fi
 
-echo -n "Checking sdl-config --cflags..."
+echo -n "Checking pkg-config sdl3 --cflags..."
 if ! $sdl_config --cflags  >/dev/null 2>&1; then
 	echo "failed."
 	exit 1
@@ -106,11 +98,11 @@ else
 fi
 
 cat << EOF >/tmp/sdl-test.c
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
-#include <SDL_mutex.h>
-#include <SDL_mixer.h>
+#include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
+#include <SDL3_ttf/SDL_ttf.h>
+#include <SDL3/SDL_mutex.h>
+#include <SDL3_mixer/SDL_mixer.h>
 int main(int argc, char **argv)
 {
 	return 0;
@@ -247,5 +239,3 @@ else
 fi
 
 echo " Enjoy..."
-
-
