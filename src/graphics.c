@@ -30,7 +30,7 @@
 #include <SDL3_ttf/SDL_ttf.h>
 
 #define PIXEL_FORMAT (SDL_PIXELFORMAT_RGBA32)
-#define PIXEL_FORMAT_DETAILS SDL_GetPixelFormatDetails(SDL_PIXELFORMAT_RGBA32)
+#define PIXEL_FORMAT_DETAILS(surf) SDL_GetPixelFormatDetails((surf)->format)
 
 #ifdef _USE_HARFBUZZ
 #include <hb.h>
@@ -622,7 +622,8 @@ void	gfx_img_fill(img_t img, int x, int y, int w, int h, color_t col)
 	dest.y = y;
 	dest.w = w;
 	dest.h = h;
-	SDL_FillSurfaceRect(Surf(img), &dest, SDL_MapRGB(PIXEL_FORMAT_DETAILS, NULL, col.r, col.g, col.b));
+	SDL_FillSurfaceRect(Surf(img), &dest, SDL_MapRGB(PIXEL_FORMAT_DETAILS(Surf(img)),
+		NULL, col.r, col.g, col.b));
 }
 
 void	gfx_fill(int x, int y, int w, int h, color_t col)
@@ -703,7 +704,8 @@ int gfx_get_pixel(img_t src, int x, int y,  color_t *color)
 
 	SDL_UnlockSurface(img);
 	if (color)
-		SDL_GetRGBA(col, PIXEL_FORMAT_DETAILS, NULL, &r, &g, &b, &a);
+		SDL_GetRGBA(col, PIXEL_FORMAT_DETAILS(img),
+			NULL, &r, &g, &b, &a);
 
 	if (color) {
 		color->r = r;
@@ -732,7 +734,8 @@ int gfx_set_pixel(img_t src, int x, int y,  color_t color)
 	ptr = (Uint8*)img->pixels;
 	ptr += img->w * y * bpp;
 	ptr += x * bpp;
-	col = SDL_MapRGBA(PIXEL_FORMAT_DETAILS, NULL, color.r, color.g, color.b, color.a);
+	col = SDL_MapRGBA(PIXEL_FORMAT_DETAILS(img),
+		NULL, color.r, color.g, color.b, color.a);
 	memcpy(ptr, &col, bpp);
 
 	SDL_UnlockSurface(img);
@@ -767,7 +770,7 @@ img_t gfx_alpha_img(img_t src, int alpha)
 	Uint32 col;
 	int size;
 	int bpp = 4;
-
+	const SDL_PixelFormatDetails *pxl_details;
 	img_t img = NULL;
 	if (!src)
 		return NULL;
@@ -777,6 +780,7 @@ img_t gfx_alpha_img(img_t src, int alpha)
 		return NULL;
 
 	gfx_set_alpha(img, SDL_ALPHA_OPAQUE);
+	pxl_details = PIXEL_FORMAT_DETAILS(Surf(img));
 
 	if (SDL_LockSurface(Surf(img))) {
 		int w = Surf(img)->w;
@@ -785,8 +789,8 @@ img_t gfx_alpha_img(img_t src, int alpha)
 		while (size --) {
 			Uint8 r, g, b, a;
 			memcpy(&col, ptr, bpp);
-			SDL_GetRGBA(col, PIXEL_FORMAT_DETAILS, NULL, &r, &g, &b, &a);
-			col = SDL_MapRGBA(PIXEL_FORMAT_DETAILS, NULL, r, g, b, a * alpha /  SDL_ALPHA_OPAQUE);
+			SDL_GetRGBA(col, pxl_details, NULL, &r, &g, &b, &a);
+			col = SDL_MapRGBA(pxl_details, NULL, r, g, b, a * alpha /  SDL_ALPHA_OPAQUE);
 			memcpy(ptr, &col, bpp);
 			ptr += bpp;
 			w --;
@@ -808,7 +812,7 @@ void gfx_set_colorkey(img_t src, color_t col)
 	SDL_Surface *s = Surf(src);
 	if (!s)
 		return;
-	c = SDL_MapRGB(PIXEL_FORMAT_DETAILS, NULL, col.r, col.g, col.b);
+	c = SDL_MapRGB(PIXEL_FORMAT_DETAILS(s), NULL, col.r, col.g, col.b);
 	SDL_SetSurfaceColorKey(s, true, c);
 }
 
@@ -1389,14 +1393,16 @@ void gfx_clear(int x, int y, int w, int h)
 	int dx, dy;
 	SDL_Rect dest;
 	SDL_Surface *s = Surf(screen);
+	const SDL_PixelFormatDetails *pxl_details;
 	if (!s)
 		return;
+	pxl_details = PIXEL_FORMAT_DETAILS(s);
 	dest.x = x;
 	dest.y = y;
 	dest.w = w;
 	dest.h = h;
 	if (x < brd.x || y < brd.y || x + w >= brd.x + brd.w || y + h >= brd.y + brd.h) {
-		SDL_FillSurfaceRect(s, &dest, SDL_MapRGB(PIXEL_FORMAT_DETAILS, NULL, brdcol.r, brdcol.g, brdcol.b));
+		SDL_FillSurfaceRect(s, &dest, SDL_MapRGB(pxl_details, NULL, brdcol.r, brdcol.g, brdcol.b));
 		dx = brd.x - x;
 		dy = brd.y - y;
 		if (dx > 0) {
@@ -1414,9 +1420,9 @@ void gfx_clear(int x, int y, int w, int h)
 		if (dy < 0)
 			dest.h += dy;
 		if (dest.w > 0 && dest.h > 0)
-			SDL_FillSurfaceRect(s, &dest, SDL_MapRGB(PIXEL_FORMAT_DETAILS, NULL, bgcol.r, bgcol.g, bgcol.b));
+			SDL_FillSurfaceRect(s, &dest, SDL_MapRGB(pxl_details, NULL, bgcol.r, bgcol.g, bgcol.b));
 	} else
-		SDL_FillSurfaceRect(s, &dest, SDL_MapRGB(PIXEL_FORMAT_DETAILS, NULL, bgcol.r, bgcol.g, bgcol.b));
+		SDL_FillSurfaceRect(s, &dest, SDL_MapRGB(pxl_details, NULL, bgcol.r, bgcol.g, bgcol.b));
 }
 
 int gfx_width = -1;
@@ -2104,7 +2110,8 @@ done:
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
 	SDL_RenderClear(Renderer);
 	SDL_RenderPresent(Renderer);
-	SDL_FillSurfaceRect(SDL_VideoSurface, NULL, SDL_MapRGB(PIXEL_FORMAT_DETAILS, NULL, 0, 0, 0));
+	SDL_FillSurfaceRect(SDL_VideoSurface, NULL,
+		SDL_MapRGB(PIXEL_FORMAT_DETAILS(SDL_VideoSurface), NULL, 0, 0, 0));
 	return 0;
 }
 
