@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
 PROJECT(instead)
 
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
@@ -11,7 +11,6 @@ ENDIF("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 SET(INSTEAD_VERSION "3.5.2")
 
 # options
-OPTION(WITH_GTK2 "Use GTK2 file open dialog" OFF)
 OPTION(WITH_GTK3 "Use GTK3 file open dialog" ON)
 OPTION(WITH_ICONV "Build with iconv support" ON)
 OPTION(WITH_LUAJIT "Use LuaJIT instead of Lua" ON)
@@ -30,11 +29,6 @@ OPTION(WITH_HARFBUZZ "Build with HarfBuzz for RTL language support" OFF)
 OPTION(SYSTEMWIDE "Build for systemwide install" ON)
 OPTION(STANDALONE "Build for standalone package creation" OFF)
 OPTION(APPIMAGE "Build for appimage package creation" OFF)
-
-IF(WITH_GTK2 AND WITH_GTK3)
-	MESSAGE(WARNING "WITH_GTK2 and WITH_GTK3 are mutually exclusive, disabling WITH_GTK2")
-	SET(WITH_GTK2 OFF)
-ENDIF(WITH_GTK2 AND WITH_GTK3)
 
 IF(SYSTEMWIDE AND STANDALONE)
 	MESSAGE(WARNING "Both STANDALONE and SYSTEMWIDE specified, disabling SYSTEMWIDE")
