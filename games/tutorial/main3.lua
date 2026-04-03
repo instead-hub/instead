@@ -4,6 +4,7 @@
 -- $Name(de):Einführung$
 -- $Name(es):Tutorial$
 -- $Name(fr):Tutoriel$
+-- $Name(hu):Tutorial$
 -- $Name(it):Tutorial$
 -- $Name(pt):Tutorial$
 -- $Name(nl):Snelstart Training$
@@ -17,6 +18,7 @@ local tut_lang = {
 	es = 'Idioma',
 	pt = 'Linguagem',
 	fr = 'Langue',
+	hu = 'Nyelv',
 	de = 'Sprache',
 	nl = 'Taal',
 }
@@ -29,6 +31,7 @@ local tut_title = {
 	es = 'Tutorial',
 	pt = 'Tutorial',
 	fr = 'Tutoriel',
+	hu = 'Tutorial',
 	de = 'Einführung',
 	nl = 'Snelstart Training',
 }
@@ -57,6 +60,7 @@ room {
 		{$fmt img|br.png} {@ load pt|Português}^
 		{$fmt img|it.png} {@ load it|Italiano}^
 		{$fmt img|fr.png} {@ load fr|Français}^
+		{$fmt img|hu.png} {@ load hu|Magyar}^
 		{$fmt img|de.png} {@ load de|Deutsch}^
 		{$fmt img|nl.png} {@ load nl|Nederlands}]]
 	);
