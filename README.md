@@ -25,5 +25,5 @@ To run games you may:
 
 ## Contacts
 
-- Join the irc channel #instead on irc.oftc.net;
+- Join the irc channel #instead on spline-online.ru;
 - Check the [AUTHORS](AUTHORS) file.
