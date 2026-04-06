@@ -20,6 +20,7 @@ game.act = L {
 	en = "You can't.",
 	es = 'No puedes hacer eso.',
 	fr = 'Vous ne pouvez pas.',
+	hu = 'Nem végezhető rajta cselekvés.',
 	it = 'Non puoi.',
 	nl = 'Dat kan niet.',
 	pt = 'Isso não é permitido.',
@@ -32,6 +33,7 @@ game.inv = L {
 	en = "Hmm... Wrong...",
 	es = "Hmm... Nop...",
 	fr = "Hmm… Mauvais…",
+	hu = 'Hmm... Értelmetlen.',
 	it = "Hmm... Sbagliato...",
 	nl = "Hmm... Verkeerd...",
 	pt = "Hmm... Não...",
@@ -44,6 +46,7 @@ game.use = L {
 	en = "Won't work...",
 	es = 'No pasa nada...',
 	fr = 'Ne fonctionne pas…',
+	hu = 'Nem működne.',
 	it = 'Non funziona...',
 	nl = 'Dat werkt niet...',
 	pt = 'Não funciona...',
@@ -62,6 +65,7 @@ room {
 		de = 'Einführung',
 		es = 'Tutorial',
 		fr = 'Tutoriel',
+		hu = 'Tutorial',
 		it = 'Tutorial',
 		nl = 'Snelstart Training',
 		pt = 'Tutorial',
@@ -130,6 +134,18 @@ room {
 
 	{@ walk r1|Suivant}]],
 
+		hu = [[
+	{$fmt c|Üdvözlet az INSTEAD oktató módjában!}^^
+	A játékok jelenetekből állnak. Minden jelenetnek van leírása, mely állandó
+	és interaktív részekből áll. Utóbbiak közé tartoznak a tárgyak, karakterek, stb. A játékos interakcióba léphet
+	az interaktív részekkel a kiemelt linkekre való klikkelés révén.^^
+
+	A mostani jelenet neve "Tutorial", leírásának állandó részét olvassa.
+	Egyetlen interaktív elem ebben a jelenetben a "Következő" címke, mely e szöveg alatt látható.
+	A folytatáshoz kattintson a "Következő" gombra.^^
+
+	{@ walk r1|Következő}]],
+
 		it = [[{$fmt c|Benvenuto in questa guida introduttiva ad INSTEAD.}^^
 	Il gioco consiste di scene. Ogni scena del gioco ha una descrizione, formata da parti statiche e dinamiche.
 	Le parti dinamiche includono oggetti, personaggi, etc... Il giocatore può interagire con la
@@ -188,6 +204,7 @@ obj {
 		de = 'Papier',
 		es = 'papel',
 		fr = 'papier',
+		hu = 'papír',
 		it = 'foglio',
 		nl = 'papier',
 		pt = 'papel',
@@ -199,6 +216,7 @@ obj {
 		de = 'Das Erste, was Sie im Raum bemerken, ist ein {Blatt Papier}.',
 		es = 'Lo primero que ves en la habitación es un {pedazo de papel}.',
 		fr = 'La première chose que vous remarquez dans la pièce est une {feuille de papier}.',
+		hu = 'A szobába lépés utáni első szembeötlő dolog egy {darab papír}.',
 		it = 'La prima cosa che potete notare nella stanza è un {foglio di carta}.',
 		nl = 'Het eerste dat in deze ruimte opvalt, is een {blad papier}.',
 		pt = 'A primeira coisa que você vê no local é uma {folha de papel}.',
@@ -210,6 +228,7 @@ obj {
 		de = 'Sie nehmen das Papier.',
 		es = 'Coges el papel.',
 		fr = 'Vous prenez le papier.',
+		hu = 'Papírlap felvéve.',
 		it = 'Prendi il foglio.',
 		nl = 'Je pakt het blad papier.',
 		pt = 'Você pega o papel.',
@@ -228,6 +247,7 @@ obj {
 				de = 'Ein leeres Blatt kariertes Papier. Vermutlich wurde aus einem Schreibblock ausgerissen.',
 				es = 'Una hoja blanca y cuadrada. Probablemente arrancada de un libro.',
 				fr = 'Une feuille de papier quadrillé. Probablement arrachée d’un livre.',
+				hu = 'Egy használatlan, kockás papírlap. Feltehetőleg gyakorlófüzetből tépték ki.',
 				it = 'Un foglio di carta bianca a quadretti. Probabilmente strappato da un quaderno.',
 				nl = 'Een blanco blad gelinieerd papier. Waarschijnlijk uit een notitieboekje gescheurd.',
 				pt = 'Uma folha branca e quadrada de papel. Provavelmente rasgada de um livro.',
@@ -241,6 +261,7 @@ obj {
 			de = 'Ein Blatt kariertes Papier, auf dem Ihr Name geschrieben steht.',
 			es = 'Una hoja cuadrada de papel con tu nombre escrito en ella.',
 			fr = 'Une feuille de papier quadrillé avec votre nom.',
+			hu = 'Az ön nevével ékesített kockás papírlap.',
 			it = 'Un foglio a quadretti con il tuo nome scritto sopra.',
 			nl = 'Een blad gelinieerd papier waarop jouw naam geschreven staat.',
 			pt = 'Uma folha quadrada de papel com seu nome nela.',
@@ -256,6 +277,7 @@ obj {
 				de = 'Sie schreiben Ihren Namen auf das Papier.',
 				es = 'Escribes tu nombre en el papel.',
 				fr = 'Vous écrivez votre nom sur le papier.',
+				hu = 'Nevét papírra írja.',
 				it = 'Scrivi il tuo nome sul foglio.',
 				nl = 'Je schrijft je naam op het papier.',
 				pt = 'Você escreve o seu nome no papel.',
@@ -275,6 +297,7 @@ obj {
 		de = 'Stift',
 		es = 'lápiz',
 		fr = 'crayon',
+		hu = 'ceruza',
 		it = 'matita',
 		nl = 'potlood',
 		pt = 'lápis',
@@ -286,6 +309,7 @@ obj {
 		de = 'Dort liegt ein {Stift} auf dem Boden.',
 		es = 'Hay un {lápiz} en el piso.',
 		fr = 'Il y a un {crayon} sur le sol.',
+		hu = 'Földön fekszik egy {ceruza}.',
 		it = "C'è anche una {matita} sul pavimento.",
 		nl = 'Er ligt een {potlood} op de grond.',
 		pt = 'Há um {lápis} no chão.',
@@ -297,6 +321,7 @@ obj {
 		de = 'Sie nehmen den Stift.',
 		es = 'Coges el lápiz.',
 		fr = 'Vous prenez le crayon.',
+		hu = 'Ceruza felvéve.',
 		it = 'Raccogli la matita.',
 		nl = 'Je pakt het potlood op.',
 		pt = 'Você pega o lápis.',
@@ -313,6 +338,7 @@ obj {
 			de = 'Ein gewöhnlicher Stift.',
 			es = 'Un lápiz común de madera.',
 			fr = 'Un crayon ordinaire, en bois.',
+			hu = 'Átlagos faceruza.',
 			it = 'Una normale matita di legno.',
 			nl = 'Een heel normaal houten potlood.',
 			pt = 'Um simples lápis de madeira.',
@@ -329,6 +355,7 @@ room {
 		de = '1. Lektion',
 		es = 'Lección 1',
 		fr = 'Leçon nº 1',
+		hu = '1. lecke',
 		it = 'Lezione 1',
 		nl = 'Les 1',
 		pt = 'Lição 1',
@@ -373,6 +400,11 @@ room {
 		Prenez les deux objets que vous y voyez. Vous pouvez simplement cliquer dessus avec la souris,
 		ou, si vous préférez le clavier, vous pouvez choisir un objet avec les touches
 		fléchées et appuyer sur « Entrée » pour interagir avec lui.]],
+
+		hu = [[1. lecke: Tárgyak használata^^
+		Folytassuk a leckét! Egy szobában van. Vegye fel mindkét látható tárgyat!.
+		Rájuk klikkelhet egérrel, de ha billentyűzettel szeretné akkor
+		nyílbillentyűkkel választhat, majd az "Enter" lenyomásával cselekedhet.]],
 
 		it = [[Lezione 1. Interagire con gli oggetti^^
 		Continuiamo la nostra guida. Siete dentro una stanza e potete vedere due oggetti presenti.
@@ -436,6 +468,12 @@ room {
 
 		{Suivant}]],
 
+			hu = [[Kiváló!^Észrevehette, hogy a jelenet leírásának állandó része eltűnt,
+		helyét a felvett tárgyak leírása vette át. A jelenet teljes leírásának újboli megjelenítéséhez
+		klikkeljen az "1. lecke" címkére, vagy nyomja le az F5 billentyűt. Az eredmény azonos.^^
+
+		{Következő}]],
+
 			it = [[Eccellente!^Avrete probabilmente notato che la parte statica della descrizione della scena è scomparsa,
 		rimpiazzata dalla descrizione degli oggetti che avete preso. Per vedere di nuovo la descrizione completa
 		della scena potete fare click sul nome della scena in alto — "Lezione 1" o premere F5.
@@ -480,6 +518,7 @@ room {
 		de = '2. Lektion',
 		es = 'Lección 2',
 		fr = 'Leçon nº 2',
+		hu = '2. lecke',
 		it = 'Lezione 2',
 		nl = 'Les 2',
 		pt = 'Lição 2',
@@ -539,6 +578,14 @@ room {
 
 		Regardez maintenant le papier. Faites ensuite la même chose avec le crayon.]],
 
+		hu = [[2. lecke: Inventory használata — Első rész^^
+		Felvett tárgyainkat használhatjuk vagy megvizsgálhatjuk, tárhelyük neve az "Inventory".
+		Vizsgálatot dupla bal klikkel tehetünk. Billentyűzet használata esetén nyomjuk le a "Tab" gombot,
+		majd a kívánt tárgy kijelölése után kétszer az "Enter"-t. A "Tab" újbóli lenyomásával térhetünk vissza
+		a jelenet leírásához.^^
+
+		Vizsgáljuk meg előbb a papírt. aztán pedig a ceruzát!]],
+
 		it = [[Lezione 2. Usare l'inventario — Parte I^^
 		Ora avete nel vostro inventario due oggetti che potete esaminare od usare.
 		Per esaminare un qualsiasi oggetto fate doppio click su di esso oppure potete
@@ -585,6 +632,7 @@ room {
 			de = "Gut!^^{Weiter}",
 			es = "Bien!^^{Siguiente}",
 			fr = "Bien !^^{Suivant}",
+			hu = "Jó !^^{Következő}",
 			it = "Bene!^^{Avanti}",
 			nl = "Goed!^^{Volgende}",
 			pt = "Muito Bem!^^{Próxima}",
@@ -604,6 +652,7 @@ obj {
 		de = 'Apfel',
 		es = 'manzana',
 		fr = 'pomme',
+		hu = 'alma',
 		it = 'mela',
 		nl = 'appel',
 		pt = 'maçã',
@@ -615,6 +664,7 @@ obj {
 		de = 'Auf dem Tisch liegt ein {Apfel}.',
 		es = 'Hay una {manzana} sobre la mesa.',
 		fr = 'Il y a une {pomme} sur le bureau.',
+		hu = 'Asztalon van az {alma}.',
 		it = "C'è una {mela} sul tavolo.",
 		nl = 'Er ligt een {appel} op de tafel.',
 		pt = 'Há uma {maçã} na mesa.',
@@ -626,6 +676,7 @@ obj {
 		de = 'Sie nehmen sich einen Apfel vom Tisch.',
 		es = 'Coges la manzana de la mesa.',
 		fr = 'Vous prenez la pomme sur le bureau.',
+		hu = 'Alma felvéve az asztalról.',
 		it = 'Prendi la mela dal tavolo.',
 		nl = 'Je pakt de appel van de tafel.',
 		pt = 'Você pega a maçã da mesa.',
@@ -641,6 +692,7 @@ obj {
 				de = 'Sie essen den Apfel.',
 				es = 'Te comes la manzana.',
 				fr = 'Vous mangez la pomme.',
+				hu = 'Alma megéve.',
 				it = 'Mangi la mela.',
 				nl = 'Je eet de appel op.',
 				pt = 'Você comeu a maçã.',
@@ -654,6 +706,7 @@ obj {
 			de = 'Sieht appetitlich aus.',
 			es = 'Luce apetecible.',
 			fr = 'Elle est appétissante.',
+			hu = 'Ízletesnek látszik.',
 			it = 'Sembra appetitosa.',
 			nl = 'Ziet er smakelijk uit.',
 			pt = 'Hum, apetitosa.',
@@ -670,6 +723,7 @@ obj {
 		de = 'Schreibtisch',
 		es = 'escritorio',
 		fr = 'bureau',
+		hu = 'asztal',
 		it = 'scrivania',
 		nl = 'bureau',
 		pt = 'escrivaninha',
@@ -681,6 +735,7 @@ obj {
 		de = 'In dieser Lektion sehen Sie einen hölzernen {Schreibtisch}.',
 		es = 'Aquí ves un {escritorio} de madera.',
 		fr = 'Dans cette leçon, vous voyez un {bureau} en bois.',
+		hu = 'Ebben a leckében egy fa {asztal} látható.',
 		it = 'Puoi vedere una {scrivania} di legno.',
 		nl = 'In deze ruimte zie je een houten {bureau}.',
 		pt = 'Você vê aqui uma {escrivaninha} de madeira.',
@@ -697,6 +752,7 @@ obj {
 				de = 'Ein großer Schreibtisch aus Eichenholz. Auf seiner Oberfläche steht mit einem Bleistift geschrieben: »Lorem Ipsum«.',
 				es = 'Un gran escritorio de roble. Hay algo escrito en él: "Lorem Ipsum".',
 				fr = 'Un grand bureau en chêne. Il y a dessus une inscription au crayon : « Lorem Ipsum ».',
+				hu = [[Nagy tölgyfa asztal, tetején ceruzával írt szöveg: "Lorem Ipsum".]],
 				it = [[Una larga scrivania di legno. C'è un'iscrizione sul piano: "Lorem Ipsum".]],
 				nl = 'Een groot eiken bureau. Er is met potlood op geschreven: "Lorem Ipsum".',
 				pt = 'Uma grande escrivaninha de carvalho. Há uma inscrição a lápis no seu topo: "Lorem Ipsum".',
@@ -710,6 +766,7 @@ obj {
 			de = 'Ein großer Schreibtisch aus Eichenholz.',
 			es = 'Un gran escritorio de roble.',
 			fr = 'Un grand bureau en chêne.',
+			hu = 'Nagy tölgyfa asztal.',
 			it = 'Una larga scrivania in legno.',
 			nl = 'Een groot eiken bureau.',
 			pt = 'Uma grande escrivaninha de carvalho.',
@@ -725,6 +782,7 @@ obj {
 				de = 'Sie schreiben einige Buchstaben auf den Tisch.',
 				es = 'Garabateas unas palabras sobre el escritorio.',
 				fr = 'Vous griffonnez plusieurs lettres sur le bureau.',
+				hu = 'Számos betűt rajzol az asztalra.',
 				it = 'Scrivi alcune lettere sulla scrivania.',
 				nl = 'Je schrijft enkele letters op het bureau.',
 				pt = 'Você escreve várias letras na escrivaninha.',
@@ -744,6 +802,7 @@ room {
 		de = '3. Lektion',
 		es = 'Lección 3',
 		fr = 'Leçon nº 3',
+		hu = '3. lecke',
 		it = 'Lezione 3',
 		nl = 'Les 3',
 		pt = 'Lição 3',
@@ -806,6 +865,13 @@ room {
 		Il suffit ensuite de regarder le bureau pour voir le résultat. Et n'oubliez pas de prendre la pomme,
 		vous en aurez besoin dans la prochaine leçon.]],
 
+		hu = [[3.lecke: Inventory használata — Második rész^^
+		Az inventory-ban tárolt eszközök használhatók más, jelenetben látható vagy szintén tárolt eszközökön. Ebben a szobában látható egy asztal. Próbáljon meg ceruzát használni rajta!^^
+
+		Ennek eléréséhez először a ceruzára, majd az asztalra kell kattintani. Billentyűzet használata esetén a "Tab", "enter" és nyílbillentyűk segítségével teljesíthető a feladat.^^
+
+		Ezután vizsgáljuk meg az asztalt, illetve ne felejtsük el magunkhoz venni az almát, amire a következő jelenetben szükség lesz.]],
+
 		it = [[Lezione 3. Usare l'inventario — Parte II^^
 		Potete agire con oggetti dell'inventario su altri oggeti della scena o dell'inventario stesso.
 		In questa locazione potete vedere una scrivania. Provate ad usare la matita su di essa.^^
@@ -858,6 +924,7 @@ room {
 			de = "{$|^^}{Weiter}",
 			es = "{$|^^}{Siguiente}",
 			fr = "{$|^^}{Suivant}",
+			hu = "{$|^^}{Következő}",
 			it = "{$|^^}{Avanti}",
 			nl = "{$|^^}{Volgende}",
 			pt = "{$|^^}{Próxima}",
@@ -877,6 +944,7 @@ room {
 		de = '4. Lektion',
 		es = 'Lección 4',
 		fr = 'Leçon nº 4',
+		hu = '4. lecke',
 		it = 'Lezione 4',
 		nl = 'Les 4',
 		pt = 'Lição 4',
@@ -947,6 +1015,15 @@ room {
 
 		Toutes ces actions peuvent être faites avec le clavier comme décrit précédemment.]],
 
+		hu = [[4. lecke: Inventory használata — Harmadik rész^^
+		Jó! Itt az ideje még egy kicsit gyakorolni a tárgyhasználatot.^^
+
+		Először írjunk valamit a papírra. Klikkeljen a ceruzára, majd a papírra! Érdemes ezután újra megvizsgálni a lapot.^^
+
+		Az előző szobában felvett alma megehető a bal egérgombbal való dupla kattintás segítségével.^^
+
+		Természetesen ezek a cselekvések billentyűzettel is kivitelezhetőek, a korábban leírtaknak megfelelően.]],
+
 		it = [[Lezione 4. Usare l'inventario — Parte III^^
 		Bene, ora vediamo qualche altra azione con gli oggetti.^^
 
@@ -1002,6 +1079,7 @@ room {
 			de = "Gut.^^{Weiter}",
 			es = "Bien!^^{Siguiente}",
 			fr = "Bien.^^{Suivant}",
+			hu = "Jó!^^{Következő}",
 			it = "Bene.^^{Avanti}",
 			nl = "Goed.^^{Volgende}",
 			pt = "Muito bem.^^{Próxima}",
@@ -1021,6 +1099,7 @@ room {
 		de = '5. Lektion',
 		es = 'Lección 5',
 		fr = 'Leçon nº 5',
+		hu = '5. lecke',
 		it = 'Lezione 5',
 		nl = 'Les 5',
 		pt = 'Lição 5',
@@ -1036,6 +1115,7 @@ room {
 			de = 'Wir haben diese Lektion bereits fertiggestellt.^ Bitte gehen Sie zur 6. Lektion.',
 			es = 'Ya hemos terminado esta lección.^ Ve a la lección 6, por favor.',
 			fr = 'Nous avons déjà terminé cette leçon…^ En avant pour la leçon nº 6, s’il vous plaît.',
+			hu = 'Már befejeztük ezt a leckét. Ideje továbblépni a hatodikra.',
 			it = 'Abbiamo già terminato questa parte della guida. Proseguiamo alla prossima, per favore.',
 			nl = 'Die les is al afgerond.^ Ga naar les 6, aub.',
 			pt = 'Já terminamos esta lição.^ Favor seguir para a lição 6.',
@@ -1076,6 +1156,11 @@ room {
 
 		Cliquez sur le lien approprié ou utilisez le clavier — sélectionnez le lien a l’aide des flèches et appuyez ensuite sur « Entrée ».]],
 
+		hu = [[5. lecke: Mozgás — Első rész^^
+		Most a helyszínek közötti mozgás mikéntjét fogjuk megismerni. Ebben a szobában öt, leckék számaival jelölt link látható. Válassza ki a hatodik leckét!^^
+
+		Mozogni egérrel vagy billentyűzettel lehetséges: Előbbi eszköznél a bal egérgomb, utóbbinál a nyilak és az "Enter" billentyű használatával.]],
+
 		it = [[Lezione 5. Movimenti — Parte I^^
 		Ora vedremo i passaggi tra una locazione e l'altra. In questa stanza potete
 		vedere cinque link che portano verso le lezioni numerate. Andate alla 6.^^
@@ -1114,6 +1199,7 @@ room {
 		de = '6. Lektion',
 		es = 'Lección 6',
 		fr = 'Leçon nº 6',
+		hu = '6. lecke',
 		it = 'Lezione 6',
 		nl = 'Les 6',
 		pt = 'Lição 6',
@@ -1129,6 +1215,7 @@ room {
 			de = 'Wir haben diese Lektion bereits fertiggestellt.^ Bitte gehen Sie zur letzen Lektion.',
 			es = 'Ya hemos terminado esta lección.^ Ve a la última lección, por favor.',
 			fr = 'Nous avons déjà terminé cette leçon…^ En avant pour la dernière leçon, s’il vous plaît.',
+			hu = 'Már befejeztük ezt a leckét. Ideje az utolsóra lépni.',
 			it = 'Abbiamo già terminato questa lezione.^ Proseguiamo verso la 6, per favore.',
 			nl = 'Die les is al afgerond.^ Ga naar de laatste les aub.',
 			pt = 'Já terminamos esta lição..^ Favor seguir para a última lição.',
@@ -1151,6 +1238,9 @@ room {
 
 		fr = [[Leçon nº 6. En mouvement — Partie II^^
 		Rendez-vous à la dernière leçon.]],
+
+		hu = [[6. lecke: Mozgás - Második rész^^
+		Lépjen az utolsó leckére!]],
 
 		it = [[Lezione 6. Movimenti - Parte II^^
 		Ora passiamo all'ultimo step di questa guida.]],
@@ -1175,6 +1265,7 @@ room {
 		de = 'Letzte Lektion',
 		es = 'Ultima lección',
 		fr = 'Dernière leçon',
+		hu = 'Utolsó lecke',
 		it = 'Gran Finale',
 		nl = 'Laatste les',
 		pt = 'Última lição',
@@ -1213,6 +1304,12 @@ room {
 		Téléchargez des jeux pour INSTEAD ici : {$fmt u|http://instead-games.sourceforge.net}^^
 		Le tutoriel utilise « INSTEAD game-engine » de svenzzon comme thème musical.]],
 
+		hu = [[A menü segítségével választhatunk játékot, kezelhetjük a mentéseket, és tehetünk egyéb dolgokat.
+		Megnyitni az "Esc" billentyűvel vagy a jobb alsó sarokban lévő menü ikonra való klikkelésel lehet.^^
+		Készen áll a játékra. Sok szerencsét!!!^^
+		INSTEAD játékok letölthetők innen: {$fmt u|http://instead-games.sourceforge.net}^^
+		A tutorial aláfestő zenéjének címe "Instead game-engine", szerzője svenzzon.]],
+
 		it = [[Con l'aiuto del menu potete scegliere un gioco, salvare o caricare una partita,
 		oltre a svariate altre cose. Per aprire il menu premete "Esc" o fate click
 		sull'icona di menu in basso a destra.^^
@@ -1247,6 +1344,7 @@ room {
 		de = 'Siehe {@ walk help|Liste der Tastenkürzel}.',
 		es = 'Ver {@ walk help|lista de atajos de teclado}.',
 		fr = 'Voir la {@ walk help|liste des raccourcis clavier}.',
+		hu = 'Lásd {@ walk help|billentyűparancsok listája}.',
 		it = 'Vedi {@ walk help|lista delle scorciatoie da tastiera}.',
 		nl = 'Zie ook de {@ walk help|lijst met sneltoetsen}.',
 		pt = 'Ver {@ walk help|lista de atalhos de teclado}.',
@@ -1262,6 +1360,7 @@ room {
 		de = 'Tastenkürzel',
 		es = 'Atajos de Teclado',
 		fr = 'Raccourcis clavier',
+		hu = 'Billentyűparancsok',
 		it = 'Scorciatoie da tastiera',
 		nl = 'Sneltoetsen',
 		pt = 'Atalhos de teclado',
@@ -1407,6 +1506,34 @@ room {
 	 - mode « Smart » : défilement dans la zone active.
 	]],
 
+		hu = [[
+	Esc - Menü.^
+	Alt+Q - Kilépés.^
+	Alt+Enter - Teljes képernyő.^
+	F5 - Jelenet frissítésa.^
+	Space/Backspace - Jelenet leírásának görgetése.^
+	Tab/Shift+Tab - Kijelölt zóna váltása.^
+	PgUp/PgDn - Kijelölt zóna görgetése.^
+	Arrows left/right - Kijelölt zónán belüli linkek közötti váltás.^
+	F2 - Mentés.^
+	F3 - Betöltés.^
+	F8 - Gyorsmentés.^
+	F9 - Gyorstöltés.^^
+
+	Egyes billentyűparancsok beállításfüggők
+	(lásd Menü -> Beállítások -> Billentyűzet módja):^^
+
+	Nyilak fel/le:^
+	 - "Görgető" mód: Kijelölt zóna görgetése.^
+	 - "Linkek" mód: Kijelölt zónán belüli linkek közötti váltás.^
+	 - "Okos" mód: Linkek közötti váltás és kijelölt zóna görgetése.^^
+
+	Nyilak fel/le + Shift vagy Alt:^
+	 - "Görgető" mód: Kijelölt zónán belüli linkek közötti váltás.^
+	 - "Linkek" mód: Kijelölt zóna görgetése.^
+	 - "Okos" mód: Kijelölt zóna görgetése.
+	]],
+
 		it = [[
 	Esc - Menu.^
 	Alt+Q - Esci.^
@@ -1525,6 +1652,7 @@ room {
 		de = 'Siehe {@ walk help2|Kommandozeilenparameter}.',
 		es = 'Ver {@ walk help2|parámetros línea de comandos}.',
 		fr = 'Voir les {@ walk help2|paramètres de la ligne de commande}.',
+		hu = 'Lásd {@ walk help2|parancssori argumentumok}.',
 		it = 'Vedi {@ walk help2|parametri della linea di comando}.',
 		nl = 'Zie {@ walk help2|commandoregel parameters}.',
 		pt = 'Ver {@ walk help2|parâmetros de linha de comando}.',
@@ -1540,6 +1668,7 @@ room {
 		de = 'Kommandozeilenparameter',
 		es = 'Parámetros línea de comandos',
 		fr = 'Paramètres de la ligne de commande',
+		hu = 'Parancssori argumentumok',
 		it = 'Parametri della linea di comando',
 		nl = 'Commandoregel parameters',
 		pt = 'parâmetros de linha de comando',
@@ -1616,6 +1745,20 @@ room {
 	-mode [WxH] – utiliser la résolution WxH (LxH).
 	]],
 
+		hu = [[
+	-nosound - indítás néma módban;^
+	-debug - fejlesztő mód;^
+	-theme <téma> - téma választása;^
+	-game <játék> - játék választása;^
+	-themespath <elérési út> - témák elérési útja;^
+	-gamespath <elérési út> - játékok elérési útja;^
+	-window - indítás ablakban;^
+	-fullscreen  - indítás teljes képernyős módban;^
+	-noautosave - automentés/autotöltés kikapcsolása;^
+	-encode <játék.lua> [kódolt.lua] - lua forrás kódolása (luából doencfile hívásával tölthető be);^
+	-mode [WxH] - felbontás beállítása W széles és H függőleges értékre.
+	]],
+
 		it = [[
 	-nosound - lancia il gioco senza suono;^
 	-debug - modalità di debug per sviluppatori di giochi;^
@@ -1678,6 +1821,7 @@ room {
 		de = 'Siehe {@ walk help|Liste der Tastenkürzel}.',
 		es = 'Ver {@ walk help|lista de atajos de teclado}.',
 		fr = 'Voir la {@ walk help|liste des raccourcis clavier}.',
+		hu = 'Lásd {@ walk help|billentyűparancsok listája}.',
 		it = 'Vedi {@ walk help|lista delle scorciatorie da tastiera}.',
 		nl = 'Zie ook de {@ walk help|lijst met sneltoetsen}.',
 		pt = 'Ver {@ walk help|lista de atalhos de teclado}.',
