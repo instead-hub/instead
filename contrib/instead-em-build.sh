@@ -70,7 +70,7 @@ fi
 cd $WORKSPACE
 if ! test -r .stamp_zlib; then
 rm -rf zlib-1.3.2/
-[ -f zlib-1.3.2.tar.gz ] || wget -nv 'http://zlib.net/zlib-1.3.1.tar.gz'
+[ -f zlib-1.3.2.tar.gz ] || wget -nv 'http://zlib.net/zlib-1.3.2.tar.gz'
 tar xf zlib-1.3.2.tar.gz
 cd zlib-1.3.2
 emconfigure ./configure --prefix=$WORKSPACE
