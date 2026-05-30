@@ -317,7 +317,7 @@ obj {
 	};
 	tak = L {
 		ru = 'Вы подобрали карандаш.',
-		en = 'You pick the pencil.',
+		en = 'You pick up the pencil.',
 		de = 'Sie nehmen den Stift.',
 		es = 'Coges el lápiz.',
 		fr = 'Vous prenez le crayon.',
@@ -705,7 +705,7 @@ obj {
 			en = "Looks appetizing.",
 			de = 'Sieht appetitlich aus.',
 			es = 'Luce apetecible.',
-			fr = 'Elle est appétissante.',
+			fr = 'Elle est appétissant.',
 			hu = 'Ízletesnek látszik.',
 			it = 'Sembra appetitosa.',
 			nl = 'Ziet er smakelijk uit.',
