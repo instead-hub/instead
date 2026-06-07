@@ -21,7 +21,7 @@ To run games you may:
 
 - Unzip game archive into ~/.instead/games/;
 - Or run zip-packed game: $ instead <game.zip>;
-- Or press [f4] to open file dialog (build with gtk2/gtl3 only).
+- Or press [f4] to open file dialog (build with gtk2/gtk3 only).
 
 ## Contacts
 
