@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2018 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2026 Peter Kosyh <pkosyh at yandex.ru>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -723,10 +723,10 @@ static int sound_inited = 0;
 #define SOUND_MAGIC 0x2004
 struct lua_sound {
 	int type;
-	short *buf;
-	int len;
+	float *buf;
+	int samples;
 };
-static void mus_callback(void *udata, unsigned char *stream, int len)
+static void mus_callback(void *udata, float *stream, int samples)
 {
 	lua_State *L = (lua_State *) udata;
 	struct lua_sound *hdr;
@@ -735,13 +735,13 @@ static void mus_callback(void *udata, unsigned char *stream, int len)
 	instead_lock();
 	lua_rawgeti(L, LUA_REGISTRYINDEX, callback_ref);
 	lua_pushinteger(L, snd_hz());
-	lua_pushinteger(L, len >> 1);
+	lua_pushinteger(L, samples);
 	hdr = lua_newuserdata(L, sizeof(*hdr));
 	if (!hdr)
 		goto err;
 	hdr->type = SOUND_MAGIC;
-	hdr->len = len >> 1; /* 16bits */
-	hdr->buf = (short *)stream;
+	hdr->samples = samples;
+	hdr->buf = (float *)stream;
 	luaL_getmetatable(L, "soundbuffer metatable");
 	lua_setmetatable(L, -2);
 	if (instead_pcall(L, 3)) { /* on any error */
@@ -817,14 +817,14 @@ static int sound_value(lua_State *L) {
 	float v = luaL_optnumber(L, 3, 0.0f);
 	if (pos <= 0)
 		return 0;
-	if (pos > hdr->len)
+	if (pos > hdr->samples)
 		return 0;
 	pos --;
 	if (lua_isnoneornil(L, 3)) {
-		lua_pushinteger(L, hdr->buf[pos]);
+		lua_pushnumber(L, hdr->buf[pos]);
 		return 1;
 	}
-	hdr->buf[pos] = SND_F2S(v);
+	hdr->buf[pos] = v;
 	return 0;
 }
 

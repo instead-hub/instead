@@ -24,13 +24,12 @@ extern wav_t	snd_load_wav(const char *fname);
 
 extern wav_t	snd_load_mem(int fmt, const short *buf, size_t len);
 extern int	snd_play_mus(char *music, int ms, int loop);
-extern void	snd_mus_callback(void (*fn)(void *udata, unsigned char *stream, int len), void *arg);
+extern void	snd_mus_callback(void (*fn)(void *udata, float *stream, int len), void *arg);
 extern int	snd_playing_mus();
 extern void     snd_stop_mus(int ms);
 extern int 	snd_volume_mus(int vol);
 extern void	snd_done(void);
 extern void	snd_close(void);
-extern int 	snd_vol_from_pcn(int v);
 extern int 	snd_vol_to_pcn(int v);
 extern int 	snd_playing(int channel);
 extern void	snd_pause(int on);
