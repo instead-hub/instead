@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2017 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2026 Peter Kosyh <pkosyh at yandex.ru>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -39,7 +39,7 @@ static int luaB_get_exepath(lua_State *L) {
 	if (instead_exec) {
 		strcpy(instead_path, instead_exec);
 		unix_path(instead_path);
-		lua_pushstring(L, instead_exec);
+		lua_pushstring(L, instead_path);
 		return 1;
 	}
 	return 0;
