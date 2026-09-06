@@ -391,7 +391,7 @@ int instead_function(char *s, struct instead_args *args)
 	int method = 0;
 	if (!L)
 		return -1;
-	strcpy(f, s);
+	snprintf(f, sizeof(f), "%s", s);
 	p = strchr(f, '.');
 	if (!p)
 		p = strchr(f, ':');
