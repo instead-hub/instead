@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2026 Peter Kosyh <pkosyh at yandex.ru>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -131,7 +131,7 @@ int	idf_magic(const char *fname)
 int idf_setdir(idf_t idf, const char *path)
 {
 	if (idf && path)
-		strcpy(idf->cwd, path);
+		snprintf(idf->cwd, sizeof(idf->cwd), "%s", path);
 	return 0;
 }
 
@@ -340,7 +340,7 @@ err1:
 int idf_create(const char *file, const char *path)
 {
 	int rc = -1, i;
-	FILE *fd;
+	FILE *fd = NULL;
 	char *p;
 	unsigned long off = 0;
 	long dict_size = 0;
@@ -719,13 +719,10 @@ SDL_IOStream *RWFromIdf(idf_t idf, const char *fname)
 	iface.close = idfrw_close;
 
 	n = SDL_OpenIO(&iface, fil);
-	if (!n)
-		goto err;
+	if (!n) {
+		idf_close(fil);
+		return NULL;
+	}
 	return n;
-err:
-	if (n)
-		SDL_CloseIO(n);
-	free(fil);
-	return NULL;
 }
 #endif
