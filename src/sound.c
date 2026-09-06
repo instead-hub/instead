@@ -32,8 +32,8 @@
 int audio_rate = 44100;
 
 #define SND_DEFAULT_FORMAT SDL_AUDIO_S16
-#define MIX_CHANNELS SND_CHANNELS
-#define MUS_CHANNEL MIX_CHANNELS
+#define MIX_CHANNELS (SND_CHANNELS+1)
+#define MUS_CHANNEL SND_CHANNELS
 #define MUS_CHAN channels[MUS_CHANNEL]
 
 Uint16 audio_format = SND_DEFAULT_FORMAT;
@@ -52,7 +52,7 @@ struct {
 	int id;
 	MIX_Track *track;
 	SDL_PropertiesID props;
-} channels[MIX_CHANNELS+1] = { }; /* last is music channel */
+} channels[MIX_CHANNELS] = { }; /* last is music channel */
 
 static int sound_on = 0;
 
@@ -141,7 +141,7 @@ static int _snd_open(int hz)
 		fprintf(stderr, "Unable to open audio: %s\n", SDL_GetError());
 		return -1;
 	}
-	for (i = 0; i <= MIX_CHANNELS; i++) {
+	for (i = 0; i < MIX_CHANNELS; i++) {
 		channels[i].id = i;
 		channels[i].track = MIX_CreateTrack(mixer);
 		if (!channels[i].track) {
@@ -259,11 +259,11 @@ void snd_halt_chan(int han, int ms)
 	if (han < 0) { /* all channels */
 		if (mix_fn) /* forever wait */
 			return;
-		for (i = 0; i < MIX_CHANNELS; i ++)
+		for (i = 0; i < SND_CHANNELS; i ++)
 			MIX_StopTrack(channels[i].track, MIX_TrackMSToFrames(channels[i].track, ms));
 		return;
 	}
-	han %= MIX_CHANNELS;
+	han %= SND_CHANNELS;
 	MIX_StopTrack(channels[han].track, MIX_TrackMSToFrames(channels[han].track, ms));
 }
 
@@ -347,13 +347,13 @@ int snd_playing(int channel)
 		return 0;
 	if (channel < 0) {
 		int i;
-		for (i = 0; i < MIX_CHANNELS; i++) {
+		for (i = 0; i < SND_CHANNELS; i++) {
 			if (MIX_TrackPlaying(channels[i].track))
 				return 1;
 		}
 		return 0;
 	}
-	channel %= MIX_CHANNELS;
+	channel %= SND_CHANNELS;
 	return MIX_TrackPlaying(channels[channel].track);
 }
 
@@ -365,11 +365,11 @@ int snd_panning(int channel, int left, int right)
 	gains.right = (float)right / 255.0f;
 
 	if (channel < 0) {
-		for (i = 0; i < MIX_CHANNELS; i++)
+		for (i = 0; i < SND_CHANNELS; i++)
 			MIX_SetTrackStereo(channels[i].track, &gains);
 		return 0;
 	}
-	channel %= MIX_CHANNELS;
+	channel %= SND_CHANNELS;
 
 	return MIX_SetTrackStereo(channels[channel].track, &gains);
 }
@@ -397,15 +397,15 @@ int snd_play(void *chunk, int channel, int loop)
 		return -1;
 	if (!chunk)
 		return -1;
-	if (channel >= MIX_CHANNELS)
-		channel %= MIX_CHANNELS;
+	if (channel >= SND_CHANNELS)
+		channel %= SND_CHANNELS;
 	if (channel < 0)
 		channel = -1;
 	if (channel != -1)
 		snd_halt_chan(channel, 0);
 
 	if (channel == -1) {
-		for (channel = 0; channel < MIX_CHANNELS; channel ++) {
+		for (channel = 0; channel < SND_CHANNELS; channel ++) {
 			if (!snd_playing(channel))
 				break;
 		}
@@ -459,7 +459,7 @@ void snd_close(void)
 		timer_id = 0;
 	}
 
-	for (i = 0; i <= MIX_CHANNELS; i++) {
+	for (i = 0; i < MIX_CHANNELS; i++) {
 		MIX_SetTrackStoppedCallback(channels[i].track, NULL, NULL);
 		MIX_StopTrack(channels[i].track, 0);
 		MIX_DestroyTrack(channels[i].track);
