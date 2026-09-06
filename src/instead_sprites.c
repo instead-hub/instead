@@ -1278,7 +1278,7 @@ static void lineAA(struct lua_pixels *src, int x0, int y0, int x1, int y1,
 		if (2 * e2 >= -dx) {
 			if (x0 == x1)
 				break;
-			if (e2 + dy < ed) {
+			if (e2 + dy < ed && y0 + 1 < h) {
 				col[3] = a - a * (e2 + dy) / ed;
 				pixel(col, ptr + syp);
 			}
@@ -1291,7 +1291,7 @@ static void lineAA(struct lua_pixels *src, int x0, int y0, int x1, int y1,
 		if (2 * e2 <= dy) {
 			if (y0 == y1)
 				break;
-			if (dx - e2 < ed) {
+			if (dx - e2 < ed && x0 + sx >= 0 && x0 + sx < w) {
 				col[3] = a - a * (dx - e2) / ed;
 				pixel(col, optr + sxp);
 			}
@@ -1617,7 +1617,8 @@ static void fill_circle(struct lua_pixels *src, int xc, int yc, int radius, int 
 	ptr += (w * yc + xc) << 2;
 
 	if (radius == 1) {
-		pixel(col, ptr);
+		if (xc >= 0 && yc >= 0 && xc < w && yc < h)
+			pixel(col, ptr);
 		return;
 	}
 	y1 = -radius; y2 = radius;
