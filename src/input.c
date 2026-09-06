@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2026 Peter Kosyh <pkosyh at yandex.ru>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -456,9 +456,11 @@ int finger_pos(const char *finger, int *x, int *y, float *pressure)
 			if (pressure)
 				*pressure = f[i]->pressure;
 			gfx_finger_pos_scale(f[i]->x, f[i]->y, x, y, 1);
+			SDL_free(f);
 			return 0;
 		}
 	}
+	SDL_free(f);
 	return -1;
 }
 
@@ -673,9 +675,9 @@ int input(struct inp_event *inp, int wait)
 		inp->type = (event.wheel.y > 0) ? MOUSE_WHEEL_UP : MOUSE_WHEEL_DOWN;
 
 		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_EVENT_MOUSE_WHEEL, SDL_EVENT_MOUSE_WHEEL) > 0) {
-			if (!((event.wheel.y > 0 &&
+			if (!((peek.wheel.y > 0 &&
 				inp->type == MOUSE_WHEEL_UP) ||
-				(event.wheel.y < 0 &&
+				(peek.wheel.y < 0 &&
 				inp->type == MOUSE_WHEEL_DOWN)))
 				break;
 			inp->count ++;
@@ -692,9 +694,9 @@ int input(struct inp_event *inp, int wait)
 		else if (event.button.button == 5)
 			inp->type = MOUSE_WHEEL_DOWN;
 		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_EVENT_MOUSE_BUTTON_DOWN, SDL_EVENT_MOUSE_BUTTON_DOWN) > 0) {
-			if (!((event.button.button == 4 &&
+			if (!((peek.button.button == 4 &&
 				inp->type == MOUSE_WHEEL_UP) ||
-				(event.button.button == 5 &&
+				(peek.button.button == 5 &&
 				inp->type == MOUSE_WHEEL_DOWN)))
 				break;
 			inp->count ++;
