@@ -98,9 +98,9 @@ static void sound_callback(void *aux)
 	channels[c] = NULL;
 	r = &sound_reqs[c];
 	if (r->snd) {
-		_snd_t *s = r->snd;
+		sound_play(r->snd, channel, r->loop);
+		r->snd->loaded --;
 		r->snd = NULL;
-		sound_play(s, channel, r->loop);
 	} else {
 		snd_halt_chan(channel, 0); /* to avoid races */
 	}
@@ -134,7 +134,7 @@ static const char *sound_channel(int i)
 	_snd_t *sn;
 	if (i >= SND_CHANNELS)
 		i = i % SND_CHANNELS;
-	if (i == -1) {
+	if (i < 0) {
 		for (i = 0; i < SND_CHANNELS; i++) {
 			sn = channels[i];
 			if (sn && !sn->system)
@@ -189,7 +189,15 @@ static void sounds_free(void)
 	_snd_t *sn;
 	pos = list_top(&sounds, _snd_t, list);
 
+	for (i = 0; i < SND_CHANNELS; i++) {
+		channels[i] = NULL;
+		if (sound_reqs[i].snd) {
+			sound_reqs[i].snd->loaded --;
+			sound_reqs[i].snd = NULL;
+		}
+	}
 	snd_halt_chan(-1, 0); /* halt sounds */
+
 	while (pos) {
 		sn = (_snd_t*)pos;
 		pos2 = list_next(&sounds, pos, list);
@@ -198,10 +206,6 @@ static void sounds_free(void)
 		else
 			sound_free(sn);
 		pos = pos2;
-	}
-	for (i = 0; i < SND_CHANNELS; i++) {
-		channels[i] = NULL;
-		sound_reqs[i].snd = NULL;
 	}
 /*	sounds_nr = 0;
 	fprintf(stderr, "%d\n", sounds_nr); */
@@ -247,9 +251,12 @@ static void sound_play(_snd_t *sn, int chan, int loop)
 	} else
 		c = chan % SND_CHANNELS;
 	if (channels[c]) {
+		if (sound_reqs[c].snd)
+			sound_reqs[c].snd->loaded --;
 		sound_reqs[c].snd = sn;
 		sound_reqs[c].loop = loop;
 		sound_reqs[c].channel = chan;
+		sn->loaded ++;
 		snd_halt_chan(chan, 0); /* work in callback */
 		input_uevents(); /* all callbacks */
 		return;
@@ -320,6 +327,8 @@ static void sounds_reload(void)
 	}
 	for (i = 0; i < SND_CHANNELS; i++) {
 		channels[i] = NULL;
+		if (sound_reqs[i].snd)
+			sound_reqs[i].snd->loaded --;
 		sound_reqs[i].snd = NULL;
 	}
 	input_uevents(); /* all callbacks */
