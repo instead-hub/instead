@@ -240,12 +240,12 @@ static void sound_play(_snd_t *sn, int chan, int loop)
 	int c;
 	if (!sn)
 		return;
-	if (chan == -1) {
+	if (chan < 0) {
 		c = sound_find_channel();
 		if (c == -1)
 			return; /* all channels are busy */
 	} else
-		c = chan;
+		c = chan % SND_CHANNELS;
 	if (channels[c]) {
 		sound_reqs[c].snd = sn;
 		sound_reqs[c].loop = loop;
