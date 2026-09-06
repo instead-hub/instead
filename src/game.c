@@ -516,9 +516,13 @@ int games_remove(int gtr)
 	int rc;
 	struct game *new_games;
 	rc = remove_dir(games[gtr].path);
-	free(games[gtr].name); free(games[gtr].dir); free(games[gtr].path);
+
+	free(games[gtr].dir); free(games[gtr].path);
+	game_info_free(&games[gtr]);
+
 	games_nr --;
-	memmove(&games[gtr], &games[gtr + 1], (games_nr - gtr) * sizeof(struct game));
+	if (games_nr - gtr > 0)
+		memmove(&games[gtr], &games[gtr + 1], (games_nr - gtr) * sizeof(struct game));
 	new_games = realloc(games, games_nr * sizeof(struct game));
 	if (new_games) /* failure to shrink otherwise, and it's non-fatal */
 		games = new_games;
@@ -1956,8 +1960,10 @@ int game_cmd(char *cmd, int flags)
 				goto fatal;
 			oldscreen = gfx_screen(offscreen);
 			gfx_copy(oldscreen, 0, 0);
-			if ((rc = game_theme_update()))
+			if ((rc = game_theme_update())) {
+				gfx_free_image(oldscreen);
 				goto out;
+			}
 			offscreen = gfx_screen(oldscreen);
 			gfx_change_screen(offscreen, 1, NULL, NULL);
 			gfx_free_image(offscreen);
@@ -2033,8 +2039,10 @@ int game_cmd(char *cmd, int flags)
 	game_render_callback_redraw();
 
 	if (game_theme_changed) {
-		if ((rc = game_theme_update()))
+		if ((rc = game_theme_update())) {
+			free(cmdstr);
 			goto out;
+		}
 		new_place = 1;
 		if (pict)
 			new_pict = 1;
@@ -2081,12 +2089,13 @@ int game_cmd(char *cmd, int flags)
 
 		if (new_pict) {
 			img = gfx_load_image(pict);
-			if (!img)
+			if (img) {
+				if (GFX_MODE(game_theme.gfx_mode) != GFX_MODE_FLOAT)
+					img = game_pict_scale(img, game_theme.win_w, game_theme.max_scene_h);
+				else
+					img = game_pict_scale(img, game_theme.max_scene_w, game_theme.max_scene_h);
+			} else
 				game_res_err_msg(pict, debug_sw);
-			if (GFX_MODE(game_theme.gfx_mode) != GFX_MODE_FLOAT)
-				img = game_pict_scale(img, game_theme.win_w, game_theme.max_scene_h);
-			else
-				img = game_pict_scale(img, game_theme.max_scene_w, game_theme.max_scene_h);
 		} else
 			img = el_img(el_spic);
 
@@ -2462,7 +2471,7 @@ static int scroll_pup(int id)
 	int hh;
 	if (box_isscroll_up(id))
 		return -1;
-	el_size(el_scene, NULL, &hh);
+	el_size(id, NULL, &hh);
 	txt_box_scroll(el_box(id), -hh);
 	el_clear(id);
 	el_draw(id);
@@ -2475,7 +2484,7 @@ static int scroll_pdown(int id)
 	int hh;
 	if (box_isscroll_down(id))
 		return -1;
-	el_size(el_scene, NULL, &hh);
+	el_size(id, NULL, &hh);
 	txt_box_scroll(el_box(id), hh);
 	el_clear(id);
 	el_draw(id);
