@@ -411,6 +411,9 @@ int snd_play(void *chunk, int channel, int loop)
 		}
 	}
 
+	if (channel == MUS_CHANNEL)
+		return -1;
+
 	track = channels[channel].track;
 	props = channels[channel].props;
 
