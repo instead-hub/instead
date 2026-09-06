@@ -672,8 +672,10 @@ static int luaB_load_sound_mem(lua_State *L) {
 		fmt |= SND_FMT_44;
 	name = sound_load_mem(fmt, buf, len);
 /*	free(buf); */
-	if (!name)
+	if (!name) {
+		free(buf);
 		return 0;
+	}
 	lua_pushstring(L, name);
 	return 1;
 }
@@ -815,7 +817,7 @@ static int sound_value(lua_State *L) {
 	struct lua_sound *hdr = (struct lua_sound*)lua_touserdata(L, 1);
 	int pos = luaL_optinteger(L, 2, -1);
 	float v = luaL_optnumber(L, 3, 0.0f);
-	if (pos <= 0)
+	if (!hdr || pos <= 0)
 		return 0;
 	if (pos > hdr->samples)
 		return 0;
