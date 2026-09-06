@@ -124,7 +124,7 @@ static void track_cb(void *userdata, MIX_Track *track)
 static int _snd_open(int hz)
 {
 	struct SDL_AudioSpec aspec;
-	int chunk, i;
+	int chunk, i, k;
 	if (!hz)
 		hz = audio_rate;
 	else
@@ -146,7 +146,7 @@ static int _snd_open(int hz)
 		channels[i].track = MIX_CreateTrack(mixer);
 		if (!channels[i].track) {
 			fprintf(stderr, "Unable to create audio track: %s\n", SDL_GetError());
-			return -1;
+			goto err;
 		}
 		channels[i].props = SDL_CreateProperties();
 		if (i != MUS_CHANNEL)
@@ -154,6 +154,15 @@ static int _snd_open(int hz)
 	}
 	sound_on = 1;
 	return 0;
+err:
+	for (k = 0;  k <= i; k++) {
+		if (channels[k].track)
+			MIX_DestroyTrack(channels[k].track);
+		if (channels[k].props)
+			SDL_DestroyProperties(channels[k].props);
+		MIX_SetTrackStoppedCallback(channels[k].track, NULL, NULL);
+	}
+	return -1;
 }
 
 int snd_open(int hz)
@@ -162,11 +171,7 @@ int snd_open(int hz)
 		return -1;
 	if (sound_on)
 		snd_close(); /* reopen */
-	if (_snd_open(hz)) {
-		snd_close();
-		return -1;
-	}
-	return 0;
+	return _snd_open(hz);
 }
 
 int snd_init(int hz)
@@ -256,6 +261,8 @@ static int mix_fn = 0;
 void snd_halt_chan(int han, int ms)
 {
 	int i;
+	if (!sound_on)
+		return;
 	if (han < 0) { /* all channels */
 		if (mix_fn) /* forever wait */
 			return;
@@ -464,6 +471,7 @@ void snd_close(void)
 		MIX_StopTrack(channels[i].track, 0);
 		MIX_DestroyTrack(channels[i].track);
 		SDL_DestroyProperties(channels[i].props);
+
 		channels[i].track = NULL;
 		channels[i].props = 0;
 	}
@@ -474,7 +482,8 @@ void snd_close(void)
 		free(next_mus);
 	next_mus = NULL;
 
-	MIX_DestroyMixer(mixer);
+	if (mixer)
+		MIX_DestroyMixer(mixer);
 	mixer = NULL;
 	sound_on = 0;
 }
