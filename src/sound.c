@@ -32,7 +32,7 @@
 int audio_rate = 44100;
 
 #define SND_DEFAULT_FORMAT SDL_AUDIO_S16
-#define MIX_CHANNELS 8
+#define MIX_CHANNELS SND_CHANNELS
 #define MUS_CHANNEL MIX_CHANNELS
 #define MUS_CHAN channels[MUS_CHANNEL]
 
