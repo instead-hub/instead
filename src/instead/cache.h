@@ -31,12 +31,14 @@ typedef void (*cache_free_fn)(void *p);
 extern cache_t cache_init(int size, cache_free_fn);
 extern void cache_free(cache_t cache);
 extern int  cache_forget(cache_t cache, void *p);
+extern int  cache_forget_name(cache_t cache, const char *name);
 extern void cache_zap(cache_t cache);
 extern void cache_shrink(cache_t cache);
 extern void *cache_get(cache_t cache, const char *name);
 extern void *cache_lookup(cache_t cache, const char *name);
 extern int cache_add(cache_t cache, const char *name, void *p);
 extern int cache_have(cache_t cache, void *p);
+extern const char *cache_data_name(cache_t cache, void *p);
 extern unsigned long hash_addr(void *p);
 extern unsigned long hash_string(const char *str);
 

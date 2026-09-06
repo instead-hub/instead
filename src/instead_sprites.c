@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2023 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2026 Peter Kosyh <pkosyh at yandex.ru>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -112,7 +112,12 @@ static _spr_t *sprite_new(const char *name, img_t img)
 		free(sp);
 		return NULL;
 	}
+
+	if (!cache_forget(gfx_image_cache(), img)) /* was taken from cache? */
+		img = gfx_clone(img);
+
 	sp->img = img;
+
 	if (cache_add(gfx_image_cache(), name, img)) {
 		free(sp->name);
 		free(sp);
@@ -243,7 +248,7 @@ static int luaB_load_sprite(lua_State *L) {
 	if (!sp)
 		goto err;
 
-	lua_pushstring(L, key);
+	lua_pushstring(L, sp->name);
 	return 1;
 err:
 	game_res_err_msg(fname, debug_sw);
@@ -385,7 +390,7 @@ static int luaB_text_sprite(lua_State *L) {
 	if (!sp)
 		goto err;
 
-	lua_pushstring(L, key);
+	lua_pushstring(L, sp->name);
 	return 1;
 err:
 	gfx_free_image(img);
@@ -573,7 +578,7 @@ static int luaB_alpha_sprite(lua_State *L) {
 	sp = sprite_new(key, img2);
 	if (!sp)
 		goto err;
-	lua_pushstring(L, sname);
+	lua_pushstring(L, sp->name);
 	return 1;
 err:
 	gfx_free_image(img2);
@@ -632,7 +637,7 @@ static int luaB_dup_sprite(lua_State *L) {
 	sp = sprite_new(key, img2);
 	if (!sp)
 		goto err;
-	lua_pushstring(L, sname);
+	lua_pushstring(L, sp->name);
 	return 1;
 err:
 	gfx_free_image(img2);
@@ -679,7 +684,7 @@ static int luaB_scale_sprite(lua_State *L) {
 	sp = sprite_new(key, img2);
 	if (!sp)
 		goto err;
-	lua_pushstring(L, sname);
+	lua_pushstring(L, sp->name);
 	return 1;
 err:
 	gfx_free_image(img2);
@@ -719,7 +724,7 @@ static int luaB_rotate_sprite(lua_State *L) {
 	sp = sprite_new(key, img2);
 	if (!sp)
 		goto err;
-	lua_pushstring(L, sname);
+	lua_pushstring(L, sp->name);
 	return 1;
 err:
 	gfx_free_image(img2);
@@ -1556,7 +1561,7 @@ static void triangle(struct lua_pixels *src, int x0, int y0, int x1, int y1, int
 	unsigned char *ptr;
 	w = src->w; h = src->h;
 	yd = 4 * w;
-	col[0] = r; col[1] = b; col[2] = g; col[3] = a;
+	col[0] = r; col[1] = g; col[2] = b; col[3] = a;
 
 	if (minx >= w || miny >= h)
 		return;
