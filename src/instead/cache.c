@@ -1,5 +1,5 @@
 /* 
- * Copyright 2009-2016 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2026 Peter Kosyh <pkosyh at yandex.ru>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -275,8 +275,14 @@ int cache_add(cache_t cache, const char *name, void *p)
 	if (!c || !name)
 		return -1;
 	cc = _cache_lookup(cache, name);
-	if (cc)
-		return 0;
+	if (cc) {
+		if (!cc->used) {
+			cache_e_free(cache, cc);
+			c->size --;
+			return cache_add(cache, name, p);
+		}
+		return -1;
+	}
 	cc = malloc(sizeof(_cache_e_t));
 	if (!cc)
 		return -1;
