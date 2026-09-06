@@ -687,7 +687,8 @@ img_t gfx_display_alpha(img_t src)
 	if (is_anim(src)) /* already optimized */
 		return src;
 	dst = gfx_dup(src); /* always to rgba */
-	SDL_SetSurfaceBlendMode(Surf(dst), SDL_BLENDMODE_BLEND);
+	if (dst)
+		SDL_SetSurfaceBlendMode(Surf(dst), SDL_BLENDMODE_BLEND);
 	gfx_free_image(src);
 	return dst;
 }
@@ -2500,6 +2501,8 @@ fnt_t fnt_load(const char *fname, int size)
 			SDL_IOStream *rw = RWFromIdf(instead_idf(), files[i]);
 			if (!rw || !(fn = TTF_OpenFontIO(rw, 1, size))) {
 				fprintf(stderr, "Can not load font: '%s'\n", files[i]);
+				if (rw)
+					SDL_CloseIO(rw);
 			}
 		}
 		if (!fn && i == 0) /* no regular */
@@ -3567,7 +3570,7 @@ int gfx_get_token(const char *ptr, char **eptr, char **val, int *sp)
 			return 0;
 		ptr += 2;
 		ep = find_in_esc(ptr, "\\>");
-		if (*ep != '>')
+		if (!ep || *ep != '>')
 			return 0;
 		if (val) {
 			p = malloc(ep - ptr + 1);
