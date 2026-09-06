@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2026 Peter Kosyh <pkosyh at yandex.ru>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -43,6 +43,7 @@
 #include "SDL3_gif.h"
 
 #define IMG_ANIM 1
+
 struct _img_t {
 	SDL_Surface *s;
 /*	SDL_Texture *t; */
@@ -569,6 +570,17 @@ static img_t	gfx_new_img(SDL_Surface *s, int fl, void *data, int release)
 		SDL_DestroySurface(s);
 	}
 	return i;
+}
+
+img_t	gfx_clone(img_t img)
+{
+	img_t p;
+	if (!img)
+		return NULL;
+	p = GFX_IMG(Surf(img));
+	if (p)
+		Surf(img)->refcount ++;
+	return p;
 }
 
 img_t   gfx_new_rgba(int w, int h)
