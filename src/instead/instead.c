@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2026 Peter Kosyh <pkosyh at yandex.ru>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -570,7 +570,6 @@ int instead_load(char **info)
 		goto err2;
 	if (info) {
 		*info = instead_retval(0);
-		*info = instead_fromgame(*info);
 	}
 	instead_clear();
 	return rc;
@@ -1107,6 +1106,8 @@ static int instead_detect_api(const char *path)
 		if (api)
 			goto out;
 		p = getfilepath(path, INSTEAD_MAIN);
+		if (!p)
+			return -1;
 		if (!access(dirpath(p), R_OK))
 			api = 2;
 		free(p);
@@ -1148,7 +1149,7 @@ int instead_init_lua(const char *path, int detect)
 	unix_path(instead_cwd_path);
 	instead_cwd_path[sizeof(instead_cwd_path) - 1] = 0;
 	strncpy(instead_game_path, path, sizeof(instead_game_path) - 1);
-	instead_cwd_path[sizeof(instead_game_path) - 1] = 0;
+	instead_game_path[sizeof(instead_game_path) - 1] = 0;
 
 	if (detect && (api = instead_detect_api(path)) < 0) {
 		fprintf(stderr, "Can not detect game format: %s\n", path);
