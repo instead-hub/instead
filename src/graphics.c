@@ -2501,8 +2501,6 @@ fnt_t fnt_load(const char *fname, int size)
 			SDL_IOStream *rw = RWFromIdf(instead_idf(), files[i]);
 			if (!rw || !(fn = TTF_OpenFontIO(rw, 1, size))) {
 				fprintf(stderr, "Can not load font: '%s'\n", files[i]);
-				if (rw)
-					SDL_CloseIO(rw);
 			}
 		}
 		if (!fn && i == 0) /* no regular */
