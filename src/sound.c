@@ -156,12 +156,14 @@ static int _snd_open(int hz)
 	return 0;
 err:
 	for (k = 0;  k <= i; k++) {
+		MIX_SetTrackStoppedCallback(channels[k].track, NULL, NULL);
 		if (channels[k].track)
 			MIX_DestroyTrack(channels[k].track);
 		if (channels[k].props)
 			SDL_DestroyProperties(channels[k].props);
-		MIX_SetTrackStoppedCallback(channels[k].track, NULL, NULL);
 	}
+	MIX_DestroyMixer(mixer);
+	mixer = NULL;
 	return -1;
 }
 
