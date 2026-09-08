@@ -1367,7 +1367,7 @@ struct theme *theme_lookup(const char *name, int type)
 int game_theme_load(const char *name, int type)
 {
 	struct theme *otheme = curtheme_loading;
-	struct theme *theme;
+	struct theme *theme = NULL;
 	struct game *game;
 	char cwd[PATH_MAX];
 	int rc = -1;
@@ -1381,7 +1381,7 @@ int game_theme_load(const char *name, int type)
 	} else {
 		game = game_lookup(curgame_dir);
 		if (!game)
-			return -1;
+			goto err;
 		if (!game->idf)
 			setdir(game->path);
 		theme_relative = 1;
