@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2022 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2026 Peter Kosyh <pkosyh at yandex.ru>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -163,8 +163,7 @@ static int run_game(const char *path)
 		return -1;
 	strcpy(dir, getrealpath(path, base)); /* always get full path */
 	unix_path(dir);
-	stat(dir, &path_stat);
-	if (S_ISREG(path_stat.st_mode) &&
+	if (!stat(dir, &path_stat) && S_ISREG(path_stat.st_mode) &&
 		(!strlowcmp(basename(dir), INSTEAD_MAIN) ||
 		!strlowcmp(basename(dir), INSTEAD_MAIN3))) {
 		d = dirname(dir);
@@ -499,7 +498,6 @@ int instead_main(int argc, char *argv[])
 		} else if (!strcmp(argv[i], "-profile")) {
 			if ((i + 1) < argc) {
 				profile_load(argv[++i]);
-				i ++;
 			}
 #ifdef _USE_UNPACK
 		} else if (!strcmp(argv[i], "-install")) {
@@ -550,9 +548,10 @@ int instead_main(int argc, char *argv[])
 				goto out;
 			}
 		} else if (!strcmp(argv[i], "-lang")) {
-			if ((i + 1) < argc)
+			FREE(lang_sw);
+			if ((i + 1) < argc) {
 				lang_sw = strdup(argv[++i]);
-			else
+			} else
 				lang_sw = strdup("en");
 		} else if (argv[i][0] == '-') {
 			fprintf(stderr,"Unknown option: %s\n", argv[i]);
@@ -661,9 +660,10 @@ int instead_main(int argc, char *argv[])
 		err = 1;
 		goto out;
 	}
-	if (lang_sw)
+	if (lang_sw) {
+		FREE(opt_lang);
 		opt_lang = strdup(lang_sw);
-	else if (!opt_lang || !opt_lang[0])
+	} else if (!opt_lang || !opt_lang[0])
 		opt_lang = game_locale();
 
 	if (menu_lang_select(opt_lang) && menu_lang_select(LANG_DEF)) {
