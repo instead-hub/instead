@@ -1909,9 +1909,10 @@ void gfx_finger_pos_scale(float x, float y, int *ox, int *oy, int norm)
 #ifdef _USE_SWROTATE
 void rotate_landscape(void)
 {
-	SDL_DisplayMode desktop_mode;
-	SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode);
-	gfx_flip_rotate = (desktop_mode.w < desktop_mode.h);
+	const SDL_DisplayMode *desktop_mode;
+	desktop_mode = SDL_GetDesktopDisplayMode(SDL_CurrentDisplay);
+
+	gfx_flip_rotate = (desktop_mode->w < desktop_mode->h);
 #ifdef SAILFISHOS
 	SDL_SetHint(SDL_HINT_QTWAYLAND_CONTENT_ORIENTATION, "landscape");
 #endif
