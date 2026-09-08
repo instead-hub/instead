@@ -222,15 +222,17 @@ wav_t	snd_load_mem(int fmt, const short *data, size_t len)
 		if (!SDL_ConvertAudioSamples(&sspec, (Uint8 *)data, size, &dspec, &dst, &dst_len))
 			return NULL;
 		chunk = MIX_LoadRawAudioNoCopy(mixer, dst, dst_len, &dspec, true);
+		if (!chunk)
+			SDL_free(dst);
 	} else {
 		Uint8 *b = (Uint8 *)SDL_calloc(1, size);
 		if (!b)
 			return NULL;
 		SDL_memcpy(b, data, size);
 		chunk = MIX_LoadRawAudioNoCopy(mixer, b, size, &dspec, true);
+		if (!chunk)
+			SDL_free(b);
 	}
-	if (!chunk)
-		return NULL;
 	return (wav_t)chunk;
 }
 
@@ -368,6 +370,9 @@ int snd_panning(int channel, int left, int right)
 {
 	int i;
 	MIX_StereoGains gains;
+	if (!sound_on)
+		return 0;
+
 	gains.left = (float)left / 255.0f;
 	gains.right = (float)right / 255.0f;
 
