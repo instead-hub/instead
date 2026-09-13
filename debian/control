@@ -2,8 +2,8 @@ Source: instead
 Section: games
 Priority: optional
 Maintainer: Peter Kosyh <p.kosyh@gmail.com>
-Build-Depends: debhelper (>= 7), pkg-config, liblua5.1-dev, libsdl2-dev, libsdl2-ttf-dev, libsdl2-image-dev, libsdl2-mixer-dev, zlib1g-dev
-Standards-Version: 3.8.3
+Build-Depends: debhelper-compat (= 13), pkg-config, liblua5.1-0-dev, libsdl3-dev, libsdl3-ttf-dev, libsdl3-image-dev, libsdl3-mixer-dev, zlib1g-dev
+Standards-Version: 4.7.0
 Homepage: http://instead.sourceforge.net
 
 Package: instead

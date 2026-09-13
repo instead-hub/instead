@@ -1,4 +1,4 @@
-VERSION := 3.5.2
+VERSION := 3.6.0
 
 DESTDIR=
 BIN=
@@ -24,8 +24,8 @@ LUA_LFLAGS=$(shell pkg-config --libs lua5.1)
 # LUA_LFLAGS=$(shell pkg-config --libs lua)
 #
 
-SDL_CFLAGS=$(shell sdl2-config --cflags)
-SDL_LFLAGS=$(shell sdl2-config --libs) -lSDL2_ttf -lSDL2_mixer -lSDL2_image
+SDL_CFLAGS=$(shell pkg-config --cflags sdl3)
+SDL_LFLAGS=$(shell pkg-config --libs sdl3) -lSDL3_ttf -lSDL3_mixer -lSDL3_image
 
 CFLAGS	+= -Wall -Dunix -D_USE_UNPACK -D_USE_BROWSE
 
