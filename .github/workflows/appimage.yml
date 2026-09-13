@@ -47,7 +47,7 @@ jobs:
           build SDL_mixer "$SDL3_MIXER_VER" -DSDLMIXER_VENDORED=OFF -DSDLMIXER_TESTS=OFF -DSDLMIXER_EXAMPLES=OFF -DSDLMIXER_GME=OFF -DSDLMIXER_MOD=OFF -DSDLMIXER_MIDI=OFF -DSDLMIXER_WAVPACK=OFF -DSDLMIXER_FLAC_LIBFLAC=OFF
 
       - name: Configure CMake
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DWITH_LUAJIT=1 -DAPPIMAGE=1 -DWITH_GTK3=0
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DWITH_LUAJIT=1 -DAPPIMAGE=1
 
       - name: Build
         run: cmake --build ./build --config Release

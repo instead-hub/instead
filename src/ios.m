@@ -179,30 +179,6 @@ char *sdl_path(char *p)
 }
 
 
-char *open_file_dialog(void) 
-{
-#if 0
-	const char *filename;
-	static char *file_name[PATH_MAX];
-	NSArray* fileTypes = [NSArray  arrayWithObjects: @"zip", @"lua", @"idf", nil];
-
-	NSOpenPanel * panel = [NSOpenPanel openPanel];
-	[panel setCanChooseDirectories:NO];
-	[panel setCanChooseFiles:YES];
-	[panel setAllowsMultipleSelection:NO];
-
-	if ([panel runModalForTypes:fileTypes] == NSOKButton) {
-#ifdef __POWERPC__
-		filename = [[panel filename] cString];
-#else
-		filename = [[panel filename] cStringUsingEncoding:NSUTF8StringEncoding];
-#endif
-		strcpy(file_name, filename);
-		return file_name;
-	}
-#endif
-	return NULL;
-}
 
 void rotate_landscape(void)
 {

@@ -23,17 +23,6 @@ else
 	zlib_libs="pkg-config --libs zlib"
 fi
 
-echo -n "Checking pkg-config --cflags gtk+-3.0..."
-if ! pkg-config --cflags gtk+-3.0 >/dev/null 2>&1; then
-	echo "no"
-	gtk_cflags=
-	gtk_libs=
-else
-	echo "yes"
-	gtk_cflags="pkg-config --cflags gtk+-3.0"
-	gtk_libs="pkg-config --libs gtk+-3.0"
-fi
-
 
 
 echo -n "Checking pkg-config --cflags lua[jit|5.1|5.2|51|52]..."
@@ -162,11 +151,6 @@ if [ ! -z "$LDFLAGS" ]; then
 	echo "EXTRA_LDFLAGS+=$LDFLAGS" >> config.make
 fi
 
-if [ ! -z "$gtk_cflags" ]; then
-	echo "EXTRA_CFLAGS+=-D_USE_GTK -D_USE_BROWSE" >> config.make
-	echo "EXTRA_CFLAGS+=\$(shell $gtk_cflags)" >> config.make
-	echo "EXTRA_LDFLAGS+=\$(shell $gtk_libs)" >> config.make
-fi
 if [ -z "$zlib_cflags" ]; then
 	echo "SUBDIRS=src/zlib" >> config.make
 	echo "ZLIB_CFLAGS=-Izlib" >> config.make

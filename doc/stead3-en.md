@@ -203,9 +203,8 @@ Documents and Settings\USER\Local Settings\Application Data\instead\games).
 In Windows and standalone-Unix version of the game are searched in the
 directory ./appdata/games, if it exists.
 
-In some assemblies, INSTEAD (in Windows, in Linux if the project is built with
-gtk etc.), you can open the game in any way from the menu "Choice of
-games".Or, press f4. If in the directory with the game there is only one the
+INSTEAD allows you to open the game in any way from the menu "Choice of
+games". Or, press f4. If in the directory with the game there is only one the
 game, INSTEAD it will be launched automatically, which is handy if you want
 distribute your game with the engine.
 

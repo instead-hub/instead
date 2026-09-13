@@ -29,10 +29,6 @@
 #include "externals.h"
 #include "internals.h"
 
-#ifdef _USE_GTK
-#include <gtk/gtk.h>
-#endif
-
 #ifdef ANDROID
 #include "android.h"
 #endif
@@ -329,9 +325,6 @@ int instead_main(int argc, char *argv[])
 	macosx_init();
 #endif
 	putenv("SDL_MOUSE_RELATIVE=0"); /* test this! */
-#if GTK_MAJOR_VERSION == 4 /* fix crash when SDL2 uses gl */
-	putenv("GDK_DEBUG=gl-disable");
-#endif
 
 #if defined(APPIMAGE)
 	unix_path(argv[0]);
@@ -769,13 +762,6 @@ int instead_main(int argc, char *argv[])
 	/* Initialize Sound */
 	snd_init(opt_hz);
 	snd_volume_mus(opt_vol);
-#ifdef _USE_GTK
-#if GTK_MAJOR_VERSION == 4
-	gtk_init();
-#else
-	gtk_init(&argc, &argv); /* must be called AFTER SDL_Init when using SDL2 */
-#endif
-#endif
 	if (gfx_video_init() || input_init())
 		return -1;
 
@@ -796,9 +782,6 @@ int instead_main(int argc, char *argv[])
 out:
 	if (debug_sw)
 		debug_done();
-#ifdef _USE_GTK
-/*	gtk_main_quit (); */
-#endif
 #ifdef _USE_UNPACK
 	if (clean_tmp)
 		remove_dir(game_tmp_path());
