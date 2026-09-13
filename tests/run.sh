@@ -43,3 +43,4 @@ if [ -z "$BIN" ]; then
 	exit 0
 fi
 tests/smoke.sh "$BIN"
+tests/integration.sh "$BIN"

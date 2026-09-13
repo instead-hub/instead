@@ -38,4 +38,10 @@ IF(STANDALONE)
 		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/standalone
 		TIMEOUT 60
 	)
+	ADD_TEST(NAME instead-integration COMMAND ${CMAKE_SOURCE_DIR}/tests/integration.sh $<TARGET_FILE:sdl-instead>)
+	SET_TESTS_PROPERTIES(instead-integration PROPERTIES
+		DEPENDS instead-stage
+		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/standalone
+		TIMEOUT 60
+	)
 ENDIF(STANDALONE)
