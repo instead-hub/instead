@@ -8,6 +8,7 @@ void test_list(void);
 void test_tinymt(void);
 void test_cache(void);
 void test_utils(void);
+void test_bits(void);
 
 int main(void)
 {
@@ -16,6 +17,7 @@ int main(void)
 	test_tinymt();
 	test_cache();
 	test_utils();
+	test_bits();
 
 	printf("%d checks, %d failures\n", tests_checks, tests_failures);
 	return tests_failures ? 1 : 0;
