@@ -2,30 +2,62 @@ name: Windows version
 
 on:
   push:
-    branches: [master]
+    branches: [master, SDL3]
   workflow_dispatch:
+
+env:
+  SDL3_VER: release-3.4.10
+  SDL3_TTF_VER: release-3.2.2
+  SDL3_IMAGE_VER: release-3.4.6
+  SDL3_MIXER_VER: release-3.2.4
 
 jobs:
   build:
     name: Windows version
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@main
+      - uses: actions/checkout@v4
 
       - name: Install Packages
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y gcc-mingw-w64-i686 mingw-w64-i686-dev binutils-mingw-w64-i686
-          sudo apt-get install -y build-essential
+          sudo apt-get install -y build-essential wget \
+            gcc-mingw-w64-i686 mingw-w64-i686-dev binutils-mingw-w64-i686
 
-      - name: Prep
-        run: make windows-sdl2.tar.gz
+      - name: Fetch dependencies
+        run: |
+          set -e
+          make windows-sdl2.tar.gz
+          tar xzf windows-sdl2.tar.gz
+          rm -rf src/windows/SDL
+          rm -f bin/SDL2*.dll bin/libmodplug-1.dll bin/libogg-0.dll
+          rm -rf bin/Microsoft.VC80.CRT
+          mkdir -p src/windows/include src/windows/lib
+          fetch() {
+            url="$1"
+            tmp="$(mktemp -d)"
+            wget -q "$url"
+            file="${url##*/}"
+            tar xzf "$file" --strip-components=1 -C "$tmp"
+            cp -a "$tmp"/i686-w64-mingw32/include/* src/windows/include/
+            cp -a "$tmp"/i686-w64-mingw32/lib/* src/windows/lib/
+            cp -a "$tmp"/i686-w64-mingw32/bin/*.dll bin/
+            rm -rf "$tmp" "$file"
+          }
+          ver="${SDL3_VER#release-}"
+          fetch "https://github.com/libsdl-org/SDL/releases/download/$SDL3_VER/SDL3-devel-$ver-mingw.tar.gz"
+          ver="${SDL3_TTF_VER#release-}"
+          fetch "https://github.com/libsdl-org/SDL_ttf/releases/download/$SDL3_TTF_VER/SDL3_ttf-devel-$ver-mingw.tar.gz"
+          ver="${SDL3_IMAGE_VER#release-}"
+          fetch "https://github.com/libsdl-org/SDL_image/releases/download/$SDL3_IMAGE_VER/SDL3_image-devel-$ver-mingw.tar.gz"
+          ver="${SDL3_MIXER_VER#release-}"
+          fetch "https://github.com/libsdl-org/SDL_mixer/releases/download/$SDL3_MIXER_VER/SDL3_mixer-devel-$ver-mingw.tar.gz"
 
       - name: Configure
         run: ./configure-mingw32.sh
 
       - name: Build
-        run: make -f Makefile.mingw
+        run: make -f Makefile.mingw -j$(nproc)
 
       - name: Create Artifact
         run: make install -f Makefile.mingw
