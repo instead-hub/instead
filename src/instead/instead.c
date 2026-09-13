@@ -986,8 +986,6 @@ static int instead_platform(void)
 	snprintf(plat, sizeof(plat) - 1, "PLATFORM='ANDROID'");
 #elif defined(_WIN32)
 	snprintf(plat, sizeof(plat) - 1, "PLATFORM='WIN32'");
-#elif defined(SAILFISHOS)
-	snprintf(plat, sizeof(plat) - 1, "PLATFORM='SFOS'");
 #else
 	snprintf(plat, sizeof(plat) - 1, "PLATFORM='UNIX'");
 #endif

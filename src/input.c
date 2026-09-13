@@ -83,32 +83,6 @@ int system_clipboard(const char *text, char **buf)
 	return SDL_SetClipboardText(text);
 }
 
-#ifdef SAILFISHOS
-static SDL_FingerID finger_mouse = 0;
-
-static void touch_mouse_event(SDL_Event *sevent)
-{
-	SDL_Event event;
-	memset(&event, 0, sizeof(event));
-	if (sevent->type == SDL_FINGERDOWN) {
-		finger_mouse = sevent->tfinger.fingerId;
-		event.type = SDL_MOUSEBUTTONDOWN;
-	} else if (sevent->type == SDL_FINGERUP) {
-		finger_mouse = 0;
-		event.type = SDL_MOUSEBUTTONUP;
-	} else if (sevent->type == SDL_FINGERMOTION) {
-		if (sevent->tfinger.fingerId != finger_mouse)
-			return;
-		event.type = SDL_MOUSEMOTION;
-	}
-	event.button.x = sevent->tfinger.x;
-	event.button.y = sevent->tfinger.y;
-	event.button.clicks = 1;
-	event.button.button = 1;
-	SDL_PushEvent(&event);
-}
-#endif
-
 static unsigned long last_press_ms = 0;
 static unsigned long last_repeat_ms = 0;
 extern void gfx_finger_pos_scale(float x, float y, int *ox, int *oy, int norm);
@@ -430,7 +404,7 @@ static void key_compat(struct inp_event *inp)
 	}
 }
 
-#if defined(IOS) || defined(SAILFISHOS)
+#if defined(IOS)
 static unsigned long touch_stamp = 0;
 static int touch_num = 0;
 #endif
@@ -499,19 +473,13 @@ int input(struct inp_event *inp, int wait)
 			return AGAIN;
 		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, event.type, event.type) > 0)
 			return AGAIN; /* to avoid flickering */
-#if defined(SAILFISHOS)
-		touch_mouse_event(&event);
-#endif
 		break;
 	case SDL_EVENT_FINGER_UP:
 #ifdef IOS
 		touch_num = 0;
 #endif
 	case SDL_EVENT_FINGER_DOWN:
-#if defined(SAILFISHOS)
-		touch_mouse_event(&event);
-#endif
-#if defined(IOS) || defined(SAILFISHOS)
+#if defined(IOS)
 		if (event.type == SDL_EVENT_FINGER_DOWN) {
 			if (gfx_ticks() - touch_stamp > 100) {
 				touch_num = 0;
@@ -569,22 +537,6 @@ int input(struct inp_event *inp, int wait)
 		m_minimized = (event.type == SDL_EVENT_WINDOW_MINIMIZED && !opt_fs);
 		snd_pause(!nopause_sw && m_minimized);
 		break;
-#if defined(SAILFISHOS)
-	case SDL_EVENT_WINDOW_FOCUS_LOST:
-		snd_pause(!nopause_sw);
-		while (1) { /* pause */
-			SDL_WaitEvent(&event);
-			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_FOCUS_GAINED) {
-				snd_pause(0);
-				break;
-			}
-			if (event.type == SDL_QUIT) {
-				game_running = 0;
-				return -1;
-			}
-		}
-		break;
-#endif
 	case SDL_EVENT_WINDOW_MOUSE_ENTER:
 	case SDL_EVENT_WINDOW_FOCUS_GAINED:
 		m_focus = 1;
