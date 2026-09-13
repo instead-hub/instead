@@ -698,7 +698,7 @@ int gfx_get_pixel(img_t src, int x, int y,  color_t *color)
 	Uint8 r, g, b, a;
 	Uint32 col = 0;
 	Uint8 *ptr;
-	int	bpp = 4;
+	int	bpp;
 	SDL_Surface *img = Surf(src);
 	if (!img)
 		return -1;
@@ -706,11 +706,13 @@ int gfx_get_pixel(img_t src, int x, int y,  color_t *color)
 	if (x >= img->w || y >= img->h || x < 0 || y < 0)
 		return -1;
 
+	bpp = SDL_BYTESPERPIXEL(img->format);
+
 	if (!SDL_LockSurface(img))
 		return -1;
 
 	ptr = (Uint8*)img->pixels;
-	ptr += img->w * y * bpp;
+	ptr += img->pitch * y;
 	ptr += x * bpp;
 
 	memcpy(&col, ptr, bpp);
@@ -718,7 +720,7 @@ int gfx_get_pixel(img_t src, int x, int y,  color_t *color)
 	SDL_UnlockSurface(img);
 	if (color)
 		SDL_GetRGBA(col, PIXEL_FORMAT_DETAILS(img),
-			NULL, &r, &g, &b, &a);
+			SDL_GetSurfacePalette(img), &r, &g, &b, &a);
 
 	if (color) {
 		color->r = r;
@@ -731,7 +733,7 @@ int gfx_get_pixel(img_t src, int x, int y,  color_t *color)
 
 int gfx_set_pixel(img_t src, int x, int y,  color_t color)
 {
-	int bpp = 4;
+	int bpp;
 	Uint32 col;
 	Uint8 *ptr;
 	SDL_Surface *img = Surf(src);
@@ -741,14 +743,16 @@ int gfx_set_pixel(img_t src, int x, int y,  color_t color)
 	if (x >= img->w || y >= img->h || x < 0 || y < 0)
 		return -1;
 
+	bpp = SDL_BYTESPERPIXEL(img->format);
+
 	if (!SDL_LockSurface(img))
 		return -1;
 
 	ptr = (Uint8*)img->pixels;
-	ptr += img->w * y * bpp;
+	ptr += img->pitch * y;
 	ptr += x * bpp;
 	col = SDL_MapRGBA(PIXEL_FORMAT_DETAILS(img),
-		NULL, color.r, color.g, color.b, color.a);
+		SDL_GetSurfacePalette(img), color.r, color.g, color.b, color.a);
 	memcpy(ptr, &col, bpp);
 
 	SDL_UnlockSurface(img);
@@ -1802,22 +1806,22 @@ static bool mouse_watcher(void *userdata, SDL_Event *event)
 #ifdef _USE_SWROTATE
 	if (gfx_flip_rotate) {
 		switch (event->type) {
-		case SDL_MOUSEBUTTONUP:
-		case SDL_MOUSEBUTTONDOWN:
+		case SDL_EVENT_MOUSE_BUTTON_UP:
+		case SDL_EVENT_MOUSE_BUTTON_DOWN:
 			mouse_y = gfx_height - event->button.x;
 			mouse_x = event->button.y;
 			event->button.x = mouse_x;
 			event->button.y = mouse_y;
 			break;
-		case SDL_MOUSEMOTION:
+		case SDL_EVENT_MOUSE_MOTION:
 			mouse_y = gfx_height - event->motion.x;
 			mouse_x = event->motion.y;
 			event->motion.x = mouse_x;
 			event->motion.y = mouse_y;
 			break;
-		case SDL_FINGERMOTION:
-		case SDL_FINGERUP:
-		case SDL_FINGERDOWN:
+		case SDL_EVENT_FINGER_MOTION:
+		case SDL_EVENT_FINGER_UP:
+		case SDL_EVENT_FINGER_DOWN:
 #ifdef SAILFISHOS /* sailfish has broken touch events */
 			mouse_x = event->tfinger.y;
 			mouse_y = gfx_height - event->tfinger.x;
@@ -1920,9 +1924,9 @@ void rotate_landscape(void)
 
 void rotate_portrait(void)
 {
-	SDL_DisplayMode desktop_mode;
-	SDL_GetDesktopDisplayMode(SDL_CurrentDisplay, &desktop_mode);
-	gfx_flip_rotate = (desktop_mode.w > desktop_mode.h);
+	const SDL_DisplayMode *desktop_mode;
+	desktop_mode = SDL_GetDesktopDisplayMode(SDL_CurrentDisplay);
+	gfx_flip_rotate = desktop_mode && (desktop_mode->w > desktop_mode->h);
 #ifdef SAILFISHOS
 	SDL_SetHint(SDL_HINT_QTWAYLAND_CONTENT_ORIENTATION, "portrait");
 #endif
@@ -2112,7 +2116,7 @@ retry:
 
 #ifdef _USE_SWROTATE
 	if (gfx_flip_rotate)
-		SDL_SetRenderLogicalSize(Renderer, h, w);
+		SDL_SetRenderLogicalPresentation(Renderer, h, w, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 	else
 #endif
 		SDL_SetRenderLogicalPresentation(Renderer, w, h, SDL_LOGICAL_PRESENTATION_LETTERBOX);
@@ -2189,17 +2193,17 @@ void gfx_show_cursor(int on)
 static void gfx_render_copy(SDL_Texture *texture, SDL_Rect *dst, int clear)
 {
 #ifdef _USE_SWROTATE
-	SDL_Rect r2;
-	SDL_Point r;
-	int w, h;
+	SDL_FRect r2;
+	SDL_FPoint r;
+	float w, h;
 	if (gfx_flip_rotate) {
 		if (clear)
 			SDL_RenderClear(Renderer);
-		SDL_QueryTexture(texture, NULL, NULL, &w, &h);
+		SDL_GetTextureSize(texture, &w, &h);
 		r2.x = 0; r2.y = -h;
 		r2.w = w; r2.h = h;
 		r.x = 0; r.y = h;
-		SDL_RenderTextureEx(Renderer, texture, NULL, &r2, 90, &r, 0);
+		SDL_RenderTextureRotated(Renderer, texture, NULL, &r2, 90, &r, SDL_FLIP_NONE);
 		return;
 	}
 #endif
@@ -2215,7 +2219,7 @@ static void gfx_render_cursor(void)
 
 	SDL_FRect rect;
 #ifdef _USE_SWROTATE
-	SDL_Point r;
+	SDL_FPoint r;
 #endif
 	if (!cursor_on || !mouse_focus() || nocursor_sw)
 		return;
@@ -2241,7 +2245,7 @@ static void gfx_render_cursor(void)
 	rect.h = cursor_h; /* - 1; */
 #ifdef _USE_SWROTATE
 	if (gfx_flip_rotate)
-		SDL_RenderTextureEx(Renderer, cursor, NULL, &rect, 90, &r, 0);
+		SDL_RenderTextureRotated(Renderer, cursor, NULL, &rect, 90, &r, SDL_FLIP_NONE);
 	else
 #endif
 		SDL_RenderTexture(Renderer, cursor, NULL, &rect);
@@ -2335,7 +2339,6 @@ void gfx_video_done(void)
 {
 	if (icon)
 		SDL_DestroySurface(icon);
-	screen = NULL;
 	TTF_Quit();
 }
 
