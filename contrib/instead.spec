@@ -1,6 +1,6 @@
 Summary:	simple text adventures/visual novels engine and game
 Name:		instead
-Version:	3.5.0
+Version:	3.6.0
 Release:	1%{?dist}
 License:	MIT
 URL:		http://instead.sourceforge.net
@@ -8,7 +8,7 @@ Source0:	%{name}_%{version}.tar.gz
 Group:		Amusements/Games
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires: SDL2-devel, SDL2_mixer-devel, SDL2_image-devel, SDL2_ttf-devel, luajit-devel
+BuildRequires: pkgconfig, SDL3-devel, SDL3_mixer-devel, SDL3_image-devel, SDL3_ttf-devel, luajit-devel
 
 %global debug_package %{nil}
 

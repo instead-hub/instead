@@ -1,13 +1,13 @@
 # Contributor: Peter Kosyh <p.kosyhgmail.com>
 
 pkgname=instead
-pkgver=3.5.2
+pkgver=3.6.0
 pkgrel=1
 pkgdesc="instead quest interpreter"
 arch=('i686' 'x86_64')
 url="http://instead.sourceforge.net/"
 license=('MIT')
-depends=('sdl2_image' 'sdl2_mixer' 'sdl2_ttf' 'lua')
+depends=('sdl3_image' 'sdl3_mixer' 'sdl3_ttf' 'lua')
 source=(http://downloads.sourceforge.net/project/instead/instead/${pkgver}/instead_${pkgver}.tar.gz)
 md5sums=(MD5SUM)
 

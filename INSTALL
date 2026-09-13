@@ -1,14 +1,27 @@
-INSTEAD 3.5.2
+INSTEAD 3.6.0
 =============
 
-WARNING! For successfull building you must install these development packages
+WARNING! For successful building you must install these development packages
 (names may vary in your distribution):
 
-	sdl2, sdl2-mixer, sdl2-image, sdl2-ttf, lua5.1/luajit, iconv
+	sdl3, sdl3_mixer, sdl3_image, sdl3_ttf, lua5.1/luajit, zlib, iconv
+
+SDL3 development packages are not available in every distribution yet.
+If they are missing, build and install SDL3, SDL3_ttf, SDL3_image and
+SDL3_mixer from source first:
+	https://github.com/libsdl-org/SDL
+	https://github.com/libsdl-org/SDL_ttf
+	https://github.com/libsdl-org/SDL_image
+	https://github.com/libsdl-org/SDL_mixer
+The versions used by CI are listed in .github/workflows/CI.yml.
+
+SDL3_image and SDL3_mixer use system codec libraries when they are available:
+	libpng, libjpeg, libwebp, libtiff, giflib (images)
+	libogg, libvorbis, opusfile, libxmp (sound, tracker music)
 
 Optionally you may use:
 	lua5.2/lua5.3/lua5.4
-	HarfBuzz and SDL2_ttf compiled with HarfBuzz support
+	HarfBuzz and SDL3_ttf compiled with HarfBuzz support
 
 0) Prepare for building
 =======================
@@ -21,37 +34,100 @@ Change current dir to project's build dir:
 
 There are several ways to build package.
 
-1) On Ubuntu
+1) Build using cmake
+====================
+
+	$ cmake -S . -B build
+	$ cmake --build build
+	$ sudo cmake --install build
+
+If cmake can not find Lua, define LUA_INCLUDE_DIR (and LUA_LIBRARY) explicitly.
+For example (Arch linux, lua5.1):
+	$ cmake -S . -B build -DLUA_INCLUDE_DIR=/usr/include/lua5.1
+
+To build standalone version, use this:
+	$ cmake -S . -B build -DSTANDALONE=1
+	$ cmake --build build
+	$ cmake --install build
+	$ cd build/standalone
+	$ ./sdl-instead
+
+Some options:
+WITH_LUAJIT Use LuaJIT instead of Lua (default on)
+WITH_ICONV Build with iconv support (default on)
+WITH_HARFBUZZ RTL support. SDL3_ttf should be compiled with HarfBuzz too (default off)
+
+For example, to build standalone version without LuaJIT, use:
+
+	$ cmake -S . -B build -DWITH_LUAJIT=0 -DSTANDALONE=1
+
+2) Build using configure.sh
+===========================
+
+	$ ./configure.sh
+
+It checks build dependencies with pkg-config and generates config.make.
+Then choose installation mode: standalone (1) or system (2).
+
+Standalone build (runs from the source tree):
+	$ make
+	$ ./sdl-instead
+
+System install:
+	$ make
+	$ sudo make install
+	$ sdl-instead
+
+If build process has failed check Rules.make.standalone (or Rules.make.system)
+and config.make, make changes if needed.
+
+3) Manual build
+===============
+
+To build game, that runs just from build dir use Rules.make.standalone:
+	$ rm -f Rules.make
+	$ ln -s Rules.make.standalone Rules.make
+	$ make clean
+	$ make
+	$ ./sdl-instead
+
+To build game for system install use Rules.make.system:
+	$ rm -f Rules.make
+	$ ln -s Rules.make.system Rules.make
+	$ make clean
+	$ make
+	$ sudo make install
+	$ sdl-instead
+
+4) On Ubuntu
 ============
 
-Install stable (old) version from repo:
+Install stable (older, SDL2 based) version from repo:
 	$ apt-get install instead
 
-Or use ppa with latest version:
-	https://launchpad.net/~gl00my/+archive/ubuntu/instead
-
-2) On Debian based systems you can build deb package
+5) On Debian based systems you can build deb package
 ====================================================
 
-	$ sudo apt-get install liblua5.1-dev libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev libsdl2-mixer-dev
+	$ sudo apt-get install liblua5.1-dev libsdl3-dev libsdl3-ttf-dev libsdl3-image-dev libsdl3-mixer-dev
 	$ sudo apt-get install build-essential debhelper
 	$ debuild
 	$ cd ..
 	$ sudo dpkg -i instead_<version>.deb
 
-3) On arch linux
+If SDL3 development packages are not available in your distribution, build
+and install SDL3 from source first (see the top of this file).
+
+6) On arch linux
 ================
 
 Install stable version from AUR:
 	$ yay -S instead
 
-Or build from svn:
+Or build from source:
 	$ make PKGBUILD
 	$ makepkg -s
 
-And, I think, you have enough skills to build package yourself. ;)
-
-4) On FreeBSD
+7) On FreeBSD
 =============
 
 Install instead from ports with pkgng:
@@ -64,75 +140,16 @@ Or build from tarball:
 	$ ./configure.sh
 	$ gmake
 
-5) On RPM based system
+8) On RPM based system
 ======================
 
 There is .spec file in tarball.
 
-6) For other distributions
-==========================
-
-You have three choices:
-	a) try to use cmake rules
-	b) try run ./configure.sh and follow instructions
-	c) do all things manually
-
-7) Build using cmake
-====================
-$ mkdir build
-$ cd build
-$ cmake ..
-$ make
-$ sudo make install
-
-Warning, in some systems (like Arch linux) you need to define LUA dir, to help cmake.
-For example (Arch linux):
-$ LUA_DIR=/usr/include/lua5.1/ cmake ..
-
-To build standalone version, use this (in ./build/ directory):
-$ cmake .. -DSTANDALONE=1
-$ make && make install
-$ cd standalone
-$ ./sdl-instead
-
-Some options:
-WITH_LUAJIT Use LuaJIT instead of Lua (default on))
-WITH_HARFBUZZ RTL support. SDL2_ttf should be compiled with HarfBuzz too (default off)
-
-For example, to build standalone version without LuaJIT, use:
-
-$ cmake .. -DWITH_LUAJIT=0 -DSTANDALONE=1
-
-8) Manual build
-===============
-To build game, that runs just from build dir use Rules.make.standalone
-----------------------------------------------------------------------
-	$ rm -f Rules.make
-	$ ln -s Rules.make.standalone Rules.make
-	$ make clean
-	$ make
-
-If build process has failed check Rules.make.standalone and make changes if needed.
-
-	$ ./sdl-instead
-
-To build game for system install
---------------------------------
-	$ rm -f Rules.make
-	$ ln -s Rules.make.system Rules.make
-	$ make clean
-	$ make
-
-If build process has failed check Rules.make.system and make changes if needed.
-
-	$ sudo make install
-
-	$ sdl-instead
-
-8) Right-to-left support
+9) Right-to-left support
 ========================
-In order to build INSTEAD with right-to-left support, the SDL2_ttf underlying library and
-INSTEAD should be compiled with HarfBuzz support (see section 7 for cmake). SDL2_ttf has
-a flag for it (TTF_USE_HARFBUZZ) which should be set in SDL_ttf.c at the time of writing.
+
+In order to build INSTEAD with right-to-left support, SDL3_ttf and INSTEAD
+should be compiled with HarfBuzz support (see section 1 for cmake options).
+SDL3_ttf has a build option TTF_USE_HARFBUZZ for it.
 
 Enjoy.

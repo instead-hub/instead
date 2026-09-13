@@ -1,3 +1,9 @@
+3.6.0
+
+ * enh: SDL3 port (large refactoring).
+
+ -- Peter Kosyh <pkosyh@yandex.ru>  Sun, 13 Sep 2026 12:00:00 +0300
+
 3.5.2
 
  * enh: redesigned installer for Windows;
