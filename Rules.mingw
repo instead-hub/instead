@@ -22,7 +22,7 @@ LUA_LFLAGS=-llua5.1 -L./windows/
 SDL_CFLAGS=-I./windows/SDL
 SDL_LFLAGS=-lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image -L./windows/SDL
 
-CFLAGS	+= -Wall -mwindows -D_HAVE_ICONV -D_USE_UNPACK -D_USE_BROWSE -D_LOCAL_APPDATA
+CFLAGS	+= -Wall -mwindows -D_HAVE_ICONV -D_USE_UNPACK -D_LOCAL_APPDATA
 LDFLAGS += -liconv
 
 MINGW=i686-w64-mingw32-

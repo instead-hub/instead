@@ -11,7 +11,6 @@ ENDIF("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 SET(INSTEAD_VERSION "3.5.2")
 
 # options
-OPTION(WITH_GTK3 "Use GTK3 file open dialog" ON)
 OPTION(WITH_ICONV "Build with iconv support" ON)
 OPTION(WITH_LUAJIT "Use LuaJIT instead of Lua" ON)
 OPTION(WITH_HARFBUZZ "Build with HarfBuzz for RTL language support" OFF)

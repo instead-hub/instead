@@ -5,7 +5,6 @@ WARNING! For successfull building you must install these development packages
 (names may vary in your distribution):
 
 	sdl2, sdl2-mixer, sdl2-image, sdl2-ttf, lua5.1/luajit, iconv
-	and gtk+2(3) (to build with open file dialog)
 
 Optionally you may use:
 	lua5.2/lua5.3/lua5.4
@@ -97,8 +96,6 @@ $ cd standalone
 $ ./sdl-instead
 
 Some options:
-WITH_GTK2 Use GTK2 file open dialog
-WITH_GTK3 Use GTK3 file open dialog (default on)
 WITH_LUAJIT Use LuaJIT instead of Lua (default on))
 WITH_HARFBUZZ RTL support. SDL2_ttf should be compiled with HarfBuzz too (default off)
 
