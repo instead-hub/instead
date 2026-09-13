@@ -67,6 +67,7 @@ jobs:
             luajit/src/lauxlib.h luajit/src/luajit.h src/windows/
           cp luajit/src/libluajit-5.1.dll.a src/windows/
           cp luajit/src/lua51.dll bin/
+          cp /usr/lib/gcc/i686-w64-mingw32/*/libgcc_s_dw2-1.dll bin/
 
       - name: Configure
         run: ./configure-mingw32.sh
