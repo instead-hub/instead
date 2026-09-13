@@ -41,7 +41,6 @@ static char dialog_dir[PATH_MAX];
 static int dialog_dir_set = 0;
 
 static const SDL_DialogFileFilter dialog_filters[] = {
-	{ "*", "*" },
 	{ "main?.lua; *.zip; *.idf", "zip;lua;idf" },
 };
 
