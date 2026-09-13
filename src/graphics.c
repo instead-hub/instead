@@ -1823,10 +1823,6 @@ static bool mouse_watcher(void *userdata, SDL_Event *event)
 		case SDL_EVENT_FINGER_MOTION:
 		case SDL_EVENT_FINGER_UP:
 		case SDL_EVENT_FINGER_DOWN:
-#ifdef SAILFISHOS /* sailfish has broken touch events */
-			mouse_x = event->tfinger.y;
-			mouse_y = gfx_height - event->tfinger.x;
-#endif
 			break;
 
 		default:
@@ -1864,7 +1860,6 @@ void gfx_real_size(int *ww, int *hh)
 void gfx_finger_pos_scale(float x, float y, int *ox, int *oy, int norm)
 {
 	int xx = 0, yy = 0;
-#ifndef SAILFISHOS
 	int w, h;
 	float sx, sy;
 	SDL_Rect rect;
@@ -1890,10 +1885,6 @@ void gfx_finger_pos_scale(float x, float y, int *ox, int *oy, int norm)
 		y = y * h;
 		yy = y / sy - rect.y;
 	}
-#else
-	xx = (int)x; /* broken touch in SFOS */
-	yy = (int)y;
-#endif
 #ifdef _USE_SWROTATE
 	if (gfx_flip_rotate) {
 		if (ox)
@@ -1918,9 +1909,6 @@ void rotate_landscape(void)
 	desktop_mode = SDL_GetDesktopDisplayMode(SDL_CurrentDisplay);
 
 	gfx_flip_rotate = desktop_mode && (desktop_mode->w < desktop_mode->h);
-#ifdef SAILFISHOS
-	SDL_SetHint(SDL_HINT_QTWAYLAND_CONTENT_ORIENTATION, "landscape");
-#endif
 }
 
 void rotate_portrait(void)
@@ -1928,17 +1916,11 @@ void rotate_portrait(void)
 	const SDL_DisplayMode *desktop_mode;
 	desktop_mode = SDL_GetDesktopDisplayMode(SDL_CurrentDisplay);
 	gfx_flip_rotate = desktop_mode && (desktop_mode->w > desktop_mode->h);
-#ifdef SAILFISHOS
-	SDL_SetHint(SDL_HINT_QTWAYLAND_CONTENT_ORIENTATION, "portrait");
-#endif
 }
 
 void unlock_rotation(void)
 {
 	gfx_flip_rotate = 0;
-#ifdef SAILFISHOS
-	SDL_SetHint(SDL_HINT_QTWAYLAND_CONTENT_ORIENTATION, "primary");
-#endif
 }
 #endif
 
@@ -1958,7 +1940,7 @@ int gfx_set_mode(int w, int h, int fs)
 	strcat(title, VERSION );
 	win_w = w * scale_sw; win_h = h * scale_sw;
 	gfx_get_max_mode(&max_mode_w, &max_mode_h, MODE_ANY); /* get current window size */
-#if defined(IOS) || defined(ANDROID) || defined(SAILFISHOS) || defined(WINRT)
+#if defined(IOS) || defined(ANDROID) || defined(WINRT)
 	fs = 1; /* always fs for mobiles */
 #endif
 	if (fs && !software_sw) {
@@ -2010,7 +1992,7 @@ int gfx_set_mode(int w, int h, int fs)
 		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, (glhack_sw / 10) % 10);
 		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, glhack_sw % 10);
 	}
-#if defined(IOS) || defined(ANDROID) || defined(SAILFISHOS) || defined(WINRT)
+#if defined(IOS) || defined(ANDROID) || defined(WINRT)
 	SDL_VideoWindow = SDL_CreateWindow(t, win_w, win_h,
 			SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE
 #if defined(ANDROID)

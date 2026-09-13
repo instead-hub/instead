@@ -1023,7 +1023,7 @@ int game_theme_init(void)
 #endif
 
 	if (w == -1) { /* as theme */
-#if !defined(IOS) && !defined(SAILFISHOS) /* always hardware accelerated */
+#if !defined(IOS) /* always hardware accelerated */
 		if (gfx_get_max_mode(&w, &h, MODE_ANY) || (game_theme.w <= w && game_theme.h <= h)) {
 			w = opt_mode[0];
 			h = opt_mode[1];
