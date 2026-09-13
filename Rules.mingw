@@ -17,7 +17,7 @@ ZLIB_CFLAGS=-Izlib
 ZLIB_LFLAGS=zlib/libz.a
 
 LUA_CFLAGS=-I./windows/
-LUA_LFLAGS=-llua5.1 -L./windows/
+LUA_LFLAGS=-lluajit-5.1 -L./windows/
 
 SDL_CFLAGS=-I./windows/include
 SDL_LFLAGS=-lSDL3 -lSDL3_ttf -lSDL3_mixer -lSDL3_image -L./windows/lib
