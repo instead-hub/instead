@@ -23,7 +23,7 @@ SDL_CFLAGS=-I./windows/include
 SDL_LFLAGS=-lSDL3 -lSDL3_ttf -lSDL3_mixer -lSDL3_image -L./windows/lib
 
 CFLAGS	+= -Wall -mwindows -D_HAVE_ICONV -D_USE_UNPACK -D_LOCAL_APPDATA
-LDFLAGS += -liconv
+LDFLAGS += -liconv -static-libgcc
 
 MINGW=i686-w64-mingw32-
 CC=$(MINGW)gcc

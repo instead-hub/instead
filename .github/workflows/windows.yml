@@ -62,13 +62,12 @@ jobs:
           set -e
           git clone --depth 1 --branch "$LUAJIT_REV" https://github.com/LuaJIT/LuaJIT.git luajit
           cd luajit
-          make HOST_CC="gcc -m32" CROSS=i686-w64-mingw32- TARGET_SYS=Windows -j$(nproc)
+          make HOST_CC="gcc -m32" CROSS=i686-w64-mingw32- TARGET_SYS=Windows TARGET_SHLDFLAGS="-static-libgcc" -j$(nproc)
           cd ..
           cp luajit/src/lua.h luajit/src/luaconf.h luajit/src/lualib.h \
             luajit/src/lauxlib.h luajit/src/luajit.h src/windows/
           cp luajit/src/libluajit-5.1.dll.a src/windows/
           cp luajit/src/lua51.dll bin/
-          cp "$(i686-w64-mingw32-gcc -print-file-name=libgcc_s_dw2-1.dll)" bin/
 
       - name: Build libxmp
         run: |
@@ -76,7 +75,8 @@ jobs:
           git clone --depth 1 --branch "$LIBXMP_VER" https://github.com/libxmp/libxmp.git libxmp
           cmake -S libxmp -B libxmp/build -G Ninja \
             -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_C_COMPILER=i686-w64-mingw32-gcc \
-            -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF
+            -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF \
+            -DCMAKE_SHARED_LINKER_FLAGS=-static-libgcc
           cmake --build libxmp/build
           cp libxmp/build/libxmp.dll bin/
 
