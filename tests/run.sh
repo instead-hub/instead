@@ -11,16 +11,20 @@ cd "$ROOT"
 
 CC=${CC:-cc}
 LUA_CFLAGS=$(pkg-config --cflags luajit 2>/dev/null || true)
+LUA_LIBS=$(pkg-config --libs luajit 2>/dev/null || true)
 [ -n "$LUA_CFLAGS" ] || LUA_CFLAGS=$(pkg-config --cflags lua5.1 2>/dev/null || true)
+[ -n "$LUA_LIBS" ] || LUA_LIBS=$(pkg-config --libs lua5.1 2>/dev/null || true)
 [ -n "$LUA_CFLAGS" ] || LUA_CFLAGS=$(pkg-config --cflags lua 2>/dev/null || true)
+[ -n "$LUA_LIBS" ] || LUA_LIBS=$(pkg-config --libs lua 2>/dev/null || true)
 
 echo "unit: build"
 $CC -Wall -Wextra -Wno-unused-parameter -g -O2 $LUA_CFLAGS -I src/instead -I src \
 	-o tests/unit/instead_unit_tests \
 	tests/unit/main.c tests/unit/test_util.c tests/unit/test_list.c \
 	tests/unit/test_tinymt.c tests/unit/test_cache.c tests/unit/test_utils.c \
+	tests/unit/test_bits.c \
 	src/instead/util.c src/instead/list.c src/instead/tinymt32.c \
-	src/instead/cache.c src/utils.c -lm
+	src/instead/cache.c src/utils.c src/instead_bits.c $LUA_LIBS -lm
 
 echo "unit: run"
 tests/unit/instead_unit_tests
