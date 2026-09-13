@@ -2,9 +2,15 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [master, SDL3]
   workflow_dispatch:
   pull_request:
+
+env:
+  SDL3_VER: release-3.4.10
+  SDL3_TTF_VER: release-3.2.2
+  SDL3_IMAGE_VER: release-3.4.6
+  SDL3_MIXER_VER: release-3.2.4
 
 jobs:
   build:
@@ -17,40 +23,50 @@ jobs:
           - {
             name: "with lua5.1",
             os: "ubuntu-latest",
-            packages: "liblua5.1-dev libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev libsdl2-mixer-dev",
+            packages: "liblua5.1-0-dev",
             cmake_opts: "-DSTANDALONE=1 -DWITH_LUAJIT=0 -DWITH_GTK3=FALSE"
           }
           - {
             name: "with luajit and gtk3",
             os: "ubuntu-latest",
-            packages: "libluajit-5.1-dev libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev libsdl2-mixer-dev libgtk-3-dev",
+            packages: "libluajit-5.1-dev libgtk-3-dev",
             cmake_opts: "-DSTANDALONE=1 -DWITH_LUAJIT=1 -DWITH_GTK3=TRUE"
           }
 
     steps:
-      - uses: actions/checkout@main
-
-      - name: Create Build Directory
-        run: cmake -E make_directory ${{github.workspace}}/build
+      - uses: actions/checkout@v4
 
       - name: Install Packages
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y ${{ matrix.config.packages }}
-          sudo apt-get install -y build-essential
+          sudo apt-get install -y build-essential cmake ninja-build pkg-config wget \
+            zlib1g-dev \
+            libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev \
+            libxkbcommon-dev libwayland-dev libdecor-0-dev \
+            libasound2-dev libpulse-dev libdbus-1-dev libudev-dev \
+            libfreetype-dev libharfbuzz-dev \
+            libpng-dev libjpeg-dev libwebp-dev libtiff-dev libgif-dev \
+            libogg-dev libvorbis-dev libopusfile-dev \
+            ${{ matrix.config.packages }}
+
+      - name: Build SDL3
+        run: |
+          set -e
+          build() {
+            name="$1"; tag="$2"; shift 2
+            git clone --depth 1 -b "$tag" "https://github.com/libsdl-org/$name.git" "/tmp/$name"
+            cmake -S "/tmp/$name" -B "/tmp/$name/build" -G Ninja \
+              -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr "$@"
+            cmake --build "/tmp/$name/build"
+            sudo cmake --install "/tmp/$name/build"
+          }
+          build SDL "$SDL3_VER" -DSDL_TESTS=OFF -DSDL_EXAMPLES=OFF
+          build SDL_ttf "$SDL3_TTF_VER" -DSDLTTF_VENDORED=OFF -DSDLTTF_SAMPLES=OFF -DSDLTTF_PLUTOSVG=OFF
+          build SDL_image "$SDL3_IMAGE_VER" -DSDLIMAGE_VENDORED=OFF -DSDLIMAGE_SAMPLES=OFF -DSDLIMAGE_TESTS=OFF -DSDLIMAGE_AVIF=OFF -DSDLIMAGE_JXL=OFF -DSDLIMAGE_SVG=OFF
+          build SDL_mixer "$SDL3_MIXER_VER" -DSDLMIXER_VENDORED=OFF -DSDLMIXER_TESTS=OFF -DSDLMIXER_EXAMPLES=OFF -DSDLMIXER_GME=OFF -DSDLMIXER_MOD=OFF -DSDLMIXER_MIDI=OFF -DSDLMIXER_WAVPACK=OFF -DSDLMIXER_FLAC_LIBFLAC=OFF
 
       - name: Configure CMake
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release ${{ matrix.config.cmake_opts }}
 
       - name: Build
         run: cmake --build ./build --config Release
-
-#      - name: Create Artifact
-#        run: |
-#          cmake --install ./build
-
-#      - name: Publish Artifact
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: standalone
-#          path: build/standalone
