@@ -11,6 +11,7 @@ env:
   SDL3_IMAGE_VER: release-3.4.6
   SDL3_MIXER_VER: release-3.2.4
   LUAJIT_REV: v2.1
+  LIBXMP_VER: libxmp-4.6.3
 
 jobs:
   build:
@@ -22,7 +23,7 @@ jobs:
       - name: Install Packages
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y build-essential wget gcc-multilib \
+          sudo apt-get install -y build-essential wget cmake ninja-build gcc-multilib \
             gcc-mingw-w64-i686 mingw-w64-i686-dev binutils-mingw-w64-i686
 
       - name: Fetch dependencies
@@ -68,6 +69,16 @@ jobs:
           cp luajit/src/libluajit-5.1.dll.a src/windows/
           cp luajit/src/lua51.dll bin/
           cp /usr/lib/gcc/i686-w64-mingw32/*/libgcc_s_dw2-1.dll bin/
+
+      - name: Build libxmp
+        run: |
+          set -e
+          git clone --depth 1 --branch "$LIBXMP_VER" https://github.com/libxmp/libxmp.git libxmp
+          cmake -S libxmp -B libxmp/build -G Ninja \
+            -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_C_COMPILER=i686-w64-mingw32-gcc \
+            -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF
+          cmake --build libxmp/build
+          cp libxmp/build/libxmp.dll bin/
 
       - name: Configure
         run: ./configure-mingw32.sh
