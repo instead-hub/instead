@@ -10,6 +10,7 @@ env:
   SDL3_TTF_VER: release-3.2.2
   SDL3_IMAGE_VER: release-3.4.6
   SDL3_MIXER_VER: release-3.2.4
+  LUAJIT_REV: v2.1
 
 jobs:
   build:
@@ -21,7 +22,7 @@ jobs:
       - name: Install Packages
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y build-essential wget \
+          sudo apt-get install -y build-essential wget gcc-multilib \
             gcc-mingw-w64-i686 mingw-w64-i686-dev binutils-mingw-w64-i686
 
       - name: Fetch dependencies
@@ -30,7 +31,9 @@ jobs:
           make windows-sdl2.tar.gz
           tar xzf windows-sdl2.tar.gz
           rm -rf src/windows/SDL
-          rm -f bin/SDL2*.dll bin/libmodplug-1.dll bin/libogg-0.dll
+          rm -f src/windows/lua.h src/windows/lua.hpp src/windows/lauxlib.h \
+            src/windows/lualib.h src/windows/luaconf.h src/windows/lua5.1.lib
+          rm -f bin/SDL2*.dll bin/libmodplug-1.dll bin/libogg-0.dll bin/lua5.1.dll
           rm -rf bin/Microsoft.VC80.CRT
           mkdir -p src/windows/include src/windows/lib
           fetch() {
@@ -52,6 +55,18 @@ jobs:
           fetch "https://github.com/libsdl-org/SDL_image/releases/download/$SDL3_IMAGE_VER/SDL3_image-devel-$ver-mingw.tar.gz"
           ver="${SDL3_MIXER_VER#release-}"
           fetch "https://github.com/libsdl-org/SDL_mixer/releases/download/$SDL3_MIXER_VER/SDL3_mixer-devel-$ver-mingw.tar.gz"
+
+      - name: Build LuaJIT
+        run: |
+          set -e
+          git clone --depth 1 --branch "$LUAJIT_REV" https://github.com/LuaJIT/LuaJIT.git luajit
+          cd luajit
+          make HOST_CC="gcc -m32" CROSS=i686-w64-mingw32- TARGET_SYS=Windows -j$(nproc)
+          cd ..
+          cp luajit/src/lua.h luajit/src/luaconf.h luajit/src/lualib.h \
+            luajit/src/lauxlib.h luajit/src/luajit.h src/windows/
+          cp luajit/src/libluajit-5.1.dll.a src/windows/
+          cp luajit/src/lua51.dll bin/
 
       - name: Configure
         run: ./configure-mingw32.sh
