@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# build INSTEAD with emscripten
+# build INSTEAD with emscripten (SDL3)
 
 set -e
 # export WORKSPACE="/home/peter/Devel/emsdk/env"
+# export INSTEAD_SRC="/path/to/instead/source" (optional)
 
 if [ ! -f ./emsdk_env.sh ]; then
 	echo "Run this script in emsdk directory"
@@ -19,257 +20,163 @@ if [ ! -d "$WORKSPACE" ]; then
 fi
 . ./emsdk_env.sh
 
+SDL3_IMAGE_VER=release-3.4.6
+SDL3_MIXER_VER=release-3.2.4
+LIBXMP_VER=libxmp-4.6.3
+
 # some general flags
-export PATH="$WORKSPACE/bin:$PATH"
 export CFLAGS="-g0 -O2"
 export CXXFLAGS="$CFLAGS"
-export EM_CFLAGS="-Wno-warn-absolute-paths"
-export EMCC_CFLAGS="$EM_CFLAGS"
-export PKG_CONFIG_PATH="$WORKSPACE/lib/pkgconfig"
-export MAKEFLAGS="-j2"
-
-# flags to fake emconfigure and emmake
-export CC="emcc"
-export CXX="em++"
-export LD="$CC"
-export LDSHARED="$LD"
-export RANLIB="emranlib"
-export AR="emar"
-export CC_BUILD=cc
+export MAKEFLAGS="-j$(nproc)"
 
 deps()
 {
-
 # Lua
 cd $WORKSPACE
 if ! test -r .stamp_lua; then
-rm -rf lua-5.1.5
-[ -f lua-5.1.5.tar.gz ] || wget -nv 'https://www.lua.org/ftp/lua-5.1.5.tar.gz' || wget -nv 'https://www.tecgraf.puc-rio.br/lua/mirror/ftp/lua-5.1.5.tar.gz'
-tar xf lua-5.1.5.tar.gz
-cd lua-5.1.5
-cat src/luaconf.h | sed -e 's/#define LUA_USE_POPEN//g' -e 's/#define LUA_USE_ULONGJMP//g'>src/luaconf.h.new
-mv src/luaconf.h.new src/luaconf.h
-emmake make posix CC=emcc 
-emmake make install INSTALL_TOP=$WORKSPACE 
-touch ../.stamp_lua
+	rm -rf lua-5.1.5
+	[ -f lua-5.1.5.tar.gz ] || wget -nv 'https://www.lua.org/ftp/lua-5.1.5.tar.gz' || wget -nv 'https://www.tecgraf.puc-rio.br/lua/mirror/ftp/lua-5.1.5.tar.gz'
+	tar xf lua-5.1.5.tar.gz
+	cd lua-5.1.5
+	cat src/luaconf.h | sed -e 's/#define LUA_USE_POPEN//g' -e 's/#define LUA_USE_ULONGJMP//g' > src/luaconf.h.new
+	mv src/luaconf.h.new src/luaconf.h
+	emmake make posix CC=emcc
+	emmake make install INSTALL_TOP=$WORKSPACE
+	touch ../.stamp_lua
 fi
 
-# libiconv
+# emscripten ports
 cd $WORKSPACE
-if ! test -r .stamp_iconv; then
-rm -rf libiconv-1.15
-[ -f libiconv-1.15.tar.gz ] || wget -nv 'https://ftp.gnu.org/gnu/libiconv/libiconv-1.15.tar.gz'
-tar xf libiconv-1.15.tar.gz
-cd libiconv-1.15
-emconfigure ./configure --prefix=$WORKSPACE
-emmake make install
-touch ../.stamp_iconv
+if ! test -r .stamp_ports; then
+	embuilder build sdl3 sdl3_ttf zlib
+	touch .stamp_ports
 fi
 
-# zlib
+# cmake shim for SDL3 ports
+mkdir -p $WORKSPACE/sdl3-cmake
+cat > $WORKSPACE/sdl3-cmake/SDL3Config.cmake <<EOF
+set(SDL3_VERSION "3.4.10")
+set(SDL3_VERSION_STRING "3.4.10")
+set(SDL3_FOUND TRUE)
+set(SDL3_Headers_FOUND TRUE)
+if(NOT TARGET SDL3::Headers)
+  add_library(SDL3::Headers INTERFACE IMPORTED)
+  set_target_properties(SDL3::Headers PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "\$ENV{EMSDK}/upstream/emscripten/cache/sysroot/include")
+endif()
+if(NOT TARGET SDL3::SDL3)
+  add_library(SDL3::SDL3 INTERFACE IMPORTED)
+  set_target_properties(SDL3::SDL3 PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "\$ENV{EMSDK}/upstream/emscripten/cache/sysroot/include")
+endif()
+EOF
+cat > $WORKSPACE/sdl3-cmake/SDL3ConfigVersion.cmake <<EOF
+set(PACKAGE_VERSION "3.4.10")
+if(PACKAGE_VERSION VERSION_LESS PACKAGE_FIND_VERSION)
+  set(PACKAGE_VERSION_COMPATIBLE FALSE)
+else()
+  set(PACKAGE_VERSION_COMPATIBLE TRUE)
+  if(PACKAGE_FIND_VERSION STREQUAL PACKAGE_VERSION)
+    set(PACKAGE_VERSION_EXACT TRUE)
+  endif()
+endif()
+EOF
+
+# SDL3_image
 cd $WORKSPACE
-if ! test -r .stamp_zlib; then
-rm -rf zlib-1.3.2/
-[ -f zlib-1.3.2.tar.gz ] || wget -nv 'http://zlib.net/zlib-1.3.2.tar.gz'
-tar xf zlib-1.3.2.tar.gz
-cd zlib-1.3.2
-emconfigure ./configure --prefix=$WORKSPACE
-emmake make install
-touch ../.stamp_zlib
+if ! test -r .stamp_sdl3_image; then
+	rm -rf SDL_image
+	git clone --depth 1 -b $SDL3_IMAGE_VER https://github.com/libsdl-org/SDL_image.git SDL_image
+	git -C SDL_image submodule update --init --depth 1 external/zlib external/libpng
+	emcmake cmake -S SDL_image -B SDL_image/build -DSDL3_DIR=$WORKSPACE/sdl3-cmake \
+		-DBUILD_SHARED_LIBS=OFF -DSDLIMAGE_VENDORED=ON -DSDLIMAGE_SAMPLES=OFF -DSDLIMAGE_TESTS=OFF \
+		-DSDLIMAGE_AVIF=OFF -DSDLIMAGE_JXL=OFF -DSDLIMAGE_SVG=OFF -DSDLIMAGE_TIF=OFF -DSDLIMAGE_WEBP=OFF
+	cmake --build SDL_image/build
+	cmake --install SDL_image/build --prefix $WORKSPACE
+	touch .stamp_sdl3_image
 fi
 
-# libmikmod
+# libxmp
 cd $WORKSPACE
-if ! test -r .stamp_libmikmod; then
-rm -rf libmikmod-3.1.12/
-[ -f SDL2_mixer-2.0.1.tar.gz ] || wget -nv https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-2.0.1.tar.gz
-tar xf SDL2_mixer-2.0.1.tar.gz
-mv SDL2_mixer-2.0.1/external/libmikmod-3.1.12/ libmikmod-3.1.12/
-cd libmikmod-3.1.12/
-emconfigure ./configure --prefix=$WORKSPACE --disable-shared --enable-static 
-emmake make install SHELL="${SHELL}"
-touch ../.stamp_libmikmod
+if ! test -r .stamp_libxmp; then
+	rm -rf libxmp
+	git clone --depth 1 -b $LIBXMP_VER https://github.com/libxmp/libxmp.git libxmp
+	emcmake cmake -S libxmp -B libxmp/build -DBUILD_SHARED_LIBS=OFF -DBUILD_TESTING=OFF
+	cmake --build libxmp/build
+	cmake --install libxmp/build --prefix $WORKSPACE
+	touch .stamp_libxmp
 fi
 
-# freetype2
-
+# SDL3_mixer
 cd $WORKSPACE
-if ! test -r .stamp_ft2; then
-rm -rf freetype-2.8
-wget --no-check-certificate https://download.savannah.gnu.org/releases/freetype/freetype-2.8.tar.gz
-tar -xvf freetype-2.8.tar.gz
-cd freetype-2.8
-./autogen.sh
-
-emconfigure ./configure --build=amd64-unknown-linux --host=asmjs-linux --prefix=$WORKSPACE  CPPFLAGS="-I$WORKSPACE/include" LDFLAGS="-L$WORKSPACE/lib" --disable-shared
-emmake make install
-touch ../.stamp_ft2
+if ! test -r .stamp_sdl3_mixer; then
+	rm -rf SDL_mixer
+	git clone --depth 1 -b $SDL3_MIXER_VER https://github.com/libsdl-org/SDL_mixer.git SDL_mixer
+	emcmake cmake -S SDL_mixer -B SDL_mixer/build -DSDL3_DIR=$WORKSPACE/sdl3-cmake \
+		-DBUILD_SHARED_LIBS=OFF -DSDLMIXER_VENDORED=OFF -DSDLMIXER_TESTS=OFF -DSDLMIXER_EXAMPLES=OFF \
+		-DSDLMIXER_GME=OFF -DSDLMIXER_MOD=ON -DSDLMIXER_MOD_XMP_SHARED=OFF -Dlibxmp_DIR=$WORKSPACE/lib/cmake/libxmp \
+		-DSDLMIXER_MIDI=OFF -DSDLMIXER_WAVPACK=OFF \
+		-DSDLMIXER_FLAC_LIBFLAC=OFF -DSDLMIXER_VORBIS_VORBISFILE=OFF -DSDLMIXER_OPUS=OFF -DSDLMIXER_MP3_MPG123=OFF
+	cmake --build SDL_mixer/build
+	cmake --install SDL_mixer/build --prefix $WORKSPACE
+	touch .stamp_sdl3_mixer
 fi
-
-# SDL2_ttf
-cd $WORKSPACE
-if ! test -r .stamp_sdl2_ttf; then
-rm -rf SDL2_ttf
-git clone https://github.com/emscripten-ports/SDL2_ttf.git
-cd SDL2_ttf
-git checkout master
-git pull
-sed -i -e 's/noinst_PROGRAMS = showfont glfont//' Makefile.am
-./autogen.sh
-emconfigure ./configure --build=amd64-unknown-linux --host=asmjs-unknown-linux --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -I$WORKSPACE/include/SDL2 -I$WORKSPACE/include/freetype2" LDFLAGS="-L$WORKSPACE/lib" --disable-sdltest --disable-shared CFLAGS="-sUSE_SDL=2"
-emmake make install
-touch ../.stamp_sdl2_ttf
-fi
-
-
-# SDL2_mixer
-cd $WORKSPACE
-if ! test -r .stamp_sdl2_mixer; then
-rm -rf SDL_mixer-2.0.2
-[ -f SDL2_mixer-2.0.2.tar.gz ] || wget -nv https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-2.0.2.tar.gz
-tar xf SDL2_mixer-2.0.2.tar.gz && cd SDL2_mixer-2.0.2
-
-cat configure.in | sed -e 's/AC_CHECK_LIB(\[modplug\], /AC_CHECK_LIB(\[modplug\], \[ModPlug_Load\], /' -e 's/have_libmikmod=no/have_libmikmod=yes/g' > configure.in.new
-mv -f configure.in.new configure.in
-./autogen.sh
-
-export have_ogg_lib=yes
-export have_ogg_h=yes
-export have_libmikmod=yes
-emconfigure ./configure --host=asmjs-unknown-emscripten --prefix=$WORKSPACE CPPFLAGS="-I$WORKSPACE/include -I$WORKSPACE/include/SDL2 -s USE_VORBIS=1 -s USE_OGG=1" LDFLAGS="-L$WORKSPACE/lib" --disable-sdltest --disable-shared \
-   --disable-music-mp3-mad-gpl --enable-music-ogg --disable-music-ogg-shared --enable-music-mod-mikmod --disable-music-mod-mikmod-shared \
-   --disable-music-midi-fluidsynth --disable-music-midi-fluidsynth-shared \
-   --disable-music-mp3-smpeg --disable-music-mp3-smpeg-shared CFLAGS="-sUSE_SDL=2"
-
-cat Makefile | sed -e 's| \$(objects)/playwave\$(EXE) \$(objects)/playmus\$(EXE)||g' > Makefile.new
-mv -f Makefile.new Makefile
-emmake make
-emmake make install
-touch ../.stamp_sdl2_mixer
-fi
-
 }
 
 deps
 
 # INSTEAD
 echo "INSTEAD"
-cd $WORKSPACE
-[ -d instead-em ] || git clone https://github.com/instead-hub/instead.git instead-em
-cd instead-em
-git checkout .
-git pull
-[ -e Rules.make ] || ln -s Rules.standalone Rules.make
+SRC="$INSTEAD_SRC"
+if [ -z "$SRC" ]; then
+	cd $WORKSPACE
+	[ -d instead-em ] || git clone https://github.com/instead-hub/instead.git instead-em
+	cd instead-em
+	git checkout .
+	git pull
+	SRC=$WORKSPACE/instead-em
+fi
+
+cd "$SRC"
+[ -e Rules.make ] || ln -s Rules.make.standalone Rules.make
 cat <<EOF > config.make
-EXTRA_CFLAGS+= -DNOMAIN -D_HAVE_ICONV -I../../include
-SDL_CFLAGS=-I../../include/SDL2 -sUSE_SDL=2 -sUSE_SDL_IMAGE=2
-SDL_LFLAGS=
-LUA_CFLAGS=
-LUA_LFLAGS=
-ZLIB_LFLAGS=
+EXTRA_CFLAGS = -DNOMAIN -D_HAVE_ICONV -I$WORKSPACE/include
+SDL_CFLAGS = -I$WORKSPACE/include -sUSE_SDL=3 -sUSE_SDL_TTF=3
+SDL_LFLAGS =
+LUA_CFLAGS = -I$WORKSPACE/include
+LUA_LFLAGS =
+ZLIB_CFLAGS = -sUSE_ZLIB=1
+ZLIB_LFLAGS =
 EOF
 emmake make clean
-sed -i -e 's/^EXE=$/EXE=.bc/' Rules.make.standalone
-LDFLAGS=-r emmake make
+emmake make EXE=.bc LDFLAGS=-r
 
 cd $WORKSPACE
-[ -d  instead-em-js ] ||  mkdir instead-em-js 
-[ -d  instead-em-js/fs ] || mkdir instead-em-js/fs
-cp -R instead-em/icon instead-em-js/fs/
-cp -R instead-em/stead instead-em-js/fs/
-cp -R instead-em/themes instead-em-js/fs/
-cp -R instead-em/lang instead-em-js/fs/
-cp -R instead-em/games instead-em-js/fs/
-rm -rf instead-em-js/fs/games # without games
+[ -d instead-em-js ] || mkdir instead-em-js
+[ -d instead-em-js/fs ] || mkdir instead-em-js/fs
+cp -R "$SRC"/icon instead-em-js/fs/
+cp -R "$SRC"/stead instead-em-js/fs/
+cp -R "$SRC"/themes instead-em-js/fs/
+cp -R "$SRC"/lang instead-em-js/fs/
+rm -rf instead-em-js/fs/games
 find instead-em-js/fs/ \( -name '*.svg' -o -name Makefile -o -name CMakeLists.txt \) -exec rm {} \;
 
-cat <<EOF > post.js
-var Module;
-FS.mkdir('/appdata');
-FS.mount(IDBFS,{},'/appdata');
-
-Module['postRun'].push(function() {
-	var argv = []
-	var req
-	if (typeof window === "object") {
-		argv = window.location.search.substr(1).trim().split('&');
-		if (!argv[0])
-			argv = [];
-	}
-	var url = argv[0];
-	if (!url) {
-		FS.syncfs(true, function (error) {
-			if (error) {
-				console.log("Error while syncing: ", error);
-			};
-			console.log("Running...");
-			Module.ccall('instead_main', 'number');
-		});
-		return;
-	}
-
-	req = new XMLHttpRequest();
-	req.open("GET", url, true);
-	req.responseType = "arraybuffer";
-	console.log("Get: ", url);
-
-	setTimeout(function() {
-		var spinnerElement = document.getElementById('spinner');
-		spinnerElement.style.display = 'inline-block';
-		Module['setStatus']('Downloading data file...');
-	}, 3);
-	req.onload = function() {
-		var basename = function(path) {
-			parts = path.split( '/' );
-			return parts[parts.length - 1];
-		}
-		var data = req.response;
-		console.log("Data loaded...");
-		FS.syncfs(true, function (error) {
-			if (error) {
-				console.log("Error while syncing: ", error);
-			}
-			url = basename(url);
-			console.log("Writing: ", url);
-			FS.writeFile(url, new Int8Array(data), { encoding: 'binary' }, "w");
-			console.log("Running...");
-			var args = stackAlloc(7 * 4);
-			args[6] = 0;
-			[ "instead-em", url, "-standalone", "-window", "-resizable", "-mode" ].forEach(function(item, i) {
-				HEAP32[(args >> 2) + i] = allocateUTF8OnStack(item);
-			})
-			setTimeout(function() {
-				Module.setStatus('');
-				document.getElementById('status').style.display = 'none';
-			}, 3);
-			window.onclick = function(){ window.focus() };
-			Module.ccall('instead_main', 'number', ["number", "number"], [6, args ]);
-		});
-	}
-	req.send(null);
-});
-EOF
-
-unzip -o -j instead-em/contrib/instead-em.zip -d instead-em-js/
+unzip -o -j "$SRC"/contrib/instead-em.zip -d instead-em-js/
 
 cd instead-em-js
-ln -f -s ../instead-em/src/sdl-instead.bc sdl-instead.bc
-ln -f -s ../lib lib
-
-emcc -O2 sdl-instead.bc lib/libz.a lib/libiconv.so lib/liblua.a lib/libSDL2_ttf.a  lib/libfreetype.a lib/libSDL2_mixer.a lib/libmikmod.a \
--lidbfs.js \
--s EXPORTED_FUNCTIONS="['_instead_main']" \
--s 'SDL2_IMAGE_FORMATS=["png","jpg","gif"]' \
--s 'EXPORTED_RUNTIME_METHODS=["ccall", "Pointer_stringify"]' \
--s 'DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=["$autoResumeAudioContext", "$dynCall"]' \
--s QUANTUM_SIZE=4 \
--s WASM=1 \
--s PRECISE_F32=1 \
--s STACK_SIZE=131072 \
--s USE_OGG=1 -s USE_VORBIS=1 -s USE_SDL=2 -s USE_SDL_IMAGE=2 \
--o instead-em.html -s SAFE_HEAP=0  -s TOTAL_MEMORY=167772160 -s ALLOW_MEMORY_GROWTH=1 \
---post-js post.js  \
---preload-file fs@/
+cp "$SRC"/src/sdl-instead.bc sdl-instead.o
+emcc -O2 sdl-instead.o $WORKSPACE/lib/liblua.a $WORKSPACE/lib/libSDL3_image.a $WORKSPACE/lib/libpng16.a $WORKSPACE/lib/libSDL3_mixer.a $WORKSPACE/lib/libxmp.a \
+	-sUSE_SDL=3 \
+	-sUSE_SDL_TTF=3 \
+	-sUSE_ZLIB=1 \
+	-lidbfs.js \
+	-sEXPORTED_FUNCTIONS='["_instead_main"]' \
+	-sEXPORTED_RUNTIME_METHODS='["ccall"]' \
+	-sWASM=1 \
+	-sALLOW_MEMORY_GROWTH=1 \
+	-s TOTAL_MEMORY=167772160 \
+	--post-js post.js \
+	--preload-file fs@/ \
+	-o instead-em.js
 
 echo "Happy hacking"
-# python2.7 -m SimpleHTTPServer 8000

@@ -29,6 +29,12 @@
 
 extern SDL_Window *SDL_VideoWindow;
 
+#ifdef __EMSCRIPTEN__
+char *open_file_dialog(void)
+{
+	return NULL;
+}
+#else
 static SDL_AtomicInt dialog_done;
 static char dialog_result[PATH_MAX];
 static char dialog_dir[PATH_MAX];
@@ -75,3 +81,4 @@ char *open_file_dialog(void)
 	dialog_dir_set = 1;
 	return file;
 }
+#endif

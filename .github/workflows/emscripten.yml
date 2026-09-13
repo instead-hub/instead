@@ -1,18 +1,18 @@
 name: Emscripten version
 on:
   push:
-    branches: [master]
+    branches: [master, SDL3]
   workflow_dispatch:
 
 env:
-    emsdk_ver: 3.1.49
+    emsdk_ver: 6.0.9
 
 jobs:
   build:
     name: Emscripten version
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@main
+      - uses: actions/checkout@v4
 
       - name: Cache emsdk
         id: cache-emsdk
@@ -39,6 +39,7 @@ jobs:
         run: |
           cd emsdk
           export WORKSPACE="${{github.workspace}}/emsdk/env"
+          export INSTEAD_SRC="${{github.workspace}}"
           ../contrib/instead-em-build.sh
 
       - name: Create Artifact
