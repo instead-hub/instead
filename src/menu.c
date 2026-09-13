@@ -266,7 +266,8 @@ static void games_menu(void)
 			snprintf(tmp, sizeof(tmp), "<l><a:%s>%s</a></l>", games[i].dir, games[i].name);
 		if (!strncmp(game_local_games_path(0), games[i].path, strlen(game_local_games_path(0))) &&
 			!access(games[i].path, W_OK)) {
-			snprintf(tmp + strlen(tmp), sizeof(tmp), " [<a:/remove_%d>X</a>]\n", i);
+			size_t len = strlen(tmp);
+			snprintf(tmp + len, sizeof(tmp) - len, " [<a:/remove_%d>X</a>]\n", i);
 		} else
 			strcat(tmp, "\n");
 
