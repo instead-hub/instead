@@ -92,7 +92,7 @@ dynamic parts of the scene, active events and a picture the scene (in the
 graphic interpreter) with possible transitions to other scene.
 
 _Descriptive part of the scene_ appears only once, when showing scene, or with explicit
-inspection of the scene (in the graphic interpreter -- Staticheskaya part
+inspection of the scene (in the graphic interpreter -- Static part
 scene contains information about static objects scene (usually scenery) and is
 always displayed. This part written by the author of the game.
 
@@ -120,7 +120,7 @@ _Actions_ of the player can be:
 ### How to start a new game project
 
 INSTEAD will treat any directory on your computer as a game project if it
-contains a text file named "main3.lua". The presense of this file means that
+contains a text file named "main3.lua". The presence of this file means that
 it is a STEAD3 project. Any other files you need for your game such as extra
 Lua scripts, images, and music should be stored within the game directory as
 well. Any time you reference an external resource in your code, it should be
@@ -268,7 +268,7 @@ this enables you to quickly see changes to the game after it changes.
 > the menu.
 
 Mode '-debug' Windows version INSTEAD creates a console window (in Unix
-version, if you start INSTEAD from the console, the output will bedirected to
+version, if you start INSTEAD from the console, the output will be directed to
 it) which will be implemented by the error output. In addition using the
 function 'print ()', you can generate your messages with debug output. For
 example:
@@ -364,7 +364,7 @@ myroom = room {
 }
 ```
 
-Myroom variable in this case becomes a synonym of object (link on the object
+The myroom variable in this case becomes a synonym of object (link on the object
 itself).
 
 	dprint("Object: ", myroom)
@@ -495,7 +495,7 @@ scene a lot, all descriptions are displayed one after the other, using the
 spacebar
 
 'act' is an event handler that is called when the action user (action on
-object in the scene, usually -- click the mouse on the the link). Its main
+object in the scene, usually -- click the mouse on the link). Its main
 task-the output (return) line of text which will become part of scene events,
 and state change to playing world.
 
@@ -613,7 +613,7 @@ for unique objects that the player can manipulate.
 
 ### The same object in multiple rooms
 
-Using our example of a forrested area, you can create a single object and
+Using our example of a forested area, you can create a single object and
 place it in multiple rooms as follows:
 
 ```
@@ -640,7 +640,7 @@ room {
 A decorative object may only appear in a single room. For objects like these,
 you can assign them a local name using the 'tag' attribute. By assigning a
 tag, you don't have to come up with a globally unique name. Strings assigned
-to the 'tag' attribute look like a name, but are preceeded by a '#' symbol.
+to the 'tag' attribute look like a name, but are preceded by a '#' symbol.
 Even so, you refer to the object by its tag without a #:
 
 ```
@@ -867,7 +867,7 @@ functions if you ever need to rename the object.
 
 In this example, we make text descriptions dynamic. The first time the player
 encounters this object, it will be referred to as "Something". Once they
-interract with it, the 'seen' variable becomes true. After that, they will see
+interact with it, the 'seen' variable becomes true. After that, they will see
 that the object is an "Apple".
 
 The syntax of 'if' statements is easy to read. Here are a few examples for
@@ -947,7 +947,7 @@ obj {
 
 All variables of an object when it changes, enter the save file game.
 
-If you don't want the variable was in a save file, you you can declare such
+If you don't want the variable was in a save file, you can declare such
 variables in a special block:
 
 ```
@@ -1300,7 +1300,7 @@ obj {
 
 The traditional transitions into INSTEAD appear as links above the description
 scene. To determine the transitions between scenes is used attribute scene --
-list 'way'. In the list are determined by the room in the form of of the room
+list 'way'. In the list are determined by the room in the form of the room
 names or variable references, similar to the list 'obj'. For example:
 
 ```
@@ -1412,7 +1412,7 @@ __Important!__
 > It should be noted that when calling the handler 'the onenter' pointer to
 > current scene (here()) **not yet changed**!!! In there INSTEAD
 > handlers 'exit' (leaving the room) and 'enter' (entering the room),
-> which are called already _posle_ how the transition happened. These
+> which are called already _after_ how the transition happened. These
 > handlers are recommended when there is no
 > need to forbid the transition.
 
@@ -1460,7 +1460,7 @@ All parameters except the transition name, can be functions.
 
 Thus, the 'path' allows you to call a transitions convenient way.
 
-Sometimes you may need to turn on and off transitions. Reallyit is not often
+Sometimes you may need to turn on and off transitions. Really it is not often
 required. The idea of transitions is that the transition visible even when
 it's impossible. For example, imagine the scene in front of the house by the
 front door. To enter the house because the door closed.
@@ -1470,7 +1470,7 @@ onenter' the scene inside the house, we check whether a character key? And if
 the key no, talking about the fact that the door is closed, and prohibit the
 transition. It increases interactivity and simplifies the code. If you want to
 do the door object in the scene, place it in the room, but in the 'act'
-handlerd o the inspection doors, or allow the player to open it with a key (how
+handler do the inspection of the doors, or allow the player to open it with a key (how
 to do it - we will look at later), but the transition itself give make the
 player in the usual way through the line transitions.
 
@@ -1647,7 +1647,7 @@ obj {
 ```
 
 As you remember, before calling use onuse handler is invoked from of the game
-object, then the object 'player', and then my current room. Youcan block
+object, then the object 'player', and then my current room. You can block
 'use', returning from any of the following methods 'onuse' -- false.
 
 Use 'use' or 'used' (or both) is a matter of personal preference, however, the
@@ -1680,7 +1680,7 @@ game.player = player {
 To INSTEAD have the ability to create multiple players and to switch between
 them. This is the 'change_pl()'. In as parameter pass function required an
 object of type 'player' (or his name). Function will switch the current
-player, andnecessary, will move into the room where the new player.
+player, and if necessary, will move into the room where the new player.
 
 The 'me()' always returns the current player. Therefore, in most games and
 me() == pl.
@@ -1702,7 +1702,7 @@ The variable game.player -- contains the current player.
 In addition, as you already know, the object of the 'game' may contain default
 handlers: 'act', 'inv', 'use', 'tak', which will called if the actions of the
 user are not found no other handlers (or all of them returned false). For
-example, you you can write in the beginning of the game:
+example, you can write in the beginning of the game:
 
 	game.act = 'does Not work.';
 	game.inv = 'hmm ... Odd thing...';
@@ -1801,7 +1801,7 @@ Thus, the main function:
 - 'from([where])' returns the last room the player goes into given room.
   Optional parameter -- to the last room not for the current room, and for a
   given;
-- 'seen(what [, where])' returns an object or transition, if itis present and
+- 'seen(what [, where])' returns an object or transition, if it is present and
   can see, there is a second optional parameter -- select the scene or
   object/list in which to search;
 - 'lookup(what, [where])' returns an object or transition, if it there is in
@@ -1909,7 +1909,7 @@ In the description of the functions most of the functions under the parameter
 - me() - returns the current player;
 - here() - returns the current scene.
 - from([w]) - returns the room from which the transition to your current scene.
-- new(constructor, arguments) - creates a new dinamicheskogo object (to be
+- new(constructor, arguments) - creates a new dynamic object (to be
   described later);
 - delete(w) - deletes the dynamic object;
 - gamefile(file, [reset?]) - load dynamically the file with the game;
@@ -2079,7 +2079,7 @@ And get prefixed with a '+' before each phrase. You can also to make a prefix
 function. The function in this case will be to enter a parameter the number of
 the phrase. The purpose of the function -- to return a string prefix.
 
-Please note that 'std.phrase_prefix' is not saved if you you need to override
+Please note that 'std.phrase_prefix' is not saved if you need to override
 it on the fly, you will have to restore it state in 'start()' function
 manually!
 
@@ -2504,7 +2504,7 @@ dlg {
 The fact that the attribute phr defines the first object of the room. But you
 can fill the room objects in the usual way: by setting the obj or with. Since
 entering the dialogue reveals the 1st phrase, then the rest phrase you will
-not see (pay attention to the phrase '#aboutpill' not worth itfalse), but you
+not see (pay attention, the phrase '#aboutpill' is not set to false), but you
 will be able to do transitions on these phrases.
 
 ### Methods
@@ -2519,7 +2519,7 @@ For phrases with always = true (or true at the beginning of the definition) --
 this the closing does not occur.
 
 For phrases with hidden = true (or false at the beginning of the definition)
--- the phrase will be created as disabled. It will not be visible until until
+-- the phrase will be created as disabled. It will not be visible until
 is explicitly enabled.
 
 For phrases with cond(), every time you browse phrases is called this method,
@@ -2844,9 +2844,9 @@ Some points required clarification.
 game:reaction() -- allows you to take/modify the output of the reaction
 user, if set to false this means to reset the reaction.
 
-game:events () -- allows you to take/change / withdrawal of life methods. Inas
-choices are made a priority and not a priority criteria false we cancelled the
-whole output of the previous life methods.
+game:events () -- allows you to take/change / withdrawal of life methods. As
+parameters, priority and non-priority messages are accepted; by setting false,
+false we cancel the whole output of the previous life methods.
 
 The standard library has a function life_walk(), which makes the described
 actions. You just have to return false.
@@ -2873,7 +2873,7 @@ Of course, 'pic' can be function, expanding the possibilities of the
 developer. If the current scene does not defined the attribute 'pic' attribute
 is taken 'game.pic'. If the picture is not displayed.
 
-Supports all common image formats, but I I recommend you to use 'png' and
+Supports all common image formats, but I recommend you to use 'png' and
 where () 'jpg'.
 
 You can use as images animated GIF files. Be sure that they are GIF files, and not WEBP format or PNG format, which are unsupported.
@@ -2966,7 +2966,7 @@ can generate an image based on the game state.
 
 If you are in the game tied to any coordinates images or their sizes, do it in
 relation to the original of image sizes. Scaling topic under specified
-playerthe resolution INSTEAD he will convert the coordinates (with the
+player resolution INSTEAD he will convert the coordinates (with the
 coordinates for the game look like the game is running without scaling).
 However, there may be a small error of computation.
 
@@ -3247,7 +3247,7 @@ height region of the scene. For example, 100% -- corresponds to the lower
 boundary region of the scene. 200% corresponds --  the lower boundary of the
 second page of output (two the height of the output pane scene).
 
-The optional parameter center specifies the position withinline on which you
+The optional parameter center specifies the position within the line on which you
 position:
 
 - top (upper edge);
@@ -3355,7 +3355,7 @@ If you write your first game, it would be better if she was simple. For a
 simple game, the information in this Chapter do not need. Moreover, 90% say
 it's not a good described in this Chapter!
 
-If you're writing a game, where many similar objects mayyou will want to
+If you're writing a game with many similar objects, you may want to
 simplify their creation. You can do one of the following ways:
 
 - Create your designer;
@@ -3652,7 +3652,7 @@ create files to store separately rooms, objects, dialogues, etc. Is a matter
 of personal convenience.
 
 There is also the possibility to dynamically load parts of the game (with the
-ability to redefine objects). To do this, you you can use the 'gamefile':
+ability to redefine objects). To do this, you can use the 'gamefile':
 
 ```
 ...
@@ -3678,7 +3678,7 @@ game collections, where the actual shell running a standalone game.
 
 ### Menu
 
-The default behavior of the item of inventory is that the playerneed to make
+The default behavior of the item of inventory is that the player needs to make
 two mouse clicks. This is necessary because each any inventory item can be
 used on another object or scene inventory. After the second click happens
 games the beat games. Sometimes this behavior may be undesirable. You might
@@ -3851,7 +3851,7 @@ The return status is false:
 
 	return false
 
-This status means that the handler has not fulfilled its function and needsto
+This status means that the handler has not fulfilled its function and needs to
 be ignored. Typically, the engine in this case, it will call the handler by
 default.
 
@@ -3870,8 +3870,8 @@ function call at the end of the handler or together with the return.
 	std.nop()
 	-- then the end of the function or return
 
-In this case, the contents of the scene will remain the same as lastthe beat
-game (even string a reaction will be old). This status conveniently be used in
+In this case, the contents of the scene will remain the same as the last game
+beat (even string a reaction will be old). This status conveniently be used in
 conjunction with the module theme, when you need to change the design of the
 game on the fly and redraw the frame with the new parameters theme.
 
@@ -4193,7 +4193,7 @@ dprint(a:type 'room') -- will print true
 
 ## Topics for sdl-instead
 
-Graphic interpreter supports the theme engine. Tema is a directory, the file
+Graphic interpreter supports the theme engine. Theme is a directory, the file
 'theme.ini' inside.
 
 The theme, which is the minimum required -- is the theme 'default'. This topic
@@ -4215,7 +4215,7 @@ or
 Values can be of the following types: string, color, number.
 
 The color is specified in the form #rgb where r g and b color components in
-hexadecimal. Additionally, some basic colorsrecognized by their names.
+hexadecimal. Additionally, some basic colors recognized by their names.
 Example: yellowgreen, or violet.
 
 Parameters can take values:
@@ -4268,7 +4268,7 @@ Parameters can take values:
 - win.fnt.size = the font size of the main window (size)
 - win.fnt.height = line spacing as the floating the decimal point (1.0 is
   default)
-- win.gfx.up, win.gfx.down = paths to the image files skallerup up/down for
+- win.gfx.up, win.gfx.down = paths to the image files of the up/down scrollbars for
   the main window (string)
 - win.up.x, win.up.y, win.down.x, win.down.y = coordinates. (coordinate or -1)
 - win.col.fg = text color of the main window (color)
@@ -4290,7 +4290,7 @@ Parameters can take values:
 - inv.fnt.size = the font size of the inventory (size)
 - inv.fnt.height = line spacing as the floating the decimal point
   (1.0 is default)
-- inv.gfx.up, inv.gfx.down = paths to the image files skallerup up/down of
+- inv.gfx.up, inv.gfx.down = paths to the image files of the up/down scrollbars of
   equipment (line)
 - inv.up.x, inv.up.y, inv.down.x, inv.down.y = coordinates.
   (coordinate or -1)
@@ -4331,7 +4331,7 @@ Allowing the player via the standard menu INSTEAD choose a suitable
 appearance, provided by the author game. For this, all threads should be in
 the game in a subdirectory themes. In turn, each theme -- is a subdirectory in
 the directory themes. In each such subdirectory should be a file theme.ini and
-theme resources (images, fonts, sounds). In this casea themes catalog
+theme resources (images, fonts, sounds). In this case a themes catalog
 themes/default - this theme will loaded by default. The format of the theme
 files.ini we just considered. However, the file paths to resources in
 theme.ini file are not written relative to the root directory of the game, and
@@ -4357,7 +4357,7 @@ scr.gfx.bg = bg.png
 ```
 
 In this case, all themes in the game are inherited from the
-themethemes/default. Supported mechanism include. At the same time, INSTEAD
+themes/default. Supported mechanism include. At the same time, INSTEAD
 first tries to find the theme of the game, and if such topics are not is will
 downloaded the theme from the standard themes INSTEAD (if it exist). Further,
 in theme.ini you can only change those settings changes were required.
@@ -4480,7 +4480,7 @@ end
 This example can be used to determine the symbolic the name of the specific
 keys.
 
-When writing arcade games can be useful not get event fromthe keyboard and
+When writing arcade games can be useful not get event from the keyboard and
 scan it (usually the timer). To do this, you can use the function
 keys:state(name key).
 
@@ -5051,7 +5051,7 @@ Using this technique, you can apply to the background image statuses,
 controls, or just change the substrate.
 
 Take note that in this case `theme.get('scr.gfx.bg')` call returns a string similar to `spr:xxxxxxxxxxx`, and not a sprite object.
-If you want to change background dinamically, use `sprite.scr()` or multiple calls to `theme.set('scr.gfx.bg', spr)` with new sprites.
+If you want to change background dynamically, use `sprite.scr()` or multiple calls to `theme.set('scr.gfx.bg', spr)` with new sprites.
 
 #### Pixels
 
@@ -5498,7 +5498,7 @@ purposes.
 - inv(s, that) - handler, default action on inventory click;
 - on{use, act, tak, inv, walk} - handler, response before call
 appropriate handlers, can cancel the chain;
-- after{use, act, tak, inv, walk} - handler, reaction after plaayer action.
+- after{use, act, tak, inv, walk} - handler, reaction after player action.
 
 ## Epilogue
 
@@ -5512,11 +5512,11 @@ on our culture remains minimal, and well-written adventures are far and few
 between.
 
 Games featuring a mixture of text and graphics have huge potential in my
-opinion. Though they are less interractive, they are also less demanding of
+opinion. Though they are less interactive, they are also less demanding of
 the player. Enjoying a text adventure will not consume days of your life spent
 in front of the monitor suffering frustration or unhealthy anxiety as your
 desires are left unsatisfied. Textual games borrow from the best that the two
-worlds of liturature and computer gaming have to offer. As a bonus, the
+worlds of literature and computer gaming have to offer. As a bonus, the
 greater part of games in this genre can be enjoyed without cost.
 
 The history of INSTEAD is, in my opinion, proof of this claim. Many games have

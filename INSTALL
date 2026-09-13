@@ -32,7 +32,7 @@ Unpack source package with this command:
 Change current dir to project's build dir:
 	$ cd instead-<version>
 
-There are several ways to build package.
+There are several ways to build the package.
 
 1) Build using cmake
 ====================
@@ -41,7 +41,7 @@ There are several ways to build package.
 	$ cmake --build build
 	$ sudo cmake --install build
 
-If cmake can not find Lua, define LUA_INCLUDE_DIR (and LUA_LIBRARY) explicitly.
+If cmake cannot find Lua, define LUA_INCLUDE_DIR (and LUA_LIBRARY) explicitly.
 For example (Arch linux, lua5.1):
 	$ cmake -S . -B build -DLUA_INCLUDE_DIR=/usr/include/lua5.1
 
@@ -84,14 +84,14 @@ and config.make, make changes if needed.
 3) Manual build
 ===============
 
-To build game, that runs just from build dir use Rules.make.standalone:
+To build a game that runs just from the build dir, use Rules.make.standalone:
 	$ rm -f Rules.make
 	$ ln -s Rules.make.standalone Rules.make
 	$ make clean
 	$ make
 	$ ./sdl-instead
 
-To build game for system install use Rules.make.system:
+To build a game for system install, use Rules.make.system:
 	$ rm -f Rules.make
 	$ ln -s Rules.make.system Rules.make
 	$ make clean
