@@ -36,14 +36,16 @@ static int dialog_dir_set = 0;
 
 static const SDL_DialogFileFilter dialog_filters[] = {
 	{ "*", "*" },
-	{ "main?.lua; *.zip; *.idf", "*.zip;main.lua;main3.lua;*.idf" },
+	{ "main?.lua; *.zip; *.idf", "zip;lua;idf" },
 };
 
 static void dialog_response(void *userdata, const char * const *filelist, int filter)
 {
 	(void)userdata;
 	(void)filter;
-	if (filelist && filelist[0] && filelist[0][0]) {
+	if (!filelist) {
+		fprintf(stderr, "Can not open file dialog: %s\n", SDL_GetError());
+	} else if (filelist[0] && filelist[0][0]) {
 		snprintf(dialog_result, sizeof(dialog_result), "%s", filelist[0]);
 		unix_path(dialog_result);
 	}

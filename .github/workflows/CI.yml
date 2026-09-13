@@ -46,7 +46,7 @@ jobs:
             libasound2-dev libpulse-dev libdbus-1-dev libudev-dev \
             libfreetype-dev libharfbuzz-dev \
             libpng-dev libjpeg-dev libwebp-dev libtiff-dev libgif-dev \
-            libogg-dev libvorbis-dev libopusfile-dev \
+            libogg-dev libvorbis-dev libopusfile-dev libxmp-dev \
             ${{ matrix.config.packages }}
 
       - name: Build SDL3
@@ -63,7 +63,7 @@ jobs:
           build SDL "$SDL3_VER" -DSDL_TESTS=OFF -DSDL_EXAMPLES=OFF
           build SDL_ttf "$SDL3_TTF_VER" -DSDLTTF_VENDORED=OFF -DSDLTTF_SAMPLES=OFF -DSDLTTF_PLUTOSVG=OFF
           build SDL_image "$SDL3_IMAGE_VER" -DSDLIMAGE_VENDORED=OFF -DSDLIMAGE_SAMPLES=OFF -DSDLIMAGE_TESTS=OFF -DSDLIMAGE_AVIF=OFF -DSDLIMAGE_JXL=OFF -DSDLIMAGE_SVG=OFF
-          build SDL_mixer "$SDL3_MIXER_VER" -DSDLMIXER_VENDORED=OFF -DSDLMIXER_TESTS=OFF -DSDLMIXER_EXAMPLES=OFF -DSDLMIXER_GME=OFF -DSDLMIXER_MOD=OFF -DSDLMIXER_MIDI=OFF -DSDLMIXER_WAVPACK=OFF -DSDLMIXER_FLAC_LIBFLAC=OFF
+          build SDL_mixer "$SDL3_MIXER_VER" -DSDLMIXER_VENDORED=OFF -DSDLMIXER_TESTS=OFF -DSDLMIXER_EXAMPLES=OFF -DSDLMIXER_GME=OFF -DSDLMIXER_MOD=ON -DSDLMIXER_MOD_XMP_SHARED=OFF -DSDLMIXER_MIDI=OFF -DSDLMIXER_WAVPACK=OFF -DSDLMIXER_FLAC_LIBFLAC=OFF
 
       - name: Configure CMake
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release ${{ matrix.config.cmake_opts }}
