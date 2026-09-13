@@ -25,7 +25,7 @@ trap cleanup EXIT
 
 echo "integration: $BIN $GAME"
 SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy \
-	"$BIN" -nosound -software "$GAME" >"$TMP" 2>&1 &
+	"$BIN" -software "$GAME" >"$TMP" 2>&1 &
 PID=$!
 
 i=0
