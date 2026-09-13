@@ -134,8 +134,10 @@ int is_empty(const char *str)
 {
 	if (!str || !*str)
 		return 1;
-	while (*str && !is_space(*str++))
-		return 0;
+	while (*str) {
+		if (!is_space(*str++))
+			return 0;
+	}
 	return 1;
 }
 
@@ -263,11 +265,17 @@ static tinymt32_t trandom;
 
 void mt_random_init(void)
 {
+	trandom.mat1 = TINYMT32_MAT1;
+	trandom.mat2 = TINYMT32_MAT2;
+	trandom.tmat = TINYMT32_TMAT;
 	tinymt32_init(&trandom, time(NULL));
 }
 
 void mt_random_seed(unsigned long seed)
 {
+	trandom.mat1 = TINYMT32_MAT1;
+	trandom.mat2 = TINYMT32_MAT2;
+	trandom.tmat = TINYMT32_TMAT;
 	tinymt32_init(&trandom, seed);
 }
 

@@ -45,6 +45,11 @@ typedef uint32_t Uint32;
 #define TINYMT32_MASK UINT32_C(0x7fffffff)
 #define TINYMT32_MUL (1.0f / 4294967296.0f)
 
+/* default parameters for period 2^127-1 */
+#define TINYMT32_MAT1 UINT32_C(0x8f7011ee)
+#define TINYMT32_MAT2 UINT32_C(0xfc78ff1f)
+#define TINYMT32_TMAT UINT32_C(0x3793fdff)
+
 /**
  * tinymt32 internal state vector and parameters
  */
