@@ -41,7 +41,7 @@ docs:	man pdf
 
 install:
 	$(INSTALLD) $(DESTDIR)$(DOCPATH)
-	-$(INSTALL) instead.txt *.pdf $(DESTDIR)$(DOCPATH)
+	-$(INSTALL) *.md instead.txt *.pdf $(DESTDIR)$(DOCPATH)
 
 	$(INSTALLD) $(DESTDIR)$(MANPATH)
 	$(INSTALL) *.6 $(DESTDIR)$(MANPATH)
