@@ -220,7 +220,14 @@ static int luaB_load_sprite(lua_State *L) {
 			desc = luaL_optstring(L, 3, NULL);
 		}
 		if (convert) { /* slow path */
-			img = gfx_new_from(pixels->w, pixels->h, (unsigned char*)(pixels + 1));
+			img_t wrap = gfx_new_from(pixels->w, pixels->h,
+				(unsigned char*)(pixels + 1));
+			if (wrap) {
+				/* wrap borrows Lua-owned pixels: take a copy,
+				   the userdata may be collected at any time */
+				img = gfx_dup(wrap);
+				gfx_free_image(wrap);
+			}
 			if (img)
 				theme_gfx_scale(&img, pixels->scale);
 		} else {
