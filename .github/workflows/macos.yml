@@ -147,9 +147,34 @@ jobs:
           codesign --force --deep --sign - "$APP"
           ditto -c -k --sequesterRsrc --keepParent "$APP" "INSTEAD-macos-${{ matrix.arch }}.zip"
 
+      - name: Create DMG
+        run: |
+          set -e
+          APP=INSTEAD.app
+          DMG="INSTEAD-macos-${{ matrix.arch }}.dmg"
+          rm -rf dmg "$DMG"
+          mkdir dmg
+          mv "$APP" dmg/
+          # drag-and-drop install
+          ln -s /Applications dmg/Applications
+          # HFS+ so the image mounts on the deployment target too
+          hdiutil create -volname "INSTEAD" -fs HFS+ -srcfolder dmg -ov \
+            -format UDZO "$DMG"
+          hdiutil verify "$DMG"
+          mkdir -p "$RUNNER_TEMP/dmg-mount"
+          hdiutil attach "$DMG" -nobrowse -readonly \
+            -mountpoint "$RUNNER_TEMP/dmg-mount"
+          ls -la "$RUNNER_TEMP/dmg-mount"
+          test -d "$RUNNER_TEMP/dmg-mount/INSTEAD.app"
+          test -L "$RUNNER_TEMP/dmg-mount/Applications"
+          codesign --verify --deep --strict "$RUNNER_TEMP/dmg-mount/INSTEAD.app"
+          hdiutil detach "$RUNNER_TEMP/dmg-mount"
+
       - name: Publish Artifact
         uses: actions/upload-artifact@v4
         with:
           name: instead-macos-${{ matrix.arch }}
-          path: INSTEAD-macos-${{ matrix.arch }}.zip
+          path: |
+            INSTEAD-macos-${{ matrix.arch }}.zip
+            INSTEAD-macos-${{ matrix.arch }}.dmg
           retention-days: 1
