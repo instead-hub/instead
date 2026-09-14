@@ -57,6 +57,16 @@ jobs:
           ver="${SDL3_MIXER_VER#release-}"
           fetch "https://github.com/libsdl-org/SDL_mixer/releases/download/$SDL3_MIXER_VER/SDL3_mixer-devel-$ver-mingw.tar.gz"
 
+          # The MinGW build of SDL3_ttf imports ScriptFreeCache/ScriptPlace
+          # from gdi32.dll, which exports them only since Windows 8. The MSVC
+          # build imports all Uniscribe functions from usp10.dll and works on
+          # Windows 7. Exports are identical, so keep the MinGW import library.
+          ver="${SDL3_TTF_VER#release-}"
+          wget -q "https://github.com/libsdl-org/SDL_ttf/releases/download/$SDL3_TTF_VER/SDL3_ttf-devel-$ver-VC.zip"
+          unzip -q "SDL3_ttf-devel-$ver-VC.zip" "SDL3_ttf-$ver/lib/x86/SDL3_ttf.dll" -d ttf-vc
+          cp -f "ttf-vc/SDL3_ttf-$ver/lib/x86/SDL3_ttf.dll" bin/
+          rm -rf ttf-vc "SDL3_ttf-devel-$ver-VC.zip"
+
       - name: Build LuaJIT
         run: |
           set -e
