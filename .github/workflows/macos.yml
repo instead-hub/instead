@@ -10,6 +10,7 @@ env:
   SDL3_TTF_VER: release-3.2.2
   SDL3_IMAGE_VER: release-3.4.6
   SDL3_MIXER_VER: release-3.2.4
+  LUAJIT_REV: v2.1
 
 jobs:
   build:
@@ -26,48 +27,77 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install Packages
-        run: |
-          brew install ninja cmake pkg-config luajit \
-            freetype harfbuzz \
-            libpng jpeg-turbo webp libtiff giflib \
-            libogg libvorbis opusfile libxmp
+        run: brew install ninja cmake pkg-config
 
       - name: Build SDL3
         run: |
           set -e
           PREFIX="$RUNNER_TEMP/prefix"
-          BREW="$(brew --prefix)"
           build() {
             name="$1"; tag="$2"; shift 2
-            git clone --depth 1 -b "$tag" "https://github.com/libsdl-org/$name.git" "/tmp/$name"
+            git clone --depth 1 --recurse-submodules --shallow-submodules \
+              -b "$tag" "https://github.com/libsdl-org/$name.git" "/tmp/$name"
             cmake -S "/tmp/$name" -B "/tmp/$name/build" -G Ninja \
               -DCMAKE_BUILD_TYPE=Release \
               -DCMAKE_INSTALL_PREFIX="$PREFIX" \
-              -DCMAKE_PREFIX_PATH="$PREFIX;$BREW" \
+              -DCMAKE_INSTALL_RPATH=@executable_path \
               -DCMAKE_OSX_DEPLOYMENT_TARGET="${{ matrix.deployment }}" \
               -DCMAKE_OSX_ARCHITECTURES="${{ matrix.arch }}" "$@"
             cmake --build "/tmp/$name/build"
             cmake --install "/tmp/$name/build"
           }
           build SDL "$SDL3_VER" -DSDL_TESTS=OFF -DSDL_EXAMPLES=OFF
-          build SDL_ttf "$SDL3_TTF_VER" -DSDLTTF_VENDORED=OFF -DSDLTTF_SAMPLES=OFF -DSDLTTF_PLUTOSVG=OFF
-          build SDL_image "$SDL3_IMAGE_VER" -DSDLIMAGE_VENDORED=OFF -DSDLIMAGE_SAMPLES=OFF -DSDLIMAGE_TESTS=OFF -DSDLIMAGE_AVIF=OFF -DSDLIMAGE_JXL=OFF -DSDLIMAGE_SVG=OFF
-          build SDL_mixer "$SDL3_MIXER_VER" -DSDLMIXER_VENDORED=OFF -DSDLMIXER_TESTS=OFF -DSDLMIXER_EXAMPLES=OFF -DSDLMIXER_GME=OFF -DSDLMIXER_MOD=ON -DSDLMIXER_MOD_XMP_SHARED=OFF -DSDLMIXER_MIDI=OFF -DSDLMIXER_WAVPACK=OFF -DSDLMIXER_FLAC_LIBFLAC=OFF
+          build SDL_ttf "$SDL3_TTF_VER" -DSDLTTF_VENDORED=ON -DSDLTTF_SAMPLES=OFF -DSDLTTF_PLUTOSVG=OFF
+          build SDL_image "$SDL3_IMAGE_VER" -DSDLIMAGE_VENDORED=ON -DSDLIMAGE_SAMPLES=OFF -DSDLIMAGE_TESTS=OFF -DSDLIMAGE_AVIF=OFF -DSDLIMAGE_JXL=OFF -DSDLIMAGE_SVG=OFF
+          build SDL_mixer "$SDL3_MIXER_VER" -DSDLMIXER_VENDORED=ON -DSDLMIXER_TESTS=OFF -DSDLMIXER_EXAMPLES=OFF -DSDLMIXER_GME=OFF -DSDLMIXER_MOD=ON -DSDLMIXER_MOD_XMP_SHARED=OFF -DSDLMIXER_MIDI=OFF -DSDLMIXER_WAVPACK=OFF -DSDLMIXER_MP3_MPG123=OFF
+
+      - name: Build LuaJIT
+        env:
+          MACOSX_DEPLOYMENT_TARGET: ${{ matrix.deployment }}
+        run: |
+          set -e
+          git clone --depth 1 --branch "$LUAJIT_REV" https://github.com/LuaJIT/LuaJIT.git luajit
+          make -C luajit -j"$(sysctl -n hw.ncpu)"
 
       - name: Configure CMake
         run: |
-          LUA="$(brew --prefix luajit)"
-          BREW="$(brew --prefix)"
           cmake -S . -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Release -DSTANDALONE=1 -DWITH_LUAJIT=1 \
-            -DCMAKE_PREFIX_PATH="$RUNNER_TEMP/prefix;$BREW" \
+            -DCMAKE_PREFIX_PATH="$RUNNER_TEMP/prefix" \
+            -DCMAKE_INSTALL_RPATH=@executable_path \
             -DCMAKE_OSX_DEPLOYMENT_TARGET="${{ matrix.deployment }}" \
             -DCMAKE_OSX_ARCHITECTURES="${{ matrix.arch }}" \
-            -DLUA_INCLUDE_DIR="$LUA/include/luajit-2.1" \
-            -DLUA_LIBRARY="$LUA/lib/libluajit-5.1.dylib"
+            -DLUA_INCLUDE_DIR="$PWD/luajit/src" \
+            -DLUA_LIBRARY="$PWD/luajit/src/libluajit.a"
 
       - name: Build
         run: cmake --build build
+
+      - name: Prepare runtime
+        run: |
+          set -e
+          cmake --install build
+          PREFIX="$RUNNER_TEMP/prefix"
+          STAGE=build/standalone
+          # the staged binary looks for the SDL libraries next to itself
+          cp -a "$PREFIX"/lib/libSDL3*.dylib "$STAGE"/
+          LIBS=$(find "$STAGE" -maxdepth 1 -name 'libSDL3*.dylib' ! -type l)
+          for f in "$STAGE/sdl-instead" $LIBS; do
+            otool -L "$f" | tail -n +2 | awk '{print $1}' | while read -r dep; do
+              case "$dep" in
+                "$PREFIX"/*)
+                  install_name_tool -change "$dep" \
+                    "@executable_path/$(basename "$dep")" "$f" ;;
+              esac
+            done
+            codesign --force --sign - "$f"
+          done
+          echo "== dependencies:"
+          otool -L "$STAGE/sdl-instead"
+          if otool -L "$STAGE/sdl-instead" "$STAGE"/libSDL3*.dylib | grep -q "$PREFIX"; then
+            echo "error: absolute dependencies on the build prefix"
+            exit 1
+          fi
 
       - name: Test
         run: ctest --test-dir build --output-on-failure
@@ -80,6 +110,7 @@ jobs:
           rm -rf "$APP" INSTEAD.icns icon.iconset
           mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
           cp build/standalone/sdl-instead "$APP/Contents/MacOS/"
+          cp -a build/standalone/libSDL3*.dylib "$APP/Contents/MacOS/"
           cp -R build/standalone/stead build/standalone/themes build/standalone/lang \
             build/standalone/icon build/standalone/games "$APP/Contents/Resources/"
           # the engine changes cwd to Contents/Resources, so a bundle just works
