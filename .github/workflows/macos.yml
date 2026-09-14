@@ -1,0 +1,124 @@
+name: macOS version
+
+on:
+  push:
+    branches: [master, SDL3]
+  workflow_dispatch:
+
+env:
+  SDL3_VER: release-3.4.10
+  SDL3_TTF_VER: release-3.2.2
+  SDL3_IMAGE_VER: release-3.4.6
+  SDL3_MIXER_VER: release-3.2.4
+
+jobs:
+  build:
+    name: macOS ${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: macos-15-intel, arch: x86_64, deployment: "10.13" }
+          - { os: macos-15, arch: arm64, deployment: "11.0" }
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Packages
+        run: |
+          brew install ninja cmake pkg-config luajit \
+            freetype harfbuzz \
+            libpng jpeg-turbo webp libtiff giflib \
+            libogg libvorbis opusfile libxmp
+
+      - name: Build SDL3
+        run: |
+          set -e
+          PREFIX="$RUNNER_TEMP/prefix"
+          BREW="$(brew --prefix)"
+          build() {
+            name="$1"; tag="$2"; shift 2
+            git clone --depth 1 -b "$tag" "https://github.com/libsdl-org/$name.git" "/tmp/$name"
+            cmake -S "/tmp/$name" -B "/tmp/$name/build" -G Ninja \
+              -DCMAKE_BUILD_TYPE=Release \
+              -DCMAKE_INSTALL_PREFIX="$PREFIX" \
+              -DCMAKE_PREFIX_PATH="$PREFIX;$BREW" \
+              -DCMAKE_OSX_DEPLOYMENT_TARGET="${{ matrix.deployment }}" \
+              -DCMAKE_OSX_ARCHITECTURES="${{ matrix.arch }}" "$@"
+            cmake --build "/tmp/$name/build"
+            cmake --install "/tmp/$name/build"
+          }
+          build SDL "$SDL3_VER" -DSDL_TESTS=OFF -DSDL_EXAMPLES=OFF
+          build SDL_ttf "$SDL3_TTF_VER" -DSDLTTF_VENDORED=OFF -DSDLTTF_SAMPLES=OFF -DSDLTTF_PLUTOSVG=OFF
+          build SDL_image "$SDL3_IMAGE_VER" -DSDLIMAGE_VENDORED=OFF -DSDLIMAGE_SAMPLES=OFF -DSDLIMAGE_TESTS=OFF -DSDLIMAGE_AVIF=OFF -DSDLIMAGE_JXL=OFF -DSDLIMAGE_SVG=OFF
+          build SDL_mixer "$SDL3_MIXER_VER" -DSDLMIXER_VENDORED=OFF -DSDLMIXER_TESTS=OFF -DSDLMIXER_EXAMPLES=OFF -DSDLMIXER_GME=OFF -DSDLMIXER_MOD=ON -DSDLMIXER_MOD_XMP_SHARED=OFF -DSDLMIXER_MIDI=OFF -DSDLMIXER_WAVPACK=OFF -DSDLMIXER_FLAC_LIBFLAC=OFF
+
+      - name: Configure CMake
+        run: |
+          LUA="$(brew --prefix luajit)"
+          BREW="$(brew --prefix)"
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DSTANDALONE=1 -DWITH_LUAJIT=1 \
+            -DCMAKE_PREFIX_PATH="$RUNNER_TEMP/prefix;$BREW" \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET="${{ matrix.deployment }}" \
+            -DCMAKE_OSX_ARCHITECTURES="${{ matrix.arch }}" \
+            -DLUA_INCLUDE_DIR="$LUA/include/luajit-2.1" \
+            -DLUA_LIBRARY="$LUA/lib/libluajit-5.1.dylib"
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Create Artifact
+        run: |
+          set -e
+          VER=$(sed -n 's/^SET(INSTEAD_VERSION "\(.*\)")$/\1/p' CMakeLists.txt)
+          APP=INSTEAD.app
+          rm -rf "$APP" INSTEAD.icns icon.iconset
+          mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
+          cp build/standalone/sdl-instead "$APP/Contents/MacOS/"
+          cp -R build/standalone/stead build/standalone/themes build/standalone/lang \
+            build/standalone/icon build/standalone/games "$APP/Contents/Resources/"
+          # the engine changes cwd to Contents/Resources, so a bundle just works
+          ICON_KEY=""
+          mkdir icon.iconset
+          for s in 16 32 128 256 512; do
+            sips -z $s $s icon/sdl_instead.png --out "icon.iconset/icon_${s}x${s}.png" >/dev/null 2>&1
+            sips -z $((s * 2)) $((s * 2)) icon/sdl_instead.png --out "icon.iconset/icon_${s}x${s}@2x.png" >/dev/null 2>&1
+          done
+          if iconutil -c icns icon.iconset -o INSTEAD.icns 2>/dev/null; then
+            cp INSTEAD.icns "$APP/Contents/Resources/"
+            ICON_KEY="<key>CFBundleIconFile</key><string>INSTEAD.icns</string>"
+          fi
+          cat > "$APP/Contents/Info.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>CFBundleName</key><string>INSTEAD</string>
+            <key>CFBundleDisplayName</key><string>INSTEAD</string>
+            <key>CFBundleExecutable</key><string>sdl-instead</string>
+            <key>CFBundleIdentifier</key><string>ru.instead.interpreter</string>
+            <key>CFBundlePackageType</key><string>APPL</string>
+            <key>CFBundleShortVersionString</key><string>$VER</string>
+            <key>CFBundleVersion</key><string>$VER</string>
+            $ICON_KEY
+            <key>LSMinimumSystemVersion</key><string>${{ matrix.deployment }}</string>
+            <key>NSHighResolutionCapable</key><true/>
+          </dict>
+          </plist>
+          EOF
+          # ad-hoc signature: arm64 binaries are unsigned otherwise and the
+          # bundle won't start; users still need to clear the quarantine flag
+          codesign --force --deep --sign - "$APP"
+          ditto -c -k --sequesterRsrc --keepParent "$APP" "INSTEAD-macos-${{ matrix.arch }}.zip"
+
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: instead-macos-${{ matrix.arch }}
+          path: INSTEAD-macos-${{ matrix.arch }}.zip
+          retention-days: 1
