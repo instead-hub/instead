@@ -1,10 +1,13 @@
 SET(DOC_FILES
-	
+	embedding-ru.md
+	modules3-ru.md
+	stead3-en.md
+	stead3-ru.md
 )
 
 SET(GENERATED_DOC_FILES
-	stead3-ru.pdf
 	modules3-ru.pdf
+	stead3-ru.pdf
 	stead3-en.pdf
 	instead.txt
 )
