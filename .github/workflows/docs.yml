@@ -21,29 +21,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             texlive-xetex texlive-latex-recommended texlive-latex-extra \
-            texlive-lang-cyrillic texlive-fonts-recommended \
+            texlive-lang-cyrillic texlive-lang-greek texlive-fonts-recommended \
             fonts-liberation fonts-dejavu-core
-
-      - name: Install Verdana
-        run: |
-          # doc/*.tex use Verdana for the main/sans font
-          echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | sudo debconf-set-selections
-          sudo apt-get install -y ttf-mscorefonts-installer || true
-          if ! fc-match -f '%{family}\n' Verdana | grep -qi '^Verdana'; then
-            echo "Verdana is not available, using DejaVu Sans instead"
-            mkdir -p "$HOME/.config/fontconfig"
-            printf '%s\n' \
-              '<?xml version="1.0"?>' \
-              '<!DOCTYPE fontconfig SYSTEM "fonts.dtd">' \
-              '<fontconfig>' \
-              '  <match target="pattern">' \
-              '    <test qual="any" name="family"><string>Verdana</string></test>' \
-              '    <edit name="family" mode="assign" binding="same"><string>DejaVu Sans</string></edit>' \
-              '  </match>' \
-              '</fontconfig>' > "$HOME/.config/fontconfig/fonts.conf"
-            fc-cache -f
-          fi
-          fc-match Verdana
 
       - name: Build MultiMarkdown
         run: |
