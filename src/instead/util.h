@@ -44,10 +44,10 @@ extern char *dirpath(const char *path);
 extern void tolow(char *p);
 extern int is_absolute_path(const char *p);
 
-extern void mt_random_init(void);
-extern void mt_random_seed(unsigned long seed);
-extern unsigned long mt_random(void);
-extern double mt_random_double(void);
+extern void instead_random_init(void);
+extern void instead_random_seed(unsigned long seed);
+extern unsigned long instead_random(void);
+extern double instead_random_double(void);
 
 #define FREE(v) do { if ((v)) free((v)); v = NULL; } while(0)
 

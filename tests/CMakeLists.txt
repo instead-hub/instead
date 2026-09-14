@@ -8,13 +8,13 @@ ADD_EXECUTABLE(instead_unit_tests
 	unit/main.c
 	unit/test_util.c
 	unit/test_list.c
-	unit/test_tinymt.c
+	unit/test_xoshiro.c
 	unit/test_cache.c
 	unit/test_utils.c
 	unit/test_bits.c
 	${CMAKE_SOURCE_DIR}/src/instead/util.c
 	${CMAKE_SOURCE_DIR}/src/instead/list.c
-	${CMAKE_SOURCE_DIR}/src/instead/tinymt32.c
+	${CMAKE_SOURCE_DIR}/src/instead/xoshiro128.c
 	${CMAKE_SOURCE_DIR}/src/instead/cache.c
 	${CMAKE_SOURCE_DIR}/src/utils.c
 	${CMAKE_SOURCE_DIR}/src/instead_bits.c
