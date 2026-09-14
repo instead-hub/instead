@@ -10,8 +10,8 @@ endif
 
 LDFLAGS += $(SDL_LFLAGS) $(LUA_LFLAGS) $(ZLIB_LFLAGS) $(EXTRA_LDFLAGS)
 
-INSTEAD_SRC	:= instead/instead.c instead/util.c instead/list.c instead/cache.c instead/idf.c instead/tinymt32.c instead/lfs.c
-INSTEAD_H	:= instead/cache.h instead/system.h instead/instead.h instead/list.h instead/util.h instead/tinymt32.h instead/idf.h
+INSTEAD_SRC	:= instead/instead.c instead/util.c instead/list.c instead/cache.c instead/idf.c instead/xoshiro128.c instead/lfs.c
+INSTEAD_H	:= instead/cache.h instead/system.h instead/instead.h instead/list.h instead/util.h instead/xoshiro128.h instead/idf.h
 
 SRC     := graphics.c input.c game.c main.c \
 	instead_bits.c instead_sprites.c instead_timer.c instead_sound.c instead_paths.c noise1234.c \

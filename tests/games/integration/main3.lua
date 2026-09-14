@@ -60,7 +60,7 @@ check_eq("bit_and", bit_and(0xF0, 0x0F), 0)
 check_eq("bit_shl", bit_shl(1, 4), 16)
 check_eq("bit_not", bit_not(0), 4294967295)
 
--- random (instead_* -> mt_random)
+-- random (instead_* -> instead_random)
 instead_srandom(12345)
 local rnd = instead_random()
 instead_srandom(12345)

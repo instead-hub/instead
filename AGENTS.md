@@ -17,7 +17,7 @@ Packages: `apk add git build-base pkgconf cmake ninja zlib-dev luajit-dev sdl3-d
 
 ## Verification
 
-Verification: `make test` (unit + smoke + integration) or `ctest --test-dir build --output-on-failure` for a CMake build. Unit tests live in `tests/unit` (pure functions util/list/tinymt/cache/utils/bits; TinyMT is checked against official vectors), smoke — `tests/smoke.sh`, integration (Lua game `tests/games/integration`) — `tests/integration.sh`. Manual smoke (run from the root only):
+Verification: `make test` (unit + smoke + integration) or `ctest --test-dir build --output-on-failure` for a CMake build. Unit tests live in `tests/unit` (pure functions util/list/xoshiro/cache/utils/bits; xoshiro128** is checked against reference vectors), smoke — `tests/smoke.sh`, integration (Lua game `tests/games/integration`) — `tests/integration.sh`. Manual smoke (run from the root only):
 
 ```
 SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy timeout 8 ./sdl-instead -nosound -software games/tutorial

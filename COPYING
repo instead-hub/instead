@@ -39,7 +39,7 @@ INSTEAD links with the following libraries/sources:
     libxmp (MIT)
     list routines (MIT) (http://ccodearchive.net/info/list.html)
     LuaFileSystem (http://keplerproject.github.io/luafilesystem/license.html)
-    tinymt32 (The 3-clause BSD License)
+    xoshiro128**/splitmix32 (public domain, CC0)
 
     HarfBuzz (old MIT)
     GLib (LGPL)

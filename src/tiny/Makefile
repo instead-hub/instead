@@ -5,7 +5,7 @@ CFLAGS += $(LUA_CFLAGS) $(EXTRA_CFLAGS) -DSTEAD_PATH=\"${STEADPATH}/\" -DVERSION
 
 LDFLAGS += $(LUA_LFLAGS) $(EXTRA_LDFLAGS)
 
-INSTEAD_SRC	:= instead.c util.c list.c cache.c idf.c tinymt32.c lfs.c
+INSTEAD_SRC	:= instead.c util.c list.c cache.c idf.c xoshiro128.c lfs.c
 
 SRC     := $(INSTEAD_SRC)
 OBJ     := $(patsubst %.c, %.o, $(SRC))

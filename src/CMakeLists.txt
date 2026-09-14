@@ -27,7 +27,7 @@ SET(INSTEAD_SRCS
 	instead/list.c
 	instead/cache.c
 	instead/idf.c
-	instead/tinymt32.c
+	instead/xoshiro128.c
 	instead/lfs.c
 )
 

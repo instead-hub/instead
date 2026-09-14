@@ -1,6 +1,6 @@
 #include "test.h"
 #include "util.h"
-#include "tinymt32.h"
+#include "xoshiro128.h"
 
 #include <stdlib.h>
 #include <limits.h>
@@ -144,17 +144,14 @@ static void test_getrealpath(void)
 
 static void test_random(void)
 {
-	tinymt32_t ref;
+	xoshiro128_t ref;
 	int i;
 
-	ref.mat1 = TINYMT32_MAT1;
-	ref.mat2 = TINYMT32_MAT2;
-	ref.tmat = TINYMT32_TMAT;
-	tinymt32_init(&ref, 42);
-	mt_random_seed(42);
+	xoshiro128_init(&ref, 42);
+	instead_random_seed(42);
 	for (i = 0; i < 4; i++)
-		CHECK_INT(mt_random(), tinymt32_generate_uint32(&ref));
-	CHECK(mt_random_double() == tinymt32_generate_32double(&ref));
+		CHECK_INT(instead_random(), xoshiro128_next(&ref));
+	CHECK(instead_random_double() == xoshiro128_double(&ref));
 }
 
 void test_util(void)

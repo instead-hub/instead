@@ -24,7 +24,7 @@
 
 #include "system.h"
 #include "util.h"
-#include "tinymt32.h"
+#include "xoshiro128.h"
 
 int get_utf8(const char *sp, unsigned long *sym_out)
 {
@@ -261,32 +261,26 @@ exitf:
 }
 #endif
 
-static tinymt32_t trandom;
+static xoshiro128_t trandom;
 
-void mt_random_init(void)
+void instead_random_init(void)
 {
-	trandom.mat1 = TINYMT32_MAT1;
-	trandom.mat2 = TINYMT32_MAT2;
-	trandom.tmat = TINYMT32_TMAT;
-	tinymt32_init(&trandom, time(NULL));
+	xoshiro128_init(&trandom, time(NULL));
 }
 
-void mt_random_seed(unsigned long seed)
+void instead_random_seed(unsigned long seed)
 {
-	trandom.mat1 = TINYMT32_MAT1;
-	trandom.mat2 = TINYMT32_MAT2;
-	trandom.tmat = TINYMT32_TMAT;
-	tinymt32_init(&trandom, seed);
+	xoshiro128_init(&trandom, seed);
 }
 
-unsigned long mt_random(void)
+unsigned long instead_random(void)
 {
-	return tinymt32_generate_uint32(&trandom);
+	return xoshiro128_next(&trandom);
 }
 
-double mt_random_double(void)
+double instead_random_double(void)
 {
-	return tinymt32_generate_32double(&trandom);
+	return xoshiro128_double(&trandom);
 }
 
 #if defined(WINRT)

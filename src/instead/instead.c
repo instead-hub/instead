@@ -761,7 +761,7 @@ static int luaB_maxn (lua_State *L) {
 }
 
 static int luaB_srandom(lua_State *L) {
-	mt_random_seed(luaL_optnumber(L, 1, time(NULL)));
+	instead_random_seed(luaL_optnumber(L, 1, time(NULL)));
 	return 0;
 }
 
@@ -770,7 +770,7 @@ static int luaB_random(lua_State *L) {
 	unsigned long r = 0;
 	long a = luaL_optnumber(L, 1, -1);
 	long b = luaL_optnumber(L, 2, -1);
-	r = mt_random();
+	r = instead_random();
 	if (a >=0 && b > a) {
 		r = a + (r % (b - a + 1));
 		lua_pushinteger(L, r);
@@ -778,7 +778,7 @@ static int luaB_random(lua_State *L) {
 		r = (r % a) + 1;
 		lua_pushinteger(L, r);
 	} else {
-		rt = mt_random_double();
+		rt = instead_random_double();
 		lua_pushnumber(L, rt);
 	}
 	return 1;
@@ -1192,7 +1192,7 @@ int instead_init_lua(const char *path, int detect)
 		instead_eval("STANDALONE=false");
 	instead_clear();
 	srand(time(NULL));
-	mt_random_init();
+	instead_random_init();
 	luaopen_lfs(L);
 	return 0;
 }
