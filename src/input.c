@@ -341,7 +341,7 @@ static int gamepad_map(struct inp_event *inp)
 	default:
 		return 0;
 	}
-	strncpy(inp->sym, key, sizeof(inp->sym));
+	strncpy(inp->sym, key, sizeof(inp->sym) - 1);
 	inp->sym[sizeof(inp->sym) - 1] = 0;
 	return 1;
 }
@@ -464,7 +464,7 @@ int input(struct inp_event *inp, int wait)
 	switch(event.type){
 	case SDL_EVENT_TEXT_INPUT:
 		inp->type = KEY_TEXT;
-		strncpy(inp->sym, event.text.text, sizeof(inp->sym));
+		strncpy(inp->sym, event.text.text, sizeof(inp->sym) - 1);
 		inp->sym[sizeof(inp->sym) - 1] = 0;
 		break;
 	case SDL_EVENT_FINGER_CANCELED:
@@ -575,7 +575,7 @@ int input(struct inp_event *inp, int wait)
 		}
 		inp->type = KEY_DOWN;
 		inp->code = event.key.scancode;
-		strncpy(inp->sym, SDL_GetScancodeName(inp->code), sizeof(inp->sym));
+		strncpy(inp->sym, SDL_GetScancodeName(inp->code), sizeof(inp->sym) - 1);
 		inp->sym[sizeof(inp->sym) - 1] = 0;
 		tolow(inp->sym);
 		key_compat(inp);
@@ -588,7 +588,7 @@ int input(struct inp_event *inp, int wait)
 	case SDL_EVENT_KEY_UP:
 		inp->type = KEY_UP;
 		inp->code = event.key.scancode;
-		strncpy(inp->sym, SDL_GetScancodeName(inp->code), sizeof(inp->sym));
+		strncpy(inp->sym, SDL_GetScancodeName(inp->code), sizeof(inp->sym) - 1);
 		inp->sym[sizeof(inp->sym) - 1] = 0;
 		tolow(inp->sym);
 		key_compat(inp);

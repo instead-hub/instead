@@ -386,7 +386,7 @@ static int luaB_text_sprite(lua_State *L) {
 
 	if (!desc || sprite_lookup(desc)) {
 		key = sname;
-		strncpy(txtkey, text, sizeof(txtkey));
+		strncpy(txtkey, text, sizeof(txtkey) - 1);
 		txtkey[sizeof(txtkey) - 1] = 0;
 		sprite_name(txtkey, sname, sizeof(sname));
 	} else
