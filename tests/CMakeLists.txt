@@ -32,16 +32,20 @@ ADD_TEST(NAME instead-unit COMMAND instead_unit_tests)
 
 IF(STANDALONE)
 	ADD_TEST(NAME instead-stage COMMAND ${CMAKE_COMMAND} --install ${CMAKE_BINARY_DIR})
-	ADD_TEST(NAME instead-smoke COMMAND ${CMAKE_SOURCE_DIR}/tests/smoke.sh $<TARGET_FILE:sdl-instead>)
+	# run the staged binary: on macOS macosx_init() chdirs to the executable
+	# directory, so the data dirs must be next to it
+	ADD_TEST(NAME instead-smoke
+		COMMAND ${CMAKE_SOURCE_DIR}/tests/smoke.sh ${STANDALONEDIR}/sdl-instead${CMAKE_EXECUTABLE_SUFFIX})
 	SET_TESTS_PROPERTIES(instead-smoke PROPERTIES
 		DEPENDS instead-stage
-		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/standalone
+		WORKING_DIRECTORY ${STANDALONEDIR}
 		TIMEOUT 60
 	)
-	ADD_TEST(NAME instead-integration COMMAND ${CMAKE_SOURCE_DIR}/tests/integration.sh $<TARGET_FILE:sdl-instead>)
+	ADD_TEST(NAME instead-integration
+		COMMAND ${CMAKE_SOURCE_DIR}/tests/integration.sh ${STANDALONEDIR}/sdl-instead${CMAKE_EXECUTABLE_SUFFIX})
 	SET_TESTS_PROPERTIES(instead-integration PROPERTIES
 		DEPENDS instead-stage
-		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/standalone
+		WORKING_DIRECTORY ${STANDALONEDIR}
 		TIMEOUT 60
 	)
 ENDIF(STANDALONE)
