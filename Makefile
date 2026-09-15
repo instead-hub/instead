@@ -21,7 +21,7 @@ config.make:
 	echo "# you can define own flags here" > config.make
 
 gitclean:
-	{ test -d .git && git status -s; } | grep "^??" | awk '{ print $$2 }' | grep -v "config.make" | while read l; do $(RM) -rf $$l; done
+	{ test -d .git && git status -s; } | grep "^??" | awk '{ print $$2 }' | grep -v "config.make" | grep -v "^doc/.*\.pdf$$" | while read l; do $(RM) -rf $$l; done
 
 rules:
 	$(RM) -f Rules.make
