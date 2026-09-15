@@ -3,6 +3,7 @@ on:
   push:
     branches: [master, SDL3]
   workflow_dispatch:
+  workflow_call:
 
 env:
     emsdk_ver: 6.0.9
