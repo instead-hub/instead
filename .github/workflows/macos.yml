@@ -29,7 +29,15 @@ jobs:
       - name: Install Packages
         run: brew install ninja cmake pkg-config
 
+      - name: Cache SDL3
+        id: cache-sdl
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/prefix
+          key: ${{ runner.os }}-${{ matrix.arch }}-sdl3-${{ env.SDL3_VER }}-${{ env.SDL3_TTF_VER }}-${{ env.SDL3_IMAGE_VER }}-${{ env.SDL3_MIXER_VER }}-${{ matrix.deployment }}
+
       - name: Build SDL3
+        if: steps.cache-sdl.outputs.cache-hit != 'true'
         run: |
           set -e
           PREFIX="$RUNNER_TEMP/prefix"
@@ -51,7 +59,15 @@ jobs:
           build SDL_image "$SDL3_IMAGE_VER" -DSDLIMAGE_VENDORED=ON -DSDLIMAGE_SAMPLES=OFF -DSDLIMAGE_TESTS=OFF -DSDLIMAGE_AVIF=OFF -DSDLIMAGE_JXL=OFF -DSDLIMAGE_SVG=OFF
           build SDL_mixer "$SDL3_MIXER_VER" -DSDLMIXER_VENDORED=ON -DSDLMIXER_TESTS=OFF -DSDLMIXER_EXAMPLES=OFF -DSDLMIXER_GME=OFF -DSDLMIXER_MOD=ON -DSDLMIXER_MOD_XMP_SHARED=OFF -DSDLMIXER_MIDI=OFF -DSDLMIXER_WAVPACK=OFF -DSDLMIXER_MP3_MPG123=OFF
 
+      - name: Cache LuaJIT
+        id: cache-luajit
+        uses: actions/cache@v4
+        with:
+          path: luajit
+          key: ${{ runner.os }}-${{ matrix.arch }}-luajit-${{ env.LUAJIT_REV }}-${{ matrix.deployment }}
+
       - name: Build LuaJIT
+        if: steps.cache-luajit.outputs.cache-hit != 'true'
         env:
           MACOSX_DEPLOYMENT_TARGET: ${{ matrix.deployment }}
         run: |
