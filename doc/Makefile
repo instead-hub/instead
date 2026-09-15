@@ -10,7 +10,7 @@ clean:
 stead3-manual-ru.tex: stead3-ru.md
 	multimarkdown stead3-ru.md -t latex -o stead3-manual-ru.tex
 
-stead3-ru.pdf: stead3-ru.tex stead3-manual-ru.tex
+stead3-ru.pdf: stead3-ru.tex preamble.tex stead3-manual-ru.tex
 	xelatex stead3-ru.tex
 	xelatex stead3-ru.tex
 	xelatex stead3-ru.tex
@@ -18,7 +18,7 @@ stead3-ru.pdf: stead3-ru.tex stead3-manual-ru.tex
 modules3-manual-ru.tex: modules3-ru.md
 	multimarkdown modules3-ru.md -t latex -o modules3-manual-ru.tex
 
-modules3-ru.pdf: modules3-ru.tex modules3-manual-ru.tex
+modules3-ru.pdf: modules3-ru.tex preamble.tex modules3-manual-ru.tex
 	xelatex modules3-ru.tex
 	xelatex modules3-ru.tex
 	xelatex modules3-ru.tex
@@ -26,7 +26,7 @@ modules3-ru.pdf: modules3-ru.tex modules3-manual-ru.tex
 stead3-manual-en.tex: stead3-en.md
 	multimarkdown stead3-en.md -t latex -o stead3-manual-en.tex
 
-stead3-en.pdf: stead3-en.tex stead3-manual-en.tex
+stead3-en.pdf: stead3-en.tex preamble.tex stead3-manual-en.tex
 	xelatex stead3-en.tex
 	xelatex stead3-en.tex
 	xelatex stead3-en.tex
