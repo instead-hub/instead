@@ -30,7 +30,7 @@ jobs:
       - name: Fetch dependencies
         run: |
           set -e
-          mkdir -p src/windows/include src/windows/lib
+          mkdir -p bin src/windows/include src/windows/lib
           fetch() {
             url="$1"
             tmp="$(mktemp -d)"
