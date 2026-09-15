@@ -1,5 +1,4 @@
 MAKE=make
-ISCC = wine ~/.wine/drive_c/Program\ Files\ \(x86\)/Inno\ Setup\ 5/ISCC.exe
 
 all: config.make src/windows
 	$(MAKE) -C src/zlib all
@@ -31,7 +30,3 @@ install: all
 	$(MAKE) DESTDIR=../bin/ -C icon install
 	$(MAKE) DESTDIR=../bin/ -C lang install
 	$(MAKE) DESTDIR=../bin/ -C doc install
-
-setup:  install docs
-	cp contrib/setup.iss bin
-	cd bin; $(ISCC) setup.iss
