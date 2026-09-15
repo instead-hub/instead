@@ -45,6 +45,23 @@
 #include <stdlib.h>
 #include "zlib.h"
 
+/* Compatibility with the old zlib bundled on some platforms (1.2.3):
+   z_crc_t appeared in zlib 1.2.7, z_off64_t in 1.2.5. */
+#if defined(ZLIB_VERNUM) && (ZLIB_VERNUM < 0x1270)
+typedef unsigned long z_crc_t;
+#endif
+#if defined(ZLIB_VERNUM) && (ZLIB_VERNUM < 0x1250) && !defined(z_off64_t)
+#  if !defined(_WIN32) && defined(Z_LARGE64)
+#    define z_off64_t off64_t
+#  elif defined(__MINGW32__)
+#    define z_off64_t long long
+#  elif defined(_WIN32) && !defined(__GNUC__)
+#    define z_off64_t __int64
+#  else
+#    define z_off64_t z_off_t
+#  endif
+#endif
+
 #if defined(USE_FILE32API)
 #define fopen64 fopen
 #define ftello64 ftell
