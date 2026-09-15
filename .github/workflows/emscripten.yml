@@ -19,7 +19,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: emsdk
-          key: ${{ runner.os }}-${{ env.emsdk_ver }}
+          key: ${{ runner.os }}-emsdk-${{ env.emsdk_ver }}-${{ hashFiles('contrib/instead-em-build.sh') }}
 
       - name: Install Packages
         run: |

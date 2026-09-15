@@ -67,19 +67,36 @@ jobs:
           cp -f "ttf-vc/SDL3_ttf-$ver/lib/x86/SDL3_ttf.dll" bin/
           rm -rf ttf-vc "SDL3_ttf-devel-$ver-VC.zip"
 
+      - name: Cache LuaJIT
+        id: cache-luajit
+        uses: actions/cache@v4
+        with:
+          path: luajit
+          key: ${{ runner.os }}-luajit-mingw32-${{ env.LUAJIT_REV }}
+
       - name: Build LuaJIT
+        if: steps.cache-luajit.outputs.cache-hit != 'true'
         run: |
           set -e
           git clone --depth 1 --branch "$LUAJIT_REV" https://github.com/LuaJIT/LuaJIT.git luajit
-          cd luajit
-          make HOST_CC="gcc -m32" CROSS=i686-w64-mingw32- TARGET_SYS=Windows TARGET_SHLDFLAGS="-static-libgcc" -j$(nproc)
-          cd ..
+          make -C luajit HOST_CC="gcc -m32" CROSS=i686-w64-mingw32- TARGET_SYS=Windows TARGET_SHLDFLAGS="-static-libgcc" -j$(nproc)
+
+      - name: Install LuaJIT
+        run: |
           cp luajit/src/lua.h luajit/src/luaconf.h luajit/src/lualib.h \
             luajit/src/lauxlib.h luajit/src/luajit.h src/windows/
           cp luajit/src/libluajit-5.1.dll.a src/windows/
           cp luajit/src/lua51.dll bin/
 
+      - name: Cache libxmp
+        id: cache-libxmp
+        uses: actions/cache@v4
+        with:
+          path: libxmp
+          key: ${{ runner.os }}-libxmp-mingw32-${{ env.LIBXMP_VER }}
+
       - name: Build libxmp
+        if: steps.cache-libxmp.outputs.cache-hit != 'true'
         run: |
           set -e
           git clone --depth 1 --branch "$LIBXMP_VER" https://github.com/libxmp/libxmp.git libxmp
@@ -88,7 +105,9 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF \
             -DCMAKE_SHARED_LINKER_FLAGS=-static-libgcc
           cmake --build libxmp/build
-          cp libxmp/build/libxmp.dll bin/
+
+      - name: Install libxmp
+        run: cp libxmp/build/libxmp.dll bin/
 
       - name: Configure
         run: ./configure-mingw32.sh

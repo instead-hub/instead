@@ -24,7 +24,15 @@ jobs:
             texlive-lang-cyrillic texlive-lang-greek texlive-fonts-recommended \
             fonts-liberation fonts-dejavu-core
 
+      - name: Cache MultiMarkdown
+        id: cache-mmd
+        uses: actions/cache@v4
+        with:
+          path: MultiMarkdown-6/build
+          key: ${{ runner.os }}-multimarkdown-6.7.0
+
       - name: Build MultiMarkdown
+        if: steps.cache-mmd.outputs.cache-hit != 'true'
         run: |
           git clone --depth 1 --branch 6.7.0 \
             https://github.com/fletcher/MultiMarkdown-6.git
@@ -32,7 +40,9 @@ jobs:
           cmake -S MultiMarkdown-6 -B MultiMarkdown-6/build \
             -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5
           cmake --build MultiMarkdown-6/build -j"$(nproc)"
-          echo "$PWD/MultiMarkdown-6/build" >> "$GITHUB_PATH"
+
+      - name: Add MultiMarkdown to PATH
+        run: echo "$PWD/MultiMarkdown-6/build" >> "$GITHUB_PATH"
 
       - name: Non-interactive xelatex
         run: |

@@ -30,21 +30,35 @@ jobs:
             libpng-dev libjpeg-dev libwebp-dev libtiff-dev libgif-dev \
             libogg-dev libvorbis-dev libopusfile-dev libxmp-dev
 
+      - name: Cache SDL3
+        id: cache-sdl
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/sdl
+          key: ${{ runner.os }}-sdl3-${{ env.SDL3_VER }}-${{ env.SDL3_TTF_VER }}-${{ env.SDL3_IMAGE_VER }}-${{ env.SDL3_MIXER_VER }}
+
       - name: Build SDL3
+        if: steps.cache-sdl.outputs.cache-hit != 'true'
         run: |
           set -e
+          ROOT="${{ runner.temp }}/sdl"
           build() {
             name="$1"; tag="$2"; shift 2
             git clone --depth 1 -b "$tag" "https://github.com/libsdl-org/$name.git" "/tmp/$name"
             cmake -S "/tmp/$name" -B "/tmp/$name/build" -G Ninja \
               -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr "$@"
             cmake --build "/tmp/$name/build"
-            sudo cmake --install "/tmp/$name/build"
+            DESTDIR="$ROOT" cmake --install "/tmp/$name/build"
           }
           build SDL "$SDL3_VER" -DSDL_TESTS=OFF -DSDL_EXAMPLES=OFF
           build SDL_ttf "$SDL3_TTF_VER" -DSDLTTF_VENDORED=OFF -DSDLTTF_SAMPLES=OFF -DSDLTTF_PLUTOSVG=OFF
           build SDL_image "$SDL3_IMAGE_VER" -DSDLIMAGE_VENDORED=OFF -DSDLIMAGE_SAMPLES=OFF -DSDLIMAGE_TESTS=OFF -DSDLIMAGE_AVIF=OFF -DSDLIMAGE_JXL=OFF -DSDLIMAGE_SVG=OFF
           build SDL_mixer "$SDL3_MIXER_VER" -DSDLMIXER_VENDORED=OFF -DSDLMIXER_TESTS=OFF -DSDLMIXER_EXAMPLES=OFF -DSDLMIXER_GME=OFF -DSDLMIXER_MOD=ON -DSDLMIXER_MOD_XMP_SHARED=OFF -DSDLMIXER_MIDI=OFF -DSDLMIXER_WAVPACK=OFF -DSDLMIXER_FLAC_LIBFLAC=OFF
+
+      - name: Install SDL3
+        run: |
+          sudo cp -a "${{ runner.temp }}/sdl/usr/." /usr/
+          sudo ldconfig
 
       - name: Configure CMake
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DWITH_LUAJIT=1 -DAPPIMAGE=1
