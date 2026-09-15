@@ -5,11 +5,11 @@ pkgver=3.6.0
 pkgrel=1
 pkgdesc="instead quest interpreter"
 arch=('i686' 'x86_64')
-url="http://instead.sourceforge.net/"
+url="https://github.com/instead-hub/instead/"
 license=('MIT')
 depends=('sdl3_image' 'sdl3_mixer' 'sdl3_ttf' 'lua')
-source=(http://downloads.sourceforge.net/project/instead/instead/${pkgver}/instead_${pkgver}.tar.gz)
-md5sums=(MD5SUM)
+source=(https://github.com/instead-hub/instead/releases/download/${pkgver}/instead_${pkgver}.tar.gz)
+md5sums=('SKIP')
 
 optdepends=('instead-launcher: install and update INSTEAD games from net')
 
