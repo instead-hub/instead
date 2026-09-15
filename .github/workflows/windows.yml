@@ -103,6 +103,20 @@ jobs:
       - name: Install libxmp
         run: cp libxmp/build/libxmp.dll bin/
 
+      - name: Build libiconv
+        run: |
+          set -e
+          wget -q https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.18.tar.gz
+          tar xzf libiconv-1.18.tar.gz
+          cd libiconv-1.18
+          ./configure --host=i686-w64-mingw32 --disable-shared --enable-static \
+            --prefix="$PWD/../libiconv"
+          make -j"$(nproc)"
+          make install
+          cd ..
+          cp -a libiconv/include/iconv.h src/windows/include/
+          cp -a libiconv/lib/libiconv.a src/windows/lib/
+
       - name: Configure
         run: ./configure-mingw32.sh
 
