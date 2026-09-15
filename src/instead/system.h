@@ -1,11 +1,6 @@
 #ifndef __INSTEAD_EXTERNAL_H_
 #define __INSTEAD_EXTERNAL_H_
 
-#if defined(WINRT)
- #define errno 0
- #define putenv(a) ;
-#endif
-
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>

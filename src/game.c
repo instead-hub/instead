@@ -2352,7 +2352,7 @@ xref_t look_xref(int x, int y, struct el **elem)
 		xref = txt_layout_xref(o->p.lay, x - o->x, y - o->y);
 	else if (type == elt_box)
 		xref = txt_box_xref(o->p.box, x - o->x, y - o->y);
-#if defined(ANDROID) || defined(IOS) || defined(WINRT)
+#if defined(ANDROID) || defined(IOS)
 	if (!xref) {
 		int xc, yc, r;
 		xref = get_nearest_xref(o->id, x, y);
@@ -3347,7 +3347,7 @@ static int game_input_events(struct inp_event *ev)
 	if (!curgame_dir)
 		return 0;
 	if (ev->type == KEY_DOWN || ev->type == KEY_UP) {
-#if defined(ANDROID) || defined(IOS) || defined(WINRT)
+#if defined(ANDROID) || defined(IOS)
 		if (!is_key(ev, "f12") && !menu_shown) /* f12 is keyboard toggle */
 			return 0;
 #endif
@@ -3431,7 +3431,7 @@ static int kbd_instead(struct inp_event *ev, int *x, int *y)
 					game_load(9);
 			}
 		}
-#if defined(ANDROID) || defined(IOS) || defined(WINRT)
+#if defined(ANDROID) || defined(IOS)
 	} else if (!is_key(ev, "f12") && curgame_dir && !menu_shown) {
 		input_text(!(input_text(-1) > 0));
 #endif

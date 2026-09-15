@@ -37,10 +37,6 @@
 #include "externals.h"
 #include "internals.h"
 
-#if !defined(_UWP) && defined(_WIN32_WINNT) && _WIN32_WINNT >= 0x0A00 && !defined(__MINGW32__)
-#define _UWP
-#endif
-
 extern char *curgame_dir;
 
 static char local_games_path[PATH_MAX];
@@ -50,20 +46,6 @@ static char local_stead_path[PATH_MAX];
 static char save_path[PATH_MAX];
 static char cfg_path[PATH_MAX];
 
-#ifdef _UWP
-char *game_locale(void)
-{
-	char buff[64];
-	char res[64];
-	buff[0] = 0;
-	/* Antokolos: Note LOCALE_NAME_USER_DEFAULT instead of LOCALE_USER_DEFAULT */
-	if (!GetLocaleInfoEx(LOCALE_NAME_USER_DEFAULT, LOCALE_SISO639LANGNAME,
-		buff, sizeof(buff) - 1))
-		return NULL;
-	wcstombs(res, buff, sizeof(res));
-	return strdup(res);
-}
-#else
 char *game_locale(void)
 {
 	char buff[64];
@@ -73,27 +55,10 @@ char *game_locale(void)
 		return NULL;
 	return strdup(buff);
 }
-#endif
 
 static char *game_codepage = NULL;
 
 #ifdef _HAVE_ICONV
-#ifdef _UWP
-static char *game_cp(void)
-{
-	char cpbuff[64];
-	char buff[64];
-	char res[64];
-	buff[0] = 0;
-	/* Antokolos: Note LOCALE_NAME_USER_DEFAULT instead of LOCALE_USER_DEFAULT */
-	if (!GetLocaleInfoEx(LOCALE_NAME_USER_DEFAULT, LOCALE_SISO639LANGNAME,
-		buff, sizeof(buff) - 1))
-		return NULL;
-	wcstombs(res, buff, sizeof(res));
-	snprintf(cpbuff, sizeof(cpbuff), "WINDOWS-%s", res);
-	return strdup(cpbuff);
-}
-#else
 static char *game_cp(void)
 {
 	char cpbuff[64];
@@ -105,7 +70,6 @@ static char *game_cp(void)
 	snprintf(cpbuff, sizeof(cpbuff), "WINDOWS-%s", buff);
 	return strdup(cpbuff);
 }
-#endif
 
 char *mbs2utf8(const char *s)
 {
@@ -156,31 +120,9 @@ char *appdir( void );
 
 static int mkdir_chk(const char *dirname)
 {
-#ifdef WINRT /* no errno? */
-	DWORD err;
-	if (CreateDirectoryA(dirname, NULL))
-		return 0;
-	err = GetLastError();
-	if (err == ERROR_ALREADY_EXISTS)
-		return 0;
-	return -1;
-#else
 	return mkdir(dirname) && errno != EEXIST;
-#endif
 }
 
-#ifdef _UWP
-char *game_tmp_path(void)
-{
-	static char lpTempPathBuffer[MAX_PATH];
-	getAppTempDir(lpTempPathBuffer);
-	strcat((char*)lpTempPathBuffer, "/instead-games");
-	if (mkdir((char*)lpTempPathBuffer) && access((char*)lpTempPathBuffer, W_OK))
-		return NULL;
-	unix_path((char*)lpTempPathBuffer);
-	return (char*)lpTempPathBuffer;
-}
-#else
 char *game_tmp_path(void)
 {
 	DWORD dwRetVal = 0;
@@ -203,7 +145,6 @@ char *game_tmp_path(void)
 	unix_path(tmp);
 	return tmp;
 }
-#endif
 char *game_local_games_path(int cr)
 {
 	char *app = appdir();
@@ -260,10 +201,6 @@ char *appdir( void )
 		strcpy(dir, appdata_sw);
 	if (dir[0] && !access(dir, W_OK))
 		return dir;
-#ifdef _UWP
-	/* TODO: always define _LOCAL_APPDATA on UWP??? */
-	return NULL;
-#else
 	SHGetFolderPath( NULL, 
 		CSIDL_FLAG_CREATE | CSIDL_LOCAL_APPDATA,
 		NULL,
@@ -272,7 +209,6 @@ char *appdir( void )
 	unix_path(dir);
 	strcat(dir, "/instead");
 	return dir;
-#endif
 }
 
 char *game_cfg_path( void )
@@ -336,27 +272,22 @@ char *game_save_path( int cr, int nr )
 
 int debug_init(void)
 {
-	// No debugging for UWP for now
-#ifndef _UWP
 	if (!AllocConsole())
 		return -1;
 	SetConsoleTitle("Debug");
 	freopen("CON", "w", stdout); //Map stdout
 	freopen("CON", "w", stderr); //Map stderr
 	freopen("CON", "r", stdin); //Map stdin
-#endif
 	return 0;
 }
 
 void debug_done()
 {
-#ifndef _UWP
 	if (game_running) {
 		fprintf(stderr, "Press enter to close the console.\n");
 		fgetc(stdin);
 	}
 	FreeConsole();
-#endif
 }
 #if 0
 int setdir(const char *path)
