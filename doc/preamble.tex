@@ -1,0 +1,40 @@
+\documentclass[12pt,]{book}
+
+\usepackage{cmap}
+\usepackage{tocloft}
+% \usepackage[T2A]{fontenc}
+%\usepackage[english,russian]{babel}
+\usepackage{polyglossia}
+\usepackage{indentfirst}
+% \usepackage[russian]{datetime}
+\usepackage{upquote}
+
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+
+\usepackage{fontspec}
+\usepackage{xltxtra,xunicode}
+\defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+\setmainfont{DejaVu Sans}
+\setsansfont{DejaVu Sans}
+\setmonofont{Liberation Mono}
+\defaultfontfeatures[ListingFont]{}
+\setmonofont[Mapping=]{Liberation Mono}[
+            ResetLigatures
+]
+
+\usepackage[setpagesize=false, % page size defined by xetex
+            unicode=false, % unicode breaks when used with xetex
+            xetex]{hyperref}
+
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={},
+            pdftitle={STEAD3},
+            colorlinks=true,
+            urlcolor=blue,
+            linkcolor=magenta,
+            pdfborder={0 0 0}}
+
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
