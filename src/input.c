@@ -276,31 +276,33 @@ static int gamepad_timer_fn(int interval, void *p)
 	return interval;
 }
 
-#if 0
 static int gamepad_mouse_event(SDL_Event *ev)
 {
 	int rc = 0;
+	int mx, my;
 	SDL_Event event;
 
 	memset(&event, 0, sizeof(event));
-	gfx_cursor(&event.button.x, &event.button.y);
-	event.type = SDL_MOUSEMOTION;
+	gfx_cursor(&mx, &my);
+	event.button.x = mx;
+	event.button.y = my;
+	event.type = SDL_EVENT_MOUSE_MOTION;
 	event.button.clicks = 1;
 	event.button.button = 1;
 
-	if (ev->type == SDL_CONTROLLERBUTTONDOWN) {
-		if (ev->cbutton.button != SDL_CONTROLLER_BUTTON_LEFTSTICK &&
-			ev->cbutton.button != SDL_CONTROLLER_BUTTON_RIGHTSTICK)
+	if (ev->type == SDL_EVENT_GAMEPAD_BUTTON_DOWN) {
+		if (ev->gbutton.button != SDL_GAMEPAD_BUTTON_LEFT_STICK &&
+			ev->gbutton.button != SDL_GAMEPAD_BUTTON_RIGHT_STICK)
 			return 0;
-		event.type = SDL_MOUSEBUTTONDOWN;
+		event.type = SDL_EVENT_MOUSE_BUTTON_DOWN;
 		rc = 1;
-	} else if (ev->type == SDL_CONTROLLERBUTTONUP) {
-		if (ev->cbutton.button != SDL_CONTROLLER_BUTTON_LEFTSTICK &&
-			ev->cbutton.button != SDL_CONTROLLER_BUTTON_RIGHTSTICK)
+	} else if (ev->type == SDL_EVENT_GAMEPAD_BUTTON_UP) {
+		if (ev->gbutton.button != SDL_GAMEPAD_BUTTON_LEFT_STICK &&
+			ev->gbutton.button != SDL_GAMEPAD_BUTTON_RIGHT_STICK)
 			return 0;
-		event.type = SDL_MOUSEBUTTONUP;
+		event.type = SDL_EVENT_MOUSE_BUTTON_UP;
 		rc = 1;
-	} else if (ev->type == SDL_CONTROLLERAXISMOTION) {
+	} else if (ev->type == SDL_EVENT_GAMEPAD_AXIS_MOTION) {
 		if (gamepad_timer == NULL_TIMER)
 			gamepad_timer = gfx_add_timer(GAMEPAD_TICKS, gamepad_timer_fn, NULL);
 	}
@@ -308,7 +310,7 @@ static int gamepad_mouse_event(SDL_Event *ev)
 		SDL_PushEvent(&event);
 	return rc;
 }
-#endif
+
 static int gamepad_map(struct inp_event *inp)
 {
 	const char *key;
@@ -455,8 +457,8 @@ int input(struct inp_event *inp, int wait)
 	if (!rc)
 		return 0;
 
-//	if (gamepad_mouse_event(&event))
-//		return AGAIN;
+	if (gamepad_mouse_event(&event))
+		return AGAIN;
 
 	inp->sym[0] = 0;
 	inp->type = 0;
