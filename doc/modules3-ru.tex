@@ -1,48 +1,5 @@
-\documentclass[12pt,]{book}
-\usepackage{cmap}
-\usepackage{tocloft}
-\usepackage[T2A]{fontenc}
-\usepackage[english,russian]{babel}
-\usepackage{indentfirst}
-% \usepackage[russian]{datetime}
-\usepackage{upquote}
-
-\usepackage{ifxetex,ifluatex}
-\usepackage{fixltx2e} % provides \textsubscript
-
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
-%  \usepackage[utf8]{inputenc}
-\else % if luatex or xelatex
-  \usepackage{fontspec}
-  \ifxetex
-    \usepackage{xltxtra,xunicode}
-  \fi
-  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
-  \newcommand{\euro}{€}
-    \setmainfont{DejaVu Sans}
-    \setsansfont{DejaVu Sans}
-    \setmonofont{Liberation Mono}
-\fi
-
-\ifxetex
-  \usepackage[setpagesize=false, % page size defined by xetex
-              unicode=false, % unicode breaks when used with xetex
-              xetex]{hyperref}
-\else
-  \usepackage[unicode=true]{hyperref}
-\fi
-\hypersetup{breaklinks=true,
-            bookmarks=true,
-            pdfauthor={},
-            pdftitle={STEAD3},
-            colorlinks=true,
-            urlcolor=blue,
-            linkcolor=magenta,
-            pdfborder={0 0 0}}
-
-\setcounter{tocdepth}{3}
-\setcounter{secnumdepth}{3}
-
+\input{preamble.tex}
+\setmainlanguage{russian}
 \title{STEAD3: Программирование модулей}
 \author{Петр Косых}
 \date{\today}
