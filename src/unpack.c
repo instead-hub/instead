@@ -12,7 +12,7 @@
          Copyright (C) 2009-2010 Mathias Svensson ( https://result42.com )
 */
 
-#ifndef _WIN32
+#if (!defined(_WIN32)) && (!defined(WIN32)) && (!defined(__APPLE__))
 #ifndef __USE_FILE_OFFSET64
 #define __USE_FILE_OFFSET64
 #endif
@@ -25,6 +25,12 @@
 #ifndef _FILE_OFFSET_BIT
 #define _FILE_OFFSET_BIT 64
 #endif
+#endif
+
+#if defined(__APPLE__) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64)
+#define FOPEN_FUNC(filename, mode) fopen(filename, mode)
+#else
+#define FOPEN_FUNC(filename, mode) fopen64(filename, mode)
 #endif
 
 #include "externals.h"
@@ -207,7 +213,7 @@ static int do_extract_currentfile(unzFile uf)
 			goto out;
 		}
 
-		fout = fopen64(write_filename, "wb");
+		fout = FOPEN_FUNC(write_filename, "wb");
 
 		/* some zipfiles don't contain directory alone before file */
 		if ((fout == NULL) && (filename_withoutpath != filename_inzip)) {
@@ -215,7 +221,7 @@ static int do_extract_currentfile(unzFile uf)
 			*(filename_withoutpath - 1) = '\0';
 			makedir(write_filename);
 			*(filename_withoutpath - 1) = c;
-			fout = fopen64(write_filename, "wb");
+			fout = FOPEN_FUNC(write_filename, "wb");
 		}
 
 		if (fout == NULL)
