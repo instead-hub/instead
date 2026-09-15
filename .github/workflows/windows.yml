@@ -30,13 +30,6 @@ jobs:
       - name: Fetch dependencies
         run: |
           set -e
-          make windows-sdl2.tar.gz
-          tar xzf windows-sdl2.tar.gz
-          rm -rf src/windows/SDL
-          rm -f src/windows/lua.h src/windows/lua.hpp src/windows/lauxlib.h \
-            src/windows/lualib.h src/windows/luaconf.h src/windows/lua5.1.lib
-          rm -f bin/SDL2*.dll bin/libmodplug-1.dll bin/libogg-0.dll bin/lua5.1.dll
-          rm -rf bin/Microsoft.VC80.CRT
           mkdir -p src/windows/include src/windows/lib
           fetch() {
             url="$1"
