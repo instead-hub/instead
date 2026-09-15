@@ -5,7 +5,6 @@
 % \usepackage[T2A]{fontenc}
 %\usepackage[english,russian]{babel}
 \usepackage{polyglossia}
-\usepackage{indentfirst}
 % \usepackage[russian]{datetime}
 \usepackage{upquote}
 
@@ -19,9 +18,7 @@
 \setsansfont{DejaVu Sans}
 \setmonofont{Liberation Mono}
 \defaultfontfeatures[ListingFont]{}
-\setmonofont[Mapping=]{Liberation Mono}[
-            ResetLigatures
-]
+\setmonofont[Mapping=,Ligatures=NoCommon]{Liberation Mono}
 
 \usepackage[setpagesize=false, % page size defined by xetex
             unicode=false, % unicode breaks when used with xetex
