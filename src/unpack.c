@@ -1,16 +1,15 @@
 #ifdef _USE_UNPACK
 /*
-   miniunz.c
-   Version 1.1, February 14h, 2010
-   sample part of the MiniZip project - ( http://www.winimage.com/zLibDll/minizip.html )
+   unpack.c -- extract game archives for INSTEAD
+   based on miniunz.c from the MiniZip project (zlib contrib/minizip)
 
-         Copyright (C) 1998-2010 Gilles Vollant (minizip) ( http://www.winimage.com/zLibDll/minizip.html )
+         Copyright (C) 1998-2026 Gilles Vollant (minizip) ( https://www.winimage.com/zLibDll/minizip.html )
 
          Modifications of Unzip for Zip64
          Copyright (C) 2007-2008 Even Rouault
 
          Modifications for Zip64 support on both zip and unzip
-         Copyright (C) 2009-2010 Mathias Svensson ( http://result42.com )
+         Copyright (C) 2009-2010 Mathias Svensson ( https://result42.com )
 */
 
 #ifndef _WIN32
@@ -54,17 +53,15 @@ char zip_game_dirname[PATH_MAX];
 
 /* change_file_date : change the date/time of a file
     filename : the filename of the file where date/time must be modified
-    dosdate : the new date at the MSDos format (4 bytes)
+    dosdate : the new date at the MSDOS format (4 bytes)
     tmu_date : the SAME new date at the tm_unz format */
-static void change_file_date(filename, dosdate, tmu_date)
-const char *filename;
-uLong dosdate;
-tm_unz tmu_date;
+static void change_file_date(const char *filename, uLong dosdate, tm_unz tmu_date)
 {
 #ifdef _WIN32
 	HANDLE hFile;
 	FILETIME ftm, ftLocal, ftCreate, ftLastAcc, ftLastWrite;
 
+	(void)tmu_date;
 	hFile = CreateFileA(filename, GENERIC_READ | GENERIC_WRITE,
 			    0, NULL, OPEN_EXISTING, 0, NULL);
 	GetFileTime(hFile, &ftCreate, &ftLastAcc, &ftLastWrite);
@@ -73,9 +70,10 @@ tm_unz tmu_date;
 	SetFileTime(hFile, &ftm, &ftLastAcc, &ftm);
 	CloseHandle(hFile);
 #else
-#ifdef unix
 	struct utimbuf ut;
 	struct tm newdate;
+
+	(void)dosdate;
 	newdate.tm_sec = tmu_date.tm_sec;
 	newdate.tm_min = tmu_date.tm_min;
 	newdate.tm_hour = tmu_date.tm_hour;
@@ -90,28 +88,23 @@ tm_unz tmu_date;
 	ut.actime = ut.modtime = mktime(&newdate);
 	utime(filename, &ut);
 #endif
-#endif
 }
 
 /* mymkdir and change_file_date are not 100 % portable
    As I don't know well Unix, I wait feedback for the unix portion */
 
-static int mymkdir(dirname)
-const char *dirname;
+static int mymkdir(const char *dirname)
 {
 	int ret = 0;
 #ifdef _WIN32
 	ret = _mkdir(dirname);
 #else
-#ifdef unix
 	ret = mkdir(dirname, 0775);
-#endif
 #endif
 	return ret;
 }
 
-static int makedir(newdir)
-const char *newdir;
+static int makedir(const char *newdir)
 {
 	char *buffer;
 	char *p;
@@ -127,9 +120,9 @@ const char *newdir;
 	}
 	strcpy(buffer, newdir);
 
-	if (buffer[len - 1] == '/') {
+	if (buffer[len - 1] == '/')
 		buffer[len - 1] = '\0';
-	}
+
 	if (mymkdir(buffer) == 0) {
 		free(buffer);
 		return 1;
@@ -156,9 +149,7 @@ const char *newdir;
 	return 1;
 }
 
-static int do_extract_currentfile(uf, password)
-unzFile uf;
-const char *password;
+static int do_extract_currentfile(unzFile uf)
 {
 	char filename_inzip[256];
 	char dir_inzip[256];
@@ -170,9 +161,8 @@ const char *password;
 	uInt size_buf;
 
 	unz_file_info64 file_info;
-	err =
-	    unzGetCurrentFileInfo64(uf, &file_info, filename_inzip,
-				    sizeof(filename_inzip), NULL, 0, NULL, 0);
+	err = unzGetCurrentFileInfo64(uf, &file_info, filename_inzip,
+				      sizeof(filename_inzip), NULL, 0, NULL, 0);
 
 	if (err != UNZ_OK) {
 		fprintf(stderr, "error %d with zipfile in unzGetCurrentFileInfo\n", err);
@@ -198,8 +188,8 @@ const char *password;
 	*p = 0;
 
 	if ((*filename_withoutpath) == '\0') {
-		if (zip_game_dirname[0] && strncmp(zip_game_dirname, 
-				filename_inzip, strlen(zip_game_dirname))) {
+		if (zip_game_dirname[0] && strncmp(zip_game_dirname,
+						   filename_inzip, strlen(zip_game_dirname))) {
 			err = -1;
 			fprintf(stderr, "Too many dirs in zip...\n");
 			goto out;
@@ -209,41 +199,30 @@ const char *password;
 		if (!*zip_game_dirname)
 			strcpy(zip_game_dirname, dir_inzip);
 	} else {
-		const char *write_filename;
-		int skip = 0;
-		write_filename = filename_inzip;
+		const char *write_filename = filename_inzip;
 
-		err = unzOpenCurrentFilePassword(uf, password);
+		err = unzOpenCurrentFilePassword(uf, NULL);
 		if (err != UNZ_OK) {
-			fprintf
-			    (stderr, "error %d with zipfile in unzOpenCurrentFilePassword\n",
-			     err);
+			fprintf(stderr, "error %d with zipfile in unzOpenCurrentFilePassword\n", err);
 			goto out;
 		}
 
-		if (skip == 0) {
+		fout = fopen64(write_filename, "wb");
+
+		/* some zipfiles don't contain directory alone before file */
+		if ((fout == NULL) && (filename_withoutpath != filename_inzip)) {
+			char c = *(filename_withoutpath - 1);
+			*(filename_withoutpath - 1) = '\0';
+			makedir(write_filename);
+			*(filename_withoutpath - 1) = c;
 			fout = fopen64(write_filename, "wb");
-
-			/* some zipfile don't contain directory alone before file */
-			if ((fout == NULL)
-			    && (filename_withoutpath != (char *)filename_inzip)) {
-				char c = *(filename_withoutpath - 1);
-				*(filename_withoutpath - 1) = '\0';
-				makedir(write_filename);
-				*(filename_withoutpath - 1) = c;
-				fout = fopen64(write_filename, "wb");
-			}
-
-			if (fout == NULL) {
-				fprintf(stderr, "error opening %s\n", write_filename);
-			}
 		}
 
-		if ((filename_withoutpath != (char *)filename_inzip) && 
-			!*zip_game_dirname) {
+		if (fout == NULL)
+			fprintf(stderr, "error opening %s\n", write_filename);
+
+		if ((filename_withoutpath != filename_inzip) && !*zip_game_dirname)
 			strcpy(zip_game_dirname, dir_inzip);
-		}
-
 
 		if (fout != NULL) {
 			fprintf(stderr, " extracting: %s\n", write_filename);
@@ -251,22 +230,18 @@ const char *password;
 			do {
 				err = unzReadCurrentFile(uf, buf, size_buf);
 				if (err < 0) {
-					fprintf
-					    (stderr, "error %d with zipfile in unzReadCurrentFile\n",
-					     err);
+					fprintf(stderr, "error %d with zipfile in unzReadCurrentFile\n", err);
 					break;
 				}
 				if (err > 0)
 					if (fwrite(buf, err, 1, fout) != 1) {
-						fprintf
-						    (stderr, "error in writing extracted file\n");
+						fprintf(stderr, "error in writing extracted file\n");
 						err = UNZ_ERRNO;
 						break;
 					}
-			}
-			while (err > 0);
-			if (fout)
-				fclose(fout);
+			} while (err > 0);
+
+			fclose(fout);
 
 			if (err == 0)
 				change_file_date(write_filename,
@@ -276,11 +251,8 @@ const char *password;
 
 		if (err == UNZ_OK) {
 			err = unzCloseCurrentFile(uf);
-			if (err != UNZ_OK) {
-				fprintf
-				    (stderr, "error %d with zipfile in unzCloseCurrentFile\n",
-				     err);
-			}
+			if (err != UNZ_OK)
+				fprintf(stderr, "error %d with zipfile in unzCloseCurrentFile\n", err);
 		} else
 			unzCloseCurrentFile(uf);	/* don't lose the error */
 
@@ -301,7 +273,7 @@ const char *password;
 		size_t s = strlen(zip_game_dirname);
 		unix_path(zip_game_dirname);
 		if (s && (zip_game_dirname[s - 1] == '/'))
-			s --;
+			s--;
 		zip_game_dirname[s] = 0;
 	}
 out:
@@ -309,27 +281,24 @@ out:
 	return err;
 }
 
-static int do_extract(uf, password)
-unzFile uf;
-const char *password;
+static int do_extract(unzFile uf)
 {
 	uLong i;
 	unz_global_info64 gi;
 	int err;
+
 	err = unzGetGlobalInfo64(uf, &gi);
 	if (err != UNZ_OK)
-		fprintf(stderr, "error %d with zipfile in unzGetGlobalInfo \n", err);
+		fprintf(stderr, "error %d with zipfile in unzGetGlobalInfo\n", err);
 
 	for (i = 0; i < gi.number_entry; i++) {
-		if (do_extract_currentfile(uf, password) != UNZ_OK)
+		if (do_extract_currentfile(uf) != UNZ_OK)
 			return -1;
 
 		if ((i + 1) < gi.number_entry) {
 			err = unzGoToNextFile(uf);
 			if (err != UNZ_OK) {
-				fprintf
-				    (stderr, "error %d with zipfile in unzGoToNextFile\n",
-				     err);
+				fprintf(stderr, "error %d with zipfile in unzGoToNextFile\n", err);
 				return -1;
 			}
 		}
@@ -344,35 +313,35 @@ int unpack(const char *zipfilename, const char *dirname)
 	unzFile uf;
 	char filename_try[MAXFILENAME + 16] = "";
 	int ret_value = 0;
+#ifdef USEWIN32IOAPI
+	zlib_filefunc64_def ffunc;
+#endif
 
 	if (dirname && !getcwd(game_cwd, sizeof(game_cwd))) {
 		fprintf(stderr, "Error: can not get current dir.\n");
 		return -1;
 	}
-	
+
 	uf = NULL;
 	zip_game_dirname[0] = 0;
-#        ifdef USEWIN32IOAPI
-	zlib_filefunc64_def ffunc;
-#        endif
 
 	strncpy(filename_try, zipfilename, MAXFILENAME - 1);
 	/* strncpy doesnt append the trailing NULL, of the string is too long. */
 	filename_try[MAXFILENAME] = '\0';
 
-#        ifdef USEWIN32IOAPI
+#ifdef USEWIN32IOAPI
 	fill_win32_filefunc64A(&ffunc);
 	uf = unzOpen2_64(zipfilename, &ffunc);
-#        else
+#else
 	uf = unzOpen64(zipfilename);
-#        endif
+#endif
 	if (uf == NULL) {
 		strcat(filename_try, ".zip");
-#            ifdef USEWIN32IOAPI
+#ifdef USEWIN32IOAPI
 		uf = unzOpen2_64(filename_try, &ffunc);
-#            else
+#else
 		uf = unzOpen64(filename_try);
-#            endif
+#endif
 	}
 
 	if (uf == NULL) {
@@ -391,8 +360,8 @@ int unpack(const char *zipfilename, const char *dirname)
 		fprintf(stderr, "Error changing dir to %s, aborting\n", dirname);
 		goto out;
 	}
-	ret_value = do_extract(uf, NULL);
- out:
+	ret_value = do_extract(uf);
+out:
 	unzClose(uf);
 #ifdef _WIN32
 	if (dirname)
