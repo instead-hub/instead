@@ -20,9 +20,6 @@ Rules.make:
 config.make:
 	echo "# you can define own flags here" > config.make
 
-svnclean:
-	{ test -d .svn && svn st; } | grep "^?" | awk '{ print $$2 }' | grep -v "config.make" | while read l; do $(RM) -rf $$l; done
-
 gitclean:
 	{ test -d .git && git status -s; } | grep "^??" | awk '{ print $$2 }' | grep -v "config.make" | while read l; do $(RM) -rf $$l; done
 
@@ -36,7 +33,7 @@ docs: rules
 PKGBUILD: PKGBUILD.in tarball
 	cat PKGBUILD.in | sed -e s/MD5SUM/`md5sum $(ARCHIVE) | cut -f1 -d' '`/g > PKGBUILD
 
-tarball: clean svnclean gitclean rules
+tarball: clean gitclean rules
 	echo "# you can define own flags here" > config.make
 	ln -sf ./ $(VERTITLE)
 	tar -cz --exclude $(VERTITLE)/$(VERTITLE) --exclude .git --exclude $(ARCHIVE) -f $(ARCHIVE) $(VERTITLE)/*
