@@ -30,8 +30,8 @@ rules:
 docs: rules
 	make docs -C doc/
 
-PKGBUILD: PKGBUILD.in tarball
-	cat PKGBUILD.in | sed -e s/MD5SUM/`md5sum $(ARCHIVE) | cut -f1 -d' '`/g > PKGBUILD
+PKGBUILD: contrib/PKGBUILD.in
+	cp contrib/PKGBUILD.in PKGBUILD
 
 tarball: clean gitclean rules
 	echo "# you can define own flags here" > config.make
