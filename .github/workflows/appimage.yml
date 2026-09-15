@@ -49,6 +49,9 @@ jobs:
               -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr "$@"
             cmake --build "/tmp/$name/build"
             DESTDIR="$ROOT" cmake --install "/tmp/$name/build"
+            # components built with VENDORED=OFF look for SDL3 in /usr
+            sudo cp -a "$ROOT/usr/." /usr/
+            sudo ldconfig
           }
           build SDL "$SDL3_VER" -DSDL_TESTS=OFF -DSDL_EXAMPLES=OFF
           build SDL_ttf "$SDL3_TTF_VER" -DSDLTTF_VENDORED=OFF -DSDLTTF_SAMPLES=OFF -DSDLTTF_PLUTOSVG=OFF
