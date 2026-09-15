@@ -12,11 +12,11 @@ jobs:
     name: Emscripten version
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Cache emsdk
         id: cache-emsdk
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: emsdk
           key: ${{ runner.os }}-emsdk-${{ env.emsdk_ver }}-${{ hashFiles('contrib/instead-em-build.sh') }}
@@ -52,7 +52,7 @@ jobs:
           cp env/instead-em-js/*.svg ../release/instead-em
 
       - name: Publish Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: instead-em
           path: release
