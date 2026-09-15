@@ -71,7 +71,7 @@ include:
 ```
 local A = 10
 local function myfunc(a, b)
-    return (a * b) / A
+  return (a * b) / A
 end
 ```
 
@@ -92,10 +92,10 @@ STEAD3. Важно то, что такие объекты _не уничтожа
 ```
 -- модуль testmod.lua
 obj {
-    nam = '@testmod';
-    hello = function(s)
-        dprint("Hello world");
-    end;
+  nam = '@testmod';
+  hello = function(s)
+    dprint("Hello world");
+  end;
 }
 ```
 
@@ -111,11 +111,11 @@ _'@testmod'.hello() -- получили объект '@testmod' и вызвал�
 ```
 -- модуль mymodule.lua
 local mod = obj { -- локальная ссылка на объект
-    nam = '@testmod';
+  nam = '@testmod';
 }
 
 function mod.hello(a) -- вариант определения метода вне объекта
-    dprint("Hello world")
+  dprint("Hello world")
 end
 
 testmod = mod -- глобальный объект testmod -- интерфейс к модулю
@@ -134,13 +134,13 @@ testmod.hello()
 ```
 -- модуль mymodule.lua
 local mod = obj { -- локальная ссылка на объект
-    nam = '@testmod';
-    num = 0; -- переменная
+  nam = '@testmod';
+  num = 0; -- переменная
 }
 
 function mod.hello(a)
-    dprint("Hello world", mod.num)
-    mod.num = mod.num + 1
+  dprint("Hello world", mod.num)
+  mod.num = mod.num + 1
 end
 
 testmod = mod -- глобальный объект testmod -- интерфейс к модулю
@@ -166,10 +166,10 @@ testmod = mod -- глобальный объект testmod -- интерфейс
 
 ```
 stead.mod_init(function()
-        declare {
-                game = std.ref 'game',
-                pl = std.ref 'player',
-        }
+    declare {
+        game = std.ref 'game',
+        pl = std.ref 'player',
+    }
 end)
 ```
 stead -- это интерфейсный объект для доступа к низкоуровневым функциям
@@ -180,10 +180,10 @@ INSTEAD. Часто, удобно сделать локальную ссылку
 local std = stead -- сделали ссылку на stead
 
 std.mod_init(function()
-        declare {
-                game = std.ref 'game',
-                pl = std.ref 'player',
-        }
+    declare {
+        game = std.ref 'game',
+        pl = std.ref 'player',
+    }
 end)
 ```
 В дальнейшем изложении всегда будет использоваться std вместо stead.
@@ -206,7 +206,7 @@ std.mod_тип_события(функция, [приоритет])
 
 ```
 local function init()
-      dprint("Очень ранний init");
+    dprint("Очень ранний init");
 end
 std.mod_init(init, -10);
 ```
@@ -237,8 +237,8 @@ std.mod_init(init, -10);
 
 ```
 obj {
-    nam = 'стол';
-    dsc = "Тут стоит {стол}.";
+  nam = 'стол';
+  dsc = "Тут стоит {стол}.";
 }
 ```
 
@@ -247,8 +247,8 @@ obj {
 
 ```
 obj {
-    nam = 'стол';
-    dsc = "Тут стоит {стол}.";
+  nam = 'стол';
+  dsc = "Тут стоит {стол}.";
 }:disable()
 ```
 
@@ -267,21 +267,21 @@ obj (с сокращениями):
 
 ```
 std.obj = std.class { -- определяем класс
-	__obj_type = true; -- тип объектов (функция is_obj)
-	with = function(self, ...)
-	     -- ... реализация конструкции :with
-	end;
-	new = function(self, v)
-	    -- реализация конструктора obj { }
-	end;
-	-- другие методы
-	-- ...
-	display = function(self) -- отображение объекта
-		local d = std.call(self, 'dsc')
-		return d
-	end;
-	-- другие методы
-	-- ...
+  __obj_type = true; -- тип объектов (функция is_obj)
+  with = function(self, ...)
+      -- ... реализация конструкции :with
+  end;
+  new = function(self, v)
+    -- реализация конструктора obj { }
+  end;
+  -- другие методы
+  -- ...
+  display = function(self) -- отображение объекта
+    local d = std.call(self, 'dsc')
+    return d
+  end;
+  -- другие методы
+  -- ...
 };
 
 ```
@@ -297,19 +297,19 @@ std.obj = std.class { -- определяем класс
 
 ```
 darkobj = std.class ({ -- определяем класс
-	__darkobj_type = true; -- тип объектов (функция is_obj)
-	display = function(self) -- отображение объекта
-		if not here().darkroom then
-			local d = std.call(self, 'dsc')
-			return d
-		end
-	end;
+  __darkobj_type = true; -- тип объектов (функция is_obj)
+  display = function(self) -- отображение объекта
+    if not here().darkroom then
+      local d = std.call(self, 'dsc')
+      return d
+    end
+  end;
 }, std.obj);
 
 
 darkobj {
-	nam = 'кот';
-	dsc = '{Кот} виден при свете.'
+  nam = 'кот';
+  dsc = '{Кот} виден при свете.'
 }
 ```
 
@@ -430,7 +430,7 @@ to_n, to_s, to_e, to_w соответственно.
 local std = stead
 
 obj {
-	nam = '@compass';
+  nam = '@compass';
 }
 ```
 
@@ -448,15 +448,15 @@ obj {
 
 ```
 obj {
-	nam = '@compass';
-	disp = false; -- не показывать объект @compass
+  nam = '@compass';
+  disp = false; -- не показывать объект @compass
 }:with {
-	obj {
-		nam = '$compass';
-		act = function(s, w)
-			std.p(fmt.c ("{@compass n| С}\n{@compass w|З} {@compass e|В}\n{@compass s|Ю}"))
-		end;
-	}
+  obj {
+    nam = '$compass';
+    act = function(s, w)
+      std.p(fmt.c ("{@compass n| С}\n{@compass w|З} {@compass e|В}\n{@compass s|Ю}"))
+    end;
+  }
 }
 ```
 
@@ -472,11 +472,11 @@ $compass и его результат отобразит в выводе. Мы �
 
 ```
 obj {
-	nam = '@compass';
-	disp = false;
-	inv = function(s)
-	     p [[Вы нажали на ссылку.]]
-	end;
+  nam = '@compass';
+  disp = false;
+  inv = function(s)
+      p [[Вы нажали на ссылку.]]
+  end;
 }:with { ...
 ```
 
@@ -502,12 +502,12 @@ use @compass,n
 
 ```
 obj {
-	nam = '@compass';
-	disp = false;
-	inv = function(s)
-		local dir = std.cmd[3]
-		p("Вы хотите идти по направлению: ", dir)
-	end;
+  nam = '@compass';
+  disp = false;
+  inv = function(s)
+    local dir = std.cmd[3]
+    p("Вы хотите идти по направлению: ", dir)
+  end;
 }:with {
 ```
 
@@ -532,17 +532,17 @@ act @compass,n
 
 ```
 obj {
-	nam = '@compass';
-	disp = false;
-	inv = function(s)
-		local dir = std.cmd[3]
-		local r = std.call(std.here(), 'to_'..dir)
-		if not r then
-			std.p ([[Нет прохода.]])
-		else
-			std.walk(r)
-		end
-	end;
+  nam = '@compass';
+  disp = false;
+  inv = function(s)
+    local dir = std.cmd[3]
+    local r = std.call(std.here(), 'to_'..dir)
+    if not r then
+      std.p ([[Нет прохода.]])
+    else
+      std.walk(r)
+    end
+  end;
 }:with {
 ```
 
@@ -555,28 +555,28 @@ local std = stead
 require "fmt"
 
 obj {
-	nam = '@compass';
-	disp = false;
-	inv = function(s)
-		local dir = std.cmd[3]
-		local r = std.call(std.here(), dir..'_to')
-		if not r then
-			std.p ([[Нет прохода]])
-		else
-			std.walk(r)
-		end
-	end;
+  nam = '@compass';
+  disp = false;
+  inv = function(s)
+    local dir = std.cmd[3]
+    local r = std.call(std.here(), dir..'_to')
+    if not r then
+      std.p ([[Нет прохода]])
+    else
+      std.walk(r)
+    end
+  end;
 }:with {
-	obj {
-		nam = '$compass';
-		act = function(s, w)
-			std.p(fmt.c ("{@compass n| С}\n{@compass w|З} {@compass e|В}\n{@compass s|Ю}"))
-		end;
-	}
+  obj {
+    nam = '$compass';
+    act = function(s, w)
+      std.p(fmt.c ("{@compass n| С}\n{@compass w|З} {@compass e|В}\n{@compass s|Ю}"))
+    end;
+  }
 }
 
 std.mod_start(function(load)
-	take '@compass'
+  take '@compass'
 end)
 compass = _'@compass'
 
@@ -621,11 +621,11 @@ p [[Как вас {@keyboard "Имя"|зовут}?]];
 перенесёт игрока в комнату клавиатурного ввода:
 
 ```
-	act = function(s, w, ...)
-		s.title = w or "?"
-		s.args = { ... }
-		walkin(s)
-	end;
+  act = function(s, w, ...)
+    s.title = w or "?"
+    s.args = { ... }
+    walkin(s)
+  end;
 ```
 
 Кроме того, что здесь мы меняем название комнаты (title) и делаем
@@ -678,21 +678,21 @@ local hooked
 local orig_filter
 
 std.mod_start(function(load)
-	if not hooked then
-		hooked = true
-		orig_filter = std.rawget(keys, 'filter')
-		std.rawset(keys, 'filter', std.hook(keys.filter, function(f, s, press, key)
-			if std.here().keyboard_type then
-				return hook_keys[key]
-			end
-			return f(s, press, key)
-		end))
-	end
+  if not hooked then
+    hooked = true
+    orig_filter = std.rawget(keys, 'filter')
+    std.rawset(keys, 'filter', std.hook(keys.filter, function(f, s, press, key)
+      if std.here().keyboard_type then
+        return hook_keys[key]
+      end
+      return f(s, press, key)
+    end))
+  end
 end)
 
 std.mod_done(function(load)
-	hooked = false
-	std.rawset(keys, 'filter', orig_filter)
+  hooked = false
+  std.rawset(keys, 'filter', orig_filter)
 end)
 ```
 

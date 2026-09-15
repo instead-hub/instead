@@ -27,17 +27,17 @@ https://instead-hub.github.io
 When we say "text adventure" most of the people there one of the two familiar
 images. It's either text, action buttons, for example:
 
-	You see a table in front of you. There is an apple on the table. What to do?
+    You see a table in front of you. There is an apple on the table. What to do?
 
-	1) Take the apple
-	2) Step away from the table
+    1) Take the apple
+    2) Step away from the table
 
 Or much less, this is a classic game with a text input where game control was
 necessary to introduce actions with the keyboard.
 
-	You in the kitchen. There is a table.
-	> inspect the table.
-	There is an apple on the table.
+    You in the kitchen. There is a table.
+    > inspect the table.
+    There is an apple on the table.
 
 Both approaches have their advantages and disadvantages.
 
@@ -130,25 +130,25 @@ The "main3.lua" file should start with a comment block containing a list of tags
 
 Any sequence of characters starting with a double-dash on the same line is a Lua comment. INSTEAD tags are comment lines of the following form:
 
-	-- $TagName: A string of UTF-8 characters$
+    -- $TagName: A string of UTF-8 characters$
 
 The $Name tag contains the name of the game. Here is an example:
 
-	-- $Name: the Most interesting game!$
+    -- $Name: the Most interesting game!$
 
 It's good practice to follow the 'Name' tag with a few others. Here is how to specify the game's version number:
 
-	-- $Version: 0.5$
+    -- $Version: 0.5$
 
 People who play your game may be interested in who wrote it:
 
-	-- $Author: Anonymous fan of text adventures$
+    -- $Author: Anonymous fan of text adventures$
 
 It's oftentimes helpful to include a description about your game. Here we give
 an example of a multi-line tag. You specify line breaks using the "\n" escape
 sequence:
 
-	-- $Info: This is a remake of a classic\nZX Spectrum game.$
+    -- $Info: This is a remake of a classic\nZX Spectrum game.$
 
 If you are a Windows user, make sure that your text editor can save files
 encoded as UTF-8 _without a BOM (byte order marker)_.
@@ -156,26 +156,26 @@ encoded as UTF-8 _without a BOM (byte order marker)_.
 After the preamble containing your tags, you should list any external modules
 required by the game. Here is an example of what that might look like. We'll explain what these specific lines mean later:
 
-	require "fmt"   -- some formatting functions
-	fmt.para = true -- enable the paragraphs (indents)
+    require "fmt"   -- some formatting functions
+    fmt.para = true -- enable the paragraphs (indents)
 
 After this, it's usually worthwhile to define default handlers. We haven't
 covered what handlers are yet, so it's fine if you don't know exactly what
 these lines do. Here is how you would define the default "act", "use", and
 "inv" handlers:
 
-	game.act = 'Not running.';
-	game.use = 'It does not help.';
-	game.inv = 'Why?';
+    game.act = 'Not running.';
+    game.use = 'It does not help.';
+    game.inv = 'Why?';
 
 When the game starts, it will set the initial game state by calling the "init"
 function. You can use this function to initialize the player or to perform any
 special starting tasks. The function may not be needed depending on your game.
 
-	function init() -- Put the knife and paper in the player's inventory
-		take 'the knife'
-		take 'paper'
-	end
+    function init() -- Put the knife and paper in the player's inventory
+        take 'the knife'
+        take 'paper'
+    end
 
 The game engine only calls init() when a new game is started. It will not be
 called when you load a game that was previously saved. To perform a few
@@ -183,12 +183,12 @@ actions whenever the game is loaded, use the start() function.
 
 ```
 function start(is_loaded) -- to restore the original state?
-	if is_loaded then
-		dprint "Game loaded."
-	else
-		dprint "New game started."
-	end
-	-- we don't need to do anything
+  if is_loaded then
+    dprint "Game loaded."
+  else
+    dprint "New game started."
+  end
+  -- we don't need to do anything
 end
 ```
 
@@ -231,7 +231,7 @@ game.use = 'does Not work.';
 game.inv = 'Why me?';
 
 function init()
-	-- initialization if it is needed
+  -- initialization if it is needed
 end
 ```
 
@@ -247,7 +247,7 @@ command-line options.
 In addition, the mode is debug, the debugger automatically connects. You can
 activate it with ctrl-d or f7. You can to connect the debugger and explicitly:
 
-	require "dbg"
+    require "dbg"
 
 In the code of your game.
 
@@ -275,8 +275,8 @@ example:
 
 ```
 act = function(s)
-	print ("Act is here! ");
-	...
+  print ("Act is here! ");
+  ...
 end;
 ```
 
@@ -288,8 +288,8 @@ window, and you can see it when logged in mode debug.
 
 ```
 act = function(s)
-	dprint ("Act is here! ");
-	...
+  dprint ("Act is here! ");
+  ...
 end;
 ```
 
@@ -306,7 +306,7 @@ it is also possible, you only need to install execute the lua file for Windows
 
 You can check the syntax and use INSTEAD, for this use the parameter -luac:
 
-	sdl-instead-debug-luac <path to the script.>
+    sdl-instead-debug-luac <path to the script.>
 
 ## Scene
 
@@ -318,9 +318,9 @@ In any game should be a scene called "main". It will start and your game!
 
 ```
 room {
-	nam = 'main';
-	disp = "Main room";
-	dsc = [[You are in a large room.]];
+  nam = 'main';
+  disp = "Main room";
+  dsc = [[You are in a large room.]];
 }
 ```
 
@@ -332,7 +332,7 @@ message.
 
 To access the object by name, you can use the following entry:
 
-	dprint("Object: ", _'main')
+    dprint("Object: ", _'main')
 
 Each object has _attributes_ and _event handlers_. In this example has two
 attributes: nam and dsc. The attributes are separated the delimiter (in this
@@ -346,8 +346,8 @@ In fact, you may not specify the name when creating the object:
 
 ```
 room {
-	disp = "Main room";
-	dsc = [[You are in a large room.]];
+  disp = "Main room";
+  dsc = [[You are in a large room.]];
 }
 ```
 
@@ -359,24 +359,24 @@ is nameless, you unable to create variable object reference, for example:
 
 ```
 myroom = room {
-	disp = "Closet";
-	dsc = [[You in the closet.]];
+  disp = "Closet";
+  dsc = [[You in the closet.]];
 }
 ```
 
 The myroom variable in this case becomes a synonym of object (link on the object
 itself).
 
-	dprint("Object: ", myroom)
+    dprint("Object: ", myroom)
 
 You can stick to any one method or to apply both. For example, you can specify
 the name and the variable link:
 
 ```
 main_room = room {
-	nam = 'main';
-	disp = "Main room";
-	dsc = [[You are in a large room.]];
+  nam = 'main';
+  disp = "Main room";
+  dsc = [[You are in a large room.]];
 }
 ```
 
@@ -398,10 +398,10 @@ use the 'disp' or 'nam'.
 
 ```
 mroom = room {
-	nam = 'main';
-	title = 'Start of adventure';
-	disp = "Main room";
-	dsc = [[You are in a large room.]];
+  nam = 'main';
+  title = 'Start of adventure';
+  disp = "Main room";
+  dsc = [[You are in a large room.]];
 }
 ```
 
@@ -413,9 +413,9 @@ You can use the symbol ',' instead of ';' to separate attributes. For example:
 
 ```
 room {
-	nam = 'main',
-	disp = 'Main room',
-	dsc = 'You are in a large room.',
+  nam = 'main',
+  disp = 'Main room',
+  dsc = 'You are in a large room.',
 }
 ```
 
@@ -424,15 +424,15 @@ single or double quotation marks:
 
 ```
 room {
-	nam = 'main';
-	disp = 'Main room';
-	dsc = "You are in a large room.";
+  nam = 'main';
+  disp = 'Main room';
+  dsc = "You are in a large room.";
 }
 ```
 
 For long descriptions it is convenient to use the following:
 
-	dsc = [[ Very long description... ]];
+    dsc = [[ Very long description... ]];
 
 The newlines are ignored. If you want in the output the description of the
 scene was attended by paragraphs -- use the '^'symbol.
@@ -464,9 +464,9 @@ _Objects_ -- this one scene interacting with the player.
 
 ```
 obj {
-	nam = 'table';
-	dsc = 'In the {table}.';
-	act = 'Hm... Just a table...';
+  nam = 'table';
+  dsc = 'In the {table}.';
+  act = 'Hm... Just a table...';
 };
 ```
 
@@ -476,11 +476,11 @@ the inventory to display it will make use of this attribute. For example:
 
 ```
 obj {
-	nam = 'table';
-	disp = 'table angle';
-	dsc = 'In the {table}.';
-	tak = 'I took the corner of the table';
-	inv = 'I hold the corner of the table.';
+  nam = 'table';
+  disp = 'table angle';
+  dsc = 'In the {table}.';
+  tak = 'I took the corner of the table';
+  inv = 'I hold the corner of the table.';
 };
 ```
 
@@ -508,16 +508,16 @@ objects to the room's 'obj' attribute:
 
 ```
 obj { -- an object with a name but without a variable
-	nam = 'box';
-	dsc = [[I see a {box} on the floor.]];
-	act = [[Hard!]];
+  nam = 'box';
+  dsc = [[I see a {box} on the floor.]];
+  act = [[Hard!]];
 }
 
 room {
-	nam = 'main';
-	disp = 'Big room';
-	dsc = [[You are in a large room.]];
-	obj = { 'box' };
+  nam = 'main';
+  disp = 'Big room';
+  dsc = [[You are in a large room.]];
+  obj = { 'box' };
 };
 ```
 
@@ -529,15 +529,15 @@ source code:
 
 ```
 apple = obj { -- object variable, but without a name
-	dsc = [[there is {Apple}.]];
-	act = [[Red!!]];
+  dsc = [[there is {Apple}.]];
+  act = [[Red!!]];
 }
 
 room {
-	nam = 'main';
-	disp = 'Big room';
-	dsc = [[You are in a large room.]];
-	obj = { apple };
+  nam = 'main';
+  disp = 'Big room';
+  dsc = [[You are in a large room.]];
+  obj = { apple };
 };
 ```
 
@@ -547,11 +547,11 @@ objects at the end of a room definition:
 
 ```
 room {
-	nam = 'main';
-	disp = 'Big room';
-	dsc = [[You are in a large room.]];
+  nam = 'main';
+  disp = 'Big room';
+  dsc = [[You are in a large room.]];
 }:with {
-	'box',
+  'box',
 }
 ```
 
@@ -560,15 +560,15 @@ an example of how you might do that:
 
 ```
 room {
-	nam = 'main';
-	disp = 'Big room';
-	dsc = [[You are in a large room.]];
+  nam = 'main';
+  disp = 'Big room';
+  dsc = [[You are in a large room.]];
 }:with {
-	obj {
-		nam = 'box';
-		dsc = [[I see a {box} on the floor.]];
-		act = [[Hard!]];
-	}
+  obj {
+    nam = 'box';
+    dsc = [[I see a {box} on the floor.]];
+    act = [[Hard!]];
+  }
 };
 ```
 
@@ -579,15 +579,15 @@ have to.
 If the room is placed a few objects, separate the links with commas, for
 example:
 
-	obj = { 'box', apple };
+    obj = { 'box', apple };
 
 You can insert line breaks for clarity, when objects many, for example:
 
 ```
 obj = {
-	'table',
-	'apple',
-	'knife',
+  'table',
+  'apple',
+  'knife',
 };
 ```
 
@@ -618,19 +618,19 @@ place it in multiple rooms as follows:
 
 ```
 obj {
-	nam = 'tree';
-	dsc = [[There is a {tree}.]];
-	act = [[All of these trees look alike.]];
+  nam = 'tree';
+  dsc = [[There is a {tree}.]];
+  act = [[All of these trees look alike.]];
 }
 
 room {
-	nam = 'Forest';
-	obj = { 'tree' };
+  nam = 'Forest';
+  obj = { 'tree' };
 }
 
 room {
-	nam = 'Street';
-	obj = { 'tree' };
+  nam = 'Street';
+  obj = { 'tree' };
 }
 
 ```
@@ -645,8 +645,8 @@ Even so, you refer to the object by its tag without a #:
 
 ```
 obj {
-	tag = '#flowers';
-	dsc = [[there is {flowers}.]]
+  tag = '#flowers';
+  dsc = [[there is {flowers}.]]
 }
 ```
 
@@ -666,8 +666,8 @@ tags always start with a '#' character whereas names do not.
 
 ```
 obj {
- nam = '#flowers';
- dsc = [[there is {flowers}.]]
+  nam = '#flowers';
+  dsc = [[there is {flowers}.]]
 }
 ```
 
@@ -683,19 +683,19 @@ scenery of the stage.
 
 ```
 room {
-	nam = 'House';
-	dsc = [[I am at home.]];
-	decor = [[I see a lot of interesting things. For example, {#wall|wall}
-	hanging {#picture|picture}.]];
+  nam = 'House';
+  dsc = [[I am at home.]];
+  decor = [[I see a lot of interesting things. For example, {#wall|wall}
+  hanging {#picture|picture}.]];
 }: with {
-	obj {
-		nam = '#wall';
-		act = [[the Wall like a wall!]];
-	};
-	obj {
-		nam = '#pattern';
-		act = [[van Gogh?]];
-	}
+  obj {
+    nam = '#wall';
+    act = [[the Wall like a wall!]];
+  };
+  obj {
+    nam = '#pattern';
+    act = [[van Gogh?]];
+  }
 }
 ```
 
@@ -720,21 +720,21 @@ descriptions together. For example, put on the table an Apple.
 
 ```
 obj {
-	nam = 'Apple';
-	dsc = [[On the table is {Apple}.]];
-	act = 'Take what?';
+  nam = 'Apple';
+  dsc = [[On the table is {Apple}.]];
+  act = 'Take what?';
 };
 
 obj {
-	nam = 'table';
-	dsc = [[the room is a {table}.]];
-	act = 'Hm... Just a table...';
-	obj = { 'Apple' };
+  nam = 'table';
+  dsc = [[the room is a {table}.]];
+  act = 'Hm... Just a table...';
+  obj = { 'Apple' };
 };
 
 room {
-	nam = 'House';
-	obj = { 'table' };
+  nam = 'House';
+  obj = { 'table' };
 }
 ```
 
@@ -752,19 +752,19 @@ so:
 
 ```
 room {
-	nam = 'House';
+  nam = 'House';
 }: with {
-	obj {
-		nam = 'table';
-		dsc = [[the room is a {table}.]];
-		act = 'Hm... Just a table...';
-	}: with {
-		obj {
-			nam = 'Apple';
-			dsc = [[On the table is {Apple}.]];
-			act = 'Take what?';
-		};
-	}
+  obj {
+    nam = 'table';
+    dsc = [[the room is a {table}.]];
+    act = 'Hm... Just a table...';
+  }: with {
+    obj {
+      nam = 'Apple';
+      dsc = [[On the table is {Apple}.]];
+      act = 'Take what?';
+    };
+  }
 }
 ```
 
@@ -777,7 +777,7 @@ and rooms. You can also assign _functions_ to attributes. For example:
 
 ```
 disp = function()
-	p 'Apple';
+  p 'Apple';
 end
 ```
 
@@ -787,7 +787,7 @@ like. We may as well have written `disp = 'Apple'`. The main objective of such f
 Let's take a look how to return something. One way to return a string is by an
 explicit statement such as the following:
 
-	return "Apple";
+    return "Apple";
 
 When a statement like this is encountered, the function will exit with the
 given return value. In this case, that would be the string, "Apple".
@@ -810,14 +810,14 @@ spacing intelligently based on what you present to the player.
 As with all functions, you can leave out the parentheses if there is only a
 single value to supply:
 
-	pn "No brackets!"
+    pn "No brackets!"
 
 It's likely that you will often times want to concatenate strings together.
 You can either use '..' or ',' for this purpose, and in that case parentheses
 will be required:
 
-	pn ("String 1".." Line 2");
-	pn ("String 1" "String 2");
+    pn ("String 1".." Line 2");
+    pn ("String 1" "String 2");
 
 > The main difference between attributes and event handlers is that only event
 > handlers are able to change the state of the game world. When writing an
@@ -839,23 +839,23 @@ of variables. For example:
 
 ```
 obj {
-	nam = 'Apple';
-	seen = false;
-	dsc = function(s)
-		if not s.seen then
-			p '{Something} is on the table.';
-		else
-			p 'An {Apple} lies on the table.';
-		end
-	end;
-	act = function(s)
-		if s.seen then
-			p 'It's an Apple!';
-		else
-			s.seen = true;
-			p 'Um... It's an Apple!';
-		end
-	end;
+  nam = 'Apple';
+  seen = false;
+  dsc = function(s)
+    if not s.seen then
+      p '{Something} is on the table.';
+    else
+      p 'An {Apple} lies on the table.';
+    end
+  end;
+  act = function(s)
+    if s.seen then
+      p 'It's an Apple!';
+    else
+      s.seen = true;
+      p 'Um... It's an Apple!';
+    end
+  end;
 };
 ```
 When a function is assigned to an attribute, its first parameter always refers
@@ -873,30 +873,30 @@ that the object is an "Apple".
 The syntax of 'if' statements is easy to read. Here are a few examples for
 clarity:
 
-	if <expression> then <actions> end
+    if <expression> then <actions> end
 
-	if have 'Apple' then
-		p 'I have an apple!'
-	end
+    if have 'Apple' then
+        p 'I have an apple!'
+    end
 
-	if <expression> then <actions> else <actions otherwise> end
+    if <expression> then <actions> else <actions otherwise> end
 
-	if have 'Apple' then
-		p 'I have an apple!'
-	else
-		p 'I don't have any apples!'
-	end
+    if have 'Apple' then
+        p 'I have an apple!'
+    else
+        p 'I don't have any apples!'
+    end
 
-	if <expression> then <action> elseif <expression 2> then <action 2>
-	else <otherwise> end -- etc.
+    if <expression> then <action> elseif <expression 2> then <action 2>
+    else <otherwise> end -- etc.
 
-	if have 'Apple' then
-		p 'I have an apple!'
-	elseif have 'fork' then
-		p 'I don't have any apples, but there is this fork in my inventory!'
-	else
-		p 'I don't have an apple or a fork.
-	end
+    if have 'Apple' then
+        p 'I have an apple!'
+    elseif have 'fork' then
+        p 'I don't have any apples, but there is this fork in my inventory!'
+    else
+        p 'I don't have an apple or a fork.
+    end
 
 The _expression_ of an "if" statement is a boolean value made up of true/false
 terms separated by "and", "or", "not", and parenthesis to control evaluation
@@ -906,17 +906,17 @@ operator is '==', and the inequality operator is '~='.
 
 ```
 if not have 'Apple' and not have 'fork' then
-	p 'I don't have an apple or a fork!'
+  p 'I don't have an apple or a fork!'
 end
 
 ...
 if w ~= apple then
-	p 'This is not an Apple.';
+  p 'This is not an Apple.';
 end
 ...
 
 if time() == 10 then
-	p 'It's your 10th turn!'
+  p 'It's your 10th turn!'
 end
 ```
 
@@ -936,12 +936,12 @@ Something like we did with the seen. But variables can be many.
 
 ```
 obj {
-	nam = 'Apple';
-	seen = false;
-	eaten = false;
-	color = 'red';
-	weight = 10;
-	...
+  nam = 'Apple';
+  seen = false;
+  eaten = false;
+  color = 'red';
+  weight = 10;
+  ...
 };
 ```
 
@@ -952,11 +952,11 @@ variables in a special block:
 
 ```
 obj {
-	nam = 'Apple';
-	{
-		t = 1; -- this variable will not get to save
-		x = false; -- and this too
-	}
+  nam = 'Apple';
+  {
+    t = 1; -- this variable will not get to save
+    x = false; -- and this too
+  }
 };
 ```
 
@@ -966,11 +966,11 @@ always saved. If you use arrays to store immutable values, you can write:
 
 ```
 obj {
-	nam = 'Apple';
-	{
-		text = { "one", "two", "three" }; -- never go to a save file
-	}
-	...
+  nam = 'Apple';
+  {
+    text = { "one", "two", "three" }; -- never go to a save file
+  }
+  ...
 };
 ```
 
@@ -979,23 +979,23 @@ variable - reference, for example:
 
 ```
 apple = obj {
-	color = 'red';
+  color = 'red';
 }
 ...
 -- somewhere in another place
-	apple.color = 'green'
+  apple.color = 'green'
 ```
 
 Or by name:
 
 ```
 obj {
-	nam = 'Apple';
-	color = 'red';
+  nam = 'Apple';
+  color = 'red';
 }
 ...
 -- somewhere in another place
-	_'Apple'.color = 'green'
+  _'Apple'.color = 'green'
 ```
 
 In fact, you can create variables of the object on the fly (without pre-define
@@ -1014,9 +1014,9 @@ Local variables are created by using office word local:
 
 ```
 act = function(s)
-	local w = _'light bulb'
-	w.light = true
-	p [[I pressed the button and the bulb lit up.]]
+  local w = _'light bulb'
+  w.light = true
+  p [[I pressed the button and the bulb lit up.]]
 end
 ```
 
@@ -1026,7 +1026,7 @@ act. We created a temporary reference variable 'w', which refers to the object
 
 Of course, we could write:
 
-	_'light bulb'.light = true
+    _'light bulb'.light = true
 
 But imagine if we need to execute multiple actions with a the object in such
 cases is easier to use a temporary variable.
@@ -1041,23 +1041,23 @@ Another example of using local variables:
 
 ```
 obj {
-	nam = 'kitten';
-	state = 1;
-	act = function(s)
-		s.state = s.state + 1
-		if s.state > 3 then
-			s.state = 1
-		end
-		p [[Purr!]]
-	end;
-	dsc = function(s)
-		local dsc = {
-			"The{kitten} purrs.",
-			"The{kitten} is playing.",
-			"The{kitten} is licked.",
-		};
-		p(dsc[s.state])
-	end;
+  nam = 'kitten';
+  state = 1;
+  act = function(s)
+    s.state = s.state + 1
+    if s.state > 3 then
+      s.state = 1
+    end
+    p [[Purr!]]
+  end;
+  dsc = function(s)
+    local dsc = {
+      "The{kitten} purrs.",
+      "The{kitten} is playing.",
+      "The{kitten} is licked.",
+    };
+    p(dsc[s.state])
+  end;
 end
 ```
 
@@ -1066,13 +1066,13 @@ operates within the dsc. Of course, this example you could write it as:
 
 ```
 dsc = function(s)
-	if s.state == 1 then
-		p "the{Kitten} is purring."
-	elseif s.state == 2 then
-		p "the{Kitten} is playing."
-	else
-		p "the{Kitten} is licked.",
-	end
+  if s.state == 1 then
+    p "the{Kitten} is purring."
+  elseif s.state == 2 then
+    p "the{Kitten} is playing."
+  else
+    p "the{Kitten} is licked.",
+  end
 end
 ```
 
@@ -1082,16 +1082,16 @@ You can also create a global variable:
 
 ```
 global { -- definition of global variables
-	global_var = 1; -- number
-	some_number = 1.2; -- number some_string = 'string';
-	know_truth = false; -- a Boolean value
-	array = {1, 2, 3, 4}; -- array
+  global_var = 1; -- number
+  some_number = 1.2; -- number some_string = 'string';
+  know_truth = false; -- a Boolean value
+  array = {1, 2, 3, 4}; -- array
 }
 ```
 
 Another form, convenient for single definitions:
 
-	global 'global_var' (1)
+    global 'global_var' (1)
 
 Global variables always get to the file-save.
 
@@ -1100,8 +1100,8 @@ global variables:
 
 ```
 const {
-	A = 1;
-	B = 2;
+  A = 1;
+  B = 2;
 }
 const 'Aflag' (false)
 ```
@@ -1115,8 +1115,8 @@ such variables you can use Declaration:
 
 ```
 declare {
-	A = 1;
-	B = 2;
+  A = 1;
+  B = 2;
 }
 declare 'Z' (false)
 ```
@@ -1126,7 +1126,7 @@ properties declarations is that you can declare functions for example:
 
 ```
 declare 'test' (function()
-	p "Hello world!"
+  p "Hello world!"
 end)
 
 global 'f' (test)
@@ -1138,7 +1138,7 @@ declared function can be used as the value of the variable!
 
 You can declare a previously defined function, for example:
 
-	declare 'dprint' (dprint)
+    declare 'dprint' (dprint)
 
 Thereby making such undeclared functions -- declared.
 
@@ -1151,15 +1151,15 @@ You can write your helper functions and use them from your game, for example:
 
 ```
 function mprint(n, ...)
-	local a = {...}; -- temporary array with the arguments to the function
-	p(a[n]) -- get the n-th element of the array
+  local a = {...}; -- temporary array with the arguments to the function
+  p(a[n]) -- get the n-th element of the array
 end
 ...
 dsc = function(s)
-	mprint(s.state {
-		"The{kitten} purrs.",
-		"The{kitten} is playing.",
-		"The{kitten} is licked." });
+  mprint(s.state {
+    "The{kitten} purrs.",
+    "The{kitten} is playing.",
+    "The{kitten} is licked." });
 end;
 ```
 Don't pay attention to this example, if it seems to you difficult.
@@ -1171,10 +1171,10 @@ useful), return false. For example:
 
 ```
 act = function(s)
-	if broken_leg then
-		return false
-	end
-	p [[I kicked the ball.]]
+  if broken_leg then
+    return false
+  end
+  p [[I kicked the ball.]]
 end
 ```
 
@@ -1182,7 +1182,7 @@ This displays the default description is specified using a handler 'game.act'.
 Usually the default description contains description of the undoable action.
 Something like:
 
-	game.act = 'Hm... does Not work...';
+    game.act = 'Hm... does Not work...';
 
 So, if you don't set the handler act or returned from it false -- it is
 believed that there is no reaction and the engine will perform the same
@@ -1204,22 +1204,22 @@ convenient to use for control events in the game, for example:
 -- for the actions on any object
 
 game.onact = function(s, ...)
-	local r, v = std.call(here(), 'onact', ...)
-	if v == false then -- if false, chop off the chain
-		return r, v
-	end
-	return
+  local r, v = std.call(here(), 'onact', ...)
+  if v == false then -- if false, chop off the chain
+    return r, v
+  end
+  return
 end
 
 room {
-	nam = 'shop';
-	disp = 'Shop';
-	onact = function(s, w)
-		p [[In the store, you can not steal!]]
-		p ([[Even if it's only a ]], w, '.')
-		return false
-	end;
-	obj = { 'ice cream', 'bread' };
+  nam = 'shop';
+  disp = 'Shop';
+  onact = function(s, w)
+    p [[In the store, you can not steal!]]
+    p ([[Even if it's only a ]], w, '.')
+    return false
+  end;
+  obj = { 'ice cream', 'bread' };
 }
 ```
 
@@ -1233,8 +1233,8 @@ handlers: tak, inv, use, and transitions, as will be is discussed later.
 > It uses the syntax of a method call
 > object. 'Object:method(parameters)'. For example:
 
-	apple:act() -- call handler 'act' of object 'apple' (if it defined as a
-	function!). _'Apple':act() -- same, but name, not a variable reference
+    apple:act() -- call handler 'act' of object 'apple' (if it defined as a
+    function!). _'Apple':act() -- same, but name, not a variable reference
 
 This method works only if the called method designed as a feature. You can use
 'std.call()' for a handler is invoked in the way that it makes itself INSTEAD.
@@ -1247,13 +1247,13 @@ handler to the 'tak' attribute, which is short for "take". For example:
 
 ```
 obj {
-	nam = 'Apple';
-	dsc = 'On the table is {Apple}.';
-	inv = function(s)
-		p 'I ate the Apple.'
-		remove(s); -- remove an Apple from the inventory
-	end;
-	tak = 'You took the Apple.';
+  nam = 'Apple';
+  dsc = 'On the table is {Apple}.';
+  inv = function(s)
+    p 'I ate the Apple.'
+    remove(s); -- remove an Apple from the inventory
+  end;
+  tak = 'You took the Apple.';
 };
 ```
 
@@ -1269,16 +1269,16 @@ Of course, we could implement the code takes object to "act", for example:
 
 ```
 obj {
-	nam = 'Apple';
-	dsc = 'On the table is {Apple}.';
-	inv = function(s)
-		p 'I ate the Apple.'
-		remove(s); -- remove an Apple from the inventory
-	end;
-	act = function(s)
-		take(s)
-	 	p 'You took the Apple.';
-	end
+  nam = 'Apple';
+  dsc = 'On the table is {Apple}.';
+  inv = function(s)
+    p 'I ate the Apple.'
+    remove(s); -- remove an Apple from the inventory
+  end;
+  act = function(s)
+    take(s)
+    p 'You took the Apple.';
+  end
 };
 ```
 If the object in the inventory is not declared a handler for the 'inv', will be called 'game.inv'.
@@ -1287,12 +1287,12 @@ If the handler is 'tak' will return false, the item will not be taken, for examp
 
 ```
 obj {
-	nam = 'Apple';
-	dsc = 'On the table is {Apple}.';
-	tak = function(s)
-		p "It is wormy!"
-		return false
-	end;
+  nam = 'Apple';
+  dsc = 'On the table is {Apple}.';
+  tak = function(s)
+    p "It is wormy!"
+    return false
+  end;
 };
 ```
 
@@ -1305,17 +1305,17 @@ names or variable references, similar to the list 'obj'. For example:
 
 ```
 room {
-	nam = 'room2';
-	disp = 'Hall';
-	dsc = 'You are in a huge hall.';
-	way = { 'main' };
+  nam = 'room2';
+  disp = 'Hall';
+  dsc = 'You are in a huge hall.';
+  way = { 'main' };
 };
 
 room {
-	nam = 'main';
-	disp = 'Main room';
-	dsc = 'You are in a large room.';
-	way = { 'room2' };
+  nam = 'main';
+  disp = 'Main room';
+  dsc = 'You are in a large room.';
+  way = { 'room2' };
 };
 ```
 
@@ -1326,19 +1326,19 @@ the transition name:
 
 ```
 room {
-	nam = 'room2';
-	disp = 'hall';
-	title = 'hall';
-	dsc = 'You are in a huge hall.';
-	way = { 'main' };
+  nam = 'room2';
+  disp = 'hall';
+  title = 'hall';
+  dsc = 'You are in a huge hall.';
+  way = { 'main' };
 };
 
 room {
-	nam = 'main';
-	title = 'the main room';
-	disp = 'the main room';
-	dsc = 'You are in a large room.';
-	way = { 'room2' };
+  nam = 'main';
+  title = 'the main room';
+  disp = 'the main room';
+  dsc = 'You are in a large room.';
+  way = { 'room2' };
 };
 ```
 
@@ -1348,11 +1348,11 @@ example:
 
 ```
 room {
-	the onenter = 'You enter the room.';
-	nam = 'Hall';
-	dsc = 'You are in a huge hall.';
-	way = { 'main' };
-	onexit = 'You exit the room.';
+  the onenter = 'You enter the room.';
+  nam = 'Hall';
+  dsc = 'You are in a huge hall.';
+  way = { 'main' };
+  onexit = 'You exit the room.';
 };
 ```
 
@@ -1363,38 +1363,38 @@ going to leave (for 'the onenter'). For example:
 
 ```
 room {
-	onenter = function(s, f)
-		if f^'main' then
-			p 'You go from room to main.';
-		end
-	end;
-	nam = 'Hall';
-	dsc = 'You are in a huge hall.';
-	way = { 'main' };
-	onexit = function(s, t)
-		if t^a'main' then
-			p 'I don't want to go back!'
-			return false
-		end
-	end;
+  onenter = function(s, f)
+    if f^'main' then
+      p 'You go from room to main.';
+    end
+  end;
+  nam = 'Hall';
+  dsc = 'You are in a huge hall.';
+  way = { 'main' };
+  onexit = function(s, t)
+    if t^a'main' then
+      p 'I don't want to go back!'
+      return false
+    end
+  end;
 };
 ```
 
 Writing:
 
-	if f^'main' then
+    if f^'main' then
 
 This mapping of the object name. This alternative records:
 
-	if f == _'main' then
+    if f == _'main' then
 
 Or:
 
-	if f.nam == 'main' then
+    if f.nam == 'main' then
 
 Or:
 
-	if std.nameof(f) == 'main' then
+    if std.nameof(f) == 'main' then
 
 As you can see, for example, onexit, these handlers other than line can return
 a Boolean status value. Similarly, the processor onact, we can cancel the
@@ -1402,7 +1402,7 @@ transition by returning false from onexit/the onenter.
 
 You can also return another way, if it seems you comfortable:
 
-	return "I don't want to go back", false
+    return "I don't want to go back", false
 
 If you use the function 'p'/'pn'/'pr', then just return the status of a
 transaction with the final 'return', as shown in the example above.
@@ -1422,17 +1422,17 @@ example, using 'path'.
 
 ```
 room {
-	nam = 'room2';
-	title = 'Hall';
-	dsc = 'You are in a huge hall.';
-	way = { path { 'main room', 'main'} };
+  nam = 'room2';
+  title = 'Hall';
+  dsc = 'You are in a huge hall.';
+  way = { path { 'main room', 'main'} };
 };
 
 room {
-	nam = 'main';
-	title = 'Main room';
-	dsc = 'You are in a large room.';
-	way = { path {'room', 'room2'} };
+  nam = 'main';
+  title = 'Main room';
+  dsc = 'You are in a large room.';
+  way = { path {'room', 'room2'} };
 };
 ```
 
@@ -1442,19 +1442,19 @@ to the room specified by the second argument of 'path'.
 
 If you specify three parameters:
 
-	way = { path {'#hall', 'room', 'room2'} };
+    way = { path {'#hall', 'room', 'room2'} };
 
 The first parameter will be the name (or tag, as in the example) for such a
 room.
 
 Alternative form of entry with the explicit task attribute nam:
 
-	way = { path { nam = '#hall', 'room', 'room2'} };
+    way = { path { nam = '#hall', 'room', 'room2'} };
 
 You can change the name of the transition, after the transition occurred at
 least once, and you know, what is this room:
 
-	way = { path {'#udvari', 'door', after = 'living room', 'room2'} };
+    way = { path {'#udvari', 'door', after = 'living room', 'room2'} };
 
 All parameters except the transition name, can be functions.
 
@@ -1480,19 +1480,19 @@ it.
 
 ```
 obj {
-	nam = 'clock';
-	dsc = [[you see an old {clock}.]];
-	act = function(s)
-		enable '#clock'
-		p [[You see that the watch is a secret passage!]];
-	end;
+  nam = 'clock';
+  dsc = [[you see an old {clock}.]];
+  act = function(s)
+    enable '#clock'
+    p [[You see that the watch is a secret passage!]];
+  end;
 }
 
 room {
-	nam = 'Hall';
-	dsc = 'You are in a huge hall.';
-	obj = { 'clock' };
-	way = { path { '#watch', 'watch', 'inclock' }:disable() };
+  nam = 'Hall';
+  dsc = 'You are in a huge hall.';
+  obj = { 'clock' };
+  way = { path { '#watch', 'watch', 'inclock' }:disable() };
 };
 ```
 
@@ -1509,19 +1509,19 @@ The alternative is not in shutdown and 'close' object:
 
 ```
 obj {
-	nam = 'clock';
-	dsc = [[you see an old {clock}.]];
-	act = function(s)
-		open '#clock'
-		p [[You see that the watch is a secret passage!]];
-	end;
+  nam = 'clock';
+  dsc = [[you see an old {clock}.]];
+  act = function(s)
+    open '#clock'
+    p [[You see that the watch is a secret passage!]];
+  end;
 }
 
 room {
-	nam = 'Hall';
-	dsc = 'You are in a huge hall.';
-	obj = { 'clock' };
-	way = { path { '#watch', 'watch', 'inclock' }:close() };
+  nam = 'Hall';
+  dsc = 'You are in a huge hall.';
+  obj = { 'clock' };
+  way = { path { '#watch', 'watch', 'inclock' }:close() };
 };
 ```
 
@@ -1537,24 +1537,24 @@ Another option:
 
 ```
 room {
-	nam = 'inclock';
-	dsc = [[I in hours.]];
+  nam = 'inclock';
+  dsc = [[I in hours.]];
 }:close()
 
 obj {
-	nam = 'clock';
-	dsc = [[you see an old {clock}.]];
-	act = function(s)
-		open 'inclock'
-		p [[You see that the watch is a secret passage!]];
-	end;
+  nam = 'clock';
+  dsc = [[you see an old {clock}.]];
+  act = function(s)
+    open 'inclock'
+    p [[You see that the watch is a secret passage!]];
+  end;
 }
 
 room {
-	nam = 'Hall';
-	dsc = 'You are in a huge hall.';
-	obj = { 'clock' };
-	way = { path { 'watch', 'inclock' } };
+  nam = 'Hall';
+  dsc = 'You are in a huge hall.';
+  obj = { 'clock' };
+  way = { path { 'watch', 'inclock' } };
 };
 ```
 
@@ -1571,22 +1571,22 @@ For example:
 
 ```
 obj {
-	nam = 'knife';
-	dsc = 'On the table is a {knife}';
-	inv = 'Sharp!';
-	tak = 'I took the knife!';
-	use = 'You try to use the knife.';
+  nam = 'knife';
+  dsc = 'On the table is a {knife}';
+  inv = 'Sharp!';
+  tak = 'I took the knife!';
+  use = 'You try to use the knife.';
 };
 
 obj {
-	nam = 'table';
-	dsc = 'In the {table}.';
-	act = 'Hm... Just a table...';
-	obj = { 'knife' };
-	used = function(s)
-		p 'You are trying to do something with a table...';
-		return false
-	end;
+  nam = 'table';
+  dsc = 'In the {table}.';
+  act = 'Hm... Just a table...';
+  obj = { 'knife' };
+  used = function(s)
+    p 'You are trying to do something with a table...';
+    return false
+  end;
 };
 ```
 
@@ -1601,12 +1601,12 @@ Another example, when it is convenient to return false:
 
 ```
 use = function(s, w)
-	if w^'Apple' then
-		p [[I cleaned up the Apple.]]
-		w.cut = true
-		return
-	end
-	return false;
+  if w^'Apple' then
+    p [[I cleaned up the Apple.]]
+    w.cut = true
+    return
+  end
+  return false;
 end
 ```
 
@@ -1618,12 +1618,12 @@ But it is better if you will add default message in use handler:
 
 ```
 use = function(s, w)
-	if w^'Apple' then
-		p [[I cleaned up the Apple.]]
-		w.cut = true
-		return
-	end
-	p [[it is Not necessary to brandish a knife!]]
+  if w^'Apple' then
+    p [[I cleaned up the Apple.]]
+    w.cut = true
+    return
+  end
+  p [[it is Not necessary to brandish a knife!]]
 end
 ```
 
@@ -1633,16 +1633,16 @@ is the entity that acts on us:
 
 ```
 obj {
-	nam = 'trash';
-	dsc = [[In the corner is a {trash bin}.]];
-	used = function(s, w)
-		if w^'Apple' then
-			p [[I threw the Apple in the trash.]]
-			remove(w)
-			return
-		end
-		return false;
-	end
+  nam = 'trash';
+  dsc = [[In the corner is a {trash bin}.]];
+  used = function(s, w)
+    if w^'Apple' then
+      p [[I threw the Apple in the trash.]]
+      remove(w)
+      return
+    end
+    return false;
+  end
 }
 ```
 
@@ -1670,10 +1670,10 @@ it:
 
 ```
 game.player = player {
-	nam = "Basil";
-	room = 'kitchen'; -- the starting room of the player
-	power = 100;
-	obj = { 'Apple' }; -- let's give him an Apple
+  nam = "Basil";
+  room = 'kitchen'; -- the starting room of the player
+  power = 100;
+  obj = { 'Apple' }; -- let's give him an Apple
 };
 ```
 
@@ -1704,10 +1704,10 @@ handlers: 'act', 'inv', 'use', 'tak', which will called if the actions of the
 user are not found no other handlers (or all of them returned false). For
 example, you can write in the beginning of the game:
 
-	game.act = 'does Not work.';
-	game.inv = 'hmm ... Odd thing...';
-	game.use = 'does Not work...';
-	game.tak = 'I don't need this...';
+    game.act = 'does Not work.';
+    game.inv = 'hmm ... Odd thing...';
+    game.use = 'does Not work...';
+    game.tak = 'I don't need this...';
 
 Of course, they can all be functions.
 
@@ -1727,8 +1727,8 @@ example:
 
 ```
 room {
-	nam = 'fridge';
-	frost = std.list { 'ice cream' };
+  nam = 'fridge';
+  frost = std.list { 'ice cream' };
 }
 ```
 
@@ -1736,7 +1736,7 @@ Although usually it is not needed. Listed below are methods for objects of
 type 'list'. You can call them for any lists, although these will usually be
 way and obj, for example:
 
-	ways():disable() -- disable all transitions
+    ways():disable() -- disable all transitions
 
 - disable() - disables all objects in the list;
 - enable() - enables all objects of the list.
@@ -1762,7 +1762,7 @@ There are functions that return the objects lists:
 
 Of course, you can refer to the lists directly:
 
-	pl.obj:add 'knife'
+    pl.obj:add 'knife'
 
 The objects in the lists are stored in the order in which they add. However,
 if the object is present numeric attribute pri he plays the role of priority
@@ -1772,10 +1772,10 @@ Thus, if you want some the object was first on the list, give priority pri <
 
 ```
 obj {
-	pri = -100;
-	nam = 'thing';
-	disp = 'Very important item';
-	inv = [[Careful with this subject.]];
+  pri = -100;
+  nam = 'thing';
+  disp = 'Very important item';
+  inv = [[Careful with this subject.]];
 }
 ```
 
@@ -1818,11 +1818,11 @@ further modification. For example, you can use 'seen' for writing terms:
 
 ```
 onexit = function(s)
-	if seen 'monster' then -- if a function has 1 parameter
-		--- I'm not hungry ...
-		p 'the Monster's in the way!'
-		return false
-	end
+  if seen 'monster' then -- if a function has 1 parameter
+    --- I'm not hungry ...
+    p 'the Monster's in the way!'
+    return false
+  end
 end
 ```
 
@@ -1830,17 +1830,17 @@ And also, for finding the object in the scene:
 
 ```
 use = function(s, w)
-	if w^'window' then
-		local ww = lookup 'dog'
-		if not ww then
-			p [[where's my dog?]]
-			return
-		end
-		place(ww, 'street')
-		p 'I broke the window! My dog jumped on the street.'
-		return
-	end
-	return false
+  if w^'window' then
+    local ww = lookup 'dog'
+    if not ww then
+      p [[where's my dog?]]
+      return
+    end
+    place(ww, 'street')
+    p 'I broke the window! My dog jumped on the street.'
+    return
+  end
+  return false
 end
 ```
 
@@ -1849,11 +1849,11 @@ Example with 'have':
 ```
 ...
 act = function(s)
-	if have a 'knife' then
-		p 'But I have a knife!';
-		return
-	end
-	take 'the knife'
+  if have a 'knife' then
+    p 'But I have a knife!';
+    return
+  end
+  take 'the knife'
 end
 ...
 ```
@@ -1878,11 +1878,11 @@ In the description of the functions most of the functions under the parameter
 ] - indicates an optional parameter.
 
 - include(file) - file to include in the game;
-		include "lib" -- will include the lib file.lua from the current directory with the game;
+        include "lib" -- will include the lib file.lua from the current directory with the game;
 
 - loadmod(module) to connect the module of the game;
 
-		loadmod "module" -- will include the module module.lua from the current directory;
+        loadmod "module" -- will include the module module.lua from the current directory;
 - rnd(m) - a random integer value from '1' to 'm';
 - rnd(a, b) - a random integer value from 'a' to 'b' where 'a'
   and 'b' are integers >= 0;
@@ -1893,14 +1893,14 @@ In the description of the functions most of the functions under the parameter
   output a string to the buffer handler/attribute (with a newline at the end);
 - pf(fmt, ...) - output formatted string to the buffer handler/attribute;
 
-		local text = 'hello';
-		pf("String: %q: %d\n", text, 10);
+        local text = 'hello';
+        pf("String: %q: %d\n", text, 10);
 
 - pfn(...)(...)... "line" - creating a simple handler; This feature simplifies
   the creation of simple handlers:
 
-		act = pfn(walk, 'bathroom') "I decided to go to the bathroom.";
-		act = pfn(enable, '#transition') "I noticed a hole in the wall!";
+        act = pfn(walk, 'bathroom') "I decided to go to the bathroom.";
+        act = pfn(enable, '#transition') "I noticed a hole in the wall!";
 
 - obj {} - create object;
 - stat {} - create status;
@@ -1914,22 +1914,22 @@ In the description of the functions most of the functions under the parameter
 - delete(w) - deletes the dynamic object;
 - gamefile(file, [reset?]) - load dynamically the file with the game;
 
-		gamefile("part2.lua", true) -- reset the game state (remove
-		objects and variables), load part2.lua and start with the main room.
+        gamefile("part2.lua", true) -- reset the game state (remove
+        objects and variables), load part2.lua and start with the main room.
 
 - player {} - create a player;- dprint(...) - debug output;
 - visits([w]) - the number of visits to the bathroom (or 0 if visits);
 - visited([w]) - the number of visits to the room, or false if not visits was;
 
-		if not visited() then
-			p [[it's my first time.]]
-		end
+        if not visited() then
+            p [[it's my first time.]]
+        end
 
 - walk(w, [Boolean exit], [enter Boolean], [Boolean to change from]) -
   transition in the scene;
 
-		-- unconditional jump (to ignore onexit/the onenter/exit/enter);
-		walk('end', false, false)
+        -- unconditional jump (to ignore onexit/the onenter/exit/enter);
+        walk('end', false, false)
 
 - walkin(w) is a transition in the scene (without calling exit/onexit current);
 - walkout([w], [dofrom]) - return from sub-scene (without calling
@@ -1938,7 +1938,7 @@ In the description of the functions most of the functions under the parameter
 - \_(w) - receiving object;
 - for_all(fn, ...) - to perform the function for all arguments;
 
-		for_all(enable, 'window', 'door');
+        for_all(enable, 'window', 'door');
 
 - seen(w, [where]) - search for the visible object;
 - lookup(w, [where]) is a search object;
@@ -1949,11 +1949,11 @@ In the description of the functions most of the functions under the parameter
 - inroom(w) - the return of the room/rooms, in which the object resides;
 - where(w, [table]) - return the object/objects in which the object resides;
 
-		local list = {}
-		local w = where('Apple', list)
-		-- if the Apple is in more than one place, then list will contain an
-		-- array of these places. If you only need one location, then:
-		where 'Apple' -- will be enough
+        local list = {}
+        local w = where('Apple', list)
+        -- if the Apple is in more than one place, then list will contain an
+        -- array of these places. If you only need one location, then:
+        where 'Apple' -- will be enough
 
 - closed(w) - true if the object is closed;
 - disabled(w) - true if the object is off;
@@ -1964,8 +1964,8 @@ In the description of the functions most of the functions under the parameter
 - actions(w, string, [value]) - returns (or sets)
   the number of actions of type t to an object w.
 
-		if actions(w, 'tak') > 0 then -- object w was taken at least 1 time;
-		if actions(w) == 1 then -- act it w was called 1 times;
+        if actions(w, 'tak') > 0 then -- object w was taken at least 1 time;
+        if actions(w) == 1 then -- act it w was called 1 times;
 
 - pop(tag) - return to the last branch of the dialog;
 - push(tag) - the transition to the next branch of dialogue
@@ -2000,16 +2000,16 @@ Consider a few examples.
 
 ```
 act = function()
-	pn "I'm going to next room..."
-	walk (nextroom);
+  pn "I'm going to next room..."
+  walk (nextroom);
 end
 
 obj {
-	nam = 'my car';
-	dsc = 'in Front of the cabin is my old {pickup} Toyota.';
-	act = function(s)
-		walk 'inmycar';
-	end
+  nam = 'my car';
+  dsc = 'in Front of the cabin is my old {pickup} Toyota.';
+  act = function(s)
+    walk 'inmycar';
+  end
 };
 ```
 
@@ -2022,9 +2022,9 @@ __Important!__
 
 ```
 act = function()
-	pn "I'm going to next room..."
-	walk (nextroom);
-	return
+  pn "I'm going to next room..."
+  walk (nextroom);
+  return
 end
 ```
 
@@ -2049,11 +2049,11 @@ The transition in the dialogue of the game is how the transition to the stage:
 
 ```
 obj {
-	nam = 'cook';
-	dsc = 'I see a {cook}.';
-	act = function()
-		walk 'povardlg'
-	end
+  nam = 'cook';
+  dsc = 'I see a {cook}.';
+  act = function()
+    walk 'povardlg'
+  end
 };
 ```
 
@@ -2063,17 +2063,17 @@ usually to be in the same room, where the main hero. That is:
 
 ```
 obj {
-	nam = 'cook';
-	dsc = 'I see a {cook}.';
-	act = function()
-		walkin 'povardlg'
-	end
+  nam = 'cook';
+  dsc = 'I see a {cook}.';
+  act = function()
+    walkin 'povardlg'
+  end
 };
 ```
 
 If you don't like the prefix of phrases in the form of a hyphen you can specify a string variable:
 
-	std.phrase_prefix = '+';
+    std.phrase_prefix = '+';
 
 And get prefixed with a '+' before each phrase. You can also to make a prefix
 function. The function in this case will be to enter a parameter the number of
@@ -2094,10 +2094,10 @@ __Important!__
 require "noinv"
 ...
 dlg {
-	nam = 'Guard';
-	-- in the dialogues typically do not require inventory
-	noinv = true;
-	...
+  nam = 'Guard';
+  -- in the dialogues typically do not require inventory
+  noinv = true;
+  ...
 }
 ```
 
@@ -2109,21 +2109,21 @@ whole dialogue can be implemented only phrase. For example:
 
 ```
 dlg {
-	nam = 'conversation';
-	title = [[the Conversation with the seller]];
-	enter = [[I asked the seller.]];
-	phr = {
-		{ 'You have beans?', '-- No.'},
-		{ 'You have chocolate?', '-- No.'},
-		{ 'You have a brew?', '-- Yes',
-			{ 'How much is it worth?', '-- 50 rubles.' },
-			{ 'He is cold?', '-- Fridge was broken.',
-				{ 'Take two!', 'Left one.',
-					{ 'Give me one!', function() p [[OK!]]; take 'brew'; end };
-				}
-			}
-		}
-	}
+  nam = 'conversation';
+  title = [[the Conversation with the seller]];
+  enter = [[I asked the seller.]];
+  phr = {
+    { 'You have beans?', '-- No.'},
+    { 'You have chocolate?', '-- No.'},
+    { 'You have a brew?', '-- Yes',
+      { 'How much is it worth?', '-- 50 rubles.' },
+      { 'He is cold?', '-- Fridge was broken.',
+        { 'Take two!', 'Left one.',
+          { 'Give me one!', function() p [[OK!]]; take 'brew'; end };
+        }
+      }
+    }
+  }
 }
 ```
 
@@ -2137,14 +2137,14 @@ reaction, which can contain code to change the game world.
 
 Steam can be as simple as:
 
-	{'Question', 'Response }
+    {'Question', 'Response }
 
 And can contain an array of pairs:
 
-	{'Question', 'Answer',
-		{'Sub-question1', 'Under-answer1' },
-		{'Under-question2', 'Under-answer2' },
-	}
+    {'Question', 'Answer',
+        {'Sub-question1', 'Under-answer1' },
+        {'Under-question2', 'Under-answer2' },
+    }
 
 In fact, if you look carefully at the attribute phr, you notice that the array
 of choices is also embedded in the main sentence phr, but only the original
@@ -2152,22 +2152,22 @@ pair is missing:
 
 ```
 dlg {
-	nam = 'conversation'; title = [[the Conversation with the seller]];
-	enter = [[I asked the seller.]];
-	phr = {
-	-- there could be question answer 1 level!
-	-- 'The main issue', 'Main',
-		{ 'You have beans?', '-- No.'},
-		{ 'You have chocolate?', '-- No.'},
-		{ 'You have a brew?', '-- Yes',
-			{ 'How much is it worth?', '-- 50 rubles.' },
-			{ 'He is cold?', '-- Fridge was broken.',
-				{ 'Take two!', 'Left one.',
-					{ 'Give me one!', function() p [[OK!]]; take 'brew'; end };
-				}
-			}
-		}
-	}
+  nam = 'conversation'; title = [[the Conversation with the seller]];
+  enter = [[I asked the seller.]];
+  phr = {
+  -- there could be question answer 1 level!
+  -- 'The main issue', 'Main',
+    { 'You have beans?', '-- No.'},
+    { 'You have chocolate?', '-- No.'},
+    { 'You have a brew?', '-- Yes',
+      { 'How much is it worth?', '-- 50 rubles.' },
+      { 'He is cold?', '-- Fridge was broken.',
+        { 'Take two!', 'Left one.',
+          { 'Give me one!', function() p [[OK!]]; take 'brew'; end };
+        }
+      }
+    }
+  }
 }
 ```
 
@@ -2187,26 +2187,26 @@ the dialogue from a fresh perspective:
 
 ```
 dlg {
-	nam = 'conversation';
-	title = [[the Conversation with the seller]];
-	enter = [[I asked the seller.]];
-	phr = { -- is a phrase without dsc and act
- 		-- is the 1st phrase inside the phrase with dsc and act
- 		{ 'You have beans?', '-- No.'},
- 		--is the 2nd phrase within a phrase with dsc and act
- 		{ 'You have chocolate?', '-- No.'},
- 		-- it's a 3rd phrase within a phrase with dsc and act
- 		{ 'You have a brew?', '-- Yes',
- 		-- is the 1st phrase inside the 3rd phrase with dsc and act
- 		{ 'How much is it worth?', '-- 50 rubles.' },
- 			{ 'He is cold?', '-- Fridge was broken.',
- 				{ 'Take two!', 'Left one.',
- 					-- act here as a function
- 					{ 'Give me one!', function() p [[OK!]]; take 'brew'; end };
-				}
-			}
-		}
-	}
+  nam = 'conversation';
+  title = [[the Conversation with the seller]];
+  enter = [[I asked the seller.]];
+  phr = { -- is a phrase without dsc and act
+    -- is the 1st phrase inside the phrase with dsc and act
+    { 'You have beans?', '-- No.'},
+    --is the 2nd phrase within a phrase with dsc and act
+    { 'You have chocolate?', '-- No.'},
+    -- it's a 3rd phrase within a phrase with dsc and act
+    { 'You have a brew?', '-- Yes',
+    -- is the 1st phrase inside the 3rd phrase with dsc and act
+    { 'How much is it worth?', '-- 50 rubles.' },
+      { 'He is cold?', '-- Fridge was broken.',
+        { 'Take two!', 'Left one.',
+          -- act here as a function
+          { 'Give me one!', function() p [[OK!]]; take 'brew'; end };
+        }
+      }
+    }
+  }
 }
 ```
 
@@ -2230,10 +2230,10 @@ Consider the phrase:
 
 ```
 phr = {
-	{ 'What have you got?', 'Pills. The red and blue. You what?',
-		{'Red', 'Hold!' },
-		{'Blue', 'Here!' },
-	}
+  { 'What have you got?', 'Pills. The red and blue. You what?',
+    {'Red', 'Hold!' },
+    {'Blue', 'Here!' },
+  }
 }
 ```
 
@@ -2245,10 +2245,10 @@ First, you can use pop() -- return to the previous the level of dialogue:
 
 ```
 phr = {
-	{ 'What have you got?', 'Pills. The red and blue. You what?',
-		{'Red', function() p 'Hold!'; pop() end; },
-		{'Blue', function() p 'Here!'; pop() end; },
-	}
+  { 'What have you got?', 'Pills. The red and blue. You what?',
+    {'Red', function() p 'Hold!'; pop() end; },
+    {'Blue', function() p 'Here!'; pop() end; },
+  }
 }
 ```
 
@@ -2256,10 +2256,10 @@ Or, in another entry:
 
 ```
 phr = {
-	{ 'What have you got?', 'Pills. The red and blue. You what?',
-		{'Red', pfn(pop) 'Hold up!' },
-		{'Blue', pfn(pop) 'Here!' },
-	}
+  { 'What have you got?', 'Pills. The red and blue. You what?',
+    {'Red', pfn(pop) 'Hold up!' },
+    {'Blue', pfn(pop) 'Here!' },
+  }
 }
 ```
 
@@ -2269,11 +2269,11 @@ be the only thing you can ask from the phrase attribute only:
 
 ```
 phr = {
-	{ 'What have you got?', 'Pills. The red and blue. You what?',
-		only = true,
-		{'Red', 'Hold!' },
-		{'Blue', 'Here!' },
-	}
+  { 'What have you got?', 'Pills. The red and blue. You what?',
+    only = true,
+    {'Red', 'Hold!' },
+    {'Blue', 'Here!' },
+  }
 }
 ```
 
@@ -2285,13 +2285,13 @@ activation. This is done by setting flag to true:
 
 ```
 phr = {
-	{ 'What have you got?', 'Pills. The red and blue. You what?',
-		only = true,
-		{'Red', 'Hold!' },
-		{'Blue', 'Here!' },
-		{ true, 'And which is better?', 'You choose.' }, -- phrase
-		-- which will never be hidden
-	}
+  { 'What have you got?', 'Pills. The red and blue. You what?',
+    only = true,
+    {'Red', 'Hold!' },
+    {'Blue', 'Here!' },
+    { true, 'And which is better?', 'You choose.' }, -- phrase
+    -- which will never be hidden
+  }
 }
 ```
 
@@ -2299,13 +2299,13 @@ An alternative notation, with the explicit task attribute always:
 
 ```
 phr = {
-	{ 'What have you got?', 'Pills. The red and blue. You what?',
-		only = true,
-		{'Red', 'Hold!' },
-		{'Blue', 'Here!' },
-		{ always = true, 'And which is better?', 'You choose.' }, -- phrase
-		-- which will never be hidden
-	}
+  { 'What have you got?', 'Pills. The red and blue. You what?',
+    only = true,
+    {'Red', 'Hold!' },
+    {'Blue', 'Here!' },
+    { always = true, 'And which is better?', 'You choose.' }, -- phrase
+    -- which will never be hidden
+  }
 }
 ```
 
@@ -2314,15 +2314,15 @@ condition? This is the handler function cond.
 
 ```
 phr = {
-	{ 'What have you got?', 'Pills. The red and blue. You what?',
-		only = true,
-		{'Red', 'Hold!' },
-		{'Blue', 'Here!' },
-		{ true, 'And which is better?', 'You choose.' }, -- phrase
-		-- which will never be hidden
-	},
-	{ cond = function() return have 'Apple' end
-		'Do you want an Apple?', 'Thank you, no.' };
+  { 'What have you got?', 'Pills. The red and blue. You what?',
+    only = true,
+    {'Red', 'Hold!' },
+    {'Blue', 'Here!' },
+    { true, 'And which is better?', 'You choose.' }, -- phrase
+    -- which will never be hidden
+  },
+  { cond = function() return have 'Apple' end
+    'Do you want an Apple?', 'Thank you, no.' };
 }
 ```
 
@@ -2335,17 +2335,17 @@ handler function onempty.
 
 ```
 phr = {
-	{ 'What have you got?', 'Pills. The red and blue. You what?',
-		only = true,
-		{'Red', 'Hold!' },
-		{'Blue', 'Here!' },
-		onempty = function()
-			p [[You made your choices.]]
-			pop()
-		end;
-	},
-	{ cond = function() return have 'Apple' end
-		'Do you want an Apple?', 'Thank you, no.' };
+  { 'What have you got?', 'Pills. The red and blue. You what?',
+    only = true,
+    {'Red', 'Hold!' },
+    {'Blue', 'Here!' },
+    onempty = function()
+      p [[You made your choices.]]
+      pop()
+    end;
+  },
+  { cond = function() return have 'Apple' end
+    'Do you want an Apple?', 'Thank you, no.' };
 }
 ```
 
@@ -2357,21 +2357,21 @@ All the above attributes can be set with any phrase. In fact on the 1st level:
 
 ```
 phr = {
-	onempty = function()
-		p [[end of conversation.]]
-		walkout()
-	end;
-	{ 'What have you got?', 'Pills. The red and blue. You what?',
-		only = true,
-		{'Red', 'Hold!' },
-		{'Blue', 'Here!' },
-		onempty = function()
-			p [[You made your choices.]]
-			pop()
-		end;
-	},
-	{ cond = function() return have 'Apple' end
-		'Do you want an Apple?', 'Thank you, no.' };
+  onempty = function()
+    p [[end of conversation.]]
+    walkout()
+  end;
+  { 'What have you got?', 'Pills. The red and blue. You what?',
+    only = true,
+    {'Red', 'Hold!' },
+    {'Blue', 'Here!' },
+    onempty = function()
+      p [[You made your choices.]]
+      pop()
+    end;
+  },
+  { cond = function() return have 'Apple' end
+    'Do you want an Apple?', 'Thank you, no.' };
 }
 ```
 
@@ -2388,10 +2388,10 @@ very simple:
 
 ```
 phr = {
-	{'#?', 'What have you got?', 'Pills. The red and blue. You what?',
-		{'#red', 'Red', 'Hold!' },
-		{'#blue', 'Blue', 'Here!' },
-	},
+  {'#?', 'What have you got?', 'Pills. The red and blue. You what?',
+    {'#red', 'Red', 'Hold!' },
+    {'#blue', 'Blue', 'Here!' },
+  },
 }
 ```
 
@@ -2403,18 +2403,18 @@ example, we could do without the attribute only as follows:
 
 ```
 phr = {
-	{'#?', 'What have you got?', 'Pills. The red and blue. You what?',
-		{'#red', 'Red', 'Hold!'
-			cond = function(s)
-				return not closed('#blue')
-			end
-		},
-		{'#blue', 'Blue', 'Here!',
-			cond = function(s)
-				return not closed('#red')
-			end
-		},
-	},
+  {'#?', 'What have you got?', 'Pills. The red and blue. You what?',
+    {'#red', 'Red', 'Hold!'
+      cond = function(s)
+        return not closed('#blue')
+      end
+    },
+    {'#blue', 'Blue', 'Here!',
+      cond = function(s)
+        return not closed('#red')
+      end
+    },
+  },
 }
 ```
 
@@ -2435,14 +2435,14 @@ for the main phrase phr. For example:
 
 ```
 phr = {
-	{ 'What have you got?', 'Pills. The red and blue. You what?',
-		only = true,
-		{'Red', 'Hold!', next = '#aboutpill' },
-		{ 'Blue', 'Here!', next = '#aboutpill' },
-	},
-	{ false, '#aboutpill',
-		{'I made the right choice?', 'Time will tell.'}
-	},
+  { 'What have you got?', 'Pills. The red and blue. You what?',
+    only = true,
+    {'Red', 'Hold!', next = '#aboutpill' },
+    { 'Blue', 'Here!', next = '#aboutpill' },
+  },
+  { false, '#aboutpill',
+    {'I made the right choice?', 'Time will tell.'}
+  },
 }
 ```
 
@@ -2456,9 +2456,9 @@ until you do an explicit enable. However, inside the phrase we can go and show
 the contents of the elections. Alternative entry possible with the use of the
 hidden attribute:
 
-	{ hidden = true, '#aboutpill',
-		{'I made the right choice?', 'Time will tell.'}
-	},
+    { hidden = true, '#aboutpill',
+        {'I made the right choice?', 'Time will tell.'}
+    },
 
 Thus it is possible to record conversations is not a tree, and linear. More
 one feature of the transitions is that if the phrase is not described the
@@ -2466,15 +2466,15 @@ reaction, when the transition is triggered by the title phrase:
 
 ```
 phr = {
-	{ 'What have you got?', 'Pills. The red and blue. You what?',
-		only = true,
-		{'Red', 'Hold!', next = '#aboutpill' },
-		{ 'Blue', 'Here!', next = '#aboutpill' },
-	},
-	{ false, '#aboutpill', [[I took the pill and the wizard smiled slyly.]],
-		{'I made the right choice?', 'Time will tell.'},
-		{'What next?', 'You're free.'},
-	},
+  { 'What have you got?', 'Pills. The red and blue. You what?',
+    only = true,
+    {'Red', 'Hold!', next = '#aboutpill' },
+    { 'Blue', 'Here!', next = '#aboutpill' },
+  },
+  { false, '#aboutpill', [[I took the pill and the wizard smiled slyly.]],
+    {'I made the right choice?', 'Time will tell.'},
+    {'What next?', 'You're free.'},
+  },
 }
 ```
 
@@ -2485,19 +2485,19 @@ If you like linear, you might prefer the following option:
 
 ```
 dlg {
-	nam = 'dialog';
-	phr = {
-		{ 'What have you got?', 'Pills. The red and blue. You what?',
-			only = true,
-			{'Red', 'Hold!', next = '#aboutpill' },
-			{ 'Blue', 'Here!', next = '#aboutpill' },
-		}
-	}
+  nam = 'dialog';
+  phr = {
+    { 'What have you got?', 'Pills. The red and blue. You what?',
+      only = true,
+      {'Red', 'Hold!', next = '#aboutpill' },
+      { 'Blue', 'Here!', next = '#aboutpill' },
+    }
+  }
 }: with {
-	{ '#aboutpill', [[I took the pill and the wizard smiled slyly.]],
-		{'I made the right choice?', 'Time will tell.'},
-		{'What next?', 'You're free.'},
-	},
+  { '#aboutpill', [[I took the pill and the wizard smiled slyly.]],
+    {'I made the right choice?', 'Time will tell.'},
+    {'What next?', 'You're free.'},
+  },
 }
 ```
 
@@ -2540,16 +2540,16 @@ other rooms you can:
 With regard to functions push/pop then you can call it explicitly as methods
 of dialogue, for example:
 
-	_'dialog':push '#new'
+    _'dialog':push '#new'
 
 But better to do it in the dialogue, for example, in enter.
 
 In addition, there is a method :reset, which resets the stack and sets the
 starting phrase, for example:
 
-	enter = function(s)
-		s:reset '#start'
-	end
+    enter = function(s)
+        s:reset '#start'
+    end
 
 > It should be noted that when you make a enable/disable/open/close phrase,
 > then you perform the action exactly over this phrase, not over phrases
@@ -2586,15 +2586,15 @@ How we can help the system object?
 
 ```
 obj {
-	nam = '@walk';
-	act = function(s, w)
-		walk(w, false, false)
-	end;
+  nam = '@walk';
+  act = function(s, w)
+    walk(w, false, false)
+  end;
 }
 room {
-	nam = 'main';
-	title = 'Home';
-	decor = [[Start {@start walk|adventure}]];
+  nam = 'main';
+  title = 'Home';
+  decor = [[Start {@start walk|adventure}]];
 }
 ```
 
@@ -2608,9 +2608,9 @@ In fact, in the standard library stdlib is already the object filename with
 xact.walk = walk
 
 room {
-	nam = 'main';
-	title = 'Home';
-	decor = [[Start {@ start walk|adventure}]];
+  nam = 'main';
+  title = 'Home';
+  decor = [[Start {@ start walk|adventure}]];
 }
 ```
 
@@ -2627,13 +2627,13 @@ Another example:
 
 ```
 xact.myprint = function(w)
-	p (w)
+  p (w)
 end
 
 room {
-	nam = 'main';
-	title = 'Home';
-	decor = [[Push {@ myprint "hello world"|the button}]];
+  nam = 'main';
+  title = 'Home';
+  decor = [[Push {@ myprint "hello world"|the button}]];
 }
 ```
 
@@ -2644,7 +2644,7 @@ system objects, but they work differently.
 
 If the output text is found on the link:
 
-	{$my a b c|text}
+    {$my a b c|text}
 
 The following happens:
 
@@ -2660,7 +2660,7 @@ from a text view in the graphics. You write object $math which in its act
 method converts text to a graphic image (sprite) and returns it in the text
 stream. Then to use this module extremely simple example:
 
-	{$math|(2+3*x)/y^2}
+    {$math|(2+3*x)/y^2}
 
 ## Dynamic events
 
@@ -2677,32 +2677,32 @@ For example, make a snow leopard alive:
 
 ```
 obj {
-	nam = 'Barsik';
-	{- do not save the array lf
-		lf = {
-			[1] = 'Barsik is moving in my bosom.',
-			[2] = 'Barsik looks out from his bosom.',
-			[3] = 'Barsik purring in my bosom.',
-			[4] = 'Barsik shivers in my bosom.',
-			[5] = 'I feel Barsik heat in his bosom.',
-			[6] = 'Barsik sticks his head out of his pocket and looks around.',
-		};
-	};
-	life = function(s)
-		local r = rnd(5);
-		if r > 2 then -- doing this is not always
-			return;
-		end
-		r = rnd(#s.lf); -- the # symbol is the number of elements in the array
-		p(s.lf[	r]); -- derive one of the 6 States of the snow leopard
-	end;
+  nam = 'Barsik';
+  {- do not save the array lf
+    lf = {
+      [1] = 'Barsik is moving in my bosom.',
+      [2] = 'Barsik looks out from his bosom.',
+      [3] = 'Barsik purring in my bosom.',
+      [4] = 'Barsik shivers in my bosom.',
+      [5] = 'I feel Barsik heat in his bosom.',
+      [6] = 'Barsik sticks his head out of his pocket and looks around.',
+    };
+  };
+  life = function(s)
+    local r = rnd(5);
+    if r > 2 then -- doing this is not always
+      return;
+    end
+    r = rnd(#s.lf); -- the # symbol is the number of elements in the array
+    p(s.lf[	r]); -- derive one of the 6 States of the snow leopard
+  end;
 ...
 ```
 
 And here is the point in the game, when snow leopard gets to us in thy bosom.
 
-	take 'snow leopard' -- add it to your inventory
-	lifeon 'Barsik' -- to revive the cat!
+    take 'snow leopard' -- add it to your inventory
+    lifeon 'Barsik' -- to revive the cat!
 
 Any object (including the stage) can have its own handler, 'life', called each
 tick of the game if the object was added to the list live objects using the
@@ -2722,21 +2722,21 @@ the 'exit', for example:
 
 ```
 room {
-	nam = 'In the basement';
-	dsc = [[it's dark in Here!]];
-	enter = function(s)
-		lifeon(s);
-	end;
-	exit = function(s)
-		lifeoff(s);
-	end;
-	life = function(s)
-		if rnd(10) > 8 then
-			p [[I heard something rustling!]];
-			-- occasionally to scare the player rustles
-		end
-	end;
-	way = { 'Home' };
+  nam = 'In the basement';
+  dsc = [[it's dark in Here!]];
+  enter = function(s)
+    lifeon(s);
+  end;
+  exit = function(s)
+    lifeoff(s);
+  end;
+  life = function(s)
+    if rnd(10) > 8 then
+      p [[I heard something rustling!]];
+      -- occasionally to scare the player rustles
+    end
+  end;
+  way = { 'Home' };
 }
 ```
 
@@ -2745,15 +2745,15 @@ another, use 'player\_moved()'.
 
 ```
 obj {
-	nam = 'flashlight';
-	on = false;
-	life = function(s)
-		if player_moved() then -- put out the torch transitions
-			s.on = false
-			p "I turned off the flashlight."
-			return
-		end;
-	end;
+  nam = 'flashlight';
+  on = false;
+  life = function(s)
+    if player_moved() then -- put out the torch transitions
+      s.on = false
+      p "I turned off the flashlight."
+      return
+    end;
+  end;
 ...
 }
 ```
@@ -2764,28 +2764,28 @@ determine the location player -- 'here()'. For determining that the object is
 
 ```
 obj {
-	nam = 'dynamite';
-	timer = 0;
-	used = function(s, w)
-		if w^'match' then -- match?
-			if live(s) then
-				return "it's Already lit!"
-			end
-			p "I have lit the dynamite."
-			lifeon(s)
-			return
-		end
-		return false-if not match
-	end;
-	life = function(s)
-		s.timer = s.timer + 1
-		if s.timer == 5 then
-			lifeoff(s) if here() == where(s) then
-			p [[the Dynamite exploded right next to me!]]
-		else
-			p [[I heard an explosion somewhere.]];
-		end
-	end
+  nam = 'dynamite';
+  timer = 0;
+  used = function(s, w)
+    if w^'match' then -- match?
+      if live(s) then
+        return "it's Already lit!"
+      end
+      p "I have lit the dynamite."
+      lifeon(s)
+      return
+    end
+    return false-if not match
+  end;
+  life = function(s)
+    s.timer = s.timer + 1
+    if s.timer == 5 then
+      lifeoff(s) if here() == where(s) then
+      p [[the Dynamite exploded right next to me!]]
+    else
+      p [[I heard an explosion somewhere.]];
+    end
+  end
 end;
 ...
 }
@@ -2798,20 +2798,20 @@ You can return from a handler for 'life' second return code ('true' or
 'false'). If you return true-it is a sign of important the event, which will
 be displayed to describe the objects in the scene, for example:
 
-	p 'In walked the guard.'
-	return true
+    p 'In walked the guard.'
+    return true
 
 Or:
 
-	return 'you entered the room the security guard.', true
+    return 'you entered the room the security guard.', true
 
 If you return false, the chain of life methods will fail on you. It easy to do
 when performing a walk from the life, for example:
 
-	life = function()
-		walk 'theend'
-		return false -- this is the last life
-	end
+    life = function()
+        walk 'theend'
+        return false -- this is the last life
+    end
 
 If you want to block 'life' handlers in some of the rooms, use the module
 'nolife'. For example:
@@ -2821,9 +2821,9 @@ require "noinv"
 require "nolife"
 
 dlg {
-	nam = 'Guard';
-	noinv = true;
-	nolife = true;
+  nam = 'Guard';
+  noinv = true;
+  nolife = true;
 ...
 }
 ```
@@ -2856,11 +2856,11 @@ actions. You just have to return false.
 Graphic interpreter INSTEAD analyzes the attribute of the scene 'pic', sees
 it as the path to the picture, for example:
 
-	room {
-		pic = 'gfx/home.png';
-		nam = 'Home';
-		dsc = 'I am home';
-	};
+    room {
+        pic = 'gfx/home.png';
+        nam = 'Home';
+        dsc = 'I am home';
+    };
 
 __Important!__
 
@@ -2888,8 +2888,8 @@ For example:
 require "fmt"
 
 obj {
-	nam = 'Apple'
-	disp = 'Apple'..fmt.img('img/apple.png');
+  nam = 'Apple'
+  disp = 'Apple'..fmt.img('img/apple.png');
 }
 ```
 
@@ -2907,15 +2907,15 @@ If you put 'fmt.img' inside { and }, you get a graphical link.
 
 ``
 obj {
-	nam = 'Apple';
-	disp = 'Apple' ..img('img/apple.png');
-	dsc = function(s)
-		p ("the floor is {Apple",fmt.img 'img/apple.png', "}");
-		-- other options:
-		-- return "On the floor lies {Apple"..fmt.img('img/apple.png').."}";
-		-- p "On the floor lies {Apple"..fmt.img('img/apple.png').."}";
-		-- or dsc = "the floor is {Apple"..fmt.img('img/apple.png').."}";
-	end;
+    nam = 'Apple';
+    disp = 'Apple' ..img('img/apple.png');
+    dsc = function(s)
+        p ("the floor is {Apple",fmt.img 'img/apple.png', "}");
+        -- other options:
+        -- return "On the floor lies {Apple"..fmt.img('img/apple.png').."}";
+        -- p "On the floor lies {Apple"..fmt.img('img/apple.png').."}";
+        -- or dsc = "the floor is {Apple"..fmt.img('img/apple.png').."}";
+    end;
 }
 ``
 
@@ -2929,12 +2929,12 @@ __Important!__
 
 To set spacing around an image, use the 'pad' example:
 
-	-- indentation 16 from each edge
-	fmt.imgl 'pad:16,picture.png'
-	-- margins: top 0, right 16, bottom 16, left 4
-	fmt.imgl 'pad:0 16 16 4,picture.png'
-	-- margins: top 0, right 16, bottom 0, left 16
-	fmt.imgl 'pad:0 16,picture.png'
+    -- indentation 16 from each edge
+    fmt.imgl 'pad:16,picture.png'
+    -- margins: top 0, right 16, bottom 16, left 4
+    fmt.imgl 'pad:0 16 16 4,picture.png'
+    -- margins: top 0, right 16, bottom 0, left 16
+    fmt.imgl 'pad:0 16,picture.png'
 
 You can use pseudo-files for images and rectangles empty areas:
 
@@ -2945,7 +2945,7 @@ dsc = fmt.img 'box:32x32,red,128'..[[Line with red semi-transparent square.]];
 
 INSTEAD can process compound images, for example:
 
-	pic = 'gfx/mycat.png;gfx/milk.png@120,25;gfx/fish.png@32,32';
+    pic = 'gfx/mycat.png;gfx/milk.png@120,25;gfx/fish.png@32,32';
 
 Thus, the composite image is a set of paths to images, separated by ';'. The
 second and subsequent components can contain Postfix in the form
@@ -2959,7 +2959,7 @@ The overlay is for the upper left corner of the overlaypictures. If you need
 to overlay was the center of the overlay images, use before the coordinate
 prefix "c", for example:
 
-	pic = 'gfx/galaxy.png;gfx/star.png@c128,132';
+    pic = 'gfx/galaxy.png;gfx/star.png@c128,132';
 
 Having as a function the formation of the path of the composite pictures, you
 can generate an image based on the game state.
@@ -2978,7 +2978,7 @@ I highly recommend not to do it in his the first game.
 
 To work with music and sounds you will need the snd module.
 
-	require "snd"
+    require "snd"
 
 The interpreter plays in the cycle of the current music that is set using the function: 'snd.music(music file)'.
 
@@ -3007,12 +3007,12 @@ As the frequency of the music files, use a frequency multiple of 11025.
 
 ```
 room {
-	pic = 'gfx/street.png';
-	enter = function()
-		snd.music 'mus/rain.ogg'
-	end;
-	nam = 'on the street';
-	dsc = 'it is raining outside.';
+  pic = 'gfx/street.png';
+  enter = function()
+    snd.music 'mus/rain.ogg'
+  end;
+  nam = 'on the street';
+  dsc = 'it is raining outside.';
 };
 ```
 
@@ -3027,11 +3027,11 @@ In order to cancel the music, you can use 'snd.stop\_music()'
 
 In order to know if the music is:
 
-	snd.music_playing()
+    snd.music_playing()
 
 You can set the rise time and attenuation of music, by calling:
 
-	snd.music_fading(o [i])
+    snd.music_fading(o [i])
 
 Here o is the time in milliseconds. for attenuation and i is the time in
 milliseconds. to rise music. If you specify only one parameter -- both times
@@ -3072,9 +3072,9 @@ For example:
 global 'wind_blow' (false)
 ...
 function start()
-	if wind_blow then
-		snd.play('snd/wind.ogg', 0)
-	end
+  if wind_blow then
+    snd.play('snd/wind.ogg', 0)
+  end
 end
 ```
 
@@ -3091,8 +3091,8 @@ of the author.
 
 For example:
 
-	require 'fmt'
-	fmt.para = true -- enable indentation of paragraphs
+    require 'fmt'
+    fmt.para = true -- enable indentation of paragraphs
 
 And your game will look much better. If you need some automatic processing of
 the displayed text, you can enable the module "fmt" and define the function
@@ -3101,12 +3101,12 @@ the displayed text, you can enable the module "fmt" and define the function
 ```
 require "fmt"
 fmt.filter = function(s, state)
-	-- s -- output
-	-- state -- true if this is the beat game (output stage)
-	if state then
-		return 'This string will be added to the beginning of output\n'..s;
-	end
-	return s
+  -- s -- output
+  -- state -- true if this is the beat game (output stage)
+  if state then
+    return 'This string will be added to the beginning of output\n'..s;
+  end
+  return s
 end
 ```
 
@@ -3127,8 +3127,8 @@ However, sometimes it's still necessary.
 std.strip_call = false
 
 obj {
-	dsc = [[There is {Apple}.^^^^]] --- now the line
-	-- will not be clipped, even though it's weird
+  dsc = [[There is {Apple}.^^^^]] --- now the line
+  -- will not be clipped, even though it's weird
 }
 ```
 
@@ -3151,10 +3151,10 @@ For example:
 
 ```
 room {
-	nam = 'main';
-	title = 'Welcome';
-	dsc = fmt.c 'Welcome!'; -- if a function has only 1 parameter,
-	-- you can omit the parentheses;
+  nam = 'main';
+  title = 'Welcome';
+  dsc = fmt.c 'Welcome!'; -- if a function has only 1 parameter,
+  -- you can omit the parentheses;
 }
 ```
 
@@ -3183,7 +3183,7 @@ INSTEAD not support the display of tables, but the conclusion is simple
 tabular data you can use 'fmt.tab()'. This function used for absolute
 positioning in the line (tab delimited).
 
-	fmt.tab(position, [center])
+    fmt.tab(position, [center])
 
 _Position_, is a text or numeric parameter. If you specify a numeric parameter,
 it is treated as position in pixels. If it is set in a string parameter
@@ -3204,42 +3204,42 @@ So, for example:
 
 ```
 room {
-	nam = 'main';
-	disp = 'Start';
-	-- the location of the 'Start!' in the middle of the line
-	dsc = fmt.tab('50%', 'center')..'Start!';
+  nam = 'main';
+  disp = 'Start';
+  -- the location of the 'Start!' in the middle of the line
+  dsc = fmt.tab('50%', 'center')..'Start!';
 }
 ```
 
 Of course, not a very good example, as the same could make using 'fmt.c()'. A
 more successful example.
 
-	 dsc = function(s)
-		p(fmt.tab '0%')
-		p "Left";
-		p(fmt.tab '100%', 'right')
-		p Right;
-	end
+     dsc = function(s)
+        p(fmt.tab '0%')
+        p "Left";
+        p(fmt.tab '100%', 'right')
+        p Right;
+    end
 
 In fact, the only situation where the use of 'fmt.tab()' justified -- is the
 output of table data.
 
 It should be noted that in a situation when we write something like:
 
-	-- the location of the 'Times' on the center line
-	dsc = fmt.tab('50%', 'center')..'one two three!';
+    -- the location of the 'Times' on the center line
+    dsc = fmt.tab('50%', 'center')..'one two three!';
 
 Only the word 'Time' is placed in the centre of the line, the rest of the words
 will be appended to the right of this word. If you want to center the 'Times
 two, three!' as one unit, use 'fmt.nb()'.
 
-	-- place 'one two three!' on the center line
-	dsc = fmt.tab('50%', 'center')..fmt.nb ('one two three!');
+    -- place 'one two three!' on the center line
+    dsc = fmt.tab('50%', 'center')..fmt.nb ('one two three!');
 
 To INSTEAD it is also possible to perform a simple vertical formatting. To do
 this, use the vertical tab:
 
-	fmt.y(position, [center])
+    fmt.y(position, [center])
 
 As in the case of fmt.tab position is text or numeric parameter. Here it is
 perceived as a position of the line expressed in pixels or percentage of the
@@ -3257,15 +3257,15 @@ position:
 It should be noted that 'fmt.y' works entirely for the line. If the line will
 meet a few of fmt.y, act will be the last one tab.
 
-	-- the location of the 'CHAPTER I' - center stage
-	dsc = fmt.y('100%').."CHAPTER I";
+    -- the location of the 'CHAPTER I' - center stage
+    dsc = fmt.y('100%').."CHAPTER I";
 
 _Esli position specified by the tab, is already occupied by another row, the tab is ignored._
 
 By default, the static part of the scene is separated from the dynamic double
 newline. If you do not fit, you can override 'std.scene_delim', for example:
 
-	std.scene_delim = '^' -- single line
+    std.scene_delim = '^' -- single line
 
 You cannot change this variable in the handlers, as it is not remains, but you
 can set it for the entire game, or fix it manually in the function 'start()'.
@@ -3276,20 +3276,20 @@ looks like the following:
 
 ```
 game.display = function(s, state)
-	local r, l, av, pv
-	local reaction = s:reaction() or nil -- reaction
-	r = std.here()
-	if state then -- the beat of the game?
-		reaction = iface:em(reaction) -- italic font
-		av, pv = s:events()
-		av = iface:em(av) - the output of "important" life
-		pv = iface:em(pv) - output background life
-		l = s.player:look() -- objects [and scene] -- the objects and scene
-	end
-	l = std.par(std.scene_delim,
-		reaction or false, av or false, l or false
-		pv or false) or "
-	return l
+  local r, l, av, pv
+  local reaction = s:reaction() or nil -- reaction
+  r = std.here()
+  if state then -- the beat of the game?
+    reaction = iface:em(reaction) -- italic font
+    av, pv = s:events()
+    av = iface:em(av) - the output of "important" life
+    pv = iface:em(pv) - output background life
+    l = s.player:look() -- objects [and scene] -- the objects and scene
+  end
+  l = std.par(std.scene_delim,
+    reaction or false, av or false, l or false
+    pv or false) or "
+  return l
 end;
 ```
 
@@ -3312,12 +3312,12 @@ For example:
 
 ```
 room {
-	nam = 'Intro';
-	title = false;
-	dsc = function(s)
-		p ('You are in a room: ')
-		p (fmt.b(s))
-	end;
+  nam = 'Intro';
+  title = false;
+  dsc = function(s)
+    p ('You are in a room: ')
+    p (fmt.b(s))
+  end;
 }
 ```
 
@@ -3325,7 +3325,7 @@ room {
 > you will get broken lines in these places. What to avoid it,
 > to turn the text into _non-breaking string_:
 
-	fmt.u(fmt.nb "now the unabridged" )
+    fmt.u(fmt.nb "now the unabridged" )
 
 Strictly speaking, INSTEAD does not support simultaneous display of different
 fonts in the window scene (except for the different font styles), so if you
@@ -3370,33 +3370,33 @@ break. We can write constructor 'window'.
 
 ```
 window = function(v)
-	v.window = true
-		v.broken = false
-	if v.dsc == nil then
-		v.dsc = 'there is a {window}.'
-	end
-	v.act = function(s)
-		if s.broken then
-			p [[broken Window.]]
-		else
-			p [[it's dark outside.]]
-		end
-	end
-	if v.used == nil then
-		v.used = function(s, w)
-			if w^'hammer' then
-				if s.broken then
-					p [[the Window is already broken.]]
-				else
-					p [[I broke the window.]]
-					s.broken = true;
-				end
-				return
-			end
-			return false
-		end
-	end
-	return obj(v)
+  v.window = true
+    v.broken = false
+  if v.dsc == nil then
+    v.dsc = 'there is a {window}.'
+  end
+  v.act = function(s)
+    if s.broken then
+      p [[broken Window.]]
+    else
+      p [[it's dark outside.]]
+    end
+  end
+  if v.used == nil then
+    v.used = function(s, w)
+      if w^'hammer' then
+        if s.broken then
+          p [[the Window is already broken.]]
+        else
+          p [[I broke the window.]]
+          s.broken = true;
+        end
+        return
+      end
+      return false
+    end
+  end
+  return obj(v)
 end
 ```
 
@@ -3407,28 +3407,28 @@ constructor obj/room/dlg and returns the resulting object.
 
 Now, create a window was easy:
 
-	window {
-		dsc = [[there is a {window}.]];
-	}
+    window {
+        dsc = [[there is a {window}.]];
+    }
 
 Or, because the window is usually a static object, you can create it
 directly in 'obj'.
 
-	obj = { window {
-			dsc = 'In the Eastern wall there is a {window}.';
-		}
-	};
+    obj = { window {
+            dsc = 'In the Eastern wall there is a {window}.';
+        }
+    };
 
 Our window will be ready used method and act method. You can
 to check the fact that the object is a window-just checking the attribute window:
 
-	use = function(s, w)
-		if w.window then
-		p [[the Action.]]
-	return
-	end
-		return false
-	end
+    use = function(s, w)
+        if w.window then
+        p [[the Action.]]
+    return
+    end
+        return false
+    end
 
 The condition "weakness" of the window, this attribute is broken.
 
@@ -3446,21 +3446,21 @@ those. treasures.
 ```
 global { score = 0 }
 treasure = function()
-	local v = {}
-	v.disp = 'treasure'
-	v.treasure = true
-	v.points = 100
-	v.dsc = function(s)
-		p ('there is {', std.dispof(s), '}.')
-	end;
-	v.inv = function(s)
-		p ('This is ', std.dispof(s), '.');
-	end;
-	v.tak = function(s)
-		score = score + s.points; -- increase the score
-		p [[Trembling hand I took the treasure.]];
-	end
-	return obj(v)
+  local v = {}
+  v.disp = 'treasure'
+  v.treasure = true
+  v.points = 100
+  v.dsc = function(s)
+    p ('there is {', std.dispof(s), '}.')
+  end;
+  v.inv = function(s)
+    p ('This is ', std.dispof(s), '.');
+  end;
+  v.tak = function(s)
+    score = score + s.points; -- increase the score
+    p [[Trembling hand I took the treasure.]];
+  end
+  return obj(v)
 end
 ```
 
@@ -3468,30 +3468,30 @@ Now, let's create gold, diamond and treasure chest.
 
 ```
 gold = function(dsc)
-	local v = treasure();
-	v.disp = 'gold';
-	v.gold = true;
-	v.points = 50;
-	v.dsc = dsc;
-	return v
+  local v = treasure();
+  v.disp = 'gold';
+  v.gold = true;
+  v.points = 50;
+  v.dsc = dsc;
+  return v
 end
 
 diamond = function(dsc)
-	local v = treasure();
-	v.disp = 'diamond';
-	v.diamond = true;
-	v.points = 200;
-	v.dsc = dsc;
-	return v
+  local v = treasure();
+  v.disp = 'diamond';
+  v.diamond = true;
+  v.points = 200;
+  v.dsc = dsc;
+  return v
 end
 
 chest = function(dsc)
-	local v = treasure();
-	v.disp = 'chest';
-	v.chest = true
-	v.points = 1000;
-	v.dsc = dsc;
-	return v
+  local v = treasure();
+  v.disp = 'chest';
+  v.chest = true
+  v.points = 1000;
+  v.dsc = dsc;
+  return v
 end
 ```
 
@@ -3503,11 +3503,11 @@ diamond2 = diamond(); -- here is the standard description of the diamond
 gold1 = gold("In the corner I noticed the glitter {gold}.");
 
 room { nam = 'cave';
-	obj = {
-		diamond1,
-		gold1,
-		chest("I can see {chest}!")
-	};
+  obj = {
+    diamond1,
+    gold1,
+    chest("I can see {chest}!")
+  };
 }
 ```
 
@@ -3523,26 +3523,26 @@ posts about what is the broken window (if it is broken).
 
 ```
 window = function(nam, dsc, what)
-	local v = {} -- creates an empty table
-	-- fill it
-	v.window = true
-	v.what = what
-	v.broken = false
-	if dsc == nil then
-		v.dsc = 'there is a {window}'
-	end
-	v.act = function(s)
-		if s.broken then
-			p [[broken Window.]]
-		end
-		local r, v = stead.call(s, 'what')
-		if v then -- the handler is executed?
-			p(r)
-		else
-			p [[it's dark outside.]]
-		end
-	end
-	return obj(v)
+  local v = {} -- creates an empty table
+  -- fill it
+  v.window = true
+  v.what = what
+  v.broken = false
+  if dsc == nil then
+    v.dsc = 'there is a {window}'
+  end
+  v.act = function(s)
+    if s.broken then
+      p [[broken Window.]]
+    end
+    local r, v = stead.call(s, 'what')
+    if v then -- the handler is executed?
+      p(r)
+    else
+      p [[it's dark outside.]]
+    end
+  end
+  return obj(v)
 end
 ```
 
@@ -3564,28 +3564,28 @@ can store other objects to be closed and open.
 ```
 -- create own class container
 cont = std.class({ -- create the class cont
-	__cont_type = true; -- to determine the type of the object
-	display = function(s) -- overridable method of displaying the subject
-		local d = std.obj.display(s)
-		if s:closed() or #s.obj == 0 then
-			return d
-		end
-		local c = s.cont or 'Inside:' -- descriptor content
-		local empty = true
-		for i = 1, #s.obj do
-			local o = s.obj[i]
-			if o:visible() then
-				empty = false
-				if i > 1 then c = c .. ', ' end
-				c = c..'{'..std.nameof(o)..'|'..std.dispof(o)..'}'
-			end
-		end
-		if empty then
-			return d
-		end
-		c = c .. '.'
-		return std.par(std.space_delim, d, c)
-	end;
+  __cont_type = true; -- to determine the type of the object
+  display = function(s) -- overridable method of displaying the subject
+    local d = std.obj.display(s)
+    if s:closed() or #s.obj == 0 then
+      return d
+    end
+    local c = s.cont or 'Inside:' -- descriptor content
+    local empty = true
+    for i = 1, #s.obj do
+      local o = s.obj[i]
+      if o:visible() then
+        empty = false
+        if i > 1 then c = c .. ', ' end
+        c = c..'{'..std.nameof(o)..'|'..std.dispof(o)..'}'
+      end
+    end
+    if empty then
+      return d
+    end
+    c = c .. '.'
+    return std.par(std.space_delim, d, c)
+  end;
 } std.obj) -- we inherit from the default object
 ```
 
@@ -3593,11 +3593,11 @@ After that, you can create containers like this:
 
 ```
 cont {
-	nam = 'box';
-	dsc = [[there is {box}.]];
-	cont = 'box: ';
+  nam = 'box';
+  dsc = [[there is {box}.]];
+  cont = 'box: ';
 }: with {
-	'Apple', 'pear';
+  'Apple', 'pear';
 }
 ```
 
@@ -3612,11 +3612,11 @@ names of the objects, you can perform the following modification:
 -- replace the function of display of any object
 -- if the object is inside the container, don't call it dsc
 std.obj.display = function(self)
-	local w = self:where () - where is the object?
-	if not std.is_obj(w, 'cont') then -- if not in a container
-		local d = std.call(self, 'dsc')
-		return d
-	end
+  local w = self:where () - where is the object?
+  if not std.is_obj(w, 'cont') then -- if not in a container
+    local d = std.call(self, 'dsc')
+    return d
+  end
 end
 ```
 
@@ -3642,7 +3642,7 @@ include "npc"
 include "start"
 
 room {
-	nam = 'main';
+  nam = 'main';
 ...
 ```
 
@@ -3671,7 +3671,7 @@ the second parameter as 'true'. Keep in mind that existing modules remain and
 survive the operation gamefile in both cases. 'gamefile()' can only be used in
 handlers.
 
-	act = function() gamefile ("episode3.lua", true); end;
+    act = function() gamefile ("episode3.lua", true); end;
 
 In the second option 'gamefile()' can be used to design multilingual games, or
 game collections, where the actual shell running a standalone game.
@@ -3699,35 +3699,35 @@ For example, the implementation of the pocket:
 
 ```
 menu {
-	state = false;
-	nam = 'pocket';
-	disp = function(s)
-		if s.state then
-			return fmt.u('pocket'); -- emphasize active pocket
-		end
-		return 'pocket';
-	end;
-	gen = function(s)
-		if s.state then
-			s:open(); -- show all the items in the pocket
-		else
-			s:close(); -- hide all the items in the pocket
-		end
-		return s
-	end;
-	act = function(s)
-		s.state = not s.state -- change state
-		s:gen (); - to open or close the pocket
-	end;
+  state = false;
+  nam = 'pocket';
+  disp = function(s)
+    if s.state then
+      return fmt.u('pocket'); -- emphasize active pocket
+    end
+    return 'pocket';
+  end;
+  gen = function(s)
+    if s.state then
+      s:open(); -- show all the items in the pocket
+    else
+      s:close(); -- hide all the items in the pocket
+    end
+    return s
+  end;
+  act = function(s)
+    s.state = not s.state -- change state
+    s:gen (); - to open or close the pocket
+  end;
 }: with {
-	obj {
-		nam = 'knife';
-		inv = 'This is knife';
-	};
+  obj {
+    nam = 'knife';
+    inv = 'This is knife';
+  };
 }
 
 function init()
- take 'pocket':gen()
+  take 'pocket':gen()
 end
 ```
 
@@ -3743,20 +3743,20 @@ inventory, but cannot be selected, that is, looks just as text.
 
 ```
 global {
-	life = 10;
-	power = 10;
+  life = 10;
+  power = 10;
 }
 
 stat { -- stat-object status
-	nam = 'status';
-	disp = function(s)
-		pn ('Life: ', life)
-		pn ('Power: ', power)
-	end
+  nam = 'status';
+  disp = function(s)
+    pn ('Life: ', life)
+    pn ('Power: ', power)
+  end
 };
 
 function init()
-	take the 'status'
+  take the 'status'
 end
 ```
 
@@ -3774,20 +3774,20 @@ the walk of these handlers.
 If you do not want to show the source code of their games, you can to encode
 source code using the command-line option the '-encode':
 
-	sdl-instead-encode <file path> [output path]
+    sdl-instead-encode <file path> [output path]
 
 And use the encoded file using the normal include/gamefile. However, for this
 you have to write at the beginning of main3.lua:
 
-	std.dofile = std.doencfile
+    std.dofile = std.doencfile
 
 The main file 'main3.lua' must be left open. This by the way, the diagram
 looks as follows ('game.lua' -- encoded file):
 
 
-	-- $Name: My closed game!$
-	std.dofile = std.doencfile
-	include "game"; -- no one knows how to pass it!
+    -- $Name: My closed game!$
+    std.dofile = std.doencfile
+    include "game"; -- no one knows how to pass it!
 
 __Important!__
 
@@ -3801,7 +3801,7 @@ You can package the game resources (graphics, music, themes) in the file
 resources '.idf' placing all the resources in the directory 'data' and start
 INSTEAD:
 
-	sdl-instead-idf <path to data>
+    sdl-instead-idf <path to data>
 
 Thus, in the current directory will be created file 'data.idf'. Place it in
 the directory with the game. Now resources game separate files can be removed
@@ -3809,12 +3809,12 @@ the directory with the game. Now resources game separate files can be removed
 
 You can pack in format.idf' the whole game:
 
-	sdl-instead-idf <path to game>
+    sdl-instead-idf <path to game>
 
 Game 'idf' can be run as a normal game 'instead' (as if it were a directory)
 and also from the command line:
 
-	sdl-instead game.idf
+    sdl-instead game.idf
 
 ### Switching between players
 
@@ -3826,20 +3826,20 @@ to be able to switch between different types of inventory.
 
 The code example.
 
-	obj {
-		nam = 'stone';
-		dsc = 'On the edge of lies {rock}.';
-		act = function()
-			remove 'stone';
-			p 'I pushed the stone, it fell and flew down...';
-	end
+    obj {
+        nam = 'stone';
+        dsc = 'On the edge of lies {rock}.';
+        act = function()
+            remove 'stone';
+            p 'I pushed the stone, it fell and flew down...';
+    end
 
 Act handler could look simpler:
 
-	act = function(s)
-		remove(s);
-		p 'I pushed the stone, it fell and flew down...';
-	end
+    act = function(s)
+        remove(s);
+        p 'I pushed the stone, it fell and flew down...';
+    end
 
 ### Special status handlers
 
@@ -3849,7 +3849,7 @@ can be useful when developing game.
 
 The return status is false:
 
-	return false
+    return false
 
 This status means that the handler has not fulfilled its function and needs to
 be ignored. Typically, the engine in this case, it will call the handler by
@@ -3857,7 +3857,7 @@ default.
 
 You can also return a special status:
 
-	return true, false
+    return true, false
 
 In this mode only equipment (but not stage) will be redrawn. This status is useful
 for implementing menu the field inventory.
@@ -3865,10 +3865,10 @@ for implementing menu the field inventory.
 There is another special status: std.nop(). It can be used just like a
 function call at the end of the handler or together with the return.
 
-	return std.nop()
-	-- ... or ...
-	std.nop()
-	-- then the end of the function or return
+    return std.nop()
+    -- ... or ...
+    std.nop()
+    -- then the end of the function or return
 
 In this case, the contents of the scene will remain the same as the last game
 beat (even string a reaction will be old). This status conveniently be used in
@@ -3884,7 +3884,7 @@ the timer can be used to control music or design purposes.
 
 To use the timer, you should connect the module "timer".
 
-	require "timer"
+    require "timer"
 
 The timer is programmed using the object "timer".
 
@@ -3903,29 +3903,29 @@ For example:
 
 ```
 game.timer = function(s)
-	if time() > 10 then
-		return false
-	end
-	snd.play 'gfx/beep.ogg';
-	p ("Timer:", time())
+  if time() > 10 then
+    return false
+  end
+  snd.play 'gfx/beep.ogg';
+  p ("Timer:", time())
 end
 
 function init()
-	timer:set(1000) -- time in second
+  timer:set(1000) -- time in second
 end
 ```
 
 ```
 room {
-	enter = function(s)
-		timer:set(1000);
-	end;
-	timer = function(s)
-		timer:stop();
-		walk 'комната2';
-	end;
-	nam = 'timer Test';
-	dsc = [[Wait.]];
+  enter = function(s)
+    timer:set(1000);
+  end;
+  timer = function(s)
+    timer:stop();
+    walk 'комната2';
+  end;
+  nam = 'timer Test';
+  dsc = [[Wait.]];
 }
 ```
 
@@ -3934,7 +3934,7 @@ restore it.
 
 You can return from timer special status:
 
-	return true, false
+    return true, false
 
 In this mode only the area of inventory will be redrawn. It is possible use of
 statuses like hours.
@@ -3953,19 +3953,19 @@ for example:
 require "snd"
 
 obj {
-	{
-		tracks = {"mus/astro2.mod",
-			"mus/aws_chas.xm",
-			"mus/dmageofd.xm",
-			"mus/doomsday.s3m"};
-	};
-	nam = 'player';
-	life = function(s)
-		if not snd.music_playing() then
-			local n = s.tracks[rnd(#s.tracks)]
-			snd.music(n, 1);
-		end
-	end;
+  {
+    tracks = {"mus/astro2.mod",
+      "mus/aws_chas.xm",
+      "mus/dmageofd.xm",
+      "mus/doomsday.s3m"};
+  };
+  nam = 'player';
+  life = function(s)
+    if not snd.music_playing() then
+      local n = s.tracks[rnd(#s.tracks)]
+      snd.music(n, 1);
+    end
+  end;
 }:lifeon();
 ```
 
@@ -3978,41 +3978,41 @@ require "timer"
 global { track_time = 0 };
 
 obj {
-	nam = 'player';
-	pos = 0;
-	{
-		playlist = { '01 Frozen sun.ogg', 0,
-			'02 Thinking.ogg', 0,
-			'03 Melancholy.ogg', 0,
-			'04 Everyday happiness.ogg', 0,
-			'10 Good morning again.ogg', 1,
-			'15 [Bonus track] The end (demo cover).ogg', 1
-		};
-	};
-	tick = function(s)
-		if snd.music_playing() and ( track_time < 120 or not player_moved() ) then
-			return
-		end
-		track_time = 0
-	if s.pos == 0 then
-		s.pos = 1
-	else
-		s.pos = s.pos + 2
-	end
-		if s.pos > #s.playlist then
-			s.pos = 1
-		end
-		snd.music('mus/'..s.playlist[s.pos], s.playlist[s.pos + 1]);
-	end;
+  nam = 'player';
+  pos = 0;
+  {
+    playlist = { '01 Frozen sun.ogg', 0,
+      '02 Thinking.ogg', 0,
+      '03 Melancholy.ogg', 0,
+      '04 Everyday happiness.ogg', 0,
+      '10 Good morning again.ogg', 1,
+      '15 [Bonus track] The end (demo cover).ogg', 1
+    };
+  };
+  tick = function(s)
+    if snd.music_playing() and ( track_time < 120 or not player_moved() ) then
+      return
+    end
+    track_time = 0
+  if s.pos == 0 then
+    s.pos = 1
+  else
+    s.pos = s.pos + 2
+  end
+    if s.pos > #s.playlist then
+      s.pos = 1
+    end
+    snd.music('mus/'..s.playlist[s.pos], s.playlist[s.pos + 1]);
+  end;
 }
 
 game.timer = function(s)
-	track_time = track_time + 1
-	music_player:tick();
+  track_time = track_time + 1
+  music_player:tick();
 end
 
 function init()
-	timer:set(1000)
+  timer:set(1000)
 end
 ```
 
@@ -4023,18 +4023,18 @@ character, which always moves the object to the location player:
 
 ```
 obj {
-	nam = 'horse';
-	dsc = 'I am standing Next to {the horse}.';
-	act = [[My horse.]];
-	life = function(s)
-		if player_moved() then
-			place(s);
-		end
-	end;
+  nam = 'horse';
+  dsc = 'I am standing Next to {the horse}.';
+  act = [[My horse.]];
+  life = function(s)
+    if player_moved() then
+      place(s);
+    end
+  end;
 }
 
 function init()
-	lifeon 'horse'; -- immediately revive the horse
+  lifeon 'horse'; -- immediately revive the horse
 end
 ```
 
@@ -4061,10 +4061,10 @@ dynamic objects. Examples:
 
 ```
 declare 'box' (function()
-	return obj {
-		dsc = [[There is {box}.]];
-		tak = [[I picked up a box.]];
-	}
+  return obj {
+    dsc = [[There is {box}.]];
+    tak = [[I picked up a box.]];
+  }
 end)
 
 local o = new (box);
@@ -4073,10 +4073,10 @@ take(o);
 
 ```
 declare 'box' (function(dsc)
-	return obj {
-		dsc = dsc;
-		tak = [[I picked up a box.]];
-	}
+  return obj {
+    dsc = dsc;
+    tak = [[I picked up a box.]];
+  }
 end)
 take(new(box 'In the corner {box}'))
 ```
@@ -4087,10 +4087,10 @@ be object.
 
 ```
 function myconstructor()
-	local v = {}
-	v.disp = 'test object'
-	v.act = 'Test response'
-	return obj(v)
+  local v = {}
+  v.disp = 'test object'
+  v.act = 'Test response'
+  return obj(v)
 end
 ```
 
@@ -4103,8 +4103,8 @@ end
 
 If you want to destroy the object by its name or the link-variable use:
 
-	purge(o) -- remove from all lists
-	delete(o) - release the object
+    purge(o) -- remove from all lists
+    delete(o) - release the object
 
 In this case, delete this is the delete the object from INSTEAD, rather than
 analogue remove() or purge(). Usually, it makes little sense to do the delete.
@@ -4147,7 +4147,7 @@ fly -- it gets to a file saves.
 -- prohibit
 -- save the rooms that contain the nosave attribute.
 instead.nosave = function()
-	return here().nosave
+  return here().nosave
 end
 ```
 
@@ -4169,7 +4169,7 @@ For example:
 
 ```
 a = room {
-	nam = 'object';
+  nam = 'object';
 };
 
 dprint(std.is_obj(a)) -- will print true
@@ -4185,7 +4185,7 @@ The second method is to use the type method:
 
 ```
 a = room {
-	nam = 'object';
+  nam = 'object';
 };
 
 dprint(a:type 'room') -- will print true
@@ -4207,10 +4207,10 @@ the game.
 
 The syntax of 'theme.ini' is very simple.
 
-	<parameter> = <value>
+    <parameter> = <value>
 or
 
-	; comment
+    ; comment
 
 Values can be of the following types: string, color, number.
 
@@ -4341,11 +4341,11 @@ only the name of the file without the directory path. For example:
 ```
 mygame/
   themes/
-    default/
-      theme.ini
-      bg.png
-    widescreen/
-      theme.ini
+  default/
+    theme.ini
+    bg.png
+  widescreen/
+    theme.ini
   main3.lua
 ```
 
@@ -4367,11 +4367,11 @@ in theme.ini you can only change those settings changes were required.
 Additional functionality is often implemented INSTEAD in the form modules. To
 use a module, you must write:
 
-	require "module name"
+    require "module name"
 
 Or:
 
-	loadmod "module name"
+    loadmod "module name"
 
 If the module shipped with the game.
 
@@ -4427,7 +4427,7 @@ track this event. For example:
 require "keys"
 
 function keys:filter(press, key)
-	press return -- catch pressing any keys
+  press return -- catch pressing any keys
 end
 ```
 
@@ -4441,9 +4441,9 @@ Usually, we need to choose what keys we want to intercept:
 require "keys"
 
 function keys:filter(press, key)
-	if key == '0' or key == '1' or key == 'z' then
-		press return -- catch keystrokes z, 1, and 0
-	end
+  if key == '0' or key == '1' or key == 'z' then
+    press return -- catch keystrokes z, 1, and 0
+  end
 end
 ```
 
@@ -4467,13 +4467,13 @@ Below is a simple example to display the symbolic names of keys:
 require "keys"
 
 function keys:filter(press, key)
-	press return -- catch all the clicking
+  press return -- catch all the clicking
 end
 
 game.onkey = function(s, press, key)
-	dprint("pressed: ", key)
-	p("Pressed: ", key)
-	return false -- allow to handle the keys to the interpreter INSTEAD
+  dprint("pressed: ", key)
+  p("Pressed: ", key)
+  return false -- allow to handle the keys to the interpreter INSTEAD
 end
 ```
 
@@ -4492,8 +4492,8 @@ require "keys"
 
 -- display the state of the key the cursor to the right
 game.timer = function(s)
-	dprint("state of 'right' key: ", keys:state 'right')
-	p("As keys 'right':", keys:state 'right')
+  dprint("state of 'right' key: ", keys:state 'right')
+  p("As keys 'right':", keys:state 'right')
 end
 
 timer:set(30)
@@ -4505,7 +4505,7 @@ You can track in your game clicks on the picture of the scene, and background.
 To do this, use the module "click". Also, you can keep track of the mouse state
 by the function:
 
-	instead.mouse_pos([x, y])
+    instead.mouse_pos([x, y])
 
 Which returns the coordinates of the cursor. If you set the parameters (x, y),
 you can move the cursor to the specified position (all coordinates are
@@ -4514,17 +4514,17 @@ calculated relative to the upper left corner of the window INSTEAD).
 ```
 require "click"
 function click:filter(press, btn, x, y, px, py)
-	dprint(press, btn, x, y, px, py)
-	return press and px -- only catch clicking on the picture
+  dprint(press, btn, x, y, px, py)
+  return press and px -- only catch clicking on the picture
 end
 room {
-	nam = 'main';
-	pic = "box:320x200,red";
-	onclick = function(s, press, btn, x, y, px, py)
-		pn("You pressed the image: ", px, ", ", py)
-		pn("Absolute coordinates: ", x, ", ", y)
- 		p("Button: ", btn)
-	end;
+  nam = 'main';
+  pic = "box:320x200,red";
+  onclick = function(s, press, btn, x, y, px, py)
+    pn("You pressed the image: ", px, ", ", py)
+    pn("Absolute coordinates: ", x, ", ", y)
+    p("Button: ", btn)
+  end;
 }
 ```
 
@@ -4537,8 +4537,8 @@ determine the current filter values of the mouse and install new ( the number
 
 ```
 function start()
-	dprint("Mouse filter delay: ", instead.mouse_filter())
-	instead.mouse_filter(0) -- turn off the filter
+  dprint("Mouse filter delay: ", instead.mouse_filter())
+  instead.mouse_filter(0) -- turn off the filter
 end
 ```
 
@@ -4601,21 +4601,21 @@ theme.snd.click(name);
 
 There is the ability to read the current settings:
 
-	theme.the 'get' variable name themes';
+    theme.the 'get' variable name themes';
 
 The return value is always in text form.
 
-	theme.set ('variable name theme', value);
+    theme.set ('variable name theme', value);
 
 You can reset the value of the parameter of the topic, which was installed in
 the built-in theme of the game:
 
-	theme.reset 'variable name';
-	theme.win.reset();
+    theme.reset 'variable name';
+    theme.win.reset();
 
 There is a function, in order to know the current selected theme.
 
-	theme.name()
+    theme.name()
 
 The function returns a string -- the directory name of the theme. If the game
 uses own the file 'theme.ini', the function will return a point. This is
@@ -4623,7 +4623,7 @@ useful for determine whether the mechanism of its own for those games:
 
 ```
 if theme.name() ~= '.' then
-	error "Please enable own theme mode in menu!"
+  error "Please enable own theme mode in menu!"
 end
 ```
 
@@ -4632,9 +4632,9 @@ with a dot, for example:
 
 ```
 if theme.name() == '.default' then
-	-- our built-in default theme
+  -- our built-in default theme
 elseif theme.name() == 'default' then
-	-- standard default theme.
+  -- standard default theme.
 end
 ```
 
@@ -4658,7 +4658,7 @@ theme.scr.w () - height
 The sprite module allows to work with graphic images.To enable the email
 module:
 
-	require "sprite"
+    require "sprite"
 
 Sprites can't get into the save file so that recovery status of sprites-the
 task of the author of the game. Generally, this use the functions init() or
@@ -4716,16 +4716,16 @@ As the "color" methods receive string: 'green', 'red', 'yellow' or '#333333',
 Example:
 
 ```
- local spr = sprite.new(320, 200)
- spr:fill 'blue'
- local spr2 = sprite.new 'fish.png'
- spr2:draw(spr, 0, 0)
+  local spr = sprite.new(320, 200)
+  spr:fill 'blue'
+  local spr2 = sprite.new 'fish.png'
+  spr2:draw(spr, 0, 0)
 ```
 
 In addition, there is the possibility of working with fonts. The font is
 created with the help of sprite.fnt(), for example:
 
-	local font = sprite.fnt('sans.ttf', 32)
+    local font = sprite.fnt('sans.ttf', 32)
 
 Have created object defines the following methods:
 
@@ -4737,7 +4737,7 @@ Have created object defines the following methods:
 
 You may also find it useful to:
 
-	sprite.font_scaled_size(size)
+    sprite.font_scaled_size(size)
 
 It returns font size taking into account the scaling that put the player in
 the settings INSTEAD. If you are in the game you want note this setting use
@@ -4745,9 +4745,9 @@ this function to determine the size of the font.
 
 Example:
 
-	local f = sprite.fnt('sans.ttf', 32)
-	local spr = sprite.new('box:320x200,black')
-	f:text("HELLO!", 'white'):draw(spr, 0, 0)
+    local f = sprite.fnt('sans.ttf', 32)
+    local spr = sprite.new('box:320x200,black')
+    f:text("HELLO!", 'white'):draw(spr, 0, 0)
 
 Now, consider the application of the module sprite.
 
@@ -4764,22 +4764,22 @@ require "timer"
 local spr = sprite.new(320, 200)
 
 function game:timer()
-	local col = { 'red', 'green', 'blue'}
-	col = col[rnd(3)]
-	spr:fill(col)
-	return false -- Important! So, the scene will not be changed
+  local col = { 'red', 'green', 'blue'}
+  col = col[rnd(3)]
+  spr:fill(col)
+  return false -- Important! So, the scene will not be changed
 end
 
 game.pic = function() return spr end -- function: as
 -- sprite is a special object (not a string)
 
 function start()
-	timer:set(30)
+  timer:set(30)
 end
 
 room {
-	nam = 'main';
-	decor = [[HYPNOSIS]];
+  nam = 'main';
+  decor = [[HYPNOSIS]];
 }
 ```
 
@@ -4798,15 +4798,15 @@ require 'theme'
 require 'timer'
 
 declare {
-	x = 0,
-	y = 0,
-	dx = 10,
-	dy = 10,
+  x = 0,
+  y = 0,
+  dx = 10,
+  dy = 10,
 }
 
 const {
-	w = theme.scr.w(),
-	h = theme.scr.h(),
+  w = theme.scr.w(),
+  h = theme.scr.h(),
 }
 
 instead.fading = false
@@ -4814,42 +4814,42 @@ instead.fading = false
 local bg, red, green
 
 function init()
-	theme.set('scr.col.bg', '#000000')
-	theme.set('win.col.fg', '#aaaaaa')
-	theme.set('win.col.link', '#ffaa00')
-	theme.set('win.col.alink', '#ffffff')
+  theme.set('scr.col.bg', '#000000')
+  theme.set('win.col.fg', '#aaaaaa')
+  theme.set('win.col.link', '#ffaa00')
+  theme.set('win.col.alink', '#ffffff')
 
-	bg = sprite.new(w, h)
-	bg:fill('black')
-	red = sprite.new(w, h)
-	red:fill('#ff0000')
-	red = red:alpha(128)
-	green = sprite.new(w, h)
-	green:fill('#00ff00')
-	green = green:alpha(64)
-	bg:copy(sprite.scr())
-	timer:set(25)
+  bg = sprite.new(w, h)
+  bg:fill('black')
+  red = sprite.new(w, h)
+  red:fill('#ff0000')
+  red = red:alpha(128)
+  green = sprite.new(w, h)
+  green:fill('#00ff00')
+  green = green:alpha(64)
+  bg:copy(sprite.scr())
+  timer:set(25)
 end
 
 function game:timer()
-	bg:copy(sprite.scr())
-	red:draw(sprite.scr(), x, 0, 128)
-	green:draw(sprite.scr(), 0, y, 64)
-	x = x + dx
-	if x >= w or x == 0 then
-		dx = -dx
-	end
-	y = y + dy
-	if y >= h or y == 0 then
-		dy = -dy
-	end
-	return false -- Important!
+  bg:copy(sprite.scr())
+  red:draw(sprite.scr(), x, 0, 128)
+  green:draw(sprite.scr(), 0, y, 64)
+  x = x + dx
+  if x >= w or x == 0 then
+    dx = -dx
+  end
+  y = y + dy
+  if y >= h or y == 0 then
+    dy = -dy
+  end
+  return false -- Important!
 end
 
 room {
-	nam = 'main',
-	disp = 'Test. Test? Test!',
-	decor = 'Lorem ipsum';
+  nam = 'main',
+  disp = 'Test. Test? Test!',
+  decor = 'Lorem ipsum';
 }
 ```
 
@@ -4861,7 +4861,7 @@ break the beat game. If your creative idea this is an obstacle (for example,
 you don't like the fact that the animation background freezes), you can change
 it by calling:
 
-	instead.wait_use(false)
+    instead.wait_use(false)
 
 As usual, place the call in the init() or start() function.
 
@@ -4876,18 +4876,18 @@ require "timer"
 require "fmt"
 
 obj {
-	nam = '$spr';
-	{
-		["square"] = sprite.new 'box:32x32,red';
-	};
-	act = function(s, w)
-		return fmt.img(s[w])
-	end
+  nam = '$spr';
+  {
+    ["square"] = sprite.new 'box:32x32,red';
+  };
+  act = function(s, w)
+    return fmt.img(s[w])
+  end
 }
 
 room {
-	nam = 'main';
-	decor = [[Now we insert the sprite: {$spr|square}.]];
+  nam = 'main';
+  decor = [[Now we insert the sprite: {$spr|square}.]];
 }
 ```
 
@@ -4896,12 +4896,12 @@ room {
 In INSTEAD, there is direct access to the chart. In the subject he is
 specified using the parameter:
 
-	scr.gfx.mode = direct
+    scr.gfx.mode = direct
 
 This option can be pre-set theme.ini, or use module theme. Or (better) special
 function:
 
-	sprite.direct(true)
+    sprite.direct(true)
 
 If the regime managed to include -- the function will return true.
 sprite.direct() without the parameter -- returns the current mode (true-if
@@ -4911,7 +4911,7 @@ In this mode, the game has direct access to the entire window and can perform
 the rendering in the procedure of the timer. The screen presents a special
 sprite:
 
-	sprite.scr()
+    sprite.scr()
 
 For example:
 
@@ -4925,40 +4925,40 @@ sprite.direct(true)
 local stars = {}
 local w, h
 local colors = {
-	"red",
-	"green",
-	"blue",
-	"white",
-	"yellow",
-	"cyan",
-	"gray",
-	"#002233",
+  "red",
+  "green",
+  "blue",
+  "white",
+  "yellow",
+  "cyan",
+  "gray",
+  "#002233",
 }
 
 function game:timer()
-	local scr = sprite.scr()
-	scr:fill 'black'
-	for i = 1, #stars do local s = stars[i]
-		scr:pixel(s.x, s.y, colors[s.dy])
-		s.y = s.y + s.dy
-		if s.y >= h then
-			s.y = 0
-			s.x = rnd(w) - 1
-			s.dy = rnd(8)
-		end
-	end
+  local scr = sprite.scr()
+  scr:fill 'black'
+  for i = 1, #stars do local s = stars[i]
+    scr:pixel(s.x, s.y, colors[s.dy])
+    s.y = s.y + s.dy
+    if s.y >= h then
+      s.y = 0
+      s.x = rnd(w) - 1
+      s.dy = rnd(8)
+    end
+  end
 end
 
 function start()
-	w, h = theme.scr.w(), theme.scr.h()
+  w, h = theme.scr.w(), theme.scr.h()
 
-	w = std.tonum(w)
-	h = std.tonum(h)
+  w = std.tonum(w)
+  h = std.tonum(h)
 
-	for i = 1, 100 do
-		table.insert(stars, { x = rnd(w) - 1, y = rnd(h) - 1, dy = rnd(8) })
-		end
-	timer:set(30)
+  for i = 1, 100 do
+    table.insert(stars, { x = rnd(w) - 1, y = rnd(h) - 1, dy = rnd(8) })
+    end
+  timer:set(30)
 end
 ```
 
@@ -4972,50 +4972,50 @@ require "theme"
 local spr = sprite
 
 declare {
-	fnt = false, ball = false, ballw = 0,
-	ballh = 0, bg = false, line = false,
-	G = false, by = false, bv = false,
-	bx = false, t1 = false,
+  fnt = false, ball = false, ballw = 0,
+  ballh = 0, bg = false, line = false,
+  G = false, by = false, bv = false,
+  bx = false, t1 = false,
 }
 
 function init()
-	fnt = spr.fnt(theme.get 'win.fnt.name', 32);
-	ball = fnt:text("INSTEAD of 3.0", 'white', 1);
-	ballw, ballh = ball:size();
-	bg = spr.new 'box:640x480,black';
-	line = spr.new 'box:320x8,lightblue';
-	spr.direct(true)
+  fnt = spr.fnt(theme.get 'win.fnt.name', 32);
+  ball = fnt:text("INSTEAD of 3.0", 'white', 1);
+  ballw, ballh = ball:size();
+  bg = spr.new 'box:640x480,black';
+  line = spr.new 'box:320x8,lightblue';
+  spr.direct(true)
 end
 
 function start()
-	timer:set(20)
-	G = 9.81
-	by = -ballh
-	bv = 0
-	bx = 320
-	t1 = instead.ticks()
+  timer:set(20)
+  G = 9.81
+  by = -ballh
+  bv = 0
+  bx = 320
+  t1 = instead.ticks()
 end
 
 function phys()
-	local t = timer:get() / 1000;
-	bv = bv + G * t;
-	by = by + bv * t;
-	if by > 400 then
-		bv = - bv
-	end
+  local t = timer:get() / 1000;
+  bv = bv + G * t;
+  by = by + bv * t;
+  if by > 400 then
+    bv = - bv
+  end
 end
 
 function game:timer(s)
-	local i
-	for i = 1, 10 do
-		phys()
-	end
-	if instead.ticks() - t1 >= 20 then
-		bg:copy(spr.scr(), 0, 0);
-		ball:draw(spr.scr(), (640 - ballw) / 2, by - ballh/2);
-		line:draw(spr.scr(), 320/2, 400 + ballh / 2);
-		t1 = instead.ticks()
-	end
+  local i
+  for i = 1, 10 do
+    phys()
+  end
+  if instead.ticks() - t1 >= 20 then
+    bg:copy(spr.scr(), 0, 0);
+    ball:draw(spr.scr(), (640 - ballw) / 2, by - ballh/2);
+    line:draw(spr.scr(), 320/2, 400 + ballh / 2);
+    t1 = instead.ticks()
+  end
 end
 ```
 
@@ -5025,7 +5025,7 @@ controlled only with keyboard.
 
 To do this, use function instead.mouse\_show()
 
-	instead.mouse_show(false)
+    instead.mouse_show(false)
 
 On the menu of the interpreter INSTEAD of the mouse pointer will still
 visible.
@@ -5040,10 +5040,10 @@ require "sprite"
 require "theme"
 
 function start() -- replace the background sprite
-	local spr = sprite.new(800, 600)
-	spr:fill 'blue'
-	spr:fill (100, 100, 32, 60, 'red')
-	theme.set('scr.gfx.bg', spr)
+  local spr = sprite.new(800, 600)
+  spr:fill 'blue'
+  spr:fill (100, 100, 32, 60, 'red')
+  theme.set('scr.gfx.bg', spr)
 end
 ```
 
@@ -5136,20 +5136,20 @@ declare 'pxl' (false)
 declare 't' (0)
 
 function game:timer()
-	local x, y, i
-	t = t + 1
-	for x = 0, 199 do
-		for y = 0 to 149 do
-			i = (x * x + y * y + t)
-			pxl:val(x, y, 0, i, i / 2)
-		end
-	end
-	pxl:copy_spr(sprite.scr())
+  local x, y, i
+  t = t + 1
+  for x = 0, 199 do
+    for y = 0 to 149 do
+      i = (x * x + y * y + t)
+      pxl:val(x, y, 0, i, i / 2)
+    end
+  end
+  pxl:copy_spr(sprite.scr())
 end
 
 function start(load)
-	pxl = pixels.new(200, 150, 4)
-	timer:set(20)
+  pxl = pixels.new(200, 150, 4)
+  timer:set(20)
 end
 ```
 
@@ -5171,21 +5171,21 @@ snd has some functions for working with sound.
 
 You can load the sound and keep it in memory as long as he you need.
 
-	require 'snd'
-	local wav = snd.new 'bark.ogg'
+    require 'snd'
+    local wav = snd.new 'bark.ogg'
 
 Besides uploading files, you can load the sound from an array of lua:
 
 ```
 local wav = {}
 for i = 1, 10000 do
-	table.insert(wav, rnd() * 2 - 1) -- random values from -1 to 1
+  table.insert(wav, rnd() * 2 - 1) -- random values from -1 to 1
 end
 
 function start()
-	-- frequency, number of channels and sound
-	local p = snd.new(22050, 1, wave)
-	p:play()
+  -- frequency, number of channels and sound
+  local p = snd.new(22050, 1, wave)
+  p:play()
 end
 ```
 
@@ -5215,12 +5215,12 @@ experimental status):
 require "snd"
 
 function cb(hz, len, data)
-	for i = 1, len do
-		data[i] = rnd() * 2 - 1
-	end
+  for i = 1, len do
+    data[i] = rnd() * 2 - 1
+  end
 end
 function start()
-	snd.music_callback(cb)
+  snd.music_callback(cb)
 end
 ```
 
@@ -5235,19 +5235,19 @@ Essentially prefs is an object, all the variables which will be saved.
 
 Save settings:
 
-	prefs:store()
+    prefs:store()
 
 The settings are automatically saved when you save the game, but you can to
 control this process, causing the prefs:store().
 
 Destroy configuration file:
 
-	prefs:purge()
+    prefs:purge()
 
 To download settings automatically when you start the game (before you call
 the start () function), but you can initiate the download and manually:
 
-	prefs:load()
+    prefs:load()
 
 Example usage:
 
@@ -5266,25 +5266,25 @@ prefs.counter = 0;
 
 -- define a function for tracking the number of "clicks"
 game.onclick = function(s)
- 	-- increment counter
-	prefs.counter = prefs.counter + 1;
-	-- persistent counter
-	prefs:store();
-	-- print message
-	p("currently done ", prefs.counter" clicks");
+  -- increment counter
+  prefs.counter = prefs.counter + 1;
+  -- persistent counter
+  prefs:store();
+  -- print message
+  p("currently done ", prefs.counter" clicks");
 end;
 
 -- added image by which to produce clicks
 game.pic = 'box:320x200,black';
 
 room {
-	nam = 'main',
-	title = "house of clicks",
-	-- make the static parts of the description
-	-- added description for the scene
-	decor = [[ This test was written specifically
-	        to check the operation of the module <<prefs>>.
-	]];
+  nam = 'main',
+  title = "house of clicks",
+  -- make the static parts of the description
+  -- added description for the scene
+  decor = [[ This test was written specifically
+      to check the operation of the module <<prefs>>.
+  ]];
 };
 ```
 
@@ -5318,37 +5318,37 @@ Example usage:
 require "snapshots"
 
 room {
-	nam = 'main';
-	title = 'Game';
-	the onenter = function()
-	snapshots:make () - created a restore point
-	end;
-	decor = [[{#red|Red} or {#black|black}?]];
+  nam = 'main';
+  title = 'Game';
+  the onenter = function()
+  snapshots:make () - created a restore point
+  end;
+  decor = [[{#red|Red} or {#black|black}?]];
 }: with {
-	obj {
-		nam = '#red';
-		act = function()
-			p [[You won!]]
-		end;
-	};
-	obj {
-		nam = '#black';
-		act = function()
-			walk 'end'
-		end;
-	}
+  obj {
+    nam = '#red';
+    act = function()
+      p [[You won!]]
+    end;
+  };
+  obj {
+    nam = '#black';
+    act = function()
+      walk 'end'
+    end;
+  }
 }
 
 room {
-	nam = 'end';
-	title = 'End';
+  nam = 'end';
+  title = 'End';
 }: with {
-	obj {
-		dsc = [[{Replay?}]];
-		act = function()
-			snapshots:restore() -- recovered
-		end;
-	}
+  obj {
+    dsc = [[{Replay?}]];
+    act = function()
+      snapshots:restore() -- recovered
+    end;
+  }
 }
 ```
 
