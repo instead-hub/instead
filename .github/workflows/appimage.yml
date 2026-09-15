@@ -4,6 +4,7 @@ on:
   push:
     branches: [master, SDL3]
   workflow_dispatch:
+  workflow_call:
 
 env:
   SDL3_VER: release-3.4.10

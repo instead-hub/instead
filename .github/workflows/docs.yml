@@ -7,6 +7,7 @@ on:
       - 'doc/**'
       - '.github/workflows/docs.yml'
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   pdf:

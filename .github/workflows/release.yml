@@ -1,0 +1,70 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag, e.g. 3.6.0'
+        required: true
+      prerelease:
+        description: 'Mark the release as a pre-release'
+        type: boolean
+        default: false
+
+jobs:
+  appimage:
+    uses: ./.github/workflows/appimage.yml
+  windows:
+    uses: ./.github/workflows/windows.yml
+  emscripten:
+    uses: ./.github/workflows/emscripten.yml
+  macos:
+    uses: ./.github/workflows/macos.yml
+  docs:
+    uses: ./.github/workflows/docs.yml
+
+  publish:
+    name: publish release
+    needs: [appimage, windows, emscripten, macos, docs]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          path: dist
+
+      - name: Package
+        run: |
+          set -e
+          find dist -maxdepth 4 | sort
+          WIN=dist/instead-win
+          if [ -d "$WIN/bin" ]; then WIN="$WIN/bin"; fi
+          (cd "$WIN" && zip -qr "$GITHUB_WORKSPACE/instead-win.zip" .)
+          EM=dist/instead-em
+          if [ ! -d "$EM/instead-em" ]; then EM="$EM/release"; fi
+          (cd "$EM" && zip -qr "$GITHUB_WORKSPACE/instead-em.zip" instead-em)
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          TAG="${{ inputs.tag }}"
+          FILES=(
+            dist/AppImage/INSTEAD-x86_64.AppImage
+            instead-win.zip
+            instead-em.zip
+            dist/instead-macos-x86_64/INSTEAD-macos-x86_64.dmg
+            dist/instead-macos-arm64/INSTEAD-macos-arm64.dmg
+            dist/instead-doc/stead3-ru.pdf
+            dist/instead-doc/modules3-ru.pdf
+            dist/instead-doc/stead3-en.pdf
+          )
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "${FILES[@]}" --clobber
+          else
+            ARGS=(--target "$GITHUB_SHA" --title "INSTEAD $TAG" --generate-notes --draft)
+            if [ "${{ inputs.prerelease }}" = "true" ]; then ARGS+=(--prerelease); fi
+            gh release create "$TAG" "${ARGS[@]}" "${FILES[@]}"
+          fi
