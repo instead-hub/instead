@@ -22,7 +22,7 @@
  *
  */
 
-#if defined(__APPLE__) || defined(ANDROID) || defined(WINRT)
+#if defined(__APPLE__) || defined(ANDROID)
 #include <SDL3/SDL.h>
 #endif
 
@@ -314,7 +314,7 @@ int instead_main(int argc, char *argv[])
 #endif
 	int err = 0;
 	int i;
-#if defined(_WIN32) && !defined(WINRT)
+#if defined(_WIN32)
 	char *exe_path;
 	HINSTANCE lib = LoadLibrary("user32.dll");
 	int (*SetProcessDPIAware)() = (void*) GetProcAddress(lib, "SetProcessDPIAware");
@@ -329,9 +329,6 @@ int instead_main(int argc, char *argv[])
 #if defined(APPIMAGE)
 	unix_path(argv[0]);
 	strcpy(game_cwd, dirname(argv[0]));
-#elif defined(WINRT)
-	unix_path(argv[0]);
-	strcpy(game_cwd, argv[0]); /* argv[0] is directory */
 #elif defined(_WIN32)
 	exe_path = malloc(PATH_MAX + 1);
 	if (exe_path) {

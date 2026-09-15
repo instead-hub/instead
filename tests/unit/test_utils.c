@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-/* the real sdl_path() lives in unix.c/winrt.c/windows.c */
+/* the real sdl_path() lives in unix.c/windows.c */
 char *sdl_path(char *path)
 {
 	return path;
