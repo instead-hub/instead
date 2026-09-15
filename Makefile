@@ -36,18 +36,10 @@ docs: rules
 PKGBUILD: PKGBUILD.in tarball
 	cat PKGBUILD.in | sed -e s/MD5SUM/`md5sum $(ARCHIVE) | cut -f1 -d' '`/g > PKGBUILD
 
-windows-sdl2.tar.gz:
-	wget "http://sourceforge.net/projects/instead/files/instead/build-bin-data/windows-sdl2-2.0.24.2.tar.gz/download" -O $(@)
-	# wget "http://sourceforge.net/projects/instead/files/instead/build-bin-data/windows-sdl2-2.0.24.tar.gz/download" -O $(@)
-	# wget "http://sourceforge.net/projects/instead/files/instead/build-bin-data/windows-sdl2-2.0.22.tar.gz/download" -O $(@)
-	# wget "http://sourceforge.net/projects/instead/files/instead/build-bin-data/windows-sdl2-2.0.14.tar.gz/download" -O $(@)
-
-build-bin-data: windows-sdl2.tar.gz
-
-tarball: clean svnclean gitclean docs rules
+tarball: clean svnclean gitclean rules
 	echo "# you can define own flags here" > config.make
 	ln -sf ./ $(VERTITLE)
-	tar -cz --exclude $(VERTITLE)/$(VERTITLE) --exclude CJK.zip --exclude .git --exclude .svn --exclude $(ARCHIVE) --exclude windows-sdl2.tar.gz -f $(ARCHIVE) $(VERTITLE)/*
+	tar -cz --exclude $(VERTITLE)/$(VERTITLE) --exclude .git --exclude $(ARCHIVE) -f $(ARCHIVE) $(VERTITLE)/*
 	$(RM) -f $(VERTITLE)
 
 clean:
