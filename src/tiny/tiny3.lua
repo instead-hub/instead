@@ -7,15 +7,15 @@ instead.noautosave = false
 instead.tiny = true
 
 function instead.mouse_filter()
-	return 0
+  return 0
 end
 
 function instead.render_callback()
-	return false
+  return false
 end
 
 function instead.wait_use()
-	return true
+  return true
 end
 
 local iface = std '@iface'
@@ -50,18 +50,18 @@ function instead.restart(v)
 end
 
 function instead.text_input()
-	return false
+  return false
 end
 
 function instead.atleast(...)
-	return true
+  return true
 end
 
 function instead.version(...)
 end
 
 function iface:title(str) -- hide title
-	return str
+  return str
 end
 
 function iface:img() return '' end
@@ -73,95 +73,95 @@ function iface:imgr() return '' end
 function iface:anchor() return '' end
 
 function iface:nb(t)
-	return t == '' and ' ' or t
+  return t == '' and ' ' or t
 end
 
 std.stat = std.class({
-	__stat_type = true;
+  __stat_type = true;
 }, std.obj);
 
 -- luacheck: globals menu
 std.menu = std.class({
-	__menu_type = true;
-	new = function(_, v)
-		if type(v) ~= 'table' then
-			std.err ("Wrong argument to std.menu:"..std.tostr(v), 2)
-		end
-		v = std.obj(v)
+  __menu_type = true;
+  new = function(_, v)
+    if type(v) ~= 'table' then
+      std.err ("Wrong argument to std.menu:"..std.tostr(v), 2)
+    end
+    v = std.obj(v)
 --		std.setmt(v, self)
-		return v
-	end;
-	inv = function(s, ...)
-		local r, v
-		if s.menu ~= nil then
-			r, v = std.call(s, 'menu', ...) -- special method while in inv
-		else
-			r, v = std.call(s, 'act', ...) -- fallback to act
-		end
-		if not r and not v then
-			return true, false -- menu mode
-		end
-		return r, v
-	end;
+    return v
+  end;
+  inv = function(s, ...)
+    local r, v
+    if s.menu ~= nil then
+      r, v = std.call(s, 'menu', ...) -- special method while in inv
+    else
+      r, v = std.call(s, 'act', ...) -- fallback to act
+    end
+    if not r and not v then
+      return true, false -- menu mode
+    end
+    return r, v
+  end;
 }, std.obj);
 
 std.setmt(std.phr, std.menu) -- make phrases menus
 std.setmt(std.ref '@', std.menu) -- make xact menu
 
 function iface:xref(str, o, ...)
-	if type(str) ~= 'string' then
-		std.err ("Wrong parameter to iface:xref: "..std.tostr(str), 2)
-	end
-	if not std.is_obj(o) or std.is_obj(o, 'stat') then
-		return str
-	end
-	local a = { ... }
-	local args = ''
-	for i = 1, #a do
-		if type(a[i]) ~= 'string' and type(a[i]) ~= 'number' then
-			std.err ("Wrong argument to iface:xref: "..std.tostr(a[i]), 2)
-		end
-		args = args .. ' '..std.dump(a[i])
-	end
-	local xref = std.string.format("%s%s", std.deref_str(o), args)
-	-- std.string.format("%s%s", iface:esc(std.deref_str(o)), iface:esc(args))
+  if type(str) ~= 'string' then
+    std.err ("Wrong parameter to iface:xref: "..std.tostr(str), 2)
+  end
+  if not std.is_obj(o) or std.is_obj(o, 'stat') then
+    return str
+  end
+  local a = { ... }
+  local args = ''
+  for i = 1, #a do
+    if type(a[i]) ~= 'string' and type(a[i]) ~= 'number' then
+      std.err ("Wrong argument to iface:xref: "..std.tostr(a[i]), 2)
+    end
+    args = args .. ' '..std.dump(a[i])
+  end
+  local xref = std.string.format("%s%s", std.deref_str(o), args)
+  -- std.string.format("%s%s", iface:esc(std.deref_str(o)), iface:esc(args))
 
-	if not dict[xref] then
-		table.insert(dict, xref)
-		dict[xref] = #dict
-	end
-	xref = std.tostr(dict[xref])
+  if not dict[xref] then
+    table.insert(dict, xref)
+    dict[xref] = #dict
+  end
+  xref = std.tostr(dict[xref])
 
-	return str..std.string.format("(%s)", xref)
+  return str..std.string.format("(%s)", xref)
 end
 
 local iface_cmd = iface.cmd -- save old
 
 function iface:cmd(inp)
-	local a = std.split(inp)
-	if std.tonum(a[1]) then
-		std.table.insert(a, 1, 'act')
-	end
-	if a[1] == 'act' or a[1] == 'use' or a[1] == 'go' then
-		if a[1] == 'use' then
-			local use = std.split(a[2], ',')
-			for i = 1, 2 do
-				local u = std.tonum(use[i])
-				if u then
-					use[i] = dict[u]
-				end
-			end
-			a[2] = std.join(use, ',')
-		elseif std.tonum(a[2]) then
-			a[2] = dict[std.tonum(a[2])]
-		end
-		inp = std.join(a)
-	end
-	return iface_cmd(self, inp)
+  local a = std.split(inp)
+  if std.tonum(a[1]) then
+    std.table.insert(a, 1, 'act')
+  end
+  if a[1] == 'act' or a[1] == 'use' or a[1] == 'go' then
+    if a[1] == 'use' then
+      local use = std.split(a[2], ',')
+      for i = 1, 2 do
+        local u = std.tonum(use[i])
+        if u then
+          use[i] = dict[u]
+        end
+      end
+      a[2] = std.join(use, ',')
+    elseif std.tonum(a[2]) then
+      a[2] = dict[std.tonum(a[2])]
+    end
+    inp = std.join(a)
+  end
+  return iface_cmd(self, inp)
 end
 
 std.obj { -- input object
-	nam = '@input';
+  nam = '@input';
 };
 
 -- some aliases
@@ -170,7 +170,7 @@ stat = std.stat
 
 -- fake sound
 local sound = std.obj {
-	nam = '@snd';
+  nam = '@snd';
 }
 
 sound.set = function() end
@@ -183,44 +183,44 @@ sound.new = function() return sound end
 
 -- fake timer
 std.obj {
-	nam = '@timer';
-	get = function(s)
-		return s.__timer or 0;
-	end;
-	stop = function(s)
-		return s:set(0)
-	end;
-	set = function(s, v)
-		s.__timer = v
-		return true
-	end;
+  nam = '@timer';
+  get = function(s)
+    return s.__timer or 0;
+  end;
+  stop = function(s)
+    return s:set(0)
+  end;
+  set = function(s, v)
+    s.__timer = v
+    return true
+  end;
 }
 
 -- fake sprite
 std.obj {
-	nam = '@sprite';
-	new = function() end;
-	fnt = function() end;
-	scr = function() end;
-	direct = function() return false end;
-	render_callback = instead.render_callback;
+  nam = '@sprite';
+  new = function() end;
+  fnt = function() end;
+  scr = function() end;
+  direct = function() return false end;
+  render_callback = instead.render_callback;
 }
 -- fake pixels
 std.obj {
-	nam = '@pixels';
-	fnt = function() end;
-	new = function() end;
+  nam = '@pixels';
+  fnt = function() end;
+  new = function() end;
 }
 -- fake themes
 local theme = std.obj {
-	nam = '@theme';
-	{
-		win = { gfx = {}};
-		inv = { gfx = {}};
-		menu = { gfx = {}};
-		gfx = {};
-		snd = {};
-	};
+  nam = '@theme';
+  {
+    win = { gfx = {}};
+    inv = { gfx = {}};
+    menu = { gfx = {}};
+    gfx = {};
+    snd = {};
+  };
 }
 
 function theme.restore()
@@ -324,28 +324,28 @@ end
 
 
 std.mod_init(function()
-	std.rawset(_G, 'instead', instead)
+  std.rawset(_G, 'instead', instead)
 end)
 
 local mp_hooked = false
 
 std.mod_start(function()
-	dict = {}
-	local mp = std.ref '@metaparser'
-	if mp then
-		mp.winsize = 0
-		mp.prompt = false
-		if not mp_hooked then -- force truncate text for all commands
-			std.mod_cmd(function(cmd) mp:trim() end)
-			mp_hooked = true
-		end
-	end
+  dict = {}
+  local mp = std.ref '@metaparser'
+  if mp then
+    mp.winsize = 0
+    mp.prompt = false
+    if not mp_hooked then -- force truncate text for all commands
+      std.mod_cmd(function(cmd) mp:trim() end)
+      mp_hooked = true
+    end
+  end
 end)
 
 std.mod_step(function(state)
-	if state then
-		dict = {}
-	end
+  if state then
+    dict = {}
+  end
 end)
 
 require "ext/paths"

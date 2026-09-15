@@ -8,22 +8,22 @@ local checks = 0
 local failed = 0
 
 local function fail(msg)
-	failed = failed + 1
-	print("INTEGRATION FAIL: " .. msg)
+  failed = failed + 1
+  print("INTEGRATION FAIL: " .. msg)
 end
 
 local function check(name, cond)
-	checks = checks + 1
-	if not cond then
-		fail(name)
-	end
+  checks = checks + 1
+  if not cond then
+    fail(name)
+  end
 end
 
 local function check_eq(name, got, want)
-	checks = checks + 1
-	if got ~= want then
-		fail(name .. ": got " .. tostring(got) .. ", expected " .. tostring(want))
-	end
+  checks = checks + 1
+  if got ~= want then
+    fail(name .. ": got " .. tostring(got) .. ", expected " .. tostring(want))
+  end
 end
 
 -- src/instead_paths.c
@@ -32,7 +32,7 @@ local gamespath = instead_gamespath()
 check("gamespath is a non-empty string", type(gamespath) == "string" and #gamespath > 0)
 check("gamespath is absolute", gamespath:sub(1, 1) == "/")
 check("gamespath ends with games",
-	gamespath:gsub("/+$", ""):sub(-5) == "games")
+  gamespath:gsub("/+$", ""):sub(-5) == "games")
 
 check("instead_exepath is a function", type(instead_exepath) == "function")
 local exepath = instead_exepath()
@@ -122,20 +122,20 @@ check("sprite free", instead_sprite_size("itest/big") == nil)
 local fontpath = instead_realpath(".") .. "/themes/default/sans.ttf"
 local fh = io.open(fontpath, "rb")
 if fh then
-	fh:close()
-	local font = instead_font_load(fontpath, 16, "itest/font")
-	check_eq("font load", font, "itest/font")
-	if font then
-		local tw, th = instead_sprite_text_size(font, "ABC")
-		check("text size", tw > 0 and th > 0)
-		local txt = instead_sprite_text(font, "ABC", "#ffffff", 0, "itest/text")
-		check_eq("text sprite", txt, "itest/text")
-		local sw, sh = instead_sprite_size(txt)
-		check("text sprite size", sw > 0 and sh > 0)
-		instead_font_free(font)
-	end
+  fh:close()
+  local font = instead_font_load(fontpath, 16, "itest/font")
+  check_eq("font load", font, "itest/font")
+  if font then
+    local tw, th = instead_sprite_text_size(font, "ABC")
+    check("text size", tw > 0 and th > 0)
+    local txt = instead_sprite_text(font, "ABC", "#ffffff", 0, "itest/text")
+    check_eq("text sprite", txt, "itest/text")
+    local sw, sh = instead_sprite_size(txt)
+    check("text sprite size", sw > 0 and sh > 0)
+    instead_font_free(font)
+  end
 else
-	print("INTEGRATION SKIP: theme font not found")
+  print("INTEGRATION SKIP: theme font not found")
 end
 
 -- src/instead_sound.c
@@ -152,20 +152,20 @@ check_eq("sound volume set", instead_sound_volume(vol), vol)
 instead_sound_panning(0, 128, 128)
 
 local mem = instead_sound_load_mem(22050, 1,
-	{ 0.1, 0.2, 0.3, 0.4, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 })
+  { 0.1, 0.2, 0.3, 0.4, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 })
 check("sound load_mem", mem ~= nil)
 
 instead_sound_free(snd)
 if mem then
-	instead_sound_free(mem)
+  instead_sound_free(mem)
 end
 instead_sounds_free()
 instead_sprites_free()
 
 print("INTEGRATION CHECKS " .. checks)
 if failed == 0 then
-	print("INTEGRATION OK")
+  print("INTEGRATION OK")
 else
-	print("INTEGRATION FAILED " .. failed)
+  print("INTEGRATION FAILED " .. failed)
 end
 io.stdout:flush()
