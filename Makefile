@@ -30,9 +30,6 @@ rules:
 docs: rules
 	make docs -C doc/
 
-PKGBUILD: contrib/PKGBUILD.in
-	cp contrib/PKGBUILD.in PKGBUILD
-
 tarball: clean gitclean rules
 	echo "# you can define own flags here" > config.make
 	ln -sf ./ $(VERTITLE)
