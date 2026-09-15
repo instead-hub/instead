@@ -151,11 +151,11 @@ _Внимание!_: если в iface:xref передаются аргумен�
 
 ```
 struct instead_ext {
-	struct list_node list;
-	int (*init)(void);
-	int (*done)(void);
-	int (*err)(void);
-	int (*cmd)(void);
+  struct list_node list;
+  int (*init)(void);
+  int (*done)(void);
+  int (*err)(void);
+  int (*cmd)(void);
 };
 ```
 
@@ -187,34 +187,34 @@ struct instead_ext {
 ```
 static int _restart(lua_State *L)
 {
-	need_restart = !lua_isboolean(L, 1) || lua_toboolean(L, 1);
-	return 0;
+  need_restart = !lua_isboolean(L, 1) || lua_toboolean(L, 1);
+  return 0;
 }
 static const luaL_Reg tiny_funcs[] = {
-	{ "instead_restart", _restart },
-	{ NULL, NULL }
+  { "instead_restart", _restart },
+  { NULL, NULL }
 };
 
 static int tiny_init(void)
 {
-	int rc;
-	char path[1024];
-	instead_api_register(tiny_funcs);
-	snprintf(path, sizeof(path), "%s/tiny.lua", instead_lua_path(NULL));
-	rc = instead_loadfile(path);
-	if (rc)
-		return rc;
-	return 0;
+  int rc;
+  char path[1024];
+  instead_api_register(tiny_funcs);
+  snprintf(path, sizeof(path), "%s/tiny.lua", instead_lua_path(NULL));
+  rc = instead_loadfile(path);
+  if (rc)
+    return rc;
+  return 0;
 }
 static struct instead_ext ext = {
-	.init = tiny_init,
+  .init = tiny_init,
 };
 
 ...
-	if (instead_extension(&ext)) {
-		fprintf(stderr, "Can't register tiny extension\n");
-		exit(1);
-	}
+  if (instead_extension(&ext)) {
+    fprintf(stderr, "Can't register tiny extension\n");
+    exit(1);
+  }
 
 ```
 
@@ -240,9 +240,9 @@ instead_function("instead.get_sound", NULL);
 
 ```
 struct instead_args args[] = {
-	{ .val = "nil", .type = INSTEAD_NIL },
-	{ .val = "-1", .type = INSTEAD_NUM },
-	{ .val = NULL }
+  { .val = "nil", .type = INSTEAD_NIL },
+  { .val = "-1", .type = INSTEAD_NUM },
+  { .val = NULL }
 };
 
 ```
@@ -279,66 +279,66 @@ _Внимание!_: функцию instead_clear() после вызова inst
 ```
 static void game_music_player(void)
 {
-	int	loop;
-	char		*mus;
+  int	loop;
+  char		*mus;
 
-	int cf_out = 0;
-	int cf_in = 0;
+  int cf_out = 0;
+  int cf_in = 0;
 
-	instead_function("instead.get_music", NULL);
-	mus = instead_retval(0);
-	loop = instead_iretval(1);
-	instead_clear();
+  instead_function("instead.get_music", NULL);
+  mus = instead_retval(0);
+  loop = instead_iretval(1);
+  instead_clear();
 
-	instead_function("instead.get_music_fading", NULL);
-	cf_out = instead_iretval(0);
-	cf_in = instead_iretval(1);
-	instead_clear();
+  instead_function("instead.get_music_fading", NULL);
+  cf_out = instead_iretval(0);
+  cf_in = instead_iretval(1);
+  instead_clear();
 
-	// в mus - трек
-	// cf_out,cf_in -- параметры затухания
-	// mus -- путь к файлу
-	// loop -- число проигрываний
-	// TODO реализовать плеер
+  // в mus - трек
+  // cf_out,cf_in -- параметры затухания
+  // mus -- путь к файлу
+  // loop -- число проигрываний
+  // TODO реализовать плеер
 
-	free(mus);
+  free(mus);
 }
 
 static int sound_init(void)
 {
-	int rc;
-	char path[PATH_MAX];
+  int rc;
+  char path[PATH_MAX];
 
-	snprintf(path, sizeof(path), "%s/%s", instead_stead_path(), "/ext/sound.lua");
+  snprintf(path, sizeof(path), "%s/%s", instead_stead_path(), "/ext/sound.lua");
 
-	rc = instead_loadfile(dirpath(path));
-	if (rc)
-		return rc;
-	// TODO - инициализация звуковой подсистемы
-	return 0;
+  rc = instead_loadfile(dirpath(path));
+  if (rc)
+    return rc;
+  // TODO - инициализация звуковой подсистемы
+  return 0;
 }
 
 static int sound_cmd(void)
 {
-	game_music_player();
-	return 0;
+  game_music_player();
+  return 0;
 }
 
 static int sound_done(void)
 {
-	// TODO: деинициализация звуковой подсистемы
-	return 0;
+  // TODO: деинициализация звуковой подсистемы
+  return 0;
 }
 
 static struct instead_ext ext = {
-	.init = sound_init,
-	.done = sound_done,
-	.cmd = sound_cmd,
+  .init = sound_init,
+  .done = sound_done,
+  .cmd = sound_cmd,
 };
 
 int instead_sound_init(void)
 {
-	return instead_extension(&ext);
+  return instead_extension(&ext);
 }
 ```
 
