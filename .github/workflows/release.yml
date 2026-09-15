@@ -23,9 +23,21 @@ jobs:
   docs:
     uses: ./.github/workflows/docs.yml
 
+  tarball:
+    name: source tarball
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build tarball
+        run: make tarball
+      - uses: actions/upload-artifact@v7
+        with:
+          name: tarball
+          path: instead_*.tar.gz
+
   publish:
     name: publish release
-    needs: [appimage, windows, emscripten, macos, docs]
+    needs: [appimage, windows, emscripten, macos, docs, tarball]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -38,6 +50,7 @@ jobs:
         run: |
           set -e
           find dist -maxdepth 4 | sort
+          cp dist/tarball/*.tar.gz .
           WIN=dist/instead-win
           if [ -d "$WIN/bin" ]; then WIN="$WIN/bin"; fi
           (cd "$WIN" && zip -qr "$GITHUB_WORKSPACE/instead-win.zip" .)
@@ -53,6 +66,7 @@ jobs:
           TAG="${{ inputs.tag }}"
           FILES=(
             dist/AppImage/INSTEAD-x86_64.AppImage
+            instead_*.tar.gz
             instead-win.zip
             instead-em.zip
             dist/instead-macos-x86_64/INSTEAD-macos-x86_64.dmg
