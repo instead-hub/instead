@@ -47,6 +47,11 @@ jobs:
     permissions:
       contents: write
     steps:
+      # gh needs a git repository (and its history for --generate-notes).
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
       - uses: actions/download-artifact@v7
         with:
           path: dist
