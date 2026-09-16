@@ -2,7 +2,7 @@ name: documentation
 
 on:
   push:
-    branches: [master, SDL3]
+    branches: [master]
     paths:
       - 'doc/**'
       - '.github/workflows/docs.yml'

@@ -1,7 +1,7 @@
 name: Emscripten version
 on:
   push:
-    branches: [master, SDL3]
+    branches: [master]
   workflow_dispatch:
   workflow_call:
 
