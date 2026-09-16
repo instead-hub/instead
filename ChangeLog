@@ -1,6 +1,9 @@
 3.6.0
 
- * enh: SDL3 port (large refactoring).
+ * enh: SDL3 port (a lot of refactoring);
+ * enh: no GTK dependency;
+ * new: macOS build in workflow;
+ * fix: a lot of bug fixed.
 
  -- Peter Kosyh <pkosyh@yandex.ru>  Sun, 13 Sep 2026 12:00:00 +0300
 
