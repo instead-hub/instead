@@ -1996,7 +1996,7 @@ int gfx_set_mode(int w, int h, int fs)
 	SDL_VideoWindow = SDL_CreateWindow(t, win_w, win_h,
 			SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE
 #if defined(ANDROID)
-			| SDL_WINDOW_FULLSCREEN_DESKTOP
+			| SDL_WINDOW_FULLSCREEN
 #endif
 			);
 	if (!SDL_VideoWindow) {
