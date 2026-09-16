@@ -1,3 +1,7 @@
+> [!WARNING]
+> The `master` branch builds against **SDL3** only.
+> For the SDL2 version use the [`SDL2`](https://github.com/instead-hub/instead/tree/SDL2) branch.
+
 ![Build status](https://github.com/instead-hub/instead/actions/workflows/CI.yml/badge.svg)
 
 # INSTEAD
