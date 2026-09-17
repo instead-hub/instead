@@ -496,11 +496,9 @@ int input(struct inp_event *inp, int wait)
 			}
 		}
 #endif
-#if SDL_VERSION_ATLEAST(2,0,7) /* broken. normalized by event watcher */
-		gfx_finger_pos_scale(event.tfinger.x, event.tfinger.y, &inp->x, &inp->y, 0);
-#else
-		gfx_finger_pos_scale(event.tfinger.x, event.tfinger.y, &inp->x, &inp->y, 1);
-#endif
+		/* already converted to render (game) coordinates by the event watcher */
+		inp->x = (int)event.tfinger.x;
+		inp->y = (int)event.tfinger.y;
 		inp->type = (event.type == SDL_EVENT_FINGER_DOWN) ? FINGER_DOWN : FINGER_UP;
 		data2hex(&event.tfinger.fingerID,
 			sizeof(event.tfinger.fingerID),

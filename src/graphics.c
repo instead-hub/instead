@@ -1831,6 +1831,12 @@ static bool mouse_watcher(void *userdata, SDL_Event *event)
 		return 0;
 	}
 #endif
+	/* Convert pointer events from window to render (game) coordinates: this
+	   takes the dpi scale and the logical presentation (scaling/letterbox)
+	   into account. */
+	if (Renderer)
+		SDL_ConvertEventToRenderCoordinates(Renderer, event);
+
 	switch (event->type) {
 	case SDL_EVENT_MOUSE_BUTTON_UP:
 	case SDL_EVENT_MOUSE_BUTTON_DOWN:
@@ -1859,47 +1865,20 @@ void gfx_real_size(int *ww, int *hh)
 
 void gfx_finger_pos_scale(float x, float y, int *ox, int *oy, int norm)
 {
-	int xx = 0, yy = 0;
+	float xx = 0, yy = 0;
 	int w, h;
-	float sx, sy;
-	SDL_Rect rect;
 
-	if (!norm) { /* do not normalize? */
-		w = gfx_width;
-		h = gfx_height;
-		sx = 1.0f;
-		sy = 1.0f;
-		rect.x = 0;
-		rect.y = 0;
-	} else {
-		SDL_GetWindowSize(SDL_VideoWindow, &w, &h);
-		SDL_GetRenderViewport(Renderer, &rect);
-		SDL_GetRenderScale(Renderer, &sx, &sy);
+	if (norm) { /* normalized [0..1] window coordinates */
+		if (!SDL_GetWindowSize(SDL_VideoWindow, &w, &h))
+			return;
+		x *= w;
+		y *= h;
 	}
-
-	if (sx != 0) {
-		x = x * w;
-		xx = x / sx - rect.x;
-	}
-	if (sy != 0) {
-		y = y * h;
-		yy = y / sy - rect.y;
-	}
-#ifdef _USE_SWROTATE
-	if (gfx_flip_rotate) {
-		if (ox)
-			*ox = yy;
-		if (oy)
-			*oy = gfx_height - xx;
-	} else {
-#endif
-		if (ox)
-			*ox = xx;
-		if (oy)
-			*oy = yy;
-#ifdef _USE_SWROTATE
-	}
-#endif
+	SDL_RenderCoordinatesFromWindow(Renderer, x, y, &xx, &yy);
+	if (ox)
+		*ox = (int)xx;
+	if (oy)
+		*oy = (int)yy;
 }
 
 #ifdef _USE_SWROTATE
@@ -5401,21 +5380,10 @@ int gfx_cursor(int *xp, int *yp)
 
 void gfx_warp_cursor(int x, int y)
 {
-	float sx, sy;
-	SDL_Rect rect;
-#ifdef _USE_SWROTATE
-	if (gfx_flip_rotate) {  /* TODO? */
-		int tmp;
-		tmp = y;
-		y = x;
-		x = gfx_height - tmp;
-	}
-#endif
-	SDL_GetRenderViewport(Renderer, &rect);
-	SDL_GetRenderScale(Renderer, &sx, &sy);
-	x = (x + rect.x) * sx;
-	y = (y + rect.y) * sy;
-	SDL_WarpMouseInWindow(SDL_VideoWindow, x, y);
+	float wx, wy;
+	/* render (game) coordinates -> window coordinates */
+	SDL_RenderCoordinatesToWindow(Renderer, x, y, &wx, &wy);
+	SDL_WarpMouseInWindow(SDL_VideoWindow, wx, wy);
 }
 
 static int ALPHA_STEPS = 4;
