@@ -100,6 +100,37 @@ char *mbs2utf8(const char *s)
 }
 #endif
 
+/* SDL uses UTF-8 paths, while the CRT file functions on Windows use the
+   system ANSI codepage. Convert between them. */
+char *utf2mbs(const char *s)
+{
+	int n;
+	wchar_t *w;
+	char *m;
+	if (!s)
+		return NULL;
+	n = MultiByteToWideChar(CP_UTF8, 0, s, -1, NULL, 0);
+	if (!n)
+		return strdup(s);
+	w = malloc(n * sizeof(wchar_t));
+	if (!w)
+		return NULL;
+	MultiByteToWideChar(CP_UTF8, 0, s, -1, w, n);
+	n = WideCharToMultiByte(CP_ACP, 0, w, -1, NULL, 0, NULL, NULL);
+	if (!n) {
+		free(w);
+		return strdup(s);
+	}
+	m = malloc(n);
+	if (!m) {
+		free(w);
+		return NULL;
+	}
+	WideCharToMultiByte(CP_ACP, 0, w, -1, m, n, NULL, NULL);
+	free(w);
+	return m;
+}
+
 extern void unix_path(char *);
 
 char *sdl_path(char *p)

@@ -75,6 +75,15 @@ char *open_file_dialog(void)
 	if (!dialog_result[0])
 		return NULL;
 	snprintf(file, sizeof(file), "%s", dialog_result);
+#ifdef _WIN32
+	{ /* the engine opens paths through the CRT (ANSI codepage), SDL gives UTF-8 */
+		char *m = utf2mbs(file);
+		if (m) {
+			snprintf(file, sizeof(file), "%s", m);
+			free(m);
+		}
+	}
+#endif
 	snprintf(dialog_dir, sizeof(dialog_dir), "%s", dialog_result);
 	dirname(dialog_dir);
 	dialog_dir_set = 1;

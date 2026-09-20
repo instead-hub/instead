@@ -59,6 +59,7 @@ extern char *encode_esc_string(const char *v);
 extern char *find_in_esc(const char *l, const char *s);
 
 extern char *sdl_path(char *path);
+extern char *utf2mbs(const char *s); /* UTF-8 -> system codepage (Windows) */
 
 extern char *parse_tag(char *line, const char *tag, const char *comm, int *brk);
 extern int remove_dir(const char *path);
