@@ -676,9 +676,9 @@ int input(struct inp_event *inp, int wait)
 		inp->type = (event.wheel.y > 0) ? MOUSE_WHEEL_UP : MOUSE_WHEEL_DOWN;
 
 		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_MOUSEWHEEL, SDL_MOUSEWHEEL) > 0) {
-			if (!((event.wheel.y > 0 &&
+			if (!((peek.wheel.y > 0 &&
 				inp->type == MOUSE_WHEEL_UP) ||
-				(event.wheel.y < 0 &&
+				(peek.wheel.y < 0 &&
 				inp->type == MOUSE_WHEEL_DOWN)))
 				break;
 			inp->count ++;
@@ -695,9 +695,9 @@ int input(struct inp_event *inp, int wait)
 		else if (event.button.button == 5)
 			inp->type = MOUSE_WHEEL_DOWN;
 		while (SDL_PeepEvents(&peek, 1, SDL_GETEVENT, SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONDOWN) > 0) {
-			if (!((event.button.button == 4 &&
+			if (!((peek.button.button == 4 &&
 				inp->type == MOUSE_WHEEL_UP) ||
-				(event.button.button == 5 &&
+				(peek.button.button == 5 &&
 				inp->type == MOUSE_WHEEL_DOWN)))
 				break;
 			inp->count ++;
