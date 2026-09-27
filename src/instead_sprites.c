@@ -1360,10 +1360,10 @@ static int _pixels_blend(struct lua_pixels *src, int x, int y, int w, int h,
 	if (!h)
 		h = src->h;
 
-	if (x < 0 || x + w > src->w)
+	if (x < 0 || (unsigned int)(x + w) > (unsigned int)src->w)
 		return 0;
 
-	if (y < 0 || y + h > src->h)
+	if (y < 0 || (unsigned int)(y + h) > (unsigned int)src->h)
 		return 0;
 
 	if (w <= 0 || h <= 0)
@@ -1487,9 +1487,9 @@ static void _fill(struct lua_pixels *src, int x, int y, int w, int h,
 	if (w <= 0 || h <= 0 || x >= src->w || y >= src->h)
 		return;
 
-	if (x + w > src->w)
+	if ((unsigned int)(x + w) > src->w)
 		w = src->w - x;
-	if (y + h > src->h)
+	if ((unsigned int)(y + h) > src->h)
 		h = src->h - y;
 
 	ptr1 = (unsigned char *)(src + 1);
