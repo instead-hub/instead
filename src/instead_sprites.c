@@ -1487,9 +1487,9 @@ static void _fill(struct lua_pixels *src, int x, int y, int w, int h,
 	if (w <= 0 || h <= 0 || x >= src->w || y >= src->h)
 		return;
 
-	if ((unsigned int)(x + w) > src->w)
+	if (w > src->w - x)
 		w = src->w - x;
-	if ((unsigned int)(y + h) > src->h)
+	if (h > src->h - y)
 		h = src->h - y;
 
 	ptr1 = (unsigned char *)(src + 1);
