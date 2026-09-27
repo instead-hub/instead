@@ -3692,7 +3692,7 @@ int gfx_get_token(const char *ptr, char **eptr, char **val, int *sp)
 			return 0;
 		ptr += 2;
 		ep = find_in_esc(ptr, "\\>");
-		if (*ep != '>')
+		if (!ep || *ep != '>')
 			return 0;
 		if (val) {
 			p = malloc(ep - ptr + 1);
