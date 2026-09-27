@@ -568,6 +568,17 @@ static img_t	gfx_new_img(SDL_Surface *s, int fl, void *data, int release)
 	return i;
 }
 
+img_t	gfx_clone(img_t img)
+{
+	img_t p;
+	if (!img)
+		return NULL;
+	p = GFX_IMG(Surf(img));
+	if (p)
+		Surf(img)->refcount ++;
+	return p;
+}
+
 img_t   gfx_new_rgba(int w, int h)
 {
 	SDL_Surface *dst;
