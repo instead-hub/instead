@@ -790,7 +790,7 @@ static int luaB_get_realpath(lua_State *L) {
 	const char *path = luaL_optstring(L, 1, NULL);
 	if (!path)
 		return 0;
-	strncpy(realpath, path, sizeof(realpath));
+	strncpy(realpath, path, sizeof(realpath) - 1);
 	realpath[sizeof(realpath) - 1] = 0;
 	unix_path(realpath);
 	path = getrealpath(realpath, outpath);
