@@ -131,7 +131,7 @@ int	idf_magic(const char *fname)
 int idf_setdir(idf_t idf, const char *path)
 {
 	if (idf && path)
-		strcpy(idf->cwd, path);
+		snprintf(idf->cwd, sizeof(idf->cwd), "%s", path);
 	return 0;
 }
 
@@ -340,7 +340,7 @@ err1:
 int idf_create(const char *file, const char *path)
 {
 	int rc = -1, i;
-	FILE *fd;
+	FILE *fd = NULL;
 	char *p;
 	unsigned long off = 0;
 	long dict_size = 0;
@@ -725,7 +725,7 @@ SDL_RWops *RWFromIdf(idf_t idf, const char *fname)
 err:
 	if (n)
 		SDL_FreeRW(n);
-	free(fil);
+	idf_close(fil);
 	return NULL;
 }
 #endif
