@@ -1,3 +1,16 @@
+3.5.3
+
+ * fix: memory leaks, double free and buffer overflows in the engine;
+ * fix: sprite reference counting and tosprite pixel copy;
+ * fix: cache entry reuse, theme state restore and sound references;
+ * fix: game list removal, scroll and picture loading in game.c;
+ * fix: mouse wheel event accumulation in input;
+ * fix: idf cleanup, get_exepath and menu buffer overflow;
+ * fix: is_empty and tinymt parameters initialization;
+ * fix: strncpy truncation warnings.
+
+ -- Peter Kosyh <pkosyh@yandex.ru>  Sun, 27 Sep 2026 12:00:00 +0300
+
 3.5.2
 
  * enh: redesigned installer for Windows;
