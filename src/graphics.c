@@ -2673,6 +2673,18 @@ static int hb_dir(int rtl)
 {
 	return rtl ? HB_DIRECTION_RTL:HB_DIRECTION_LTR;
 }
+
+static void fnt_dir_script(fnt_t fn, TTF_Direction dir, Uint32 script)
+{
+	struct fnt *h = (struct fnt *)fn;
+	int i;
+	for (i = 0; i < FN_MAX; i++) {
+		if (!h->fonts[i])
+			continue;
+		TTF_SetFontDirection(h->fonts[i], dir);
+		TTF_SetFontScript(h->fonts[i], script);
+	}
+}
 #endif
 
 /* This function detects and configures direction, script and type of a word. */
@@ -3964,8 +3976,7 @@ static void word_render(struct layout *layout, struct word *word, int x, int y)
 		return;
 #ifdef _USE_HARFBUZZ
 	/* Set the language and script for SDL_ttf */
-	TTF_SetDirection(hb_dir(word->rtl));
-	TTF_SetScript(word->script);
+	fnt_dir_script(layout->fn, hb_dir(word->rtl), word->script);
 #endif
 	if (!word->xref) {
 		if (!word->prerend) {
@@ -4007,8 +4018,7 @@ static void word_render(struct layout *layout, struct word *word, int x, int y)
 	free(wc);
 #ifdef _USE_HARFBUZZ
 	/* Drop to defaults */
-	TTF_SetDirection(HB_DIRECTION_LTR);
-	TTF_SetScript(HB_SCRIPT_COMMON);
+	fnt_dir_script(layout->fn, TTF_DIRECTION_LTR, HB_SCRIPT_COMMON);
 #endif
 	if (!s)
 		return;
@@ -4991,12 +5001,10 @@ void _txt_layout_add(layout_t lay, char *txt)
 			word = word_new(p);
 			if (word) {
 				word_detect_rtl(word, layout->rtl);
-				TTF_SetDirection(hb_dir(word->rtl));
-				TTF_SetScript(word->script);
+				fnt_dir_script(layout->fn, hb_dir(word->rtl), word->script);
 				txt_size(layout->fn, p, &w, &h);
-				TTF_SetDirection(HB_DIRECTION_LTR);
-				TTF_SetScript(HB_SCRIPT_COMMON);
-				free(word);
+				fnt_dir_script(layout->fn, TTF_DIRECTION_LTR, HB_SCRIPT_COMMON);
+				word_free(word);
 			}
 #else
 			txt_size(layout->fn, p, &w, &h);
