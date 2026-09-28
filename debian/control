@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Peter Kosyh <p.kosyh@gmail.com>
 Build-Depends: debhelper-compat (= 13), pkg-config, liblua5.1-0-dev, libsdl3-dev, libsdl3-ttf-dev, libsdl3-image-dev, libsdl3-mixer-dev, zlib1g-dev
 Standards-Version: 4.7.0
-Homepage: http://instead.sourceforge.net
+Homepage: https://github.com/instead-hub/instead
 
 Package: instead
 Architecture: any
