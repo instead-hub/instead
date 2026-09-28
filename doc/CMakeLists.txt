@@ -21,7 +21,7 @@ FOREACH(FILE ${GENERATED_DOC_FILES})
 ENDFOREACH(FILE ${GENERATED_DOC_FILES})
 
 IF(NOT "${MISSING_FILES}" STREQUAL "")
-	MESSAGE(WARNING "This distribution lacks some documentation files: ${MISSING_FILES}. These may be generated (network access and additional tools required, see doc/makepdfs), or you may use instead source tarball from sourceforge which has these files included")
+	MESSAGE(WARNING "This distribution lacks some documentation files: ${MISSING_FILES}. These may be generated (network access and additional tools required, see doc/makepdfs), or you may use instead source tarball from GitHub which has these files included")
 ENDIF(NOT "${MISSING_FILES}" STREQUAL "")
 
 IF(SYSTEMWIDE)
