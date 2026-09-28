@@ -3,7 +3,7 @@ Name:		instead
 Version:	3.6.0
 Release:	1%{?dist}
 License:	MIT
-URL:		http://instead.sourceforge.net
+URL:		https://github.com/instead-hub/instead
 Source0:	%{name}_%{version}.tar.gz
 Group:		Amusements/Games
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
