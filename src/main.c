@@ -58,7 +58,6 @@ int resizable_sw = 0;
 int scale_sw = 1;
 int standalone_sw = 0;
 int nocursor_sw = 0;
-int glhack_sw = 0;
 int dpi_sw = 0;
 int kbd_sw = -1;
 
@@ -469,11 +468,6 @@ int instead_main(int argc, char *argv[])
 			nocursor_sw = 1;
 		} else if (!strcmp(argv[i], "-software")) {
 			software_sw = 1;
-		} else if (!strcmp(argv[i], "-glhack")) {
-			if ((i + 1) < argc)
-				glhack_sw = atoi(argv[++i]);
-			else
-				glhack_sw = 565; /* some samsung devices */
 		} else if (!strcmp(argv[i], "-resizable")) {
 			resizable_sw = 1;
 		} else if (!strcmp(argv[i], "-scale")) {
