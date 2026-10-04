@@ -1789,7 +1789,6 @@ int gfx_check_mode(int w, int h)
 
 static SDL_Surface *icon = NULL;
 extern int software_sw;
-extern int glhack_sw;
 
 #ifdef _USE_SWROTATE
 static int gfx_flip_rotate = 0;
@@ -1964,13 +1963,6 @@ int gfx_set_mode(int w, int h, int fs)
 	t = game_reset_name();
 	if (!t)
 		t = title;
-	if (glhack_sw) {
-		fprintf(stderr, "glhack: %d\n", glhack_sw);
-		/* fix for hackish samsung devices */
-		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, (glhack_sw / 100) % 10);
-		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, (glhack_sw / 10) % 10);
-		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, glhack_sw % 10);
-	}
 #if defined(IOS) || defined(ANDROID)
 	SDL_VideoWindow = SDL_CreateWindow(t, win_w, win_h,
 			SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE
