@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2026 Peter Kosyh <pkosyh at yandex.ru>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -26,11 +26,6 @@
 #define __CONFIG_H_INCLUDED
 
 #define FONT_SZ(v) (SCALABLE_FONT?((v) * (1.0f + ((0.1f * opt_fsize)))):(v))
-
-#define KBD_SMART	0
-#define KBD_NORMAL	1
-#define KBD_INVERSE	2
-#define KBD_MAX		3
 
 #define JUST_THEME	0
 #define JUST_NO		1

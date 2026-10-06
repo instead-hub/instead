@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2022 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2026 Peter Kosyh <pkosyh at yandex.ru>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -48,7 +48,6 @@ int opt_click = 1;
 int opt_music = 1;
 int opt_autosave = 1;
 int opt_filter = 1;
-int opt_kbd = KBD_SMART;
 int opt_justify = 0;
 int opt_vsync = -1;
 int opt_debug = -1;
@@ -92,7 +91,6 @@ static struct parser cfg_parser[] = {
 	{ "filter", parse_int, &opt_filter, 0 },
 	{ "owntheme", parse_int, &opt_owntheme, 0 },
 	{ "lang", parse_string, &opt_lang, 0 },
-	{ "kbd", parse_int, &opt_kbd, 0 },
 	{ "mode", parse_mode, opt_mode, 0 },
 	{ "justify", parse_int, &opt_justify, 0 },
 	{ "fading", parse_int, &opt_fading, 0 },
@@ -141,11 +139,11 @@ int cfg_save(void)
 	fprintf(fp, "fs = %d\nhl = %d\nhz = %d\nvol = %d\nautosave = %d\n\
 game = %s\nfscale = %d\nmotion = %d\n\
 click = %d\nmusic = %d\ntheme = %s\n\
-filter = %d\nowntheme = %d\nlang = %s\nkbd = %d\nmode = %dx%d\njustify = %d\nfading = %d\nhires = %d\n",
+filter = %d\nowntheme = %d\nlang = %s\nmode = %dx%d\njustify = %d\nfading = %d\nhires = %d\n",
 		opt_fs, opt_hl, opt_hz, opt_vol, save_autosave,
 		curgame_dir?curgame_dir:"", opt_fsize, opt_motion,
 		opt_click, opt_music, curtheme_dir[THEME_GLOBAL]?curtheme_dir[THEME_GLOBAL]:DEFAULT_THEME,
-		opt_filter, save_owntheme, opt_lang, opt_kbd, opt_mode[0], opt_mode[1],
+		opt_filter, save_owntheme, opt_lang, opt_mode[0], opt_mode[1],
 		opt_justify, opt_fading, opt_hires);
 	if (opt_vsync != -1)
 		fprintf(fp, "vsync = %d\n", opt_vsync);

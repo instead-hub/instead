@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2026 Peter Kosyh <pkosyh at yandex.ru>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -63,9 +63,6 @@ char *REMOVE_MENU = NULL;
 char *ON = NULL;
 char *OFF = NULL;
 
-char *KBD_MODE_LINKS = NULL;
-char *KBD_MODE_SMART = NULL;
-char *KBD_MODE_SCROLL = NULL;
 char *CANCEL_MENU = NULL;
 
 char *FROM_THEME = NULL;
@@ -496,9 +493,7 @@ char *game_menu_gen(void)
 		}
 	} else if (cur_menu == menu_settings) {
 		char *just[JUST_MAX] = { FROM_THEME, OFF, ON };
-		char *kbd [KBD_MAX] = { KBD_MODE_SMART, KBD_MODE_LINKS, KBD_MODE_SCROLL };
 		int fsize = 100 + (10 * opt_fsize);
-		opt_kbd = (unsigned int)opt_kbd % KBD_MAX;
 		opt_justify = (unsigned int)opt_justify % JUST_MAX;
 		switch (menu_settings_num) {
 		case 0:
@@ -516,7 +511,7 @@ char *game_menu_gen(void)
 			break;
 		case 2:
 			snprintf(menu_buff, sizeof(menu_buff), SETTINGS_OTH_MENU, 
-			opt_motion?ON:OFF, opt_filter?ON:OFF, kbd[opt_kbd],
+			opt_motion?ON:OFF, opt_filter?ON:OFF,
 			langs[cur_lang].name,  (opt_autosave & 1)?ON:OFF);
 			break;
 		}
@@ -568,11 +563,6 @@ int game_menu_act(const char *a)
 
 	if (!strcmp(a, "/autosave")) {
 		opt_autosave = !(opt_autosave & 1);
-		game_menu_box(1, game_menu_gen());
-	} else if (!strcmp(a, "/kbd")) {
-		opt_kbd += 1;
-		if (opt_kbd == KBD_MAX)
-			opt_kbd = 0;
 		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/owntheme")) {
 		opt_owntheme = !opt_owntheme;
@@ -910,9 +900,6 @@ static void lang_free(void)
 	FREE(REMOVE_MENU);
 	FREE(ON);
 	FREE(OFF);
-	FREE(KBD_MODE_LINKS);
-	FREE(KBD_MODE_SMART);
-	FREE(KBD_MODE_SCROLL);
 	FREE(CANCEL_MENU);
 	FREE(FROM_THEME);
 	FREE(DISABLED_SAVE_MENU);
@@ -926,7 +913,7 @@ static int lang_ok(void)
 		MAIN_MENU && ABOUT_MENU && BACK_MENU && SETTINGS_SND_MENU && SETTINGS_GFX_MENU && SETTINGS_OTH_MENU &&
 		CUSTOM_THEME_MENU && OWN_THEME_MENU && SELECT_GAME_MENU && SELECT_THEME_MENU && WAIT_MENU &&
 		SAVED_MENU && NOGAMES_MENU && NOTHEMES_MENU && QUIT_MENU && REMOVE_MENU &&
-		ON && OFF && KBD_MODE_LINKS && KBD_MODE_SMART && KBD_MODE_SCROLL && CANCEL_MENU &&
+		ON && OFF && CANCEL_MENU &&
 		FROM_THEME && DISABLED_SAVE_MENU && BROWSE_MENU)
 		return 0;
 	return -1;
@@ -959,9 +946,6 @@ struct parser lang_parser[] = {
 	{ "REMOVE_MENU", parse_esc_string, &REMOVE_MENU, 0 },
 	{ "ON", parse_esc_string, &ON, 0 },
 	{ "OFF", parse_esc_string, &OFF, 0 },
-	{ "KBD_MODE_LINKS", parse_esc_string, &KBD_MODE_LINKS, 0 },
-	{ "KBD_MODE_SMART", parse_esc_string, &KBD_MODE_SMART, 0 },
-	{ "KBD_MODE_SCROLL", parse_esc_string, &KBD_MODE_SCROLL, 0 },
 	{ "CANCEL_MENU", parse_esc_string, &CANCEL_MENU, 0 },
 	{ "FROM_THEME", parse_esc_string, &FROM_THEME, 0 },
 	{ "DISABLED_SAVE_MENU", parse_esc_string, &DISABLED_SAVE_MENU, 0 },
