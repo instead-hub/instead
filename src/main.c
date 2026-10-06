@@ -59,7 +59,6 @@ int scale_sw = 1;
 int standalone_sw = 0;
 int nocursor_sw = 0;
 int dpi_sw = 0;
-int kbd_sw = -1;
 
 static int opt_index = 1;
 
@@ -538,11 +537,6 @@ int instead_main(int argc, char *argv[])
 				lang_sw = strdup(argv[++i]);
 			} else
 				lang_sw = strdup("en");
-		} else if (!strcmp(argv[i], "-kbd")) {
-			if ((i + 1) < argc) {
-				kbd_sw = atoi(argv[++i]) % KBD_MAX;
-			} else
-				kbd_sw = KBD_SMART;
 		} else if (argv[i][0] == '-') {
 			fprintf(stderr,"Unknown option: %s\n", argv[i]);
 			usage();
@@ -655,9 +649,6 @@ int instead_main(int argc, char *argv[])
 		opt_lang = strdup(lang_sw);
 	} else if (!opt_lang || !opt_lang[0])
 		opt_lang = game_locale();
-
-	if (kbd_sw != -1)
-		opt_kbd = kbd_sw;
 
 	if (menu_lang_select(opt_lang) && menu_lang_select(LANG_DEF)) {
 		fprintf(stderr, "Can not load default language.\n");

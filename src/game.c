@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2022 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2026 Peter Kosyh <pkosyh at yandex.ru>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -3492,41 +3492,26 @@ static int kbd_instead(struct inp_event *ev, int *x, int *y)
 	} else if (!is_key(ev, "up") || !is_key(ev, "down") ||
 		   !is_key(ev, "[8]") || !is_key(ev, "[2]")) {
 
-		int lm;
+		int lm = (!alt_pressed && !shift_pressed);
 		int prev = !is_key(ev, "up") || !is_key(ev, "[8]");
-
-		if (opt_kbd == KBD_INVERSE)
-			lm = (alt_pressed || shift_pressed);
-		else
-			lm = (!alt_pressed && !shift_pressed);
 
 		if (menu_shown || lm) {
 			if (select_ref(prev, 0)) {
-				if (opt_kbd == KBD_SMART) {
-					(prev)?game_scroll_up(1):game_scroll_down(1);
-					select_ref(prev, 1);
-				} else
-					select_ref(prev, 1);
+				(prev)?game_scroll_up(1):game_scroll_down(1);
+				select_ref(prev, 1);
 			}
 		} else
 			(prev)?game_scroll_up(1):game_scroll_down(1);
 	} else if (!is_key(ev, "page up") || !is_key(ev, "[9]") ||
 		   !is_key(ev, "page down") || !is_key(ev, "[3]")) {
-		int lm;
+		int lm = (!alt_pressed && !shift_pressed);
 		int prev = !is_key(ev, "page up") || !is_key(ev, "[9]");
 
-		if (opt_kbd == KBD_INVERSE)
-			lm = (alt_pressed || shift_pressed);
-		else
-			lm = (!alt_pressed && !shift_pressed);
 		if (menu_shown || lm) {
 			if (select_ref(prev, 0) || select_ref(prev, 1)) {
-				if (opt_kbd == KBD_SMART) {
-					int s = (prev)?game_scroll_pup():game_scroll_pdown();
-					if (!s)
-						select_ref(!prev, 1);
-				} else
-					select_ref(prev, 0);
+				int s = (prev)?game_scroll_pup():game_scroll_pdown();
+				if (!s)
+					select_ref(!prev, 1);
 			}
 		} else {
 			if (prev)
