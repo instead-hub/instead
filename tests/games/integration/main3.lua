@@ -26,6 +26,24 @@ local function check_eq(name, got, want)
   end
 end
 
+-- Recursive searches return the index in the containing list, not the parent.
+local search_leaf = obj { nam = 'search_leaf' }
+local search_inner = obj {
+  nam = 'search_inner',
+  obj = { obj { nam = 'search_filler' }, search_leaf },
+}
+local search_root = obj {
+  nam = 'search_root',
+  obj = { search_inner },
+}
+for _, method in ipairs { 'srch', 'lookup' } do
+  local o, l, idx = search_root[method](search_root, search_leaf)
+  check_eq(method .. " nested object", o, search_leaf)
+  check_eq(method .. " containing list", l, search_inner.obj)
+  check_eq(method .. " nested index", idx, 2)
+  check_eq(method .. " missing object", search_root[method](search_root, 'missing'), nil)
+end
+
 -- src/instead_paths.c
 check("instead_gamespath is a function", type(instead_gamespath) == "function")
 local gamespath = instead_gamespath()

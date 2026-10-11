@@ -735,12 +735,23 @@ static int luaB_print (lua_State *L) {
   for (i = 1; i <= n; i++) {  /* for each argument */
     size_t l;
     const char *s = luaL_tolstring(L, i, &l);  /* convert it to string */
+#if LUA_VERSION_NUM >= 505
+    if (i > 1)
+      fputs("\t", stdout);
+    fwrite(s, sizeof(char), l, stdout);
+#else
     if (i > 1)  /* not the first element? */
       lua_writestring("\t", 1);  /* add a tab before it */
     lua_writestring(s, l);  /* print it */
+#endif
     lua_pop(L, 1);  /* pop result */
   }
+#if LUA_VERSION_NUM >= 505
+  fputs("\n", stdout);
+  fflush(stdout);
+#else
   lua_writeline();
+#endif
   return 0;
 }
 #endif
