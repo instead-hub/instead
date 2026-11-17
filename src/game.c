@@ -3570,6 +3570,40 @@ static int mouse_instead(struct inp_event *ev, int *x, int *y)
 	}
 	return 0;
 }
+/* Adaptive theme: apply a new window size without restarting the game. */
+void game_resize(int w, int h)
+{
+	if (!curgame_dir || game_theme.w <= 0)
+		return;	/* game/theme is not ready yet */
+	if (!game_theme.scale_aware)
+		return;
+	/* window pixels -> theme pixels (see gfx_set_mode: win_w = w * scale_sw) */
+	if (scale_sw > 1) {
+		w /= scale_sw;
+		h /= scale_sw;
+	}
+	if (w == game_theme.w && h == game_theme.h)
+		return;	/* same size, nothing to adopt */
+	/* resize during a fade: cancel the transition, keep the last frame */
+	if (gfx_fading())
+		gfx_cancel_change_screen();
+	/* layouts hold font pointers: release them before fonts are reloaded */
+	game_release_theme(1);
+	/* the game's own background buffer lives in theme pixels: drop it */
+	if (!game_theme.bg_name || !game_theme.bg_name[0]) {
+		if (game_theme.bg) {
+			gfx_free_image(game_theme.bg);
+			game_theme.bg = NULL;
+		}
+	}
+
+	if (game_theme_init_size(w, h)) {
+		game_restart();
+		return;
+	}
+	game_event("resize");
+	game_theme_update();
+}
 
 static __inline int game_cycle(void)
 {

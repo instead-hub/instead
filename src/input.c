@@ -522,6 +522,8 @@ int input(struct inp_event *inp, int wait)
 			return AGAIN;
 		break;
 	case SDL_EVENT_WINDOW_RESIZED: /* Android send this on screen rotate */
+		if (SDL_PeepEvents(&peek, 1, SDL_PEEKEVENT, event.type, event.type) > 0)
+			return AGAIN; /* to avoid resize storm */
 		gfx_resize(event.window.data1, event.window.data2);
 		/* Fall through */
 	case SDL_EVENT_WINDOW_EXPOSED:

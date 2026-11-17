@@ -1795,6 +1795,7 @@ static int gfx_flip_rotate = 0;
 #endif
 SDL_Window *SDL_VideoWindow = NULL;
 static SDL_Texture *SDL_VideoTexture = NULL;
+static SDL_Texture *cursor = NULL;	/* must be reset together with the renderer */
 static SDL_Surface *SDL_VideoSurface = NULL;
 static SDL_Renderer *Renderer = NULL;
 
@@ -1902,6 +1903,11 @@ void unlock_rotation(void)
 }
 #endif
 
+/* an adaptive theme is laid out for the real window size -- must be resizable */
+#define GFX_WINDOW_FLAGS(fs) \
+	((fs) ? SDL_WINDOW_FULLSCREEN : \
+		((resizable_sw || game_theme.scale_aware) ? SDL_WINDOW_RESIZABLE : 0))
+
 int gfx_set_mode(int w, int h, int fs)
 {
 	int i;
@@ -1955,6 +1961,7 @@ int gfx_set_mode(int w, int h, int fs)
 	screen = NULL;
 	Renderer = NULL;
 	SDL_VideoTexture = NULL;
+	cursor = NULL;
 
 	if (SDL_VideoWindow) {
 		SDL_DestroyWindow(SDL_VideoWindow);
@@ -1978,11 +1985,12 @@ int gfx_set_mode(int w, int h, int fs)
 #else
 	if (!software_sw) /* try to using scale */
 		SDL_VideoWindow = SDL_CreateWindow(t, win_w, win_h,
-			((fs)?SDL_WINDOW_FULLSCREEN:(resizable_sw?SDL_WINDOW_RESIZABLE:0)) | SDL_WINDOW_OPENGL);
+			GFX_WINDOW_FLAGS(fs) | SDL_WINDOW_OPENGL);
 	if (!SDL_VideoWindow) { /* try simple window */
 		fprintf(stderr, "Fallback to software window.\n");
 		win_w = w; win_h = h;
-		SDL_VideoWindow = SDL_CreateWindow(t, win_w, win_h, ((fs)?SDL_WINDOW_FULLSCREEN:0));
+		SDL_VideoWindow = SDL_CreateWindow(t, win_w, win_h,
+			GFX_WINDOW_FLAGS(fs));
 	}
 #endif
 	if (SDL_VideoWindow == NULL) {
@@ -2088,9 +2096,6 @@ static int queue_y1 = -1;
 static int queue_x2 = -1;
 static int queue_y2 = -1;
 static int queue_dirty = 0;
-static SDL_Texture *cursor = NULL;
-
-
 static int cursor_xc = 0;
 static int cursor_yc = 0;
 
@@ -2252,12 +2257,38 @@ void gfx_flip(void)
 	queue_dirty = 1;
 }
 
+/* resize: a one shot timer serialises the event burst into the last size */
+#define GFX_RESIZE_DELAY 200 /* ms: quiet period after the last resize event */
+
+static int resize_w = 0;
+static int resize_h = 0;
+static SDL_TimerID resize_timer = 0;
+
+static void cb_resize(void *aux)
+{
+	game_resize(resize_w, resize_h);
+}
+
+static Uint32 resize_fired(void *unused, SDL_TimerID id, Uint32 interval)
+{
+	resize_timer = 0;
+	push_user_event(cb_resize, NULL);	/* wake up SDL_WaitEvent */
+	return 0;	/* one shot */
+}
+
 void gfx_resize(int w, int h)
 {
 #if defined(ANDROID) || defined(IOS)
 	current_gfx_w = w;
 	current_gfx_h = h;
 #endif
+	if (!game_theme.scale_aware || gfx_fs || w <= 0 || h <= 0)
+		return;
+	resize_w = w;
+	resize_h = h;
+	if (resize_timer)
+		SDL_RemoveTimer(resize_timer);
+	resize_timer = SDL_AddTimer(GFX_RESIZE_DELAY, resize_fired, NULL);
 }
 
 void gfx_commit(void)

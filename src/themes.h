@@ -41,6 +41,7 @@
 struct game_theme {
 	float	scale;
 	float	img_scale;
+	float	img_scale_base;	/* scr.gfx.scale as declared by the theme */
 	int	scale_aware;
 	struct dpi {
 		int min;
@@ -191,6 +192,7 @@ extern void	themes_drop(int type);
 
 extern int 	game_theme_load(const char *name, int type);
 extern int	game_theme_init(void);
+extern int	game_theme_init_size(int w, int h);
 extern int 	game_theme_free(void);
 extern int	game_theme_optimize(void);
 extern int	game_theme_update(void);
