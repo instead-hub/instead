@@ -1934,11 +1934,13 @@ int gfx_set_mode(int w, int h, int fs)
 	if (gfx_width == w && gfx_height == h && gfx_fs == fs) {
 		game_reset_name();
 #if defined(ANDROID)
-		if (SDL_VideoWindow) /* see gfx_set_mode call from input.c */
+		if (SDL_VideoWindow) { /* see gfx_set_mode call from input.c */
 #else
-		if (SDL_VideoWindow && !fs)
+		if (SDL_VideoWindow && !fs) {
 #endif
 			SDL_SetWindowSize(SDL_VideoWindow, win_w, win_h);
+			SDL_SetWindowResizable(SDL_VideoWindow, !!(SDL_WINDOW_RESIZABLE));
+		}
 		goto done; /* already done */
 	}
 //	SelectVideoDisplay();
@@ -1963,9 +1965,12 @@ int gfx_set_mode(int w, int h, int fs)
 	SDL_VideoTexture = NULL;
 	cursor = NULL;
 
-	if (SDL_VideoWindow) {
-		SDL_DestroyWindow(SDL_VideoWindow);
-		SDL_VideoWindow = NULL;
+	if (SDL_VideoWindow) { /* do not recreate window */
+		if (SDL_SetWindowSize(SDL_VideoWindow, win_w, win_h)) {
+			SDL_SetWindowFullscreen(SDL_VideoWindow, !!fs);
+			SDL_SetWindowResizable(SDL_VideoWindow, !!(SDL_WINDOW_RESIZABLE));
+		}
+		goto skip;
 	}
 	t = game_reset_name();
 	if (!t)
@@ -1997,6 +2002,7 @@ int gfx_set_mode(int w, int h, int fs)
 		fprintf(stderr, "Unable to create %dx%d window: %s\n", win_w, win_h, SDL_GetError());
 		return -1;
 	}
+skip:
 	if (icon)
 		SDL_SetWindowIcon(SDL_VideoWindow, icon);
 // TODO
@@ -2272,6 +2278,8 @@ static void cb_resize(void *aux)
 static Uint32 resize_fired(void *unused, SDL_TimerID id, Uint32 interval)
 {
 	resize_timer = 0;
+	if (game_paused())
+		return GFX_RESIZE_DELAY;
 	push_user_event(cb_resize, NULL);	/* wake up SDL_WaitEvent */
 	return 0;	/* one shot */
 }
