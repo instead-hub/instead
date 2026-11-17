@@ -1906,7 +1906,7 @@ void unlock_rotation(void)
 /* an adaptive theme is laid out for the real window size -- must be resizable */
 #define GFX_WINDOW_FLAGS(fs) \
 	((fs) ? SDL_WINDOW_FULLSCREEN : \
-		((resizable_sw || game_theme.scale_aware) ? SDL_WINDOW_RESIZABLE : 0))
+		((resizable_sw || game_theme.scale_aware == 3) ? SDL_WINDOW_RESIZABLE : 0))
 
 int gfx_set_mode(int w, int h, int fs)
 {
@@ -2292,7 +2292,7 @@ void gfx_resize(int w, int h)
 	current_gfx_w = w;
 	current_gfx_h = h;
 #endif
-	if (!game_theme.scale_aware || gfx_fs || w <= 0 || h <= 0)
+	if (game_theme.scale_aware != 3 || gfx_fs || w <= 0 || h <= 0)
 		return;
 	resize_w = w;
 	resize_h = h;

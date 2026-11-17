@@ -3575,7 +3575,7 @@ void game_resize(int w, int h)
 {
 	if (!curgame_dir || game_theme.w <= 0)
 		return;	/* game/theme is not ready yet */
-	if (!game_theme.scale_aware)
+	if (game_theme.scale_aware != 3)
 		return;
 	/* window pixels -> theme pixels (see gfx_set_mode: win_w = w * scale_sw) */
 	if (scale_sw > 1) {

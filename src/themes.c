@@ -666,7 +666,7 @@ out:
 	t->w = w;
 	t->h = h;
 	if (t->scale_aware) {
-		if (t->scale_aware == 2) {
+		if (t->scale_aware >= 2) {
 			/* from the declared value: "*=" accumulated on every re-init */
 			t->img_scale = t->img_scale_base * t->scale;
 			t->scale = 1.0f;
