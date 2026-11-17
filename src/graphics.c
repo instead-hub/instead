@@ -1966,11 +1966,13 @@ int gfx_set_mode(int w, int h, int fs)
 	cursor = NULL;
 
 	if (SDL_VideoWindow) { /* do not recreate window */
-		if (SDL_SetWindowSize(SDL_VideoWindow, win_w, win_h)) {
+		if (!fs && !gfx_fs && SDL_SetWindowSize(SDL_VideoWindow, win_w, win_h)) {
 			SDL_SetWindowFullscreen(SDL_VideoWindow, !!fs);
 			SDL_SetWindowResizable(SDL_VideoWindow, !!(SDL_WINDOW_RESIZABLE));
+			goto skip;
 		}
-		goto skip;
+		SDL_DestroyWindow(SDL_VideoWindow);
+		SDL_VideoWindow = NULL;
 	}
 	t = game_reset_name();
 	if (!t)
