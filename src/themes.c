@@ -321,13 +321,22 @@ static int theme_parse_full_path(const char *v, void *data)
 	return parse_full_path(v, data);
 }
 
+/* scr.gfx.scale: keep the declared value, img_scale follows the window */
+static int parse_img_scale(const char *v, void *data)
+{
+	if (parse_float(v, data))
+		return -1;
+	game_theme.img_scale_base = game_theme.img_scale;
+	return 0;
+}
+
 struct parser cmd_parser[] = {
 	{ "scr.w", parse_int, &game_theme.w, 0 }, /* must be 0 */
 	{ "scr.h", parse_int, &game_theme.h, 0 }, /* must be 1, see scale_aware logic */
 	{ "scr.scale_aware", parse_int, &game_theme.scale_aware, 0 },
 	{ "scr.dpi", parse_dpi, &game_theme.dpi, 0 },
 	{ "scr.gfx.scalable", parse_int, &game_theme.gfx_scalable, CHANGED_ALL },
-	{ "scr.gfx.scale", parse_float, &game_theme.img_scale, CHANGED_IMG },
+	{ "scr.gfx.scale", parse_img_scale, &game_theme.img_scale, CHANGED_IMG },
 	{ "scr.col.bg", parse_color, &game_theme.bgcol, 0 },
 	{ "scr.col.brd", parse_color, &game_theme.brdcol, 0 },
 	{ "scr.gfx.icon", theme_parse_full_path, &game_theme.icon_name, CHANGED_ICON },
@@ -638,7 +647,8 @@ out:
 	t->h = h;
 	if (t->scale_aware) {
 		if (t->scale_aware == 2) {
-			t->img_scale *= t->scale;
+			/* from the declared value: "*=" accumulated on every re-init */
+			t->img_scale = t->img_scale_base * t->scale;
 			t->scale = 1.0f;
 		}
 		t->xoff = t->yoff = 0;
@@ -692,7 +702,8 @@ char *theme_getvar(char *name)
 			if (out_gfx_mode(cmd_parser[i].p, &s))
 				return NULL;
 			return s;
-		} else if (cmd_parser[i].fn == parse_float) {
+		} else if (cmd_parser[i].fn == parse_float ||
+			cmd_parser[i].fn == parse_img_scale) {
 			f = (float*)cmd_parser[i].p;
 			sprintf(buf, "%f", *f);
 			return strdup(buf);
@@ -988,6 +999,18 @@ extern void rotate_landscape(void);
 extern void rotate_portrait(void);
 extern void unlock_rotation(void);
 #endif
+
+int game_theme_init_size(int w, int h)
+{
+	int mode_w = opt_mode[0];
+	int mode_h = opt_mode[1];
+	opt_mode[0] = w;
+	opt_mode[1] = h;
+	int rc = game_theme_init();
+	opt_mode[0] = mode_w;
+	opt_mode[1] = mode_h;
+	return rc;
+}
 
 int game_theme_init(void)
 {
@@ -1440,6 +1463,7 @@ int game_default_theme(void)
 {
 	int rc;
 	memset(&game_theme, 0, sizeof(game_theme));
+	game_theme.img_scale_base = 1.0f;
 	game_theme.changed = CHANGED_ALL;
 	rc = game_theme_load(DEFAULT_THEME, THEME_GLOBAL);
 	if (rc)

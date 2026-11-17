@@ -74,6 +74,7 @@ extern void	game_flip(void);
 extern int	game_loop(void);
 extern void	game_done(int err);
 extern char	*game_reset_name(void);
+extern void	game_resize(int w, int h);
 
 extern int	game_load_theme(const char *path);
 extern int	game_apply_theme(void);
