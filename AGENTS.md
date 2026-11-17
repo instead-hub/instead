@@ -1,14 +1,17 @@
 # AGENTS.md — INSTEAD
 
-Adventure game interpreter (C + Lua/LuaJIT, SDL3 rendering). The active branch is `SDL3` (a port from SDL2); `master` is the old SDL2 version. On this branch `CI.yml` and `appimage.yml` build SDL3 (SDL3/SDL3_ttf/image/mixer are pulled from source at release tags — apt Ubuntu does not have them), `windows.yml` builds SDL3 with mingw (official SDL3/SDL3_image/SDL3_mixer mingw packages + SDL3_ttf from the VC package — its mingw build imports `ScriptFreeCache`/`ScriptPlace` from gdi32.dll and does not start on Windows 7; plus LuaJIT/libxmp from source), `macos.yml` builds SDL3 for macOS (x86_64/arm64, SDL3 from source, `.app` bundle + `.dmg`), `emscripten.yml` builds SDL3 for wasm (emscripten ports `sdl3`/`sdl3_ttf`/`zlib`, SDL3_image/SDL3_mixer/libxmp from source via `emcmake`; `_USE_BROWSE` is disabled on wasm), `docs.yml` builds the PDF manuals (`make -C doc pdf`: xelatex + MultiMarkdown). `INSTALL` describes the SDL3 build (cmake/configure.sh); the source of truth is `config.make` + `Makefile`.
+Adventure game interpreter (C + Lua/LuaJIT, SDL3 rendering). The active branch is `master`: it already contains the SDL3 port (the old `SDL3` branch is its ancestor and is no longer developed, the SDL2 version lives in the `SDL2` branch). On `master` `CI.yml` and `appimage.yml` build SDL3 (SDL3/SDL3_ttf/image/mixer are pulled from source at release tags — apt Ubuntu does not have them), `windows.yml` builds SDL3 with mingw (official SDL3/SDL3_image/SDL3_mixer mingw packages + SDL3_ttf from the VC package — its mingw build imports `ScriptFreeCache`/`ScriptPlace` from gdi32.dll and does not start on Windows 7; plus LuaJIT/libxmp from source), `macos.yml` builds SDL3 for macOS (x86_64/arm64, SDL3 from source, `.app` bundle + `.dmg`), `emscripten.yml` builds SDL3 for wasm (emscripten ports `sdl3`/`sdl3_ttf`/`zlib`, SDL3_image/SDL3_mixer/libxmp from source via `emcmake`; `_USE_BROWSE` is disabled on wasm), `docs.yml` builds the PDF manuals (`make -C doc pdf`: xelatex + MultiMarkdown). `INSTALL` describes the SDL3 build (cmake/configure.sh); the source of truth is `config.make` + `Makefile`.
 
 Map: `src/` — engine and rendering (`src/instead/` — Lua VM and engine), `stead/` — the Lua game library, `games/tutorial` — smoke test game, `tests/games/integration` — test game for integration tests, `themes/` — theme data.
 
-## Build (Alpine Linux)
+## Build
 
-Packages: `apk add git build-base pkgconf cmake ninja zlib-dev luajit-dev sdl3-dev sdl3_ttf-dev libpng-dev libjpeg-turbo-dev libwebp-dev tiff-dev giflib-dev libogg-dev libvorbis-dev flac-dev opusfile-dev libxmp-dev xvfb cppcheck`
+Dependencies: a C toolchain, `pkg-config`, `cmake`/`ninja` (optional), and the development
+packages of SDL3, SDL3_ttf, SDL3_image, SDL3_mixer, LuaJIT and zlib (plus the usual
+image/audio libraries pulled in by SDL3_image/SDL3_mixer). Install them with the distro
+package manager; where `sdl3_image`/`sdl3_mixer` packages are missing, build them from
+source against the distro SDL3.
 
-- Alpine has no `pkg-config`, only `pkgconf`; there are no `sdl3_image`/`sdl3_mixer` packages — they are built from source and installed to `/usr` (`/tmp/opencode/SDL_image` release-3.4.6, `/tmp/opencode/SDL_mixer` release-3.2.4). From a clean environment build them with: `cmake ... -DCMAKE_INSTALL_PREFIX=/usr -DSDLIMAGE_*` / `-DSDLMIXER_*` and `*_VENDORED=OFF`; for mixer `-DSDLMIXER_FLAC_LIBFLAC=OFF` is mandatory (broken flac config in Alpine).
 - Dev build: `make -j$(nproc)` from the root. `Makefile` includes `Rules.make` (symlink to `Rules.make.standalone`) and the local untracked `config.make` (SDL3/LuaJIT/zlib flags; ASan optional). The binary is `src/sdl-instead`; run it from the repository root (paths `./stead`, `./games`).
 - The CMake path works too: `cmake -S . -B build -G Ninja -DSTANDALONE=1` + `ninja -C build`.
 - `./configure.sh` completely overwrites `config.make` — do not run it unnecessarily.
