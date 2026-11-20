@@ -3587,20 +3587,7 @@ void game_resize(int w, int h)
 	/* resize during a fade: cancel the transition, keep the last frame */
 	if (gfx_fading())
 		gfx_cancel_change_screen();
-	/* layouts hold font pointers: release them before fonts are reloaded */
-	game_release_theme(1);
-	/* the game's own background buffer lives in theme pixels: drop it */
-	if (!game_theme.bg_name || !game_theme.bg_name[0]) {
-		if (game_theme.bg) {
-			gfx_free_image(game_theme.bg);
-			game_theme.bg = NULL;
-		}
-	}
-
-	if (game_theme_init_size(w, h)) {
-		game_restart();
-		return;
-	}
+	game_theme_resize(w, h);
 	game_event("resize");
 	game_theme_update();
 }

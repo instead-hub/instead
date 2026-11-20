@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2025 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2026 Peter Kosyh <pkosyh at yandex.ru>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -321,22 +321,13 @@ static int theme_parse_full_path(const char *v, void *data)
 	return parse_full_path(v, data);
 }
 
-/* scr.gfx.scale: keep the declared value, img_scale follows the window */
-static int parse_img_scale(const char *v, void *data)
-{
-	if (parse_float(v, data))
-		return -1;
-	game_theme.img_scale_base = game_theme.img_scale;
-	return 0;
-}
-
 struct parser cmd_parser[] = {
 	{ "scr.w", parse_int, &game_theme.w, 0 }, /* must be 0 */
 	{ "scr.h", parse_int, &game_theme.h, 0 }, /* must be 1, see scale_aware logic */
 	{ "scr.scale_aware", parse_int, &game_theme.scale_aware, 0 },
 	{ "scr.dpi", parse_dpi, &game_theme.dpi, 0 },
 	{ "scr.gfx.scalable", parse_int, &game_theme.gfx_scalable, CHANGED_ALL },
-	{ "scr.gfx.scale", parse_img_scale, &game_theme.img_scale, CHANGED_IMG },
+	{ "scr.gfx.scale", parse_float, &game_theme.img_scale, CHANGED_IMG },
 	{ "scr.col.bg", parse_color, &game_theme.bgcol, 0 },
 	{ "scr.col.brd", parse_color, &game_theme.brdcol, 0 },
 	{ "scr.gfx.icon", theme_parse_full_path, &game_theme.icon_name, CHANGED_ICON },
@@ -463,26 +454,6 @@ static theme_scalable_t theme_scalables[] = {
 	{ NULL, NULL, 0 },
 };
 static int theme_scalables_unscaled[sizeof(theme_scalables)/sizeof(theme_scalable_t)];
-/* values as declared by the theme: scaling is always applied to these, so a
- * resize is idempotent (val *= scale used to accumulate: 16 -> 8 -> 12) */
-static int theme_scalables_base[sizeof(theme_scalables)/sizeof(theme_scalable_t)];
-
-/* remember current values as the declared ones (called after theme load) */
-static void theme_scalables_snapshot(void)
-{
-	int i;
-	for (i = 0; theme_scalables[i].name; i++)
-		theme_scalables_base[i] = *(theme_scalables[i].val);
-}
-
-/* restore the declared values: scaling always starts from them, so a
- * repeated resize does not accumulate error */
-static void theme_scalables_restore(void)
-{
-	int i;
-	for (i = 0; theme_scalables[i].name; i++)
-		*(theme_scalables[i].val) = theme_scalables_base[i];
-}
 
 struct game_theme game_theme;
 
@@ -667,8 +638,7 @@ out:
 	t->h = h;
 	if (t->scale_aware) {
 		if (t->scale_aware >= 2) {
-			/* from the declared value: "*=" accumulated on every re-init */
-			t->img_scale = t->img_scale_base * t->scale;
+			t->img_scale *= t->scale;
 			t->scale = 1.0f;
 		}
 		t->xoff = t->yoff = 0;
@@ -722,8 +692,7 @@ char *theme_getvar(char *name)
 			if (out_gfx_mode(cmd_parser[i].p, &s))
 				return NULL;
 			return s;
-		} else if (cmd_parser[i].fn == parse_float ||
-			cmd_parser[i].fn == parse_img_scale) {
+		} else if (cmd_parser[i].fn == parse_float) {
 			f = (float*)cmd_parser[i].p;
 			sprintf(buf, "%f", *f);
 			return strdup(buf);
@@ -1020,20 +989,17 @@ extern void rotate_portrait(void);
 extern void unlock_rotation(void);
 #endif
 
-int game_theme_init_size(int w, int h)
+int game_theme_resize(int w, int h)
 {
-	int mode_w = opt_mode[0];
-	int mode_h = opt_mode[1];
-	/* the engine scales the CURRENT theme values: put the declared ones back
-	 * first, otherwise the scale accumulates on every resize
-	 * (scr.gfx.pad 16 -> 8 -> 12, the menu loses its padding) */
-	theme_scalables_restore();
-	opt_mode[0] = w;
-	opt_mode[1] = h;
-	int rc = game_theme_init();
-	opt_mode[0] = mode_w;
-	opt_mode[1] = mode_h;
-	return rc;
+	int rc = gfx_set_mode(w, h, 0);
+	if (rc)
+		return rc;
+	game_theme.changed = CHANGED_ALL;
+	game_theme.w = w;
+	game_theme.h = h;
+	theme_scalables_unscaled[0] = w;
+	theme_scalables_unscaled[1] = h;
+	return 0;
 }
 
 int game_theme_init(void)
@@ -1099,24 +1065,24 @@ int game_theme_init(void)
 
 static int theme_parse_idf(idf_t idf, const char *path)
 {
-	int rc = 0;
 	idff_t idff = NULL;
 	if (idf)
 		idff = idf_open(idf, path);
 
 	if (idff) {
-		rc = parse_idff(idff, path, cmd_parser);
+		int rc = parse_idff(idff, path, cmd_parser);
 		idf_close(idff);
 		if (rc)
 			fprintf(stderr, "Theme parsed with errors!\n");
-	} else if (parse_ini(dirpath(path), cmd_parser)) {
+		return rc;
+	}
+	if (parse_ini(dirpath(path), cmd_parser)) {
 		fprintf(stderr, "Theme parsed with errors!\n");
 /*		game_theme_free(); */
-		rc = -1;
+		return -1;
 	}
-	if (!rc) /* theme file parsed: these are the declared values */
-		theme_scalables_snapshot();
-	return rc;
+
+	return 0;
 }
 
 int theme_load(const char *name)
@@ -1487,7 +1453,6 @@ int game_default_theme(void)
 {
 	int rc;
 	memset(&game_theme, 0, sizeof(game_theme));
-	game_theme.img_scale_base = 1.0f;
 	game_theme.changed = CHANGED_ALL;
 	rc = game_theme_load(DEFAULT_THEME, THEME_GLOBAL);
 	if (rc)

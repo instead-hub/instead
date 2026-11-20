@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2021 Peter Kosyh <p.kosyh at gmail.com>
+ * Copyright 2009-2026 Peter Kosyh <pkosyh at yandex.ru>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -41,7 +41,6 @@
 struct game_theme {
 	float	scale;
 	float	img_scale;
-	float	img_scale_base;	/* scr.gfx.scale as declared by the theme */
 	int	scale_aware;
 	struct dpi {
 		int min;
@@ -192,7 +191,7 @@ extern void	themes_drop(int type);
 
 extern int 	game_theme_load(const char *name, int type);
 extern int	game_theme_init(void);
-extern int	game_theme_init_size(int w, int h);
+extern int	game_theme_resize(int w, int h);
 extern int 	game_theme_free(void);
 extern int	game_theme_optimize(void);
 extern int	game_theme_update(void);
