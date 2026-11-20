@@ -578,12 +578,16 @@ int game_menu_act(const char *a)
 	} else if (!strcmp(a, "/click")) {
 		opt_click ^= 1;
 		game_menu_box(1, game_menu_gen());
+	} else if (!strcmp(a, "/mode")) {
+		opt_mode[0] = opt_mode[1] = -1;
+		restart_needed = 1;
+		game_menu_box(1, game_menu_gen());
 	} else if (!strcmp(a, "/mode++")) {
 		if (gfx_next_mode(&opt_mode[0], &opt_mode[1]))
 			opt_mode[0] = opt_mode[1] = -1;
 		restart_needed = 1;
 		game_menu_box(1, game_menu_gen());
-	} else if (!strcmp(a, "/mode--")) {	
+	} else if (!strcmp(a, "/mode--")) {
 		if (gfx_prev_mode(&opt_mode[0], &opt_mode[1]))
 			opt_mode[0] = opt_mode[1] = -1;
 		restart_needed = 1;
