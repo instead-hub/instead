@@ -2654,6 +2654,26 @@ int txt_width(fnt_t fnt, const char *txt)
 	return w;
 }
 #endif
+
+static void txt_max_size(fnt_t fnt, const char *txt, int *w, int *h)
+{
+	struct fnt *fh = (struct fnt *)fnt;
+	int i = 0;
+	int ww = 0, hh = 0;
+	int ow = 0, oh = 0;
+	for (i = 0; i < FN_MAX; i ++) {
+		TTF_GetStringSize((TTF_Font *)fh->fonts[i], txt, 0, &ww, &hh);
+		if (ww > ow)
+			ow = ww;
+		if (hh > oh)
+			oh = hh;
+	}
+	if (w)
+		*w = ow;
+	if (h)
+		*h = oh;
+}
+
 void txt_size(fnt_t fnt, const char *txt, int *w, int *h)
 {
 	int ww, hh;
@@ -4823,12 +4843,23 @@ int get_unbreakable_len(struct layout *layout, const char *ptr)
 	int w = 0;
 	int ww = 0;
 	char *p, *eptr;
+	int style_changed = 0;
 	while (ptr && *ptr) {
-		int sp;
-		while (gfx_get_token(ptr, &eptr, NULL, &sp)) {
+		int sp, token;
+		while ((token = gfx_get_token(ptr, &eptr, NULL, &sp))) {
 			if (sp)
 				return w;
 			ptr = eptr;
+			switch (TOKEN(token)) {
+			case TOKEN_B:
+				/* fall through */
+			case TOKEN_U:
+				/* fall through */
+			case TOKEN_I:
+				/* fall through */
+			case TOKEN_S:
+				style_changed ++;
+			}
 		}
 		p = get_word(ptr, &eptr, &sp);
 		if (!p)
@@ -4839,7 +4870,10 @@ int get_unbreakable_len(struct layout *layout, const char *ptr)
 			return w;
 		}
 
-		txt_size(layout->fn, p, &ww, NULL);
+		if (style_changed)
+			txt_max_size(layout->fn, p, &ww, NULL); /* check all fonts, we havent style yet */
+		else
+			txt_size(layout->fn, p, &ww, NULL);
 
 		ptr = eptr;
 		w += ww;
