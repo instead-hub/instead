@@ -1903,10 +1903,10 @@ void unlock_rotation(void)
 }
 #endif
 
+#define GFX_WINDOW_RESIZABLE  (resizable_sw || game_theme.scale_aware == 3)
 /* an adaptive theme is laid out for the real window size -- must be resizable */
 #define GFX_WINDOW_FLAGS(fs) \
-	((fs) ? SDL_WINDOW_FULLSCREEN : \
-		((resizable_sw || game_theme.scale_aware == 3) ? SDL_WINDOW_RESIZABLE : 0))
+	(((fs) ? SDL_WINDOW_FULLSCREEN : 0)|((GFX_WINDOW_RESIZABLE) ? SDL_WINDOW_RESIZABLE : 0))
 
 int gfx_set_mode(int w, int h, int fs)
 {
@@ -1939,7 +1939,7 @@ int gfx_set_mode(int w, int h, int fs)
 		if (SDL_VideoWindow && !fs) {
 #endif
 			SDL_SetWindowSize(SDL_VideoWindow, win_w, win_h);
-			SDL_SetWindowResizable(SDL_VideoWindow, !!(SDL_WINDOW_RESIZABLE));
+			SDL_SetWindowResizable(SDL_VideoWindow, !!(GFX_WINDOW_RESIZABLE));
 		}
 		goto done; /* already done */
 	}
@@ -1968,7 +1968,7 @@ int gfx_set_mode(int w, int h, int fs)
 	if (SDL_VideoWindow) { /* do not recreate window */
 		if (!fs && !gfx_fs && SDL_SetWindowSize(SDL_VideoWindow, win_w, win_h)) {
 			SDL_SetWindowFullscreen(SDL_VideoWindow, !!fs);
-			SDL_SetWindowResizable(SDL_VideoWindow, !!(SDL_WINDOW_RESIZABLE));
+			SDL_SetWindowResizable(SDL_VideoWindow, !!(GFX_WINDOW_RESIZABLE));
 			goto skip;
 		}
 		SDL_DestroyWindow(SDL_VideoWindow);

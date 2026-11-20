@@ -994,7 +994,7 @@ int game_theme_resize(int w, int h)
 	int rc = gfx_set_mode(w, h, 0);
 	if (rc)
 		return rc;
-	game_theme.changed = CHANGED_ALL;
+	game_theme.changed = CHANGED_BG;
 	game_theme.w = w;
 	game_theme.h = h;
 	theme_scalables_unscaled[0] = w;
