@@ -4692,19 +4692,11 @@ static char *get_word_token(char *p, int *token)
 	return r;
 }
 
-char *process_token(char *ptr, struct layout *layout, struct line *line, struct xref **xref, int *sp)
+static int process_font_token(int token, struct layout *layout)
 {
-
-	int token;
-	char *val = NULL;
-	int bit = 0;
-	int al = 0;
 	int *cnt = NULL;
-	char *eptr;
+	int bit = 0;
 
-	token = gfx_get_token(ptr, &eptr, &val, sp);
-	if (!token)
-		return NULL;
 	if (TOKEN(token) == TOKEN_B) {
 		cnt = &layout->scnt[0];
 		bit = TTF_STYLE_BOLD;
@@ -4722,20 +4714,34 @@ char *process_token(char *ptr, struct layout *layout, struct line *line, struct 
 		bit = TTF_STYLE_ITALIC;
 #endif
 	}
-
-	if (bit) {
-		if (token & TOKEN_CLOSE) {
-			-- (*cnt);
-			if (*cnt < 0) /* fuzzy */
-				*cnt = 0;
-			if (!*cnt)
-				layout->style &= ~bit;
-		} else {
-			++ (*cnt);
-			layout->style |= bit;
-		}
-		goto out;
+	if (!bit)
+		return -1;
+	if (token & TOKEN_CLOSE) {
+		-- (*cnt);
+		if (*cnt < 0) /* fuzzy */
+			*cnt = 0;
+		if (!*cnt)
+			layout->style &= ~bit;
+	} else {
+		++ (*cnt);
+		layout->style |= bit;
 	}
+	return 0;
+}
+
+char *process_token(char *ptr, struct layout *layout, struct line *line, struct xref **xref, int *sp)
+{
+	int token;
+	char *val = NULL;
+	int al = 0;
+	char *eptr;
+
+	token = gfx_get_token(ptr, &eptr, &val, sp);
+	if (!token)
+		return NULL;
+
+	if (!process_font_token(token, layout))
+		goto out;
 
 	if (TOKEN(token) == TOKEN_L)
 		al = ALIGN_LEFT;
@@ -4838,28 +4844,20 @@ out:
 	return eptr;
 }
 
-int get_unbreakable_len(struct layout *layout, const char *ptr)
+static int _get_unbreakable_len(struct layout *layout, const char *ptr)
 {
 	int w = 0;
 	int ww = 0;
 	char *p, *eptr;
-	int style_changed = 0;
+
 	while (ptr && *ptr) {
 		int sp, token;
 		while ((token = gfx_get_token(ptr, &eptr, NULL, &sp))) {
 			if (sp)
 				return w;
+			process_font_token(token, layout);
+			fnt_style(layout->fn, layout->style);
 			ptr = eptr;
-			switch (TOKEN(token)) {
-			case TOKEN_B:
-				/* fall through */
-			case TOKEN_U:
-				/* fall through */
-			case TOKEN_I:
-				/* fall through */
-			case TOKEN_S:
-				style_changed ++;
-			}
 		}
 		p = get_word(ptr, &eptr, &sp);
 		if (!p)
@@ -4870,10 +4868,7 @@ int get_unbreakable_len(struct layout *layout, const char *ptr)
 			return w;
 		}
 
-		if (style_changed)
-			txt_max_size(layout->fn, p, &ww, NULL); /* check all fonts, we havent style yet */
-		else
-			txt_size(layout->fn, p, &ww, NULL);
+		txt_size(layout->fn, p, &ww, NULL);
 
 		ptr = eptr;
 		w += ww;
@@ -4886,6 +4881,17 @@ int get_unbreakable_len(struct layout *layout, const char *ptr)
 		free(p);
 	}
 	return w;
+}
+
+int get_unbreakable_len(struct layout *layout, const char *ptr)
+{
+	int rc, style;
+	struct layout lay_copy;
+	memcpy(&lay_copy, layout, sizeof(lay_copy));
+	style = layout->style;
+	rc = _get_unbreakable_len(&lay_copy, ptr);
+	fnt_style(layout->fn, style);
+	return rc;
 }
 
 int txt_layout_pos2off(layout_t lay, int pos, int *hh)
