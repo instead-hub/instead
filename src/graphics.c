@@ -2655,25 +2655,6 @@ int txt_width(fnt_t fnt, const char *txt)
 }
 #endif
 
-static void txt_max_size(fnt_t fnt, const char *txt, int *w, int *h)
-{
-	struct fnt *fh = (struct fnt *)fnt;
-	int i = 0;
-	int ww = 0, hh = 0;
-	int ow = 0, oh = 0;
-	for (i = 0; i < FN_MAX && (TTF_Font *)fh->fonts[i]; i ++) {
-		TTF_GetStringSize((TTF_Font *)fh->fonts[i], txt, 0, &ww, &hh);
-		if (ww > ow)
-			ow = ww;
-		if (hh > oh)
-			oh = hh;
-	}
-	if (w)
-		*w = ow;
-	if (h)
-		*h = oh;
-}
-
 void txt_size(fnt_t fnt, const char *txt, int *w, int *h)
 {
 	int ww, hh;
