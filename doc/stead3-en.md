@@ -4228,9 +4228,15 @@ Parameters can take values:
   version 2.2.0 available optional [4/5/6]: 4 - fully scalable (non-scalable
   fonts), 5 - scalable, with non-scalable fonts, 6 - scaled without smoothing,
   with not a scalable font
-- scr.scale_aware = [0|1|2] (adaptive themes support: 0 - virtual resolution, 1 - real proportions, 2 - real resolution)
+- scr.scale_aware = [0|1|2|3] (adaptive themes support: 0 - virtual
+  resolution, 1 - real proportions, 2 - real resolution, 3 - like 2, but
+  the window can be resized: on resize the game receives a resize event
+  and rebuilds the theme from Lua)
 - scr.dpi = [dpi|dpi1-dpi2] (theme dpi, 96 by default)
-- scr.gfx.scale = scale (image scaling, 1.0 by default)
+- scr.gfx.scale = scale (image scaling, 1.0 by default). In modes 2 and
+  3 it is multiplied by the theme fit scale at startup (see the 'Adaptive
+  themes' section); the game can read and change it -- theme images are
+  reloaded with the new scale
 - scr.gfx.bg = path to the background image (string)
 - scr.gfx.cursor.x = the x coordinate of the cursor center (number)
 - scr.gfx.cursor.y = the y coordinate of the cursor center (number)
@@ -4361,6 +4367,50 @@ themes/default. Supported mechanism include. At the same time, INSTEAD
 first tries to find the theme of the game, and if such topics are not is will
 downloaded the theme from the standard themes INSTEAD (if it exist). Further,
 in theme.ini you can only change those settings changes were required.
+
+### Adaptive themes
+
+Adaptive themes let the game adapt its look to the actual screen and/or
+window resolution.
+
+With 'scr.scale_aware' = 1 the theme gets the virtual resolution with real
+proportions, with 2 -- the real resolution. The game sets up an adaptive
+theme at startup, in init() or start(): it reads 'scr.w'/'scr.h' and sets
+the theme parameters with 'theme.set'. In mode 3 this is complemented by
+the resize event handling -- see below.
+
+The engine fits the theme once, at startup. In modes 2 and 3 the numbers
+declared by the theme are given to the game already multiplied by the fit
+scale, and the scale itself is stored in 'scr.gfx.scale' and used to load
+the theme images. The game can read 'scr.gfx.scale' to restore the
+declared values, and change it -- theme images are reloaded with the new
+scale.
+
+In mode 3 the startup is the same, but the window can be resized: on
+every change the engine does not recalculate the theme parameters, but
+sends the "resize" event to the game. The game has to lay the theme out
+again for the new 'scr.w'/'scr.h', just like at startup, but taking into
+account that the theme already holds the values set earlier via
+'theme.set'.
+
+The event comes through the 'events' module; the handler is
+'instead.onevent':
+
+```
+require "events"
+
+function instead.onevent(_, ev)
+  if ev == 'resize' then
+    layout() -- read scr.w/scr.h and set the theme up again
+    return std.nop() -- show the scene in the new layout
+  end
+end
+```
+
+At game startup 'theme.get' returns the theme numbers already multiplied
+by 'scr.gfx.scale', which at that moment also accounts for the general
+theme scale according to the dpi; during the resize event -- what the
+game has set.
 
 ## Modules
 
