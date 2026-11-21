@@ -3589,7 +3589,7 @@ void game_resize(int w, int h)
 		gfx_cancel_change_screen();
 	game_theme_resize(w, h);
 	game_event("resize");
-	game_theme_update();
+	game_redraw_all();
 }
 
 static __inline int game_cycle(void)
