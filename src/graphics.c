@@ -2280,7 +2280,7 @@ static void cb_resize(void *aux)
 static Uint32 resize_fired(void *unused, SDL_TimerID id, Uint32 interval)
 {
 	resize_timer = 0;
-	if (game_paused())
+	if (game_paused() && !menu_visible())
 		return GFX_RESIZE_DELAY;
 	push_user_event(cb_resize, NULL);	/* wake up SDL_WaitEvent */
 	return 0;	/* one shot */
