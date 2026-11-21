@@ -3573,10 +3573,13 @@ static int mouse_instead(struct inp_event *ev, int *x, int *y)
 /* Adaptive theme: apply a new window size without restarting the game. */
 void game_resize(int w, int h)
 {
+	int menu_on = menu_shown;
 	if (!curgame_dir || game_theme.w <= 0)
 		return;	/* game/theme is not ready yet */
 	if (game_theme.scale_aware != 3)
 		return;
+	if (menu_on)
+		menu_toggle(-1);
 	/* window pixels -> theme pixels (see gfx_set_mode: win_w = w * scale_sw) */
 	if (scale_sw > 1) {
 		w /= scale_sw;
@@ -3590,6 +3593,8 @@ void game_resize(int w, int h)
 	game_theme_resize(w, h);
 	game_event("resize");
 	game_redraw_all();
+	if (menu_on)
+		menu_toggle(-1);
 }
 
 static __inline int game_cycle(void)
