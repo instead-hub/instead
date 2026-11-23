@@ -3574,8 +3574,8 @@ static int mouse_instead(struct inp_event *ev, int *x, int *y)
 void game_resize(int w, int h)
 {
 	int menu_on = menu_shown;
-	if (!curgame_dir || game_theme.w <= 0)
-		return;	/* game/theme is not ready yet */
+	if (!curgame_dir || game_theme.w <= 0 || opt_fs)
+		return;
 	if (game_theme.scale_aware != 3)
 		return;
 	if (menu_on)
