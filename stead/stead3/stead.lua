@@ -138,6 +138,7 @@ else
   math.log10 = function(a)
     return std.math.log(a, 10)
   end
+  math.atan2 = math.atan2 or math.atan
 end
 
 math.pow = function(num, n)
@@ -1533,9 +1534,9 @@ std.obj = std.class {
 
     for i = 1, #s.obj do
       local v = s.obj[i]
-      o, l, i = v:srch(w)
+      o, l, idx = v:srch(w)
       if o then
-        return o, l, i
+        return o, l, idx
       end
     end
   end;
@@ -1547,9 +1548,9 @@ std.obj = std.class {
     end
     for i = 1, #s.obj do
       local v = s.obj[i]
-      o, l, i = v:lookup(w)
+      o, l, idx = v:lookup(w)
       if o then
-        return o, l, i
+        return o, l, idx
       end
     end
   end;
