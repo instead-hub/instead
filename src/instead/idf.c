@@ -281,6 +281,7 @@ static int idf_tree(const char *path, struct list_head *list, const char *fname)
 			list_add(list, &i->list);
 			return 0;
 		err:
+			fclose(fd);
 			if (i->path)
 				free(i->path);
 			free(i);
@@ -618,9 +619,7 @@ char *idf_gets(idff_t idf, char *b, int size)
 	if (!size)
 		return NULL;
 	rc = idf_read(idf, b, 1, size);
-	if (rc < 0)
-		return NULL;
-	if (!rc && idf_eof(idf))
+	if (rc <= 0)
 		return NULL;
 	if (!idf_eof(idf))
 		b[rc - 1] = 0;

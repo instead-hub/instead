@@ -181,6 +181,8 @@ err:
 char *getpath(const char *d, const char *n)
 {
 	char *p = getfilepath(d, n);
+	if (!p)
+		return NULL;
 	strcat(p, "/");
 	return p;
 }
@@ -423,12 +425,16 @@ static char curdir[PATH_MAX];
 int setdir(const char *path)
 {
 	strncpy(curdir, path, sizeof(curdir) - 1);
+	curdir[sizeof(curdir) - 1] = 0;
 	return chdir(path);
 }
 
 char *getdir(char *path, size_t size)
 {
+	if (!size)
+		return NULL;
 	strncpy(path, curdir, size - 1);
+	path[size - 1] = 0;
 	return path;
 }
 
