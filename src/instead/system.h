@@ -4,14 +4,6 @@
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
-#if LUA_VERSION_NUM >= 505
- #if !defined(lua_writestring)
-  #define lua_writestring(s,l)   fwrite((s), sizeof(char), (l), stdout)
- #endif
- #if !defined(lua_writeline)
-  #define lua_writeline()        (lua_writestring("\n", 1), fflush(stdout))
- #endif
-#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

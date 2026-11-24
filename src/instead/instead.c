@@ -729,6 +729,14 @@ static int luaB_print (lua_State *L) {
 	return 0;
 }
 #else
+#if LUA_VERSION_NUM >= 505
+ #if !defined(lua_writestring)
+  #define lua_writestring(s,l)   fwrite((s), sizeof(char), (l), stdout)
+ #endif
+ #if !defined(lua_writeline)
+  #define lua_writeline()        (lua_writestring("\n", 1), fflush(stdout))
+ #endif
+#endif
 static int luaB_print (lua_State *L) {
   int n = lua_gettop(L);  /* number of arguments */
   int i;
